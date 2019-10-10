@@ -3,3 +3,11 @@
 language: R
 sudo: false
 cache: packages
+
+addons:
+  apt:
+    sources:
+      - sourceline: 'ppa:chris-lea/libsodium'
+    packages:
+      - libsecret-1-dev
+      - libsodium-dev
