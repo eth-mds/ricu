@@ -17,6 +17,8 @@ download_eicu(version = "2.0", demo = FALSE, dest = if (demo)
 \item{demo}{Logical switch between demo (TRUE) and full (FALSE) datasets.}
 
 \item{dest}{Destination directory where the downloaded data is written to.}
+
+\item{...}{Passed onto}
 }
 \description{
 The \href{https://lcp.mit.edu/index.html}{Laboratory for Computational Physiology } (LCP) at MIT hosts two large-scale
@@ -43,6 +45,12 @@ deidentified health data associated with over 200,000 admissions, including
 vital sign measurements, care plan documentation, severity of illness
 measures, diagnosis information, and treatment information. For further
 information, please refer to the \href{https://eicu-crd.mit.edu/about/eicu}{eICU documentation }.
+
+In case the keyring package is available, credentials used to log onto
+PhysioNet are stored using \code{\link[keyring:key_set]{keyring::key_set()}}, therefore allowing for non-
+interactive querying of the PhysioNet service. Furthermore, if the openssl
+package is available, SHA256 hashes of downloaded files are verified using
+\code{\link[openssl:sha256]{openssl::sha256()}}.
 }
 \examples{
 \dontrun{

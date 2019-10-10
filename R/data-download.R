@@ -29,6 +29,12 @@
 #' information, please refer to the [eICU documentation
 #' ](https://eicu-crd.mit.edu/about/eicu).
 #'
+#' In case the keyring package is available, credentials used to log onto
+#' PhysioNet are stored using [keyring::key_set()], therefore allowing for non-
+#' interactive querying of the PhysioNet service. Furthermore, if the openssl
+#' package is available, SHA256 hashes of downloaded files are verified using
+#' [openssl::sha256()].
+#'
 #' @references
 #' MIMIC-III, a freely accessible critical care database. Johnson AEW, Pollard
 #' TJ, Shen L, Lehman L, Feng M, Ghassemi M, Moody B, Szolovits P, Celi LA,
@@ -42,6 +48,7 @@
 #' @param version String value specifying the desired data release version.
 #' @param demo Logical switch between demo (TRUE) and full (FALSE) datasets.
 #' @param dest Destination directory where the downloaded data is written to.
+#' @param ... Passed onto
 #'
 #' @rdname download_data
 #'
@@ -115,8 +122,8 @@ download_eicu <- function(
   }
 }
 
-get_physionet_creds <- function(username = NULL, service = "physionet",
-                                keyring = NULL) {
+get_set_physionet_creds <- function(username = NULL, password = NULL,
+                                    service = "physionet", keyring = NULL) {
 
   if (requireNamespace("getPass", quietly = TRUE)) {
     get_pass <- getPass::getPass
@@ -139,9 +146,12 @@ get_physionet_creds <- function(username = NULL, service = "physionet",
       message("set up credentials for physionet access")
 
       if (is.null(username)) {
+
         username <- readline("username: ")
-        password <- get_pass("password: ")
-      } else {
+        if (is.null(password)) password <- get_pass("password: ")
+
+      } else if (is.null(password)) {
+
         password <- get_pass(paste0("password for user ", username, ": "))
       }
 
@@ -172,6 +182,9 @@ download_pysionet_data <- function(dest_folder, url, username, password, ...) {
       isTRUE(as.character(openssl::sha256(file(file, raw = TRUE))) == val)
 
     } else {
+
+      message("Currently the openssl is not installed and therefore file ",
+              "hashes are not verified.")
 
       TRUE
     }
@@ -221,7 +234,7 @@ download_pysionet_data <- function(dest_folder, url, username, password, ...) {
 
     if (missing(username)) username <- NULL
 
-    cred <- get_physionet_creds(username, ...)
+    cred <- get_set_physionet_creds(username, ...)
 
     handle <- curl::new_handle(
       useragent = "Wget/", username = cred[["username"]],
