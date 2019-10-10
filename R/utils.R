@@ -95,11 +95,14 @@ ensure_dir <- function(paths) {
 
   dirs_to_create <- paths[is.na(is_dir)]
 
-  res <- dir.create(dirs_to_create, recursive = TRUE)
+  if (length(dirs_to_create) > 0L) {
 
-  if (!all(res)) {
-    stop("The following directorie(s) could not be created:\n  ",
-         paste(dirs_to_create[!res], collapse = "\n  "))
+    res <- dir.create(dirs_to_create, recursive = TRUE)
+
+    if (!all(res)) {
+      stop("The following directorie(s) could not be created:\n  ",
+           paste(dirs_to_create[!res], collapse = "\n  "))
+    }
   }
 
   invisible(paths)
@@ -107,9 +110,11 @@ ensure_dir <- function(paths) {
 
 sepsr_data_path <- function() {
 
-  res <- ensure_dir(
-    Sys.getenv("SEPSR_DATA_PATH", unset = sepsr_default_data_path())
-  )
+  env_var <- Sys.getenv("SEPSR_DATA_PATH", unset = NA_character_)
 
-  res
+  if (is.na(env_var)) {
+    sepsr_default_data_path()
+  } else {
+    ensure_dir(env_var)
+  }
 }
