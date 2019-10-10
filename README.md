@@ -7,6 +7,12 @@
 
 [![Travis build
 status](https://travis-ci.com/septic-tank/sepsr.svg?branch=master)](https://travis-ci.com/septic-tank/sepsr)
+[![Azure pipelines build
+status](https://img.shields.io/azure-devops/build/septic-tank/sepsr/2)](https://dev.azure.com/septic-tank/sepsr/_build/latest?definitionId=1&branchName=master)
+[![Azure pipelines test
+status](https://img.shields.io/azure-devops/tests/septic-tank/sepsr/2?color=brightgreen&compact_message)](https://dev.azure.com/septic-tank/sepsr/_build/latest?definitionId=1&branchName=master)
+[![Azure pipelines coverage
+status](https://img.shields.io/azure-devops/coverage/septic-tank/sepsr/2)](https://dev.azure.com/septic-tank/sepsr/_build/latest?definitionId=1&branchName=master)
 <!-- badges: end -->
 
 The goal of sepsr is to …

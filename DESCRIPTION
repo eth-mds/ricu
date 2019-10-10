@@ -20,6 +20,9 @@ Imports:
 Suggests:
     getPass,
     keyring,
-    openssl
+    openssl,
+    xml2,
+    covr,
+    testthat
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 6.1.1
