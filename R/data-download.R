@@ -1,6 +1,9 @@
 
+#' @export
 download_mimic <- function(version = "1.4", demo = FALSE,
   dest = if (demo) data_dir("mimic-demo") else data_dir("mimic"), ...) {
+
+  assert_that(is.string(version), is.flag(demo), is.dir(dest))
 
   if (demo) {
 
@@ -21,8 +24,11 @@ download_mimic <- function(version = "1.4", demo = FALSE,
   }
 }
 
+#' @export
 download_eicu <- function(version = "2.0", demo = FALSE,
   dest = if (demo) data_dir("eicu-demo") else data_dir("eicu"), ...) {
+
+  assert_that(is.string(version), is.flag(demo), is.dir(dest))
 
   if (demo) {
 
@@ -85,6 +91,8 @@ get_physionet_creds <- function(username = NULL, service = "physionet",
       password <- get_pass(paste0("password for user ", username, ": "))
     }
   }
+
+  assert_that(is.string(username), is.string(password))
 
   list(username = username, password = password)
 }
