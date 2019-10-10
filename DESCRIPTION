@@ -1,12 +1,16 @@
 Package: sepsr
-Title: What the Package Does (One Line, Title Case)
+Title: Tools for working with publicly available intensive care unit (ICU) datasets
+Description: What the package does (one paragraph).
 Version: 0.0.0.9000
 Authors@R:
-    person(given = "First",
-           family = "Last",
+    person(given = "Drago",
+           family = "Plecko",
            role = c("aut", "cre"),
-           email = "first.last@example.com")
-Description: What the package does (one paragraph).
+           email = "drago.plecko@stat.math.ethz.ch")
+    person(given = "Nicolas",
+           family = "Bennett",
+           role = c("aut", "cre"),
+           email = "nicolas.bennett@stat.math.ethz.ch")
 License: GPL-3
 Encoding: UTF-8
 LazyData: true
