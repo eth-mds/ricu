@@ -1,7 +1,69 @@
 
+#' Data download utilities
+#'
+#' The [Laboratory for Computational Physiology
+#' ](https://lcp.mit.edu/index.html) (LCP) at MIT hosts two large-scale
+#' databases of hospital intensive care units (ICUs), both of which can be
+#' either downloaded in full or as demo subsets. While both databases are
+#' publicly available, full download requires credentialed access which can be
+#' gained by applying for up an account with [PhysioNet
+#' ](https://physionet.org).
+#'
+#' The Medical Information Mart for Intensive Care (MIMIC) database holds
+#' detailed clinical data from over 60,000 patient stays in Beth Israel
+#' Deaconess Medical Center (BIDMC) intensive care units between 2001 and 2012.
+#' The database includes information such as demographics, vital sign
+#' measurements made at the bedside (~1 data point per hour), laboratory test
+#' results, procedures, medications, caregiver notes, imaging reports, and
+#' mortality (both in and out of hospital). For further information, please
+#' refer to the [MIMIC-III documentation
+#' ](https://mimic.physionet.org/about/mimic).
+#'
+#' More recently, Philips Healthcare and LCP began assembling the eICU
+#' Collaborative Research Database as a multi-center resource for ICU data.
+#' Combining data of several critical care units throughout the continental
+#' United States from the years 2014 and 2015, this database contains
+#' deidentified health data associated with over 200,000 admissions, including
+#' vital sign measurements, care plan documentation, severity of illness
+#' measures, diagnosis information, and treatment information. For further
+#' information, please refer to the [eICU documentation
+#' ](https://eicu-crd.mit.edu/about/eicu).
+#'
+#' @references
+#' MIMIC-III, a freely accessible critical care database. Johnson AEW, Pollard
+#' TJ, Shen L, Lehman L, Feng M, Ghassemi M, Moody B, Szolovits P, Celi LA,
+#' and Mark RG. Scientific Data (2016). DOI: 10.1038/sdata.2016.35.
+#'
+#' The eICU Collaborative Research Database, a freely available multi-center
+#' database for critical care research. Pollard TJ, Johnson AEW, Raffa JD,
+#' Celi LA, Mark RG and Badawi O. Scientific Data (2018). DOI:
+#' http://dx.doi.org/10.1038/sdata.2018.178.
+#'
+#' @param version String value specifying the desired data release version.
+#' @param demo Logical switch between demo (TRUE) and full (FALSE) datasets.
+#' @param dest Destination directory where the downloaded data is written to.
+#'
+#' @rdname download_data
+#'
+#' @examples
+#' \dontrun{
+#'
+#' dir <- tempdir()
+#' list.files(dir)
+#'
+#' download_eicu(demo = TRUE, dest = dir)
+#'
+#' list.files(dir)
+#'
+#' }
+#'
 #' @export
-download_mimic <- function(version = "1.4", demo = FALSE,
-  dest = if (demo) data_dir("mimic-demo") else data_dir("mimic"), ...) {
+#'
+download_mimic <- function(
+  version = "1.4",
+  demo = FALSE,
+  dest = if (demo) data_dir("mimic-demo") else data_dir("mimic"),
+  ...) {
 
   assert_that(is.string(version), is.flag(demo), is.dir(dest))
 
@@ -24,9 +86,13 @@ download_mimic <- function(version = "1.4", demo = FALSE,
   }
 }
 
+#' @rdname download_data
 #' @export
-download_eicu <- function(version = "2.0", demo = FALSE,
-  dest = if (demo) data_dir("eicu-demo") else data_dir("eicu"), ...) {
+download_eicu <- function(
+  version = "2.0",
+  demo = FALSE,
+  dest = if (demo) data_dir("eicu-demo") else data_dir("eicu"),
+  ...) {
 
   assert_that(is.string(version), is.flag(demo), is.dir(dest))
 

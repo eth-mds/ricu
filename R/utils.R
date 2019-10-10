@@ -1,4 +1,54 @@
 
+#' File system utilities
+#'
+#' Determine the location where to place data meant to persist between
+#' individual sessions. The default location depends on the operating system
+#' as
+#'
+#' | **Platform** | **Location**                          |
+#' | ------------ | ------------------------------------- |
+#' | Linux        | `~/.local/share/sepsr`                |
+#' | macOS        | `~/Library/Application Support/sepsr` |
+#' | Windows      | `%LOCALAPPDATA%/sepsr`                |
+#'
+#' If the default storage directory does not exists, it will only be created
+#' upon user consent (requiring an interactive session).
+#'
+#' The environment variable `SEPSR_DATA_PATH` can be used to overwrite the
+#' default location. If desired, this variable can be set in an R startup file
+#' to make it apply to all R sessions. For example, it could be set within:
+#'
+#' - A project-local `.Renviron`;
+#' - The user-level `.Renviron`;
+#' - A file at `$(R RHOME)/etc/Renviron.site`.
+#'
+#' Any directory specified as environment variable will recursively be created.
+#'
+#' @param subdir A string specifying a directory that will be made sure to
+#' exist below the data directory.
+#'
+#' @examples
+#' Sys.setenv(SEPSR_DATA_PATH = tempdir())
+#' identical(data_dir(), tempdir())
+#'
+#' dir.exists(file.path(tempdir(), "some_subdir"))
+#' some_subdir <- data_dir("some_subdir")
+#' dir.exists(some_subdir)
+#'
+#' @export
+#'
+data_dir <- function(subdir = NULL) {
+
+  res <- sepsr_data_path()
+
+  if (!is.null(subdir)) {
+    assert_that(is.string(subdir))
+    res <- ensure_dir(file.path(res, subdir))
+  }
+
+  res
+}
+
 sepsr_default_data_path <- function() {
 
   root <- switch(
@@ -60,19 +110,6 @@ sepsr_data_path <- function() {
   res <- ensure_dir(
     Sys.getenv("SEPSR_DATA_PATH", unset = sepsr_default_data_path())
   )
-
-  res
-}
-
-#' @export
-data_dir <- function(subdir = NULL) {
-
-  res <- sepsr_data_path()
-
-  if (!is.null(subdir)) {
-    assert_that(is.string(subdir))
-    res <- ensure_dir(file.path(res, subdir))
-  }
 
   res
 }
