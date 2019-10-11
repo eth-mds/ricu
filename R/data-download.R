@@ -48,7 +48,7 @@
 #' @param version String value specifying the desired data release version.
 #' @param demo Logical switch between demo (TRUE) and full (FALSE) datasets.
 #' @param dest Destination directory where the downloaded data is written to.
-#' @param ... Passed onto
+#' @param ... Passed onto keyring, for example [keyring::key_set_with_value()].
 #'
 #' @rdname download_data
 #'
@@ -263,4 +263,29 @@ download_pysionet_data <- function(dest_folder, url, username, password, ...) {
   lapply(chksums, fetch_file)
 
   invisible(NULL)
+}
+
+download_pysionet_schema <- function(url) {
+
+  dat <- curl::curl_fetch_memory(url,
+    curl::new_handle(useragent = "Wget/")
+  )
+
+  assert_that(dat[["status_code"]] == 200)
+
+  schema <- xml2::read_xml(rawToChar(dat[["content"]]))
+
+  xml2::as_list(schema)
+}
+
+download_mimic_schema <- function() {
+  download_pysionet_schema(
+    "https://mit-lcp.github.io/mimic-schema-spy/mimic.mimiciii.xml"
+  )
+}
+
+download_eicu_schema <- function() {
+  download_pysionet_schema(
+    "https://mit-lcp.github.io/eicu-schema-spy/eicu.eicu_crd.xml"
+  )
 }
