@@ -10,7 +10,7 @@
 #' ](https://physionet.org).
 #'
 #' The Medical Information Mart for Intensive Care (MIMIC) database holds
-#' detailed clinical data from over 60,000 patient stays in Beth Israel
+#' detailed clinical data from roughly 60,000 patient stays in Beth Israel
 #' Deaconess Medical Center (BIDMC) intensive care units between 2001 and 2012.
 #' The database includes information such as demographics, vital sign
 #' measurements made at the bedside (~1 data point per hour), laboratory test
@@ -257,7 +257,7 @@ download_pysionet_data <- function(dest_folder, url, username, password, ...) {
   chksums <- strsplit(chksums, " ")
 
   chksums <- chksums[
-    grepl("\\.csv.gz", vapply(chksums, `[[`, character(1L), 2L))
+    grepl("\\.csv(\\.gz)?$", vapply(chksums, `[[`, character(1L), 2L))
   ]
 
   lapply(chksums, fetch_file)
@@ -267,15 +267,22 @@ download_pysionet_data <- function(dest_folder, url, username, password, ...) {
 
 download_pysionet_schema <- function(url) {
 
-  dat <- curl::curl_fetch_memory(url,
-    curl::new_handle(useragent = "Wget/")
-  )
+  if (requireNamespace("xml2", quietly = TRUE)) {
 
-  assert_that(dat[["status_code"]] == 200)
+    dat <- curl::curl_fetch_memory(url,
+      curl::new_handle(useragent = "Wget/")
+    )
 
-  schema <- xml2::read_xml(rawToChar(dat[["content"]]))
+    assert_that(dat[["status_code"]] == 200)
 
-  xml2::as_list(schema)
+    schema <- xml2::read_xml(rawToChar(dat[["content"]]))
+
+    xml2::as_list(schema)
+
+  } else {
+
+    NULL
+  }
 }
 
 download_mimic_schema <- function() {
