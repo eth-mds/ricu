@@ -122,49 +122,64 @@ download_eicu <- function(
   }
 }
 
+is_pkg_available <- function(pkg) requireNamespace(pkg, quietly = TRUE)
+
+read_line <- function(prompt = "", mask_input = FALSE) {
+
+  assert_that(interactive())
+
+  if (mask_input && is_pkg_available("getPass")) {
+    getPass::getPass(prompt)
+  } else {
+    readline(prompt)
+  }
+}
+
 get_set_physionet_creds <- function(username = NULL, password = NULL,
                                     service = "physionet", keyring = NULL) {
 
-  if (requireNamespace("getPass", quietly = TRUE)) {
-    get_pass <- getPass::getPass
-  } else {
-    get_pass <- readline
-  }
+  if (is.null(username) || is.null(password)) {
 
-  if (requireNamespace("keyring", quietly = TRUE)) {
+    if (is_pkg_available("keyring")) {
 
-    hits <- keyring::key_list(service, keyring)
+      hits <- keyring::key_list(service, keyring)
 
-    if (nrow(hits) > 0L && (is.null(username) ||
-        isTRUE(username %in% hits[["username"]]))) {
+      if (nrow(hits) > 0L && (is.null(username) ||
+          isTRUE(username %in% hits[["username"]]))) {
 
-      if (is.null(username)) username <- hits[1L, "username"]
-      password <- keyring::key_get(service, username, keyring)
+        if (is.null(username)) {
+          username <- hits[1L, "username"]
+        }
 
-    } else {
+        password <- keyring::key_get(service, username, keyring)
 
-      message("set up credentials for physionet access")
+      } else {
 
-      if (is.null(username)) {
+        message("set up credentials for physionet access")
 
-        username <- readline("username: ")
-        if (is.null(password)) password <- get_pass("password: ")
+        if (is.null(username)) {
 
-      } else if (is.null(password)) {
+          username <- read_line("username: ")
+          if (is.null(password)) password <- read_line("password: ", TRUE)
 
-        password <- get_pass(paste0("password for user ", username, ": "))
+        } else if (is.null(password)) {
+
+          password <- read_line(paste0("password for user ", username, ": "),
+                                TRUE)
+        }
+
+        keyring::key_set_with_value(service, username, password, keyring)
       }
 
-      keyring::key_set_with_value(service, username, password, keyring)
-    }
-
-  } else {
-
-    if (is.null(username)) {
-      username <- readline("username: ")
-      password <- get_pass("password: ")
     } else {
-      password <- get_pass(paste0("password for user ", username, ": "))
+
+      if (is.null(username)) {
+        username <- read_line("username: ")
+        password <- read_line("password: ", TRUE)
+      } else {
+        password <- read_line(paste0("password for user ", username, ": "),
+                              TRUE)
+      }
     }
   }
 
@@ -273,8 +288,8 @@ download_pysionet_data <- function(dest_folder, url, username, password, ...) {
     MoreArgs = list(username = username, password = password)
   )
 
-  if (requireNamespace("openssl", quietly = TRUE)) {
-    checks <- Map(check_file_sha256, files, chksums)
+  if (is_pkg_available("openssl")) {
+    checks <- Map(check_file_sha256, file.path(dest_folder, files), chksums)
     assert_that(all(unlist(checks)))
   } else {
     message("The package openssl is required for checking file hashes.")
@@ -285,17 +300,14 @@ download_pysionet_data <- function(dest_folder, url, username, password, ...) {
 
 download_pysionet_schema <- function(url) {
 
-  if (requireNamespace("xml2", quietly = TRUE)) {
+  if (is_pkg_available("xml2")) {
 
-    dat <- curl::curl_fetch_memory(url,
-      curl::new_handle(useragent = "Wget/")
-    )
+    dat <- download_pysionet_file(url, dest = NULL, username = NULL,
+                                  password = NULL)
 
-    assert_that(dat[["status_code"]] == 200)
+    dat <- xml2::read_xml(rawToChar(dat))
 
-    schema <- xml2::read_xml(rawToChar(dat[["content"]]))
-
-    xml2::as_list(schema)
+    xml2::as_list(dat)
 
   } else {
 
