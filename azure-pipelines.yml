@@ -1,7 +1,7 @@
 # R package
 # Test an R package
 
-parameters:
+variables:
   CRAN: 'https://cloud.r-project.org'
   R_LIBS_USER: '$(Agent.BuildDirectory)/R/library'
   coverage: true
@@ -16,10 +16,7 @@ resources:
 jobs:
   - job: 'Linux'
     variables:
-      CRAN: ${{parameters.CRAN}}
-      R_LIBS_USER: ${{parameters.R_LIBS_USER}}
       TZ: UTC
-      CI: true
     pool:
       vmImage: 'Ubuntu-16.04'
     strategy:
@@ -45,10 +42,6 @@ jobs:
 
 
   - job: 'macOS'
-    variables:
-      CRAN: ${{parameters.CRAN}}
-      R_LIBS_USER: ${{parameters.R_LIBS_USER}}
-      CI: true
     pool:
       vmImage: 'macOS-10.13'
     steps:
@@ -58,10 +51,6 @@ jobs:
           coverage: ${{parameters.coverage}}
 
   - job: 'Windows'
-    variables:
-      CRAN: ${{parameters.CRAN}}
-      R_LIBS_USER: ${{parameters.R_LIBS_USER}}
-      CI: true
     pool:
       vmImage: 'vs2017-win2016'
     steps:
