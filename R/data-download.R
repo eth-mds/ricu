@@ -173,84 +173,88 @@ get_set_physionet_creds <- function(username = NULL, password = NULL,
   list(username = username, password = password)
 }
 
-download_pysionet_data <- function(dest_folder, url, username, password, ...) {
+download_pysionet_file <- function(url, dest = NULL, username = NULL,
+                                   password = NULL) {
 
-  check_hash <- function(file, val) {
+  assert_that(is.string(url))
 
-    if (requireNamespace("openssl", quietly = TRUE)) {
+  handle <- curl::new_handle(useragent = "Wget/")
 
-      isTRUE(as.character(openssl::sha256(file(file, raw = TRUE))) == val)
+  if (is.null(username) || is.null(password)) {
 
-    } else {
+    assert_that(is.null(username), is.null(password))
 
-      message("Currently the openssl is not installed and therefore file ",
-              "hashes are not verified.")
+  } else {
 
-      TRUE
-    }
-
+    handle <- curl::handle_setopt(handle,
+      username = username, password = password
+    )
   }
 
-  fetch_file <- function(x) {
+  if (is.null(dest)) {
 
-    file <- file.path(dest_folder, x[2L])
+    res <- curl::curl_fetch_memory(url, handle)
 
-    if (file.exists(file)) {
+  } else {
+
+    assert_that(is.string(dest))
+
+    if (file.exists(dest)) {
       handle <- curl::handle_setopt(handle,
-        timevalue = file.mtime(file), timecondition = TRUE
+        timevalue = file.mtime(dest), timecondition = TRUE
       )
-    } else {
-      handle <- curl::handle_setopt(handle, timecondition = FALSE)
     }
 
     tmp <- tempfile()
     on.exit(unlink(tmp))
 
-    res <- curl::curl_fetch_disk(paste0(url, "/", x[2L]), tmp,
-                                 handle = handle)
+    res <- curl::curl_fetch_disk(url, tmp, handle = handle)
 
     if (res[["status_code"]] == 304) {
-
-      assert_that(check_hash(file, x[1L]))
-
-      message("skipped download of ", x[2L])
-
-    } else if (res[["status_code"]] == 200) {
-
-      file.rename(tmp, file)
-
-      assert_that(check_hash(file, x[1L]))
-
-      message("successfully downloaded ", x[2L])
-
-    } else {
-
-      stop("download of ", x[2L], " failed with status code ",
-           res[["status_code"]])
+      message("skipped download of ", basename(url))
+      return(invisible(NULL))
     }
   }
+
+  assert_that(res[["status_code"]] == 200)
+
+  if (is.null(dest)) {
+
+    res[["content"]]
+
+  } else {
+
+    file.rename(res[["content"]], dest)
+    invisible(NULL)
+  }
+}
+
+check_file_sha256 <- function(file, val) {
+  isTRUE(as.character(openssl::sha256(file(file, raw = TRUE))) == val)
+}
+
+download_pysionet_data <- function(dest_folder, url, username, password, ...) {
 
   if (missing(username) || missing(password)) {
 
     if (missing(username)) username <- NULL
 
     cred <- get_set_physionet_creds(username, ...)
-
-    handle <- curl::new_handle(
-      useragent = "Wget/", username = cred[["username"]],
-      password = cred[["password"]]
-    )
+    username <- cred[["username"]]
+    password <- cred[["password"]]
 
   } else {
 
-    handle <- curl::new_handle(useragent = "Wget/")
+    username <- NULL
+    password <- NULL
   }
 
-  chksums <- curl::curl_fetch_memory(file.path(url, "SHA256SUMS.txt"), handle)
+  chksums <- download_pysionet_file(
+    file.path(url, "SHA256SUMS.txt", fsep = "/"), dest = NULL,
+    username = username, password = password
+  )
 
-  assert_that(chksums[["status_code"]] == 200)
-
-  con <- rawConnection(chksums$content)
+  con <- rawConnection(chksums)
   on.exit(close(con))
 
   chksums <- readLines(con)
@@ -260,7 +264,21 @@ download_pysionet_data <- function(dest_folder, url, username, password, ...) {
     grepl("\\.csv(\\.gz)?$", vapply(chksums, `[[`, character(1L), 2L))
   ]
 
-  lapply(chksums, fetch_file)
+  files <- vapply(chksums, `[[`, character(1L), 2L)
+  chksums <- vapply(chksums, `[[`, character(1L), 1L)
+
+  Map(download_pysionet_file,
+    file.path(url, files, fsep = "/"),
+    file.path(dest_folder, files),
+    MoreArgs = list(username = username, password = password)
+  )
+
+  if (requireNamespace("openssl", quietly = TRUE)) {
+    checks <- Map(check_file_sha256, files, chksums)
+    assert_that(all(unlist(checks)))
+  } else {
+    message("The package openssl is required for checking file hashes.")
+  }
 
   invisible(NULL)
 }
