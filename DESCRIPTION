@@ -17,6 +17,9 @@ LazyData: true
 Imports:
     curl,
     assertthat,
+    fst,
+    data.table,
+    readr,
     jsonlite
 Suggests:
     getPass,

@@ -3,6 +3,8 @@
 export(data_dir)
 export(download_eicu)
 export(download_mimic)
+export(import_eicu)
+export(import_mimic)
 importFrom(assertthat,assert_that)
 importFrom(assertthat,is.dir)
 importFrom(assertthat,is.flag)
