@@ -2,3 +2,6 @@
 ^\.travis\.yml$
 ^LICENSE\.md$
 ^azure-pipelines\.yml$
+^_pkgdown\.yml$
+^docs$
+^pkgdown$
