@@ -48,6 +48,7 @@
 #' @param version String value specifying the desired data release version.
 #' @param demo Logical switch between demo (TRUE) and full (FALSE) datasets.
 #' @param dest Destination directory where the downloaded data is written to.
+#' @param tables Character vector specifying the tables to download.
 #' @param ... Passed onto keyring, for example [keyring::key_set_with_value()].
 #'
 #' @rdname download_data
@@ -69,16 +70,19 @@
 download_mimic <- function(
   version = "1.4",
   demo = FALSE,
-  dest = if (demo) data_dir("mimic-demo") else data_dir("mimic"),
-  ...) {
+  dest = if (demo) data_dir("mimic-demo") else data_dir("mimic-data"),
+  tables = names(
+    if (demo) get_config("mimic-demo") else get_config("mimic-setup")
+  ), ...) {
 
-  assert_that(is.string(version), is.flag(demo), is.dir(dest))
+  assert_that(is.string(version), is.flag(demo), is.dir(dest),
+              is.character(tables))
 
   if (demo) {
 
     message("downloading mimic-iii v", version, " demo")
 
-    download_pysionet_data(dest,
+    download_pysionet_data(dest, tables,
       paste0("https://physionet.org/files/mimiciii-demo/", version),
       username = NULL, password = NULL
     )
@@ -87,7 +91,7 @@ download_mimic <- function(
 
     message("downloading mimic-iii v", version, " data")
 
-    download_pysionet_data(dest,
+    download_pysionet_data(dest, tables,
       paste0("https://physionet.org/files/mimiciii/", version), ...
     )
   }
@@ -98,16 +102,19 @@ download_mimic <- function(
 download_eicu <- function(
   version = "2.0",
   demo = FALSE,
-  dest = if (demo) data_dir("eicu-demo") else data_dir("eicu"),
-  ...) {
+  dest = if (demo) data_dir("eicu-demo") else data_dir("eicu-data"),
+  tables = names(
+    if (demo) get_config("eicu-demo") else get_config("eicu-setup")
+  ), ...) {
 
-  assert_that(is.string(version), is.flag(demo), is.dir(dest))
+  assert_that(is.string(version), is.flag(demo), is.dir(dest),
+              is.character(tables))
 
   if (demo) {
 
     message("downloading eicu v", version, " demo")
 
-    download_pysionet_data(dest,
+    download_pysionet_data(dest, tables,
       paste0("https://physionet.org/files/eicu-crd-demo/", version),
       username = NULL, password = NULL
     )
@@ -116,7 +123,7 @@ download_eicu <- function(
 
     message("downloading eicu v", version, " data")
 
-    download_pysionet_data(dest,
+    download_pysionet_data(dest, tables,
       paste0("https://physionet.org/files/eicu-crd/", version), ...
     )
   }
@@ -248,7 +255,8 @@ check_file_sha256 <- function(file, val) {
   isTRUE(as.character(openssl::sha256(file(file, raw = TRUE))) == val)
 }
 
-download_pysionet_data <- function(dest_folder, url, username, password, ...) {
+download_pysionet_data <- function(dest_folder, tables, url, username,
+                                   password, ...) {
 
   if (missing(username) || missing(password)) {
 
@@ -276,8 +284,13 @@ download_pysionet_data <- function(dest_folder, url, username, password, ...) {
   chksums <- strsplit(chksums, " ")
 
   chksums <- chksums[
-    grepl("\\.csv(\\.gz)?$", vapply(chksums, `[[`, character(1L), 2L))
+    vapply(chksums, `[[`, character(1L), 2L) %in% tables
   ]
+
+  if (length(chksums) == 0) {
+    warning("No matching files can be downloaded.")
+    return(invisible(NULL))
+  }
 
   files <- vapply(chksums, `[[`, character(1L), 2L)
   chksums <- vapply(chksums, `[[`, character(1L), 1L)

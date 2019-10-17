@@ -6,10 +6,12 @@
 \title{Data download utilities}
 \usage{
 download_mimic(version = "1.4", demo = FALSE, dest = if (demo)
-  data_dir("mimic-demo") else data_dir("mimic"), ...)
+  data_dir("mimic-demo") else data_dir("mimic-data"), tables = names(if
+  (demo) get_config("mimic-demo") else get_config("mimic-setup")), ...)
 
 download_eicu(version = "2.0", demo = FALSE, dest = if (demo)
-  data_dir("eicu-demo") else data_dir("eicu"), ...)
+  data_dir("eicu-demo") else data_dir("eicu-data"), tables = names(if
+  (demo) get_config("eicu-demo") else get_config("eicu-setup")), ...)
 }
 \arguments{
 \item{version}{String value specifying the desired data release version.}
@@ -18,7 +20,9 @@ download_eicu(version = "2.0", demo = FALSE, dest = if (demo)
 
 \item{dest}{Destination directory where the downloaded data is written to.}
 
-\item{...}{Passed onto}
+\item{tables}{Character vector specifying the tables to download.}
+
+\item{...}{Passed onto keyring, for example \code{\link[keyring:key_set_with_value]{keyring::key_set_with_value()}}.}
 }
 \description{
 The \href{https://lcp.mit.edu/index.html}{Laboratory for Computational Physiology } (LCP) at MIT hosts two large-scale
@@ -29,7 +33,7 @@ gained by applying for up an account with \href{https://physionet.org}{PhysioNet
 }
 \details{
 The Medical Information Mart for Intensive Care (MIMIC) database holds
-detailed clinical data from over 60,000 patient stays in Beth Israel
+detailed clinical data from roughly 60,000 patient stays in Beth Israel
 Deaconess Medical Center (BIDMC) intensive care units between 2001 and 2012.
 The database includes information such as demographics, vital sign
 measurements made at the bedside (~1 data point per hour), laboratory test
