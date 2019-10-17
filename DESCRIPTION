@@ -16,7 +16,8 @@ Encoding: UTF-8
 LazyData: true
 Imports:
     curl,
-    assertthat
+    assertthat,
+    jsonlite
 Suggests:
     getPass,
     keyring,

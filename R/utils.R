@@ -39,7 +39,7 @@
 #'
 data_dir <- function(subdir = NULL) {
 
-  res <- sepsr_data_path()
+  res <- data_dir_path()
 
   if (!is.null(subdir)) {
     assert_that(is.string(subdir))
@@ -49,7 +49,7 @@ data_dir <- function(subdir = NULL) {
   res
 }
 
-sepsr_default_data_path <- function() {
+default_data_path <- function() {
 
   root <- switch(
     Sys.info()[["sysname"]],
@@ -58,7 +58,6 @@ sepsr_default_data_path <- function() {
     Sys.getenv("XDG_DATA_HOME", "~/.local/share")
   )
 
-  root <- normalize_path(root)
   root <- file.path(root, "sepsr")
 
   if (!dir.exists(root)) {
@@ -72,15 +71,6 @@ sepsr_default_data_path <- function() {
   }
 
   root
-}
-
-normalize_path <- function(path, winslash = "/", mustWork = FALSE) {
-
-  if (Sys.info()[["sysname"]] == "Windows") {
-    path <- utils::shortPathName(path.expand(path))
-  }
-
-  normalizePath(path, winslash = winslash, mustWork = mustWork)
 }
 
 ensure_dir <- function(paths) {
@@ -108,13 +98,54 @@ ensure_dir <- function(paths) {
   invisible(paths)
 }
 
-sepsr_data_path <- function() {
+data_dir_path <- function() {
 
   env_var <- Sys.getenv("SEPSR_DATA_PATH", unset = NA_character_)
 
-  if (is.na(env_var)) {
-    sepsr_default_data_path()
+  if (is.na(env_var)) default_data_path()
+  else                ensure_dir(env_var)
+}
+
+default_config_path <- function() {
+  system.file("extdata", "config", package = getPackageName())
+}
+
+config_dir_path <- function() {
+
+  env_var <- Sys.getenv("SEPSR_CONFIG_PATH", unset = NA_character_)
+
+  if (is.na(env_var)) default_config_path()
+  else                ensure_dir(env_var)
+}
+
+get_config <- function(name, dir = NULL, ...) {
+
+  assert_that(is.string(name))
+
+  file <- paste0(name, ".json")
+
+  if (is.null(dir)) {
+
+    usr_file <- file.path(config_dir_path(), file)
+
+    if (file.exists(usr_file)) file <- usr_file
+    else                       file <- file.path(default_config_path(), file)
+
   } else {
-    ensure_dir(env_var)
+
+    assert_that(is.dir(dir))
+    file <- file.path(dir, file)
   }
+
+  read_json(file, ...)
+}
+
+read_json <- function(file, simplifyVector = TRUE, simplifyDataFrame = FALSE,
+                      simplifyMatrix = FALSE, ...) {
+
+  assert_that(file.exists(file))
+
+  jsonlite::read_json(file, simplifyVector = simplifyVector,
+                      simplifyDataFrame = simplifyDataFrame,
+                      simplifyMatrix = simplifyMatrix, ...)
 }
