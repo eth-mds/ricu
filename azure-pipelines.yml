@@ -48,7 +48,7 @@ jobs:
       - template: templates/r-setup-macOS.yml@r-azure-pipelines
       - template: templates/pkg-workflow.yml@r-azure-pipelines
         parameters:
-          coverage: ${{parameters.coverage}}
+          coverage: true
 
   - job: 'Windows'
     pool:
