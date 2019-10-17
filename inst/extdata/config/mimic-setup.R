@@ -450,14 +450,14 @@ mk_cfg <- function(is_demo = FALSE) {
 
 jsonlite::write_json(
   mk_cfg(is_demo = FALSE),
-  "config-mimic.json",
+  "mimic-setup.json",
   auto_unbox = TRUE,
   pretty = TRUE
 )
 
 jsonlite::write_json(
   mk_cfg(is_demo = TRUE),
-  "config-mimic-demo.json",
+  "mimic-demo.json",
   auto_unbox = TRUE,
   pretty = TRUE
 )
