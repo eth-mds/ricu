@@ -5,20 +5,20 @@
 \alias{download_eicu}
 \title{Data download utilities}
 \usage{
-download_mimic(version = "1.4", demo = FALSE, dest = if (demo)
-  data_dir("mimic-demo") else data_dir("mimic-data"), tables = names(if
+download_mimic(demo = FALSE, dest = if (demo) data_dir("mimic-demo")
+  else data_dir("mimic-data"), version = "1.4", tables = names(if
   (demo) get_config("mimic-demo") else get_config("mimic-setup")), ...)
 
-download_eicu(version = "2.0", demo = FALSE, dest = if (demo)
-  data_dir("eicu-demo") else data_dir("eicu-data"), tables = names(if
-  (demo) get_config("eicu-demo") else get_config("eicu-setup")), ...)
+download_eicu(demo = FALSE, dest = if (demo) data_dir("eicu-demo") else
+  data_dir("eicu-data"), version = "2.0", tables = names(if (demo)
+  get_config("eicu-demo") else get_config("eicu-setup")), ...)
 }
 \arguments{
-\item{version}{String value specifying the desired data release version.}
-
 \item{demo}{Logical switch between demo (TRUE) and full (FALSE) datasets.}
 
 \item{dest}{Destination directory where the downloaded data is written to.}
+
+\item{version}{String value specifying the desired data release version.}
 
 \item{tables}{Character vector specifying the tables to download.}
 
@@ -62,9 +62,10 @@ package is available, SHA256 hashes of downloaded files are verified using
 dir <- tempdir()
 list.files(dir)
 
-download_eicu(demo = TRUE, dest = dir)
-
+download_mimic(demo = TRUE, dest = dir)
 list.files(dir)
+
+unlink(dir, recursive = TRUE)
 
 }
 

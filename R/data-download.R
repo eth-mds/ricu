@@ -45,13 +45,13 @@
 #' Celi LA, Mark RG and Badawi O. Scientific Data (2018). DOI:
 #' http://dx.doi.org/10.1038/sdata.2018.178.
 #'
-#' @param version String value specifying the desired data release version.
 #' @param demo Logical switch between demo (TRUE) and full (FALSE) datasets.
 #' @param dest Destination directory where the downloaded data is written to.
+#' @param version String value specifying the desired data release version.
 #' @param tables Character vector specifying the tables to download.
 #' @param ... Passed onto keyring, for example [keyring::key_set_with_value()].
 #'
-#' @rdname download_data
+#' @rdname data_download
 #'
 #' @examples
 #' \dontrun{
@@ -59,24 +59,25 @@
 #' dir <- tempdir()
 #' list.files(dir)
 #'
-#' download_eicu(demo = TRUE, dest = dir)
-#'
+#' download_mimic(demo = TRUE, dest = dir)
 #' list.files(dir)
+#'
+#' unlink(dir, recursive = TRUE)
 #'
 #' }
 #'
 #' @export
 #'
 download_mimic <- function(
-  version = "1.4",
   demo = FALSE,
   dest = if (demo) data_dir("mimic-demo") else data_dir("mimic-data"),
+  version = "1.4",
   tables = names(
     if (demo) get_config("mimic-demo") else get_config("mimic-setup")
   ), ...) {
 
   assert_that(is.string(version), is.flag(demo), is.dir(dest),
-              is.character(tables))
+              is.character(tables), length(tables) > 0L)
 
   if (demo) {
 
@@ -97,18 +98,18 @@ download_mimic <- function(
   }
 }
 
-#' @rdname download_data
+#' @rdname data_download
 #' @export
 download_eicu <- function(
-  version = "2.0",
   demo = FALSE,
   dest = if (demo) data_dir("eicu-demo") else data_dir("eicu-data"),
+  version = "2.0",
   tables = names(
     if (demo) get_config("eicu-demo") else get_config("eicu-setup")
   ), ...) {
 
   assert_that(is.string(version), is.flag(demo), is.dir(dest),
-              is.character(tables))
+              is.character(tables), length(tables) > 0L)
 
   if (demo) {
 
