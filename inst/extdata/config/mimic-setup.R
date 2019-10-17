@@ -1,6 +1,6 @@
 
 mk_cfg <- function(is_demo = FALSE) {
-  list(
+  res <- list(
     ADMISSIONS = list(
       col_spec = list(
         ROW_ID = list(type = "col_integer"),
@@ -446,6 +446,26 @@ mk_cfg <- function(is_demo = FALSE) {
       )
     )
   )
+
+  if (is_demo) {
+    names(res) <- paste0(tolower(names(res)), ".csv")
+    for (i in seq_along(res)) {
+      names(res[[i]][["col_spec"]]) <- tolower(names(res[[i]][["col_spec"]]))
+      if (!is.null(res[[i]][["partitioning"]])) {
+        names(res[[i]][["partitioning"]]) <- tolower(
+          names(res[[i]][["partitioning"]])
+        )
+      }
+      names(res[[i]][["col_spec"]]) <- tolower(names(res[[i]][["col_spec"]]))
+      res[[i]][["col_spec"]] <- c(res[[i]][["col_spec"]],
+                                  list(mimic_id = list(type = "col_skip")))
+    }
+    res <- res[!grepl("noteevents.csv", names(res), fixed = TRUE)]
+  } else {
+    names(res) <- paste0(names(res), ".csv.gz")
+  }
+
+  res
 }
 
 jsonlite::write_json(

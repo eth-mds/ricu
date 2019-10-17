@@ -1,6 +1,6 @@
 
 mk_cfg <- function(is_demo = FALSE) {
-  list(
+  res <- list(
     admissionDrug = list(
       col_spec = list(
         admissiondrugid = list(type = "col_integer"),
@@ -535,6 +535,16 @@ mk_cfg <- function(is_demo = FALSE) {
       )
     )
   )
+
+  if (is_demo) {
+    names(res[["respiratoryCare"]][["col_spec"]])[
+      names(res[["respiratoryCare"]][["col_spec"]]) == "apneaparms"
+    ] <- "apneaparams"
+  }
+
+  names(res) <- paste0(names(res), ".csv.gz")
+
+  res
 }
 
 jsonlite::write_json(

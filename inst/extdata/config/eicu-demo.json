@@ -1,5 +1,5 @@
 {
-  "admissionDrug": {
+  "admissionDrug.csv.gz": {
     "col_spec": {
       "admissiondrugid": {
         "type": "col_integer"
@@ -45,7 +45,7 @@
       }
     }
   },
-  "admissionDx": {
+  "admissionDx.csv.gz": {
     "col_spec": {
       "admissiondxid": {
         "type": "col_integer"
@@ -67,7 +67,7 @@
       }
     }
   },
-  "allergy": {
+  "allergy.csv.gz": {
     "col_spec": {
       "allergyid": {
         "type": "col_integer"
@@ -110,7 +110,7 @@
       }
     }
   },
-  "apacheApsVar": {
+  "apacheApsVar.csv.gz": {
     "col_spec": {
       "apacheapsvarid": {
         "type": "col_integer"
@@ -192,7 +192,7 @@
       }
     }
   },
-  "apachePatientResult": {
+  "apachePatientResult.csv.gz": {
     "col_spec": {
       "apachepatientresultsid": {
         "type": "col_integer"
@@ -265,7 +265,7 @@
       }
     }
   },
-  "apachePredVar": {
+  "apachePredVar.csv.gz": {
     "col_spec": {
       "apachepredvarid": {
         "type": "col_integer"
@@ -422,7 +422,7 @@
       }
     }
   },
-  "carePlanCareProvider": {
+  "carePlanCareProvider.csv.gz": {
     "col_spec": {
       "cplcareprovderid": {
         "type": "col_integer"
@@ -450,7 +450,7 @@
       }
     }
   },
-  "carePlanEOL": {
+  "carePlanEOL.csv.gz": {
     "col_spec": {
       "cpleolid": {
         "type": "col_integer"
@@ -469,7 +469,7 @@
       }
     }
   },
-  "carePlanGeneral": {
+  "carePlanGeneral.csv.gz": {
     "col_spec": {
       "cplgeneralid": {
         "type": "col_integer"
@@ -491,7 +491,7 @@
       }
     }
   },
-  "carePlanGoal": {
+  "carePlanGoal.csv.gz": {
     "col_spec": {
       "cplgoalid": {
         "type": "col_integer"
@@ -516,7 +516,7 @@
       }
     }
   },
-  "carePlanInfectiousDisease": {
+  "carePlanInfectiousDisease.csv.gz": {
     "col_spec": {
       "cplinfectid": {
         "type": "col_integer"
@@ -544,7 +544,7 @@
       }
     }
   },
-  "customLab": {
+  "customLab.csv.gz": {
     "col_spec": {
       "customlabid": {
         "type": "col_integer"
@@ -569,7 +569,7 @@
       }
     }
   },
-  "diagnosis": {
+  "diagnosis.csv.gz": {
     "col_spec": {
       "diagnosisid": {
         "type": "col_integer"
@@ -594,7 +594,7 @@
       }
     }
   },
-  "hospital": {
+  "hospital.csv.gz": {
     "col_spec": {
       "hospitalid": {
         "type": "col_integer"
@@ -610,7 +610,7 @@
       }
     }
   },
-  "infusionDrug": {
+  "infusionDrug.csv.gz": {
     "col_spec": {
       "infusiondrugid": {
         "type": "col_integer"
@@ -641,7 +641,7 @@
       }
     }
   },
-  "intakeOutput": {
+  "intakeOutput.csv.gz": {
     "col_spec": {
       "intakeoutputid": {
         "type": "col_integer"
@@ -681,7 +681,7 @@
       }
     }
   },
-  "lab": {
+  "lab.csv.gz": {
     "col_spec": {
       "labid": {
         "type": "col_integer"
@@ -715,7 +715,7 @@
       }
     }
   },
-  "medication": {
+  "medication.csv.gz": {
     "col_spec": {
       "medicationid": {
         "type": "col_integer"
@@ -764,7 +764,7 @@
       }
     }
   },
-  "microLab": {
+  "microLab.csv.gz": {
     "col_spec": {
       "microlabid": {
         "type": "col_integer"
@@ -789,7 +789,7 @@
       }
     }
   },
-  "note": {
+  "note.csv.gz": {
     "col_spec": {
       "noteid": {
         "type": "col_integer"
@@ -817,7 +817,7 @@
       }
     }
   },
-  "nurseAssessment": {
+  "nurseAssessment.csv.gz": {
     "col_spec": {
       "nurseassessid": {
         "type": "col_integer"
@@ -845,7 +845,7 @@
       }
     }
   },
-  "nurseCare": {
+  "nurseCare.csv.gz": {
     "col_spec": {
       "nursecareid": {
         "type": "col_integer"
@@ -873,7 +873,7 @@
       }
     }
   },
-  "nurseCharting": {
+  "nurseCharting.csv.gz": {
     "col_spec": {
       "nursingchartid": {
         "type": "col_double"
@@ -904,7 +904,7 @@
       "patientunitstayid": [0, 1775421, 999999999]
     }
   },
-  "pastHistory": {
+  "pastHistory.csv.gz": {
     "col_spec": {
       "pasthistoryid": {
         "type": "col_integer"
@@ -932,7 +932,7 @@
       }
     }
   },
-  "patient": {
+  "patient.csv.gz": {
     "col_spec": {
       "patientunitstayid": {
         "type": "col_integer"
@@ -1023,7 +1023,7 @@
       }
     }
   },
-  "physicalExam": {
+  "physicalExam.csv.gz": {
     "col_spec": {
       "physicalexamid": {
         "type": "col_integer"
@@ -1045,7 +1045,7 @@
       }
     }
   },
-  "respiratoryCare": {
+  "respiratoryCare.csv.gz": {
     "col_spec": {
       "respcareid": {
         "type": "col_integer"
@@ -1083,7 +1083,7 @@
       "priorventendoffset": {
         "type": "col_integer"
       },
-      "apneaparms": {
+      "apneaparams": {
         "type": "col_character"
       },
       "lowexhmvlimit": {
@@ -1151,7 +1151,7 @@
       }
     }
   },
-  "respiratoryCharting": {
+  "respiratoryCharting.csv.gz": {
     "col_spec": {
       "respchartid": {
         "type": "col_integer"
@@ -1176,7 +1176,7 @@
       }
     }
   },
-  "treatment": {
+  "treatment.csv.gz": {
     "col_spec": {
       "treatmentid": {
         "type": "col_integer"
@@ -1195,7 +1195,7 @@
       }
     }
   },
-  "vitalAperiodic": {
+  "vitalAperiodic.csv.gz": {
     "col_spec": {
       "vitalaperiodicid": {
         "type": "col_integer"
@@ -1238,7 +1238,7 @@
       }
     }
   },
-  "vitalPeriodic": {
+  "vitalPeriodic.csv.gz": {
     "col_spec": {
       "vitalperiodicid": {
         "type": "col_double"

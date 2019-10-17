@@ -1,5 +1,5 @@
 {
-  "ADMISSIONS": {
+  "ADMISSIONS.csv.gz": {
     "col_spec": {
       "ROW_ID": {
         "type": "col_integer"
@@ -65,7 +65,7 @@
       }
     }
   },
-  "CALLOUT": {
+  "CALLOUT.csv.gz": {
     "col_spec": {
       "ROW_ID": {
         "type": "col_integer"
@@ -147,7 +147,7 @@
       }
     }
   },
-  "CAREGIVERS": {
+  "CAREGIVERS.csv.gz": {
     "col_spec": {
       "ROW_ID": {
         "type": "col_integer"
@@ -163,7 +163,7 @@
       }
     }
   },
-  "CHARTEVENTS": {
+  "CHARTEVENTS.csv.gz": {
     "col_spec": {
       "ROW_ID": {
         "type": "col_integer"
@@ -217,7 +217,7 @@
       "ITEMID": [0, 127, 210, 425, 549, 643, 741, 1483, 3458, 3695, 8440, 8553, 220274, 223921, 224085, 224859, 227629, 999999999]
     }
   },
-  "CPTEVENTS": {
+  "CPTEVENTS.csv.gz": {
     "col_spec": {
       "ROW_ID": {
         "type": "col_integer"
@@ -258,7 +258,7 @@
       }
     }
   },
-  "DATETIMEEVENTS": {
+  "DATETIMEEVENTS.csv.gz": {
     "col_spec": {
       "ROW_ID": {
         "type": "col_integer"
@@ -307,7 +307,7 @@
       }
     }
   },
-  "DIAGNOSES_ICD": {
+  "DIAGNOSES_ICD.csv.gz": {
     "col_spec": {
       "ROW_ID": {
         "type": "col_integer"
@@ -326,7 +326,7 @@
       }
     }
   },
-  "DRGCODES": {
+  "DRGCODES.csv.gz": {
     "col_spec": {
       "ROW_ID": {
         "type": "col_integer"
@@ -354,7 +354,7 @@
       }
     }
   },
-  "D_CPT": {
+  "D_CPT.csv.gz": {
     "col_spec": {
       "ROW_ID": {
         "type": "col_integer"
@@ -385,7 +385,7 @@
       }
     }
   },
-  "D_ICD_DIAGNOSES": {
+  "D_ICD_DIAGNOSES.csv.gz": {
     "col_spec": {
       "ROW_ID": {
         "type": "col_integer"
@@ -401,7 +401,7 @@
       }
     }
   },
-  "D_ICD_PROCEDURES": {
+  "D_ICD_PROCEDURES.csv.gz": {
     "col_spec": {
       "ROW_ID": {
         "type": "col_integer"
@@ -417,7 +417,7 @@
       }
     }
   },
-  "D_ITEMS": {
+  "D_ITEMS.csv.gz": {
     "col_spec": {
       "ROW_ID": {
         "type": "col_integer"
@@ -451,7 +451,7 @@
       }
     }
   },
-  "D_LABITEMS": {
+  "D_LABITEMS.csv.gz": {
     "col_spec": {
       "ROW_ID": {
         "type": "col_integer"
@@ -473,7 +473,7 @@
       }
     }
   },
-  "ICUSTAYS": {
+  "ICUSTAYS.csv.gz": {
     "col_spec": {
       "ROW_ID": {
         "type": "col_integer"
@@ -515,7 +515,7 @@
       }
     }
   },
-  "INPUTEVENTS_CV": {
+  "INPUTEVENTS_CV.csv.gz": {
     "col_spec": {
       "ROW_ID": {
         "type": "col_integer"
@@ -587,7 +587,7 @@
       }
     }
   },
-  "INPUTEVENTS_MV": {
+  "INPUTEVENTS_MV.csv.gz": {
     "col_spec": {
       "ROW_ID": {
         "type": "col_integer"
@@ -688,7 +688,7 @@
       }
     }
   },
-  "LABEVENTS": {
+  "LABEVENTS.csv.gz": {
     "col_spec": {
       "ROW_ID": {
         "type": "col_integer"
@@ -720,7 +720,7 @@
       }
     }
   },
-  "MICROBIOLOGYEVENTS": {
+  "MICROBIOLOGYEVENTS.csv.gz": {
     "col_spec": {
       "ROW_ID": {
         "type": "col_integer"
@@ -774,7 +774,7 @@
       }
     }
   },
-  "NOTEEVENTS": {
+  "NOTEEVENTS.csv.gz": {
     "col_spec": {
       "ROW_ID": {
         "type": "col_integer"
@@ -814,7 +814,7 @@
       }
     }
   },
-  "OUTPUTEVENTS": {
+  "OUTPUTEVENTS.csv.gz": {
     "col_spec": {
       "ROW_ID": {
         "type": "col_integer"
@@ -859,7 +859,7 @@
       }
     }
   },
-  "PATIENTS": {
+  "PATIENTS.csv.gz": {
     "col_spec": {
       "ROW_ID": {
         "type": "col_integer"
@@ -891,7 +891,7 @@
       }
     }
   },
-  "PRESCRIPTIONS": {
+  "PRESCRIPTIONS.csv.gz": {
     "col_spec": {
       "ROW_ID": {
         "type": "col_integer"
@@ -954,7 +954,7 @@
       }
     }
   },
-  "PROCEDUREEVENTS_MV": {
+  "PROCEDUREEVENTS_MV.csv.gz": {
     "col_spec": {
       "ROW_ID": {
         "type": "col_integer"
@@ -1037,7 +1037,7 @@
       }
     }
   },
-  "PROCEDURES_ICD": {
+  "PROCEDURES_ICD.csv.gz": {
     "col_spec": {
       "ROW_ID": {
         "type": "col_integer"
@@ -1056,7 +1056,7 @@
       }
     }
   },
-  "SERVICES": {
+  "SERVICES.csv.gz": {
     "col_spec": {
       "ROW_ID": {
         "type": "col_integer"
@@ -1079,7 +1079,7 @@
       }
     }
   },
-  "TRANSFERS": {
+  "TRANSFERS.csv.gz": {
     "col_spec": {
       "ROW_ID": {
         "type": "col_integer"

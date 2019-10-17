@@ -1,1126 +1,1161 @@
 {
-  "ADMISSIONS": {
+  "admissions.csv": {
     "col_spec": {
-      "ROW_ID": {
+      "row_id": {
         "type": "col_integer"
       },
-      "SUBJECT_ID": {
+      "subject_id": {
         "type": "col_integer"
       },
-      "HADM_ID": {
+      "hadm_id": {
         "type": "col_integer"
       },
-      "ADMITTIME": {
+      "admittime": {
         "type": "col_datetime",
         "format": "%Y-%m-%d %H:%M:%S"
       },
-      "DISCHTIME": {
+      "dischtime": {
         "type": "col_datetime",
         "format": "%Y-%m-%d %H:%M:%S"
       },
-      "DEATHTIME": {
+      "deathtime": {
         "type": "col_datetime",
         "format": "%Y-%m-%d %H:%M:%S"
       },
-      "ADMISSION_TYPE": {
+      "admission_type": {
         "type": "col_character"
       },
-      "ADMISSION_LOCATION": {
+      "admission_location": {
         "type": "col_character"
       },
-      "DISCHARGE_LOCATION": {
+      "discharge_location": {
         "type": "col_character"
       },
-      "INSURANCE": {
+      "insurance": {
         "type": "col_character"
       },
-      "LANGUAGE": {
+      "language": {
         "type": "col_character"
       },
-      "RELIGION": {
+      "religion": {
         "type": "col_character"
       },
-      "MARITAL_STATUS": {
+      "marital_status": {
         "type": "col_character"
       },
-      "ETHNICITY": {
+      "ethnicity": {
         "type": "col_character"
       },
-      "EDREGTIME": {
+      "edregtime": {
         "type": "col_datetime",
         "format": "%Y-%m-%d %H:%M:%S"
       },
-      "EDOUTTIME": {
+      "edouttime": {
         "type": "col_datetime",
         "format": "%Y-%m-%d %H:%M:%S"
       },
-      "DIAGNOSIS": {
+      "diagnosis": {
         "type": "col_character"
       },
-      "HOSPITAL_EXPIRE_FLAG": {
+      "hospital_expire_flag": {
         "type": "col_integer"
       },
-      "HAS_CHARTEVENTS_DATA": {
+      "has_chartevents_data": {
         "type": "col_integer"
+      },
+      "mimic_id": {
+        "type": "col_skip"
       }
     }
   },
-  "CALLOUT": {
+  "callout.csv": {
     "col_spec": {
-      "ROW_ID": {
+      "row_id": {
         "type": "col_integer"
       },
-      "SUBJECT_ID": {
+      "subject_id": {
         "type": "col_integer"
       },
-      "HADM_ID": {
+      "hadm_id": {
         "type": "col_integer"
       },
-      "SUBMIT_WARDID": {
+      "submit_wardid": {
         "type": "col_integer"
       },
-      "SUBMIT_CAREUNIT": {
+      "submit_careunit": {
         "type": "col_character"
       },
-      "CURR_WARDID": {
+      "curr_wardid": {
         "type": "col_integer"
       },
-      "CURR_CAREUNIT": {
+      "curr_careunit": {
         "type": "col_character"
       },
-      "CALLOUT_WARDID": {
+      "callout_wardid": {
         "type": "col_integer"
       },
-      "CALLOUT_SERVICE": {
+      "callout_service": {
         "type": "col_character"
       },
-      "REQUEST_TELE": {
+      "request_tele": {
         "type": "col_integer"
       },
-      "REQUEST_RESP": {
+      "request_resp": {
         "type": "col_integer"
       },
-      "REQUEST_CDIFF": {
+      "request_cdiff": {
         "type": "col_integer"
       },
-      "REQUEST_MRSA": {
+      "request_mrsa": {
         "type": "col_integer"
       },
-      "REQUEST_VRE": {
+      "request_vre": {
         "type": "col_integer"
       },
-      "CALLOUT_STATUS": {
+      "callout_status": {
         "type": "col_character"
       },
-      "CALLOUT_OUTCOME": {
+      "callout_outcome": {
         "type": "col_character"
       },
-      "DISCHARGE_WARDID": {
+      "discharge_wardid": {
         "type": "col_integer"
       },
-      "ACKNOWLEDGE_STATUS": {
+      "acknowledge_status": {
         "type": "col_character"
       },
-      "CREATETIME": {
+      "createtime": {
         "type": "col_datetime",
         "format": "%Y-%m-%d %H:%M:%S"
       },
-      "UPDATETIME": {
+      "updatetime": {
         "type": "col_datetime",
         "format": "%Y-%m-%d %H:%M:%S"
       },
-      "ACKNOWLEDGETIME": {
+      "acknowledgetime": {
         "type": "col_datetime",
         "format": "%Y-%m-%d %H:%M:%S"
       },
-      "OUTCOMETIME": {
+      "outcometime": {
         "type": "col_datetime",
         "format": "%Y-%m-%d %H:%M:%S"
       },
-      "FIRSTRESERVATIONTIME": {
+      "firstreservationtime": {
         "type": "col_datetime",
         "format": "%Y-%m-%d %H:%M:%S"
       },
-      "CURRENTRESERVATIONTIME": {
+      "currentreservationtime": {
         "type": "col_datetime",
         "format": "%Y-%m-%d %H:%M:%S"
+      },
+      "mimic_id": {
+        "type": "col_skip"
       }
     }
   },
-  "CAREGIVERS": {
+  "caregivers.csv": {
     "col_spec": {
-      "ROW_ID": {
+      "row_id": {
         "type": "col_integer"
       },
-      "CGID": {
+      "cgid": {
         "type": "col_integer"
       },
-      "LABEL": {
+      "label": {
         "type": "col_character"
       },
-      "DESCRIPTION": {
+      "description": {
         "type": "col_character"
+      },
+      "mimic_id": {
+        "type": "col_skip"
       }
     }
   },
-  "CHARTEVENTS": {
+  "chartevents.csv": {
     "col_spec": {
-      "ROW_ID": {
+      "row_id": {
         "type": "col_integer"
       },
-      "SUBJECT_ID": {
+      "subject_id": {
         "type": "col_integer"
       },
-      "HADM_ID": {
+      "hadm_id": {
         "type": "col_integer"
       },
-      "ICUSTAY_ID": {
+      "icustay_id": {
         "type": "col_integer"
       },
-      "ITEMID": {
+      "itemid": {
         "type": "col_integer"
       },
-      "CHARTTIME": {
+      "charttime": {
         "type": "col_datetime",
         "format": "%Y-%m-%d %H:%M:%S"
       },
-      "STORETIME": {
+      "storetime": {
         "type": "col_datetime",
         "format": "%Y-%m-%d %H:%M:%S"
       },
-      "CGID": {
+      "cgid": {
         "type": "col_integer"
       },
-      "VALUE": {
+      "value": {
         "type": "col_character"
       },
-      "VALUENUM": {
+      "valuenum": {
         "type": "col_double"
       },
-      "VALUEUOM": {
+      "valueuom": {
         "type": "col_character"
       },
-      "WARNING": {
+      "warning": {
         "type": "col_integer"
       },
-      "ERROR": {
+      "error": {
         "type": "col_integer"
       },
-      "RESULTSTATUS": {
+      "resultstatus": {
         "type": "col_character"
       },
-      "STOPPED": {
+      "stopped": {
         "type": "col_character"
+      },
+      "mimic_id": {
+        "type": "col_skip"
       }
     },
     "partitioning": {
-      "ITEMID": [0, 100000, 999999999]
+      "itemid": [0, 100000, 999999999]
     }
   },
-  "CPTEVENTS": {
+  "cptevents.csv": {
     "col_spec": {
-      "ROW_ID": {
+      "row_id": {
         "type": "col_integer"
       },
-      "SUBJECT_ID": {
+      "subject_id": {
         "type": "col_integer"
       },
-      "HADM_ID": {
+      "hadm_id": {
         "type": "col_integer"
       },
-      "COSTCENTER": {
+      "costcenter": {
         "type": "col_character"
       },
-      "CHARTDATE": {
+      "chartdate": {
         "type": "col_datetime",
         "format": "%Y-%m-%d %H:%M:%S"
       },
-      "CPT_CD": {
+      "cpt_cd": {
         "type": "col_character"
       },
-      "CPT_NUMBER": {
+      "cpt_number": {
         "type": "col_integer"
       },
-      "CPT_SUFFIX": {
+      "cpt_suffix": {
         "type": "col_character"
       },
-      "TICKET_ID_SEQ": {
+      "ticket_id_seq": {
         "type": "col_integer"
       },
-      "SECTIONHEADER": {
+      "sectionheader": {
         "type": "col_character"
       },
-      "SUBSECTIONHEADER": {
+      "subsectionheader": {
         "type": "col_character"
       },
-      "DESCRIPTION": {
+      "description": {
         "type": "col_character"
+      },
+      "mimic_id": {
+        "type": "col_skip"
       }
     }
   },
-  "DATETIMEEVENTS": {
+  "datetimeevents.csv": {
     "col_spec": {
-      "ROW_ID": {
+      "row_id": {
         "type": "col_integer"
       },
-      "SUBJECT_ID": {
+      "subject_id": {
         "type": "col_integer"
       },
-      "HADM_ID": {
+      "hadm_id": {
         "type": "col_integer"
       },
-      "ICUSTAY_ID": {
+      "icustay_id": {
         "type": "col_integer"
       },
-      "ITEMID": {
+      "itemid": {
         "type": "col_integer"
       },
-      "CHARTTIME": {
+      "charttime": {
         "type": "col_datetime",
         "format": "%Y-%m-%d %H:%M:%S"
       },
-      "STORETIME": {
+      "storetime": {
         "type": "col_datetime",
         "format": "%Y-%m-%d %H:%M:%S"
       },
-      "CGID": {
+      "cgid": {
         "type": "col_integer"
       },
-      "VALUE": {
+      "value": {
         "type": "col_datetime",
         "format": "%Y-%m-%d %H:%M:%S"
       },
-      "VALUEUOM": {
+      "valueuom": {
         "type": "col_character"
       },
-      "WARNING": {
+      "warning": {
         "type": "col_integer"
       },
-      "ERROR": {
+      "error": {
         "type": "col_integer"
       },
-      "RESULTSTATUS": {
+      "resultstatus": {
         "type": "col_character"
       },
-      "STOPPED": {
+      "stopped": {
         "type": "col_character"
+      },
+      "mimic_id": {
+        "type": "col_skip"
       }
     }
   },
-  "DIAGNOSES_ICD": {
+  "diagnoses_icd.csv": {
     "col_spec": {
-      "ROW_ID": {
+      "row_id": {
         "type": "col_integer"
       },
-      "SUBJECT_ID": {
+      "subject_id": {
         "type": "col_integer"
       },
-      "HADM_ID": {
+      "hadm_id": {
         "type": "col_integer"
       },
-      "SEQ_NUM": {
+      "seq_num": {
         "type": "col_integer"
       },
-      "ICD9_CODE": {
+      "icd9_code": {
         "type": "col_character"
+      },
+      "mimic_id": {
+        "type": "col_skip"
       }
     }
   },
-  "DRGCODES": {
+  "drgcodes.csv": {
     "col_spec": {
-      "ROW_ID": {
+      "row_id": {
         "type": "col_integer"
       },
-      "SUBJECT_ID": {
+      "subject_id": {
         "type": "col_integer"
       },
-      "HADM_ID": {
+      "hadm_id": {
         "type": "col_integer"
       },
-      "DRG_TYPE": {
+      "drg_type": {
         "type": "col_character"
       },
-      "DRG_CODE": {
+      "drg_code": {
         "type": "col_character"
       },
-      "DESCRIPTION": {
+      "description": {
         "type": "col_character"
       },
-      "DRG_SEVERITY": {
+      "drg_severity": {
         "type": "col_integer"
       },
-      "DRG_MORTALITY": {
+      "drg_mortality": {
         "type": "col_integer"
+      },
+      "mimic_id": {
+        "type": "col_skip"
       }
     }
   },
-  "D_CPT": {
+  "d_cpt.csv": {
     "col_spec": {
-      "ROW_ID": {
+      "row_id": {
         "type": "col_integer"
       },
-      "CATEGORY": {
+      "category": {
         "type": "col_integer"
       },
-      "SECTIONRANGE": {
+      "sectionrange": {
         "type": "col_character"
       },
-      "SECTIONHEADER": {
+      "sectionheader": {
         "type": "col_character"
       },
-      "SUBSECTIONRANGE": {
+      "subsectionrange": {
         "type": "col_character"
       },
-      "SUBSECTIONHEADER": {
+      "subsectionheader": {
         "type": "col_character"
       },
-      "CODESUFFIX": {
+      "codesuffix": {
         "type": "col_character"
       },
-      "MINCODEINSUBSECTION": {
+      "mincodeinsubsection": {
         "type": "col_integer"
       },
-      "MAXCODEINSUBSECTION": {
+      "maxcodeinsubsection": {
         "type": "col_integer"
+      },
+      "mimic_id": {
+        "type": "col_skip"
       }
     }
   },
-  "D_ICD_DIAGNOSES": {
+  "d_icd_diagnoses.csv": {
     "col_spec": {
-      "ROW_ID": {
+      "row_id": {
         "type": "col_integer"
       },
-      "ICD9_CODE": {
+      "icd9_code": {
         "type": "col_character"
       },
-      "SHORT_TITLE": {
+      "short_title": {
         "type": "col_character"
       },
-      "LONG_TITLE": {
+      "long_title": {
         "type": "col_character"
+      },
+      "mimic_id": {
+        "type": "col_skip"
       }
     }
   },
-  "D_ICD_PROCEDURES": {
+  "d_icd_procedures.csv": {
     "col_spec": {
-      "ROW_ID": {
+      "row_id": {
         "type": "col_integer"
       },
-      "ICD9_CODE": {
+      "icd9_code": {
         "type": "col_character"
       },
-      "SHORT_TITLE": {
+      "short_title": {
         "type": "col_character"
       },
-      "LONG_TITLE": {
+      "long_title": {
         "type": "col_character"
+      },
+      "mimic_id": {
+        "type": "col_skip"
       }
     }
   },
-  "D_ITEMS": {
+  "d_items.csv": {
     "col_spec": {
-      "ROW_ID": {
+      "row_id": {
         "type": "col_integer"
       },
-      "ITEMID": {
+      "itemid": {
         "type": "col_integer"
       },
-      "LABEL": {
+      "label": {
         "type": "col_character"
       },
-      "ABBREVIATION": {
+      "abbreviation": {
         "type": "col_character"
       },
-      "DBSOURCE": {
+      "dbsource": {
         "type": "col_character"
       },
-      "LINKSTO": {
+      "linksto": {
         "type": "col_character"
       },
-      "CATEGORY": {
+      "category": {
         "type": "col_character"
       },
-      "UNITNAME": {
+      "unitname": {
         "type": "col_character"
       },
-      "PARAM_TYPE": {
+      "param_type": {
         "type": "col_character"
       },
-      "CONCEPTID": {
+      "conceptid": {
         "type": "col_integer"
+      },
+      "mimic_id": {
+        "type": "col_skip"
       }
     }
   },
-  "D_LABITEMS": {
+  "d_labitems.csv": {
     "col_spec": {
-      "ROW_ID": {
+      "row_id": {
         "type": "col_integer"
       },
-      "ITEMID": {
+      "itemid": {
         "type": "col_integer"
       },
-      "LABEL": {
+      "label": {
         "type": "col_character"
       },
-      "FLUID": {
+      "fluid": {
         "type": "col_character"
       },
-      "CATEGORY": {
+      "category": {
         "type": "col_character"
       },
-      "LOINC_CODE": {
+      "loinc_code": {
         "type": "col_character"
+      },
+      "mimic_id": {
+        "type": "col_skip"
       }
     }
   },
-  "ICUSTAYS": {
+  "icustays.csv": {
     "col_spec": {
-      "ROW_ID": {
+      "row_id": {
         "type": "col_integer"
       },
-      "SUBJECT_ID": {
+      "subject_id": {
         "type": "col_integer"
       },
-      "HADM_ID": {
+      "hadm_id": {
         "type": "col_integer"
       },
-      "ICUSTAY_ID": {
+      "icustay_id": {
         "type": "col_integer"
       },
-      "DBSOURCE": {
+      "dbsource": {
         "type": "col_character"
       },
-      "FIRST_CAREUNIT": {
+      "first_careunit": {
         "type": "col_character"
       },
-      "LAST_CAREUNIT": {
+      "last_careunit": {
         "type": "col_character"
       },
-      "FIRST_WARDID": {
+      "first_wardid": {
         "type": "col_integer"
       },
-      "LAST_WARDID": {
+      "last_wardid": {
         "type": "col_integer"
       },
-      "INTIME": {
+      "intime": {
         "type": "col_datetime",
         "format": "%Y-%m-%d %H:%M:%S"
       },
-      "OUTTIME": {
+      "outtime": {
         "type": "col_datetime",
         "format": "%Y-%m-%d %H:%M:%S"
       },
-      "LOS": {
-        "type": "col_double"
-      }
-    }
-  },
-  "INPUTEVENTS_CV": {
-    "col_spec": {
-      "ROW_ID": {
-        "type": "col_integer"
-      },
-      "SUBJECT_ID": {
-        "type": "col_integer"
-      },
-      "HADM_ID": {
-        "type": "col_integer"
-      },
-      "ICUSTAY_ID": {
-        "type": "col_integer"
-      },
-      "CHARTTIME": {
-        "type": "col_datetime",
-        "format": "%Y-%m-%d %H:%M:%S"
-      },
-      "ITEMID": {
-        "type": "col_integer"
-      },
-      "AMOUNT": {
-        "type": "col_double"
-      },
-      "AMOUNTUOM": {
-        "type": "col_character"
-      },
-      "RATE": {
+      "los": {
         "type": "col_double"
       },
-      "RATEUOM": {
-        "type": "col_character"
-      },
-      "STORETIME": {
-        "type": "col_datetime",
-        "format": "%Y-%m-%d %H:%M:%S"
-      },
-      "CGID": {
-        "type": "col_integer"
-      },
-      "ORDERID": {
-        "type": "col_integer"
-      },
-      "LINKORDERID": {
-        "type": "col_integer"
-      },
-      "STOPPED": {
-        "type": "col_character"
-      },
-      "NEWBOTTLE": {
-        "type": "col_integer"
-      },
-      "ORIGINALAMOUNT": {
-        "type": "col_double"
-      },
-      "ORIGINALAMOUNTUOM": {
-        "type": "col_character"
-      },
-      "ORIGINALROUTE": {
-        "type": "col_character"
-      },
-      "ORIGINALRATE": {
-        "type": "col_double"
-      },
-      "ORIGINALRATEUOM": {
-        "type": "col_character"
-      },
-      "ORIGINALSITE": {
-        "type": "col_character"
+      "mimic_id": {
+        "type": "col_skip"
       }
     }
   },
-  "INPUTEVENTS_MV": {
+  "inputevents_cv.csv": {
     "col_spec": {
-      "ROW_ID": {
+      "row_id": {
         "type": "col_integer"
       },
-      "SUBJECT_ID": {
+      "subject_id": {
         "type": "col_integer"
       },
-      "HADM_ID": {
+      "hadm_id": {
         "type": "col_integer"
       },
-      "ICUSTAY_ID": {
+      "icustay_id": {
         "type": "col_integer"
       },
-      "STARTTIME": {
+      "charttime": {
         "type": "col_datetime",
         "format": "%Y-%m-%d %H:%M:%S"
       },
-      "ENDTIME": {
+      "itemid": {
+        "type": "col_integer"
+      },
+      "amount": {
+        "type": "col_double"
+      },
+      "amountuom": {
+        "type": "col_character"
+      },
+      "rate": {
+        "type": "col_double"
+      },
+      "rateuom": {
+        "type": "col_character"
+      },
+      "storetime": {
         "type": "col_datetime",
         "format": "%Y-%m-%d %H:%M:%S"
       },
-      "ITEMID": {
+      "cgid": {
         "type": "col_integer"
       },
-      "AMOUNT": {
+      "orderid": {
+        "type": "col_integer"
+      },
+      "linkorderid": {
+        "type": "col_integer"
+      },
+      "stopped": {
+        "type": "col_character"
+      },
+      "newbottle": {
+        "type": "col_integer"
+      },
+      "originalamount": {
         "type": "col_double"
       },
-      "AMOUNTUOM": {
+      "originalamountuom": {
         "type": "col_character"
       },
-      "RATE": {
+      "originalroute": {
+        "type": "col_character"
+      },
+      "originalrate": {
         "type": "col_double"
       },
-      "RATEUOM": {
+      "originalrateuom": {
         "type": "col_character"
       },
-      "STORETIME": {
-        "type": "col_datetime",
-        "format": "%Y-%m-%d %H:%M:%S"
-      },
-      "CGID": {
-        "type": "col_integer"
-      },
-      "ORDERID": {
-        "type": "col_integer"
-      },
-      "LINKORDERID": {
-        "type": "col_integer"
-      },
-      "ORDERCATEGORYNAME": {
+      "originalsite": {
         "type": "col_character"
       },
-      "SECONDARYORDERCATEGORYNAME": {
-        "type": "col_character"
-      },
-      "ORDERCOMPONENTTYPEDESCRIPTION": {
-        "type": "col_character"
-      },
-      "ORDERCATEGORYDESCRIPTION": {
-        "type": "col_character"
-      },
-      "PATIENTWEIGHT": {
-        "type": "col_double"
-      },
-      "TOTALAMOUNT": {
-        "type": "col_double"
-      },
-      "TOTALAMOUNTUOM": {
-        "type": "col_character"
-      },
-      "ISOPENBAG": {
-        "type": "col_integer"
-      },
-      "CONTINUEINNEXTDEPT": {
-        "type": "col_integer"
-      },
-      "CANCELREASON": {
-        "type": "col_integer"
-      },
-      "STATUSDESCRIPTION": {
-        "type": "col_character"
-      },
-      "COMMENTS_EDITEDBY": {
-        "type": "col_character"
-      },
-      "COMMENTS_CANCELEDBY": {
-        "type": "col_character"
-      },
-      "COMMENTS_DATE": {
-        "type": "col_datetime",
-        "format": "%Y-%m-%d %H:%M:%S"
-      },
-      "ORIGINALAMOUNT": {
-        "type": "col_double"
-      },
-      "ORIGINALRATE": {
-        "type": "col_double"
+      "mimic_id": {
+        "type": "col_skip"
       }
     }
   },
-  "LABEVENTS": {
+  "inputevents_mv.csv": {
     "col_spec": {
-      "ROW_ID": {
+      "row_id": {
         "type": "col_integer"
       },
-      "SUBJECT_ID": {
+      "subject_id": {
         "type": "col_integer"
       },
-      "HADM_ID": {
+      "hadm_id": {
         "type": "col_integer"
       },
-      "ITEMID": {
+      "icustay_id": {
         "type": "col_integer"
       },
-      "CHARTTIME": {
+      "starttime": {
         "type": "col_datetime",
         "format": "%Y-%m-%d %H:%M:%S"
       },
-      "VALUE": {
-        "type": "col_character"
+      "endtime": {
+        "type": "col_datetime",
+        "format": "%Y-%m-%d %H:%M:%S"
       },
-      "VALUENUM": {
+      "itemid": {
+        "type": "col_integer"
+      },
+      "amount": {
         "type": "col_double"
       },
-      "VALUEUOM": {
+      "amountuom": {
         "type": "col_character"
       },
-      "FLAG": {
-        "type": "col_character"
-      }
-    }
-  },
-  "MICROBIOLOGYEVENTS": {
-    "col_spec": {
-      "ROW_ID": {
-        "type": "col_integer"
-      },
-      "SUBJECT_ID": {
-        "type": "col_integer"
-      },
-      "HADM_ID": {
-        "type": "col_integer"
-      },
-      "CHARTDATE": {
-        "type": "col_datetime",
-        "format": "%Y-%m-%d %H:%M:%S"
-      },
-      "CHARTTIME": {
-        "type": "col_datetime",
-        "format": "%Y-%m-%d %H:%M:%S"
-      },
-      "SPEC_ITEMID": {
-        "type": "col_integer"
-      },
-      "SPEC_TYPE_DESC": {
-        "type": "col_character"
-      },
-      "ORG_ITEMID": {
-        "type": "col_integer"
-      },
-      "ORG_NAME": {
-        "type": "col_character"
-      },
-      "ISOLATE_NUM": {
-        "type": "col_integer"
-      },
-      "AB_ITEMID": {
-        "type": "col_integer"
-      },
-      "AB_NAME": {
-        "type": "col_character"
-      },
-      "DILUTION_TEXT": {
-        "type": "col_character"
-      },
-      "DILUTION_COMPARISON": {
-        "type": "col_character"
-      },
-      "DILUTION_VALUE": {
+      "rate": {
         "type": "col_double"
       },
-      "INTERPRETATION": {
+      "rateuom": {
         "type": "col_character"
-      }
-    }
-  },
-  "NOTEEVENTS": {
-    "col_spec": {
-      "ROW_ID": {
-        "type": "col_integer"
       },
-      "SUBJECT_ID": {
-        "type": "col_integer"
-      },
-      "HADM_ID": {
-        "type": "col_integer"
-      },
-      "CHARTDATE": {
-        "type": "col_date",
-        "format": "%Y-%m-%d"
-      },
-      "CHARTTIME": {
+      "storetime": {
         "type": "col_datetime",
         "format": "%Y-%m-%d %H:%M:%S"
       },
-      "STORETIME": {
-        "type": "col_datetime",
-        "format": "%Y-%m-%d %H:%M:%S"
+      "cgid": {
+        "type": "col_integer"
       },
-      "CATEGORY": {
+      "orderid": {
+        "type": "col_integer"
+      },
+      "linkorderid": {
+        "type": "col_integer"
+      },
+      "ordercategoryname": {
         "type": "col_character"
       },
-      "DESCRIPTION": {
+      "secondaryordercategoryname": {
         "type": "col_character"
       },
-      "CGID": {
-        "type": "col_integer"
-      },
-      "ISERROR": {
+      "ordercomponenttypedescription": {
         "type": "col_character"
       },
-      "TEXT": {
+      "ordercategorydescription": {
         "type": "col_character"
-      }
-    }
-  },
-  "OUTPUTEVENTS": {
-    "col_spec": {
-      "ROW_ID": {
-        "type": "col_integer"
       },
-      "SUBJECT_ID": {
-        "type": "col_integer"
-      },
-      "HADM_ID": {
-        "type": "col_integer"
-      },
-      "ICUSTAY_ID": {
-        "type": "col_integer"
-      },
-      "CHARTTIME": {
-        "type": "col_datetime",
-        "format": "%Y-%m-%d %H:%M:%S"
-      },
-      "ITEMID": {
-        "type": "col_integer"
-      },
-      "VALUE": {
+      "patientweight": {
         "type": "col_double"
       },
-      "VALUEUOM": {
-        "type": "col_character"
-      },
-      "STORETIME": {
-        "type": "col_datetime",
-        "format": "%Y-%m-%d %H:%M:%S"
-      },
-      "CGID": {
-        "type": "col_integer"
-      },
-      "STOPPED": {
-        "type": "col_character"
-      },
-      "NEWBOTTLE": {
-        "type": "col_character"
-      },
-      "ISERROR": {
-        "type": "col_integer"
-      }
-    }
-  },
-  "PATIENTS": {
-    "col_spec": {
-      "ROW_ID": {
-        "type": "col_integer"
-      },
-      "SUBJECT_ID": {
-        "type": "col_integer"
-      },
-      "GENDER": {
-        "type": "col_character"
-      },
-      "DOB": {
-        "type": "col_datetime",
-        "format": "%Y-%m-%d %H:%M:%S"
-      },
-      "DOD": {
-        "type": "col_datetime",
-        "format": "%Y-%m-%d %H:%M:%S"
-      },
-      "DOD_HOSP": {
-        "type": "col_datetime",
-        "format": "%Y-%m-%d %H:%M:%S"
-      },
-      "DOD_SSN": {
-        "type": "col_datetime",
-        "format": "%Y-%m-%d %H:%M:%S"
-      },
-      "EXPIRE_FLAG": {
-        "type": "col_integer"
-      }
-    }
-  },
-  "PRESCRIPTIONS": {
-    "col_spec": {
-      "ROW_ID": {
-        "type": "col_integer"
-      },
-      "SUBJECT_ID": {
-        "type": "col_integer"
-      },
-      "HADM_ID": {
-        "type": "col_integer"
-      },
-      "ICUSTAY_ID": {
-        "type": "col_integer"
-      },
-      "STARTDATE": {
-        "type": "col_datetime",
-        "format": "%Y-%m-%d %H:%M:%S"
-      },
-      "ENDDATE": {
-        "type": "col_datetime",
-        "format": "%Y-%m-%d %H:%M:%S"
-      },
-      "DRUG_TYPE": {
-        "type": "col_character"
-      },
-      "DRUG": {
-        "type": "col_character"
-      },
-      "DRUG_NAME_POE": {
-        "type": "col_character"
-      },
-      "DRUG_NAME_GENERIC": {
-        "type": "col_character"
-      },
-      "FORMULARY_DRUG_CD": {
-        "type": "col_character"
-      },
-      "GSN": {
-        "type": "col_character"
-      },
-      "NDC": {
-        "type": "col_character"
-      },
-      "PROD_STRENGTH": {
-        "type": "col_character"
-      },
-      "DOSE_VAL_RX": {
-        "type": "col_character"
-      },
-      "DOSE_UNIT_RX": {
-        "type": "col_character"
-      },
-      "FORM_VAL_DISP": {
-        "type": "col_character"
-      },
-      "FORM_UNIT_DISP": {
-        "type": "col_character"
-      },
-      "ROUTE": {
-        "type": "col_character"
-      }
-    }
-  },
-  "PROCEDUREEVENTS_MV": {
-    "col_spec": {
-      "ROW_ID": {
-        "type": "col_integer"
-      },
-      "SUBJECT_ID": {
-        "type": "col_integer"
-      },
-      "HADM_ID": {
-        "type": "col_integer"
-      },
-      "ICUSTAY_ID": {
-        "type": "col_integer"
-      },
-      "STARTTIME": {
-        "type": "col_datetime",
-        "format": "%Y-%m-%d %H:%M:%S"
-      },
-      "ENDTIME": {
-        "type": "col_datetime",
-        "format": "%Y-%m-%d %H:%M:%S"
-      },
-      "ITEMID": {
-        "type": "col_integer"
-      },
-      "VALUE": {
+      "totalamount": {
         "type": "col_double"
       },
-      "VALUEUOM": {
+      "totalamountuom": {
         "type": "col_character"
       },
-      "LOCATION": {
+      "isopenbag": {
+        "type": "col_integer"
+      },
+      "continueinnextdept": {
+        "type": "col_integer"
+      },
+      "cancelreason": {
+        "type": "col_integer"
+      },
+      "statusdescription": {
         "type": "col_character"
       },
-      "LOCATIONCATEGORY": {
+      "comments_editedby": {
         "type": "col_character"
       },
-      "STORETIME": {
+      "comments_canceledby": {
+        "type": "col_character"
+      },
+      "comments_date": {
         "type": "col_datetime",
         "format": "%Y-%m-%d %H:%M:%S"
       },
-      "CGID": {
-        "type": "col_integer"
-      },
-      "ORDERID": {
-        "type": "col_integer"
-      },
-      "LINKORDERID": {
-        "type": "col_integer"
-      },
-      "ORDERCATEGORYNAME": {
-        "type": "col_character"
-      },
-      "SECONDARYORDERCATEGORYNAME": {
-        "type": "col_character"
-      },
-      "ORDERCATEGORYDESCRIPTION": {
-        "type": "col_character"
-      },
-      "ISOPENBAG": {
-        "type": "col_integer"
-      },
-      "CONTINUEINNEXTDEPT": {
-        "type": "col_integer"
-      },
-      "CANCELREASON": {
-        "type": "col_integer"
-      },
-      "STATUSDESCRIPTION": {
-        "type": "col_character"
-      },
-      "COMMENTS_EDITEDBY": {
-        "type": "col_character"
-      },
-      "COMMENTS_CANCELEDBY": {
-        "type": "col_character"
-      },
-      "COMMENTS_DATE": {
-        "type": "col_datetime",
-        "format": "%Y-%m-%d %H:%M:%S"
-      }
-    }
-  },
-  "PROCEDURES_ICD": {
-    "col_spec": {
-      "ROW_ID": {
-        "type": "col_integer"
-      },
-      "SUBJECT_ID": {
-        "type": "col_integer"
-      },
-      "HADM_ID": {
-        "type": "col_integer"
-      },
-      "SEQ_NUM": {
-        "type": "col_integer"
-      },
-      "ICD9_CODE": {
-        "type": "col_character"
-      }
-    }
-  },
-  "SERVICES": {
-    "col_spec": {
-      "ROW_ID": {
-        "type": "col_integer"
-      },
-      "SUBJECT_ID": {
-        "type": "col_integer"
-      },
-      "HADM_ID": {
-        "type": "col_integer"
-      },
-      "TRANSFERTIME": {
-        "type": "col_datetime",
-        "format": "%Y-%m-%d %H:%M:%S"
-      },
-      "PREV_SERVICE": {
-        "type": "col_character"
-      },
-      "CURR_SERVICE": {
-        "type": "col_character"
-      }
-    }
-  },
-  "TRANSFERS": {
-    "col_spec": {
-      "ROW_ID": {
-        "type": "col_integer"
-      },
-      "SUBJECT_ID": {
-        "type": "col_integer"
-      },
-      "HADM_ID": {
-        "type": "col_integer"
-      },
-      "ICUSTAY_ID": {
-        "type": "col_integer"
-      },
-      "DBSOURCE": {
-        "type": "col_character"
-      },
-      "EVENTTYPE": {
-        "type": "col_character"
-      },
-      "PREV_CAREUNIT": {
-        "type": "col_character"
-      },
-      "CURR_CAREUNIT": {
-        "type": "col_character"
-      },
-      "PREV_WARDID": {
-        "type": "col_integer"
-      },
-      "CURR_WARDID": {
-        "type": "col_integer"
-      },
-      "INTIME": {
-        "type": "col_datetime",
-        "format": "%Y-%m-%d %H:%M:%S"
-      },
-      "OUTTIME": {
-        "type": "col_datetime",
-        "format": "%Y-%m-%d %H:%M:%S"
-      },
-      "LOS": {
+      "originalamount": {
         "type": "col_double"
+      },
+      "originalrate": {
+        "type": "col_double"
+      },
+      "mimic_id": {
+        "type": "col_skip"
+      }
+    }
+  },
+  "labevents.csv": {
+    "col_spec": {
+      "row_id": {
+        "type": "col_integer"
+      },
+      "subject_id": {
+        "type": "col_integer"
+      },
+      "hadm_id": {
+        "type": "col_integer"
+      },
+      "itemid": {
+        "type": "col_integer"
+      },
+      "charttime": {
+        "type": "col_datetime",
+        "format": "%Y-%m-%d %H:%M:%S"
+      },
+      "value": {
+        "type": "col_character"
+      },
+      "valuenum": {
+        "type": "col_double"
+      },
+      "valueuom": {
+        "type": "col_character"
+      },
+      "flag": {
+        "type": "col_character"
+      },
+      "mimic_id": {
+        "type": "col_skip"
+      }
+    }
+  },
+  "microbiologyevents.csv": {
+    "col_spec": {
+      "row_id": {
+        "type": "col_integer"
+      },
+      "subject_id": {
+        "type": "col_integer"
+      },
+      "hadm_id": {
+        "type": "col_integer"
+      },
+      "chartdate": {
+        "type": "col_datetime",
+        "format": "%Y-%m-%d %H:%M:%S"
+      },
+      "charttime": {
+        "type": "col_datetime",
+        "format": "%Y-%m-%d %H:%M:%S"
+      },
+      "spec_itemid": {
+        "type": "col_integer"
+      },
+      "spec_type_desc": {
+        "type": "col_character"
+      },
+      "org_itemid": {
+        "type": "col_integer"
+      },
+      "org_name": {
+        "type": "col_character"
+      },
+      "isolate_num": {
+        "type": "col_integer"
+      },
+      "ab_itemid": {
+        "type": "col_integer"
+      },
+      "ab_name": {
+        "type": "col_character"
+      },
+      "dilution_text": {
+        "type": "col_character"
+      },
+      "dilution_comparison": {
+        "type": "col_character"
+      },
+      "dilution_value": {
+        "type": "col_double"
+      },
+      "interpretation": {
+        "type": "col_character"
+      },
+      "mimic_id": {
+        "type": "col_skip"
+      }
+    }
+  },
+  "outputevents.csv": {
+    "col_spec": {
+      "row_id": {
+        "type": "col_integer"
+      },
+      "subject_id": {
+        "type": "col_integer"
+      },
+      "hadm_id": {
+        "type": "col_integer"
+      },
+      "icustay_id": {
+        "type": "col_integer"
+      },
+      "charttime": {
+        "type": "col_datetime",
+        "format": "%Y-%m-%d %H:%M:%S"
+      },
+      "itemid": {
+        "type": "col_integer"
+      },
+      "value": {
+        "type": "col_double"
+      },
+      "valueuom": {
+        "type": "col_character"
+      },
+      "storetime": {
+        "type": "col_datetime",
+        "format": "%Y-%m-%d %H:%M:%S"
+      },
+      "cgid": {
+        "type": "col_integer"
+      },
+      "stopped": {
+        "type": "col_character"
+      },
+      "newbottle": {
+        "type": "col_character"
+      },
+      "iserror": {
+        "type": "col_integer"
+      },
+      "mimic_id": {
+        "type": "col_skip"
+      }
+    }
+  },
+  "patients.csv": {
+    "col_spec": {
+      "row_id": {
+        "type": "col_integer"
+      },
+      "subject_id": {
+        "type": "col_integer"
+      },
+      "gender": {
+        "type": "col_character"
+      },
+      "dob": {
+        "type": "col_datetime",
+        "format": "%Y-%m-%d %H:%M:%S"
+      },
+      "dod": {
+        "type": "col_datetime",
+        "format": "%Y-%m-%d %H:%M:%S"
+      },
+      "dod_hosp": {
+        "type": "col_datetime",
+        "format": "%Y-%m-%d %H:%M:%S"
+      },
+      "dod_ssn": {
+        "type": "col_datetime",
+        "format": "%Y-%m-%d %H:%M:%S"
+      },
+      "expire_flag": {
+        "type": "col_integer"
+      },
+      "mimic_id": {
+        "type": "col_skip"
+      }
+    }
+  },
+  "prescriptions.csv": {
+    "col_spec": {
+      "row_id": {
+        "type": "col_integer"
+      },
+      "subject_id": {
+        "type": "col_integer"
+      },
+      "hadm_id": {
+        "type": "col_integer"
+      },
+      "icustay_id": {
+        "type": "col_integer"
+      },
+      "startdate": {
+        "type": "col_datetime",
+        "format": "%Y-%m-%d %H:%M:%S"
+      },
+      "enddate": {
+        "type": "col_datetime",
+        "format": "%Y-%m-%d %H:%M:%S"
+      },
+      "drug_type": {
+        "type": "col_character"
+      },
+      "drug": {
+        "type": "col_character"
+      },
+      "drug_name_poe": {
+        "type": "col_character"
+      },
+      "drug_name_generic": {
+        "type": "col_character"
+      },
+      "formulary_drug_cd": {
+        "type": "col_character"
+      },
+      "gsn": {
+        "type": "col_character"
+      },
+      "ndc": {
+        "type": "col_character"
+      },
+      "prod_strength": {
+        "type": "col_character"
+      },
+      "dose_val_rx": {
+        "type": "col_character"
+      },
+      "dose_unit_rx": {
+        "type": "col_character"
+      },
+      "form_val_disp": {
+        "type": "col_character"
+      },
+      "form_unit_disp": {
+        "type": "col_character"
+      },
+      "route": {
+        "type": "col_character"
+      },
+      "mimic_id": {
+        "type": "col_skip"
+      }
+    }
+  },
+  "procedureevents_mv.csv": {
+    "col_spec": {
+      "row_id": {
+        "type": "col_integer"
+      },
+      "subject_id": {
+        "type": "col_integer"
+      },
+      "hadm_id": {
+        "type": "col_integer"
+      },
+      "icustay_id": {
+        "type": "col_integer"
+      },
+      "starttime": {
+        "type": "col_datetime",
+        "format": "%Y-%m-%d %H:%M:%S"
+      },
+      "endtime": {
+        "type": "col_datetime",
+        "format": "%Y-%m-%d %H:%M:%S"
+      },
+      "itemid": {
+        "type": "col_integer"
+      },
+      "value": {
+        "type": "col_double"
+      },
+      "valueuom": {
+        "type": "col_character"
+      },
+      "location": {
+        "type": "col_character"
+      },
+      "locationcategory": {
+        "type": "col_character"
+      },
+      "storetime": {
+        "type": "col_datetime",
+        "format": "%Y-%m-%d %H:%M:%S"
+      },
+      "cgid": {
+        "type": "col_integer"
+      },
+      "orderid": {
+        "type": "col_integer"
+      },
+      "linkorderid": {
+        "type": "col_integer"
+      },
+      "ordercategoryname": {
+        "type": "col_character"
+      },
+      "secondaryordercategoryname": {
+        "type": "col_character"
+      },
+      "ordercategorydescription": {
+        "type": "col_character"
+      },
+      "isopenbag": {
+        "type": "col_integer"
+      },
+      "continueinnextdept": {
+        "type": "col_integer"
+      },
+      "cancelreason": {
+        "type": "col_integer"
+      },
+      "statusdescription": {
+        "type": "col_character"
+      },
+      "comments_editedby": {
+        "type": "col_character"
+      },
+      "comments_canceledby": {
+        "type": "col_character"
+      },
+      "comments_date": {
+        "type": "col_datetime",
+        "format": "%Y-%m-%d %H:%M:%S"
+      },
+      "mimic_id": {
+        "type": "col_skip"
+      }
+    }
+  },
+  "procedures_icd.csv": {
+    "col_spec": {
+      "row_id": {
+        "type": "col_integer"
+      },
+      "subject_id": {
+        "type": "col_integer"
+      },
+      "hadm_id": {
+        "type": "col_integer"
+      },
+      "seq_num": {
+        "type": "col_integer"
+      },
+      "icd9_code": {
+        "type": "col_character"
+      },
+      "mimic_id": {
+        "type": "col_skip"
+      }
+    }
+  },
+  "services.csv": {
+    "col_spec": {
+      "row_id": {
+        "type": "col_integer"
+      },
+      "subject_id": {
+        "type": "col_integer"
+      },
+      "hadm_id": {
+        "type": "col_integer"
+      },
+      "transfertime": {
+        "type": "col_datetime",
+        "format": "%Y-%m-%d %H:%M:%S"
+      },
+      "prev_service": {
+        "type": "col_character"
+      },
+      "curr_service": {
+        "type": "col_character"
+      },
+      "mimic_id": {
+        "type": "col_skip"
+      }
+    }
+  },
+  "transfers.csv": {
+    "col_spec": {
+      "row_id": {
+        "type": "col_integer"
+      },
+      "subject_id": {
+        "type": "col_integer"
+      },
+      "hadm_id": {
+        "type": "col_integer"
+      },
+      "icustay_id": {
+        "type": "col_integer"
+      },
+      "dbsource": {
+        "type": "col_character"
+      },
+      "eventtype": {
+        "type": "col_character"
+      },
+      "prev_careunit": {
+        "type": "col_character"
+      },
+      "curr_careunit": {
+        "type": "col_character"
+      },
+      "prev_wardid": {
+        "type": "col_integer"
+      },
+      "curr_wardid": {
+        "type": "col_integer"
+      },
+      "intime": {
+        "type": "col_datetime",
+        "format": "%Y-%m-%d %H:%M:%S"
+      },
+      "outtime": {
+        "type": "col_datetime",
+        "format": "%Y-%m-%d %H:%M:%S"
+      },
+      "los": {
+        "type": "col_double"
+      },
+      "mimic_id": {
+        "type": "col_skip"
       }
     }
   }
