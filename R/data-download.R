@@ -252,6 +252,20 @@ download_pysionet_file <- function(url, dest = NULL, username = NULL,
   }
 }
 
+get_sha256 <- function(url, username = NULL, password = NULL) {
+
+  res <- download_pysionet_file(
+    file.path(url, "SHA256SUMS.txt", fsep = "/"), dest = NULL,
+    username = username, password = password
+  )
+
+  con <- rawConnection(res)
+  on.exit(close(con))
+
+  res <- readLines(con)
+  strsplit(res, " ")
+}
+
 check_file_sha256 <- function(file, val) {
   isTRUE(as.character(openssl::sha256(file(file, raw = TRUE))) == val)
 }
@@ -273,17 +287,7 @@ download_pysionet_data <- function(dest_folder, tables, url, username,
     password <- NULL
   }
 
-  chksums <- download_pysionet_file(
-    file.path(url, "SHA256SUMS.txt", fsep = "/"), dest = NULL,
-    username = username, password = password
-  )
-
-  con <- rawConnection(chksums)
-  on.exit(close(con))
-
-  chksums <- readLines(con)
-  chksums <- strsplit(chksums, " ")
-
+  chksums <- get_sha256(url, username, password)
   chksums <- chksums[
     vapply(chksums, `[[`, character(1L), 2L) %in% tables
   ]
