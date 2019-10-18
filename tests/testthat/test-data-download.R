@@ -23,15 +23,15 @@ test_that("credential management", {
 
   creds <- with_mock(
     `keyring::key_set_with_value` = function(...) invisible(NULL),
-    `read_line` = function(...) "bar",
+    `sepsr:::read_line` = function(...) "bar",
     get_set_physionet_creds("foo")
   )
 
   expect_identical(creds, list(username = "foo", password = "bar"))
 
   creds <- with_mock(
-    is_pkg_available = function(...) FALSE,
-    read_line = function(x, ...) {
+    `sepsr:::is_pkg_available` = function(...) FALSE,
+    `sepsr:::read_line` = function(x, ...) {
       if (grepl("user", x)) "foo" else if (grepl("pass", x)) "bar" else "baz"
     },
     get_set_physionet_creds()
@@ -41,7 +41,7 @@ test_that("credential management", {
 
   expect_error(
     with_mock(
-      is_pkg_available = function(...) FALSE,
+      `sepsr:::is_pkg_available` = function(...) FALSE,
       get_set_physionet_creds()
     )
   )
