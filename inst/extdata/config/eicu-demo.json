@@ -1,5 +1,5 @@
 {
-  "admissionDrug.csv.gz": {
+  "admissiondrug.csv.gz": {
     "col_spec": {
       "admissiondrugid": {
         "type": "col_integer"
@@ -610,7 +610,7 @@
       }
     }
   },
-  "infusionDrug.csv.gz": {
+  "infusiondrug.csv.gz": {
     "col_spec": {
       "infusiondrugid": {
         "type": "col_integer"

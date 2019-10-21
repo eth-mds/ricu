@@ -540,6 +540,8 @@ mk_cfg <- function(is_demo = FALSE) {
     names(res[["respiratoryCare"]][["col_spec"]])[
       names(res[["respiratoryCare"]][["col_spec"]]) == "apneaparms"
     ] <- "apneaparams"
+    all_lower <- grepl("Drug$", names(res))
+    names(res)[all_lower] <- tolower(names(res)[all_lower])
   }
 
   names(res) <- paste0(names(res), ".csv.gz")
