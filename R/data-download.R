@@ -288,9 +288,15 @@ download_pysionet_data <- function(dest_folder, tables, url, username,
   }
 
   chksums <- get_sha256(url, username, password)
-  chksums <- chksums[
-    vapply(chksums, `[[`, character(1L), 2L) %in% tables
-  ]
+  avail_tbls <- vapply(chksums, `[[`, character(1L), 2L)
+  matches <- tables %in% avail_tbls
+
+  if (!all(matches)) {
+    warning("Skipping unavailable files:\n  ",
+            paste(tables[!matches], collapse = "\n  "))
+  }
+
+  chksums <- chksums[matches]
 
   if (length(chksums) == 0) {
     warning("No matching files can be downloaded.")
