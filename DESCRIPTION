@@ -27,6 +27,9 @@ Suggests:
     openssl,
     xml2,
     covr,
-    testthat (>= 2.1.0)
+    testthat (>= 2.1.0),
+    mimic.demo,
+    eicu.demo
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 6.1.1
+Additional_repositories: https://septic-tank.github.io/physionet-demo
