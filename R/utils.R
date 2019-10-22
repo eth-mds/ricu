@@ -2,8 +2,9 @@
 #' File system utilities
 #'
 #' Determine the location where to place data meant to persist between
-#' individual sessions. The default location depends on the operating system
-#' as
+#' individual sessions.
+#'
+#' For data, the default location depends on the operating system as
 #'
 #' | **Platform** | **Location**                          |
 #' | ------------ | ------------------------------------- |
@@ -26,6 +27,8 @@
 #'
 #' @param subdir A string specifying a directory that will be made sure to
 #' exist below the data directory.
+#'
+#' @rdname file_utils
 #'
 #' @examples
 #' Sys.setenv(SEPSR_DATA_PATH = tempdir())
@@ -107,7 +110,7 @@ data_dir_path <- function() {
 }
 
 default_config_path <- function() {
-  system.file("extdata", "config", package = getPackageName())
+  system.file("extdata", "config", package = methods::getPackageName())
 }
 
 config_dir_path <- function() {
@@ -118,6 +121,29 @@ config_dir_path <- function() {
   else                ensure_dir(env_var)
 }
 
+#' For configuration files, the default location is `extdata/config` and the
+#' environment variable `SEPSR_CONFIG_PATH` can be used to overwrite the
+#' default location. Files are first searched for in the user-specified
+#' directory and if not found there, the default dir ist taken into account.
+#' Additionally, `get_config()` has a `dir` argument which takes highest
+#' precedence.
+#'
+#' @param name File name of the configuration file (without file ending).
+#' @param dir (Optional) directory name where to look for the specified file.
+#' @param ... Passed to [jsonlite::read_json].
+#'
+#' @rdname file_utils
+#'
+#' @examples
+#' cfg <- get_config("eicu-demo")
+#' identical(
+#'   cfg,
+#'   get_config("eicu-demo",
+#'              system.file("extdata", "config", package = "sepsr"))
+#' )
+#'
+#' @export
+#'
 get_config <- function(name, dir = NULL, ...) {
 
   assert_that(is.string(name))

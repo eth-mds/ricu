@@ -20,7 +20,8 @@ Imports:
     fst,
     data.table,
     readr,
-    jsonlite
+    jsonlite,
+    methods
 Suggests:
     getPass,
     keyring,

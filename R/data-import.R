@@ -60,7 +60,7 @@
 #' @param demo Logical flag for switching between default arguments for demo
 #' or full data sources.
 #' @param dir The directory where the data was downloaded to (see
-#' [data_download]).
+#' [download_mimic()]).
 #' @param cfg Import configuration specified as nested list.
 #' @param cleanup Logical flag, if `TRUE` the original CSV data is deleted
 #' after successful import.

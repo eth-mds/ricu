@@ -2,20 +2,30 @@
 % Please edit documentation in R/utils.R
 \name{data_dir}
 \alias{data_dir}
+\alias{get_config}
 \title{File system utilities}
 \usage{
 data_dir(subdir = NULL)
+
+get_config(name, dir = NULL, ...)
 }
 \arguments{
 \item{subdir}{A string specifying a directory that will be made sure to
 exist below the data directory.}
+
+\item{name}{File name of the configuration file (without file ending).}
+
+\item{dir}{(Optional) directory name where to look for the specified file.}
+
+\item{...}{Passed to \link[jsonlite:read_json]{jsonlite::read_json}.}
 }
 \description{
 Determine the location where to place data meant to persist between
-individual sessions. The default location depends on the operating system
-as
+individual sessions.
 }
 \details{
+For data, the default location depends on the operating system as
+
 | \strong{Platform} | \strong{Location}                          |
 | ------------ | ------------------------------------- |
 | Linux        | \code{~/.local/share/sepsr}                |
@@ -43,5 +53,12 @@ identical(data_dir(), tempdir())
 dir.exists(file.path(tempdir(), "some_subdir"))
 some_subdir <- data_dir("some_subdir")
 dir.exists(some_subdir)
+
+cfg <- get_config("eicu-demo")
+identical(
+  cfg,
+  get_config("eicu-demo",
+             system.file("extdata", "config", package = "sepsr"))
+)
 
 }
