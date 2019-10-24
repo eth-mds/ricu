@@ -38,3 +38,46 @@ str.file_fst <- function(x, ...) {
     ...
   )
 }
+
+#' @export
+head.file_fst <- function(x, n = 6L, ...) {
+
+  assert_that(length(n) == 1L)
+
+  if (n < 0L) n <- max(nrow(x) + n, 0L)
+  else n <- min(n, nrow(x))
+
+  if (n == 0L) to <- 1L
+  else if (is.character(n)) to <- NULL
+  else to <- floor(n)
+
+  res <- fst::read_fst(file_fst_file(x), from = 1L, to = to,
+                       as.data.table = TRUE)
+  data.table::setattr(res, "row.names", NULL)
+
+  if (n == 0L) res[-1L, ]
+  else res
+}
+
+#' @export
+tail.file_fst <- function(x, n = 6L, ...) {
+
+  assert_that(length(n) == 1L)
+
+  if (n < 0L) n <- max(nrow(x) + n, 0L)
+  else n <- min(n, nrow(x))
+
+  if (n == 0L) to <- 1L
+  else if (is.character(n)) to <- NULL
+  else to <- nrow(x)
+
+  if (n == 0L || is.character(n)) from <- 1L
+  else from <- nrow(x) - floor(n) + 1L
+
+  res <- fst::read_fst(file_fst_file(x), from = from, to = to,
+                       as.data.table = TRUE)
+  data.table::setattr(res, "row.names", NULL)
+
+  if (n == 0L) res[-1L, ]
+  else res
+}

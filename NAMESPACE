@@ -2,7 +2,9 @@
 
 S3method(dim,file_fst)
 S3method(dimnames,file_fst)
+S3method(head,file_fst)
 S3method(str,file_fst)
+S3method(tail,file_fst)
 export(data_dir)
 export(download_eicu)
 export(download_mimic)
