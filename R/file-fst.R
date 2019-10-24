@@ -81,3 +81,20 @@ tail.file_fst <- function(x, n = 6L, ...) {
   if (n == 0L) res[-1L, ]
   else res
 }
+
+#' @export
+`[[.file_fst` <- function(x, ...) {
+  `[[`(x = file_fst_proxy(x), ...)
+}
+
+#' @export
+`$.file_fst` <- function(x, ...) {
+  `$`(x = file_fst_proxy(x), ...)
+}
+
+#' @export
+`[.file_fst` <- function(x, ...) {
+  res <- `[`(x = file_fst_proxy(x), ...)
+  if (is.data.frame(res)) data.table::setDT(res)
+  res
+}

@@ -11,6 +11,10 @@ mtcars_file_fst <- function() {
   get("mtcars", envir = env)
 }
 
+mtcars_fst_table <- function() {
+  fst::fst(file.path(tmp, "mtcars.fst"))
+}
+
 tmp <- tempfile()
 
 setup({
@@ -76,4 +80,81 @@ test_that("file_fst head/tail", {
   expect_error(tail(ref, n = NA))
   expect_error(tail(dat, n = c(1L, 2L)))
   expect_error(tail(ref, n = c(1L, 2L)))
+})
+
+test_that("file_fst `[[` subsetting", {
+
+  dat <- mtcars_file_fst()
+  ref <- mtcars_fst_table()
+
+  expect_identical(dat[[1L]], ref[[1L]])
+  expect_identical(dat[[1L, 2L]], ref[[1L, 2L]])
+  expect_identical(dat[[c(1L, 2L)]], ref[[c(1L, 2L)]])
+  expect_identical(dat[[c(1L, 2L), 3L]], ref[[c(1L, 2L), 3L]])
+
+  expect_error(dat[[1L, NA]])
+  expect_error(dat[[]])
+  expect_error(dat[[c(1L, NA)]])
+  expect_error(dat[[NA, 1L]])
+
+  expect_error(ref[[1L, NA]])
+  expect_error(ref[[]])
+  expect_error(ref[[c(1L, NA)]])
+  expect_error(ref[[NA, 1L]])
+
+  expect_error(dat[[TRUE]])
+  expect_error(dat[[NA]])
+  expect_error(dat[[c(TRUE, FALSE)]])
+  expect_error(dat[[c(NA, NA)]])
+  expect_error(dat[[NULL]])
+
+  expect_error(ref[[TRUE]])
+  expect_error(ref[[NA]])
+  expect_error(ref[[c(TRUE, FALSE)]])
+  expect_error(ref[[c(NA, NA)]])
+  expect_error(ref[[NULL]])
+
+  expect_identical(dat[["disp"]], ref[["disp"]])
+  expect_identical(dat[["dis"]], ref[["dis"]])
+
+  expect_error(dat[[1L, "disp"]])
+  expect_error(dat[[c("dis", "drat")]])
+  expect_error(dat[["dis", "drat"]])
+  expect_error(dat[[NA, "disp"]])
+
+  expect_error(ref[[1L, "disp"]])
+  expect_error(ref[[c("dis", "drat")]])
+  expect_error(ref[["dis", "drat"]])
+  expect_error(ref[[NA, "disp"]])
+})
+
+test_that("file_fst `$` subsetting", {
+
+  dat <- mtcars_file_fst()
+  ref <- mtcars_fst_table()
+
+  expect_identical(dat$disp, ref$disp)
+  expect_identical(dat$dis, ref$dis)
+})
+
+test_that("file_fst `[` subsetting", {
+
+  dat <- mtcars_file_fst()
+  ref <- mtcars_fst_table()
+
+  expect_equal_df(dat[2], ref[2])
+  expect_equal_df(dat[2.6], ref[2.6])
+  expect_equal_df(dat[TRUE], ref[TRUE])
+  expect_equal_df(dat[c(1.1, 2)], ref[c(1.1, 2)])
+  expect_equal_df(dat[c(TRUE, FALSE)], ref[c(TRUE, FALSE)])
+  expect_equal_df(dat[c(TRUE, FALSE, TRUE)], ref[c(TRUE, FALSE, TRUE)])
+  expect_equal_df(dat[i = 2], ref[i = 2])
+  expect_equal_df(dat[j = 2], ref[j = 2])
+  expect_equal_df(dat[drop = FALSE], ref[drop = FALSE])
+  expect_equal_df(dat[,], ref[,])
+  expect_equal_df(dat[, 2:3], ref[, 2:3])
+  expect_equal_df(dat[2, drop = FALSE], ref[2, drop = FALSE])
+  expect_equal_df(dat[,,], ref[,,])
+  expect_equal_df(dat[,, drop = FALSE], ref[,, drop = FALSE])
+  expect_equal_df(dat[j = 2, drop = FALSE], ref[j = 2, drop = FALSE])
 })
