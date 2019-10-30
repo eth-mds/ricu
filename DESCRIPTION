@@ -21,7 +21,8 @@ Imports:
     data.table,
     readr,
     jsonlite,
-    methods
+    methods,
+    prt
 Suggests:
     getPass,
     keyring,
@@ -34,3 +35,4 @@ Suggests:
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 6.1.1
 Additional_repositories: https://septic-tank.github.io/physionet-demo
+Remotes: nbenn/prt
