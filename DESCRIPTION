@@ -31,7 +31,8 @@ Suggests:
     covr,
     testthat (>= 2.1.0),
     mimic.demo,
-    eicu.demo
+    eicu.demo,
+    rlang
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 6.1.1
 Additional_repositories: https://septic-tank.github.io/physionet-demo
