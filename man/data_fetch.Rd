@@ -3,16 +3,16 @@
 \name{download_mimic}
 \alias{download_mimic}
 \alias{download_eicu}
+\alias{download_datasource}
 \title{Data download utilities}
 \usage{
-download_mimic(demo = FALSE, dest = if (demo) data_dir("mimic-demo")
-  else data_dir("mimic-data"), config = if (demo)
-  get_config("mimic-demo") else get_config("mimic-setup"),
-  table_sel = NULL, ...)
+download_mimic(demo = FALSE, dest = mimic_data_dir(demo),
+  config = mimic_config(demo), table_sel = NULL, ...)
 
-download_eicu(demo = FALSE, dest = if (demo) data_dir("eicu-demo") else
-  data_dir("eicu-data"), config = if (demo) get_config("eicu-demo") else
-  get_config("eicu-setup"), table_sel = NULL, ...)
+download_eicu(demo = FALSE, dest = eicu_data_dir(demo),
+  config = eicu_config(demo), table_sel = NULL, ...)
+
+download_datasource(dest, config, table_sel = NULL, ...)
 }
 \arguments{
 \item{demo}{Logical switch between demo (TRUE) and full (FALSE) datasets.}
@@ -20,7 +20,7 @@ download_eicu(demo = FALSE, dest = if (demo) data_dir("eicu-demo") else
 \item{dest}{Destination directory where the downloaded data is written to.}
 
 \item{config}{List structure with configuration information (see
-\link{import_mimic() for further information}).}
+\code{\link[=import_mimic]{import_mimic()}} for further information).}
 
 \item{table_sel}{Character vector specifying the tables to download. If
 \code{NULL}, all available tables are downloaded.}

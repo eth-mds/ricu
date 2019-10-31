@@ -48,12 +48,12 @@
 #' @param demo Logical switch between demo (TRUE) and full (FALSE) datasets.
 #' @param dest Destination directory where the downloaded data is written to.
 #' @param config List structure with configuration information (see
-#' [import_mimic() for further information]).
+#' [import_mimic()] for further information).
 #' @param table_sel Character vector specifying the tables to download. If
 #' `NULL`, all available tables are downloaded.
 #' @param ... Passed onto keyring, for example [keyring::key_set_with_value()].
 #'
-#' @rdname data_download
+#' @rdname data_fetch
 #'
 #' @examples
 #' \dontrun{
@@ -70,41 +70,46 @@
 #'
 #' @export
 #'
-download_mimic <- function(demo = FALSE,
-  dest = if (demo) data_dir("mimic-demo") else data_dir("mimic-data"),
-  config = if (demo) get_config("mimic-demo") else get_config("mimic-setup"),
-  table_sel = NULL,
-  ...) {
+download_mimic <- function(demo = FALSE, dest = mimic_data_dir(demo),
+                           config = mimic_config(demo), table_sel = NULL,
+                           ...) {
 
   if (demo) {
-    download_physionet_dataset(dest, config, table_sel, ..., username = NULL,
-                               password = NULL)
+    download_datasource(dest, config, table_sel, ..., username = NULL,
+                        password = NULL)
   } else {
-    download_physionet_dataset(dest, config, table_sel, ...)
+    download_datasource(dest, config, table_sel, ...)
   }
 }
 
-#' @rdname data_download
+#' @rdname data_fetch
+#'
 #' @export
-download_eicu <- function(demo = FALSE,
-  dest = if (demo) data_dir("eicu-demo") else data_dir("eicu-data"),
-  config = if (demo) get_config("eicu-demo") else get_config("eicu-setup"),
-  table_sel = NULL,
-  ...) {
+#'
+download_eicu <- function(demo = FALSE, dest = eicu_data_dir(demo),
+                          config = eicu_config(demo), table_sel = NULL,
+                          ...) {
 
   if (demo) {
-    download_physionet_dataset(dest, config, table_sel, ..., username = NULL,
-                               password = NULL)
+    download_datasource(dest, config, table_sel, ..., username = NULL,
+                        password = NULL)
   } else {
-    download_physionet_dataset(dest, config, table_sel, ...)
+    download_datasource(dest, config, table_sel, ...)
   }
 }
 
-download_physionet_dataset <- function(dest, config, table_sel = NULL, ...) {
+#' @rdname data_fetch
+#'
+#' @export
+#'
+download_datasource <- function(dest, config, table_sel = NULL, ...) {
 
   assert_that(is.dir(dest))
 
-  list2env(config, envir = environment())
+  name <- config[["name"]]
+  version <- config[["version"]]
+  url <- config[["url"]]
+  tables <- config[["tables"]]
 
   assert_that(is.string(name), is.string(version), is.string(url),
               is.list(tables), !is.null(names(tables)))

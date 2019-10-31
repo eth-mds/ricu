@@ -3,15 +3,16 @@
 \name{import_mimic}
 \alias{import_mimic}
 \alias{import_eicu}
+\alias{import_datasource}
 \title{Data import utilities}
 \usage{
-import_mimic(demo = FALSE, dir = if (demo) data_dir("mimic-demo") else
-  data_dir("mimic-data"), config = if (demo) get_config("mimic-demo")
-  else get_config("mimic-setup"), cleanup = TRUE)
+import_mimic(demo = FALSE, dir = mimic_data_dir(demo),
+  config = mimic_config(demo), cleanup = TRUE)
 
-import_eicu(demo = FALSE, dir = if (demo) data_dir("eicu-demo") else
-  data_dir("eicu-data"), config = if (demo) get_config("eicu-demo") else
-  get_config("eicu-setup"), cleanup = TRUE)
+import_eicu(demo = FALSE, dir = eicu_data_dir(demo),
+  config = eicu_config(demo), cleanup = TRUE)
+
+import_datasource(dir, config, cleanup = TRUE)
 }
 \arguments{
 \item{demo}{Logical flag for switching between default arguments for demo

@@ -91,33 +91,28 @@
 #' }
 #'
 #' @export
-import_mimic <- function(demo = FALSE,
-  dir = if (demo) data_dir("mimic-demo") else data_dir("mimic-data"),
-  config = if (demo) get_config("mimic-demo") else get_config("mimic-setup"),
-  cleanup = TRUE) {
-
-  assert_that(is.flag(demo), is.dir(dir), is.list(config), is.flag(cleanup))
-
-  message("importing ", name, " v", version)
+#'
+import_mimic <- function(demo = FALSE, dir = mimic_data_dir(demo),
+                         config = mimic_config(demo), cleanup = TRUE) {
 
   import_datasource(dir, config, cleanup)
 }
 
 #' @rdname data_import
+#'
 #' @export
-import_eicu <- function(demo = FALSE,
-  dir = if (demo) data_dir("eicu-demo") else data_dir("eicu-data"),
-  config = if (demo) get_config("eicu-demo") else get_config("eicu-setup"),
-  cleanup = TRUE) {
-
-  assert_that(is.flag(demo), is.dir(dir), is.list(config), is.flag(cleanup))
-
-  message("importing eicu data")
+#'
+import_eicu <- function(demo = FALSE, dir = eicu_data_dir(demo),
+                        config = eicu_config(demo), cleanup = TRUE) {
 
   import_datasource(dir, config, cleanup)
 }
 
-import_datasource <- function(dir, cfg, cleanup) {
+#' @rdname data_import
+#'
+#' @export
+#'
+import_datasource <- function(dir, config, cleanup = TRUE) {
 
   process_table <- function(x, name) {
 
@@ -130,15 +125,17 @@ import_datasource <- function(dir, cfg, cleanup) {
     message("successfully imported ", tolower(name))
   }
 
-  message("importing ", cfg[["name"]], " v", cfg[["version"]])
+  assert_that(is.dir(dir), is.list(config), is.flag(cleanup))
 
-  tables <- names(cfg[["tables"]])
+  message("importing ", config[["name"]], " v", config[["version"]])
+
+  tables <- names(config[["tables"]])
   files <- file.path(dir, tables)
 
   avail <- file.exists(files)
 
   if (any(!avail)) {
-    imported <- table_exists_as_fst(cfg, dir)
+    imported <- table_exists_as_fst(config, dir)
     missing <- !avail & !imported
     if (any(missing)) {
       message("skipping unavailable files:\n  ",
@@ -148,7 +145,7 @@ import_datasource <- function(dir, cfg, cleanup) {
 
   assert_that(sum(avail) > 0L)
 
-  Map(process_table, cfg[["tables"]][avail], tables[avail])
+  Map(process_table, config[["tables"]][avail], tables[avail])
 
   invisible(NULL)
 }
