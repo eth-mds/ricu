@@ -6,11 +6,11 @@
 \title{Data import utilities}
 \usage{
 import_mimic(demo = FALSE, dir = if (demo) data_dir("mimic-demo") else
-  data_dir("mimic-data"), cfg = if (demo) get_config("mimic-demo") else
-  get_config("mimic-setup"), cleanup = TRUE)
+  data_dir("mimic-data"), config = if (demo) get_config("mimic-demo")
+  else get_config("mimic-setup"), cleanup = TRUE)
 
 import_eicu(demo = FALSE, dir = if (demo) data_dir("eicu-demo") else
-  data_dir("eicu-data"), cfg = if (demo) get_config("eicu-demo") else
+  data_dir("eicu-data"), config = if (demo) get_config("eicu-demo") else
   get_config("eicu-setup"), cleanup = TRUE)
 }
 \arguments{
@@ -20,7 +20,7 @@ or full data sources.}
 \item{dir}{The directory where the data was downloaded to (see
 \code{\link[=download_mimic]{download_mimic()}}).}
 
-\item{cfg}{Import configuration specified as nested list.}
+\item{config}{Import configuration specified as nested list.}
 
 \item{cleanup}{Logical flag, if \code{TRUE} the original CSV data is deleted
 after successful import.}
@@ -32,10 +32,12 @@ format, which allows for random row and column access. Large tables are
 split into chunks in order to keep memory requirements under control.
 }
 \details{
-A nested list supplied as \code{cfg} argument controls how the CSV data is parsed
-and ingested. For every file to be read in, an entry in \code{cfg} with the name
-of the corresponding file is expected, requiring a list named \code{col_spec} and
-optionally a list named \code{partitioning}.
+A nested list supplied as \code{config} argument controls how the CSV data is
+parsed and ingested. A the top level, elements \code{name} (string), \code{base_url}
+(string), \code{version} (string) and \code{tables} (list) are expected. For every
+file to be read in, an entry in \code{tables} with the name of the corresponding
+file is assumed, requiring a list named \code{col_spec} and optionally a list
+named \code{partitioning}.
 
 Every \code{col_spec} node again is expected to be a named list with names
 corresponding to column names in the CSV and list valued entries. Finally,
@@ -55,19 +57,24 @@ corresponds to the column used for partitioning and partitions are defined
 as integer vector which is passed to \code{\link[base:findInterval]{base::findInterval()}}. This implies
 that partitions can only be created on integer valued columns.
 
-Putting all this together, the expected structure of \code{cfg} is as\preformatted{list(
-  file_name_table_1 = list(
-    col_spec = list(
-      colname_1 = list(type = "col_*"),
-      colname_2 = list(type = "col_*"),
-      ...
-    )
-  ),
-  file_name_table_2 = list(
-    col_spec = list(...),
-    partitioning = list(colname_i = c(0L, ))
-  ),
-  ...
+Putting all this together, the expected structure of \code{config} is as\preformatted{list(
+  name = "some_name",
+  base_url = "some_url",
+  version = "major.minor",
+  tables = list(
+    file_name_table_1 = list(
+      col_spec = list(
+        colname_1 = list(type = "col_*"),
+        colname_2 = list(type = "col_*"),
+        ...
+      )
+    ),
+    file_name_table_2 = list(
+      col_spec = list(...),
+      partitioning = list(colname_i = c(0L, ))
+    ),
+    ...
+  )
 )
 }
 

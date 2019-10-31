@@ -175,3 +175,5 @@ read_json <- function(file, simplifyVector = TRUE, simplifyDataFrame = FALSE,
                       simplifyDataFrame = simplifyDataFrame,
                       simplifyMatrix = simplifyMatrix, ...)
 }
+
+is_pkg_available <- function(pkg) requireNamespace(pkg, quietly = TRUE)
