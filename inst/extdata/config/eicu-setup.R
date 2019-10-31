@@ -550,14 +550,24 @@ mk_cfg <- function(is_demo = FALSE) {
 }
 
 jsonlite::write_json(
-  mk_cfg(is_demo = FALSE),
+  list(
+    name = "eicu_data",
+    base_url = "https://physionet.org/files/eicu-crd",
+    version = "2.0",
+    tables = mk_cfg(is_demo = FALSE)
+  ),
   "eicu-setup.json",
   auto_unbox = TRUE,
   pretty = TRUE
 )
 
 jsonlite::write_json(
-  mk_cfg(is_demo = TRUE),
+  list(
+    name = "eicu_demo",
+    base_url = "https://physionet.org/files/eicu-crd-demo",
+    version = "2.0",
+    tables = mk_cfg(is_demo = TRUE)
+  ),
   "eicu-demo.json",
   auto_unbox = TRUE,
   pretty = TRUE

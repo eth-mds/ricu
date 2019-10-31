@@ -469,14 +469,24 @@ mk_cfg <- function(is_demo = FALSE) {
 }
 
 jsonlite::write_json(
-  mk_cfg(is_demo = FALSE),
+  list(
+    name = "mimic_data",
+    base_url = "https://physionet.org/files/mimiciii",
+    version = "1.4",
+    tables = mk_cfg(is_demo = FALSE)
+  ),
   "mimic-setup.json",
   auto_unbox = TRUE,
   pretty = TRUE
 )
 
 jsonlite::write_json(
-  mk_cfg(is_demo = TRUE),
+  list(
+    name = "mimic_demo",
+    base_url = "https://physionet.org/files/mimiciii-demo",
+    version = "1.4",
+    tables = mk_cfg(is_demo = TRUE)
+  ),
   "mimic-demo.json",
   auto_unbox = TRUE,
   pretty = TRUE

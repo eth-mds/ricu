@@ -6,10 +6,12 @@
 #' format, which allows for random row and column access. Large tables are
 #' split into chunks in order to keep memory requirements under control.
 #'
-#' A nested list supplied as `cfg` argument controls how the CSV data is parsed
-#' and ingested. For every file to be read in, an entry in `cfg` with the name
-#' of the corresponding file is expected, requiring a list named `col_spec` and
-#' optionally a list named `partitioning`.
+#' A nested list supplied as `config` argument controls how the CSV data is
+#' parsed and ingested. A the top level, elements `name` (string), `base_url`
+#' (string), `version` (string) and `tables` (list) are expected. For every
+#' file to be read in, an entry in `tables` with the name of the corresponding
+#' file is assumed, requiring a list named `col_spec` and optionally a list
+#' named `partitioning`.
 #'
 #' Every `col_spec` node again is expected to be a named list with names
 #' corresponding to column names in the CSV and list valued entries. Finally,
@@ -35,22 +37,27 @@
 #' as integer vector which is passed to [base::findInterval()]. This implies
 #' that partitions can only be created on integer valued columns.
 #'
-#' Putting all this together, the expected structure of `cfg` is as
+#' Putting all this together, the expected structure of `config` is as
 #'
 #' ```
 #' list(
-#'   file_name_table_1 = list(
-#'     col_spec = list(
-#'       colname_1 = list(type = "col_*"),
-#'       colname_2 = list(type = "col_*"),
-#'       ...
-#'     )
-#'   ),
-#'   file_name_table_2 = list(
-#'     col_spec = list(...),
-#'     partitioning = list(colname_i = c(0L, ))
-#'   ),
-#'   ...
+#'   name = "some_name",
+#'   base_url = "some_url",
+#'   version = "major.minor",
+#'   tables = list(
+#'     file_name_table_1 = list(
+#'       col_spec = list(
+#'         colname_1 = list(type = "col_*"),
+#'         colname_2 = list(type = "col_*"),
+#'         ...
+#'       )
+#'     ),
+#'     file_name_table_2 = list(
+#'       col_spec = list(...),
+#'       partitioning = list(colname_i = c(0L, ))
+#'     ),
+#'     ...
+#'   )
 #' )
 #' ```
 #'
@@ -61,7 +68,7 @@
 #' or full data sources.
 #' @param dir The directory where the data was downloaded to (see
 #' [download_mimic()]).
-#' @param cfg Import configuration specified as nested list.
+#' @param config Import configuration specified as nested list.
 #' @param cleanup Logical flag, if `TRUE` the original CSV data is deleted
 #' after successful import.
 #'
@@ -86,28 +93,28 @@
 #' @export
 import_mimic <- function(demo = FALSE,
   dir = if (demo) data_dir("mimic-demo") else data_dir("mimic-data"),
-  cfg = if (demo) get_config("mimic-demo") else get_config("mimic-setup"),
+  config = if (demo) get_config("mimic-demo") else get_config("mimic-setup"),
   cleanup = TRUE) {
 
-  assert_that(is.flag(demo), is.dir(dir), is.list(cfg), is.flag(cleanup))
+  assert_that(is.flag(demo), is.dir(dir), is.list(config), is.flag(cleanup))
 
-  message("importing mimic-iii data")
+  message("importing ", name, " v", version)
 
-  import_datasource(dir, cfg, cleanup)
+  import_datasource(dir, config, cleanup)
 }
 
 #' @rdname data_import
 #' @export
 import_eicu <- function(demo = FALSE,
   dir = if (demo) data_dir("eicu-demo") else data_dir("eicu-data"),
-  cfg = if (demo) get_config("eicu-demo") else get_config("eicu-setup"),
+  config = if (demo) get_config("eicu-demo") else get_config("eicu-setup"),
   cleanup = TRUE) {
 
-  assert_that(is.flag(demo), is.dir(dir), is.list(cfg), is.flag(cleanup))
+  assert_that(is.flag(demo), is.dir(dir), is.list(config), is.flag(cleanup))
 
   message("importing eicu data")
 
-  import_datasource(dir, cfg, cleanup)
+  import_datasource(dir, config, cleanup)
 }
 
 import_datasource <- function(dir, cfg, cleanup) {
@@ -123,19 +130,25 @@ import_datasource <- function(dir, cfg, cleanup) {
     message("successfully imported ", tolower(name))
   }
 
-  tables <- names(cfg)
+  message("importing ", cfg[["name"]], " v", cfg[["version"]])
+
+  tables <- names(cfg[["tables"]])
   files <- file.path(dir, tables)
 
   avail <- file.exists(files)
 
   if (any(!avail)) {
-    message("skipping unavailable files:\n  ",
-            paste(basename(files)[!avail], collapse = "\n  "))
+    imported <- table_exists_as_fst(cfg, dir)
+    missing <- !avail & !imported
+    if (any(missing)) {
+      message("skipping unavailable files:\n  ",
+              paste(basename(files)[missing], collapse = "\n  "))
+    }
   }
 
   assert_that(sum(avail) > 0L)
 
-  Map(process_table, cfg[avail], tables[avail])
+  Map(process_table, cfg[["tables"]][avail], tables[avail])
 
   invisible(NULL)
 }

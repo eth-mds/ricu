@@ -47,8 +47,10 @@
 #'
 #' @param demo Logical switch between demo (TRUE) and full (FALSE) datasets.
 #' @param dest Destination directory where the downloaded data is written to.
-#' @param version String value specifying the desired data release version.
-#' @param tables Character vector specifying the tables to download.
+#' @param config List structure with configuration information (see
+#' [import_mimic() for further information]).
+#' @param table_sel Character vector specifying the tables to download. If
+#' `NULL`, all available tables are downloaded.
 #' @param ... Passed onto keyring, for example [keyring::key_set_with_value()].
 #'
 #' @rdname data_download
@@ -68,73 +70,60 @@
 #'
 #' @export
 #'
-download_mimic <- function(
-  demo = FALSE,
+download_mimic <- function(demo = FALSE,
   dest = if (demo) data_dir("mimic-demo") else data_dir("mimic-data"),
-  version = "1.4",
-  tables = names(
-    if (demo) get_config("mimic-demo") else get_config("mimic-setup")
-  ), ...) {
-
-  assert_that(is.string(version), is.flag(demo), is.dir(dest),
-              is.character(tables), length(tables) > 0L)
+  config = if (demo) get_config("mimic-demo") else get_config("mimic-setup"),
+  table_sel = NULL,
+  ...) {
 
   if (demo) {
-
-    message("downloading mimic-iii v", version, " demo")
-
-    download_pysionet_data(dest, tables,
-      paste0("https://physionet.org/files/mimiciii-demo/", version),
-      username = NULL, password = NULL
-    )
-
+    download_physionet_dataset(dest, config, table_sel, ..., username = NULL,
+                               password = NULL)
   } else {
-
-    message("downloading mimic-iii v", version, " data")
-
-    download_pysionet_data(dest, tables,
-      paste0("https://physionet.org/files/mimiciii/", version), ...
-    )
+    download_physionet_dataset(dest, config, table_sel, ...)
   }
 }
 
 #' @rdname data_download
 #' @export
-download_eicu <- function(
-  demo = FALSE,
+download_eicu <- function(demo = FALSE,
   dest = if (demo) data_dir("eicu-demo") else data_dir("eicu-data"),
-  version = "2.0",
-  tables = names(
-    if (demo) get_config("eicu-demo") else get_config("eicu-setup")
-  ), ...) {
-
-  assert_that(is.string(version), is.flag(demo), is.dir(dest),
-              is.character(tables), length(tables) > 0L)
+  config = if (demo) get_config("eicu-demo") else get_config("eicu-setup"),
+  table_sel = NULL,
+  ...) {
 
   if (demo) {
-
-    message("downloading eicu v", version, " demo")
-
-    download_pysionet_data(dest, tables,
-      paste0("https://physionet.org/files/eicu-crd-demo/", version),
-      username = NULL, password = NULL
-    )
-
+    download_physionet_dataset(dest, config, table_sel, ..., username = NULL,
+                               password = NULL)
   } else {
-
-    message("downloading eicu v", version, " data")
-
-    download_pysionet_data(dest, tables,
-      paste0("https://physionet.org/files/eicu-crd/", version), ...
-    )
+    download_physionet_dataset(dest, config, table_sel, ...)
   }
 }
 
-is_pkg_available <- function(pkg) requireNamespace(pkg, quietly = TRUE)
+download_physionet_dataset <- function(dest, config, table_sel = NULL, ...) {
+
+  assert_that(is.dir(dest))
+
+  list2env(config, envir = environment())
+
+  assert_that(is.string(name), is.string(version), is.string(url),
+              is.list(tables), !is.null(names(tables)))
+
+  if (is.null(table_sel)) table_sel <- names(tables)
+
+  assert_that(is.character(table_sel), length(table_sel) > 0L,
+              all(table_sel %in% names(tables)))
+
+  message("downloading ", name, " v", version)
+
+  url <- paste(url, version, sep = "/")
+
+  download_check_data(dest, table_sel, url, ...)
+}
 
 read_line <- function(prompt = "", mask_input = FALSE) {
 
-  assert_that(interactive())
+  if (!interactive()) return(NULL)
 
   if (mask_input && is_pkg_available("getPass")) {
     getPass::getPass(prompt)
@@ -239,6 +228,11 @@ download_pysionet_file <- function(url, dest = NULL, username = NULL,
     }
   }
 
+  if (res[["status_code"]] == 401) {
+    stop("Access to the requested resource was denied. Please set up an ",
+         "account at https://physionet.org/ and apply for data access.")
+  }
+
   assert_that(res[["status_code"]] == 200)
 
   if (is.null(dest)) {
@@ -270,8 +264,8 @@ check_file_sha256 <- function(file, val) {
   isTRUE(as.character(openssl::sha256(file(file, raw = TRUE))) == val)
 }
 
-download_pysionet_data <- function(dest_folder, tables, url, username,
-                                   password, ...) {
+download_check_data <- function(dest_folder, tables, url, username,
+                                password, ...) {
 
   if (missing(username) || missing(password)) {
 
