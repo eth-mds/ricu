@@ -108,7 +108,7 @@ download_datasource <- function(dest, config, table_sel = NULL, ...) {
 
   name <- config[["name"]]
   version <- config[["version"]]
-  url <- config[["url"]]
+  url <- config[["base_url"]]
   tables <- config[["tables"]]
 
   assert_that(is.string(name), is.string(version), is.string(url),
@@ -288,22 +288,13 @@ download_check_data <- function(dest_folder, tables, url, username,
 
   chksums <- get_sha256(url, username, password)
   avail_tbls <- vapply(chksums, `[[`, character(1L), 2L)
-  matches <- tables %in% avail_tbls
 
-  if (!all(matches)) {
-    warning("Skipping unavailable files:\n  ",
-            paste(tables[!matches], collapse = "\n  "))
-  }
+  assert_that(all(tables %in% avail_tbls))
 
-  chksums <- chksums[matches]
+  todo <- chksums[avail_tbls %in% tables]
 
-  if (length(chksums) == 0) {
-    warning("No matching files can be downloaded.")
-    return(invisible(NULL))
-  }
-
-  files <- vapply(chksums, `[[`, character(1L), 2L)
-  chksums <- vapply(chksums, `[[`, character(1L), 1L)
+  files <- vapply(todo, `[[`, character(1L), 2L)
+  chksums <- vapply(todo, `[[`, character(1L), 1L)
 
   Map(download_pysionet_file,
     file.path(url, files, fsep = "/"),
