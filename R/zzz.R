@@ -6,3 +6,5 @@
   attach_eicu(demo = TRUE)
   attach_eicu(demo = FALSE)
 }
+
+.datatable.aware = TRUE

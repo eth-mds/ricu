@@ -177,3 +177,18 @@ read_json <- function(file, simplifyVector = TRUE, simplifyDataFrame = FALSE,
 }
 
 is_pkg_available <- function(pkg) requireNamespace(pkg, quietly = TRUE)
+
+get_table <- function(table, envir) {
+
+  if (is.character(envir)) {
+    envir <- get0(envir, data)
+  }
+
+  assert_that(is.string(table), is.environment(envir))
+
+  res <- get0(table, envir)
+
+  assert_that(prt::is_prt(res))
+
+  res
+}
