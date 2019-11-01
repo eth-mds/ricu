@@ -1,5 +1,5 @@
 
-#' @importFrom assertthat on_failure
+#' @importFrom assertthat on_failure<-
 NULL
 
 is_dt <- function(x) data.table::is.data.table(x)
@@ -28,3 +28,13 @@ on_failure(is_difftime) <- function(call, env) {
          "`difftime` object")
 }
 
+has_unit <- function(x, col, unit) {
+  is_dt(x) && if (nrow(x) > 0L && !all(is.na(x[[col]]))) {
+    identical(attr(x[[col]], "unit"), unit)
+  } else TRUE
+}
+
+on_failure(has_unit) <- function(call, env) {
+  paste0("column `", eval(call$col, env), "` of ", deparse(call$x),
+         " does not have unit `", eval(call$unit, env), "`.")
+}

@@ -73,10 +73,13 @@ mimic_get_event_items <- function(items, table_name, time_col, unit_col,
 
   proc_each <- function(x) {
 
-    x <- handle_unit(x, value_col, unit_col, unit_handler)
+    if (nrow(x) > 0L) {
 
-    if (!is.null(callback)) {
-      x <- callback(x)
+      x <- handle_unit(x, value_col, unit_col, unit_handler)
+
+      if (!is.null(callback)) {
+        x <- callback(x)
+      }
     }
 
     x[, c(id_cols, rel_time_col, value_col), with = FALSE]
@@ -88,6 +91,7 @@ mimic_get_event_items <- function(items, table_name, time_col, unit_col,
                               time_scale, round_fun)
 
   if (split_items && length(items) > 1L) {
+    dat <- dat[, c(item_col) := factor(get(item_col), levels = items)]
     res <- split(dat, by = item_col)
   } else {
     res <- list(dat)
@@ -107,10 +111,10 @@ mimic_get_event_items <- function(items, table_name, time_col, unit_col,
     res <- Map(data.table::setnames, res, new_names)
   }
 
-  if (length(items) == 1L) {
-    res[[1L]]
-  } else {
+  if (split_items) {
     res
+  } else {
+    res[[1L]]
   }
 }
 
@@ -152,18 +156,11 @@ mimic_do_get_events <- function(items, table_name, data_env, na_rm = NULL,
   dat
 }
 
-mimic_get_admittime <- function(cols = c("hadm_id", "admittime"),
-                                data_env = "mimic") {
-
-  adm <- get_table("admissions", data_env)
-  adm[, cols]
-}
-
 mimic_admit_difftime <- function(dat, data_env = "mimic",
   time_col = "charttime", rel_time_col = "rel_time", time_scale = "hours",
   round_fun = round) {
 
-  adm <- mimic_get_admittime(data_env = data_env)
+  adm <- mimic_get_admissions(data_env = data_env)
 
   dat <- merge(dat, adm, by = "hadm_id", all = FALSE)
 

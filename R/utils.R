@@ -271,3 +271,7 @@ agg_or_na <- function(agg_fun) {
 min_or_na <- agg_or_na(min)
 max_or_na <- agg_or_na(max)
 sum_or_na <- agg_or_na(sum)
+
+reduce <- function(f, x, ...) {
+  Reduce(function(x, y) f(x, y, ...), x)
+}
