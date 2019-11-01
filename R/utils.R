@@ -192,3 +192,82 @@ get_table <- function(table, envir) {
 
   res
 }
+
+expand_limits <- function(x, min_col = "min", max_col = "max", id_cols = NULL,
+                          new_col = "rel_time") {
+
+  make_seq <- function(lwr, upr, unit) {
+    list(as.difftime(unlist(Map(seq, lwr, upr)), units = unit))
+  }
+
+  assert_that(
+    is_dt(x), is.string(min_col), is.string(max_col),
+    min_col %in% colnames(x), max_col %in% colnames(x),
+    units(x[[min_col]]) == units(x[[max_col]])
+  )
+
+  unit <- units(x[[min_col]])
+
+  res <- x[, make_seq(get(min_col), get(max_col), unit), by = id_cols]
+  res <- data.table::setnames(res, c(id_cols, new_col))
+
+  res
+}
+
+make_regular <- function(x, time_col = "rel_time",
+                         id_cols = c("hadm_id", "icustay_id"),
+                         limits = x[, list(min = min(get(time_col)),
+                                           max = max(get(time_col))),
+                                      by = id_cols],
+                         ...) {
+
+  join <- expand_limits(limits, id_cols = id_cols, ...)
+  join <- data.table::setnames(join, c(id_cols, time_col))
+
+  x[join, on = c(id_cols, time_col)]
+}
+
+window_fun <- function(tbl, expr, ...) window_quo(tbl, substitute(expr), ...)
+
+window_quo <- function(tbl, expr, id_cols = "hadm_id", time_col = "rel_time",
+                       full_window = FALSE,
+                       window_length = as.difftime(24L, units = "hours")) {
+
+  assert_that(window_length >= 0, inherits(window_length, "difftime"))
+
+  units(window_length) <- units(tbl[[time_col]])
+
+  join <- tbl[,
+    c(mget(id_cols), list(get(time_col)), list(get(time_col) - window_length))
+  ]
+  join <- data.table::setnames(join, c(id_cols, "cur_time", "min_time"))
+
+  if (full_window) {
+    join <- join[, win_time := window_length <= (cur_time - min(cur_time)),
+                 by = id_cols]
+    join <- join[(win_time), ]
+  }
+
+  on_clauses <- c(
+    id_cols, paste(time_col, "<= cur_time"), paste(time_col, ">= min_time")
+  )
+
+  tmp <- tbl[join, eval(expr), on = on_clauses, by = .EACHI]
+
+  tmp <- data.table::setnames(tmp, make.unique(colnames(tmp)))
+  tmp <- tmp[, rel_time.1 := NULL]
+
+  merge(tbl, tmp, by = c(id_cols, time_col), all = TRUE)
+}
+
+agg_or_na <- function(agg_fun) {
+  function(x) {
+    if (all(is.na(x))) return(x[1L])
+    res <- agg_fun(x, na.rm = TRUE)
+    if(is.na(res)) x[1L] else res
+  }
+}
+
+min_or_na <- agg_or_na(min)
+max_or_na <- agg_or_na(max)
+sum_or_na <- agg_or_na(sum)
