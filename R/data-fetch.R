@@ -240,6 +240,8 @@ download_pysionet_file <- function(url, dest = NULL, username = NULL,
 
   assert_that(res[["status_code"]] == 200)
 
+  message("Successfully downloaded ", basename(url))
+
   if (is.null(dest)) {
 
     res[["content"]]
@@ -303,8 +305,14 @@ download_check_data <- function(dest_folder, tables, url, username,
   )
 
   if (is_pkg_available("openssl")) {
-    checks <- Map(check_file_sha256, file.path(dest_folder, files), chksums)
-    assert_that(all(unlist(checks)))
+    checks <- unlist(
+      Map(check_file_sha256, file.path(dest_folder, files), chksums)
+    )
+    if (!all(checks)) {
+      warning("The following files have the wrong checksum:\n  ",
+        paste(basename(names(checks))[!checks], collapse = "\n  ")
+      )
+    }
   } else {
     message("The package openssl is required for checking file hashes.")
   }
