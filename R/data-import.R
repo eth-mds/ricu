@@ -122,12 +122,12 @@ import_datasource <- function(dir, config, cleanup = TRUE) {
       csv_to_fst(dir, name, x, cleanup = cleanup)
     }
 
-    message("successfully imported ", tolower(name))
+    message("Successfully imported ", tolower(name))
   }
 
   assert_that(is.dir(dir), is.list(config), is.flag(cleanup))
 
-  message("importing ", config[["name"]], " v", config[["version"]])
+  message("Importing ", config[["name"]], " v", config[["version"]])
 
   tables <- names(config[["tables"]])
   files <- file.path(dir, tables)
@@ -138,7 +138,7 @@ import_datasource <- function(dir, config, cleanup = TRUE) {
     imported <- table_exists_as_fst(config, dir)
     missing <- !avail & !imported
     if (any(missing)) {
-      message("skipping unavailable files:\n  ",
+      message("Skipping unavailable files:\n  ",
               paste(basename(files)[missing], collapse = "\n  "))
     }
   }
@@ -209,7 +209,7 @@ partition_table <- function(dir, table, cfg, chunk_length = 10 ^ 7,
     invisible(NULL)
   }
 
-  message("parititioning ", tolower(table))
+  message("Parititioning ", tolower(table))
 
   assert_that(has_name(cfg, c("col_spec", "partitioning")))
 

@@ -119,7 +119,7 @@ download_datasource <- function(dest, config, table_sel = NULL, ...) {
   assert_that(is.character(table_sel), length(table_sel) > 0L,
               all(table_sel %in% names(tables)))
 
-  message("downloading ", name, " v", version)
+  message("Downloading ", name, " v", version)
 
   url <- paste(url, version, sep = "/")
 
@@ -228,7 +228,7 @@ download_pysionet_file <- function(url, dest = NULL, username = NULL,
     res <- curl::curl_fetch_disk(url, tmp, handle = handle)
 
     if (res[["status_code"]] == 304) {
-      message("skipped download of ", basename(url))
+      message("Skipped download of ", basename(url))
       return(invisible(NULL))
     }
   }
