@@ -85,8 +85,8 @@ mimic_get_event_items <- function(items, table_name, time_col, unit_col,
     x[, c(id_cols, rel_time_col, value_col), with = FALSE]
   }
 
-  dat <- mimic_do_get_events(items, table_name, data_env, na_rm, item_col,
-                             subset_expr)
+  dat <- do_get_items(items, table_name, data_env, item_col, na_rm,
+                      subset_expr)
   dat <- mimic_admit_difftime(dat, data_env, time_col, rel_time_col,
                               time_scale, round_fun)
 
@@ -116,44 +116,6 @@ mimic_get_event_items <- function(items, table_name, time_col, unit_col,
   } else {
     res[[1L]]
   }
-}
-
-mimic_do_get_events <- function(items, table_name, data_env, na_rm = NULL,
-                                item_col = "itemid", subset_expr = NULL) {
-
-  assert_that(length(items) > 0L, is.string(item_col))
-
-  if (length(items) == 1L) {
-    row_expr <- substitute(item_col == items,
-      list(items = items, item_col = as.name(item_col))
-    )
-  } else {
-    row_expr <- substitute(item_col %in% items,
-      list(items = items, item_col = as.name(item_col))
-    )
-  }
-
-  if (!is.null(subset_expr)) {
-    row_expr <- substitute((item_subset) & (extra_subset),
-      list(item_subset = row_expr, extra_subset = subset_expr)
-    )
-  }
-
-  dat <- get_table(table_name, data_env)
-  dat <- prt::subset_quo(dat, row_expr)
-
-  if (!is.null(na_rm)) {
-    nrow_before <- nrow(dat)
-    dat <- na.omit(dat, na_rm)
-    nrow_rm <- nrow_before - nrow(dat)
-    if (nrow_rm > 0L) {
-      message("Removed ", nrow_rm, " rows from `", table_name,
-              "` due to `NA` in columns\n  ",
-              paste0("`", na_rm, "`", collapse = ", "))
-    }
-  }
-
-  dat
 }
 
 mimic_admit_difftime <- function(dat, data_env = "mimic",
