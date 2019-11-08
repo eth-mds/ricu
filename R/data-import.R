@@ -178,6 +178,7 @@ merge_fst_chunks <- function(tmp_dir, targ_dir) {
 
   dat <- lapply(files[sort_ind], fst::read_fst, as.data.table = TRUE)
   dat <- data.table::rbindlist(dat)
+  dat <- data.table::setnames(dat, tolower)
 
   new_file <- file.path(targ_dir,
     paste0(sub("part_", "", basename(tmp_dir)), ".fst")
@@ -258,7 +259,7 @@ csv_to_fst <- function(dir, table, cfg, cleanup = TRUE) {
                          skip = 1L)
   readr::stop_for_problems(dat)
 
-  colnames(dat) <- tolower(colnames(dat))
+  dat <- data.table::setnames(dat, tolower)
   new_file <- file.path(dir,
     paste0(sub("\\.csv(\\.gz)?$", "", tolower(table)), ".fst")
   )
