@@ -1,78 +1,93 @@
 
-mimic_sofa_pa <- function(lab_item = 50821L, unit_handler = fix_case_allow_na,
-                          agg_fun = min, ...) {
+mimic_pao2 <- function(time_scale = "hours", step_size = 1L,
+                       data_env = "mimic") {
 
   message("fetching pao2")
 
-  lab <- mimic_get_items(c(pao2 = lab_item), item_table = "d_labitems",
-                         unit_handler = unit_handler, ...)
-
-  assert_that(has_unit(lab, "pao2", "mm Hg"))
-
-  aggregate_vals(lab, agg_fun, by_cols = NULL, val_col = "pao2")
+  mimic_get_data_items(50821L, "d_labitems", data_env,
+    value_names = "pao2",
+    time_scale = time_scale,
+    step_size = step_size,
+    unit_handler = fix_case_allow_na,
+    expected_unit = "mm Hg",
+    agg_fun = min
+  )
 }
 
-mimic_sofa_fi <- function(lab_item = 50816L, chart_item = 223835L,
-                          unit_handler = fix_percent,
-                          agg_fun = max, ...) {
+mimic_fio2 <- function(add_chart_data = TRUE, time_scale = "hours",
+                       step_size = 1L, data_env = "mimic") {
 
   message("fetching fio2")
 
-  lab <- mimic_get_items(lab_item, item_table = "d_labitems",
-                         unit_handler = unit_handler, ...)
-  lab <- aggregate_vals(lab, agg_fun, by_cols = c("hadm_id", "rel_time"),
-                        new_col = "fi_lab")
-  chart <- mimic_get_items(chart_item, item_table = "d_items",
-                           unit_handler = unit_handler, ...)
-  chart <- aggregate_vals(chart, agg_fun,
-                          by_cols = c("hadm_id", "icustay_id", "rel_time"),
-                          new_col = "fi_chart")
-
-  assert_that(
-    has_unit(lab, "fi_lab", "%"),
-    has_unit(chart, "fi_chart", "%")
+  lab <- mimic_get_data_items(50816L, "d_labitems", data_env,
+    value_names = if (add_chart_data) "fi_lab" else "fio2",
+    time_scale = time_scale,
+    step_size = step_size,
+    unit_handler = fix_percent,
+    expected_unit = "%",
+    agg_fun = max
   )
 
-  res <- merge(lab, chart, by = c("hadm_id", "rel_time"), all = TRUE)
-  res <- res[, fio2 := ifelse(is.na(fi_lab), fi_chart, fi_lab)]
-  res <- res[, c("fi_lab", "icustay_id", "fi_chart") := NULL]
+  if (add_chart_data) {
+
+    chart <- mimic_get_data_items(c(3420L, 223835L), "d_items", data_env,
+      value_names = "fi_chart",
+      time_scale = time_scale,
+      step_size = step_size,
+      split_items = FALSE,
+      unit_handler = fix_percent,
+      expected_unit = "%",
+      agg_fun = max
+    )
+
+    res <- merge(lab, chart, by = c("hadm_id", "hadm_time"), all = TRUE)
+    res <- res[, fio2 := ifelse(is.na(fi_lab), fi_chart, fi_lab)]
+
+    res <- data.table::set(res, j = c("fi_lab", "fi_chart"), value = NULL)
+
+  } else {
+    res <- lab
+  }
+
+  res <- res[fio2 <= 1, fio2 := fio2 * 100]
+  res <- res[fio2 > 0, ]
 
   res
-
 }
 
-mimic_sofa_pafi <- function(...,
-                            pa = mimic_sofa_pa(...), fi = mimic_sofa_fi(...),
-                            win_length = as.difftime(2L, units = "hours"),
-                            mode = c("match_vals", "extreme_vals")) {
+mimic_pafi <- function(pao2 = NULL, fio2 = NULL,
+                       win_length = as.difftime(2L, units = "hours"),
+                       mode = c("match_vals", "extreme_vals"),
+                       ...) {
 
-  assert_that(is_dt(pa), is_dt(fi),
-              has_cols(pa, c("hadm_id", "rel_time", "pao2")),
-              has_cols(fi, c("hadm_id", "rel_time", "fio2")),
+  if (is.null(pao2)) pao2 <- mimic_pao2(...)
+  if (is.null(fio2)) fio2 <- mimic_fio2(...)
+
+  assert_that(is_dt(pao2), is_dt(fio2),
+              has_cols(pao2, c("hadm_id", "hadm_time", "pao2")),
+              has_cols(fio2, c("hadm_id", "hadm_time", "fio2")),
+              same_time_spec(pao2, fio2),
               is_difftime(win_length, allow_neg = FALSE))
 
-  mode <- match.arg(mode)
-
-  fi <- fi[fio2 <= 1, fio2 := fio2 * 100]
-  fi <- fi[fio2 > 0, ]
-
-  if (mode == "match_vals") {
+  if (match.arg(mode) == "match_vals") {
 
     res <- rbind(
-      fi[pa, on = c("hadm_id", "rel_time"), roll = win_length],
-      pa[fi, on = c("hadm_id", "rel_time"), roll = win_length]
+      fio2[pao2, on = c("hadm_id", "hadm_time"), roll = win_length],
+      pao2[fio2, on = c("hadm_id", "hadm_time"), roll = win_length]
     )
     res <- unique(res)
 
   } else {
 
-    res <- merge(pa, fi, all = TRUE, by = c("hadm_id", "rel_time"))
-    res <- make_regular(res, time_col = "rel_time", id_cols = "hadm_id")
+    res <- merge(pao2, fio2, all = TRUE, by = c("hadm_id", "hadm_time"))
+    res <- make_regular(res, time_col = "hadm_time", id_cols = "hadm_id")
+
     res <- window_quo(res,
       substitute(list(min_pa = min_fun(pao2), max_fi = max_fun(fio2)),
                  list(min_fun = min_or_na, max_fun = max_or_na)),
-      full_window = FALSE, window_length = win_length
+      id_cols = "hadm_id", full_window = FALSE, window_length = win_length
     )
+
     res <- res[, c("pao2", "fio2") := NULL]
     res <- data.table::setnames(res, c("min_pa", "max_fi"), c("pao2", "fio2"))
   }
@@ -83,46 +98,96 @@ mimic_sofa_pafi <- function(...,
   res
 }
 
-mimic_sofa_vent <- function(
-  start_items = c(223848L, 223849L, 220339L, 224419L, 224684L:224687L,
-                  224695L:224697L, 224700L:224707L, 224709L, 224738L,
-                  224746L, 224747L, 224750L, 226873L, 227187L),
-  stop_items = list(extub = c(227194L, 225468L, 225477L),
-                    o2_therapy = 226732L),
-  win_length = as.difftime(4L, units = "hours"),
-  min_length = as.difftime(10L, units = "mins"),
-  value_col = "value",
-  id_cols = "hadm_id",
-  na_rm = "hadm_id",
-  time_scale = "hours",
-  round_fun = round,
-  ...) {
+mimic_vent_start <- function(data_env = "mimic") {
 
-  combine_itms <- function(x, ...) {
-    res <- lapply(x, mimic_get_items, value_col = value_col, id_cols = id_cols,
-                  na_rm = na_rm, split_items = TRUE, time_scale = "mins", ...)
-    res <- lapply(do.call("c", res),
-                  function(y) y[, c("hadm_id", "rel_time"), with = FALSE])
-    res <- unique(data.table::rbindlist(res))
-    data.table::setkeyv(res, c("hadm_id", "rel_time"))
+  message("fetching mechanical ventilation start info")
+
+  cv_ids <- c(     1L,     60L,    218L,    221L,    223L,    436L,    437L,
+                 444L,    445L,    448L,    449L,    450L,    459L,    501L,
+                 502L,    503L,    505L,    506L,    535L,    543L,    639L,
+                 654L,    667L,    668L,    669L,    670L,    671L,    672L,
+                 681L,    682L,    683L,    684L,    686L,   1211L,   1340L,
+                1486L,   1600L,   1655L,   2000L,   3459L,   5865L,   5866L)
+  mv_ids <- c(220339L, 223848L, 223849L, 224419L, 224684L, 224685L, 224686L,
+              224687L, 224695L, 224696L, 224697L, 224700L, 224701L, 224702L,
+              224703L, 224704L, 224705L, 224706L, 224707L, 224709L, 224738L,
+              224746L, 224747L, 224750L, 226873L, 227187L)
+
+  res <- mimic_get_data_items(c(cv_ids, mv_ids), "d_items", data_env,
+    unit_cols = NULL,
+    value_names = "vent_start",
+    split_items = FALSE,
+    time_scale = "secs",
+    agg_fun = function(x) x[1L]
+  )
+
+  res <- data.table::set(res, j = "vent_start", value = NULL)
+
+  res
+}
+
+mimic_vent_stop <- function(data_env = "mimic") {
+
+  get_di <- function(x) {
+    mimic_get_data_items(x, "d_items", data_env,
+      unit_cols = NULL,
+      value_names = "vent_end",
+      split_items = FALSE,
+      time_scale = "secs",
+      agg_fun = function(x) x[1L]
+    )
   }
+
+  message("fetching mechanical ventilation stop info")
+
+  res <- rbind(get_di(c(227194L, 225468L, 225477L)),
+               get_di(c(467L, 469L, 226732L)))
+  res <- data.table::set(res, j = "vent_end", value = NULL)
+
+  unique(res)
+}
+
+mimic_vent <- function(vent_start = NULL, vent_stop = NULL,
+                       win_length = as.difftime(4L, units = "hours"),
+                       min_length = as.difftime(10L, units = "mins"),
+                       time_scale = "hours", step_size = 1L,
+                       data_env = "mimic") {
 
   final_units <- function(x) {
     units(x) <- time_scale
-    round_fun(x)
+    round_to(x, step_size)
   }
 
-  assert_that(!identical(time_scale, "secs"))
+  if (is.null(vent_start)) vent_start <- mimic_vent_start(data_env)
+  if (is.null(vent_stop)) vent_stop <- mimic_vent_stop(data_env)
 
-  message("fetching mechanical ventilation info")
+  assert_that(is_dt(vent_start), is_dt(vent_stop),
+              has_cols(vent_start, c("hadm_id", "hadm_time")),
+              has_cols(vent_stop, c("hadm_id", "hadm_time")),
+              same_time_spec(vent_start, vent_stop),
+              is_difftime(win_length, allow_neg = FALSE),
+              is_difftime(min_length, allow_neg = FALSE))
 
-  units(win_length) <- "mins"
-  units(min_length) <- "mins"
+  data_time_scale <- units(vent_start[["hadm_time"]])
+  data_step_size <- attr(vent_start[["hadm_time"]], "step_size")
 
-  start <- combine_itms(list(start_items), ...)[, start_time := rel_time]
-  stop <- combine_itms(stop_items, ...)[, stop_time := rel_time]
+  assert_that(
+    min_length < win_length,
+    as.difftime(data_step_size, units = data_time_scale) < min_length
+  )
 
-  merged <- stop[start, roll = -win_length]
+  if (time_unit_as_int(data_time_scale) >=
+      time_unit_as_int(units(min_length))) {
+    warning("Consider moving to higher time resolution for ventilation data.")
+  }
+
+  units(win_length) <- data_time_scale
+  units(min_length) <- data_time_scale
+
+  start <- data.table::copy(vent_start)[, start_time := hadm_time]
+  stop <- data.table::copy(vent_stop)[, stop_time := hadm_time]
+
+  merged <- stop[start, roll = -win_length, on = c("hadm_id", "hadm_time")]
   merged <- merged[is.na(stop_time), stop_time := start_time + win_length]
   merged <- merged[stop_time - start_time >= min_length, ]
   merged <- merged[, c("start_time", "stop_time") := list(
@@ -131,114 +196,163 @@ mimic_sofa_vent <- function(
 
   res <- unique(
     expand_limits(merged, min_col = "start_time", max_col = "stop_time",
-                  id_cols = "hadm_id")
+                  step_size = step_size, id_cols = "hadm_id")
   )
   res <- res[, vent := TRUE]
 
   res
 }
 
-mimic_sofa_coag <- function(platelets = 51265L, unit_handler = allow_na,
-                            agg_fun = min, ...) {
+mimic_coag <- function(time_scale = "hours", step_size = 1L,
+                       data_env = "mimic") {
 
   message("fetching platelet counts")
 
-  res <- mimic_get_items(items = c(coag = platelets),
-                         item_table = "d_labitems",
-                         unit_handler = unit_handler, ...)
-
-  assert_that(has_unit(res, "coag", "K/uL"))
-
-  aggregate_vals(res, agg_fun, by_cols = c("hadm_id", "rel_time"),
-                 val_col = "coag")
+  mimic_get_data_items(51265L, "d_labitems", data_env,
+    value_names = "coag",
+    time_scale = time_scale,
+    step_size = step_size,
+    unit_handler = allow_na,
+    expected_unit = "K/uL",
+    agg_fun = min
+  )
 }
 
-mimic_sofa_bili <- function(bilirubin = 50885L, unit_handler = allow_na,
-                            agg_fun = max, ...) {
+mimic_bili <- function(time_scale = "hours", step_size = 1L,
+                       data_env = "mimic") {
 
   message("fetching bilirubin measurements")
 
-  res <- mimic_get_items(items = c(bili = bilirubin),
-                         item_table = "d_labitems",
-                         unit_handler = unit_handler, ...)
-
-  assert_that(has_unit(res, "bili", "mg/dL"))
-
-  aggregate_vals(res, agg_fun, by_cols = c("hadm_id", "rel_time"),
-                 val_col = "bili",)
+  mimic_get_data_items(50885L, "d_labitems", data_env,
+    value_names = "bili",
+    time_scale = time_scale,
+    step_size = step_size,
+    unit_handler = allow_na,
+    expected_unit = "mg/dL",
+    agg_fun = max
+  )
 }
 
-mimic_sofa_map <- function(items = c(220052L, 220181L), agg_fun = min, ...) {
+mimic_map <- function(time_scale = "hours", step_size = 1L,
+                      data_env = "mimic") {
 
   message("fetching map measurements")
 
-  res <- mimic_get_items(items = items, split_items = FALSE, ...)
-  res <- aggregate_vals(res, agg_fun, new_col = "map")
+  items <- c(52L, 443L, 456L, 6702L, 220052L, 220181L, 225312L)
 
-  assert_that(has_unit(res, "map", "mmHg"))
-
-  res[, icustay_id := NULL]
-  res
+  mimic_get_data_items(items, "d_items", data_env,
+    value_names = "map",
+    time_scale = time_scale,
+    step_size = step_size,
+    split_items = FALSE,
+    expected_unit = "mmHg",
+    agg_fun = min
+  )
 }
 
-mimic_sofa_vaso <- function(norepi = 221906L, epi = 221289L, dopa = 221662L,
-                            dobu = 221653L, agg_fun = max,
-                            unit_col = "rateuom", value_col = "rate", ...) {
+mimic_vaso <- function(time_scale = "hours", step_size = 1L,
+                       data_env = "mimic") {
+
+  fix_rate <- function(x, unit_col, val_col) {
+
+    drop <- x[[unit_col]] %in% "mcgmin"
+
+    if (any(drop)) {
+      message("Removing ", sum(drop), " absolute (w.r.t. body weight) rates.")
+      x <- x[!drop, ]
+    }
+
+    x[[unit_col]][x[[unit_col]] %in% "mcgkgmin"] <- "mcg/kg/min"
+
+    x
+  }
+
+  get_di <- function(itms, name, split = FALSE) {
+    mimic_get_data_items(itms, "d_items", data_env,
+      value_cols = "rate",
+      unit_cols = "rateuom",
+      value_names = name,
+      time_scale = time_scale,
+      step_size = step_size,
+      split_items = split,
+      unit_handler = fix_rate,
+      expected_unit = "mcg/kg/min",
+      agg_fun = max
+    )
+  }
+
+  combine <- function(x) {
+    res <- reduce(merge, x, by = c("hadm_id", "hadm_time"), all = TRUE)
+    data.table::setcolorder(res, c("hadm_id", "hadm_time", names(cv_ids)))
+    res
+  }
 
   message("fetching vasopressor dosages")
 
-  vaso <- mimic_get_items(
-    items = c(norepi = norepi, epi = epi, dopa = dopa, dobu = dobu),
-    unit_col = unit_col, value_col = value_col, ...
-  )
+  cv_ids <- list(norepi = c(30047L, 30120L),
+                 epi    = c(30044L, 30119L, 30309L),
+                 dopa   = c(30043L, 30125L, 30307L),
+                 dobu   = c(30042L, 30306L))
 
-  vaso <- lapply(vaso, aggregate_vals, fun = agg_fun)
+  mv_ids <- list(norepi = 221906L,
+                 epi    = 221289L,
+                 dopa   = 221662L,
+                 dobu   = 221653L)
 
-  res <- reduce(merge, vaso, by = c("hadm_id", "icustay_id", "rel_time"),
-                all = TRUE)
 
-  assert_that(
-    has_unit(res, "dopa", "mcg/kg/min"),
-    has_unit(res, "norepi", "mcg/kg/min"),
-    has_unit(res, "dobu", "mcg/kg/min"),
-    has_unit(res, "epi", "mcg/kg/min")
-  )
+  cv_dat <- combine(Map(get_di, cv_ids, names(cv_ids)))
+  mv_dat <- combine(get_di(unlist(mv_ids), names(mv_ids), split = TRUE))
 
-  res[, icustay_id := NULL]
+  res <- rbind(cv_dat, mv_dat)
+  data.table::setkeyv(res, c("hadm_id", "hadm_time"))
+
   res
 }
 
-gcs_callback <- function(x, sed_id = 223900L, sed_val = "No Response-ETT") {
+mimic_gcs <- function(win_length = as.difftime(6L, units = "hours"),
+                      set_na_max = TRUE, time_scale = "hours", step_size = 1L,
+                      data_env = "mimic") {
 
-  err <- x[["error"]] == 1L
-  if (any(err)) {
-    message("removing ", sum(err), " rows due to error == 1L")
-    x <- x[!err, ]
+  fix_gcs <- function(x, ...) {
+
+    err <- is_val(x[["error"]], 1L)
+    if (any(err)) {
+      message("Removing ", sum(err), " rows due to error == 1L")
+      x <- x[!err, ]
+    }
+
+    assert_that(!any(x[["valuenum"]] == 0))
+
+    sed <- (x[["itemid"]] ==    723L & x[["value"]] == "1.0 ET/Trach") |
+           (x[["itemid"]] == 223900L & x[["value"]] == "No Response-ETT")
+
+    if (any(sed)) {
+      x <- x[sed, valuenum := 0]
+    }
+
+    assert_that(!any(is.na(x[["valuenum"]])))
+
+    x
   }
 
-  assert_that(!any(x[["valuenum"]] == 0))
-
-  sed <- x[["itemid"]] == sed_id & x[["value"]] == sed_val
-  if (any(sed)) {
-    message("setting ", sum(sed), " sedation instances to zero")
-    x <- x[sed, valuenum := 0]
+  get_di <- function(itms, name) {
+    mimic_get_data_items(itms, "d_items", data_env,
+      extra_cols = c("error", "value"),
+      value_names = name,
+      time_scale = time_scale,
+      step_size = step_size,
+      split_items = FALSE,
+      unit_handler = fix_gcs,
+      expected_unit = NA_character_,
+      agg_fun = min
+    )
   }
-
-  assert_that(!any(is.na(x[["valuenum"]])))
-
-  x
-}
-
-mimic_sofa_gcs <- function(verbal = 223900L, motor = 223901L, eye = 220739L,
-                           callback = gcs_callback, agg_fun = min,
-                           win_length = as.difftime(6L, units = "hours"),
-                           set_na_max = TRUE, ...) {
 
   repl_na <- function(x, val) {
 
     repl <- is.na(x)
     if (any(repl)) {
-      message("replacing ", sum(repl), " values with ", val)
+      message("Replacing ", sum(repl), " values with ", val, ".")
       x[repl] <- val
     }
 
@@ -257,43 +371,31 @@ mimic_sofa_gcs <- function(verbal = 223900L, motor = 223901L, eye = 220739L,
     res
   }
 
-  is_zero <- function(x) !is.na(x) & x == 0
-
   message("fetching gcs scores")
 
-  gcs_cols <- c("eye", "verbal", "motor")
+  itms <- list(eye    = c(184L, 220739L),
+               verbal = c(723L, 223900L),
+               motor  = c(454L, 223901L))
 
-  res <- mimic_get_items(
-    items = c(verbal = verbal, motor = motor, eye = eye),
-    callback = callback, ...
-  )
+  res <- Map(get_di, itms, names(itms))
+  res <- reduce(merge, res, by = c("hadm_id", "hadm_time"), all = TRUE)
 
-  res <- lapply(res, aggregate_vals, fun = agg_fun)
-  res <- reduce(merge, res, by = c("hadm_id", "icustay_id", "rel_time"),
-                all = TRUE)
-
-  assert_that(
-    has_unit(res, "eye", NA_character_),
-    has_unit(res, "verbal", NA_character_),
-    has_unit(res, "motor", NA_character_)
-  )
-
-  zeros <- reduce(`|`, res[, lapply(.SD, is_zero), .SDcols = gcs_cols])
+  zeros <- reduce(`|`, res[, lapply(.SD, is_val, 0), .SDcols = names(itms)])
 
   if (any(zeros)) {
-    message("Setting ", sum(zeros), " rows to max gcs values due to a zero.")
-    res <- res[zeros, (gcs_cols) := list(4, 5, 6)]
+    message("Setting ", sum(zeros), " rows to max gcs values due to sedation.")
+    res <- res[zeros, names(itms) := list(4, 5, 6)]
   }
 
   res <- window_quo(res,
     substitute(list(eye_imp = fun(eye), verb_imp = fun(verbal),
                     mot_imp = fun(motor)),
                list(fun = impute_na_prev)),
-    id_cols = c("hadm_id", "icustay_id"), window_length = win_length
+    id_cols = "hadm_id", window_length = win_length
   )
 
   if (set_na_max) {
-    res <- res[, (gcs_cols) := list(
+    res <- res[, names(itms) := list(
       repl_na(eye_imp, 4), repl_na(verb_imp, 5), repl_na(mot_imp, 6)
     )]
   }
@@ -301,90 +403,131 @@ mimic_sofa_gcs <- function(verbal = 223900L, motor = 223901L, eye = 220739L,
   res <- res[, gcs := eye_imp + verb_imp + mot_imp]
 
   res <- data.table::set(res,
-    j = c(gcs_cols, "eye_imp", "verb_imp", "mot_imp", "icustay_id"),
+    j = c(names(itms), "eye_imp", "verb_imp", "mot_imp"),
     value = NULL
   )
 
   res
 }
 
-mimic_sofa_crea <- function(items = 50912L, unit_handler = allow_na,
-                            agg_fun = max, ...) {
+mimic_crea <- function(time_scale = "hours", step_size = 1L,
+                       data_env = "mimic") {
 
   message("fetching creatinine measurements")
 
-  res <- mimic_get_items(items = c(crea = items), item_table = "d_labitems",
-                         unit_handler = unit_handler, ...)
-
-  assert_that(has_unit(res, "crea", "mg/dL"))
-
-  aggregate_vals(res, agg_fun, by_cols = c("hadm_id", "rel_time"),
-                 new_col = "crea")
+  mimic_get_data_items(50912L, "d_labitems", data_env,
+    value_names = "crea",
+    time_scale = time_scale,
+    step_size = step_size,
+    unit_handler = allow_na,
+    expected_unit = "mg/dL",
+    agg_fun = max
+  )
 }
 
-mimic_sofa_urine <- function(
-  items = c(226557L:226561L, 226563L:226567L, 227510L, 226584L),
-  agg_fun = sum,
-  icu_limits = mimic_get_icu_stays("min", "max", NULL, data_env = data_env),
-  win_fun = sum_or_na,
-  full_win = TRUE,
-  data_env = "mimic",
-  ...) {
+mimic_urine24 <- function(min_win = as.difftime(12L, units = "hours"),
+                          time_scale = "hours", step_size = 1L,
+                          data_env = "mimic") {
+
+  handle_ml <- function(x, unit_col, val_col) {
+    x <- x[x[[val_col]] > 0, ]
+    x[[unit_col]][is_val(x[[unit_col]], "ml")] <- "mL"
+    x
+  }
+
+  convert_dt <- function(x) as.numeric(x, time_scale)
+
+  urine_sum <- local({
+
+    min_steps <- ceiling(convert_dt(min_win) / step_size)
+    step_factor <- convert_dt(as.difftime(24L, units = "hours")) / step_size
+
+    function(x) {
+      if (length(x) <= min_steps) return(NA_real_)
+      else sum(x, na.rm = TRUE) * step_factor / length(x)
+    }
+  })
 
   message("fetching urine measurements")
 
-  res <- mimic_get_items(items = items, split_items = FALSE,
-                         data_env = data_env, ...)
-  res <- aggregate_vals(res, agg_fun, new_col = "urine")
+  assert_that(is_difftime(min_win, allow_neg = FALSE),
+              min_win <= as.difftime(24L, units = "hours"))
 
-  assert_that(has_unit(res, "urine", "mL"))
+  itms <- c( 40055L,  40056L,  40057L,  40065L,  40069L,  40085L,  40086L,
+             40094L,  40096L,  40405L,  40428L,  40473L,  40715L,  43175L,
+            226557L, 226558L, 226559L, 226560L, 226561L, 226563L, 226564L,
+            226565L, 226566L, 226567L, 226584L, 227510L)
 
-  res <- make_regular(res, time_col = "rel_time",
+  res <- mimic_get_data_items(itms, "d_items", data_env,
+    id_cols = c("hadm_id", "icustay_id"),
+    value_names = "urine",
+    time_scale = time_scale,
+    step_size = step_size,
+    split_items = FALSE,
+    unit_handler = handle_ml,
+    expected_unit = "mL",
+    agg_fun = sum,
+    id_names = c("hadm_id", "icustay_id")
+  )
+
+  icu_limits <- mimic_get_icu_stays("min", "max", NULL, time_scale, step_size,
+                                    data_env)
+
+  res <- make_regular(res, time_col = "hadm_time",
                       id_cols = c("hadm_id", "icustay_id"),
                       limits = icu_limits)
 
   res <- window_quo(res,
     substitute(list(urine_24 = win_agg_fun(urine)),
-               list(win_agg_fun = win_fun)),
-    id_cols = c("hadm_id", "icustay_id"), full_window = full_win
+               list(win_agg_fun = urine_sum)),
+    id_cols = c("hadm_id", "icustay_id"), full_window = FALSE
   )
 
   data.table::setattr(res[["urine_24"]], "units",
                       attr(res[["urine"]], "units"))
-  res <- res[, c("icustay_id", "urine") := NULL]
+  data.table::set(res, j = c("icustay_id", "urine"), value = NULL)
+  data.table::setkeyv(res, c("hadm_id", "hadm_time"))
 
   res
 }
 
-mimic_sofa_vars <- function(data_env = "mimic", ...,
-  pafi = mimic_sofa_pafi(data_env = data_env, ...),
-  vent = mimic_sofa_vent(data_env = data_env, ...),
-  coag = mimic_sofa_coag(data_env = data_env, ...),
-  bili = mimic_sofa_bili(data_env = data_env, ...),
-  map  = mimic_sofa_map(data_env = data_env, ...),
-  vaso = mimic_sofa_vaso(data_env = data_env, ...),
-  gcs  = mimic_sofa_gcs(data_env = data_env, ...),
-  crea = mimic_sofa_crea(data_env = data_env, ...),
-  urine = mimic_sofa_urine(data_env = data_env, ...)) {
+mimic_sofa <- function(pafi  = NULL, vent = NULL, coag = NULL, bili = NULL,
+                       map   = NULL, vaso  = NULL, gcs = NULL, crea = NULL,
+                       urine = NULL, ..., data_env = "mimic") {
+
+  if (is.null(pafi))  pafi  <- mimic_pafi(..., data_env = data_env)
+  if (is.null(vent))  vent  <- mimic_vent(..., data_env = data_env)
+  if (is.null(coag))  coag  <- mimic_coag(..., data_env = data_env)
+  if (is.null(bili))  bili  <- mimic_bili(..., data_env = data_env)
+  if (is.null(map))   map   <- mimic_map(..., data_env = data_env)
+  if (is.null(vaso))  vaso  <- mimic_vaso(..., data_env = data_env)
+  if (is.null(gcs))   gcs   <- mimic_gcs(..., data_env = data_env)
+  if (is.null(crea))  crea  <- mimic_crea(..., data_env = data_env)
+  if (is.null(urine)) urine <- mimic_urine24(..., data_env = data_env)
 
   tables <- list(pafi, vent, coag, bili, map, vaso, gcs, crea, urine)
 
   assert_that(
-    all(vapply(tables, is_dt, logical(1L)))
+    all(vapply(tables, is_dt, logical(1L))),
+    all(vapply(tables, has_cols, logical(1L), c("hadm_id", "hadm_time"))),
+    all(vapply(tables, same_time_spec, logical(1L), tables[[1L]]))
   )
 
-  dat <- reduce(merge, tables, by = c("hadm_id", "rel_time"), all = TRUE)
+  dat <- reduce(merge, tables, by = c("hadm_id", "hadm_time"), all = TRUE)
 
-  limits <- dat[, list(min = min(rel_time), max = max(rel_time)),
-                by = "hadm_id"]
+  time_scale <- units(dat[["hadm_time"]])
+  step_size <- attr(dat[["hadm_time"]], "step_size")
 
-  hadm <- mimic_get_icu_stays(NULL, NULL, data_env = data_env)
+  hadm <- mimic_get_icu_stays(NULL, NULL, "disch", time_scale, step_size,
+                              data_env)
   hadm <- hadm[, list(disch = max(disch)), by = "hadm_id"]
 
+  limits <- dat[, list(min = min(hadm_time), max = max(hadm_time)),
+                by = "hadm_id"]
   limits <- merge(limits, hadm, by = "hadm_id", all.x = TRUE)
-  limits <- limits[, list(min = min(as.difftime(0, units = "hours"), min),
+  limits <- limits[, list(min = min(as.difftime(0, units = time_scale), min),
                           max = max(max, disch, na.rm = TRUE)), by = "hadm_id"]
 
-  make_regular(dat, time_col = "rel_time", id_cols = "hadm_id",
-               limits = limits)
+  make_regular(dat, time_col = "hadm_time", id_cols = "hadm_id",
+               limits = limits, step_size = step_size)
 }

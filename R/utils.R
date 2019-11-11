@@ -193,11 +193,12 @@ get_table <- function(table, envir) {
   res
 }
 
-expand_limits <- function(x, min_col = "min", max_col = "max", id_cols = NULL,
-                          new_col = "rel_time") {
+expand_limits <- function(x, min_col = "min", max_col = "max", step_size = 1L,
+                          id_cols = NULL, new_col = "hadm_time") {
 
-  make_seq <- function(lwr, upr, unit) {
-    list(as.difftime(unlist(Map(seq, lwr, upr)), units = unit))
+  make_seq <- function(lwr, upr, step, unit) {
+    seqs <- Map(seq, lwr, upr, MoreArgs = list(by = step))
+    list(as.difftime(unlist(seqs), units = unit))
   }
 
   assert_that(
@@ -208,32 +209,40 @@ expand_limits <- function(x, min_col = "min", max_col = "max", id_cols = NULL,
 
   unit <- units(x[[min_col]])
 
-  res <- x[, make_seq(get(min_col), get(max_col), unit), by = id_cols]
-  res <- data.table::setnames(res, c(id_cols, new_col))
+  res <- x[, make_seq(get(min_col), get(max_col), step_size, unit),
+           by = id_cols]
+  data.table::setnames(res, c(id_cols, new_col))
+  data.table::setattr(res[[new_col]], "step_size", step_size)
 
   res
 }
 
-make_regular <- function(x, time_col = "rel_time",
-                         id_cols = c("hadm_id", "icustay_id"),
-                         limits = x[, list(min = min(get(time_col)),
-                                           max = max(get(time_col))),
-                                      by = id_cols],
-                         ...) {
+make_regular <- function(x, time_col = "hadm_time", id_cols = "hadm_id",
+                         limits = NULL, step_size = NULL, ...) {
 
-  join <- expand_limits(limits, id_cols = id_cols, ...)
-  join <- data.table::setnames(join, c(id_cols, time_col))
+  if (is.null(step_size)) {
+    step_size <- attr(x[[time_col]], "step_size")
+  }
+
+  if (is.null(limits)) {
+    limits <- x[, list(min = min(get(time_col)), max = max(get(time_col))),
+                       by = id_cols]
+    join <- expand_limits(limits, "min", "max", step_size, id_cols, time_col)
+  } else {
+    join <- expand_limits(limits, ..., step_size = step_size,
+                          id_cols = id_cols, new_col = time_col)
+  }
 
   x[join, on = c(id_cols, time_col)]
 }
 
 window_fun <- function(tbl, expr, ...) window_quo(tbl, substitute(expr), ...)
 
-window_quo <- function(tbl, expr, id_cols = "hadm_id", time_col = "rel_time",
+window_quo <- function(tbl, expr, id_cols = "hadm_id", time_col = "hadm_time",
                        full_window = FALSE,
                        window_length = as.difftime(24L, units = "hours")) {
 
-  assert_that(window_length >= 0, inherits(window_length, "difftime"))
+  assert_that(is_difftime(window_length, allow_neg = FALSE))
 
   units(window_length) <- units(tbl[[time_col]])
 
@@ -255,7 +264,7 @@ window_quo <- function(tbl, expr, id_cols = "hadm_id", time_col = "rel_time",
   tmp <- tbl[join, eval(expr), on = on_clauses, by = .EACHI]
 
   tmp <- data.table::setnames(tmp, make.unique(colnames(tmp)))
-  tmp <- tmp[, rel_time.1 := NULL]
+  tmp <- tmp[, hadm_time.1 := NULL]
 
   merge(tbl, tmp, by = c(id_cols, time_col), all = TRUE)
 }
@@ -275,3 +284,11 @@ sum_or_na <- agg_or_na(sum)
 reduce <- function(f, x, ...) {
   Reduce(function(x, y) f(x, y, ...), x)
 }
+
+round_to <- function(x, to = 1) if (to == 1) round(x) else to * round(x / to)
+
+time_unit_as_int <- function(x) {
+  match(x, c("secs", "mins", "hours", "days", "weeks"))
+}
+
+is_val <- function(x, val) !is.na(x) & x == val

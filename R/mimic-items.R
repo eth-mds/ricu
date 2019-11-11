@@ -1,6 +1,6 @@
 
-mimic_get_items <- function(items,
-  item_table = "d_items", data_env = "mimic", ...) {
+mimic_get_data_items <- function(items, item_table = "d_items",
+  data_env = "mimic", item_col = "itemid", id_cols = "hadm_id", ...) {
 
   table <- determine_event_table(items, item_table, data_env)
 
@@ -14,121 +14,76 @@ mimic_get_items <- function(items,
     stop("No matching function for table `", table, "`.")
   )
 
-  fun(items, data_env, ...)
+  fun(items, data_env, mimic_admit_difftime, item_col, id_cols, ...)
 }
 
-mimic_get_lab_items <- function(items, data_env,
-  time_col = "charttime", unit_col = "valueuom", value_col = "valuenum",
-  id_cols = "hadm_id", ...) {
+mimic_get_lab_items <- function(items, data_env, difftime_fun, item_col,
+  id_cols, time_col = "charttime", value_cols = "valuenum",
+  unit_cols = "valueuom", ...) {
 
-  mimic_get_event_items(items, "labevents", time_col, unit_col, value_col,
-                        id_cols, data_env, ...)
+  get_data_items(items, "labevents", data_env, difftime_fun, item_col, id_cols,
+    time_col, value_cols, unit_cols, ...)
 }
 
-mimic_get_out_items <- function(items, data_env,
-  time_col = "charttime", unit_col = "valueuom", value_col = "value",
-  id_cols = c("hadm_id", "icustay_id"), ...) {
+mimic_get_out_items <- function(items, data_env, difftime_fun, item_col,
+  id_cols, time_col = "charttime", value_cols = "value",
+  unit_cols = "valueuom", ...) {
 
-  mimic_get_event_items(items, "outputevents", time_col, unit_col, value_col,
-                        id_cols, data_env, ...)
+  get_data_items(items, "outputevents", data_env, difftime_fun, item_col,
+    id_cols, time_col, value_cols, unit_cols, ...)
 }
 
-mimic_get_chart_items <- function(items, data_env,
-  time_col = "charttime", unit_col = "valueuom", value_col = "valuenum",
-  id_cols = c("hadm_id", "icustay_id"), ...) {
+mimic_get_chart_items <- function(items, data_env, difftime_fun, item_col,
+  id_cols, time_col = "charttime", value_cols = "valuenum",
+  unit_cols = "valueuom", ...) {
 
-  mimic_get_event_items(items, "chartevents", time_col, unit_col, value_col,
-                        id_cols, data_env, ...)
+  get_data_items(items, "chartevents", data_env, difftime_fun, item_col,
+    id_cols, time_col, value_cols, unit_cols, ...)
 }
 
-mimic_get_incv_items <- function(items, data_env,
-  time_col = "charttime", unit_col = "amountuom", value_col = "amount",
-  id_cols = c("hadm_id", "icustay_id"), ...) {
+mimic_get_incv_items <- function(items, data_env, difftime_fun, item_col,
+  id_cols, time_col = "charttime", value_cols = "amount",
+  unit_cols = "amountuom", ...) {
 
-  mimic_get_event_items(items, "inputevents_cv", time_col, unit_col, value_col,
-                        id_cols, data_env, ...)
+  get_data_items(items, "inputevents_cv", data_env, difftime_fun, item_col,
+    id_cols, time_col, value_cols, unit_cols, ...)
 }
 
-mimic_get_inmv_items <- function(items, data_env,
-  time_col = "starttime", unit_col = "amountuom", value_col = "amount",
-  id_cols = c("hadm_id", "icustay_id"), ...) {
+mimic_get_inmv_items <- function(items, data_env, difftime_fun, item_col,
+  id_cols, time_col = "starttime", value_cols = "amount",
+  unit_cols = "amountuom", ...) {
 
-  mimic_get_event_items(items, "inputevents_mv", time_col, unit_col, value_col,
-                        id_cols, data_env, ...)
+  get_data_items(items, "inputevents_mv", data_env, difftime_fun, item_col,
+    id_cols, time_col, value_cols, unit_cols, ...)
 }
 
-mimic_get_procmv_items <- function(items, data_env,
-  time_col = "starttime", unit_col = "valueuom", value_col = "value",
-  id_cols = c("hadm_id", "icustay_id"), ...) {
+mimic_get_procmv_items <- function(items, data_env, difftime_fun, item_col,
+  id_cols, time_col = "starttime", value_cols = "value",
+  unit_cols = "valueuom", ...) {
 
-  mimic_get_event_items(items, "procedureevents_mv", time_col, unit_col,
-                        value_col, id_cols, data_env, ...)
-}
-
-mimic_get_event_items <- function(items, table_name, time_col, unit_col,
-  value_col, id_cols, data_env, na_rm = c(id_cols, value_col),
-  item_col = "itemid", subset_expr = NULL, rel_time_col = "rel_time",
-  time_scale = "hours", round_fun = round, split_items = length(items) > 1L,
-  unit_handler = NULL, callback = NULL) {
-
-  proc_each <- function(x) {
-
-    if (nrow(x) > 0L) {
-
-      x <- handle_unit(x, value_col, unit_col, unit_handler)
-
-      if (!is.null(callback)) {
-        x <- callback(x)
-      }
-    }
-
-    x[, c(id_cols, rel_time_col, value_col), with = FALSE]
-  }
-
-  dat <- do_get_items(items, table_name, data_env, item_col, na_rm,
-                      subset_expr)
-  dat <- mimic_admit_difftime(dat, data_env, time_col, rel_time_col,
-                              time_scale, round_fun)
-
-  if (split_items && length(items) > 1L) {
-    dat <- dat[, c(item_col) := factor(get(item_col), levels = items)]
-    res <- split(dat, by = item_col)
-  } else {
-    res <- list(dat)
-  }
-
-  res <- lapply(res, proc_each)
-
-  if (!is.null(names(items)) && (length(items) == 1L || length(res) > 1L)) {
-
-    if (length(items) == 1L) {
-      new_names <- list(c(id_cols, rel_time_col, names(items)))
-    } else {
-      new_names <- names(items)[match(names(res), items)]
-      new_names <- lapply(new_names, function(x) c(id_cols, rel_time_col, x))
-    }
-
-    res <- Map(data.table::setnames, res, new_names)
-  }
-
-  if (split_items) {
-    res
-  } else {
-    res[[1L]]
-  }
+  get_data_items(items, "procedureevents_mv", data_env, difftime_fun, item_col,
+    id_cols, time_col, value_cols, unit_cols, ...)
 }
 
 mimic_admit_difftime <- function(dat, data_env = "mimic",
-  time_col = "charttime", rel_time_col = "rel_time", time_scale = "hours",
-  round_fun = round) {
+  time_col = "charttime", time_name = "hadm_time", time_scale = "hours",
+  step_size = 1L) {
 
   adm <- mimic_get_admissions(data_env = data_env)
 
+  nrow_before <- nrow(dat)
   dat <- merge(dat, adm, by = "hadm_id", all = FALSE)
+  nrow_rm <- nrow_before - nrow(dat)
 
-  dat <- dat[, c(rel_time_col) := round_fun(
-    difftime(eval(as.name(time_col)), admittime, units = time_scale)
+  if (nrow_rm > 0L) {
+    message("Lost ", nrow_rm, " rows determining `", time_name, "`.")
+  }
+
+  dat <- dat[, c(time_name) := round_to(
+    difftime(eval(as.name(time_col)), admittime, units = time_scale), step_size
   )]
+
+  data.table::setattr(dat[[time_name]], "step_size", step_size)
 
   dat
 }

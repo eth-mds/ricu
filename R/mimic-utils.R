@@ -8,7 +8,11 @@ mimic_get_admissions <- function(cols = c("hadm_id", "admittime"),
 
 mimic_get_icu_stays <- function(icu_in = "icu_in", icu_out = "icu_out",
                                 disch = "disch", time_scale = "hours",
-                                round_fun = round, data_env = "mimic") {
+                                step_size = 1L, data_env = "mimic") {
+
+  dt_fun <- function(x, y) {
+    list(round_to(difftime(x, y, units = time_scale), step_size))
+  }
 
   adm <- mimic_get_admissions(c("hadm_id", "admittime", "dischtime"), data_env)
   icu <- get_table("icustays", data_env)
@@ -23,12 +27,9 @@ mimic_get_icu_stays <- function(icu_in = "icu_in", icu_out = "icu_out",
   }
 
   dat <- dat[, c(icu_in, icu_out, disch) := c(
-    if (!is.null(icu_in))
-      list(round_fun(difftime(intime, admittime, units = time_scale))),
-    if (!is.null(icu_out))
-      list(round_fun(difftime(outtime, admittime, units = time_scale))),
-    if (!is.null(disch))
-      list(round_fun(difftime(dischtime, admittime, units = time_scale)))
+    if (!is.null(icu_in)) dt_fun(intime, admittime),
+    if (!is.null(icu_out)) dt_fun(outtime, admittime),
+    if (!is.null(disch)) dt_fun(dischtime, admittime)
   )]
 
   dat[, c("hadm_id", "icustay_id", icu_in, icu_out, disch), with = FALSE]

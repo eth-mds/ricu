@@ -1,5 +1,5 @@
 
-pa <- sepsr:::mimic_sofa_pa(data_env = "mimic_demo")
+pa <- mimic_sofa_pa(data_env = "mimic_demo")
 
 test_that("fetch sofa pa", {
   expect_is(pa, "data.table")
@@ -7,7 +7,7 @@ test_that("fetch sofa pa", {
   expect_identical(anyDuplicated(pa[, c("hadm_id", "rel_time")]), 0L)
 })
 
-fi <- sepsr:::mimic_sofa_fi(data_env = "mimic_demo")
+fi <- mimic_sofa_fi(data_env = "mimic_demo")
 
 test_that("fetch sofa fi", {
   expect_is(fi, "data.table")
@@ -15,7 +15,7 @@ test_that("fetch sofa fi", {
   expect_identical(anyDuplicated(fi[, c("hadm_id", "rel_time")]), 0L)
 })
 
-pafi <- sepsr:::mimic_sofa_pafi(pa, fi)
+pafi <- mimic_sofa_pafi(pa, fi)
 
 test_that("fetch sofa pafi", {
   expect_is(pafi, "data.table")
@@ -25,7 +25,7 @@ test_that("fetch sofa pafi", {
 
 test_that("fetch sofa vars", {
 
-  res <- sepsr:::mimic_sofa_vars(pafi = pafi, data_env = "mimic_demo")
+  res <- mimic_sofa_vars(pafi = pafi, data_env = "mimic_demo")
 
   expect_is(res, "data.table")
   expect_named(res, c("hadm_id", "rel_time", "pafi", "vent", "coag", "bili",
