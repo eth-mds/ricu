@@ -220,6 +220,8 @@ expand_limits <- function(x, min_col = "min", max_col = "max", step_size = 1L,
 make_regular <- function(x, time_col = "hadm_time", id_cols = "hadm_id",
                          limits = NULL, step_size = NULL, ...) {
 
+  assert_that(is_unique(x, c(id_cols, time_col)))
+
   if (is.null(step_size)) {
     step_size <- attr(x[[time_col]], "step_size")
   }
@@ -233,7 +235,24 @@ make_regular <- function(x, time_col = "hadm_time", id_cols = "hadm_id",
                           id_cols = id_cols, new_col = time_col)
   }
 
-  x[join, on = c(id_cols, time_col)]
+  assert_that(is_regular(join, id_cols, time_col))
+
+  tmp <- x[join, on = c(id_cols, time_col)]
+}
+
+is_regular <- function(x, id_cols = "hadm_id", time_col = "hadm_time") {
+
+  check_time_col <- function(time, step) {
+    tmp <- as.numeric(time)
+    identical(tmp, seq(min(tmp), max(tmp), by = step))
+  }
+
+  assert_that(is_dt(x), has_cols(x, c(id_cols, time_col)))
+
+  step <- attr(x[[time_col]], "step_size")
+  res <- x[, check_time_col(get(time_col), step), by = id_cols]
+
+  all(res[[setdiff(colnames(res), id_cols)]])
 }
 
 window_fun <- function(tbl, expr, ...) window_quo(tbl, substitute(expr), ...)
@@ -263,7 +282,7 @@ window_quo <- function(tbl, expr, id_cols = "hadm_id", time_col = "hadm_time",
 
   tmp <- tbl[join, eval(expr), on = on_clauses, by = .EACHI]
 
-  tmp <- data.table::setnames(tmp, make.unique(colnames(tmp)))
+  tmp <- data.table::setnames(tmp, make.unique)
   tmp <- tmp[, hadm_time.1 := NULL]
 
   merge(tbl, tmp, by = c(id_cols, time_col), all = TRUE)
@@ -292,3 +311,11 @@ time_unit_as_int <- function(x) {
 }
 
 is_val <- function(x, val) !is.na(x) & x == val
+is_true <- function(x) !is.na(x) & x
+
+last_elem <- function(x) x[length(x)]
+first_elem <- function(x) x[1L]
+
+is_unique <- function(x, cols = seq_along(x)) {
+  identical(anyDuplicated(x, by = cols), 0L)
+}

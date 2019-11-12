@@ -55,7 +55,7 @@ get_data_items <- function(items, table_name, data_env, difftime_fun,
              MoreArgs = list(id_cols, id_names, time_name))
 
   if (!is.null(agg_fun)) {
-    dat <- lapply(dat, aggregate_data_items, c(id_names, time_name), agg_fun)
+    dat <- lapply(dat, aggregate_data_items, agg_fun, c(id_names, time_name))
   }
 
   dat <- lapply(dat, data.table::setkeyv, c(id_names, time_name))
@@ -173,29 +173,27 @@ rename_data_items <- function(dat, val_name, id_cols, id_names, time_name) {
   dat
 }
 
-aggregate_data_items <- function(tbl, by_cols, fun = mean,
-                                 val_col = setdiff(colnames(tbl), by_cols),
-                                 new_col = val_col, ...) {
-
-  if (is.null(val_col)) val_col <- setdiff(colnames(tbl), by_cols)
-  if (is.null(by_cols)) by_cols <- setdiff(colnames(tbl), val_col)
+aggregate_data_items <- function(tbl, fun = mean,
+                                 by_cols = c("hadm_id", "hadm_time"),
+                                 val_cols = setdiff(colnames(tbl), by_cols),
+                                 new_cols = val_cols, ...) {
 
   assert_that(
-    data.table::is.data.table(tbl), is.function(fun), is.string(val_col),
+    is_dt(tbl), is.function(fun),
+    is.character(val_cols), length(val_cols) > 0L,
     is.character(by_cols), length(by_cols) > 0L,
-    all(c(val_col, by_cols) %in% colnames(tbl))
+    all(c(val_cols, by_cols) %in% colnames(tbl))
   )
 
   if (nrow(tbl) == 0) return(tbl)
 
-  units <- attr(tbl[[val_col]], "units")
+  units <- lapply(val_cols, function(col) attr(tbl[[col]], "units"))
 
-  tbl <- tbl[, setNames(lapply(.SD, fun, ...), new_col), .SDcols = val_col,
-             by = by_cols]
+  tbl <- tbl[, lapply(.SD, fun, ...), .SDcols = val_cols, by = by_cols]
+  tbl <- data.table::setnames(tbl, c(by_cols, new_cols))
 
-  if (!is.null(units)) {
-    data.table::setattr(tbl[[new_col]], "units", units)
-  }
+  Map(function(col, unit) data.table::setattr(tbl[[col]], "units", unit),
+      new_cols, units)
 
   tbl
 }

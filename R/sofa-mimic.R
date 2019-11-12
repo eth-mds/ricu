@@ -118,7 +118,7 @@ mimic_vent_start <- function(data_env = "mimic") {
     value_names = "vent_start",
     split_items = FALSE,
     time_scale = "secs",
-    agg_fun = function(x) x[1L]
+    agg_fun = first_elem
   )
 
   res <- data.table::set(res, j = "vent_start", value = NULL)
@@ -134,7 +134,7 @@ mimic_vent_stop <- function(data_env = "mimic") {
       value_names = "vent_end",
       split_items = FALSE,
       time_scale = "secs",
-      agg_fun = function(x) x[1L]
+      agg_fun = first_elem
     )
   }
 
@@ -148,7 +148,7 @@ mimic_vent_stop <- function(data_env = "mimic") {
 }
 
 mimic_vent <- function(vent_start = NULL, vent_stop = NULL,
-                       win_length = as.difftime(4L, units = "hours"),
+                       win_length = as.difftime(6L, units = "hours"),
                        min_length = as.difftime(10L, units = "mins"),
                        time_scale = "hours", step_size = 1L,
                        data_env = "mimic") {
@@ -282,8 +282,8 @@ mimic_vaso <- function(time_scale = "hours", step_size = 1L,
   }
 
   combine <- function(x) {
-    res <- reduce(merge, x, by = c("hadm_id", "hadm_time"), all = TRUE)
-    data.table::setcolorder(res, c("hadm_id", "hadm_time", names(cv_ids)))
+    res <- reduce(merge, x, by = by_cols, all = TRUE)
+    data.table::setcolorder(res, c(by_cols, names(cv_ids)))
     res
   }
 
@@ -299,12 +299,14 @@ mimic_vaso <- function(time_scale = "hours", step_size = 1L,
                  dopa   = 221662L,
                  dobu   = 221653L)
 
+  by_cols <- c("hadm_id", "hadm_time")
 
   cv_dat <- combine(Map(get_di, cv_ids, names(cv_ids)))
   mv_dat <- combine(get_di(unlist(mv_ids), names(mv_ids), split = TRUE))
 
-  res <- rbind(cv_dat, mv_dat)
-  data.table::setkeyv(res, c("hadm_id", "hadm_time"))
+  res <- aggregate_data_items(rbind(cv_dat, mv_dat), fun = max,
+                              by_cols = by_cols, val_cols = names(cv_ids))
+  data.table::setkeyv(res, by_cols)
 
   res
 }
@@ -491,9 +493,10 @@ mimic_urine24 <- function(min_win = as.difftime(12L, units = "hours"),
   res
 }
 
-mimic_sofa <- function(pafi  = NULL, vent = NULL, coag = NULL, bili = NULL,
-                       map   = NULL, vaso  = NULL, gcs = NULL, crea = NULL,
-                       urine = NULL, ..., data_env = "mimic") {
+mimic_sofa_vars <- function(pafi = NULL, vent = NULL, coag  = NULL,
+                            bili = NULL, map  = NULL, vaso  = NULL,
+                            gcs  = NULL, crea = NULL, urine = NULL,
+                            ..., data_env = "mimic") {
 
   if (is.null(pafi))  pafi  <- mimic_pafi(..., data_env = data_env)
   if (is.null(vent))  vent  <- mimic_vent(..., data_env = data_env)
@@ -530,4 +533,15 @@ mimic_sofa <- function(pafi  = NULL, vent = NULL, coag = NULL, bili = NULL,
 
   make_regular(dat, time_col = "hadm_time", id_cols = "hadm_id",
                limits = limits, step_size = step_size)
+}
+
+mimic_sofa <- function(time_scale = "hours", step_size = 1L,
+                       data_env = "mimic") {
+
+  tbl <- mimic_sofa_vars(time_scale = time_scale, step_size = step_size,
+                         data_env = data_env)
+  tbl <- sofa_window(tbl)
+  tbl <- sofa_compute(tbl)
+
+  tbl
 }
