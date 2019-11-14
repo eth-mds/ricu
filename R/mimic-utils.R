@@ -1,4 +1,27 @@
 
+mimic_admit_difftime <- function(dat, data_env = "mimic",
+  time_col = "charttime", time_name = "hadm_time", time_scale = "hours",
+  step_size = 1L) {
+
+  adm <- mimic_get_admissions(data_env = data_env)
+
+  nrow_before <- nrow(dat)
+  dat <- merge(dat, adm, by = "hadm_id", all = FALSE)
+  nrow_rm <- nrow_before - nrow(dat)
+
+  if (nrow_rm > 0L) {
+    message("Lost ", nrow_rm, " rows determining `", time_name, "`.")
+  }
+
+  dat <- dat[, c(time_name) := round_to(
+    difftime(eval(as.name(time_col)), admittime, units = time_scale), step_size
+  )]
+
+  data.table::setattr(dat[[time_name]], "step_size", step_size)
+
+  dat
+}
+
 mimic_get_admissions <- function(cols = c("hadm_id", "admittime"),
                                  data_env = "mimic") {
 
