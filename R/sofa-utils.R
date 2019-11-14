@@ -1,11 +1,11 @@
 
-sofa_window <- function(tbl = mimic_sofa_vars(),   pafi_win_fun   = min_or_na,
-                        vent_win_fun  = last_elem, coag_win_fun   = min_or_na,
-                        bili_win_fun  = max_or_na, map_win_fun    = min_or_na,
-                        dopa_win_fun  = max_or_na, norepi_win_fun = max_or_na,
-                        dobu_win_fun  = max_or_na, epi_win_fun    = max_or_na,
-                        gcs_win_fun   = min_or_na, crea_win_fun   = max_or_na,
-                        urine_win_fun = min_or_na,
+sofa_window <- function(tbl,
+                        pafi_win_fun   = min_or_na, vent_win_fun  = last_elem,
+                        coag_win_fun   = min_or_na, bili_win_fun  = max_or_na,
+                        map_win_fun    = min_or_na, dopa_win_fun  = max_or_na,
+                        norepi_win_fun = max_or_na, dobu_win_fun  = max_or_na,
+                        epi_win_fun    = max_or_na, gcs_win_fun   = min_or_na,
+                        crea_win_fun   = max_or_na, urine_win_fun = min_or_na,
                         win_length = as.difftime(24L, units = "hours")) {
 
   need_cols <- c("pafi", "vent", "coag", "bili", "map", "dopa", "norepi",
@@ -78,7 +78,7 @@ sofa_compute <- function(tbl, na_val = 0L, na_val_resp = na_val,
       sofa_resp(pafi, vent, na_val_resp), sofa_coag(coag, na_val_coag),
       sofa_liver(bili, na_val_liver),
       sofa_cardio(map, dopa, norepi, dobu, epi, na_val_cardio),
-      sofa_cns(gcs, na_val_cns), sofa_renal(crea, urine, na_val_renal)
+      sofa_cns(gcs, na_val_cns), sofa_renal(crea, urine_24, na_val_renal)
     )
   ]
 

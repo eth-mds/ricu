@@ -55,13 +55,10 @@ mimic_fio2 <- function(add_chart_data = TRUE, time_scale = "hours",
   res
 }
 
-mimic_pafi <- function(pao2 = NULL, fio2 = NULL,
+mimic_pafi <- function(pao2 = mimic_pao2(...), fio2 = mimic_fio2(...),
                        win_length = as.difftime(2L, units = "hours"),
                        mode = c("match_vals", "extreme_vals"),
                        ...) {
-
-  if (is.null(pao2)) pao2 <- mimic_pao2(...)
-  if (is.null(fio2)) fio2 <- mimic_fio2(...)
 
   assert_that(is_dt(pao2), is_dt(fio2),
               has_cols(pao2, c("hadm_id", "hadm_time", "pao2")),
@@ -147,7 +144,8 @@ mimic_vent_stop <- function(data_env = "mimic") {
   unique(res)
 }
 
-mimic_vent <- function(vent_start = NULL, vent_stop = NULL,
+mimic_vent <- function(vent_start = mimic_vent_start(data_env),
+                       vent_stop = mimic_vent_stop(data_env),
                        win_length = as.difftime(6L, units = "hours"),
                        min_length = as.difftime(10L, units = "mins"),
                        time_scale = "hours", step_size = 1L,
@@ -157,9 +155,6 @@ mimic_vent <- function(vent_start = NULL, vent_stop = NULL,
     units(x) <- time_scale
     round_to(x, step_size)
   }
-
-  if (is.null(vent_start)) vent_start <- mimic_vent_start(data_env)
-  if (is.null(vent_stop)) vent_stop <- mimic_vent_stop(data_env)
 
   assert_that(is_dt(vent_start), is_dt(vent_stop),
               has_cols(vent_start, c("hadm_id", "hadm_time")),
@@ -493,20 +488,16 @@ mimic_urine24 <- function(min_win = as.difftime(12L, units = "hours"),
   res
 }
 
-mimic_sofa_vars <- function(pafi = NULL, vent = NULL, coag  = NULL,
-                            bili = NULL, map  = NULL, vaso  = NULL,
-                            gcs  = NULL, crea = NULL, urine = NULL,
+mimic_sofa_vars <- function(pafi  = mimic_pafi(..., data_env = data_env),
+                            vent  = mimic_vent(..., data_env = data_env),
+                            coag  = mimic_coag(..., data_env = data_env),
+                            bili  = mimic_bili(..., data_env = data_env),
+                            map   = mimic_map(..., data_env = data_env),
+                            vaso  = mimic_vaso(..., data_env = data_env),
+                            gcs   = mimic_gcs(..., data_env = data_env),
+                            crea  = mimic_crea(..., data_env = data_env),
+                            urine = mimic_urine24(..., data_env = data_env),
                             ..., data_env = "mimic") {
-
-  if (is.null(pafi))  pafi  <- mimic_pafi(..., data_env = data_env)
-  if (is.null(vent))  vent  <- mimic_vent(..., data_env = data_env)
-  if (is.null(coag))  coag  <- mimic_coag(..., data_env = data_env)
-  if (is.null(bili))  bili  <- mimic_bili(..., data_env = data_env)
-  if (is.null(map))   map   <- mimic_map(..., data_env = data_env)
-  if (is.null(vaso))  vaso  <- mimic_vaso(..., data_env = data_env)
-  if (is.null(gcs))   gcs   <- mimic_gcs(..., data_env = data_env)
-  if (is.null(crea))  crea  <- mimic_crea(..., data_env = data_env)
-  if (is.null(urine)) urine <- mimic_urine24(..., data_env = data_env)
 
   tables <- list(pafi, vent, coag, bili, map, vaso, gcs, crea, urine)
 
@@ -535,11 +526,9 @@ mimic_sofa_vars <- function(pafi = NULL, vent = NULL, coag  = NULL,
                limits = limits, step_size = step_size)
 }
 
-mimic_sofa <- function(time_scale = "hours", step_size = 1L,
-                       data_env = "mimic") {
+mimic_sofa <- function(...) {
 
-  tbl <- mimic_sofa_vars(time_scale = time_scale, step_size = step_size,
-                         data_env = data_env)
+  tbl <- mimic_sofa_vars(...)
   tbl <- sofa_window(tbl)
   tbl <- sofa_compute(tbl)
 
