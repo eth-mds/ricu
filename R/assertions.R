@@ -8,7 +8,8 @@ on_failure(is_dt) <- function(call, env) {
   paste0(deparse(call$x), " is not a `data.table`")
 }
 
-has_cols <- function(x, cols) all(cols %in% colnames(x))
+has_cols <- function(x, cols)
+  is.character(cols) && length(cols) > 0L && all(cols %in% colnames(x))
 
 on_failure(has_cols) <- function(call, env) {
   out_names <- paste0("`", paste0(eval(call$cols, env), collapse = "`, `"),
@@ -17,10 +18,8 @@ on_failure(has_cols) <- function(call, env) {
          out_names)
 }
 
-is_difftime <- function(x, allow_neg = TRUE, need_step = FALSE) {
-  inherits(x, "difftime") &&
-    if (allow_neg) TRUE else all(x >= 0) &&
-    if (need_step) !is.null(attr(x, "step_size")) else TRUE
+is_difftime <- function(x, allow_neg = TRUE) {
+  inherits(x, "difftime") && if (allow_neg) TRUE else all(x >= 0)
 }
 
 on_failure(is_difftime) <- function(call, env) {
