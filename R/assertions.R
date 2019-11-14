@@ -17,8 +17,10 @@ on_failure(has_cols) <- function(call, env) {
          out_names)
 }
 
-is_difftime <- function(x, allow_neg = TRUE) {
-  inherits(x, "difftime") && if (allow_neg) TRUE else all(x >= 0)
+is_difftime <- function(x, allow_neg = TRUE, need_step = FALSE) {
+  inherits(x, "difftime") &&
+    if (allow_neg) TRUE else all(x >= 0) &&
+    if (need_step) !is.null(attr(x, "step_size")) else TRUE
 }
 
 on_failure(is_difftime) <- function(call, env) {

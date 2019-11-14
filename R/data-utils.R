@@ -60,7 +60,7 @@ get_data_items <- function(items, table_name, data_env, difftime_fun,
 
   dat <- lapply(dat, data.table::setkeyv, c(id_names, time_name))
 
-  if (any(vapply(dat, anyDuplicated, integer(1L)) != 0L)) {
+  if (missing(agg_fun) && any(vapply(dat, anyDuplicated, integer(1L)) != 0L)) {
     warning("Non-unique id/value combinations found. Consider `agg_fun`.")
   }
 

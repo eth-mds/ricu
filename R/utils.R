@@ -261,7 +261,9 @@ window_quo <- function(tbl, expr, id_cols = "hadm_id", time_col = "hadm_time",
                        full_window = FALSE,
                        window_length = as.difftime(24L, units = "hours")) {
 
-  assert_that(is_difftime(window_length, allow_neg = FALSE))
+  assert_that(is_dt(tbl), has_cols(tbl, c(id_cols, time_col)),
+              is_unique(tbl, c(id_cols, time_col)), is.flag(full_window),
+              is_difftime(window_length, allow_neg = FALSE))
 
   units(window_length) <- units(tbl[[time_col]])
 
