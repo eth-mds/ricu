@@ -321,3 +321,8 @@ first_elem <- function(x) x[1L]
 is_unique <- function(x, cols = seq_along(x)) {
   identical(anyDuplicated(x, by = cols), 0L)
 }
+
+cat_line <- function(...) {
+  line <- trimws(paste0(...), "right")
+  cat(paste0(line, "\n"), sep = "")
+}

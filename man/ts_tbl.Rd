@@ -11,6 +11,12 @@
 \alias{length.ts_tbl}
 \alias{dimnames.ts_tbl}
 \alias{names.ts_tbl}
+\alias{head.ts_tbl}
+\alias{tail.ts_tbl}
+\alias{print.ts_tbl}
+\alias{format.ts_tbl}
+\alias{tbl_sum.ts_tbl}
+\alias{str.ts_tbl}
 \alias{time_col}
 \alias{id_cols}
 \alias{val_cols}
@@ -40,6 +46,20 @@ is_ts_tbl(x)
 \method{dimnames}{ts_tbl}(x)
 
 \method{names}{ts_tbl}(x)
+
+\method{head}{ts_tbl}(x, ...)
+
+\method{tail}{ts_tbl}(x, ...)
+
+\method{print}{ts_tbl}(x, ..., n = NULL, width = NULL,
+  n_extra = NULL)
+
+\method{format}{ts_tbl}(x, ..., n = NULL, width = NULL,
+  n_extra = NULL)
+
+\method{tbl_sum}{ts_tbl}(x)
+
+\method{str}{ts_tbl}(object, ...)
 
 time_col(x)
 
@@ -72,6 +92,8 @@ complete time series data).}
 \item{...}{Passed to \code{\link[data.table:data.table]{data.table::data.table()}}/generic compatibility.}
 
 \item{x}{A \code{ts_tbl} object.}
+
+\item{object}{A \code{ts_tbl} object.}
 
 \item{value}{New time unit.}
 }

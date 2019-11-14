@@ -113,6 +113,59 @@ names.ts_tbl <- function(x) colnames(x)
 #'
 #' @export
 #'
+head.ts_tbl <- function(x, ...) head(tbl(x), ...)
+
+#' @rdname ts_tbl
+#'
+#' @export
+#'
+tail.ts_tbl <- function(x, ...) tail(tbl(x), ...)
+
+#' @rdname ts_tbl
+#'
+#' @export
+#'
+print.ts_tbl <- function(x, ..., n = NULL, width = NULL, n_extra = NULL) {
+  cat_line(format(x, ..., n = n, width = width, n_extra = n_extra))
+  invisible(x)
+}
+
+#' @rdname ts_tbl
+#'
+#' @export
+#'
+format.ts_tbl <- function(x, ..., n = NULL, width = NULL, n_extra = NULL) {
+  mat <- prt::trunc_dt(x, n = n, width = width, n_extra = n_extra)
+  format(mat)
+}
+
+#' @rdname ts_tbl
+#'
+#' @importFrom tibble tbl_sum
+#'
+#' @export
+#'
+tbl_sum.ts_tbl <- function(x) {
+  c("A ts_tbl" = prt::dim_desc(x),
+    "Index" = paste0(id_cols(x), collapse = ", "),
+    "Key" = time_col(x),
+    "Interval" = format(step_time(x)))
+}
+
+#' @param object A `ts_tbl` object.
+#'
+#' @rdname ts_tbl
+#'
+#' @export
+#'
+str.ts_tbl <- function(object, ...) {
+  invisible(prt::str_dt(object, ...))
+}
+
+#' @rdname ts_tbl
+#'
+#' @export
+#'
 time_col <- function(x) {
   assert_that(is_ts_tbl(x))
   .subset2(x, "time_col")
