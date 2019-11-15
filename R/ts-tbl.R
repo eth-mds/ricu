@@ -46,7 +46,11 @@ new_ts_tbl <- function(tbl, id_cols, time_col, step_size) {
               is_difftime(tbl[[time_col]]),
               is.numeric(step_size), length(step_size) == 1L, step_size > 0)
 
-  data.table::setkeyv(tbl, c(id_cols, time_col))
+  by_cols <-  c(id_cols, time_col)
+  val_cols <- setdiff(colnames(tbl), by_cols)
+
+  data.table::setkeyv(tbl, by_cols)
+  data.table::setcolorder(tbl, c(by_cols, val_cols))
 
   structure(
     list(tbl = tbl, id_cols = id_cols, time_col = time_col,
@@ -76,7 +80,8 @@ is_ts_tbl <- function(x) inherits(x, "ts_tbl")
 #' @export
 #'
 `[.ts_tbl` <- function(x, ...) {
-  new_ts_tbl(`[`(tbl(x), ...), id_cols(x), time_col(x), step_size(x))
+  res <- do.call(`[`, c(list(tbl(x)), substitute(...(), parent.frame())))
+  new_ts_tbl(res, id_cols(x), time_col(x), step_size(x))
 }
 
 #' @rdname ts_tbl
@@ -107,7 +112,7 @@ dimnames.ts_tbl <- function(x) list(NULL, colnames(tbl(x)))
 #'
 #' @export
 #'
-names.ts_tbl <- function(x) colnames(x)
+names.ts_tbl <- function(x) colnames(tbl(x))
 
 #' @rdname ts_tbl
 #'
@@ -184,6 +189,12 @@ id_cols <- function(x) {
 #'
 #' @export
 #'
+by_cols <- function(x) c(id_cols(x), time_col(x))
+
+#' @rdname ts_tbl
+#'
+#' @export
+#'
 val_cols <- function(x) setdiff(colnames(x), c(id_cols(x), time_col(x)))
 
 #' @rdname ts_tbl
@@ -225,4 +236,89 @@ time_unit <- function(x) units(x[[time_col(x)]])
 as.data.table.ts_tbl <- function(x, ...) {
   if (...length() > 0L) warning("Ignoring further `...` arguments.")
   tbl(x)
+}
+
+#' @param row.names,optional Generic consistency: passing anything other than
+#' the default value issues a warning.
+#'
+#' @rdname ts_tbl
+#'
+#' @method as.data.frame ts_tbl
+#'
+#' @export
+#'
+as.data.frame.ts_tbl <- function(x, row.names = NULL, optional = FALSE, ...) {
+
+  if (!is.null(row.names)) warning("Ignoring `row.names` argument.")
+  if (!isFALSE(optional)) warning("Ignoring `optional` argument.")
+  if (...length() > 0L) warning("Ignoring further `...` arguments.")
+
+  res <- data.table::setDF(as.data.table(x))
+  res
+}
+
+#' @param y A `ts_tbl` object.
+#' @rdname ts_tbl
+#'
+#' @export
+#'
+merge.ts_tbl <- function(x, y, ...) {
+
+  assert_that(is_ts_tbl(y), same_by_cols(x, y), same_time_unit(x, y))
+
+  res <- merge(tbl(x), tbl(y), by = by_cols(x), ...)
+
+  new_ts_tbl(res, id_cols(x), time_col(x), step_size(x))
+}
+
+#' @inheritParams data.table::rbindlist
+#'
+#' @rdname ts_tbl
+#'
+#' @export
+#'
+rbind.ts_tbl <- function(x, ..., use.names = "check", fill = FALSE,
+                         idcol = NULL) {
+
+  dots <- list(...)
+
+  if (length(dots) == 0L) return(x)
+
+  assert_that(
+    all(vapply(dots, same_by_cols, logical(1L), x)),
+    all(vapply(dots, same_time_unit, logical(1L), x))
+  )
+
+  res <- data.table::rbindlist(c(list(tbl(x)), lapply(dots, tbl)), use.names,
+                               fill, idcol)
+
+  new_ts_tbl(res, id_cols(x), time_col(x), step_size(x))
+}
+
+#' @rdname ts_tbl
+#'
+#' @export
+#'
+unique.ts_tbl <- function(x, ...) {
+  new_ts_tbl(unique(tbl(x), ...), id_cols(x), time_col(x), step_size(x))
+}
+
+#' @rdname ts_tbl
+#'
+#' @export
+#'
+duplicated.ts_tbl <- function(x, ...) duplicated(tbl(x), ...)
+
+#' @rdname ts_tbl
+#'
+#' @export
+#'
+anyDuplicated.ts_tbl <- function(x, ...) anyDuplicated(tbl(x), ...)
+
+#' @rdname ts_tbl
+#'
+#' @export
+#'
+is_unique <- function(x, by = by_cols(x)) {
+  identical(anyDuplicated(x, by = by), 0L)
 }

@@ -57,3 +57,17 @@ on_failure(same_time_spec) <- function(call, env) {
          " does not have the same time specification as column `",
          eval(call$time_y, env), "` of ", deparse(call$y), ".")
 }
+
+same_time_unit <- function(x, y) identical(time_unit(x), time_unit(y))
+
+on_failure(same_time_unit) <- function(call, env) {
+  paste0(deparse(call$x), " and ", deparse(call$y),
+         " are not on the same time scale.")
+}
+
+same_by_cols <- function(x, y) setequal(by_cols(x), by_cols(y))
+
+on_failure(same_time_unit) <- function(call, env) {
+  paste0(deparse(call$x), " and ", deparse(call$y),
+         " do not share the same `by` columns.")
+}
