@@ -1,9 +1,9 @@
 library(testthat)
-library(sepsr)
+library(ricu)
 
 if (requireNamespace("xml2")) {
   test_check(
-    "sepsr",
+    "ricu",
     reporter = MultiReporter$new(
       reporters = list(JunitReporter$new(file = "test-results.xml"),
                        CheckReporter$new()
@@ -11,5 +11,5 @@ if (requireNamespace("xml2")) {
     )
   )
 } else {
-  test_check("sepsr")
+  test_check("ricu")
 }

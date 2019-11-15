@@ -23,15 +23,15 @@ test_that("credential management", {
 
   creds <- with_mock(
     `keyring::key_set_with_value` = function(...) invisible(NULL),
-    `sepsr:::read_line` = function(...) "bar",
+    `ricu:::read_line` = function(...) "bar",
     get_set_physionet_creds("foo")
   )
 
   expect_identical(creds, list(username = "foo", password = "bar"))
 
   creds <- with_mock(
-    `sepsr:::is_pkg_available` = function(...) FALSE,
-    `sepsr:::read_line` = function(x, ...) {
+    `ricu:::is_pkg_available` = function(...) FALSE,
+    `ricu:::read_line` = function(x, ...) {
       if (grepl("user", x)) "foo" else if (grepl("pass", x)) "bar" else "baz"
     },
     get_set_physionet_creds()
@@ -41,7 +41,7 @@ test_that("credential management", {
 
   expect_error(
     with_mock(
-      `sepsr:::is_pkg_available` = function(...) FALSE,
+      `ricu:::is_pkg_available` = function(...) FALSE,
       get_set_physionet_creds()
     )
   )
@@ -50,7 +50,7 @@ test_that("credential management", {
 curl_mock_fm <- function(url, handle) {
 
   file <- system.file("testdata", paste0(basename(url), ".rds"),
-                      package = "sepsr")
+                      package = "ricu")
 
   if (identical(file, "")) stop("file ", basename(url), "not found")
 

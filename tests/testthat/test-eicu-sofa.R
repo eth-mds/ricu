@@ -1,5 +1,5 @@
 
-pa <- sepsr:::eicu_sofa_pa(data_env = "eicu_demo")
+pa <- eicu_sofa_pa(data_env = "eicu_demo")
 
 test_that("fetch sofa pa", {
   expect_is(pa, "data.table")

@@ -8,14 +8,14 @@
 #'
 #' | **Platform** | **Location**                          |
 #' | ------------ | ------------------------------------- |
-#' | Linux        | `~/.local/share/sepsr`                |
-#' | macOS        | `~/Library/Application Support/sepsr` |
-#' | Windows      | `%LOCALAPPDATA%/sepsr`                |
+#' | Linux        | `~/.local/share/ricu`                |
+#' | macOS        | `~/Library/Application Support/ricu` |
+#' | Windows      | `%LOCALAPPDATA%/ricu`                |
 #'
 #' If the default storage directory does not exists, it will only be created
 #' upon user consent (requiring an interactive session).
 #'
-#' The environment variable `SEPSR_DATA_PATH` can be used to overwrite the
+#' The environment variable `RICU_DATA_PATH` can be used to overwrite the
 #' default location. If desired, this variable can be set in an R startup file
 #' to make it apply to all R sessions. For example, it could be set within:
 #'
@@ -31,7 +31,7 @@
 #' @rdname file_utils
 #'
 #' @examples
-#' Sys.setenv(SEPSR_DATA_PATH = tempdir())
+#' Sys.setenv(RICU_DATA_PATH = tempdir())
 #' identical(data_dir(), tempdir())
 #'
 #' dir.exists(file.path(tempdir(), "some_subdir"))
@@ -61,7 +61,7 @@ default_data_path <- function() {
     Sys.getenv("XDG_DATA_HOME", "~/.local/share")
   )
 
-  root <- file.path(root, "sepsr")
+  root <- file.path(root, "ricu")
 
   if (!dir.exists(root)) {
     message("Attempting to set up data directory at\n  ", root,
@@ -103,7 +103,7 @@ ensure_dir <- function(paths) {
 
 data_dir_path <- function() {
 
-  env_var <- Sys.getenv("SEPSR_DATA_PATH", unset = NA_character_)
+  env_var <- Sys.getenv("RICU_DATA_PATH", unset = NA_character_)
 
   if (is.na(env_var)) default_data_path()
   else                ensure_dir(env_var)
@@ -115,14 +115,14 @@ default_config_path <- function() {
 
 config_dir_path <- function() {
 
-  env_var <- Sys.getenv("SEPSR_CONFIG_PATH", unset = NA_character_)
+  env_var <- Sys.getenv("RICU_CONFIG_PATH", unset = NA_character_)
 
   if (is.na(env_var)) default_config_path()
   else                ensure_dir(env_var)
 }
 
 #' For configuration files, the default location is `extdata/config` and the
-#' environment variable `SEPSR_CONFIG_PATH` can be used to overwrite the
+#' environment variable `RICU_CONFIG_PATH` can be used to overwrite the
 #' default location. Files are first searched for in the user-specified
 #' directory and if not found there, the default dir ist taken into account.
 #' Additionally, `get_config()` has a `dir` argument which takes highest
@@ -139,7 +139,7 @@ config_dir_path <- function() {
 #' identical(
 #'   cfg,
 #'   get_config("eicu-demo",
-#'              system.file("extdata", "config", package = "sepsr"))
+#'              system.file("extdata", "config", package = "ricu"))
 #' )
 #'
 #' @export

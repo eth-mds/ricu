@@ -6,7 +6,7 @@ trace(
   exit = function() { output <<- returnValue() }
 )
 
-sepsr:::download_pysionet_file(
+ricu:::download_pysionet_file(
   "https://physionet.org/files/mimiciii-demo/1.4/SHA256SUMS.txt"
 )
 
@@ -23,13 +23,13 @@ close(con)
 
 saveRDS(output, "SHA256SUMS.txt.rds")
 
-sepsr:::download_pysionet_file(
+ricu:::download_pysionet_file(
   "https://physionet.org/files/mimiciii-demo/1.4/patients.csv"
 )
 
 saveRDS(output, "patients.csv.rds")
 
-sepsr:::download_pysionet_file(
+ricu:::download_pysionet_file(
   "https://physionet.org/files/mimiciii-demo/1.4/services.csv"
 )
 

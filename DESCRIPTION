@@ -1,4 +1,4 @@
-Package: sepsr
+Package: ricu
 Title: Tools for working with publicly available intensive care unit (ICU) datasets
 Description: What the package does (one paragraph).
 Version: 0.0.0.9000

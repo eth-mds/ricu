@@ -27,7 +27,7 @@ or full data sources.}
 after successful import.}
 }
 \description{
-In order to speed up data access operations, \code{sepsr} does not directly use
+In order to speed up data access operations, \code{ricu} does not directly use
 the PhysioNet provided CSV files, but converts all data to \code{\link[fst:fst]{fst::fst()}}
 format, which allows for random row and column access. Large tables are
 split into chunks in order to keep memory requirements under control.

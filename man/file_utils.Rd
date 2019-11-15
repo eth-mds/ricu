@@ -28,14 +28,14 @@ For data, the default location depends on the operating system as
 
 | \strong{Platform} | \strong{Location}                          |
 | ------------ | ------------------------------------- |
-| Linux        | \code{~/.local/share/sepsr}                |
-| macOS        | \code{~/Library/Application Support/sepsr} |
-| Windows      | \code{\%LOCALAPPDATA\%/sepsr}                |
+| Linux        | \code{~/.local/share/ricu}                |
+| macOS        | \code{~/Library/Application Support/ricu} |
+| Windows      | \code{\%LOCALAPPDATA\%/ricu}                |
 
 If the default storage directory does not exists, it will only be created
 upon user consent (requiring an interactive session).
 
-The environment variable \code{SEPSR_DATA_PATH} can be used to overwrite the
+The environment variable \code{RICU_DATA_PATH} can be used to overwrite the
 default location. If desired, this variable can be set in an R startup file
 to make it apply to all R sessions. For example, it could be set within:
 \itemize{
@@ -47,7 +47,7 @@ to make it apply to all R sessions. For example, it could be set within:
 Any directory specified as environment variable will recursively be created.
 }
 \examples{
-Sys.setenv(SEPSR_DATA_PATH = tempdir())
+Sys.setenv(RICU_DATA_PATH = tempdir())
 identical(data_dir(), tempdir())
 
 dir.exists(file.path(tempdir(), "some_subdir"))
@@ -58,7 +58,7 @@ cfg <- get_config("eicu-demo")
 identical(
   cfg,
   get_config("eicu-demo",
-             system.file("extdata", "config", package = "sepsr"))
+             system.file("extdata", "config", package = "ricu"))
 )
 
 }

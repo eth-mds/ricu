@@ -1,7 +1,7 @@
 
 #' Data import utilities
 #'
-#' In order to speed up data access operations, `sepsr` does not directly use
+#' In order to speed up data access operations, `ricu` does not directly use
 #' the PhysioNet provided CSV files, but converts all data to [fst::fst()]
 #' format, which allows for random row and column access. Large tables are
 #' split into chunks in order to keep memory requirements under control.
