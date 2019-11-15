@@ -2,24 +2,24 @@
 #' Methods for creating and inspecting ts_tbl objects
 #'
 #' @param tbl An object inheriting from `data.frame`.
-#' @param id_cols Character or numeric vector of at least length 1, identifying
+#' @param ts_key Character or numeric vector of at least length 1, identifying
 #' columns that combined with time stamps, uniquely identify rows.
-#' @param time_col Character or numeric vector of length 1, identifying the
+#' @param ts_index Character or numeric vector of length 1, identifying the
 #' column that defines temporal ordering.
-#' @param step_size Scalar value, defining time steps between rows (assuming
+#' @param ts_step Scalar value, defining time steps between rows (assuming
 #' complete time series data).
 #'
 #' @rdname ts_tbl
 #'
 #' @export
 #'
-as_ts_tbl <- function(tbl, id_cols, time_col = NULL, step_size = 1L) {
+as_ts_tbl <- function(tbl, ts_key, ts_index = NULL, ts_step = 1L) {
 
   assert_that(inherits(tbl, "data.frame"))
 
   data.table::setDT(tbl)
 
-  new_ts_tbl(tbl, id_cols, time_col, step_size)
+  new_ts_tbl(tbl, ts_key, ts_index, ts_step)
 }
 
 #' @param ... Passed to [data.table::data.table()]/generic compatibility.
@@ -28,38 +28,37 @@ as_ts_tbl <- function(tbl, id_cols, time_col = NULL, step_size = 1L) {
 #'
 #' @export
 #'
-ts_tbl <- function(..., id_cols, time_col = NULL, step_size = 1L) {
-  new_ts_tbl(data.table::data.table(...), id_cols, time_col, step_size)
+ts_tbl <- function(..., ts_key, ts_index = NULL, ts_step = 1L) {
+  new_ts_tbl(data.table::data.table(...), ts_key, ts_index, ts_step)
 }
 
-new_ts_tbl <- function(tbl, id_cols, time_col, step_size) {
+new_ts_tbl <- function(tbl, ts_key, ts_index, ts_step) {
 
-  if (is.null(time_col)) {
-    time_col <- which(vapply(tbl, is_difftime, logical(1L)))
+  if (is.null(ts_index)) {
+    ts_index <- which(vapply(tbl, is_difftime, logical(1L)))
   }
 
-  if (is.numeric(id_cols))  id_cols  <- colnames(tbl)[id_cols]
-  if (is.numeric(time_col)) time_col <- colnames(tbl)[time_col]
+  if (is.numeric(ts_key))    ts_key  <- colnames(tbl)[ts_key]
+  if (is.numeric(ts_index)) ts_index <- colnames(tbl)[ts_index]
 
-  assert_that(is_dt(tbl), length(id_cols) > 0L, length(time_col) == 1L,
-              has_cols(tbl, c(id_cols, time_col)),
-              is_difftime(tbl[[time_col]]),
-              is.numeric(step_size), length(step_size) == 1L, step_size > 0)
+  assert_that(is_dt(tbl), length(ts_key) > 0L, length(ts_index) == 1L,
+              has_cols(tbl, c(ts_key, ts_index)),
+              is_difftime(tbl[[ts_index]]),
+              is.numeric(ts_step), length(ts_step) == 1L, ts_step > 0)
 
-  by_cols <-  c(id_cols, time_col)
+  by_cols <-  c(ts_key, ts_index)
   val_cols <- setdiff(colnames(tbl), by_cols)
 
-  data.table::setkeyv(tbl, by_cols)
-  data.table::setcolorder(tbl, c(by_cols, val_cols))
+  setkeyv(tbl, by_cols)
+  setcolorder(tbl, c(by_cols, val_cols))
 
-  structure(
-    list(tbl = tbl, id_cols = id_cols, time_col = time_col,
-         step_size = step_size),
-    class = c("ts_tbl", class(tbl))
-  )
+  setattr(tbl, "ts_key", ts_key)
+  setattr(tbl, "ts_index", ts_index)
+  setattr(tbl, "ts_step", ts_step)
+  setattr(tbl, "class", c("ts_tbl", class(tbl)))
+
+  tbl
 }
-
-tbl <- function(x) .subset2(x, "tbl")
 
 #' @param x A `ts_tbl` object.
 #'
@@ -73,58 +72,16 @@ is_ts_tbl <- function(x) inherits(x, "ts_tbl")
 #'
 #' @export
 #'
-`[[.ts_tbl` <- function(x, ...) `[[`(tbl(x), ...)
-
-#' @rdname ts_tbl
-#'
-#' @export
-#'
 `[.ts_tbl` <- function(x, ...) {
-  res <- do.call(`[`, c(list(tbl(x)), substitute(...(), parent.frame())))
-  new_ts_tbl(res, id_cols(x), time_col(x), step_size(x))
+  res <- NextMethod()
+  new_ts_tbl(res, ts_key(x), ts_index(x), ts_step(x))
 }
 
 #' @rdname ts_tbl
 #'
 #' @export
 #'
-`$.ts_tbl` <- function(x, ...) `$`(tbl(x), ...)
-
-#' @rdname ts_tbl
-#'
-#' @export
-#'
-dim.ts_tbl <- function(x) dim(tbl(x))
-
-#' @rdname ts_tbl
-#'
-#' @export
-#'
-length.ts_tbl <- function(x) length(tbl(x))
-
-#' @rdname ts_tbl
-#'
-#' @export
-#'
-dimnames.ts_tbl <- function(x) list(NULL, colnames(tbl(x)))
-
-#' @rdname ts_tbl
-#'
-#' @export
-#'
-names.ts_tbl <- function(x) colnames(tbl(x))
-
-#' @rdname ts_tbl
-#'
-#' @export
-#'
-head.ts_tbl <- function(x, ...) head(tbl(x), ...)
-
-#' @rdname ts_tbl
-#'
-#' @export
-#'
-tail.ts_tbl <- function(x, ...) tail(tbl(x), ...)
+dimnames.ts_tbl <- function(x) list(NULL, colnames(x))
 
 #' @rdname ts_tbl
 #'
@@ -152,8 +109,8 @@ format.ts_tbl <- function(x, ..., n = NULL, width = NULL, n_extra = NULL) {
 #'
 tbl_sum.ts_tbl <- function(x) {
   c("A ts_tbl" = prt::dim_desc(x),
-    "Index" = paste0(id_cols(x), collapse = ", "),
-    "Key" = time_col(x),
+    "Index" = paste0(ts_key(x), collapse = ", "),
+    "Key" = ts_index(x),
     "Interval" = format(step_time(x)))
 }
 
@@ -171,52 +128,52 @@ str.ts_tbl <- function(object, ...) {
 #'
 #' @export
 #'
-time_col <- function(x) {
+ts_index <- function(x) {
   assert_that(is_ts_tbl(x))
-  .subset2(x, "time_col")
+  attr(x, "ts_index")
 }
 
 #' @rdname ts_tbl
 #'
 #' @export
 #'
-id_cols <- function(x) {
+ts_key <- function(x) {
   assert_that(is_ts_tbl(x))
-  .subset2(x, "id_cols")
+  attr(x, "ts_key")
 }
 
 #' @rdname ts_tbl
 #'
 #' @export
 #'
-by_cols <- function(x) c(id_cols(x), time_col(x))
+by_cols <- function(x) c(ts_key(x), ts_index(x))
 
 #' @rdname ts_tbl
 #'
 #' @export
 #'
-val_cols <- function(x) setdiff(colnames(x), c(id_cols(x), time_col(x)))
+val_cols <- function(x) setdiff(colnames(x), c(ts_key(x), ts_index(x)))
 
 #' @rdname ts_tbl
 #'
 #' @export
 #'
-step_size <- function(x) {
+ts_step <- function(x) {
   assert_that(is_ts_tbl(x))
-  .subset2(x, "step_size")
+  attr(x, "ts_step")
 }
 
 #' @rdname ts_tbl
 #'
 #' @export
 #'
-step_time <- function(x) as.difftime(step_size(x), units = time_unit(x))
+step_time <- function(x) as.difftime(ts_step(x), units = time_unit(x))
 
 #' @rdname ts_tbl
 #'
 #' @export
 #'
-time_unit <- function(x) units(x[[time_col(x)]])
+time_unit <- function(x) units(x[[ts_index(x)]])
 
 #' @param value New time unit.
 #'
@@ -224,7 +181,7 @@ time_unit <- function(x) units(x[[time_col(x)]])
 #'
 #' @export
 #'
-`time_unit<-` <- function(x, value) units(x[[time_col(x)]]) <- value
+`time_unit<-` <- function(x, value) units(x[[ts_index(x)]]) <- value
 
 #' @rdname ts_tbl
 #'
@@ -234,8 +191,15 @@ time_unit <- function(x) units(x[[time_col(x)]])
 #' @export
 #'
 as.data.table.ts_tbl <- function(x, ...) {
+
   if (...length() > 0L) warning("Ignoring further `...` arguments.")
-  tbl(x)
+
+  setattr(x, "ts_key", NULL)
+  setattr(x, "ts_index", NULL)
+  setattr(x, "ts_step", NULL)
+  setattr(x, "class", setdiff(class(x), "ts_tbl"))
+
+  x
 }
 
 #' @param row.names,optional Generic consistency: passing anything other than
@@ -253,8 +217,9 @@ as.data.frame.ts_tbl <- function(x, row.names = NULL, optional = FALSE, ...) {
   if (!isFALSE(optional)) warning("Ignoring `optional` argument.")
   if (...length() > 0L) warning("Ignoring further `...` arguments.")
 
-  res <- data.table::setDF(as.data.table(x))
-  res
+  data.table::setDF(as.data.table(x))
+
+  x
 }
 
 #' @param y A `ts_tbl` object.
@@ -262,13 +227,13 @@ as.data.frame.ts_tbl <- function(x, row.names = NULL, optional = FALSE, ...) {
 #'
 #' @export
 #'
-merge.ts_tbl <- function(x, y, ...) {
+merge.ts_tbl <- function(x, y, by = by_cols(x), ...) {
 
   assert_that(is_ts_tbl(y), same_by_cols(x, y), same_time_unit(x, y))
 
-  res <- merge(tbl(x), tbl(y), by = by_cols(x), ...)
+  res <- NextMethod()
 
-  new_ts_tbl(res, id_cols(x), time_col(x), step_size(x))
+  new_ts_tbl(res, ts_key(x), ts_index(x), ts_step(x))
 }
 
 #' @inheritParams data.table::rbindlist
@@ -289,10 +254,9 @@ rbind.ts_tbl <- function(x, ..., use.names = "check", fill = FALSE,
     all(vapply(dots, same_time_unit, logical(1L), x))
   )
 
-  res <- data.table::rbindlist(c(list(tbl(x)), lapply(dots, tbl)), use.names,
-                               fill, idcol)
+  res <- data.table::rbindlist(c(list(x), dots), use.names, fill, idcol)
 
-  new_ts_tbl(res, id_cols(x), time_col(x), step_size(x))
+  new_ts_tbl(res, ts_key(x), ts_index(x), ts_step(x))
 }
 
 #' @rdname ts_tbl
@@ -300,20 +264,8 @@ rbind.ts_tbl <- function(x, ..., use.names = "check", fill = FALSE,
 #' @export
 #'
 unique.ts_tbl <- function(x, ...) {
-  new_ts_tbl(unique(tbl(x), ...), id_cols(x), time_col(x), step_size(x))
+  new_ts_tbl(NextMethod(), ts_key(x), ts_index(x), ts_step(x))
 }
-
-#' @rdname ts_tbl
-#'
-#' @export
-#'
-duplicated.ts_tbl <- function(x, ...) duplicated(tbl(x), ...)
-
-#' @rdname ts_tbl
-#'
-#' @export
-#'
-anyDuplicated.ts_tbl <- function(x, ...) anyDuplicated(tbl(x), ...)
 
 #' @rdname ts_tbl
 #'

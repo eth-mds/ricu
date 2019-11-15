@@ -4,24 +4,17 @@
 \alias{as_ts_tbl}
 \alias{ts_tbl}
 \alias{is_ts_tbl}
-\alias{[[.ts_tbl}
 \alias{[.ts_tbl}
-\alias{$.ts_tbl}
-\alias{dim.ts_tbl}
-\alias{length.ts_tbl}
 \alias{dimnames.ts_tbl}
-\alias{names.ts_tbl}
-\alias{head.ts_tbl}
-\alias{tail.ts_tbl}
 \alias{print.ts_tbl}
 \alias{format.ts_tbl}
 \alias{tbl_sum.ts_tbl}
 \alias{str.ts_tbl}
-\alias{time_col}
-\alias{id_cols}
+\alias{ts_index}
+\alias{ts_key}
 \alias{by_cols}
 \alias{val_cols}
-\alias{step_size}
+\alias{ts_step}
 \alias{step_time}
 \alias{time_unit}
 \alias{time_unit<-}
@@ -30,34 +23,18 @@
 \alias{merge.ts_tbl}
 \alias{rbind.ts_tbl}
 \alias{unique.ts_tbl}
-\alias{duplicated.ts_tbl}
-\alias{anyDuplicated.ts_tbl}
 \alias{is_unique}
 \title{Methods for creating and inspecting ts_tbl objects}
 \usage{
-as_ts_tbl(tbl, id_cols, time_col = NULL, step_size = 1L)
+as_ts_tbl(tbl, ts_key, ts_index = NULL, ts_step = 1L)
 
-ts_tbl(..., id_cols, time_col = NULL, step_size = 1L)
+ts_tbl(..., ts_key, ts_index = NULL, ts_step = 1L)
 
 is_ts_tbl(x)
 
-\method{[[}{ts_tbl}(x, ...)
-
 \method{[}{ts_tbl}(x, ...)
 
-\method{$}{ts_tbl}(x, ...)
-
-\method{dim}{ts_tbl}(x)
-
-\method{length}{ts_tbl}(x)
-
 \method{dimnames}{ts_tbl}(x)
-
-\method{names}{ts_tbl}(x)
-
-\method{head}{ts_tbl}(x, ...)
-
-\method{tail}{ts_tbl}(x, ...)
 
 \method{print}{ts_tbl}(x, ..., n = NULL, width = NULL,
   n_extra = NULL)
@@ -69,15 +46,15 @@ is_ts_tbl(x)
 
 \method{str}{ts_tbl}(object, ...)
 
-time_col(x)
+ts_index(x)
 
-id_cols(x)
+ts_key(x)
 
 by_cols(x)
 
 val_cols(x)
 
-step_size(x)
+ts_step(x)
 
 step_time(x)
 
@@ -90,29 +67,25 @@ time_unit(x) <- value
 \method{as.data.frame}{ts_tbl}(x, row.names = NULL, optional = FALSE,
   ...)
 
-\method{merge}{ts_tbl}(x, y, ...)
+\method{merge}{ts_tbl}(x, y, by = by_cols(x), ...)
 
 \method{rbind}{ts_tbl}(x, ..., use.names = "check", fill = FALSE,
   idcol = NULL)
 
 \method{unique}{ts_tbl}(x, ...)
 
-\method{duplicated}{ts_tbl}(x, ...)
-
-\method{anyDuplicated}{ts_tbl}(x, ...)
-
 is_unique(x, by = by_cols(x))
 }
 \arguments{
 \item{tbl}{An object inheriting from \code{data.frame}.}
 
-\item{id_cols}{Character or numeric vector of at least length 1, identifying
+\item{ts_key}{Character or numeric vector of at least length 1, identifying
 columns that combined with time stamps, uniquely identify rows.}
 
-\item{time_col}{Character or numeric vector of length 1, identifying the
+\item{ts_index}{Character or numeric vector of length 1, identifying the
 column that defines temporal ordering.}
 
-\item{step_size}{Scalar value, defining time steps between rows (assuming
+\item{ts_step}{Scalar value, defining time steps between rows (assuming
 complete time series data).}
 
 \item{...}{Passed to \code{\link[data.table:data.table]{data.table::data.table()}}/generic compatibility.}
