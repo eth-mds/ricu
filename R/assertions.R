@@ -19,7 +19,7 @@ on_failure(has_cols) <- function(call, env) {
 }
 
 is_difftime <- function(x, allow_neg = TRUE) {
-  inherits(x, "difftime") && if (allow_neg) TRUE else all(x >= 0)
+  inherits(x, "difftime") && (allow_neg || all(x >= 0))
 }
 
 on_failure(is_difftime) <- function(call, env) {
@@ -70,4 +70,14 @@ same_by_cols <- function(x, y) setequal(by_cols(x), by_cols(y))
 on_failure(same_time_unit) <- function(call, env) {
   paste0(deparse(call$x), " and ", deparse(call$y),
          " do not share the same `by` columns.")
+}
+
+check_ts_tbl <- function(x, key, ind, unit = NULL, step = NULL) {
+  is_dt(x) && has_cols(x, c(key, ind)) && is_difftime(x[[ind]]) &&
+    (is.null(unit) || identical(unit, units(x[[ind]]))) &&
+    (is.null(step) || identical(step, ts_step(x)))
+}
+
+on_failure(check_ts_tbl) <- function(call, env) {
+  paste0(deparse(call$x), " does not fulfill `ts_tbl` requirements.")
 }

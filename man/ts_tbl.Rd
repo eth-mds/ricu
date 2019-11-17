@@ -20,10 +20,6 @@
 \alias{time_unit<-}
 \alias{as.data.table.ts_tbl}
 \alias{as.data.frame.ts_tbl}
-\alias{merge.ts_tbl}
-\alias{rbind.ts_tbl}
-\alias{unique.ts_tbl}
-\alias{is_unique}
 \title{Methods for creating and inspecting ts_tbl objects}
 \usage{
 as_ts_tbl(tbl, ts_key, ts_index = NULL, ts_step = 1L)
@@ -66,15 +62,6 @@ time_unit(x) <- value
 
 \method{as.data.frame}{ts_tbl}(x, row.names = NULL, optional = FALSE,
   ...)
-
-\method{merge}{ts_tbl}(x, y, by = by_cols(x), ...)
-
-\method{rbind}{ts_tbl}(x, ..., use.names = "check", fill = FALSE,
-  idcol = NULL)
-
-\method{unique}{ts_tbl}(x, ...)
-
-is_unique(x, by = by_cols(x))
 }
 \arguments{
 \item{tbl}{An object inheriting from \code{data.frame}.}
@@ -98,14 +85,6 @@ complete time series data).}
 
 \item{row.names, optional}{Generic consistency: passing anything other than
 the default value issues a warning.}
-
-\item{y}{A \code{ts_tbl} object.}
-
-\item{use.names}{\code{TRUE} binds by matching column name, \code{FALSE} by position. `check` (default) warns if all items don't have the same names in the same order and then currently proceeds as if `use.names=FALSE` for backwards compatibility (\code{TRUE} in future); see news for v1.12.2.}
-
-\item{fill}{\code{TRUE} fills missing columns with NAs. By default \code{FALSE}. When \code{TRUE}, \code{use.names} is set to \code{TRUE}.}
-
-\item{idcol}{Creates a column in the result showing which list item those rows came from. \code{TRUE} names this column \code{".id"}. \code{idcol="file"} names this column \code{"file"}. If the input list has names, those names are the values placed in this id column, otherwise the values are an integer vector \code{1:length(l)}. See \code{examples}.}
 }
 \description{
 Methods for creating and inspecting ts_tbl objects

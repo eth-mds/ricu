@@ -14,11 +14,13 @@ Authors@R:
 License: GPL-3
 Encoding: UTF-8
 LazyData: true
+Depends:
+    R (>= 3.1.0)
 Imports:
+    data.table,
     curl,
     assertthat,
     fst,
-    data.table,
     readr,
     jsonlite,
     methods,
