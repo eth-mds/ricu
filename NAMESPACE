@@ -36,6 +36,8 @@ export(ts_key)
 export(ts_step)
 export(ts_tbl)
 export(val_cols)
+if (getRversion() >= "3.6.2") { S3method(cbind, ts_tbl) }
+if (getRversion() >= "3.6.2") { S3method(rbind, ts_tbl) }
 importFrom(assertthat,"on_failure<-")
 importFrom(assertthat,assert_that)
 importFrom(assertthat,has_attr)

@@ -292,3 +292,23 @@ as.data.frame.ts_tbl <- function(x, row.names = NULL, optional = FALSE, ...) {
 
   x
 }
+
+.cbind.ts_tbl <- function(...) {
+  data.table::data.table(...)
+}
+
+.rbind.ts_tbl <- function(..., use.names = TRUE, fill = FALSE, idcol = NULL) {
+
+  lst <- lapply(
+    list(...),
+    function(x) if (is.list(x)) x else data.table::as.data.table(x)
+  )
+
+  data.table::rbindlist(l, use.names, fill, idcol)
+}
+
+#' @rawNamespace if (getRversion() >= "3.6.2") { S3method(cbind, ts_tbl) }
+cbind.ts_tbl <- .cbind.ts_tbl
+
+#' @rawNamespace if (getRversion() >= "3.6.2") { S3method(rbind, ts_tbl) }
+rbind.ts_tbl <- .rbind.ts_tbl

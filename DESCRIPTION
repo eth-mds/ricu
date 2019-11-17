@@ -24,7 +24,8 @@ Imports:
     readr,
     jsonlite,
     methods,
-    prt
+    prt,
+    tibble
 Suggests:
     getPass,
     keyring,
