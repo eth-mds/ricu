@@ -8,14 +8,32 @@ on_failure(is_dt) <- function(call, env) {
   paste0(deparse(call$x), " is not a `data.table`")
 }
 
-has_cols <- function(x, cols)
-  is.character(cols) && length(cols) > 0L && all(cols %in% colnames(x))
+has_cols <- function(x, cols) {
+  is.character(cols) && length(cols) > 0L &&
+    all(vapply(cols, str_in_vec_once, logical(1L), colnames(x)))
+}
 
 on_failure(has_cols) <- function(call, env) {
   out_names <- paste0("`", paste0(eval(call$cols, env), collapse = "`, `"),
                       "`")
-  paste0(deparse(call$x), " does not have all of these column name(s): ",
-         out_names)
+  paste0(deparse(call$x), " does not contain exactly one of the following ",
+         "column names: ", out_names)
+}
+
+has_col <- function(x, col) {
+  is.string(col) && str_in_vec_once(col, colnames(x))
+}
+
+on_failure(has_col) <- function(call, env) {
+  paste0(deparse(call$x), " does not contain exactly one column `",
+         eval(call$col, env), "`.")
+}
+
+has_time_col <- function(x, col) has_col(x, col) && is_difftime(x[[col]])
+
+on_failure(has_time_col) <- function(call, env) {
+  paste0(deparse(call$x), " does not contain column `",
+         eval(call$col, env), "` of class `difftime`.")
 }
 
 is_difftime <- function(x, allow_neg = TRUE) {
@@ -27,6 +45,14 @@ on_failure(is_difftime) <- function(call, env) {
   paste0(deparse(call$x), " is not a",
          if (pos) " strictly positive " else " ",
          "`difftime` object")
+}
+
+same_time_unit <- function(x, y)
+ is_difftime(x) && is_difftime(y) && identical(units(x), units(y))
+
+on_failure(same_time_unit) <- function(call, env) {
+  paste0("`", deparse(call$x), "` and `", deparse(call$y),
+         "` are not on the same time scale.")
 }
 
 has_unit <- function(x, col, unit) {
@@ -58,13 +84,6 @@ on_failure(same_time_spec) <- function(call, env) {
          eval(call$time_y, env), "` of ", deparse(call$y), ".")
 }
 
-same_time_unit <- function(x, y) identical(time_unit(x), time_unit(y))
-
-on_failure(same_time_unit) <- function(call, env) {
-  paste0(deparse(call$x), " and ", deparse(call$y),
-         " are not on the same time scale.")
-}
-
 same_by_cols <- function(x, y) setequal(by_cols(x), by_cols(y))
 
 on_failure(same_time_unit) <- function(call, env) {
@@ -73,7 +92,7 @@ on_failure(same_time_unit) <- function(call, env) {
 }
 
 check_ts_tbl <- function(x, key, ind, unit = NULL, step = NULL) {
-  is_dt(x) && has_cols(x, c(key, ind)) && is_difftime(x[[ind]]) &&
+  is_dt(x) && has_cols(x, key) && has_time_col(x, ind) &&
     (is.null(unit) || identical(unit, units(x[[ind]]))) &&
     (is.null(step) || identical(step, ts_step(x)))
 }

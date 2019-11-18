@@ -193,103 +193,6 @@ get_table <- function(table, envir) {
   res
 }
 
-expand_limits <- function(x, min_col = "min", max_col = "max", step_size = 1L,
-                          id_cols = NULL, new_col = "hadm_time") {
-
-  make_seq <- function(lwr, upr, step, unit) {
-    seqs <- Map(seq, lwr, upr, MoreArgs = list(by = step))
-    list(as.difftime(unlist(seqs), units = unit))
-  }
-
-  assert_that(
-    is_dt(x), is.string(min_col), is.string(max_col),
-    min_col %in% colnames(x), max_col %in% colnames(x),
-    units(x[[min_col]]) == units(x[[max_col]])
-  )
-
-  unit <- units(x[[min_col]])
-
-  res <- x[, make_seq(get(min_col), get(max_col), step_size, unit),
-           by = id_cols]
-  data.table::setnames(res, c(id_cols, new_col))
-  data.table::setattr(res[[new_col]], "step_size", step_size)
-
-  res
-}
-
-make_regular <- function(x, time_col = "hadm_time", id_cols = "hadm_id",
-                         limits = NULL, step_size = NULL, ...) {
-
-  assert_that(is_unique(x, c(id_cols, time_col)))
-
-  if (is.null(step_size)) {
-    step_size <- attr(x[[time_col]], "step_size")
-  }
-
-  if (is.null(limits)) {
-    limits <- x[, list(min = min(get(time_col)), max = max(get(time_col))),
-                       by = id_cols]
-    join <- expand_limits(limits, "min", "max", step_size, id_cols, time_col)
-  } else {
-    join <- expand_limits(limits, ..., step_size = step_size,
-                          id_cols = id_cols, new_col = time_col)
-  }
-
-  assert_that(is_regular(join, id_cols, time_col))
-
-  tmp <- x[join, on = c(id_cols, time_col)]
-}
-
-is_regular <- function(x, id_cols = "hadm_id", time_col = "hadm_time") {
-
-  check_time_col <- function(time, step) {
-    tmp <- as.numeric(time)
-    identical(tmp, seq(min(tmp), max(tmp), by = step))
-  }
-
-  assert_that(is_dt(x), has_cols(x, c(id_cols, time_col)))
-
-  step <- attr(x[[time_col]], "step_size")
-  res <- x[, check_time_col(get(time_col), step), by = id_cols]
-
-  all(res[[setdiff(colnames(res), id_cols)]])
-}
-
-window_fun <- function(tbl, expr, ...) window_quo(tbl, substitute(expr), ...)
-
-window_quo <- function(tbl, expr, id_cols = "hadm_id", time_col = "hadm_time",
-                       full_window = FALSE,
-                       window_length = as.difftime(24L, units = "hours")) {
-
-  assert_that(is_dt(tbl), has_cols(tbl, c(id_cols, time_col)),
-              is_unique(tbl, c(id_cols, time_col)), is.flag(full_window),
-              is_difftime(window_length, allow_neg = FALSE))
-
-  units(window_length) <- units(tbl[[time_col]])
-
-  join <- tbl[,
-    c(mget(id_cols), list(get(time_col)), list(get(time_col) - window_length))
-  ]
-  join <- data.table::setnames(join, c(id_cols, "cur_time", "min_time"))
-
-  if (full_window) {
-    join <- join[, win_time := window_length <= (cur_time - min(cur_time)),
-                 by = id_cols]
-    join <- join[(win_time), ]
-  }
-
-  on_clauses <- c(
-    id_cols, paste(time_col, "<= cur_time"), paste(time_col, ">= min_time")
-  )
-
-  tmp <- tbl[join, eval(expr), on = on_clauses, by = .EACHI]
-
-  tmp <- data.table::setnames(tmp, make.unique)
-  tmp <- tmp[, hadm_time.1 := NULL]
-
-  merge(tbl, tmp, by = c(id_cols, time_col), all = TRUE)
-}
-
 agg_or_na <- function(agg_fun) {
   function(x) {
     if (all(is.na(x))) return(x[1L])
@@ -315,6 +218,10 @@ time_unit_as_int <- function(x) {
 is_val <- function(x, val) !is.na(x) & x == val
 is_true <- function(x) !is.na(x) & x
 
+is_unique <- function(x, by = by_cols(x)) {
+  identical(anyDuplicated(x, by = by), 0L)
+}
+
 last_elem <- function(x) x[length(x)]
 first_elem <- function(x) x[1L]
 
@@ -322,3 +229,11 @@ cat_line <- function(...) {
   line <- trimws(paste0(...), "right")
   cat(paste0(line, "\n"), sep = "")
 }
+
+secs <- function(x) as.difftime(x, units = "secs")
+mins <- function(x) as.difftime(x, units = "mins")
+hours <- function(x) as.difftime(x, units = "hours")
+days <- function(x) as.difftime(x, units = "days")
+weeks <- function(x) as.difftime(x, units = "weeks")
+
+str_in_vec_once <- function(str, vec) identical(sum(vec %in% str), 1L)
