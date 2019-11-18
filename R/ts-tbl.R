@@ -111,12 +111,14 @@ unclass_ts_tbl <- function(x) {
   invisible(x)
 }
 
-reclass_ts_tbl <- function(x, ts_key, ts_index, ts_step, ts_unit,
-                           warn_on_fail = TRUE) {
+reclass_ts_tbl <- function(x, spec, warn_on_fail = TRUE) {
 
-  if (check_ts_tbl(x, ts_key, ts_index, ts_unit)) {
+  check <- check_ts_tbl(x, spec[["ts_key"]], spec[["ts_index"]],
+                        spec[["ts_unit"]])
 
-    new_ts_tbl(x, ts_key, ts_index, ts_step)
+  if (check) {
+
+    new_ts_tbl(x, spec[["ts_key"]], spec[["ts_index"]], spec[["ts_step"]])
 
   } else {
 
@@ -143,9 +145,7 @@ is_ts_tbl <- function(x) inherits(x, "ts_tbl")
 #' @export
 #'
 `[.ts_tbl` <- function(x, ...) {
-  spec <- get_ts_spec(x)
-  res <- NextMethod()
-  do.call(reclass_ts_tbl, c(list(res), spec, list(warn_on_fail = FALSE)))
+  reclass_ts_tbl(NextMethod(), get_ts_spec(x), warn_on_fail = FALSE)
 }
 
 #' @rdname ts_tbl
@@ -265,10 +265,7 @@ as.data.table.ts_tbl <- function(x, ...) {
 
   if (...length() > 0L) warning("Ignoring further `...` arguments.")
 
-  setattr(x, "ts_key", NULL)
-  setattr(x, "ts_index", NULL)
-  setattr(x, "ts_step", NULL)
-  setattr(x, "class", setdiff(class(x), "ts_tbl"))
+  unclass_ts_tbl(x)
 
   x
 }
@@ -293,18 +290,54 @@ as.data.frame.ts_tbl <- function(x, row.names = NULL, optional = FALSE, ...) {
   x
 }
 
-.cbind.ts_tbl <- function(...) {
-  data.table::data.table(...)
-}
+#' @export
+.cbind.ts_tbl <- function(..., keep.rownames = FALSE, check.names = FALSE,
+                          key = NULL, stringsAsFactors = FALSE) {
 
-.rbind.ts_tbl <- function(..., use.names = TRUE, fill = FALSE, idcol = NULL) {
+  lst <- list(...)
+  check <- vapply(lst, is_ts_tbl, logical(1L))
 
-  lst <- lapply(
-    list(...),
-    function(x) if (is.list(x)) x else data.table::as.data.table(x)
+  if (sum(check) == 1L) {
+    hit <- which(check)
+    lst <- c(lst[hit], lst[-hit])
+    spec <- get_ts_spec(lst[[hit]])
+  } else {
+    spec <- NULL
+  }
+
+  res <- do.call(data.table::data.table,
+    c(lst, list(keep.rownames = keep.rownames, check.names = check.names,
+                key = key, stringsAsFactors = stringsAsFactors))
   )
 
-  data.table::rbindlist(l, use.names, fill, idcol)
+  if (!is.null(spec)) {
+    reclass_ts_tbl(res, spec, warn_on_fail = TRUE)
+  } else {
+    res
+  }
+}
+
+#' @export
+.rbind.ts_tbl <- function(..., use.names = TRUE, fill = FALSE, idcol = NULL) {
+
+  cond_as <- function(x) {
+    if (is.list(x)) x else data.table::as.data.table(x)
+  }
+
+  dt_rbl <- function(x, use.names, fill, idcol) {
+    data.table::rbindlist(lapply(x, cond_as), use.names, fill, idcol)
+  }
+
+  lst <- list(...)
+
+  hit <- which(vapply(lst, is_ts_tbl, logical(1L)))[1L]
+  spec <- get_ts_spec(lst[[hit]])
+
+  reclass_ts_tbl(
+    dt_rbl(lst, use.names, fill, idcol),
+    get_ts_spec(lst[[hit]]),
+    warn_on_fail = TRUE
+  )
 }
 
 #' @rawNamespace if (getRversion() >= "3.6.2") { S3method(cbind, ts_tbl) }
