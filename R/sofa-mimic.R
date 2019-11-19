@@ -40,10 +40,9 @@ mimic_fio2 <- function(add_chart_data = TRUE, time_scale = "hours",
       agg_fun = max
     )
 
-    res <- merge(lab, chart, by = c("hadm_id", "hadm_time"), all = TRUE)
+    res <- merge(lab, chart, all = TRUE)
     res <- res[, fio2 := ifelse(is.na(fi_lab), fi_chart, fi_lab)]
-
-    res <- data.table::set(res, j = c("fi_lab", "fi_chart"), value = NULL)
+    res <- res[, c("fi_lab", "fi_chart") := NULL]
 
   } else {
     res <- lab
@@ -56,37 +55,39 @@ mimic_fio2 <- function(add_chart_data = TRUE, time_scale = "hours",
 }
 
 mimic_pafi <- function(pao2 = mimic_pao2(...), fio2 = mimic_fio2(...),
-                       win_length = as.difftime(2L, units = "hours"),
-                       mode = c("match_vals", "extreme_vals"),
+                       win_length = hours(2L),
+                       mode = c("match_vals", "extreme_vals", "fill_gaps"),
                        ...) {
 
-  assert_that(is_dt(pao2), is_dt(fio2),
-              has_cols(pao2, c("hadm_id", "hadm_time", "pao2")),
-              has_cols(fio2, c("hadm_id", "hadm_time", "fio2")),
-              same_time_spec(pao2, fio2),
-              is_difftime(win_length, allow_neg = FALSE))
+  assert_that(is_ts_tbl(pao2), is_ts_tbl(fio2), same_by_cols(pao2, fio2),
+              has_cols(pao2, "pao2"), has_cols(fio2, "fio2"),
+              is_time(win_length, allow_neg = FALSE))
 
-  if (match.arg(mode) == "match_vals") {
+  mode <- match.arg(mode)
+
+  if (identical(mode, "match_vals")) {
 
     res <- rbind(
-      fio2[pao2, on = c("hadm_id", "hadm_time"), roll = win_length],
-      pao2[fio2, on = c("hadm_id", "hadm_time"), roll = win_length]
+      fio2[pao2, on = by_cols(fio2), roll = win_length],
+      pao2[fio2, on = by_cols(fio2), roll = win_length]
     )
     res <- unique(res)
 
   } else {
 
-    res <- merge(pao2, fio2, all = TRUE, by = c("hadm_id", "hadm_time"))
-    res <- make_regular(res, time_col = "hadm_time", id_cols = "hadm_id")
+    res <- merge(pao2, fio2, all = TRUE)
 
-    res <- window_quo(res,
-      substitute(list(min_pa = min_fun(pao2), max_fi = max_fun(fio2)),
-                 list(min_fun = min_or_na, max_fun = max_or_na)),
-      id_cols = "hadm_id", full_window = FALSE, window_length = win_length
+    if (identical(mode, "fill_gaps")) {
+      res <- fill_gaps(res)
+    }
+
+    win_expr <- substitute(
+      list(min_pa = min_fun(pao2), max_fi = max_fun(fio2)),
+      list(min_fun = min_or_na, max_fun = max_or_na)
     )
+    res <- slide_quo(res, win_expr, before = win_length, full_window = FALSE)
 
-    res <- res[, c("pao2", "fio2") := NULL]
-    res <- data.table::setnames(res, c("min_pa", "max_fi"), c("pao2", "fio2"))
+    setnames(res, c("min_pa", "max_fi"), c("pao2", "fio2"))
   }
 
   res <- res[, pafi := 100 * pao2 / fio2]
@@ -95,7 +96,8 @@ mimic_pafi <- function(pao2 = mimic_pao2(...), fio2 = mimic_fio2(...),
   res
 }
 
-mimic_vent_start <- function(data_env = "mimic") {
+mimic_vent_start <- function(time_scale = "mins", step_size = 1L,
+                             data_env = "mimic") {
 
   message("fetching mechanical ventilation start info")
 
@@ -114,40 +116,42 @@ mimic_vent_start <- function(data_env = "mimic") {
     unit_cols = NULL,
     value_names = "vent_start",
     split_items = FALSE,
-    time_scale = "secs",
+    time_scale = time_scale,
+    step_size = step_size,
     agg_fun = first_elem
   )
 
-  res <- data.table::set(res, j = "vent_start", value = NULL)
+  set(res, j = "vent_start", value = NULL)
 
   res
 }
 
-mimic_vent_stop <- function(data_env = "mimic") {
+mimic_vent_stop <- function(time_scale = "mins", step_size = 1L,
+                            data_env = "mimic") {
 
   get_di <- function(x) {
     mimic_get_data_items(x, "d_items", data_env,
       unit_cols = NULL,
       value_names = "vent_end",
       split_items = FALSE,
-      time_scale = "secs",
+      time_scale = time_scale,
+      step_size = step_size,
       agg_fun = first_elem
     )
   }
 
-  message("fetching mechanical ventilation stop info")
+  message("fetching mechanical ventilation vent_stop info")
 
   res <- rbind(get_di(c(227194L, 225468L, 225477L)),
                get_di(c(467L, 469L, 226732L)))
-  res <- data.table::set(res, j = "vent_end", value = NULL)
+  set(res, j = "vent_end", value = NULL)
 
   unique(res)
 }
 
-mimic_vent <- function(vent_start = mimic_vent_start(data_env),
-                       vent_stop = mimic_vent_stop(data_env),
-                       win_length = as.difftime(6L, units = "hours"),
-                       min_length = as.difftime(10L, units = "mins"),
+mimic_vent <- function(vent_start = mimic_vent_start(data_env = data_env),
+                       vent_stop = mimic_vent_stop(data_env = data_env),
+                       win_length = hours(6L), min_length = mins(10L),
                        time_scale = "hours", step_size = 1L,
                        data_env = "mimic") {
 
@@ -156,35 +160,28 @@ mimic_vent <- function(vent_start = mimic_vent_start(data_env),
     round_to(x, step_size)
   }
 
-  assert_that(is_dt(vent_start), is_dt(vent_stop),
-              has_cols(vent_start, c("hadm_id", "hadm_time")),
-              has_cols(vent_stop, c("hadm_id", "hadm_time")),
-              same_time_spec(vent_start, vent_stop),
-              is_difftime(win_length, allow_neg = FALSE),
-              is_difftime(min_length, allow_neg = FALSE))
+  assert_that(same_by_cols(vent_start, vent_stop),
+              same_time_cols(vent_start, vent_stop),
+              is_time(win_length, allow_neg = FALSE),
+              is_time(min_length, allow_neg = FALSE),
+              min_length < win_length, step_time(vent_start) < min_length)
 
-  data_time_scale <- units(vent_start[["hadm_time"]])
-  data_step_size <- attr(vent_start[["hadm_time"]], "step_size")
+  units(win_length) <- time_unit(vent_start)
+  units(min_length) <- time_unit(vent_start)
 
-  assert_that(
-    min_length < win_length,
-    as.difftime(data_step_size, units = data_time_scale) < min_length
-  )
+  vent_start[, start_time := hadm_time]
+  vent_stop[ , stop_time  := hadm_time]
 
-  if (time_unit_as_int(data_time_scale) >=
-      time_unit_as_int(units(min_length))) {
-    warning("Consider moving to higher time resolution for ventilation data.")
-  }
+  on.exit({
+    set(vent_start, j = "start_time", value = NULL)
+    set(vent_stop,  j = "stop_time",  value = NULL)
+  })
 
-  units(win_length) <- data_time_scale
-  units(min_length) <- data_time_scale
+  merged <- vent_stop[vent_start, roll = -win_length, on = by_cols(vent_start)]
 
-  start <- data.table::copy(vent_start)[, start_time := hadm_time]
-  stop <- data.table::copy(vent_stop)[, stop_time := hadm_time]
-
-  merged <- stop[start, roll = -win_length, on = c("hadm_id", "hadm_time")]
   merged <- merged[is.na(stop_time), stop_time := start_time + win_length]
   merged <- merged[stop_time - start_time >= min_length, ]
+
   merged <- merged[, c("start_time", "stop_time") := list(
     final_units(start_time), final_units(stop_time)
   )]
@@ -276,12 +273,6 @@ mimic_vaso <- function(time_scale = "hours", step_size = 1L,
     )
   }
 
-  combine <- function(x) {
-    res <- reduce(merge, x, by = by_cols, all = TRUE)
-    data.table::setcolorder(res, c(by_cols, names(cv_ids)))
-    res
-  }
-
   message("fetching vasopressor dosages")
 
   cv_ids <- list(norepi = c(30047L, 30120L),
@@ -294,20 +285,15 @@ mimic_vaso <- function(time_scale = "hours", step_size = 1L,
                  dopa   = 221662L,
                  dobu   = 221653L)
 
-  by_cols <- c("hadm_id", "hadm_time")
+  cv_dat <- reduce(merge, Map(get_di, cv_ids, names(cv_ids)), all = TRUE)
+  mv_dat <- reduce(merge, get_di(unlist(mv_ids), names(mv_ids), split = TRUE),
+                   all = TRUE)
 
-  cv_dat <- combine(Map(get_di, cv_ids, names(cv_ids)))
-  mv_dat <- combine(get_di(unlist(mv_ids), names(mv_ids), split = TRUE))
-
-  res <- aggregate_data_items(rbind(cv_dat, mv_dat), fun = max,
-                              by_cols = by_cols, val_cols = names(cv_ids))
-  data.table::setkeyv(res, by_cols)
-
-  res
+  make_unique(rbind(cv_dat, mv_dat), fun = max)
 }
 
-mimic_gcs <- function(win_length = as.difftime(6L, units = "hours"),
-                      set_na_max = TRUE, time_scale = "hours", step_size = 1L,
+mimic_gcs <- function(win_length = hours(6L), set_na_max = TRUE,
+                      time_scale = "hours", step_size = 1L,
                       data_env = "mimic") {
 
   fix_gcs <- function(x, ...) {
@@ -373,36 +359,33 @@ mimic_gcs <- function(win_length = as.difftime(6L, units = "hours"),
   itms <- list(eye    = c(184L, 220739L),
                verbal = c(723L, 223900L),
                motor  = c(454L, 223901L))
+  evm <- names(itms)
 
   res <- Map(get_di, itms, names(itms))
-  res <- reduce(merge, res, by = c("hadm_id", "hadm_time"), all = TRUE)
+  res <- reduce(merge, res, all = TRUE)
 
-  zeros <- reduce(`|`, res[, lapply(.SD, is_val, 0), .SDcols = names(itms)])
+  zeros <- reduce(`|`, res[, lapply(.SD, is_val, 0), .SDcols = evm])
 
   if (any(zeros)) {
     message("Setting ", sum(zeros), " rows to max gcs values due to sedation.")
-    res <- res[zeros, names(itms) := list(4, 5, 6)]
+    res <- res[zeros, c(evm) := list(4, 5, 6)]
   }
 
-  res <- window_quo(res,
-    substitute(list(eye_imp = fun(eye), verb_imp = fun(verbal),
-                    mot_imp = fun(motor)),
-               list(fun = impute_na_prev)),
-    id_cols = "hadm_id", window_length = win_length
-  )
+  expr <- substitute(list(eye_imp = fun(eye), verb_imp = fun(verbal),
+                          mot_imp = fun(motor)),
+                     list(fun = impute_na_prev))
+  res <- slide_quo(res, expr, before = win_length)
 
   if (set_na_max) {
-    res <- res[, names(itms) := list(
+    res <- res[, c(evm) := list(
       repl_na(eye_imp, 4), repl_na(verb_imp, 5), repl_na(mot_imp, 6)
     )]
   }
 
   res <- res[, gcs := eye_imp + verb_imp + mot_imp]
 
-  res <- data.table::set(res,
-    j = c(names(itms), "eye_imp", "verb_imp", "mot_imp"),
-    value = NULL
-  )
+  res <- set(res, j = c(evm, "eye_imp", "verb_imp", "mot_imp"),
+             value = NULL)
 
   res
 }
@@ -422,9 +405,8 @@ mimic_crea <- function(time_scale = "hours", step_size = 1L,
   )
 }
 
-mimic_urine24 <- function(min_win = as.difftime(12L, units = "hours"),
-                          time_scale = "hours", step_size = 1L,
-                          data_env = "mimic") {
+mimic_urine24 <- function(min_win = hours(12L), time_scale = "hours",
+                          step_size = 1L, data_env = "mimic") {
 
   handle_ml <- function(x, unit_col, val_col) {
     x <- x[x[[val_col]] > 0, ]
@@ -437,7 +419,7 @@ mimic_urine24 <- function(min_win = as.difftime(12L, units = "hours"),
   urine_sum <- local({
 
     min_steps <- ceiling(convert_dt(min_win) / step_size)
-    step_factor <- convert_dt(as.difftime(24L, units = "hours")) / step_size
+    step_factor <- convert_dt(hours(24L)) / step_size
 
     function(x) {
       if (length(x) <= min_steps) return(NA_real_)
@@ -447,8 +429,7 @@ mimic_urine24 <- function(min_win = as.difftime(12L, units = "hours"),
 
   message("fetching urine measurements")
 
-  assert_that(is_difftime(min_win, allow_neg = FALSE),
-              min_win <= as.difftime(24L, units = "hours"))
+  assert_that(is_time(min_win, allow_neg = FALSE), min_win <= hours(24L))
 
   itms <- c( 40055L,  40056L,  40057L,  40065L,  40069L,  40085L,  40086L,
              40094L,  40096L,  40405L,  40428L,  40473L,  40715L,  43175L,
@@ -470,20 +451,14 @@ mimic_urine24 <- function(min_win = as.difftime(12L, units = "hours"),
   icu_limits <- mimic_get_icu_stays("min", "max", NULL, time_scale, step_size,
                                     data_env)
 
-  res <- make_regular(res, time_col = "hadm_time",
-                      id_cols = c("hadm_id", "icustay_id"),
-                      limits = icu_limits)
+  res <- fill_gaps(res, limits = icu_limits)
 
-  res <- window_quo(res,
-    substitute(list(urine_24 = win_agg_fun(urine)),
-               list(win_agg_fun = urine_sum)),
-    id_cols = c("hadm_id", "icustay_id"), full_window = FALSE
-  )
+  expr <- substitute(list(urine_24 = win_agg_fun(urine)),
+                     list(win_agg_fun = urine_sum))
 
-  data.table::setattr(res[["urine_24"]], "units",
-                      attr(res[["urine"]], "units"))
-  data.table::set(res, j = c("icustay_id", "urine"), value = NULL)
-  data.table::setkeyv(res, c("hadm_id", "hadm_time"))
+  res <- slide_quo(res, expr, hours(24L))
+
+  res <- rm_ts_cols(res, "icustay_id")
 
   res
 }
@@ -502,28 +477,27 @@ mimic_sofa_vars <- function(pafi  = mimic_pafi(..., data_env = data_env),
   tables <- list(pafi, vent, coag, bili, map, vaso, gcs, crea, urine)
 
   assert_that(
-    all(vapply(tables, is_dt, logical(1L))),
-    all(vapply(tables, has_cols, logical(1L), c("hadm_id", "hadm_time"))),
-    all(vapply(tables, same_time_spec, logical(1L), tables[[1L]]))
+    all(vapply(tables, same_by_cols,   logical(1L), tables[[1L]])),
+    all(vapply(tables, same_time_cols, logical(1L), tables[[1L]]))
   )
 
-  dat <- reduce(merge, tables, by = c("hadm_id", "hadm_time"), all = TRUE)
+  dat <- reduce(merge, tables, all = TRUE)
 
-  time_scale <- units(dat[["hadm_time"]])
-  step_size <- attr(dat[["hadm_time"]], "step_size")
+  time_scale <- time_unit(dat)
+  time_col <- ts_index(dat)
 
-  hadm <- mimic_get_icu_stays(NULL, NULL, "disch", time_scale, step_size,
+  hadm <- mimic_get_icu_stays(NULL, NULL, "disch", time_scale, ts_step(dat),
                               data_env)
   hadm <- hadm[, list(disch = max(disch)), by = "hadm_id"]
 
-  limits <- dat[, list(min = min(hadm_time), max = max(hadm_time)),
-                by = "hadm_id"]
-  limits <- merge(limits, hadm, by = "hadm_id", all.x = TRUE)
+  limits <- dat[, list(min = min(get(time_col)), max = max(get(time_col))),
+                by = c(ts_key(dat))]
+  limits <- merge(limits, hadm, by.x = ts_key(dat), by.y = "hadm_id",
+                  all.x = TRUE)
   limits <- limits[, list(min = min(as.difftime(0, units = time_scale), min),
                           max = max(max, disch, na.rm = TRUE)), by = "hadm_id"]
 
-  make_regular(dat, time_col = "hadm_time", id_cols = "hadm_id",
-               limits = limits, step_size = step_size)
+  fill_gaps(dat, limits = limits)
 }
 
 mimic_sofa <- function(...) {

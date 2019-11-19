@@ -13,8 +13,8 @@ sofa_window <- function(tbl,
 
   assert_that(is_dt(tbl), has_cols(tbl, c("hadm_id", "hadm_time", need_cols)),
               is_regular(tbl),
-              is_difftime(tbl[["hadm_time"]]),
-              is_difftime(win_length, allow_neg = FALSE))
+              is_time(tbl[["hadm_time"]]),
+              is_time(win_length, allow_neg = FALSE))
 
   message("computing worst values over window")
 
@@ -64,7 +64,7 @@ sofa_compute <- function(tbl, na_val = 0L, na_val_resp = na_val,
 
   assert_that(is_dt(tbl), has_cols(tbl, c("hadm_id", "hadm_time", need_cols)),
               is_regular(tbl),
-              is_difftime(tbl[["hadm_time"]]))
+              is_time(tbl[["hadm_time"]]))
 
   message("computing sofa scores")
 
