@@ -29,18 +29,18 @@ on_failure(has_col) <- function(call, env) {
          eval(call$col, env), "`.")
 }
 
-has_time_col <- function(x, col) has_col(x, col) && is_difftime(x[[col]])
+has_time_col <- function(x, col) has_col(x, col) && is_time(x[[col]])
 
 on_failure(has_time_col) <- function(call, env) {
   paste0(deparse(call$x), " does not contain column `",
          eval(call$col, env), "` of class `difftime`.")
 }
 
-is_difftime <- function(x, allow_neg = TRUE) {
+is_time <- function(x, allow_neg = TRUE) {
   inherits(x, "difftime") && (allow_neg || all(x >= 0))
 }
 
-on_failure(is_difftime) <- function(call, env) {
+on_failure(is_time) <- function(call, env) {
   pos <- !eval(call$allow_neg, env)
   paste0(deparse(call$x), " is not a",
          if (pos) " strictly positive " else " ",
@@ -48,11 +48,27 @@ on_failure(is_difftime) <- function(call, env) {
 }
 
 same_time_unit <- function(x, y)
- is_difftime(x) && is_difftime(y) && identical(units(x), units(y))
+ is_time(x) && is_time(y) && identical(units(x), units(y))
 
 on_failure(same_time_unit) <- function(call, env) {
   paste0("`", deparse(call$x), "` and `", deparse(call$y),
          "` are not on the same time scale.")
+}
+
+same_by_cols <- function(x, y) setequal(by_cols(x), by_cols(y))
+
+on_failure(same_by_cols) <- function(call, env) {
+  paste0(deparse(call$x), " and ", deparse(call$y),
+         " do not share the same `by` columns.")
+}
+
+same_time_cols <- function(x, y) {
+  identical(ts_index(x), ts_index(y)) && identical(step_time(x), step_time(y))
+}
+
+on_failure(same_time_cols) <- function(call, env) {
+  paste0(deparse(call$x), " and ", deparse(call$y),
+         " do not share the same `time` columns and scale.")
 }
 
 has_unit <- function(x, col, unit) {
@@ -84,12 +100,6 @@ on_failure(same_time_spec) <- function(call, env) {
          eval(call$time_y, env), "` of ", deparse(call$y), ".")
 }
 
-same_by_cols <- function(x, y) setequal(by_cols(x), by_cols(y))
-
-on_failure(same_time_unit) <- function(call, env) {
-  paste0(deparse(call$x), " and ", deparse(call$y),
-         " do not share the same `by` columns.")
-}
 
 check_ts_tbl <- function(x, key, ind, unit = NULL, step = NULL) {
   is_dt(x) && has_cols(x, key) && has_time_col(x, ind) &&

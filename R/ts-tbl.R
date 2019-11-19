@@ -59,17 +59,41 @@ set_ts_key <- function(x, val) {
   invisible(x)
 }
 
+rm_ts_cols <- function(x, cols) {
+
+  assert_that(is_ts_tbl(x))
+  index <- ts_index(x)
+
+  if (is.numeric(cols)) cols <- colnames(x)[cols]
+
+  assert_that(has_cols(x, cols), !index %in% cols)
+
+  old_keys <- ts_key(x)
+
+  set(x, j = cols, value = NULL)
+
+  if (any(cols %in% old_keys)) {
+
+    new_keys <- setdiff(old_keys, cols)
+
+    set_ts_key(x, new_keys)
+    setkeyv(x, c(new_keys, index))
+  }
+
+  invisible(x)
+}
+
 set_ts_index <- function(x, val) {
 
   if (is.null(val)) {
-    val <- which(vapply(x, is_difftime, logical(1L)))
+    val <- which(vapply(x, is_time, logical(1L)))
   }
 
   if (is.numeric(val)) {
     val <- colnames(x)[val]
   }
 
-  assert_that(length(val) == 1L, has_cols(x, val), is_difftime(x[[val]]))
+  assert_that(length(val) == 1L, has_cols(x, val), is_time(x[[val]]))
 
   setattr(x, "ts_index", val)
   invisible(x)

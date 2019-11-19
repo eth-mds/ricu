@@ -3,7 +3,8 @@ expand_limits <- function(x, min_col = "min", max_col = "max", step_size = 1L,
                           id_cols = NULL, new_col = "hadm_time") {
 
   seq_time <- function(min, max, step, unit) {
-    as.difftime(seq(min, max, step_size), units = unit)
+    do_seq <- function(min, max) seq(min, max, step)
+    as.difftime(unlist(Map(do_seq, min, max)), units = unit)
   }
 
   assert_that(is_dt(x), has_time_col(x, min_col), has_time_col(x, max_col),
@@ -34,8 +35,10 @@ has_gaps <- function(x) {
 
   res <- x[, check_time_col(get(ts_index(x)), ts_step(x)), by = c(ts_key(x))]
 
-  all(res[[setdiff(colnames(res), ts_key(x))]])
+  !all(res[[setdiff(colnames(res), ts_key(x))]])
 }
+
+has_no_gaps <- Negate(has_gaps)
 
 fill_gaps <- function(x, limits = NULL, ...) {
 
@@ -57,9 +60,9 @@ fill_gaps <- function(x, limits = NULL, ...) {
                           id_cols = ts_key(x), new_col = time_col)
   }
 
-  assert_that(has_gaps(join))
+  assert_that(has_no_gaps(join))
 
-  x[join, on = by_cols(x), nomatch = NULL]
+  x[join, on = by_cols(x)]
 }
 
 slide_expr <- function(tbl, expr, ...) slide_quo(tbl, substitute(expr), ...)
@@ -68,8 +71,8 @@ slide_quo <- function(x, expr, before, after = hours(0L),
                       full_window = FALSE) {
 
   assert_that(is_ts_tbl(x), is_unique(x), is.flag(full_window),
-              is_difftime(before, allow_neg = FALSE),
-              is_difftime(after, allow_neg = FALSE))
+              is_time(before, allow_neg = FALSE),
+              is_time(after, allow_neg = FALSE))
 
   time_col <- ts_index(x)
   id_cols  <- ts_key(x)
@@ -106,4 +109,25 @@ slide_quo <- function(x, expr, before, after = hours(0L),
   set(res, j = "extra_time", value = NULL)
 
   res
+}
+
+is_unique <- function(x, by = by_cols(x)) {
+  identical(anyDuplicated(x, by = by), 0L)
+}
+
+make_unique <- function(x, fun = mean, ...) {
+
+  assert_that(is_ts_tbl(x), is.function(fun))
+
+  if (nrow(x) == 0) return(x)
+
+  cols <- val_cols(x)
+
+  units <- lapply(cols, function(col) attr(x[[col]], "units"))
+
+  x <- x[, lapply(.SD, fun, ...), .SDcols = cols, by = c(by_cols(x))]
+
+  Map(function(col, unit) setattr(x[[col]], "units", unit), cols, units)
+
+  x
 }

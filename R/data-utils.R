@@ -24,7 +24,6 @@ get_data_items <- function(items, table_name, data_env, difftime_fun,
 
   assert_that(inherits(dat[[time_name]], "difftime"),
               identical(units(dat[[time_name]]), time_scale),
-              identical(attr(dat[[time_name]], "step_size"), step_size),
               all(as.numeric(dat[[time_name]]) %% step_size == 0))
 
   if (split_items) {
@@ -54,19 +53,18 @@ get_data_items <- function(items, table_name, data_env, difftime_fun,
   dat <- Map(rename_data_items, dat, value_names,
              MoreArgs = list(id_cols, id_names, time_name))
 
+  dat <- lapply(dat, new_ts_tbl, id_names, time_name, step_size)
+
   if (!is.null(agg_fun)) {
-    dat <- lapply(dat, aggregate_data_items, agg_fun, c(id_names, time_name))
+    dat <- lapply(dat, make_unique, agg_fun)
   }
 
-  dat <- lapply(dat, data.table::setkeyv, c(id_names, time_name))
-
-  if (missing(agg_fun) && any(vapply(dat, anyDuplicated, integer(1L)) != 0L)) {
+  if (missing(agg_fun) && !all(vapply(dat, is_unique, logical(1L)))) {
     warning("Non-unique id/value combinations found. Consider `agg_fun`.")
   }
 
-  if (!split_items) dat <- dat[[1L]]
-
-  dat
+  if (split_items) dat
+  else             dat[[1L]]
 }
 
 read_data_items <- function(items, table_name, data_env, cols, item_col,
@@ -171,29 +169,4 @@ rename_data_items <- function(dat, val_name, id_cols, id_names, time_name) {
   dat <- data.table::setnames(dat, c(id_names, time_name, val_name))
 
   dat
-}
-
-aggregate_data_items <- function(tbl, fun = mean,
-                                 by_cols = c("hadm_id", "hadm_time"),
-                                 val_cols = setdiff(colnames(tbl), by_cols),
-                                 new_cols = val_cols, ...) {
-
-  assert_that(
-    is_dt(tbl), is.function(fun),
-    is.character(val_cols), length(val_cols) > 0L,
-    is.character(by_cols), length(by_cols) > 0L,
-    all(c(val_cols, by_cols) %in% colnames(tbl))
-  )
-
-  if (nrow(tbl) == 0) return(tbl)
-
-  units <- lapply(val_cols, function(col) attr(tbl[[col]], "units"))
-
-  tbl <- tbl[, lapply(.SD, fun, ...), .SDcols = val_cols, by = by_cols]
-  tbl <- data.table::setnames(tbl, c(by_cols, new_cols))
-
-  Map(function(col, unit) data.table::setattr(tbl[[col]], "units", unit),
-      new_cols, units)
-
-  tbl
 }

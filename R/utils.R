@@ -218,10 +218,6 @@ time_unit_as_int <- function(x) {
 is_val <- function(x, val) !is.na(x) & x == val
 is_true <- function(x) !is.na(x) & x
 
-is_unique <- function(x, by = by_cols(x)) {
-  identical(anyDuplicated(x, by = by), 0L)
-}
-
 last_elem <- function(x) x[length(x)]
 first_elem <- function(x) x[1L]
 
