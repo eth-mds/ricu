@@ -1,12 +1,12 @@
 
 #' @export
-mimic_tbl_expr <- function(table, row_expr, col_expr, ...) {
-  mimic_tbl_quo(table, null_or_subs(row_expr), null_or_subs(col_expr), ...)
+mimic_tbl <- function(table, row_expr, ...) {
+  mimic_tbl_(table, null_or_subs(row_expr), ...)
 }
 
 #' @export
-mimic_tbl_quo <- function(table, row_quo = NULL, col_quo = NULL,
-                          interval = hours(1L), envir = "mimic") {
+mimic_tbl_ <- function(table, row_quo = NULL, cols = NULL,
+                       interval = hours(1L), envir = "mimic") {
 
   time_fun <- function(x, y) {
     round_to(difftime(x, y, units = units(interval)), as.numeric(interval))
@@ -14,7 +14,7 @@ mimic_tbl_quo <- function(table, row_quo = NULL, col_quo = NULL,
 
   assert_that(is_time(interval, allow_neg = FALSE))
 
-  dat <- prt::subset_quo(get_table(table, data_env), row_quo, col_quo)
+  dat <- prt::subset_quo(get_table(table, envir), row_quo, cols)
 
   is_date <- vapply(dat, inherits, logical(1L), "POSIXt")
 
@@ -35,17 +35,28 @@ mimic_tbl_quo <- function(table, row_quo = NULL, col_quo = NULL,
 }
 
 #' @export
-mimic_ts_expr <- function(table, row_expr, col_expr, ...) {
-  mimic_ts_quo(table, null_or_subs(row_expr), null_or_subs(col_expr), ...)
+mimic_ts <- function(table, row_expr, ...) {
+  mimic_ts_(table, null_or_subs(row_expr), ...)
 }
 
 #' @export
-mimic_ts_quo <- function(table, row_quo = NULL, col_quo = NULL,
-                         id_cols = "hadm_id", time_col = "charttime",
-                         id_names = id_cols, time_name = "hadm_time",
-                         interval = hours(1L), envir = "mimic") {
+mimic_ts_ <- function(table, row_quo = NULL, cols = NULL,
+                      id_cols = "hadm_id", time_col = "charttime",
+                      id_names = id_cols, time_name = "hadm_time",
+                      interval = hours(1L), envir = "mimic") {
 
-  res <- mimic_tbl_quo(table, row_quo, col_quo, interval, envir)
+  if (!is.null(cols)) {
+
+    if (is.numeric(cols)) {
+      cols <- colnames(get_table(table, envir))
+    }
+
+    assert_that(is.character(cols))
+
+    cols <- unique(c(id_cols, time_col, cols))
+  }
+
+  res <- mimic_tbl_(table, row_quo, cols, interval, envir)
   res <- setnames(res, c(id_cols, time_col), c(id_names, time_name))
 
   new_ts_tbl(res, id_names, time_name, as.numeric(interval))

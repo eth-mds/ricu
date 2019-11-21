@@ -12,7 +12,7 @@ unique_time_win <- function(tbl, min_count = 1L,
 
   if (min_count > 1L) {
 
-    assert_that(is_difftime(count_win, allow_neg = FALSE))
+    assert_that(is_time(count_win, allow_neg = FALSE))
 
     expr <- quote(list(sum_count = sum(count), max_win = max(win_end)))
     tbl <- window_quo(tbl, expr, window_length = count_win)
@@ -37,8 +37,8 @@ si_compute <- function(abx, micro, win_lwr = as.difftime(48L, units = "hours"),
   assert_that(
     is_dt(abx),   is_unique(abx,   id), has_cols(abx,   c(id, "win_end")),
     is_dt(micro), is_unique(micro, id), has_cols(micro, c(id, "win_end")),
-    is_difftime(win_lwr, allow_neg = FALSE),
-    is_difftime(win_upr, allow_neg = FALSE),
+    is_time(win_lwr, allow_neg = FALSE),
+    is_time(win_upr, allow_neg = FALSE),
   )
 
   abx   <-   abx[, time_copy := hadm_time]

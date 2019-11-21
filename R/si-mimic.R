@@ -1,4 +1,5 @@
 
+#' @export
 mimic_abx_presc <- function(
   select_drugs = paste(
     "aztreonam|bactrim|cephalexin|chloramphenicol|cipro|flagyl|metronidazole",
@@ -11,15 +12,14 @@ mimic_abx_presc <- function(
     sep = "|"
   ),
   drop_routes = "[ao][dsu]|eye|ear|tp",
-  win_length = as.difftime(24L, units = "hours"),
-  date_padding = as.difftime(24L, units = "hours"),
-  time_scale = "hours",
-  step_size = 1L,
-  data_env = "mimic") {
+  win_length = hours(24L),
+  date_extra = hours(24L) - interval,
+  interval = hours(1L),
+  envir = "mimic") {
 
   assert_that(is.string(select_drugs), is.string(drop_routes),
-              is_difftime(win_length, allow_neg = FALSE),
-              is_difftime(date_padding, allow_neg = FALSE))
+              is_time(win_length, allow_neg = FALSE),
+              is_time(date_extra, allow_neg = FALSE))
 
   search_fun <- function(col) grepl(select_drugs, col, ignore.case = TRUE)
 
@@ -28,28 +28,22 @@ mimic_abx_presc <- function(
   row_expr <- substitute((fun(drug) | fun(drug_name_generic)) & !fun(route),
                          list(fun = search_fun))
 
-  dat <- get_table("prescriptions", data_env)
-  dat <- prt::subset_quo(dat, row_expr, c("hadm_id", "startdate"))
+  res <- mimic_prescr_(row_expr, interval = interval, envir = envir,
+                       date_extra = date_extra)
 
-  res <- mimic_admit_difftime(dat, data_env, "startdate",
-                              time_scale = time_scale, step_size = step_size)
-
-  drop_cols <- setdiff(colnames(res), c("hadm_id", "hadm_time"))
-  res <- data.table::set(res, j = drop_cols, value = NULL)
-  res <- res[, win_end := hadm_time + win_length + date_padding]
-
-  res
+  res <- res[, win_end := hadm_time + win_length + startdate_ub]
+  res <- set(res, j = "startdate_ub", value = NULL)
 }
 
 mimic_abx_inmv <- function(select_cat = "antibiotics",
-                           win_length = as.difftime(24L, units = "hours"),
-                           date_padding = as.difftime(24L, units = "hours"),
+                           win_length = hours(24L),
+                           date_padding = hours(24L),
                            time_scale = "hours", step_size = 1L,
                            data_env = "mimic") {
 
   assert_that(is.string(select_cat),
-              is_difftime(win_length, allow_neg = FALSE),
-              is_difftime(date_padding, allow_neg = FALSE))
+              is_time(win_length, allow_neg = FALSE),
+              is_time(date_padding, allow_neg = FALSE))
 
   message("Fetching abx from `inputevents_mv`.")
 
@@ -73,14 +67,14 @@ mimic_abx_inmv <- function(select_cat = "antibiotics",
 
 mimic_abx <- function(abx = mimic_abx_presc(..., data_env = data_env),
                       min_count = 1L,
-                      count_win = as.difftime(24L, units = "hours"),
+                      count_win = hours(24L),
                       ..., data_env = "mimic") {
 
   unique_time_win(abx, min_count, count_win)
 }
 
-mimic_micro <- function(win_length = as.difftime(72L, units = "hours"),
-                        date_padding = as.difftime(24L, units = "hours"),
+mimic_micro <- function(win_length = hours(72L),
+                        date_padding = hours(24L),
                         time_scale = "hours", step_size = 1L,
                         data_env = "mimic") {
 
