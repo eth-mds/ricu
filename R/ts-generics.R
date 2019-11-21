@@ -17,6 +17,49 @@ dimnames.ts_tbl <- function(x) list(NULL, colnames(x))
 #'
 #' @export
 #'
+`dimnames<-.ts_tbl` <- function(x, value) {
+
+  assert_that(is.list(value), length(value) == 2L)
+
+  if (!is.null(value[[1L]])) {
+    warning("Row names for `ts_tbl` objects are not supported.")
+  }
+
+  names(x) <- value
+
+  invisible(x)
+}
+
+#' @rdname ts_tbl
+#'
+#' @export
+#'
+`names<-.ts_tbl` <- function(x, value) {
+
+  if (is.null(value)) {
+    return(NextMethod())
+  }
+
+  assert_that(ncol(x) == length(value))
+
+  old <- names(x)
+  new <- as.character(value)
+
+  new_key <- new[old %in% ts_key(x)]
+  new_ind <- new[old %in% ts_index(x)]
+
+  setnames(x, new)
+
+  set_ts_key(  x, new_key)
+  set_ts_index(x, new_ind)
+
+  invisible(x)
+}
+
+#' @rdname ts_tbl
+#'
+#' @export
+#'
 print.ts_tbl <- function(x, ..., n = NULL, width = NULL, n_extra = NULL) {
   cat_line(format(x, ..., n = n, width = width, n_extra = n_extra))
   invisible(x)
@@ -145,3 +188,8 @@ cbind.ts_tbl <- .cbind.ts_tbl
 
 #' @rawNamespace if (getRversion() >= "3.6.2") { S3method(rbind, ts_tbl) }
 rbind.ts_tbl <- .rbind.ts_tbl
+
+#' @export
+split.ts_tbl <- function(x, ...) {
+  lapply(NextMethod(), reclass_ts_tbl, get_ts_spec(x), warn_on_fail = TRUE)
+}

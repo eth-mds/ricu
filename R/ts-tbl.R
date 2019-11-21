@@ -224,3 +224,16 @@ rm_ts_cols <- function(x, cols) {
 
   invisible(x)
 }
+
+set_names <- function(x, old, new) {
+
+  assert_that(is_ts_tbl(x))
+
+  if (missing(new)) {
+    names(x) <- old
+  } else {
+    names(x)[match(old, colnames(x))] <- new
+  }
+
+  invisible(x)
+}

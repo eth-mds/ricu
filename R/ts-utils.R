@@ -131,3 +131,19 @@ make_unique <- function(x, fun = mean, ...) {
 
   x
 }
+
+#' @export
+secs <- function(x) as.difftime(x, units = "secs")
+
+#' @export
+mins <- function(x) as.difftime(x, units = "mins")
+
+#' @export
+hours <- function(x) as.difftime(x, units = "hours")
+
+#' @export
+days <- function(x) as.difftime(x, units = "days")
+
+#' @export
+weeks <- function(x) as.difftime(x, units = "weeks")
+

@@ -209,11 +209,7 @@ reduce <- function(f, x, ...) {
   Reduce(function(x, y) f(x, y, ...), x)
 }
 
-round_to <- function(x, to = 1) if (to == 1) round(x) else to * round(x / to)
-
-time_unit_as_int <- function(x) {
-  match(x, c("secs", "mins", "hours", "days", "weeks"))
-}
+round_to <- function(x, to = 1) if (to == 1) floor(x) else to * floor(x / to)
 
 is_val <- function(x, val) !is.na(x) & x == val
 is_true <- function(x) !is.na(x) & x
@@ -226,10 +222,8 @@ cat_line <- function(...) {
   cat(paste0(line, "\n"), sep = "")
 }
 
-secs <- function(x) as.difftime(x, units = "secs")
-mins <- function(x) as.difftime(x, units = "mins")
-hours <- function(x) as.difftime(x, units = "hours")
-days <- function(x) as.difftime(x, units = "days")
-weeks <- function(x) as.difftime(x, units = "weeks")
-
 str_in_vec_once <- function(str, vec) identical(sum(vec %in% str), 1L)
+
+null_or_subs <- function(x, where = parent.frame(2L)) {
+  if (missing(x)) NULL else substitute(x, where)
+}
