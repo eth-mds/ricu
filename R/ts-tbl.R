@@ -32,73 +32,6 @@ ts_tbl <- function(..., ts_key, ts_index = NULL, ts_step = 1L) {
   new_ts_tbl(data.table::data.table(...), ts_key, ts_index, ts_step)
 }
 
-#' @param x A `ts_tbl` object.
-#'
-#' @rdname ts_tbl
-#'
-#' @export
-#'
-is_ts_tbl <- function(x) inherits(x, "ts_tbl")
-
-#' @rdname ts_tbl
-#'
-#' @export
-#'
-ts_index <- function(x) {
-  assert_that(is_ts_tbl(x), has_attr(x, "ts_index"))
-  attr(x, "ts_index")
-}
-
-#' @rdname ts_tbl
-#'
-#' @export
-#'
-ts_key <- function(x) {
-  assert_that(is_ts_tbl(x), has_attr(x, "ts_key"))
-  attr(x, "ts_key")
-}
-
-#' @rdname ts_tbl
-#'
-#' @export
-#'
-by_cols <- function(x) c(ts_key(x), ts_index(x))
-
-#' @rdname ts_tbl
-#'
-#' @export
-#'
-val_cols <- function(x) setdiff(colnames(x), c(ts_key(x), ts_index(x)))
-
-#' @rdname ts_tbl
-#'
-#' @export
-#'
-ts_step <- function(x) {
-  assert_that(is_ts_tbl(x), has_attr(x, "ts_step"))
-  attr(x, "ts_step")
-}
-
-#' @rdname ts_tbl
-#'
-#' @export
-#'
-step_time <- function(x) as.difftime(ts_step(x), units = time_unit(x))
-
-#' @rdname ts_tbl
-#'
-#' @export
-#'
-time_unit <- function(x) units(x[[ts_index(x)]])
-
-#' @param value New time unit.
-#'
-#' @rdname ts_tbl
-#'
-#' @export
-#'
-`time_unit<-` <- function(x, value) units(x[[ts_index(x)]]) <- value
-
 new_ts_tbl <- function(tbl, ts_key, ts_index, ts_step) {
 
   assert_that(is_dt(tbl))
@@ -113,6 +46,99 @@ new_ts_tbl <- function(tbl, ts_key, ts_index, ts_step) {
 
   tbl
 }
+
+#' @param x A `ts_tbl` object.
+#'
+#' @rdname ts_tbl
+#'
+#' @export
+#'
+is_ts_tbl <- function(x) inherits(x, "ts_tbl")
+
+#' @export
+get_ts_meta <- function(x, is_fun = NULL) {
+
+  assert_that(is_ts_tbl(x), has_attr(x, "ts_meta"))
+
+  res <- attr(x, "ts_meta")
+
+  assert_that(is.list(res), all(vapply(res, is_ts_meta, logical(1L))))
+
+  if (is.null(is_fun)) {
+    res
+  } else {
+    hit <- vapply(res, is_fun, logical(1L))
+    assert_that(sum(hit) == 1L)
+    res[[which(hit)]]
+  }
+}
+
+#' @rdname ts_tbl
+#'
+#' @export
+#'
+ts_index <- function(x) meta_cols(get_ts_meta(x, is_ts_index))
+
+#' @rdname ts_tbl
+#'
+#' @export
+#'
+ts_key <- function(x) meta_cols(get_ts_meta(x, is_ts_key))
+
+#' @rdname ts_tbl
+#'
+#' @export
+#'
+ts_meta_cols <- function(x) unique(unlist(lapply(get_ts_meta(x), meta_cols)))
+
+#' @rdname ts_tbl
+#'
+#' @export
+#'
+ts_data_cols <- function(x) setdiff(colnames(x), ts_meta(x))
+
+#' @rdname ts_tbl
+#'
+#' @export
+#'
+ts_id_cols <- function(x) c(ts_key(x), ts_index(x))
+
+#' @rdname ts_tbl
+#'
+#' @export
+#'
+ts_interval <- function(x) interval(get_ts_meta(x, is_ts_index))
+
+#' @rdname ts_tbl
+#'
+#' @export
+#'
+ts_time_unit <- function(x) units(x[[ts_index(x)]])
+
+#' @rdname ts_tbl
+#'
+#' @export
+#'
+ts_time_step <- function(x) as.double(ts_interval(x), units = ts_time_unit(x))
+
+#' @export
+set_ts_meta <- function(x, meta) {
+
+  if (is_ts_meta(meta)) meta <- list(meta)
+
+  assert_that(is_ts_tbl(x), all(vapply(meta, is_ts_meta, logical(1L))))
+
+  old <- attr(x, "ts_meta")
+}
+
+#' @param value New time unit.
+#'
+#' @rdname ts_tbl
+#'
+#' @export
+#'
+`time_unit<-` <- function(x, value) units(x[[ts_index(x)]]) <- value
+
 
 set_ts_key <- function(x, val) {
 
