@@ -55,15 +55,17 @@ on_failure(same_time_unit) <- function(call, env) {
          "` are not on the same time scale.")
 }
 
-same_by_cols <- function(x, y) setequal(by_cols(x), by_cols(y))
+same_id_cols <- function(x, y) setequal(ts_id_cols(x), ts_id_cols(y))
 
-on_failure(same_by_cols) <- function(call, env) {
+on_failure(same_id_cols) <- function(call, env) {
   paste0(deparse(call$x), " and ", deparse(call$y),
          " do not share the same `by` columns.")
 }
 
 same_time_cols <- function(x, y) {
-  identical(ts_index(x), ts_index(y)) && identical(step_time(x), step_time(y))
+  identical(ts_index(x), ts_index(y)) &&
+    identical(ts_time_unit(x), ts_time_unit(y)) &&
+    identical(ts_time_step(x), ts_time_step(y))
 }
 
 on_failure(same_time_cols) <- function(call, env) {
@@ -82,31 +84,10 @@ on_failure(has_unit) <- function(call, env) {
          " does not have unit `", eval(call$unit, env), "`.")
 }
 
-same_time_spec <- function(x, y, time_col = "hadm_time", time_x = time_col,
-                            time_y = time_col) {
+all_fun <- function(x, is_fun) all(vapply(x, is_fun, logical(1L)))
 
-  x <- attributes(x[[time_x]])
-  y <- attributes(y[[time_y]])
-
-  !is.null(x[["units"]]) && !is.null(y[["units"]]) &&
-    identical(x[["units"]], y[["units"]]) &&
-  !is.null(x[["step_size"]]) && !is.null(y[["step_size"]]) &&
-    identical(x[["step_size"]], y[["step_size"]])
+on_failure(all_fun) <- function(call, env) {
+  paste0("some of ", deparse(call$x), " do not satisfy `", deparse(call$x),
+         "`.")
 }
 
-on_failure(same_time_spec) <- function(call, env) {
-  paste0("column `", eval(call$time_x, env), "` of ", deparse(call$x),
-         " does not have the same time specification as column `",
-         eval(call$time_y, env), "` of ", deparse(call$y), ".")
-}
-
-
-check_ts_tbl <- function(x, key, ind, unit = NULL, step = NULL) {
-  is_dt(x) && has_cols(x, key) && has_time_col(x, ind) &&
-    (is.null(unit) || identical(unit, units(x[[ind]]))) &&
-    (is.null(step) || identical(step, ts_step(x)))
-}
-
-on_failure(check_ts_tbl) <- function(call, env) {
-  paste0(deparse(call$x), " does not fulfill `ts_tbl` requirements.")
-}

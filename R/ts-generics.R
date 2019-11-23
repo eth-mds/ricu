@@ -4,7 +4,7 @@
 #' @export
 #'
 `[.ts_tbl` <- function(x, ...) {
-  reclass_ts_tbl(NextMethod(), get_ts_spec(x), warn_on_fail = FALSE)
+  reclass_ts_tbl(NextMethod(), get_ts_meta(x), warn_opt = FALSE)
 }
 
 #' @rdname ts_tbl
@@ -36,22 +36,26 @@ dimnames.ts_tbl <- function(x) list(NULL, colnames(x))
 #'
 `names<-.ts_tbl` <- function(x, value) {
 
+  repl <- function(x, new) {
+    replace(x, x %in% colnames(x), new)
+  }
+
   if (is.null(value)) {
     return(NextMethod())
   }
 
   assert_that(ncol(x) == length(value))
 
-  old <- names(x)
   new <- as.character(value)
+  meta <- get_ts_meta(x)
 
-  new_key <- new[old %in% ts_key(x)]
-  new_ind <- new[old %in% ts_index(x)]
+  old_cols <- lapply(meta, meta_cols)
+  new_cols <- lapply(old_cols, repl, new)
 
-  setnames(x, new)
+  Map(`meta_cols<-`, meta, new_cols)
 
-  set_ts_key(  x, new_key)
-  set_ts_index(x, new_ind)
+  x <- setnames(x, new)
+  x <- reclass_ts_tbl(x, meta)
 
   invisible(x)
 }
@@ -81,10 +85,21 @@ format.ts_tbl <- function(x, ..., n = NULL, width = NULL, n_extra = NULL) {
 #' @export
 #'
 tbl_sum.ts_tbl <- function(x) {
-  c("A ts_tbl" = prt::dim_desc(x),
-    "Index" = paste0(ts_key(x), collapse = ", "),
-    "Key" = ts_index(x),
-    "Interval" = format(step_time(x)))
+
+  meta <- get_ts_meta(x)
+  is_req <- vapply(meta, is_required, logical(1L))
+
+  if (any(is_req)) {
+    req <- paste0(vapply(meta[is_req], format, character(1L)),
+                  collapse = ", ")
+  }
+
+  if (!all(is_req)) {
+    opt <- paste0(vapply(meta[!is_req], format, character(1L)),
+                  collapse = ", ")
+  }
+
+  c("A `ts_tbl`" = prt::dim_desc(x), "Required" = req, "Optional" = opt)
 }
 
 #' @param object A `ts_tbl` object.
@@ -143,9 +158,9 @@ as.data.frame.ts_tbl <- function(x, row.names = NULL, optional = FALSE, ...) {
   if (sum(check) == 1L) {
     hit <- which(check)
     lst <- c(lst[hit], lst[-hit])
-    spec <- get_ts_spec(lst[[hit]])
+    meta <- get_ts_meta(lst[[hit]])
   } else {
-    spec <- NULL
+    meta <- NULL
   }
 
   res <- do.call(data.table::data.table,
@@ -153,8 +168,8 @@ as.data.frame.ts_tbl <- function(x, row.names = NULL, optional = FALSE, ...) {
                 key = key, stringsAsFactors = stringsAsFactors))
   )
 
-  if (!is.null(spec)) {
-    reclass_ts_tbl(res, spec, warn_on_fail = TRUE)
+  if (!is.null(meta)) {
+    reclass_ts_tbl(res, meta)
   } else {
     res
   }
@@ -174,13 +189,11 @@ as.data.frame.ts_tbl <- function(x, row.names = NULL, optional = FALSE, ...) {
   lst <- list(...)
 
   hit <- which(vapply(lst, is_ts_tbl, logical(1L)))[1L]
-  spec <- get_ts_spec(lst[[hit]])
+  meta <- get_ts_meta(lst[[hit]])
 
-  reclass_ts_tbl(
-    dt_rbl(lst, use.names, fill, idcol),
-    get_ts_spec(lst[[hit]]),
-    warn_on_fail = TRUE
-  )
+  res <- dt_rbl(lst, use.names, fill, idcol)
+
+  reclass_ts_tbl(res, meta)
 }
 
 #' @rawNamespace if (getRversion() >= "3.6.2") { S3method(cbind, ts_tbl) }
@@ -191,5 +204,5 @@ rbind.ts_tbl <- .rbind.ts_tbl
 
 #' @export
 split.ts_tbl <- function(x, ...) {
-  lapply(NextMethod(), reclass_ts_tbl, get_ts_spec(x), warn_on_fail = TRUE)
+  lapply(NextMethod(), reclass_ts_tbl, get_ts_meta(x))
 }

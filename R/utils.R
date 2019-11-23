@@ -205,9 +205,7 @@ min_or_na <- agg_or_na(min)
 max_or_na <- agg_or_na(max)
 sum_or_na <- agg_or_na(sum)
 
-reduce <- function(f, x, ...) {
-  Reduce(function(x, y) f(x, y, ...), x)
-}
+reduce <- function(f, x, ...) Reduce(function(x, y) f(x, y, ...), x)
 
 round_to <- function(x, to = 1) if (to == 1) floor(x) else to * floor(x / to)
 
@@ -227,3 +225,7 @@ str_in_vec_once <- function(str, vec) identical(sum(vec %in% str), 1L)
 null_or_subs <- function(x, where = parent.frame(2L)) {
   if (missing(x)) NULL else substitute(x, where)
 }
+
+same_class <- function(x, y) identical(class(x), class(y))
+
+flapply(x, fun, ...) unique(unlist(lapply(x, fun, ...), recursive = FALSE))

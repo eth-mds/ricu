@@ -19,10 +19,10 @@ expand_limits <- function(x, min_col = "min", max_col = "max", step_size = 1L,
 
   setnames(res, c(id_cols, new_col))
 
-  new_ts_tbl(res, id_cols, new_col, step_size)
+  as_ts_tbl(res, id_cols, new_col, step_size)
 }
 
-has_gaps <- function(x) {
+has_no_gaps <- function(x) {
 
   check_time_col <- function(time, step) {
     len <- length(time)
@@ -31,14 +31,17 @@ has_gaps <- function(x) {
   }
 
   assert_that(is_ts_tbl(x), is_unique(x),
-              identical(data.table::key(x), by_cols(x)))
+              identical(data.table::key(x), ts_id_cols(x)))
 
-  res <- x[, check_time_col(get(ts_index(x)), ts_step(x)), by = c(ts_key(x))]
+  key_cols <- ts_key(x)
 
-  !all(res[[setdiff(colnames(res), ts_key(x))]])
+  res <- x[, check_time_col(get(ts_index(x)), ts_time_step(x)),
+           by = c(key_cols)]
+
+  all(res[[setdiff(colnames(res), key_cols)]])
 }
 
-has_no_gaps <- Negate(has_gaps)
+has_gaps <- Negate(has_no_gaps)
 
 fill_gaps <- function(x, limits = NULL, ...) {
 
@@ -51,18 +54,18 @@ fill_gaps <- function(x, limits = NULL, ...) {
     limits <- x[, list(min = min(get(time_col)), max = max(get(time_col))),
                 by = c(ts_key(x))]
 
-    join <- expand_limits(limits, "min", "max", ts_step(x), ts_key(x),
+    join <- expand_limits(limits, "min", "max", ts_time_step(x), ts_key(x),
                           time_col)
 
   } else {
 
-    join <- expand_limits(limits, ..., step_size = ts_step(x),
+    join <- expand_limits(limits, ..., step_size = ts_time_step(x),
                           id_cols = ts_key(x), new_col = time_col)
   }
 
   assert_that(has_no_gaps(join))
 
-  x[join, on = by_cols(x)]
+  x[join, on = ts_id_cols(x)]
 }
 
 slide_expr <- function(tbl, expr, ...) slide_quo(tbl, substitute(expr), ...)
@@ -76,9 +79,10 @@ slide_quo <- function(x, expr, before, after = hours(0L),
 
   time_col <- ts_index(x)
   id_cols  <- ts_key(x)
+  time_unit <- ts_time_unit(x)
 
-  units(before) <- time_unit(x)
-  units(after)  <- time_unit(x)
+  units(before) <- time_unit
+  units(after)  <- time_unit
 
   join <- x[,
     c(mget(id_cols), list(min_time = get(time_col) - before,
@@ -111,7 +115,7 @@ slide_quo <- function(x, expr, before, after = hours(0L),
   res
 }
 
-is_unique <- function(x, by = by_cols(x)) {
+is_unique <- function(x, by = ts_id_cols(x)) {
   identical(anyDuplicated(x, by = by), 0L)
 }
 
@@ -121,11 +125,11 @@ make_unique <- function(x, fun = mean, ...) {
 
   if (nrow(x) == 0) return(x)
 
-  cols <- val_cols(x)
+  cols <- setdiff(colnames(x), ts_id_cols(x))
 
   units <- lapply(cols, function(col) attr(x[[col]], "units"))
 
-  x <- x[, lapply(.SD, fun, ...), .SDcols = cols, by = c(by_cols(x))]
+  x <- x[, lapply(.SD, fun, ...), .SDcols = cols, by = c(ts_id_cols(x))]
 
   Map(function(col, unit) setattr(x[[col]], "units", unit), cols, units)
 

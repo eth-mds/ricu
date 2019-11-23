@@ -2,24 +2,24 @@
 #' Methods for creating and inspecting ts_tbl objects
 #'
 #' @param tbl An object inheriting from `data.frame`.
-#' @param ts_key Character or numeric vector of at least length 1, identifying
+#' @param key Character or numeric vector of at least length 1, identifying
 #' columns that combined with time stamps, uniquely identify rows.
-#' @param ts_index Character or numeric vector of length 1, identifying the
+#' @param index Character or numeric vector of length 1, identifying the
 #' column that defines temporal ordering.
-#' @param ts_step Scalar value, defining time steps between rows (assuming
+#' @param interval Scalar value, defining time steps between rows (assuming
 #' complete time series data).
 #'
 #' @rdname ts_tbl
 #'
 #' @export
 #'
-as_ts_tbl <- function(tbl, ts_key, ts_index = NULL, ts_step = 1L) {
+as_ts_tbl <- function(tbl, key, index = NULL, interval = hours(1L), ...) {
 
   assert_that(inherits(tbl, "data.frame"))
 
-  data.table::setDT(tbl)
+  if (!is_dt(tbl)) data.table::setDT(tbl)
 
-  new_ts_tbl(tbl, ts_key, ts_index, ts_step)
+  new_ts_tbl(tbl, c(ts_tbl_key_ind(tbl, key, index, interval), list(...)))
 }
 
 #' @param ... Passed to [data.table::data.table()]/generic compatibility.
@@ -28,23 +28,58 @@ as_ts_tbl <- function(tbl, ts_key, ts_index = NULL, ts_step = 1L) {
 #'
 #' @export
 #'
-ts_tbl <- function(..., ts_key, ts_index = NULL, ts_step = 1L) {
-  new_ts_tbl(data.table::data.table(...), ts_key, ts_index, ts_step)
+ts_tbl <- function(..., key, index = NULL, interval = hours(1L)) {
+  as_ts_tbl(data.table::data.table(...), key, index, interval)
 }
 
-new_ts_tbl <- function(tbl, ts_key, ts_index, ts_step) {
+new_ts_tbl <- function(tbl, meta) {
 
-  assert_that(is_dt(tbl))
+  assert_that(is_dt(tbl), is.list(meta),
+              all(vapply(meta, is_ts_meta, logical(1L))))
 
-  set_ts_attrs(tbl, ts_key, ts_index, ts_step)
+  id_cols <- ts_id_cols(meta)
 
-  by_cols <-  c(ts_key, ts_index)
+  setkeyv(tbl, id_cols)
+  setcolorder(tbl, c(id_cols, setdiff(cols, id_cols)))
 
-  setkeyv(tbl, by_cols)
-  setcolorder(tbl, c(by_cols, setdiff(colnames(tbl), by_cols)))
+  set_ts_meta_lst(tbl, meta)
   setattr(tbl, "class", unique(c("ts_tbl", class(tbl))))
 
   tbl
+}
+
+ts_tbl_key_ind <- function(x, key, index, interval) {
+  list(ts_tbl_key(x, key), ts_tbl_ind(x, index, interval))
+}
+
+ts_tbl_key <- function(x, key) {
+
+  if (is.numeric(key) || is.logical(key)) {
+    key <- colnames(x)[key]
+  }
+
+  new_ts_key(key)
+}
+
+ts_tbl_ind <- function(x, index, interval) {
+
+  if (is.null(index)) {
+
+    hits <- vapply(x, is_time, logical(1L))
+
+    assert_that(sum(hits) == 1L,
+      msg = paste("In order to automatically determine the index column,",
+                  "exactly one `difftime` column is required.")
+    )
+
+    index <- colnames(x)[hits]
+
+  } else if (is.numeric(index) || is.logical(index)) {
+
+    index <- colnames(x)[index]
+  }
+
+  new_ts_index(index, interval)
 }
 
 #' @param x A `ts_tbl` object.
@@ -56,21 +91,86 @@ new_ts_tbl <- function(tbl, ts_key, ts_index, ts_step) {
 is_ts_tbl <- function(x) inherits(x, "ts_tbl")
 
 #' @export
+set_ts_meta <- function(x, ..., warn_opt = TRUE) {
+  set_ts_meta_lst(x, list(...), warn_opt)
+}
+
+#' @export
+set_ts_meta_lst <- function(x, meta, warn_opt = TRUE) {
+
+  find_hits <- function(new_elem, old_set) {
+    which(vapply(old_set, same_class, logical(1L), new_elem))
+  }
+
+  old <- attr(x, "ts_meta")
+
+  assert_that(is_ts_tbl(x), all_fun(meta, is_ts_meta),
+              is.null(old) || all_fun(old,  is_ts_meta))
+
+  hits <- flapply(meta, find_hits, old)
+
+  if (length(hits) > 0L) old <- old[-hits]
+
+  new <- c(old, meta)
+  new <- check_ts_meta(new, x, stop_req = TRUE, warn_opt = warn_opt)
+
+  setattr(x, "ts_meta", new)
+
+  invisible(x)
+}
+
+check_ts_meta <- function(objs, tbl, stop_req, warn_opt) {
+
+  msg <- function(prob, fun) {
+    fun("Some ts_meta requirements cannot be satisfied:\n  ",
+        paste(vapply(prob, format, character(1L)), collapse = ", "))
+  }
+
+  needed <- vapply(objs, is_required,   logical(1L))
+  failed <- vapply(x,    Negate(check), logical(1L), tbl)
+
+  if (any(needed & failed)) {
+    if (stop_req) msg(objs[needed & failed], stop)
+    return(NULL)
+  }
+
+  if (any(!needed & failed)) {
+    if (warn_opt) msg(objs[failed], warning)
+    objs <- objs[!failed]
+  }
+
+  objs
+}
+
+#' @export
 get_ts_meta <- function(x, is_fun = NULL) {
 
-  assert_that(is_ts_tbl(x), has_attr(x, "ts_meta"))
-
-  res <- attr(x, "ts_meta")
-
-  assert_that(is.list(res), all(vapply(res, is_ts_meta, logical(1L))))
-
-  if (is.null(is_fun)) {
-    res
+  if (is_ts_tbl(x)) {
+    assert_that(has_attr(x, "ts_meta"))
+    meta <- attr(x, "ts_meta")
   } else {
-    hit <- vapply(res, is_fun, logical(1L))
-    assert_that(sum(hit) == 1L)
-    res[[which(hit)]]
+    assert_that(is.list(x))
+    meta <- x
   }
+
+  res <- subset_meta(meta, is_fun, drop = TRUE)
+
+  assert_that(is_ts_meta(res))
+
+  res
+}
+
+subset_meta <- function(meta, is_fun = NULL, drop = FALSE) {
+
+  assert_that(is.list(meta), all(vapply(meta, is_ts_meta, logical(1L))))
+
+  if (!is.null(is_fun)) {
+    meta <- meta[vapply(meta, is_fun, logical(1L))]
+  }
+
+  if (drop && length(meta) == 1L) meta <- meta[[1L]]
+
+  meta
 }
 
 #' @rdname ts_tbl
@@ -83,19 +183,33 @@ ts_index <- function(x) meta_cols(get_ts_meta(x, is_ts_index))
 #'
 #' @export
 #'
+`ts_index<-` <- function(x, value) {
+  set_ts_meta(x, ts_tbl_ind(x, value, ts_interval(x)))
+}
+
+#' @rdname ts_tbl
+#'
+#' @export
+#'
 ts_key <- function(x) meta_cols(get_ts_meta(x, is_ts_key))
 
 #' @rdname ts_tbl
 #'
 #' @export
 #'
-ts_meta_cols <- function(x) unique(unlist(lapply(get_ts_meta(x), meta_cols)))
+`ts_key<-` <- function(x, value) set_ts_meta(x, ts_tbl_key(x, value))
 
 #' @rdname ts_tbl
 #'
 #' @export
 #'
-ts_data_cols <- function(x) setdiff(colnames(x), ts_meta(x))
+ts_meta_cols <- function(x) flapply(get_ts_meta(x), meta_cols)
+
+#' @rdname ts_tbl
+#'
+#' @export
+#'
+ts_data_cols <- function(x) setdiff(colnames(x), ts_meta_cols(x))
 
 #' @rdname ts_tbl
 #'
@@ -113,6 +227,14 @@ ts_interval <- function(x) interval(get_ts_meta(x, is_ts_index))
 #'
 #' @export
 #'
+`ts_interval<-` <- function(x, value) {
+  set_ts_meta(x, ts_tbl_ind(x, ts_index(x), value))
+}
+
+#' @rdname ts_tbl
+#'
+#' @export
+#'
 ts_time_unit <- function(x) units(x[[ts_index(x)]])
 
 #' @rdname ts_tbl
@@ -121,132 +243,40 @@ ts_time_unit <- function(x) units(x[[ts_index(x)]])
 #'
 ts_time_step <- function(x) as.double(ts_interval(x), units = ts_time_unit(x))
 
-#' @export
-set_ts_meta <- function(x, meta) {
-
-  if (is_ts_meta(meta)) meta <- list(meta)
-
-  assert_that(is_ts_tbl(x), all(vapply(meta, is_ts_meta, logical(1L))))
-
-  old <- attr(x, "ts_meta")
-}
-
-#' @param value New time unit.
-#'
-#' @rdname ts_tbl
-#'
-#' @export
-#'
-`time_unit<-` <- function(x, value) units(x[[ts_index(x)]]) <- value
-
-
-set_ts_key <- function(x, val) {
-
-  if (is.numeric(val)) {
-    val <- colnames(x)[val]
-  }
-
-  assert_that(has_cols(x, val))
-
-  setattr(x, "ts_key", val)
-  invisible(x)
-}
-
-set_ts_index <- function(x, val) {
-
-  if (is.null(val)) {
-    val <- which(vapply(x, is_time, logical(1L)))
-  }
-
-  if (is.numeric(val)) {
-    val <- colnames(x)[val]
-  }
-
-  assert_that(length(val) == 1L, has_cols(x, val), is_time(x[[val]]))
-
-  setattr(x, "ts_index", val)
-  invisible(x)
-}
-
-set_ts_step <- function(x, val) {
-
-  assert_that(is.numeric(val), length(val) == 1L, val > 0)
-
-  setattr(x, "ts_step", val)
-  invisible(x)
-}
-
-set_ts_attrs <- function(x, ts_key, ts_index, ts_step) {
-
-  set_ts_key(x, ts_key)
-  set_ts_index(x, ts_index)
-  set_ts_step(x, ts_step)
-
-  invisible(x)
-}
-
-get_ts_attrs <- function(x) {
-  list(ts_key = ts_key(x), ts_index = ts_index(x), ts_step = ts_step(x))
-}
-
-get_ts_spec <- function(x) {
-  c(get_ts_attrs(x), list(ts_unit = time_unit(x)))
-}
-
 unclass_ts_tbl <- function(x) {
 
+  setattr(x, "ts_meta", NULL)
   setattr(x, "class", setdiff(class(x), "ts_tbl"))
-
-  setattr(x, "ts_key", NULL)
-  setattr(x, "ts_index", NULL)
-  setattr(x, "ts_step", NULL)
 
   invisible(x)
 }
 
-reclass_ts_tbl <- function(x, spec, warn_on_fail = TRUE) {
+reclass_ts_tbl <- function(x, meta, warn_opt = TRUE) {
 
-  check <- check_ts_tbl(x, spec[["ts_key"]], spec[["ts_index"]],
-                        spec[["ts_unit"]])
+  meta <- check_ts_meta(meta, x, stop_req = FALSE, warn_opt = warn_opt)
 
-  if (check) {
-
-    new_ts_tbl(x, spec[["ts_key"]], spec[["ts_index"]], spec[["ts_step"]])
-
+  if (is.null(meta)) {
+    x <- unclass_ts_tbl(x)
   } else {
-
-    if (warn_on_fail) {
-      warning("Cannot reclass as `ts_tbl` according to specification.")
-    }
-
-    unclass_ts_tbl(x)
-
-    x
+    x <- new_ts_tbl(x, meta)
   }
+
+  x
 }
 
-rm_ts_cols <- function(x, cols) {
+rm_cols <- function(x, cols) {
 
   assert_that(is_ts_tbl(x))
-  index <- ts_index(x)
 
-  if (is.numeric(cols)) cols <- colnames(x)[cols]
+  meta <- get_ts_meta(x)
 
-  assert_that(has_cols(x, cols), !index %in% cols)
+  old_cols <- lapply(meta, meta_cols)
+  new_cols <- lapply(old_cols, setdiff, cols)
 
-  old_keys <- ts_key(x)
+  Map(`meta_cols<-`, meta, new_cols)
 
-  set(x, j = cols, value = NULL)
-
-  if (any(cols %in% old_keys)) {
-
-    new_keys <- setdiff(old_keys, cols)
-
-    assert_that(length(new_keys) > 0L)
-
-    set_ts_key(x, new_keys)
-    setkeyv(x, c(new_keys, index))
-  }
+  x <- set(x, j = cols, value = NULL)
+  x <- reclass_ts_tbl(x, meta)
 
   invisible(x)
 }
