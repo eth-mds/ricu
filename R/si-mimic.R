@@ -33,6 +33,8 @@ mimic_abx_presc <- function(
 
   res <- res[, win_end := hadm_time + win_length + startdate_ub]
   res <- set(res, j = "startdate_ub", value = NULL)
+
+  res
 }
 
 mimic_abx_inmv <- function(select_cat = "antibiotics",

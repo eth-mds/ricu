@@ -1,5 +1,5 @@
 
-#' @importFrom assertthat on_failure<-
+#' @importFrom assertthat on_failure<- validate_that
 NULL
 
 is_dt <- function(x) data.table::is.data.table(x)
@@ -10,6 +10,7 @@ on_failure(is_dt) <- function(call, env) {
 
 has_cols <- function(x, cols) {
   is.character(cols) && length(cols) > 0L &&
+    length(cols) == unique(length(cols)) &&
     all(vapply(cols, str_in_vec_once, logical(1L), colnames(x)))
 }
 
@@ -17,7 +18,7 @@ on_failure(has_cols) <- function(call, env) {
   out_names <- paste0("`", paste0(eval(call$cols, env), collapse = "`, `"),
                       "`")
   paste0(deparse(call$x), " does not contain exactly one of the following ",
-         "column names: ", out_names)
+         "(unique) column names: ", out_names)
 }
 
 has_col <- function(x, col) {

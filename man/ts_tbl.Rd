@@ -11,18 +11,20 @@
 \alias{str.ts_tbl}
 \alias{as.data.table.ts_tbl}
 \alias{as.data.frame.ts_tbl}
-\alias{as_ts_tbl}
 \alias{ts_tbl}
+\alias{as_ts_tbl}
 \alias{is_ts_tbl}
 \alias{ts_index}
+\alias{ts_index<-}
 \alias{ts_key}
+\alias{ts_key<-}
 \alias{ts_meta_cols}
 \alias{ts_data_cols}
 \alias{ts_id_cols}
 \alias{ts_interval}
+\alias{ts_interval<-}
 \alias{ts_time_unit}
 \alias{ts_time_step}
-\alias{time_unit<-}
 \title{Methods for creating and inspecting ts_tbl objects}
 \usage{
 \method{[}{ts_tbl}(x, ...)
@@ -48,15 +50,19 @@
 \method{as.data.frame}{ts_tbl}(x, row.names = NULL, optional = FALSE,
   ...)
 
-as_ts_tbl(tbl, ts_key, ts_index = NULL, ts_step = 1L)
+ts_tbl(..., key, index = NULL, interval = hours(1L))
 
-ts_tbl(..., ts_key, ts_index = NULL, ts_step = 1L)
+as_ts_tbl(tbl, key, index = NULL, interval = hours(1L), ...)
 
 is_ts_tbl(x)
 
 ts_index(x)
 
+ts_index(x) <- value
+
 ts_key(x)
+
+ts_key(x) <- value
 
 ts_meta_cols(x)
 
@@ -66,34 +72,32 @@ ts_id_cols(x)
 
 ts_interval(x)
 
+ts_interval(x) <- value
+
 ts_time_unit(x)
 
 ts_time_step(x)
-
-time_unit(x) <- value
 }
 \arguments{
 \item{x}{A \code{ts_tbl} object.}
 
 \item{...}{Passed to \code{\link[data.table:data.table]{data.table::data.table()}}/generic compatibility.}
 
-\item{value}{New time unit.}
-
 \item{object}{A \code{ts_tbl} object.}
 
 \item{row.names, optional}{Generic consistency: passing anything other than
 the default value issues a warning.}
 
-\item{tbl}{An object inheriting from \code{data.frame}.}
-
-\item{ts_key}{Character or numeric vector of at least length 1, identifying
+\item{key}{Character or numeric vector of at least length 1, identifying
 columns that combined with time stamps, uniquely identify rows.}
 
-\item{ts_index}{Character or numeric vector of length 1, identifying the
+\item{index}{Character or numeric vector of length 1, identifying the
 column that defines temporal ordering.}
 
-\item{ts_step}{Scalar value, defining time steps between rows (assuming
+\item{interval}{Scalar value, defining time steps between rows (assuming
 complete time series data).}
+
+\item{tbl}{An object inheriting from \code{data.frame}.}
 }
 \description{
 Methods for creating and inspecting ts_tbl objects

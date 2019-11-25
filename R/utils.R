@@ -228,4 +228,10 @@ null_or_subs <- function(x, where = parent.frame(2L)) {
 
 same_class <- function(x, y) identical(class(x), class(y))
 
-flapply(x, fun, ...) unique(unlist(lapply(x, fun, ...), recursive = FALSE))
+flapply <- function(x, fun, ...) {
+  unique(unlist(lapply(x, fun, ...), recursive = FALSE))
+}
+
+clapply <- function(x, fun, ...) {
+  structure(lapply(x, fun, ...), class = class(x))
+}

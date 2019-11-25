@@ -92,11 +92,15 @@ tbl_sum.ts_tbl <- function(x) {
   if (any(is_req)) {
     req <- paste0(vapply(meta[is_req], format, character(1L)),
                   collapse = ", ")
+  } else {
+    req <- NULL
   }
 
   if (!all(is_req)) {
     opt <- paste0(vapply(meta[!is_req], format, character(1L)),
                   collapse = ", ")
+  } else {
+    opt <- NULL
   }
 
   c("A `ts_tbl`" = prt::dim_desc(x), "Required" = req, "Optional" = opt)
