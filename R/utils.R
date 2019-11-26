@@ -228,10 +228,22 @@ null_or_subs <- function(x, where = parent.frame(2L)) {
 
 same_class <- function(x, y) identical(class(x), class(y))
 
-flapply <- function(x, fun, ...) {
-  unique(unlist(lapply(x, fun, ...), recursive = FALSE))
+flapply <- function(x, fun, ..., recursive = FALSE) {
+  unique(unlist(lapply(x, fun, ...), recursive = recursive))
 }
 
 clapply <- function(x, fun, ...) {
   structure(lapply(x, fun, ...), class = class(x))
+}
+
+replace_with <- function(x, from, to) {
+
+  assert_that(same_length(from, to))
+
+  mapidx <- match(x, from)
+  mapidxNA <- is.na(mapidx)
+
+  x[!mapidxNA] <- to[mapidx[!mapidxNA]]
+
+  x
 }

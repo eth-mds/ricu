@@ -14,17 +14,6 @@
 \alias{ts_tbl}
 \alias{as_ts_tbl}
 \alias{is_ts_tbl}
-\alias{ts_index}
-\alias{ts_index<-}
-\alias{ts_key}
-\alias{ts_key<-}
-\alias{ts_meta_cols}
-\alias{ts_data_cols}
-\alias{ts_id_cols}
-\alias{ts_interval}
-\alias{ts_interval<-}
-\alias{ts_time_unit}
-\alias{ts_time_step}
 \title{Methods for creating and inspecting ts_tbl objects}
 \usage{
 \method{[}{ts_tbl}(x, ...)
@@ -55,28 +44,6 @@ ts_tbl(..., key, index = NULL, interval = hours(1L))
 as_ts_tbl(tbl, key, index = NULL, interval = hours(1L), ...)
 
 is_ts_tbl(x)
-
-ts_index(x)
-
-ts_index(x) <- value
-
-ts_key(x)
-
-ts_key(x) <- value
-
-ts_meta_cols(x)
-
-ts_data_cols(x)
-
-ts_id_cols(x)
-
-ts_interval(x)
-
-ts_interval(x) <- value
-
-ts_time_unit(x)
-
-ts_time_step(x)
 }
 \arguments{
 \item{x}{A \code{ts_tbl} object.}

@@ -1,7 +1,5 @@
 
 #' @export
-ts_def <- function(...) new_ts_def(list(...))
-
 new_ts_def <- function(x) {
 
   assert_that(is.list(x))
@@ -32,7 +30,7 @@ as_ts_def.list <- function(x) new_ts_def(x)
 as_ts_def.ts_def <- function(x) x
 
 #' @export
-as_ts_def.ts_meta <- function(x) ts_def(x)
+as_ts_def.ts_meta <- function(x) new_ts_def(list(x))
 
 #' @export
 c.ts_def <- function(x, ...) {
@@ -42,6 +40,12 @@ c.ts_def <- function(x, ...) {
   if (any(meta)) lst[meta] <- lapply(lst[meta], list)
 
   new_ts_def(c(unclass(x), lst))
+}
+
+#' @export
+`[[.ts_def` <- function(x, i, ...) {
+  if (is.character(i)) x[[which(vapply(i, inherits, logical(1L), i))]]
+  else NextMethod()
 }
 
 #' @export
@@ -58,9 +62,13 @@ c.ts_meta <- function(x, ...) {
 }
 
 #' @export
-`[[.ts_def` <- function(x, i, ...) {
-  if (is.string(i)) x[[which(vapply(i, inherits, logical(1L), i))]]
-  else NextMethod()
+print.ts_def <- function(x, ...) {
+  cat_line(format(x, ...))
+}
+
+#' @export
+print.ts_meta <- function(x, ...) {
+  cat_line(format(x, ...))
 }
 
 #' @export
@@ -109,6 +117,25 @@ is_ts_key <- function(x) inherits(x, "ts_key")
 is_ts_uncertainty <- function(x) inherits(x, "ts_uncertainty")
 
 #' @export
+col_names <- function(x) UseMethod()
+
+#' @export
+col_names.ts_def <- function(x) {
+
+  res <- lapply(x, col_names)
+
+  names(res) <- vapply(x, format_class, character(1L))
+
+  res
+}
+
+#' @export
+col_names.ts_meta <- function(x) x[["meta_cols"]]
+
+#' @export
+col_names.ts_uncertainty <- function(x) x[c("meta_cols", "time_cols")]
+
+#' @export
 is_required <- function(x, ...) UseMethod()
 
 #' @export
@@ -121,9 +148,9 @@ is_required.ts_index <- function(x, ...) TRUE
 is_required.ts_key <- function(x, ...) TRUE
 
 #' @export
-validate_meta.ts_index <- function(x, tbl, stop_req, warn_opt, ...) {
+validate_def.ts_index <- function(x, tbl, stop_req, warn_opt, ...) {
 
-  col <- meta_cols(x)
+  col <- col_names(x)
   interv <- interval(x)
   unit <- units(tbl[[col]])
 
@@ -135,9 +162,9 @@ validate_meta.ts_index <- function(x, tbl, stop_req, warn_opt, ...) {
 }
 
 #' @export
-validate_meta.ts_key <- function(x, tbl, stop_req, warn_opt, ...) {
+validate_def.ts_key <- function(x, tbl, stop_req, warn_opt, ...) {
 
-  cols <- meta_cols(x)
+  cols <- col_names(x)
 
   validation_helper(x, stop_req, warn_opt,
     has_cols(tbl, cols),
@@ -146,102 +173,22 @@ validate_meta.ts_key <- function(x, tbl, stop_req, warn_opt, ...) {
 }
 
 #' @export
-validate_meta.ts_uncertainty <- function(x, tbl, stop_req, warn_opt, ...) {
-  browser()
+validate_def.ts_uncertainty <- function(x, tbl, stop_req, warn_opt, ...) {
+
+  cols <- col_names(x)
+  aux <- x[["time_cols"]]
+
+  directions <- c("forwards", "backwards", "both")
+
+  validation_helper(x, stop_req, warn_opt,
+    has_time_cols(x, c(cols, aux)), all(x[["direction"]] %in% directions),
+    all(vapply(x, same_length, logical(1L), x[[1L]]))
+  )
 }
 
 #' @export
-validate_meta.ts_meta <- function(x, ...) {
-  stop("Please add a `validate_meta` method for `", class(x)[1L], "` classes.")
-}
-
-#' @export
-rm_cols.ts_meta <- function(x, cols, ...) {
-
-  new_cols <- setdiff(x[["meta_cols"]], cols)
-
-  if (length(new_cols) == 0L) return(NULL)
-
-  x[["meta_cols"]] <- new_cols
-
-  x
-}
-
-#' @export
-rm_cols.ts_uncertainty <- function(x, cols, ...) {
-
-  hits <- (x[["meta_cols"]] %in% cols) | (x[["time_cols"]] %in% cols)
-
-  if (all(hits)) return(NULL)
-
-  clapply(x, `[`, !hits)
-}
-
-
-
-#' @export
-meta_cols <- function(x, ...) UseMethod()
-
-#' @export
-meta_cols.ts_meta <- function(x, ...) x[["meta_cols"]]
-
-#' @export
-`meta_cols<-` <- function(x, ...) UseMethod()
-
-#' @export
-`meta_cols<-.ts_meta` <- function(x, value) x[["meta_cols"]] <- value
-
-#' @export
-all_cols <- function(x, ...) UseMethod()
-
-#' @export
-all_cols.ts_meta <- function(x, ...) list(meta_cols(x, ...))
-
-#' @export
-`all_cols<-` <- function(x, value) UseMethod()
-
-#' @export
-interval <- function(x, ...) UseMethod()
-
-#' @export
-time_cols <- function(x, tbl, ...) UseMethod()
-
-#' @export
-print.ts_meta <- function(x, ...) {
-  cat_line(format(x, ...))
-}
-
-#' @export
-format.ts_meta <- function(x, ...) format_ts_meta(x, meta_cols(x))
-
-
-#' @export
-interval.ts_index <- function(x, ...) x[["interval"]]
-
-
-#' @export
-format.ts_index <- function(x, ...) {
-  format_ts_meta(x, meta_cols(x), format(interval(x), ...))
-}
-
-
-#' @export
-format.ts_uncertainty <- function(x, ...) {
-  format_ts_meta(x, meta_cols(x), format(interval(x), ...))
-}
-
-#' @export
-time_cols.ts_uncertainty <- function(x, ...) x[["time_cols"]]
-
-#' @export
-all_cols.ts_uncertainty <- function(x, ...) list(meta_cols(x), time_cols(x))
-
-format_class <- function(x) sub("^ts_", "", class(x)[1L])
-
-format_body <- function(...) paste(..., sep = ", ", collapse = "; ")
-
-format_ts_meta <- function(x, ...) {
-  paste0(format_class(x), "<", format_body(...), ">")
+validate_def.ts_meta <- function(x, ...) {
+  stop("Please add a `validate_def` method for `", class(x)[1L], "` classes.")
 }
 
 validation_helper <- function(x, stop_req, warn_opt, ...) {
@@ -264,3 +211,100 @@ validation_helper <- function(x, stop_req, warn_opt, ...) {
 
   res
 }
+
+#' @export
+rm_cols.ts_index <- function(x, cols, ...) {
+
+  if (col_names(x) %in% cols) {
+    stop("Cannot remove the only column that defines an index.")
+  }
+
+  x
+}
+
+#' @export
+rm_cols.ts_key <- function(x, cols, ...) {
+  new_ts_key(setdiff(col_names(x), cols))
+}
+
+#' @export
+rm_cols.ts_uncertainty <- function(x, cols, ...) {
+
+  meta <- col_names(x)
+  times <- x[["time_cols"]]
+
+  hits <- (meta %in% cols) | (times %in% cols)
+
+  if (all(hits)) return(NULL)
+
+  new_ts_uncertainty(meta[!hits], times[!hits], x[["direction"]][!hits])
+}
+
+#' @export
+rm_cols.ts_meta <- function(x, cols, ...) {
+  stop("Please add a `rm_cols` method for `", class(x)[1L], "` classes.")
+}
+
+#' @export
+rename_cols.ts_meta <- function(x, new, old, ...) {
+
+  x[["meta_cols"]] <- replace_with(col_names(x), old, new)
+
+  x
+}
+
+#' @export
+rename_cols.ts_uncertainty <- function(x, new, old, ...) {
+
+  x <- NextMethod()
+
+  x[["time_cols"]] <- replace_with(x[["time_cols"]], old, new)
+
+  x
+}
+
+#' @export
+format.ts_def <- function(x, ...) {
+  paste(vapply(x, format, character(1L)), collapse = ", ")
+}
+
+#' @export
+format.ts_meta <- function(x, ...) format_ts_meta(x, col_names(x))
+
+#' @export
+format.ts_index <- function(x, ...) {
+  format_ts_meta(x, col_names(x), format(interval(x)))
+}
+
+#' @export
+format.ts_uncertainty <- function(x, ...) {
+  dir <- replace_with(x[["direction"]], c("forwards", "backwards", "both"),
+                      c("+", "-", "+/-"))
+  format_ts_meta(x, col_names(x), paste0(dir, x[["direction"]]))
+}
+
+format_class <- function(x) sub("^ts_", "", class(x)[1L])
+
+format_body <- function(...) paste(..., sep = ", ", collapse = "; ")
+
+format_ts_meta <- function(x, ...) {
+  paste0(format_class(x), if(is_required(x)) "*", "<", format_body(...), ">")
+}
+
+#' @export
+index.ts_def <- function(x) index(x[["ts_index"]])
+
+#' @export
+index.ts_index <- col_names
+
+#' @export
+key.ts_def <- function(x) key(x[["ts_key"]])
+
+#' @export
+key.ts_key <- col_names
+
+#' @export
+interval.ts_def <- function(x) interval(x[["ts_index"]])
+
+#' @export
+interval.ts_index <- function(x) x[["interval"]]

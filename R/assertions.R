@@ -30,11 +30,20 @@ on_failure(has_col) <- function(call, env) {
          eval(call$col, env), "`.")
 }
 
-has_time_col <- function(x, col) has_col(x, col) && is_time(x[[col]])
+has_time_col <- function(x, col, ...) has_col(x, col) && is_time(x[[col]], ...)
 
 on_failure(has_time_col) <- function(call, env) {
   paste0(deparse(call$x), " does not contain column `",
          eval(call$col, env), "` of class `difftime`.")
+}
+
+has_time_cols <- function(x, cols, ...) {
+  all(vapply(cols, function(col) has_time_col(x, col), logical(1L), ...))
+}
+
+on_failure(has_time_cols) <- function(call, env) {
+  paste0("Not all of ", paste0(eval(call$col, env), collapse = ", "),
+         " are contained in ", deparse(call$x), " as `difftime` objects.")
 }
 
 is_time <- function(x, allow_neg = TRUE) {
@@ -88,7 +97,13 @@ on_failure(has_unit) <- function(call, env) {
 all_fun <- function(x, is_fun) all(vapply(x, is_fun, logical(1L)))
 
 on_failure(all_fun) <- function(call, env) {
-  paste0("some of ", deparse(call$x), " do not satisfy `", deparse(call$x),
-         "`.")
+  paste0("some of ", deparse(call$x), " do not satisfy `",
+         deparse(call$is_fun), "`.")
 }
 
+same_length <- function(x, y) identical(length(x), length(y))
+
+on_failure(same_length) <- function(call, env) {
+  paste0(deparse(call$x), " does not have the same length as ",
+         deparse(call$y), ".")
+}

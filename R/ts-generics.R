@@ -35,29 +35,7 @@ dimnames.ts_tbl <- function(x) list(NULL, colnames(x))
 #' @export
 #'
 `names<-.ts_tbl` <- function(x, value) {
-
-  repl <- function(x, new) {
-    replace(x, x %in% colnames(x), new)
-  }
-
-  if (is.null(value)) {
-    return(NextMethod())
-  }
-
-  assert_that(ncol(x) == length(value))
-
-  new <- as.character(value)
-  meta <- get_ts_meta(x)
-
-  old_cols <- lapply(meta, meta_cols)
-  new_cols <- lapply(old_cols, repl, new)
-
-  Map(`meta_cols<-`, meta, new_cols)
-
-  x <- setnames(x, new)
-  x <- reclass_ts_tbl(x, meta)
-
-  invisible(x)
+  invisible(rename_cols(x, value))
 }
 
 #' @rdname ts_tbl
@@ -85,25 +63,8 @@ format.ts_tbl <- function(x, ..., n = NULL, width = NULL, n_extra = NULL) {
 #' @export
 #'
 tbl_sum.ts_tbl <- function(x) {
-
-  meta <- get_ts_meta(x)
-  is_req <- vapply(meta, is_required, logical(1L))
-
-  if (any(is_req)) {
-    req <- paste0(vapply(meta[is_req], format, character(1L)),
-                  collapse = ", ")
-  } else {
-    req <- NULL
-  }
-
-  if (!all(is_req)) {
-    opt <- paste0(vapply(meta[!is_req], format, character(1L)),
-                  collapse = ", ")
-  } else {
-    opt <- NULL
-  }
-
-  c("A `ts_tbl`" = prt::dim_desc(x), "Required" = req, "Optional" = opt)
+  c("A `ts_tbl`" = prt::dim_desc(x),
+    "Properties" = format(get_ts_meta(x)))
 }
 
 #' @param object A `ts_tbl` object.
