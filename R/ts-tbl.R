@@ -36,15 +36,15 @@ as_ts_tbl <- function(tbl, key, index = NULL, interval = hours(1L), ...) {
 
 new_ts_tbl <- function(tbl, meta) {
 
-  assert_that(is_dt(tbl), is_ts_def(meta))
+  assert_that(is_dt(tbl))
 
   meta <- as_ts_def(meta)
-  id_cols <- id_cols(meta)
+  cols <- id_cols(meta)
 
-  tbl <- stats::na.omit(tbl, id_cols)
+  tbl <- stats::na.omit(tbl, cols)
 
-  setkeyv(tbl, id_cols)
-  setcolorder(tbl, c(id_cols, setdiff(colnames(tbl), id_cols)))
+  setkeyv(tbl, cols)
+  setcolorder(tbl, c(cols, setdiff(colnames(tbl), cols)))
 
   ts_def(tbl) <- meta
   setattr(tbl, "class", unique(c("ts_tbl", class(tbl))))
@@ -91,59 +91,52 @@ new_tbl_index <- function(tbl, index, interval) {
 is_ts_tbl <- function(x) inherits(x, "ts_tbl")
 
 #' @export
-ts_def <- function(x) {
-
-  if (is_ts_def(x)) return(x)
-
-  assert_that(is_ts_tbl(x))
-
-  attr(x, "ts_def")
-}
+ts_def <- function(x) UseMethod("ts_def", x)
 
 #' @export
-`ts_def<-` <- function(x, meta, warn_opt = TRUE) {
+ts_def.data.table <- function(x) NULL
+
+#' @export
+ts_def.ts_tbl <- function(x) attr(x, "ts_def")
+
+#' @export
+ts_def.ts_def <- function(x) x
+
+#' @export
+`ts_def<-` <- function(x, value) {
 
   find_hits <- function(new_elem, old_set) {
     which(vapply(old_set, same_class, logical(1L), new_elem))
   }
 
-  assert_that(is_ts_tbl(x), is.flag(warn_opt))
-
-  meta <- as_ts_def(meta)
+  value <- as_ts_def(value)
   old <- ts_def(x)
 
   if (!is.null(old)) {
 
     assert_that(is_ts_def(old))
 
-    hits <- flapply(meta, find_hits, old)
+    hits <- flapply(value, find_hits, old)
 
     if (length(hits) > 0L) old <- old[-hits]
-
-    new <- c(old, meta)
+    if (length(old) > 0L) value <- c(old, value)
   }
 
-  is_valid <- validate_def(new, x, stop_req = TRUE, warn_opt = warn_opt)
+  is_valid <- validate_def(value, x)
 
-  setattr(x, "ts_def", new[is_valid])
+  setattr(x, "ts_def", value[is_valid])
 
   invisible(x)
 }
 
 #' @export
 validate_def <- function(x, ..., stop_req = TRUE, warn_opt = TRUE) {
-  assert_that(is.flag(stop_req), is.flag(warn_opt))
-  UseMethod()
+  UseMethod("validate_def", x)
 }
 
 #' @export
-validate_def.ts_tbl <- function(x, stop_req, warn_opt, ...) {
+validate_def.ts_tbl <- function(x, stop_req = TRUE, warn_opt = TRUE, ...) {
   validate_def(ts_def(x), x, stop_req, warn_opt)
-}
-
-#' @export
-validate_def.ts_def <- function(x, tbl, stop_req, warn_opt, ...) {
-  vapply(x, validate_def, logical(1L), tbl, stop_req, warn_opt)
 }
 
 #' @export
@@ -170,7 +163,7 @@ reclass_ts_tbl <- function(x, meta, warn_opt = TRUE) {
 }
 
 #' @export
-rm_cols <- function(x, cols, ...) UseMethod()
+rm_cols <- function(x, cols, ...) UseMethod("rm_cols", x)
 
 #' @export
 rm_cols.ts_tbl <- function(x, cols, ...) {
@@ -189,7 +182,7 @@ rm_cols.ts_def <- function(x, cols, ...) {
 }
 
 #' @export
-rename_cols <- function(x, new, old, ...) UseMethod()
+rename_cols <- function(x, new, old, ...) UseMethod("rename_cols", x)
 
 #' @export
 rename_cols.ts_tbl <- function(x, new, old = colnames(x), ...) {
@@ -206,7 +199,7 @@ rename_cols.ts_def <- function(x, new, old, ...) {
 }
 
 #' @export
-index <- function(x) UseMethod()
+index <- function(x) UseMethod("index", x)
 
 #' @export
 index.ts_tbl <- function(x) index(ts_def(x))
@@ -217,7 +210,7 @@ index.ts_tbl <- function(x) index(ts_def(x))
 }
 
 #' @export
-key <- function(x) UseMethod()
+key <- function(x) UseMethod("key", x)
 
 #' @export
 key.data.table <- data.table::key
@@ -243,7 +236,7 @@ data_cols <- function(x) setdiff(colnames(x), meta_cols(x))
 id_cols <- function(x) c(key(x), index(x))
 
 #' @export
-interval <- function(x) UseMethod()
+interval <- function(x) UseMethod("interval", x)
 
 #' @export
 interval.ts_tbl <- function(x) interval(ts_def(x))

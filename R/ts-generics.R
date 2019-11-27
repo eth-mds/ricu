@@ -4,7 +4,7 @@
 #' @export
 #'
 `[.ts_tbl` <- function(x, ...) {
-  reclass_ts_tbl(NextMethod(), get_ts_meta(x), warn_opt = FALSE)
+  reclass_ts_tbl(NextMethod(), ts_def(x), warn_opt = FALSE)
 }
 
 #' @rdname ts_tbl
@@ -64,7 +64,7 @@ format.ts_tbl <- function(x, ..., n = NULL, width = NULL, n_extra = NULL) {
 #'
 tbl_sum.ts_tbl <- function(x) {
   c("A `ts_tbl`" = prt::dim_desc(x),
-    "Properties" = format(get_ts_meta(x)))
+    "Properties" = format(ts_def(x)))
 }
 
 #' @param object A `ts_tbl` object.
@@ -123,7 +123,7 @@ as.data.frame.ts_tbl <- function(x, row.names = NULL, optional = FALSE, ...) {
   if (sum(check) == 1L) {
     hit <- which(check)
     lst <- c(lst[hit], lst[-hit])
-    meta <- get_ts_meta(lst[[hit]])
+    meta <- ts_def(lst[[hit]])
   } else {
     meta <- NULL
   }
@@ -154,7 +154,7 @@ as.data.frame.ts_tbl <- function(x, row.names = NULL, optional = FALSE, ...) {
   lst <- list(...)
 
   hit <- which(vapply(lst, is_ts_tbl, logical(1L)))[1L]
-  meta <- get_ts_meta(lst[[hit]])
+  meta <- ts_def(lst[[hit]])
 
   res <- dt_rbl(lst, use.names, fill, idcol)
 
@@ -169,5 +169,5 @@ rbind.ts_tbl <- .rbind.ts_tbl
 
 #' @export
 split.ts_tbl <- function(x, ...) {
-  lapply(NextMethod(), reclass_ts_tbl, get_ts_meta(x))
+  lapply(NextMethod(), reclass_ts_tbl, ts_def(x))
 }

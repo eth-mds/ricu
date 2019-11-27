@@ -14,14 +14,14 @@ new_ts_def <- function(x) {
 
   assert_that(length(classes) == length(unique(classes)))
 
-  structure(x, class = "ts_def", "ts_meta")
+  structure(x, class = c("ts_def", "ts_meta"))
 }
 
 #' @export
 is_ts_def <- function(x) inherits(x, "ts_def")
 
 #' @export
-as_ts_def <- function(x) UseMethod()
+as_ts_def <- function(x) UseMethod("as_ts_def", x)
 
 #' @export
 as_ts_def.list <- function(x) new_ts_def(x)
@@ -36,15 +36,20 @@ as_ts_def.ts_meta <- function(x) new_ts_def(list(x))
 c.ts_def <- function(x, ...) {
 
   lst <- list(...)
-  meta <- vapply(lst, Negate(is_ts_def), logical(1L))
-  if (any(meta)) lst[meta] <- lapply(lst[meta], list)
+
+  assert_that(all_fun(x, is_ts_def))
 
   new_ts_def(c(unclass(x), lst))
 }
 
 #' @export
+`[.ts_def` <- function(x, i, ...) {
+  new_ts_def(NextMethod())
+}
+
+#' @export
 `[[.ts_def` <- function(x, i, ...) {
-  if (is.character(i)) x[[which(vapply(i, inherits, logical(1L), i))]]
+  if (is.character(i)) x[[which(vapply(x, inherits, logical(1L), i))]]
   else NextMethod()
 }
 
@@ -55,8 +60,8 @@ is_ts_meta <- function(x) inherits(x, "ts_meta")
 c.ts_meta <- function(x, ...) {
 
   lst <- list(...)
-  meta <- vapply(lst, Negate(is_ts_def), logical(1L))
-  if (any(meta)) lst[meta] <- lapply(lst[meta], list)
+
+  assert_that(all_fun(x, Negate(is_ts_def)))
 
   new_ts_def(c(list(x), lst))
 }
@@ -94,9 +99,7 @@ new_ts_uncertainty <- function(meta_cols, time_cols, direction = "forwards") {
   assert_that(is.character(meta_cols), is.character(time_cols),
               length(meta_cols) == length(time_cols))
 
-  directions <- c("forwards", "backwards", "both")
-
-  assert_that(length(direction) > 0L, all(direction %in% directions))
+  assert_that(length(direction) > 0L, all(direction %in% ts_uncertainty_dirs))
 
   if (length(direction) == 1L) direction <- rep(direction, length(meta_cols))
 
@@ -106,6 +109,8 @@ new_ts_uncertainty <- function(meta_cols, time_cols, direction = "forwards") {
                  direction = direction),
             class = c("ts_uncertainty", "ts_meta"))
 }
+
+ts_uncertainty_dirs <- c("forwards", "backwards", "both")
 
 #' @export
 is_ts_index <- function(x) inherits(x, "ts_index")
@@ -117,7 +122,7 @@ is_ts_key <- function(x) inherits(x, "ts_key")
 is_ts_uncertainty <- function(x) inherits(x, "ts_uncertainty")
 
 #' @export
-col_names <- function(x) UseMethod()
+col_names <- function(x) UseMethod("col_names", x)
 
 #' @export
 col_names.ts_def <- function(x) {
@@ -133,10 +138,7 @@ col_names.ts_def <- function(x) {
 col_names.ts_meta <- function(x) x[["meta_cols"]]
 
 #' @export
-col_names.ts_uncertainty <- function(x) x[c("meta_cols", "time_cols")]
-
-#' @export
-is_required <- function(x, ...) UseMethod()
+is_required <- function(x, ...) UseMethod("is_required", x)
 
 #' @export
 is_required.ts_meta <- function(x, ...) FALSE
@@ -148,7 +150,15 @@ is_required.ts_index <- function(x, ...) TRUE
 is_required.ts_key <- function(x, ...) TRUE
 
 #' @export
-validate_def.ts_index <- function(x, tbl, stop_req, warn_opt, ...) {
+validate_def.ts_def <- function(x, tbl, stop_req = TRUE, warn_opt = TRUE,
+                                ...) {
+
+  vapply(x, validate_def, logical(1L), tbl, stop_req, warn_opt)
+}
+
+#' @export
+validate_def.ts_index <- function(x, tbl, stop_req = TRUE, warn_opt = TRUE,
+                                  ...) {
 
   col <- col_names(x)
   interv <- interval(x)
@@ -162,7 +172,8 @@ validate_def.ts_index <- function(x, tbl, stop_req, warn_opt, ...) {
 }
 
 #' @export
-validate_def.ts_key <- function(x, tbl, stop_req, warn_opt, ...) {
+validate_def.ts_key <- function(x, tbl, stop_req = TRUE, warn_opt = TRUE,
+                                ...) {
 
   cols <- col_names(x)
 
@@ -173,15 +184,15 @@ validate_def.ts_key <- function(x, tbl, stop_req, warn_opt, ...) {
 }
 
 #' @export
-validate_def.ts_uncertainty <- function(x, tbl, stop_req, warn_opt, ...) {
+validate_def.ts_uncertainty <- function(x, tbl, stop_req = TRUE,
+                                        warn_opt = TRUE, ...) {
 
   cols <- col_names(x)
   aux <- x[["time_cols"]]
 
-  directions <- c("forwards", "backwards", "both")
-
   validation_helper(x, stop_req, warn_opt,
-    has_time_cols(x, c(cols, aux)), all(x[["direction"]] %in% directions),
+    has_time_cols(tbl, cols), has_time_cols(tbl, aux, allow_neg = FALSE),
+    all(x[["direction"]] %in% ts_uncertainty_dirs),
     all(vapply(x, same_length, logical(1L), x[[1L]]))
   )
 }
@@ -191,13 +202,14 @@ validate_def.ts_meta <- function(x, ...) {
   stop("Please add a `validate_def` method for `", class(x)[1L], "` classes.")
 }
 
-validation_helper <- function(x, stop_req, warn_opt, ...) {
+validation_helper <- function(x, stop_req, warn_opt, ...,
+                              env = parent.frame()) {
 
   msg_fun <- function(fun, msg) {
     fun("Error validating ", format(x), ":\n  ", msg)
   }
 
-  res <- validate_that(..., env = parent.frame(2L))
+  res <- validate_that(..., env = env)
 
   if (!isTRUE(res)) {
     if (is_required(x)) {
@@ -278,9 +290,9 @@ format.ts_index <- function(x, ...) {
 
 #' @export
 format.ts_uncertainty <- function(x, ...) {
-  dir <- replace_with(x[["direction"]], c("forwards", "backwards", "both"),
+  dir <- replace_with(x[["direction"]], ts_uncertainty_dirs,
                       c("+", "-", "+/-"))
-  format_ts_meta(x, col_names(x), paste0(dir, x[["direction"]]))
+  format_ts_meta(x, col_names(x), paste0(dir, x[["time_cols"]]))
 }
 
 format_class <- function(x) sub("^ts_", "", class(x)[1L])

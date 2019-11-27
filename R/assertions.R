@@ -94,11 +94,11 @@ on_failure(has_unit) <- function(call, env) {
          " does not have unit `", eval(call$unit, env), "`.")
 }
 
-all_fun <- function(x, is_fun, ...) all(vapply(x, is_fun, logical(1L)), ...)
+all_fun <- function(x, fun, ...) all(vapply(x, fun, logical(1L), ...))
 
 on_failure(all_fun) <- function(call, env) {
   paste0("some of ", deparse(call$x), " do not satisfy `",
-         deparse(call$is_fun), "`.")
+         deparse(call$fun), "`.")
 }
 
 same_length <- function(x, y) identical(length(x), length(y))
