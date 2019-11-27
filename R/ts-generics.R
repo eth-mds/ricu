@@ -17,31 +17,6 @@ dimnames.ts_tbl <- function(x) list(NULL, colnames(x))
 #'
 #' @export
 #'
-`dimnames<-.ts_tbl` <- function(x, value) {
-
-  assert_that(is.list(value), length(value) == 2L)
-
-  if (!is.null(value[[1L]])) {
-    warning("Row names for `ts_tbl` objects are not supported.")
-  }
-
-  names(x) <- value
-
-  invisible(x)
-}
-
-#' @rdname ts_tbl
-#'
-#' @export
-#'
-`names<-.ts_tbl` <- function(x, value) {
-  invisible(rename_cols(x, value))
-}
-
-#' @rdname ts_tbl
-#'
-#' @export
-#'
 print.ts_tbl <- function(x, ..., n = NULL, width = NULL, n_extra = NULL) {
   cat_line(format(x, ..., n = n, width = width, n_extra = n_extra))
   invisible(x)

@@ -222,8 +222,12 @@ cat_line <- function(...) {
 
 str_in_vec_once <- function(str, vec) identical(sum(vec %in% str), 1L)
 
-null_or_subs <- function(x, where = parent.frame(2L)) {
-  if (missing(x)) NULL else substitute(x, where)
+substitute_q <- function(expr, env) {
+  substitute(substitute(x, env), list(x = expr))
+}
+
+null_or_subs <- function(x, where = parent.frame(1L)) {
+  if (missing(x)) NULL else do.call("substitute", list(substitute(x), where))
 }
 
 same_class <- function(x, y) identical(class(x), class(y))

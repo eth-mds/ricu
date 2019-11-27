@@ -1,4 +1,5 @@
 
+#' @export
 expand_limits <- function(x, min_col = "min", max_col = "max", step_size = 1L,
                           id_cols = NULL, new_col = "hadm_time") {
 
@@ -22,6 +23,7 @@ expand_limits <- function(x, min_col = "min", max_col = "max", step_size = 1L,
   as_ts_tbl(res, id_cols, new_col, step_size)
 }
 
+#' @export
 has_no_gaps <- function(x) {
 
   check_time_col <- function(time, step) {
@@ -31,55 +33,57 @@ has_no_gaps <- function(x) {
   }
 
   assert_that(is_ts_tbl(x), is_unique(x),
-              identical(data.table::key(x), ts_id_cols(x)))
+              identical(data.table::key(x), id_cols(x)))
 
-  key_cols <- ts_key(x)
+  key_cols <- key(x)
 
-  res <- x[, check_time_col(get(ts_index(x)), ts_time_step(x)),
+  res <- x[, check_time_col(get(index(x)), time_step(x)),
            by = c(key_cols)]
 
   all(res[[setdiff(colnames(res), key_cols)]])
 }
 
+#' @export
 has_gaps <- Negate(has_no_gaps)
 
+#' @export
 fill_gaps <- function(x, limits = NULL, ...) {
 
   assert_that(is_unique(x))
 
-  time_col <- ts_index(x)
+  time_col <- index(x)
 
   if (is.null(limits)) {
 
     limits <- x[, list(min = min(get(time_col)), max = max(get(time_col))),
-                by = c(ts_key(x))]
+                by = c(key(x))]
 
-    join <- expand_limits(limits, "min", "max", ts_time_step(x), ts_key(x),
-                          time_col)
+    join <- expand_limits(limits, "min", "max", time_step(x), key(x), time_col)
 
   } else {
 
-    join <- expand_limits(limits, ..., step_size = ts_time_step(x),
-                          id_cols = ts_key(x), new_col = time_col)
+    join <- expand_limits(limits, ..., step_size = time_step(x),
+                          id_cols = key(x), new_col = time_col)
   }
 
   assert_that(has_no_gaps(join))
 
-  x[join, on = ts_id_cols(x)]
+  x[join, on = id_cols(x)]
 }
 
-slide_expr <- function(tbl, expr, ...) slide_quo(tbl, substitute(expr), ...)
+#' @export
+slide <- function(tbl, expr, ...) slide_quo(tbl, substitute(expr), ...)
 
-slide_quo <- function(x, expr, before, after = hours(0L),
-                      full_window = FALSE) {
+#' @export
+slide_ <- function(x, expr, before, after = hours(0L), full_window = FALSE) {
 
   assert_that(is_ts_tbl(x), is_unique(x), is.flag(full_window),
               is_time(before, allow_neg = FALSE),
               is_time(after, allow_neg = FALSE))
 
-  time_col <- ts_index(x)
-  id_cols  <- ts_key(x)
-  time_unit <- ts_time_unit(x)
+  time_col <- index(x)
+  id_cols  <- key(x)
+  time_unit <- time_unit(x)
 
   units(before) <- time_unit
   units(after)  <- time_unit
@@ -115,21 +119,31 @@ slide_quo <- function(x, expr, before, after = hours(0L),
   res
 }
 
-is_unique <- function(x, by = ts_id_cols(x)) {
-  identical(anyDuplicated(x, by = by), 0L)
+#' @export
+is_unique <- function(x, ...) UseMethod("is_unique", x)
+
+#' @export
+is_unique.default <- function(x, ...) {
+  identical(anyDuplicated(x, ...), 0L)
 }
 
+#' @export
+is_unique.ts_tbl <- function(x, by = id_cols(x), ...) {
+  identical(anyDuplicated(x, by = by, ...), 0L)
+}
+
+#' @export
 make_unique <- function(x, fun = mean, ...) {
 
   assert_that(is_ts_tbl(x), is.function(fun))
 
   if (nrow(x) == 0) return(x)
 
-  cols <- setdiff(colnames(x), ts_id_cols(x))
+  cols <- setdiff(colnames(x), id_cols(x))
 
   units <- lapply(cols, function(col) attr(x[[col]], "units"))
 
-  x <- x[, lapply(.SD, fun, ...), .SDcols = cols, by = c(ts_id_cols(x))]
+  x <- x[, lapply(.SD, fun, ...), .SDcols = cols, by = c(id_cols(x))]
 
   Map(function(col, unit) setattr(x[[col]], "units", unit), cols, units)
 
@@ -151,3 +165,33 @@ days <- function(x) as.difftime(x, units = "days")
 #' @export
 weeks <- function(x) as.difftime(x, units = "weeks")
 
+#' @export
+materialize_window <- function(x, suffixes = c("_lwr", "_upr")) {
+
+  do_op <- function(not_dir, op, suff) {
+
+    def <- ts_def(x)[["ts_window"]]
+    hits <- def[["direction"]] != not_dir
+
+    if (any(hits)) {
+
+      old <- col_names(def)[hits]
+      new <- paste0(old, suff)
+      delta <- def[["time_cols"]][hits]
+
+      x[, c(new) := Map(op, .SD, mget(delta)), .SDcols = old]
+    }
+
+    invisible(x)
+  }
+
+  assert_that(is_ts_tbl(x), is.character(suffixes), length(suffixes) == 2L)
+
+  def <- ts_def(x)[["ts_window"]]
+
+  if (is.null(def)) return(x)
+
+  Map(do_op, c("forwards", "backwards"), c(`-`, `+`), suffixes)
+
+  rm_cols(x, def[["time_cols"]])
+}

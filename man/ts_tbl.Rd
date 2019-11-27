@@ -3,8 +3,6 @@
 \name{[.ts_tbl}
 \alias{[.ts_tbl}
 \alias{dimnames.ts_tbl}
-\alias{dimnames<-.ts_tbl}
-\alias{names<-.ts_tbl}
 \alias{print.ts_tbl}
 \alias{format.ts_tbl}
 \alias{tbl_sum.ts_tbl}
@@ -19,10 +17,6 @@
 \method{[}{ts_tbl}(x, ...)
 
 \method{dimnames}{ts_tbl}(x)
-
-\method{dimnames}{ts_tbl}(x) <- value
-
-\method{names}{ts_tbl}(x) <- value
 
 \method{print}{ts_tbl}(x, ..., n = NULL, width = NULL,
   n_extra = NULL)

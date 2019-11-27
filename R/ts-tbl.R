@@ -46,7 +46,7 @@ new_ts_tbl <- function(tbl, meta) {
   setkeyv(tbl, cols)
   setcolorder(tbl, c(cols, setdiff(colnames(tbl), cols)))
 
-  ts_def(tbl) <- meta
+  set_ts_def(tbl, meta)
   setattr(tbl, "class", unique(c("ts_tbl", class(tbl))))
 
   tbl
@@ -103,30 +103,38 @@ ts_def.ts_tbl <- function(x) attr(x, "ts_def")
 ts_def.ts_def <- function(x) x
 
 #' @export
-`ts_def<-` <- function(x, value) {
+update_ts_def <- function(x, new, ...) {
 
   find_hits <- function(new_elem, old_set) {
     which(vapply(old_set, same_class, logical(1L), new_elem))
   }
 
-  value <- as_ts_def(value)
+  new <- as_ts_def(new)
   old <- ts_def(x)
 
   if (!is.null(old)) {
 
     assert_that(is_ts_def(old))
 
-    hits <- flapply(value, find_hits, old)
+    hits <- flapply(new, find_hits, old)
 
     if (length(hits) > 0L) old <- old[-hits]
-    if (length(old) > 0L) value <- c(old, value)
+    if (length(old) > 0L) new <- c(old, new)
   }
 
-  is_valid <- validate_def(value, x)
+  set_ts_def(x, new, ...)
+}
 
-  setattr(x, "ts_def", value[is_valid])
+#' @export
+set_ts_def <- function(x, new, warn_opt = TRUE) {
 
-  invisible(x)
+  new <- as_ts_def(new)
+
+  is_valid <- validate_def(new, x, warn_opt = warn_opt)
+
+  setattr(x, "ts_def", new[is_valid])
+
+  x
 }
 
 #' @export
@@ -205,8 +213,8 @@ index <- function(x) UseMethod("index", x)
 index.ts_tbl <- function(x) index(ts_def(x))
 
 #' @export
-`index<-` <- function(x, value) {
-  ts_def(x) <- new_tbl_index(x, value, interval(x))
+set_index <- function(x, new) {
+  update_ts_def(x, new_tbl_index(x, new, interval(x)))
 }
 
 #' @export
@@ -222,9 +230,7 @@ key.ts_tbl <- function(x) key(ts_def(x))
 key.ts_def <- function(x) key(x[["ts_key"]])
 
 #' @export
-`key<-` <- function(x, value) {
-  ts_def(x) <- new_tbl_key(x, value)
-}
+set_key <- function(x, new) update_ts_def(x, new_tbl_key(x, new))
 
 #' @export
 meta_cols <- function(x) flapply(ts_def(x), col_names)
@@ -242,8 +248,8 @@ interval <- function(x) UseMethod("interval", x)
 interval.ts_tbl <- function(x) interval(ts_def(x))
 
 #' @export
-`interval<-` <- function(x, value) {
-  ts_def(x) <- new_tbl_index(x, index(x), value)
+set_interval <- function(x, new) {
+  update_ts_def(x, new_tbl_index(x, index(x), new))
 }
 
 #' @export
