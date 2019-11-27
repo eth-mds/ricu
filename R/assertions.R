@@ -11,7 +11,7 @@ on_failure(is_dt) <- function(call, env) {
 has_cols <- function(x, cols) {
   is.character(cols) && length(cols) > 0L &&
     length(cols) == unique(length(cols)) &&
-    all(vapply(cols, str_in_vec_once, logical(1L), colnames(x)))
+    all_fun(cols, str_in_vec_once, colnames(x))
 }
 
 on_failure(has_cols) <- function(call, env) {
@@ -38,7 +38,7 @@ on_failure(has_time_col) <- function(call, env) {
 }
 
 has_time_cols <- function(x, cols, ...) {
-  all(vapply(cols, function(col) has_time_col(x, col), logical(1L), ...))
+  all_fun(cols, function(col, ...) has_time_col(x, col, ...), ...)
 }
 
 on_failure(has_time_cols) <- function(call, env) {
@@ -94,7 +94,7 @@ on_failure(has_unit) <- function(call, env) {
          " does not have unit `", eval(call$unit, env), "`.")
 }
 
-all_fun <- function(x, is_fun) all(vapply(x, is_fun, logical(1L)))
+all_fun <- function(x, is_fun, ...) all(vapply(x, is_fun, logical(1L)), ...)
 
 on_failure(all_fun) <- function(call, env) {
   paste0("some of ", deparse(call$x), " do not satisfy `",
