@@ -24,13 +24,13 @@ Determine the location where to place data meant to persist between
 individual sessions.
 }
 \details{
-For data, the default location depends on the operating system as
+For data, the default location depends on the operating system as\tabular{ll}{
+   \strong{Platform} \tab \strong{Location} \cr
+   Linux \tab \verb{~/.local/share/ricu} \cr
+   macOS \tab \verb{~/Library/Application Support/ricu} \cr
+   Windows \tab \verb{\%LOCALAPPDATA\%/ricu} \cr
+}
 
-| \strong{Platform} | \strong{Location}                          |
-| ------------ | ------------------------------------- |
-| Linux        | \code{~/.local/share/ricu}                |
-| macOS        | \code{~/Library/Application Support/ricu} |
-| Windows      | \code{\%LOCALAPPDATA\%/ricu}                |
 
 If the default storage directory does not exists, it will only be created
 upon user consent (requiring an interactive session).
@@ -41,7 +41,7 @@ to make it apply to all R sessions. For example, it could be set within:
 \itemize{
 \item A project-local \code{.Renviron};
 \item The user-level \code{.Renviron};
-\item A file at \code{$(R RHOME)/etc/Renviron.site}.
+\item A file at \verb{$(R RHOME)/etc/Renviron.site}.
 }
 
 Any directory specified as environment variable will recursively be created.

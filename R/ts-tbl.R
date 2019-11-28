@@ -159,6 +159,12 @@ unclass_ts_tbl <- function(x) {
 #' @export
 reclass_ts_tbl <- function(x, meta, warn_opt = TRUE) {
 
+  ids <- id_cols(meta)
+
+  if (has_cols(x, ids) && !identical(data.table::key(x), ids)) {
+    x <- data.table::setkeyv(x, ids)
+  }
+
   is_valid <- validate_def(meta, x, stop_req = FALSE, warn_opt = warn_opt)
 
   if (anyNA(is_valid)) {

@@ -75,7 +75,8 @@ fill_gaps <- function(x, limits = NULL, ...) {
 slide <- function(tbl, expr, ...) slide_quo(tbl, substitute(expr), ...)
 
 #' @export
-slide_ <- function(x, expr, before, after = hours(0L), full_window = FALSE) {
+slide_quo <- function(x, expr, before, after = hours(0L),
+                      full_window = FALSE) {
 
   assert_that(is_ts_tbl(x), is_unique(x), is.flag(full_window),
               is_time(before, allow_neg = FALSE),
@@ -133,19 +134,31 @@ is_unique.ts_tbl <- function(x, by = id_cols(x), ...) {
 }
 
 #' @export
-make_unique <- function(x, fun = mean, ...) {
+make_unique <- function(x, expr, fun = mean, ...) {
+  make_unique_quo(x, null_or_subs(expr), fun, ...)
+}
 
-  assert_that(is_ts_tbl(x), is.function(fun))
+#' @export
+make_unique_quo <- function(x, expr = NULL, fun = mean, by = id_cols(x),
+                            cols = setdiff(colnames(x), by), ...) {
+
+  get_units <- function(col) attr(x[[col]], "units")
+  set_units <- function(col, unit) setattr(x[[col]], "units", unit)
+
+  assert_that(is_ts_tbl(x))
 
   if (nrow(x) == 0) return(x)
+  if (length(cols) == 0L) return(unique(x))
 
-  cols <- setdiff(colnames(x), id_cols(x))
+  units <- lapply(cols, get_units)
 
-  units <- lapply(cols, function(col) attr(x[[col]], "units"))
+  if (is.null(expr)) {
+    x <- x[, lapply(.SD, fun, ...), .SDcols = cols, by = by]
+  } else {
+    x <- x[, eval(expr), .SDcols = cols, by = by]
+  }
 
-  x <- x[, lapply(.SD, fun, ...), .SDcols = cols, by = c(id_cols(x))]
-
-  Map(function(col, unit) setattr(x[[col]], "units", unit), cols, units)
+  Map(set_units, cols, units)
 
   x
 }
@@ -194,4 +207,34 @@ materialize_window <- function(x, suffixes = c("_lwr", "_upr")) {
   Map(do_op, c("forwards", "backwards"), c(`-`, `+`), suffixes)
 
   rm_cols(x, def[["time_cols"]])
+}
+
+#' @export
+filter_count <- function(x, min_count = 1L, count_win = hours(24L)) {
+
+  assert_that(is_ts_tbl(x), is.count(min_count))
+
+  id <- c("hadm_id", "hadm_time")
+
+  assert_that(is_dt(x), has_cols(x, c(id, "win_end")))
+
+  time_step <- attr(x[["hadm_time"]], "step_size")
+  x <- x[, list(count = .N, win_end = max(win_end)), by = id]
+  data.table::setattr(x[["hadm_time"]], "step_size", time_step)
+
+  if (min_count > 1L) {
+
+    assert_that(is_time(count_win, allow_neg = FALSE))
+
+    expr <- quote(list(sum_count = sum(count), max_win = max(win_end)))
+    x <- window_quo(x, expr, window_length = count_win)
+    x <- x[sum_count >= min_count, ]
+    data.table::set(x, j = c("sum_count", "count"), value = NULL)
+    data.table::setnames(x, "max_win", "win_end")
+
+  } else {
+    data.table::set(x, j = "count", value = NULL)
+  }
+
+  x
 }

@@ -37,6 +37,6 @@ Suggests:
     eicu.demo,
     rlang
 Roxygen: list(markdown = TRUE)
-RoxygenNote: 6.1.1
+RoxygenNote: 7.0.1
 Additional_repositories: https://septic-tank.github.io/physionet-demo
 Remotes: nbenn/prt

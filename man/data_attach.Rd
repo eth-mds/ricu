@@ -14,11 +14,19 @@
 \title{Data attach utilities}
 \format{An object of class \code{environment} of length 4.}
 \usage{
-attach_mimic(demo = FALSE, dir = mimic_data_dir(demo),
-  config = mimic_config(demo), envir = if (demo) mimic_demo else mimic)
+attach_mimic(
+  demo = FALSE,
+  dir = mimic_data_dir(demo),
+  config = mimic_config(demo),
+  envir = if (demo) mimic_demo else mimic
+)
 
-attach_eicu(demo = FALSE, dir = eicu_data_dir(demo),
-  config = eicu_config(demo), envir = if (demo) eicu_demo else eicu)
+attach_eicu(
+  demo = FALSE,
+  dir = eicu_data_dir(demo),
+  config = eicu_config(demo),
+  envir = if (demo) eicu_demo else eicu
+)
 
 data
 

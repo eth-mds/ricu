@@ -60,6 +60,9 @@ is_ts_meta <- function(x) inherits(x, "ts_meta")
 c.ts_meta <- function(x, ...) c_ts_def(as_ts_def(x), list(...))
 
 #' @export
+length.ts_meta <- function(x) length(col_names(x))
+
+#' @export
 print.ts_def <- function(x, ...) {
   cat_line(format(x, ...))
 }
@@ -165,14 +168,14 @@ validate_def.ts_index <- function(x, tbl, stop_req = TRUE, warn_opt = TRUE,
 
   col <- col_names(x)
   interv <- interval(x)
-  unit <- units(tbl[[col]])
 
   validation_helper(x, stop_req, warn_opt,
     has_col(tbl, col),
     identical(col, last_elem(data.table::key(tbl))),
     is_time(interv, allow_neg = FALSE),
     length(interv) == 1L,
-    all(as.double(tbl[[col]]) %% as.double(interv, units = unit) == 0)
+    all(as.double(tbl[[col]]) %%
+        as.double(interv, units = units(tbl[[col]])) == 0)
   )
 }
 
@@ -313,35 +316,35 @@ rename_cols.ts_unit <- function(x, new, old, ...) {
 
 #' @export
 format.ts_def <- function(x, ...) {
-  paste(vapply(x, format, character(1L)), collapse = ", ")
+  vap <- function(fun) vapply(x, fun, character(1L))
+  req <- function(x) if(is_required(x)) "*" else ""
+  paste0(vap(format_class), vap(req), vap(format), collapse = ", ")
 }
 
 #' @export
-format.ts_meta <- function(x, ...) format_ts_meta(x, col_names(x))
+format.ts_meta <- function(x, ...) format_ts_meta(col_names(x))
 
 #' @export
 format.ts_index <- function(x, ...) {
-  format_ts_meta(x, col_names(x), format(interval(x)))
+  format_ts_meta(col_names(x), format(interval(x)))
 }
 
 #' @export
 format.ts_window <- function(x, ...) {
   dir <- replace_with(x[["direction"]], ts_window_dirs,
                       c("+", "-", "+/-"))
-  format_ts_meta(x, col_names(x), paste0(dir, x[["time_cols"]]))
+  format_ts_meta(col_names(x), paste0(dir, x[["time_cols"]]))
 }
 
 #' @export
 format.ts_unit <- function(x, ...) {
-  format_ts_meta(x, col_names(x), x[["unit_cols"]])
+  format_ts_meta(col_names(x), x[["unit_cols"]])
 }
 
 format_class <- function(x) sub("^ts_", "", class(x)[1L])
 
-format_body <- function(...) paste(..., sep = ", ", collapse = "; ")
-
-format_ts_meta <- function(x, ...) {
-  paste0(format_class(x), if(is_required(x)) "*", "<", format_body(...), ">")
+format_ts_meta <- function(...) {
+  paste0("<", paste(..., sep = ", ", collapse = "; "), ">")
 }
 
 #' @export

@@ -1,12 +1,92 @@
 
 #' @export
-mimic_tbl <- function(table, row_expr, ...) {
-  mimic_tbl_(table, null_or_subs(row_expr), ...)
+mimic_ts <- function(table, row_expr, ...) {
+  mimic_ts_quo(table, null_or_subs(row_expr), ...)
 }
 
 #' @export
-mimic_tbl_ <- function(table, row_quo = NULL, cols = NULL,
-                       interval = hours(1L), envir = "mimic") {
+mimic_ts_quo <- function(table, row_quo = NULL, cols = NULL,
+                         id_cols = "hadm_id", time_col = "charttime",
+                         interval = hours(1L), envir = "mimic") {
+
+  if (!is.null(cols)) {
+    cols <- c(id_cols, time_col, cols)
+  }
+
+  res <- mimic_tbl_quo(table, row_quo, cols, interval, envir)
+
+  as_ts_tbl(res, id_cols, time_col, interval)
+}
+
+mimic_ts_unit_quo <- function(table, row_quo = NULL, cols = NULL, ...,
+                              val_cols, unit_cols) {
+
+  assert_that(is.character(val_cols), is.character(unit_cols),
+              length(val_cols) > 0L, same_length(val_cols, unit_cols))
+
+  if (!is.null(cols)) {
+    cols <- c(cols, unit_cols[val_cols %in% cols])
+  }
+
+  res <- mimic_ts_quo(table, row_quo, cols, ...)
+
+  hits <- val_cols %in% colnames(res)
+
+  if (any(hits)) {
+    res <- update_ts_def(res, new_ts_unit(val_cols[hits], unit_cols[hits]))
+  }
+
+  res
+}
+
+mimic_ts_date_time_quo <- function(table, row_quo = NULL, cols = NULL,
+                                   id_cols = "hadm_id", time_col = "charttime",
+                                   interval = hours(1L), envir = "mimic",
+                                   date_cols, time_cols) {
+
+  fix_time <- function(time_col, date_col, delta_col) {
+    res <- res[, c(delta_col) := hours(0L)]
+    res <- res[is.na(get(time_col)),
+               c(time_col, delta_col) := list(get(date_col), hours(24L))]
+    NULL
+  }
+
+  assert_that(is.character(date_cols), is.character(time_cols),
+              length(date_cols) > 0L, same_length(date_cols, time_cols))
+
+  if (!is.null(cols)) {
+    cols <- c(id_cols, time_col, cols)
+    get_cols <- c(cols, date_cols[time_cols %in% cols])
+  } else {
+    get_cols <- NULL
+  }
+
+  res <- mimic_tbl_quo(table, row_quo, get_cols, interval, envir)
+
+  hits <- time_cols %in% colnames(res)
+
+  if (any(hits)) {
+    time_cols <- time_cols[hits]
+    wins <- paste0(time_cols, "_win")
+    Map(fix_time, time_cols, date_cols[hits], wins)
+    wins <- new_ts_window(time_cols, wins)
+  }
+
+  res <- as_ts_tbl(res, id_cols, time_col, interval)
+  if (any(hits)) res <- update_ts_def(res, wins)
+  if (!is.null(cols)) res <- rm_cols(res, setdiff(get_cols, cols))
+
+  res
+}
+
+#' @export
+mimic_tbl <- function(table, row_expr, ...) {
+  mimic_tbl_quo(table, null_or_subs(row_expr), ...)
+}
+
+#' @export
+mimic_tbl_quo <- function(table, row_quo = NULL, cols = NULL,
+                          interval = hours(1L), envir = "mimic") {
 
   time_fun <- function(x, y) {
     round_to(difftime(x, y, units = units(interval)), as.numeric(interval))
@@ -14,7 +94,14 @@ mimic_tbl_ <- function(table, row_quo = NULL, cols = NULL,
 
   assert_that(is_time(interval, allow_neg = FALSE))
 
-  dat <- prt::subset_quo(get_table(table, envir), row_quo, cols)
+  if (!is.null(cols)) {
+
+    assert_that(is.character(cols))
+
+    if (table == "admissions") cols <- c("admittime", cols)
+  }
+
+  dat <- prt::subset_quo(get_table(table, envir), row_quo, unique(cols))
 
   is_date <- vapply(dat, inherits, logical(1L), "POSIXt")
 
@@ -22,8 +109,12 @@ mimic_tbl_ <- function(table, row_quo = NULL, cols = NULL,
 
     date_cols <- colnames(dat)[is_date]
 
-    adm <- mimic_admissions(cols = c("hadm_id", "admittime"), data_env = envir)
-    dat <- merge(dat, adm, by = "hadm_id", all.x = TRUE)
+    if (table == "admissions") {
+      date_cols <- setdiff(date_cols, "admittime")
+    } else {
+      adm <- get_table("admissions", envir)[, c("hadm_id", "admittime")]
+      dat <- merge(dat, adm, by = "hadm_id", all.x = TRUE)
+    }
 
     dat <- dat[, c(date_cols) := lapply(.SD, time_fun, admittime),
                .SDcols = date_cols]
@@ -32,89 +123,4 @@ mimic_tbl_ <- function(table, row_quo = NULL, cols = NULL,
   }
 
   dat
-}
-
-#' @export
-mimic_ts <- function(table, row_expr, ...) {
-  mimic_ts_(table, null_or_subs(row_expr), ...)
-}
-
-#' @export
-mimic_ts_ <- function(table, row_quo = NULL, cols = NULL,
-                      id_cols = "hadm_id", time_col = "charttime",
-                      id_names = id_cols, time_name = "hadm_time",
-                      interval = hours(1L), envir = "mimic") {
-
-  if (!is.null(cols)) {
-
-    if (is.numeric(cols)) {
-      cols <- colnames(get_table(table, envir))
-    }
-
-    assert_that(is.character(cols))
-
-    cols <- unique(c(id_cols, time_col, cols))
-  }
-
-  res <- mimic_tbl_(table, row_quo, cols, interval, envir)
-  res <- setnames(res, c(id_cols, time_col), c(id_names, time_name))
-
-  new_ts_tbl(res, id_names, time_name, as.numeric(interval))
-}
-
-mimic_admit_difftime <- function(dat, data_env = "mimic",
-  time_col = "charttime", time_name = "hadm_time", time_scale = "hours",
-  step_size = 1L) {
-
-  adm <- mimic_admissions(data_env = data_env)
-
-  nrow_before <- nrow(dat)
-  dat <- merge(dat, adm, by = "hadm_id", all = FALSE)
-  nrow_rm <- nrow_before - nrow(dat)
-
-  if (nrow_rm > 0L) {
-    message("Lost ", nrow_rm, " rows determining `", time_name, "`.")
-  }
-
-  dat <- dat[, c(time_name) := round_to(
-    difftime(eval(as.name(time_col)), admittime, units = time_scale), step_size
-  )]
-
-  dat
-}
-
-mimic_admissions <- function(cols = c("hadm_id", "admittime"),
-                             data_env = "mimic") {
-
-  adm <- get_table("admissions", data_env)
-  adm[, cols]
-}
-
-mimic_get_icu_stays <- function(icu_in = "icu_in", icu_out = "icu_out",
-                                disch = "disch", time_scale = "hours",
-                                step_size = 1L, data_env = "mimic") {
-
-  dt_fun <- function(x, y) {
-    list(round_to(difftime(x, y, units = time_scale), step_size))
-  }
-
-  adm <- mimic_admissions(c("hadm_id", "admittime", "dischtime"), data_env)
-  icu <- get_table("icustays", data_env)
-  icu <- icu[, c("hadm_id", "icustay_id", "intime", "outtime")]
-
-  dat <- merge(adm, icu, by = "hadm_id")
-
-  row_ok <- complete.cases(dat)
-  if (any(!row_ok)) {
-    message("deleting ", sum(!row_ok), " icu stays due to missingness")
-    dat <- dat[row_ok, ]
-  }
-
-  dat <- dat[, c(icu_in, icu_out, disch) := c(
-    if (!is.null(icu_in)) dt_fun(intime, admittime),
-    if (!is.null(icu_out)) dt_fun(outtime, admittime),
-    if (!is.null(disch)) dt_fun(dischtime, admittime)
-  )]
-
-  dat[, c("hadm_id", "icustay_id", icu_in, icu_out, disch), with = FALSE]
 }

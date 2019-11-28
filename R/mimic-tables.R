@@ -1,29 +1,47 @@
 
 #' @export
-mimic_prescr <- function(row_expr, ...) {
-  mimic_prescr_(null_or_subs(row_expr), ...)
+mimic_admissions <- function(cols = character(0L), rows = NULL,
+                             id_cols = "hadm_id", time_col = "dischtime",
+                             ...) {
+
+  mimic_ts_quo("admissions", rows, cols, id_cols, time_col, ...)
 }
 
 #' @export
-mimic_prescr_ <- function(row_quo = NULL, extra_cols = character(0L),
-                          id_cols = "hadm_id", time_col = "startdate",
-                          id_names = id_cols, time_name = "hadm_time",
-                          interval = hours(1L), envir = "mimic",
-                          date_extra = days(1L) - interval) {
+mimic_microbio <- function(cols = character(0L), rows = NULL,
+                           id_cols = "hadm_id", time_col = "charttime",
+                           ...) {
 
-  add_delta <- function(x) x + date_extra
+  mimic_ts_date_time_quo("microbiologyevents", rows, cols, id_cols, time_col,
+                         ..., date_cols = "chartdate", time_cols = "charttime")
+}
 
-  assert_that(is.character(extra_cols))
+#' @export
+mimic_prescriptions <- function(cols = character(0L), rows = NULL,
+                                id_cols = "hadm_id", time_col = "startdate",
+                                ...) {
 
-  res <- mimic_tbl_("prescriptions", row_quo,
-                    unique(c(id_cols, time_col, extra_cols)), interval, envir)
+  delta <- function(n) list(as.difftime(rep.int(24L, n), units = "hours"))
+
+  res <- mimic_ts_unit_quo("prescriptions", rows, cols, id_cols,
+                           time_col, ..., val_cols = "dose_val_rx",
+                           unit_cols = "dose_unit_rx")
 
   time_cols <- intersect(colnames(res), c("startdate", "enddate"))
-  time_delta <- paste0(time_cols, "_ub")
+  time_delta <- paste0(time_cols, "_win")
 
-  res <- res[, c(time_delta) := lapply(.SD, add_delta), .SDcols = time_cols]
+  res <- res[, c(time_delta) := rep(delta(.N), length(time_delta))]
 
-  res <- setnames(res, c(id_cols, time_col), c(id_names, time_name))
+  update_ts_def(res, new_ts_window(time_cols, time_delta))
+}
 
-  new_ts_tbl(res, id_names, time_name, as.numeric(interval))
+#' @export
+mimic_input_mv <- function(cols = character(0L), rows = NULL,
+                           id_cols = "hadm_id", time_col = "starttime", ...) {
+
+  val_cols  <- c("amount",    "rate",    "totalamount")
+  unit_cols <- c("amountuom", "rateuom", "totalamountuom")
+
+  mimic_ts_unit_quo("inputevents_mv", rows, cols, id_cols, time_col,
+                     ..., val_cols = val_cols, unit_cols = unit_cols)
 }

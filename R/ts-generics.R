@@ -38,8 +38,11 @@ format.ts_tbl <- function(x, ..., n = NULL, width = NULL, n_extra = NULL) {
 #' @export
 #'
 tbl_sum.ts_tbl <- function(x) {
-  c("A `ts_tbl`" = prt::dim_desc(x),
-    "Properties" = format(ts_def(x)))
+  vap <- function(fun) vapply(ts_def(x), fun, character(1L))
+  req <- function(x) if(is_required(x)) "[*]" else ""
+  meta <- vap(format)
+  names(meta) <- paste0(cap_str(vap(format_class)), vap(req))
+  c("A `ts_tbl`" = prt::dim_desc(x), meta)
 }
 
 #' @param object A `ts_tbl` object.

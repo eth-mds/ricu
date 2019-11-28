@@ -18,11 +18,9 @@
 
 \method{dimnames}{ts_tbl}(x)
 
-\method{print}{ts_tbl}(x, ..., n = NULL, width = NULL,
-  n_extra = NULL)
+\method{print}{ts_tbl}(x, ..., n = NULL, width = NULL, n_extra = NULL)
 
-\method{format}{ts_tbl}(x, ..., n = NULL, width = NULL,
-  n_extra = NULL)
+\method{format}{ts_tbl}(x, ..., n = NULL, width = NULL, n_extra = NULL)
 
 \method{tbl_sum}{ts_tbl}(x)
 
@@ -30,8 +28,7 @@
 
 \method{as.data.table}{ts_tbl}(x, ...)
 
-\method{as.data.frame}{ts_tbl}(x, row.names = NULL, optional = FALSE,
-  ...)
+\method{as.data.frame}{ts_tbl}(x, row.names = NULL, optional = FALSE, ...)
 
 ts_tbl(..., key, index = NULL, interval = hours(1L))
 

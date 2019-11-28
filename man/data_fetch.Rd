@@ -6,11 +6,21 @@
 \alias{download_datasource}
 \title{Data download utilities}
 \usage{
-download_mimic(demo = FALSE, dest = mimic_data_dir(demo),
-  config = mimic_config(demo), table_sel = NULL, ...)
+download_mimic(
+  demo = FALSE,
+  dest = mimic_data_dir(demo),
+  config = mimic_config(demo),
+  table_sel = NULL,
+  ...
+)
 
-download_eicu(demo = FALSE, dest = eicu_data_dir(demo),
-  config = eicu_config(demo), table_sel = NULL, ...)
+download_eicu(
+  demo = FALSE,
+  dest = eicu_data_dir(demo),
+  config = eicu_config(demo),
+  table_sel = NULL,
+  ...
+)
 
 download_datasource(dest, config, table_sel = NULL, ...)
 }

@@ -6,11 +6,19 @@
 \alias{import_datasource}
 \title{Data import utilities}
 \usage{
-import_mimic(demo = FALSE, dir = mimic_data_dir(demo),
-  config = mimic_config(demo), cleanup = TRUE)
+import_mimic(
+  demo = FALSE,
+  dir = mimic_data_dir(demo),
+  config = mimic_config(demo),
+  cleanup = TRUE
+)
 
-import_eicu(demo = FALSE, dir = eicu_data_dir(demo),
-  config = eicu_config(demo), cleanup = TRUE)
+import_eicu(
+  demo = FALSE,
+  dir = eicu_data_dir(demo),
+  config = eicu_config(demo),
+  cleanup = TRUE
+)
 
 import_datasource(dir, config, cleanup = TRUE)
 }

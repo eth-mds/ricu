@@ -107,3 +107,12 @@ on_failure(same_length) <- function(call, env) {
   paste0(deparse(call$x), " does not have the same length as ",
          deparse(call$y), ".")
 }
+
+has_ts_meta <- function(x, class) {
+  is_ts_tbl(x) && !is.null(ts_def(x)[[class]])
+}
+
+on_failure(has_ts_meta) <- function(call, env) {
+  paste0(deparse(call$x), " does not contain a ts_meta tag of class `",
+         deparse(call$class), "`.")
+}
