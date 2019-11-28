@@ -48,8 +48,7 @@ c_ts_def <- function(x, lst) {
 `[[.ts_def` <- function(x, i, ...) {
   if (is.character(i)) {
     hits <- vapply(x, inherits, logical(1L), i)
-    if (sum(hits) == 1L) x[[which(hits)]]
-    else NULL
+    if (sum(hits) == 0L) NULL else x[[which(hits)]]
   } else NextMethod()
 }
 
@@ -60,62 +59,82 @@ is_ts_meta <- function(x) inherits(x, "ts_meta")
 c.ts_meta <- function(x, ...) c_ts_def(as_ts_def(x), list(...))
 
 #' @export
-length.ts_meta <- function(x) length(col_names(x))
+length.ts_meta <- function(x) length(meta_names(x))
 
 #' @export
-print.ts_def <- function(x, ...) {
-  cat_line(format(x, ...))
-}
+print.ts_def <- function(x, ...) cat_line(format(x, ...))
 
 #' @export
-print.ts_meta <- function(x, ...) {
-  cat_line(format(x, ...))
-}
+print.ts_meta <- function(x, ...) cat_line(format(x, ...))
 
 #' @export
 new_ts_index <- function(col, interval) {
 
-  assert_that(is.string(col), is_time(interval))
+  assert_that(is.string(col), !is.na(col), is_time(interval))
 
-  structure(list(meta_cols = col, interval = interval),
+  structure(list(list(meta_col = col, aux_data = interval)),
             class = c("ts_index", "ts_meta"))
 }
 
 #' @export
 new_ts_key <- function(cols) {
 
-  assert_that(is.character(cols))
+  assert_that(is.character(cols), length(cols) > 0L)
 
-  structure(list(meta_cols = cols), class = c("ts_key", "ts_meta"))
+  structure(Map(list, meta_col = as.list(cols)),
+            class = c("ts_key", "ts_meta"))
 }
 
 #' @export
-new_ts_window <- function(meta_cols, time_cols, direction = "forwards") {
+new_ts_window <- function(time_cols, delta_cols = NA, delta_vals = NA) {
 
-  assert_that(is.character(meta_cols), is.character(time_cols),
-              length(meta_cols) > 0L, same_length(meta_cols, time_cols))
+  assemble <- function(tim, dco, dva) {
 
-  assert_that(length(direction) > 0L, all(direction %in% ts_window_dirs))
+    if (is.na(dco)) dco <- NA_character_
+    if (is.na(dva)) dva <- hours(NA_integer_)
 
-  if (length(direction) == 1L) direction <- rep(direction, length(meta_cols))
+    assert_that(is.string(tim), is.string(dco), is_time(dva),
+                !is.na(tim), xor_na(dco, dva))
 
-  assert_that(length(direction) == length(meta_cols))
+    list(meta_col = tim, aux_col = dco, aux_data = dva)
+  }
 
-  structure(list(meta_cols = meta_cols, time_cols = time_cols,
-                 direction = direction),
+  structure(Map(assemble, as.list(time_cols), delta_cols, delta_vals),
             class = c("ts_window", "ts_meta"))
 }
 
-ts_window_dirs <- c("forwards", "backwards", "both")
+#' @export
+new_ts_unit <- function(val_cols, unit_cols = NA, unit_vals = NA) {
+
+  assemble <- function(vco, uco, uva) {
+
+    if (is.na(uco)) uco <- NA_character_
+    if (is.na(uva)) uva <- NA_character_
+
+    assert_that(is.string(vco), is.string(uco), is_time(uva),
+                !is.na(vco), xor_na(uco, uva))
+
+    list(meta_col = vco, aux_col = uco, aux_data = uva)
+  }
+
+  structure(Map(assemble, as.list(val_cols), unit_cols),
+            class = c("ts_unit", "ts_meta"))
+}
 
 #' @export
-new_ts_unit <- function(val_cols, unit_cols) {
+new_ts_date <- function(time_cols, ind_cols = NA) {
 
-  assert_that(is.character(val_cols), is.character(unit_cols),
-              length(val_cols) > 0L, same_length(val_cols, unit_cols))
+  assemble <- function(tco, ico) {
 
-  structure(list(meta_cols = val_cols, unit_cols = unit_cols),
-            class = c("ts_unit", "ts_meta"))
+    if (is.na(ico)) ico <- NA_character_
+
+    assert_that(is.string(tco), is.string(ico))
+
+    list(meta_col = tco, aux_col = ico)
+  }
+
+  structure(Map(assemble, as.list(time_cols), ind_cols),
+            class = c("ts_date", "ts_meta"))
 }
 
 #' @export
@@ -128,12 +147,12 @@ is_ts_key <- function(x) inherits(x, "ts_key")
 is_ts_window <- function(x) inherits(x, "ts_window")
 
 #' @export
-col_names <- function(x) UseMethod("col_names", x)
+meta_names <- function(x) UseMethod("meta_names", x)
 
 #' @export
-col_names.ts_def <- function(x) {
+meta_names.ts_def <- function(x) {
 
-  res <- lapply(x, col_names)
+  res <- lapply(x, meta_names)
 
   names(res) <- vapply(x, format_class, character(1L))
 
@@ -141,7 +160,11 @@ col_names.ts_def <- function(x) {
 }
 
 #' @export
-col_names.ts_meta <- function(x) x[["meta_cols"]]
+meta_names.ts_meta <- function(x) vapply(x, `[[`, character(1L), "meta_col")
+
+`meta_names<-` <- function(x, value) {
+  Map(function(x, value) `[[<-`(x, "meta_col", value), x, value)
+}
 
 #' @export
 is_required <- function(x, ...) UseMethod("is_required", x)
@@ -155,6 +178,62 @@ is_required.ts_index <- function(x, ...) TRUE
 #' @export
 is_required.ts_key <- function(x, ...) TRUE
 
+has_aux_names <- function(x) !is.null(x[[1L]][["aux_col"]])
+
+#' @export
+aux_names <- function(x) UseMethod("aux_names", x)
+
+#' @export
+aux_names.ts_def <- function(x) {
+
+  res <- lapply(x, aux_names)
+
+  names(res) <- vapply(x, format_class, character(1L))
+
+  res
+}
+
+#' @export
+aux_names.ts_meta <- function(x) {
+
+  if (!has_aux_names(x)) return(rep(NA_character_, length(x)))
+
+  res <- vapply(x, `[[`, character(1L), "aux_col")
+  names(res) <- meta_names(x)
+
+  res
+}
+
+`aux_names<-` <- function(x, value) {
+  Map(function(x, value) `[[<-`(x, "aux_col", value), x, value)
+}
+
+has_aux_data <- function(x) !is.null(x[[1L]][["aux_data"]])
+
+#' @export
+aux_data <- function(x) UseMethod("aux_data", x)
+
+#' @export
+aux_data.ts_def <- function(x) {
+
+  res <- lapply(x, aux_data)
+
+  names(res) <- vapply(x, format_class, character(1L))
+
+  res
+}
+
+#' @export
+aux_data.ts_meta <- function(x) {
+
+  if (!has_aux_data(x)) return(NULL)
+
+  res <- lapply(x, `[[`, "aux_data")
+  names(res) <- meta_names(x)
+
+  res
+}
+
 #' @export
 validate_def.ts_def <- function(x, tbl, stop_req = TRUE, warn_opt = TRUE,
                                 ...) {
@@ -166,7 +245,7 @@ validate_def.ts_def <- function(x, tbl, stop_req = TRUE, warn_opt = TRUE,
 validate_def.ts_index <- function(x, tbl, stop_req = TRUE, warn_opt = TRUE,
                                   ...) {
 
-  col <- col_names(x)
+  col <- meta_names(x)
   interv <- interval(x)
 
   validation_helper(x, stop_req, warn_opt,
@@ -183,7 +262,7 @@ validate_def.ts_index <- function(x, tbl, stop_req = TRUE, warn_opt = TRUE,
 validate_def.ts_key <- function(x, tbl, stop_req = TRUE, warn_opt = TRUE,
                                 ...) {
 
-  cols <- col_names(x)
+  cols <- meta_names(x)
 
   validation_helper(x, stop_req, warn_opt,
     has_cols(tbl, cols),
@@ -195,27 +274,34 @@ validate_def.ts_key <- function(x, tbl, stop_req = TRUE, warn_opt = TRUE,
 validate_def.ts_window <- function(x, tbl, stop_req = TRUE, warn_opt = TRUE,
                                    ...) {
 
-  cols <- col_names(x)
-  aux <- x[["time_cols"]]
-
   validation_helper(x, stop_req, warn_opt,
-    has_time_cols(tbl, cols),
-    has_time_cols(tbl, aux, allow_neg = FALSE)
+    has_time_cols(tbl, meta_names(x)),
+    has_time_cols(tbl, aux_names(x), allow_neg = FALSE)
   )
 }
 
 #' @export
-validate_def.ts_unit <- function(x, tbl, stop_req = TRUE, warn_opt = TRUE,
+validate_def.ts_date <- function(x, tbl, stop_req = TRUE, warn_opt = TRUE,
+                                 ...) {
+
+  is_lgl <- function(col) is.logical(tbl[[col]])
+
+  aux <- aux_names(x)
+  aux <- aux[!is.na(aux)]
+
+  validation_helper(x, stop_req, warn_opt,
+    has_cols(tbl, c(meta_names(x), aux)),
+    all_fun(aux, is_lgl)
+  )
+}
+
+#' @export
+validate_def.ts_meta <- function(x, tbl, stop_req = TRUE, warn_opt = TRUE,
                                  ...) {
 
   validation_helper(x, stop_req, warn_opt,
-    has_cols(tbl, c(col_names(x), x[["unit_cols"]]))
+    has_cols(tbl, c(meta_names(x), aux_names(x)))
   )
-}
-
-#' @export
-validate_def.ts_meta <- function(x, ...) {
-  stop("Please add a `validate_def` method for `", class(x)[1L], "` classes.")
 }
 
 validation_helper <- function(x, stop_req, warn_opt, ...,
@@ -230,20 +316,20 @@ validation_helper <- function(x, stop_req, warn_opt, ...,
   if (!isTRUE(res)) {
     if (is_required(x)) {
       if (stop_req) msg_fun(stop, res)
-      res <- NA
+      return(NA)
     } else {
       if (warn_opt) msg_fun(warning, res)
-      res <- FALSE
+      return(FALSE)
     }
   }
 
-  res
+  TRUE
 }
 
 #' @export
 rm_cols.ts_index <- function(x, cols, ...) {
 
-  if (col_names(x) %in% cols) {
+  if (meta_names(x) %in% cols) {
     stop("Cannot remove the only column that defines an index.")
   }
 
@@ -252,64 +338,30 @@ rm_cols.ts_index <- function(x, cols, ...) {
 
 #' @export
 rm_cols.ts_key <- function(x, cols, ...) {
-  new_ts_key(setdiff(col_names(x), cols))
-}
-
-#' @export
-rm_cols.ts_window <- function(x, cols, ...) {
-
-  meta <- col_names(x)
-  times <- x[["time_cols"]]
-
-  hits <- (meta %in% cols) | (times %in% cols)
-
-  if (all(hits)) return(NULL)
-
-  new_ts_window(meta[!hits], times[!hits], x[["direction"]][!hits])
-}
-
-#' @export
-rm_cols.ts_unit <- function(x, cols, ...) {
-
-  meta <- col_names(x)
-  unit <- x[["unit_cols"]]
-
-  hits <- (meta %in% cols) | (unit %in% cols)
-
-  if (all(hits)) return(NULL)
-
-  new_ts_unit(meta[!hits], unit[!hits])
+  new_ts_key(setdiff(meta_names(x), cols))
 }
 
 #' @export
 rm_cols.ts_meta <- function(x, cols, ...) {
-  stop("Please add a `rm_cols` method for `", class(x)[1L], "` classes.")
+
+  hits <- meta_names(x) %in% cols
+
+  if (has_aux_names(x)) {
+    hits <- hits | (aux_names(x) %in% cols)
+  }
+
+  if (all(hits)) return(NULL)
+  else structure(x[!hits], class = class(x))
 }
 
 #' @export
 rename_cols.ts_meta <- function(x, new, old, ...) {
 
-  x[["meta_cols"]] <- replace_with(col_names(x), old, new)
+  meta_names(x) <- replace_with(meta_names(x), old, new)
 
-  x
-}
-
-#' @export
-rename_cols.ts_window <- function(x, new, old, ...) {
-
-  x <- NextMethod()
-
-  x[["time_cols"]] <- replace_with(x[["time_cols"]], old, new)
-
-  x
-}
-
-#' @export
-rename_cols.ts_unit <- function(x, new, old, ...) {
-
-  x <- NextMethod()
-
-  x[["unit_cols"]] <- replace_with(x[["unit_cols"]], old, new)
+  if (has_aux_names(x)) {
+    aux_names(x) <- replace_with(aux_names(x), old, new)
+  }
 
   x
 }
@@ -322,23 +374,13 @@ format.ts_def <- function(x, ...) {
 }
 
 #' @export
-format.ts_meta <- function(x, ...) format_ts_meta(col_names(x))
-
-#' @export
-format.ts_index <- function(x, ...) {
-  format_ts_meta(col_names(x), format(interval(x)))
-}
-
-#' @export
-format.ts_window <- function(x, ...) {
-  dir <- replace_with(x[["direction"]], ts_window_dirs,
-                      c("+", "-", "+/-"))
-  format_ts_meta(col_names(x), paste0(dir, x[["time_cols"]]))
-}
-
-#' @export
-format.ts_unit <- function(x, ...) {
-  format_ts_meta(col_names(x), x[["unit_cols"]])
+format.ts_meta <- function(x, ...) {
+  args <- c(
+    meta_names(x),
+    if (has_aux_names(x)) aux_names(x),
+    if (has_aux_data(x)) vapply(aux_data(x), format, character(1L))
+  )
+  do.call(format_ts_meta, as.list(args))
 }
 
 format_class <- function(x) sub("^ts_", "", class(x)[1L])
@@ -351,16 +393,16 @@ format_ts_meta <- function(...) {
 index.ts_def <- function(x) index(x[["ts_index"]])
 
 #' @export
-index.ts_index <- col_names
+index.ts_index <- meta_names
 
 #' @export
 key.ts_def <- function(x) key(x[["ts_key"]])
 
 #' @export
-key.ts_key <- col_names
+key.ts_key <- meta_names
 
 #' @export
 interval.ts_def <- function(x) interval(x[["ts_index"]])
 
 #' @export
-interval.ts_index <- function(x) x[["interval"]]
+interval.ts_index <- function(x) aux_data(x)[[1L]]

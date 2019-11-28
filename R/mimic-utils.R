@@ -44,11 +44,16 @@ mimic_ts_date_time_quo <- function(table, row_quo = NULL, cols = NULL,
                                    interval = hours(1L), envir = "mimic",
                                    date_cols, time_cols) {
 
-  fix_time <- function(time_col, date_col, delta_col) {
-    res <- res[, c(delta_col) := hours(0L)]
-    res <- res[is.na(get(time_col)),
-               c(time_col, delta_col) := list(get(date_col), hours(24L))]
-    NULL
+  fix_time <- function(time_col, date_col, ind_col) {
+
+    res <- res[, c(ind_col) := is.na(get(time_col))]
+
+    if (all(res[[ind_col]])) {
+      set(res, j = ind_col, value = NULL)
+      NA_character_
+    } else {
+      ind_col
+    }
   }
 
   assert_that(is.character(date_cols), is.character(time_cols),
@@ -66,15 +71,23 @@ mimic_ts_date_time_quo <- function(table, row_quo = NULL, cols = NULL,
   hits <- time_cols %in% colnames(res)
 
   if (any(hits)) {
+
     time_cols <- time_cols[hits]
-    wins <- paste0(time_cols, "_win")
-    Map(fix_time, time_cols, date_cols[hits], wins)
-    wins <- new_ts_window(time_cols, wins)
+    date_cols <- date_cols[hits]
+
+    inds <- Map(fix_time, time_cols, date_cols, paste0(time_cols, "_date"))
+    inds <- new_ts_date(time_cols, inds)
   }
 
   res <- as_ts_tbl(res, id_cols, time_col, interval)
-  if (any(hits)) res <- update_ts_def(res, wins)
-  if (!is.null(cols)) res <- rm_cols(res, setdiff(get_cols, cols))
+
+  if (any(hits)) {
+    res <- update_ts_def(res, inds)
+  }
+
+  if (!is.null(cols)) {
+    res <- rm_cols(res, setdiff(get_cols, cols))
+  }
 
   res
 }
@@ -99,6 +112,7 @@ mimic_tbl_quo <- function(table, row_quo = NULL, cols = NULL,
     assert_that(is.character(cols))
 
     if (table == "admissions") cols <- c("admittime", cols)
+    else                       cols <- c("hadm_id", cols)
   }
 
   dat <- prt::subset_quo(get_table(table, envir), row_quo, unique(cols))

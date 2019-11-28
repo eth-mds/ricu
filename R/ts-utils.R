@@ -188,7 +188,7 @@ materialize_window <- function(x, suffixes = c("_lwr", "_upr")) {
 
     if (any(hits)) {
 
-      old <- col_names(def)[hits]
+      old <- meta_names(def)[hits]
       new <- paste0(old, suff)
       delta <- def[["time_cols"]][hits]
 

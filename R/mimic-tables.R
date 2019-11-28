@@ -21,18 +21,14 @@ mimic_prescriptions <- function(cols = character(0L), rows = NULL,
                                 id_cols = "hadm_id", time_col = "startdate",
                                 ...) {
 
-  delta <- function(n) list(as.difftime(rep.int(24L, n), units = "hours"))
-
   res <- mimic_ts_unit_quo("prescriptions", rows, cols, id_cols,
                            time_col, ..., val_cols = "dose_val_rx",
                            unit_cols = "dose_unit_rx")
 
-  time_cols <- intersect(colnames(res), c("startdate", "enddate"))
-  time_delta <- paste0(time_cols, "_win")
+  date_cols <- intersect(colnames(res), c("startdate", "enddate"))
+  date_inds <- paste0(date_cols, "_date")
 
-  res <- res[, c(time_delta) := rep(delta(.N), length(time_delta))]
-
-  update_ts_def(res, new_ts_window(time_cols, time_delta))
+  update_ts_def(res, new_ts_date(date_cols, time_delta))
 }
 
 #' @export

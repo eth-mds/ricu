@@ -30,7 +30,9 @@ on_failure(has_col) <- function(call, env) {
          eval(call$col, env), "`.")
 }
 
-has_time_col <- function(x, col, ...) has_col(x, col) && is_time(x[[col]], ...)
+has_time_col <- function(x, col, ...) {
+  has_col(x, col) && is_time_vec(x[[col]], ...)
+}
 
 on_failure(has_time_col) <- function(call, env) {
   paste0(deparse(call$x), " does not contain column `",
@@ -47,18 +49,29 @@ on_failure(has_time_cols) <- function(call, env) {
 }
 
 is_time <- function(x, allow_neg = TRUE) {
-  inherits(x, "difftime") && (allow_neg || all(x >= 0))
+  inherits(x, "difftime") && length(x) == 1L && (allow_neg || all(x >= 0))
 }
 
 on_failure(is_time) <- function(call, env) {
   pos <- !eval(call$allow_neg, env)
   paste0(deparse(call$x), " is not a",
          if (pos) " strictly positive " else " ",
-         "`difftime` object")
+         "`difftime` object of length 1.")
+}
+
+is_time_vec <- function(x, allow_neg = TRUE) {
+  inherits(x, "difftime") && (allow_neg || all(x >= 0))
+}
+
+on_failure(is_time_vec) <- function(call, env) {
+  pos <- !eval(call$allow_neg, env)
+  paste0(deparse(call$x), " is not a",
+         if (pos) " strictly positive " else " ",
+         "`difftime` object.")
 }
 
 same_time_unit <- function(x, y)
- is_time(x) && is_time(y) && identical(units(x), units(y))
+ is_time_vec(x) && is_time_vec(y) && identical(units(x), units(y))
 
 on_failure(same_time_unit) <- function(call, env) {
   paste0("`", deparse(call$x), "` and `", deparse(call$y),
@@ -116,3 +129,11 @@ on_failure(has_ts_meta) <- function(call, env) {
   paste0(deparse(call$x), " does not contain a ts_meta tag of class `",
          deparse(call$class), "`.")
 }
+
+xor_na <- function(x, y) all(xor(is.na(x), is.na(y)))
+
+on_failure(xor_na) <- function(call, env) {
+  paste0("Either ", deparse(call$x), " xor ", deparse(call$y),
+         " are expected to be `NA`.")
+}
+
