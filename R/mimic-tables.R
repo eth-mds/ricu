@@ -28,7 +28,7 @@ mimic_prescriptions <- function(cols = character(0L), rows = NULL,
   date_cols <- intersect(colnames(res), c("startdate", "enddate"))
   date_inds <- paste0(date_cols, "_date")
 
-  update_ts_def(res, new_ts_date(date_cols, time_delta))
+  update_ts_def(res, new_ts_date(date_cols))
 }
 
 #' @export

@@ -59,9 +59,6 @@ is_ts_meta <- function(x) inherits(x, "ts_meta")
 c.ts_meta <- function(x, ...) c_ts_def(as_ts_def(x), list(...))
 
 #' @export
-length.ts_meta <- function(x) length(meta_names(x))
-
-#' @export
 print.ts_def <- function(x, ...) cat_line(format(x, ...))
 
 #' @export
@@ -275,8 +272,7 @@ validate_def.ts_window <- function(x, tbl, stop_req = TRUE, warn_opt = TRUE,
                                    ...) {
 
   validation_helper(x, stop_req, warn_opt,
-    has_time_cols(tbl, meta_names(x)),
-    has_time_cols(tbl, aux_names(x), allow_neg = FALSE)
+    has_time_cols(tbl, c(meta_names(x), aux_names(x)))
   )
 }
 
@@ -406,3 +402,38 @@ interval.ts_def <- function(x) interval(x[["ts_index"]])
 
 #' @export
 interval.ts_index <- function(x) aux_data(x)[[1L]]
+
+#' @export
+any_date <- function(x, col) is_any_date_helper(x, col, 1L)
+
+#' @export
+is_date <- function(x, col) is_any_date_helper(x, col, nrow(x))
+
+is_any_date_helper <- function(x, col, length) {
+
+  assert_that(is_ts_tbl(x), is.string(col))
+
+  date <- ts_def(x)[["ts_date"]]
+
+  if (is.null(date)) return(rep(FALSE, length))
+
+  hits <- col == meta_names(date)
+
+  if (sum(hits) == 0L) {
+
+    rep(FALSE, length)
+
+  } else if (sum(hits) == 1L) {
+
+    aux <- aux_names(date)[[hits]]
+
+    if (is.na(aux)) {
+      rep(TRUE, length)
+    } else {
+      if (length == 1L) any(x[[aux]]) else x[[aux]]
+    }
+  } else {
+    stop("Only a single `ts_date` entry is allowed per column.")
+  }
+}
+
