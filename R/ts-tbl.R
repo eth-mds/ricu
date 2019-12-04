@@ -91,9 +91,6 @@ new_tbl_index <- function(tbl, index, interval) {
 is_ts_tbl <- function(x) inherits(x, "ts_tbl")
 
 #' @export
-ts_def <- function(x) UseMethod("ts_def", x)
-
-#' @export
 ts_def.data.table <- function(x) NULL
 
 #' @export
@@ -135,11 +132,6 @@ set_ts_def <- function(x, new, warn_opt = TRUE) {
   setattr(x, "ts_def", new[is_valid])
 
   x
-}
-
-#' @export
-validate_def <- function(x, ..., stop_req = TRUE, warn_opt = TRUE) {
-  UseMethod("validate_def", x)
 }
 
 #' @export
@@ -196,9 +188,6 @@ rm_cols.ts_def <- function(x, cols, ...) {
 }
 
 #' @export
-rename_cols <- function(x, new, old, ...) UseMethod("rename_cols", x)
-
-#' @export
 rename_cols.ts_tbl <- function(x, new, old = colnames(x), ...) {
 
   meta <- rename_cols(ts_def(x), new, old)
@@ -213,18 +202,12 @@ rename_cols.ts_def <- function(x, new, old, ...) {
 }
 
 #' @export
-index <- function(x) UseMethod("index", x)
-
-#' @export
 index.ts_tbl <- function(x) index(ts_def(x))
 
 #' @export
 set_index <- function(x, new) {
   update_ts_def(x, new_tbl_index(x, new, interval(x)))
 }
-
-#' @export
-key <- function(x) UseMethod("key", x)
 
 #' @export
 key.data.table <- data.table::key
@@ -245,9 +228,6 @@ data_cols <- function(x) setdiff(colnames(x), meta_cols(x))
 id_cols <- function(x) c(key(x), index(x))
 
 #' @export
-interval <- function(x) UseMethod("interval", x)
-
-#' @export
 interval.ts_tbl <- function(x) interval(ts_def(x))
 
 #' @export
@@ -260,3 +240,13 @@ time_unit <- function(x) units(x[[index(x)]])
 
 #' @export
 time_step <- function(x) as.double(interval(x), units = time_unit(x))
+
+#' @export
+ts_meta.ts_tbl <- function(x, ...) ts_meta(ts_def(x), ...)
+
+#' @export
+has_aux_names.ts_tbl <- function(x) has_aux_names(ts_def(x))
+
+#' @export
+aux_names.ts_tbl <- function(x, ...) aux_names(ts_def(x), ...)
+

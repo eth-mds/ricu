@@ -1,60 +1,5 @@
 
 #' @export
-new_ts_def <- function(x) {
-
-  assert_that(is.list(x))
-
-  null <- vapply(x, is.null, logical(1L))
-
-  if(any(null)) x <- x[!null]
-
-  assert_that(all_fun(x, is_ts_meta), all_fun(x, Negate(is_ts_def)))
-
-  classes <- lapply(x, class)
-
-  assert_that(length(classes) == length(unique(classes)))
-
-  structure(x, class = c("ts_def", "ts_meta"))
-}
-
-#' @export
-is_ts_def <- function(x) inherits(x, "ts_def")
-
-#' @export
-as_ts_def <- function(x) UseMethod("as_ts_def", x)
-
-#' @export
-as_ts_def.list <- function(x) new_ts_def(x)
-
-#' @export
-as_ts_def.ts_def <- function(x) x
-
-#' @export
-as_ts_def.ts_meta <- function(x) new_ts_def(list(x))
-
-#' @export
-c.ts_def <- function(x, ...) c_ts_def(x, list(...))
-
-c_ts_def <- function(x, lst) {
-  new_ts_def(c(unclass(x), unlist(lapply(lst, as_ts_def), recursive = FALSE)))
-}
-
-#' @export
-`[.ts_def` <- function(x, i, ...) new_ts_def(NextMethod())
-
-#' @export
-is_ts_meta <- function(x) inherits(x, "ts_meta")
-
-#' @export
-c.ts_meta <- function(x, ...) c_ts_def(as_ts_def(x), list(...))
-
-#' @export
-print.ts_def <- function(x, ...) cat_line(format(x, ...))
-
-#' @export
-print.ts_meta <- function(x, ...) cat_line(format(x, ...))
-
-#' @export
 new_ts_index <- function(col, interval) {
 
   assert_that(is.string(col), !is.na(col), is_time(interval))
@@ -66,10 +11,52 @@ new_ts_index <- function(col, interval) {
 #' @export
 new_ts_key <- function(cols) {
 
-  assert_that(is.character(cols), length(cols) > 0L)
+  assert_that(is.character(cols), length(cols) > 0L, !anyNA(cols),
+              is_unique(cols))
 
   structure(Map(list, meta_col = as.list(cols)),
             class = c("ts_key", "ts_meta"))
+}
+
+#' @export
+new_ts_unit <- function(val_cols, unit_cols = NA, unit_vals = NA) {
+
+  assemble <- function(vco, uco, uva) {
+
+    if (is.na(uco)) uco <- NA_character_
+    if (is.na(uva)) uva <- NA_character_
+
+    assert_that(is.string(vco), is.string(uco), is.string(uva),
+                !is.na(vco), xor_na(uco, uva))
+
+    list(meta_col = vco, aux_col = uco, aux_data = uva)
+  }
+
+  res <- structure(Map(assemble, as.list(val_cols), unit_cols, unit_vals),
+                   class = c("ts_unit", "ts_meta"))
+
+  met <- meta_names(res)
+  aux <- aux_names(res)
+
+  assert_that(is_unique(met), is_unique(aux), is_disjoint(met, aux))
+
+  res
+}
+
+#' @export
+new_ts_date <- function(time_cols, ind_cols = NA) {
+
+  assemble <- function(tco, ico) {
+
+    if (is.na(ico)) ico <- NA_character_
+
+    assert_that(is.string(tco), is.string(ico))
+
+    list(meta_col = tco, aux_col = ico)
+  }
+
+  structure(Map(assemble, as.list(time_cols), ind_cols),
+            class = c("ts_date", "ts_meta"))
 }
 
 #' @export
@@ -91,38 +78,7 @@ new_ts_window <- function(time_cols, delta_cols = NA, delta_vals = NA) {
 }
 
 #' @export
-new_ts_unit <- function(val_cols, unit_cols = NA, unit_vals = NA) {
-
-  assemble <- function(vco, uco, uva) {
-
-    if (is.na(uco)) uco <- NA_character_
-    if (is.na(uva)) uva <- NA_character_
-
-    assert_that(is.string(vco), is.string(uco), is.string(uva),
-                !is.na(vco), xor_na(uco, uva))
-
-    list(meta_col = vco, aux_col = uco, aux_data = uva)
-  }
-
-  structure(Map(assemble, as.list(val_cols), unit_cols, unit_vals),
-            class = c("ts_unit", "ts_meta"))
-}
-
-#' @export
-new_ts_date <- function(time_cols, ind_cols = NA) {
-
-  assemble <- function(tco, ico) {
-
-    if (is.na(ico)) ico <- NA_character_
-
-    assert_that(is.string(tco), is.string(ico))
-
-    list(meta_col = tco, aux_col = ico)
-  }
-
-  structure(Map(assemble, as.list(time_cols), ind_cols),
-            class = c("ts_date", "ts_meta"))
-}
+is_ts_meta <- function(x) inherits(x, "ts_meta")
 
 #' @export
 is_ts_index <- function(x) inherits(x, "ts_index")
@@ -140,39 +96,11 @@ is_ts_unit <- function(x) inherits(x, "ts_unit")
 is_ts_date <- function(x) inherits(x, "ts_date")
 
 #' @export
-ts_meta <- function(x, ...) UseMethod("ts_meta", x)
-
-#' @export
-ts_meta.ts_tbl <- function(x, ...) ts_meta(ts_def(x), ...)
-
-#' @export
-ts_meta.ts_def <- function(x, class, ...) {
-  hits <- vapply(x, inherits, logical(1L), class)
-  if (sum(hits) == 0L) NULL else x[[which(hits)]]
-}
-
-#' @export
-meta_names <- function(x) UseMethod("meta_names", x)
-
-#' @export
-meta_names.ts_def <- function(x) {
-
-  res <- lapply(x, meta_names)
-
-  names(res) <- vapply(x, format_class, character(1L))
-
-  res
-}
-
-#' @export
 meta_names.ts_meta <- function(x) vapply(x, `[[`, character(1L), "meta_col")
 
 `meta_names<-` <- function(x, value) {
   Map(function(x, value) `[[<-`(x, "meta_col", value), x, value)
 }
-
-#' @export
-is_required <- function(x, ...) UseMethod("is_required", x)
 
 #' @export
 is_required.ts_meta <- function(x, ...) FALSE
@@ -184,39 +112,7 @@ is_required.ts_index <- function(x, ...) TRUE
 is_required.ts_key <- function(x, ...) TRUE
 
 #' @export
-has_aux_names <- function(x) UseMethod("has_aux_names", x)
-
-#' @export
-has_aux_names.ts_tbl <- function(x) has_aux_names(ts_def(x))
-
-#' @export
-has_aux_names.ts_def <- function(x) vapply(x, has_aux_names, logical(1L))
-
-#' @export
 has_aux_names.ts_meta <- function(x) !is.null(x[[1L]][["aux_col"]])
-
-#' @export
-aux_names <- function(x, ...) UseMethod("aux_names", x)
-
-#' @export
-aux_names.ts_tbl <- function(x, ...) aux_names(ts_def(x), ...)
-
-#' @export
-aux_names.ts_def <- function(x, class = NULL, ...) {
-
-  if (is.null(class)) {
-
-    res <- lapply(x, aux_names, ...)
-    names(res) <- vapply(x, format_class, character(1L))
-    res
-
-  } else {
-
-    meta <- ts_meta(x, class)
-    if (is.null(meta)) return(NULL)
-    aux_names(meta, ...)
-  }
-}
 
 #' @export
 aux_names.ts_meta <- function(x, meta_col = NULL, allow_multiple = TRUE, ...) {
@@ -256,20 +152,8 @@ aux_names.ts_meta <- function(x, meta_col = NULL, allow_multiple = TRUE, ...) {
   Map(function(x, value) `[[<-`(x, "aux_col", value), x, value)
 }
 
-has_aux_data <- function(x) !is.null(x[[1L]][["aux_data"]])
-
 #' @export
-aux_data <- function(x) UseMethod("aux_data", x)
-
-#' @export
-aux_data.ts_def <- function(x) {
-
-  res <- lapply(x, aux_data)
-
-  names(res) <- vapply(x, format_class, character(1L))
-
-  res
-}
+has_aux_data.ts_meta <- function(x) !is.null(x[[1L]][["aux_data"]])
 
 #' @export
 aux_data.ts_meta <- function(x) {
@@ -280,13 +164,6 @@ aux_data.ts_meta <- function(x) {
   names(res) <- meta_names(x)
 
   res
-}
-
-#' @export
-validate_def.ts_def <- function(x, tbl, stop_req = TRUE, warn_opt = TRUE,
-                                ...) {
-
-  vapply(x, validate_def, logical(1L), tbl, stop_req, warn_opt)
 }
 
 #' @export
@@ -414,42 +291,10 @@ rename_cols.ts_meta <- function(x, new, old, ...) {
 }
 
 #' @export
-format.ts_def <- function(x, ...) {
-  vap <- function(fun) vapply(x, fun, character(1L))
-  req <- function(x) if(is_required(x)) "*" else ""
-  paste0(vap(format_class), vap(req), vap(format), collapse = ", ")
-}
-
-#' @export
-format.ts_meta <- function(x, ...) {
-  args <- c(
-    meta_names(x),
-    if (has_aux_names(x)) aux_names(x),
-    if (has_aux_data(x)) vapply(aux_data(x), format, character(1L))
-  )
-  do.call(format_ts_meta, as.list(args))
-}
-
-format_class <- function(x) sub("^ts_", "", class(x)[1L])
-
-format_ts_meta <- function(...) {
-  paste0("<", paste(..., sep = ", ", collapse = "; "), ">")
-}
-
-#' @export
-index.ts_def <- function(x) index(ts_meta(x, "ts_index"))
-
-#' @export
 index.ts_index <- meta_names
 
 #' @export
-key.ts_def <- function(x) key(ts_meta(x, "ts_key"))
-
-#' @export
 key.ts_key <- meta_names
-
-#' @export
-interval.ts_def <- function(x) interval(ts_meta(x, "ts_index"))
 
 #' @export
 interval.ts_index <- function(x) aux_data(x)[[1L]]
@@ -460,33 +305,9 @@ any_date <- function(x, col = index(x)) is_any_date_helper(x, col, 1L)
 #' @export
 is_date <- function(x, col = index(x)) is_any_date_helper(x, col, nrow(x))
 
-#' @export
-get_aux_col <- function(x, ...) UseMethod("get_aux_col", x)
-
-#' @export
-get_aux_col.ts_tbl <- function(x, class, col, allow_multiple = TRUE) {
-
-  assert_that(is_ts_tbl(x), has_col(x, col), is.flag(allow_multiple))
-
-  date <- ts_meta(x, class)
-
-  if (is.null(date)) return(NULL)
-
-  hits <- col == meta_names(date)
-
-  if (sum(hits) == 0L) return(NULL)
-  else if (sum(hits) == 1L) aux_names(date)[[hits]]
-  else if (allow_multiple) aux_names(date)[hits]
-  else stop("Only a single `", class, "` entry is allowed per column.")
-}
-
-#' @export
-get_aux_col.ts_tbl <- function(x, class, col, allow_multiple = TRUE) {}
-
-
 is_any_date_helper <- function(x, col, length) {
 
-  aux_col <- get_aux_col(x, "ts_date", col, FALSE)
+  aux_col <- aux_names(x, "ts_date", col, FALSE)
 
   if (is.null(aux_col)) rep(FALSE, length)
   else if (is.na(aux_col)) rep(TRUE, length)
@@ -496,7 +317,7 @@ is_any_date_helper <- function(x, col, length) {
 
 compact_unit <- function(x, col, handler = NULL, expected = NULL) {
 
-  unit <- get_aux_col(x, "ts_unit", col, FALSE)
+  unit <- aux_names(x, "ts_unit", col, FALSE)
 
   assert_that(is.string(unit))
 
