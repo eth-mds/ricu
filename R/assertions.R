@@ -53,7 +53,7 @@ is_time <- function(x, allow_neg = TRUE) {
 }
 
 on_failure(is_time) <- function(call, env) {
-  pos <- !eval(call$allow_neg, env)
+  pos <- is.null(call$allow_neg) || !eval(call$allow_neg, env)
   paste0(deparse(call$x), " is not a",
          if (pos) " strictly positive " else " ",
          "`difftime` object of length 1.")

@@ -233,13 +233,10 @@ key.data.table <- data.table::key
 key.ts_tbl <- function(x) key(ts_def(x))
 
 #' @export
-key.ts_def <- function(x) key(x[["ts_key"]])
-
-#' @export
 set_key <- function(x, new) update_ts_def(x, new_tbl_key(x, new))
 
 #' @export
-meta_cols <- function(x) flapply(ts_def(x), meta_names)
+meta_cols <- function(x) flapply(ts_def(x), aux_names)
 
 #' @export
 data_cols <- function(x) setdiff(colnames(x), meta_cols(x))

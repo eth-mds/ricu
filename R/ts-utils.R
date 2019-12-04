@@ -154,7 +154,7 @@ make_unique_quo <- function(x, expr, by = id_cols(x),
   if (is.function(expr)) {
     x <- x[, lapply(.SD, fun, ...), .SDcols = cols, by = by]
   } else {
-    x <- x[, eval(expr), .SDcols = cols, by = by]
+    x <- x[, eval(expr), by = by]
   }
 
   assert_that(is_unique(x, by = by))
