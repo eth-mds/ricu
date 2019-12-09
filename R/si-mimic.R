@@ -46,40 +46,49 @@ mimic_abx <- function(x = mimic_abx_presc(...), win_length = hours(24L),
                       date_extra = hours(24L), min_count = 1L,
                       count_win = hours(24L), ...) {
 
-  x <- add_date_win(x, "abx_win", win_length, date_extra)
-  x <- make_unique_quo(x, quote(list(count = .N, abx_win = max(abx_win))))
+  x <- add_date_win(x, "win_end", win_length, date_extra)
+  x <- make_unique_quo(x, quote(list(count = .N, win_end = max(win_end))))
 
   if (min_count > 1L) {
 
     assert_that(is_time(count_win, allow_neg = FALSE))
 
-    expr <- quote(list(sum_count = sum(count), max_win = max(abx_win)))
+    expr <- quote(list(sum_count = sum(count), max_win = max(win_end)))
     x <- slide_quo(x, expr, before = count_win)
 
     x <- x[sum_count >= min_count, ]
 
     x <- rm_cols(x, "sum_count")
-    x <- rename_cols(x, "abx_win", "max_win")
+    x <- rename_cols(x, "win_end", "max_win")
 
   } else {
     x <- rm_cols(x, "count")
   }
 
-  update_ts_def(x, new_ts_window(index(x), "abx_win"))
+  rename_cols(x, "hadm_time", index(x))
 }
 
 #' @export
 mimic_micro <- function(win_length = hours(72L), date_extra = hours(24L),
-                        interval = hours(1L), envir = "mimic") {
+                        rm_negative = FALSE, interval = hours(1L),
+                        envir = "mimic") {
+
+  assert_that(is.flag(rm_negative))
 
   message("Fetching microbiology events.")
 
-  res <- mimic_microbio(interval = interval, envir = envir)
-  res <- add_date_win(res, "micro_win", win_length, date_extra)
+  if (rm_negative) {
+    row_expr <- quote(!is.na(org_itemid))
+  } else {
+    row_expr <- NULL
+  }
 
-  res <- make_unique_quo(res, quote(list(micro_win = max(micro_win))))
+  res <- mimic_microbio(rows = row_expr, interval = interval, envir = envir)
+  res <- add_date_win(res, "win_end", win_length, date_extra)
 
-  update_ts_def(res, new_ts_window("charttime", "micro_win"))
+  res <- make_unique_quo(res, quote(list(win_end = max(win_end))))
+
+  rename_cols(res, "hadm_time", index(res))
 }
 
 add_date_win <- function(x, win_name, win_len, date_extra) {
@@ -87,7 +96,7 @@ add_date_win <- function(x, win_name, win_len, date_extra) {
   assert_that(is_ts_tbl(x), !has_col(x, win_name),
               is_time(win_len), is_time(date_extra))
 
-  x <- x[, c(win_name) := win_len]
+  x <- x[, c(win_name) := get(index(x)) + win_len]
 
   if (has_ts_meta(x, "ts_date")) {
     x <- x[, c(win_name) := get(win_name) + fifelse(

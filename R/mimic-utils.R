@@ -51,6 +51,9 @@ mimic_ts_date_time_quo <- function(table, row_quo = NULL, cols = NULL,
     if (all(res[[ind_col]])) {
       set(res, j = ind_col, value = NULL)
       NA_character_
+    } else if (!any(res[[ind_col]])) {
+      set(res, j = ind_col, value = NULL)
+      NULL
     } else {
       ind_col
     }
@@ -76,7 +79,7 @@ mimic_ts_date_time_quo <- function(table, row_quo = NULL, cols = NULL,
     date_cols <- date_cols[hits]
 
     inds <- Map(fix_time, time_cols, date_cols, paste0(time_cols, "_date"))
-    inds <- new_ts_date(time_cols, inds)
+    inds <- new_ts_date(time_cols, unlist(inds))
   }
 
   res <- as_ts_tbl(res, id_cols, time_col, interval)

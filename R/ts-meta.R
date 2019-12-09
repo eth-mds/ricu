@@ -148,7 +148,11 @@ meta_names.ts_meta <- function(x) vapply(x, `[[`, character(1L), "meta_col")
 
   assert_that(is_ts_meta(x), !is_ts_def(x))
 
-  Map(function(x, value) `[[<-`(x, "meta_col", value), x, value)
+  res <- Map(function(x, value) `[[<-`(x, "meta_col", value), x, value)
+
+  class(res) <- class(x)
+
+  res
 }
 
 #' @export
@@ -203,7 +207,10 @@ aux_names.ts_meta <- function(x, meta_col = NULL, allow_multiple = FALSE,
 
   assert_that(is_ts_meta(x), !is_ts_def(x), has_aux_names(x))
 
-  Map(function(x, value) `[[<-`(x, "aux_col", value), x, value)
+  res <- Map(function(x, value) `[[<-`(x, "aux_col", value), x, value)
+  class(res) <- class(x)
+
+  res
 }
 
 #' @export

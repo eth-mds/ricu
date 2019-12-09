@@ -165,3 +165,13 @@ on_failure(all_zero) <- function(call, env) {
 is_valid <- function(x) isTRUE(validate(x))
 
 on_failure(is_valid) <- function(call, env) eval(call$x, env)
+
+same_ts <- function(x, y) {
+  identical(key(x), key(y)) && identical(index(x), index(y)) &&
+    identical(interval(x), interval(y))
+}
+
+on_failure(same_ts) <- function(call, env) {
+  paste0("`", deparse(call$x), "` and `", deparse(call$y),
+         "` differ in key, index and/or interval.")
+}

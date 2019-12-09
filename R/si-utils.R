@@ -4,38 +4,33 @@ si_compute <- function(abx, micro, win_lwr = hours(48L),
 
   min_fun <- function(x) if (length(x) == 0L) x else min(x)
 
-  abx_win   <- ts_def(abx)[["ts_window"]]
-  micro_win <- ts_def(micro)[["ts_window"]]
-
   assert_that(
-    length(abx_win)   == 1L, is_unique(abx),
-    length(micro_win) == 1L, is_unique(micro),
+    same_ts(abx, micro),
+    has_time_col(abx, "win_end"), has_time_col(micro, "win_end"),
     is_time(win_lwr, allow_neg = FALSE),
     is_time(win_upr, allow_neg = FALSE)
   )
 
-  browser()
+  key <- key(abx)
+  ind <- index(abx)
 
-  abx   <-   abx[, time_copy := get(index(abx))]
-  micro <- micro[, time_copy := get(index(micro))]
+  abx   <-   abx[, time_copy := get(ind)]
+  micro <- micro[, time_copy := get(ind)]
 
-  join_clause <- c("hadm_id", "win_end >= hadm_time", "time_copy <= hadm_time")
+  join_clause <- c(key, paste("win_end >=", ind), paste("time_copy <=", ind))
 
   message("determining si times")
 
-  abx_micro <- abx[micro, list(si_time = min_fun(hadm_time)), on = join_clause,
-                   by = .EACHI, nomatch = NULL]
-  micro_abx <- micro[abx, list(si_time = min_fun(hadm_time)), on = join_clause,
-                   by = .EACHI, nomatch = NULL]
+  abx_micro <- abx[micro, list(si_time = min_fun(get(ind))),
+                   on = join_clause, by = .EACHI, nomatch = NULL]
+  micro_abx <- micro[abx, list(si_time = min_fun(get(ind))),
+                   on = join_clause, by = .EACHI, nomatch = NULL]
 
-  res_col <- c("hadm_id", "si_time")
-
-  res <- unique(rbind(abx_micro[, res_col, with = FALSE],
-                      micro_abx[, res_col, with = FALSE]))
-  res <- data.table::setkeyv(res, res_col)
+  res <- unique(rbind(abx_micro[, c(key, "si_time"), with = FALSE],
+                      micro_abx[, c(key, "si_time"), with = FALSE]))
 
   res <- res[, c("si_lwr", "si_upr") := list(si_time - win_lwr,
                                              si_time + win_upr)]
 
-  res
+  as_ts_tbl(res, key, "si_time", interval(abx))
 }
