@@ -272,5 +272,3 @@ cap_str <- function(x) paste0(toupper(substring(x, 1,1)), substring(x, 2))
 extract_strings <- function(x, name) vapply(x, `[[`, character(1L), name)
 
 filter_na <- function(x) Filter(Negate(is.na), x)
-
-is_valid <- function(x) isTRUE(validate(x))

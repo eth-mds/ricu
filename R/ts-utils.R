@@ -185,33 +185,3 @@ compact_unit <- function(x, col, handler = NULL, expected = NULL) {
   assert_that(!is.null(units), sum(hits) == 1L)
 
 }
-
-materialize_win <- function(x, ts_win) {
-
-  do_op <- function(not_dir, op, suff) {
-
-    def <- ts_def(x)[["ts_window"]]
-    hits <- def[["direction"]] != not_dir
-
-    if (any(hits)) {
-
-      old <- meta_names(def)[hits]
-      new <- paste0(old, suff)
-      delta <- def[["time_cols"]][hits]
-
-      x[, c(new) := Map(op, .SD, mget(delta)), .SDcols = old]
-    }
-
-    invisible(x)
-  }
-
-  assert_that(is_ts_tbl(x), is.character(suffixes), length(suffixes) == 2L)
-
-  def <- ts_def(x)[["ts_window"]]
-
-  if (is.null(def)) return(x)
-
-  Map(do_op, c("forwards", "backwards"), c(`-`, `+`), suffixes)
-
-  rm_cols(x, def[["time_cols"]])
-}

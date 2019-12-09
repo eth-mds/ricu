@@ -1,6 +1,11 @@
 
 new_ts_meta <- function(x, subclass) {
-  validate(structure(x, class = c(subclass, "ts_meta")))
+
+  res <- structure(x, class = c(subclass, "ts_meta"))
+
+  assert_that(is_valid(res))
+
+  res
 }
 
 #' @export

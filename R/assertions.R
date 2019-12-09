@@ -161,3 +161,7 @@ all_zero <- function(x) all(x == 0)
 on_failure(all_zero) <- function(call, env) {
   paste0("Some of `", deparse(call$x), "` are not equal to 0.")
 }
+
+is_valid <- function(x) isTRUE(validate(x))
+
+on_failure(is_valid) <- function(call, env) eval(call$x, env)

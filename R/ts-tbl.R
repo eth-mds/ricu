@@ -148,7 +148,7 @@ make_valid <- function(meta, tbl, stop_req = TRUE, warn_opt = TRUE) {
     msg_fun(warning, res[opt_not_ok])
   }
 
-  res[ok]
+  meta[ok]
 }
 
 #' @export

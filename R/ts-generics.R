@@ -39,7 +39,7 @@ interval <- function(x) UseMethod("interval", x)
 ts_def <- function(x) UseMethod("ts_def", x)
 
 #' @export
-is_valid <- function(x, ...) UseMethod("is_valid", x)
+validate <- function(x, ...) UseMethod("validate", x)
 
 #' @export
 rm_cols <- function(x, cols, ...) UseMethod("rm_cols", x)
