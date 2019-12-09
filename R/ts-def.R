@@ -18,10 +18,16 @@ new_ts_def <- function(x) {
 }
 
 #' @export
-validate_def.ts_def <- function(x, tbl, stop_req = TRUE, warn_opt = TRUE,
-                                ...) {
+validate.ts_def <- function(x, tbl = NULL, ...) {
 
-  vapply(x, validate_def, logical(1L), tbl, stop_req, warn_opt)
+  res <- lapply(x, validate, tbl, ...)
+  ok <- vapply(res, isTRUE, logical(1L))
+
+  if(all(ok)) {
+    TRUE
+  } else {
+    paste0("Validation errors:\n  -", paste(res[!ok], collapse = "\n  -"))
+  }
 }
 
 #' @export
@@ -76,13 +82,20 @@ aux_names.ts_def <- function(x, class = NULL, ...) {
 has_aux_data.ts_def <- function(x) vapply(x, has_aux_data, logical(1L))
 
 #' @export
-aux_data.ts_def <- function(x) {
+aux_data.ts_def <- function(x, class = NULL, ...) {
 
-  res <- lapply(x, aux_data)
+  if (is.null(class)) {
 
-  names(res) <- vapply(x, format_class, character(1L))
+    res <- lapply(x, aux_data, ...)
+    names(res) <- vapply(x, format_class, character(1L))
+    res
 
-  res
+  } else {
+
+    meta <- ts_meta(x, class)
+    if (is.null(meta)) return(NULL)
+    aux_data(meta, ...)
+  }
 }
 
 #' @export

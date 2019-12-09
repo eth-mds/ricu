@@ -205,6 +205,21 @@ min_or_na <- agg_or_na(min)
 max_or_na <- agg_or_na(max)
 sum_or_na <- agg_or_na(sum)
 
+#' @export
+secs <- function(x) as.difftime(x, units = "secs")
+
+#' @export
+mins <- function(x) as.difftime(x, units = "mins")
+
+#' @export
+hours <- function(x) as.difftime(x, units = "hours")
+
+#' @export
+days <- function(x) as.difftime(x, units = "days")
+
+#' @export
+weeks <- function(x) as.difftime(x, units = "weeks")
+
 reduce <- function(f, x, ...) Reduce(function(x, y) f(x, y, ...), x)
 
 round_to <- function(x, to = 1) if (to == 1) floor(x) else to * floor(x / to)
@@ -253,3 +268,9 @@ replace_with <- function(x, from, to) {
 }
 
 cap_str <- function(x) paste0(toupper(substring(x, 1,1)), substring(x, 2))
+
+extract_strings <- function(x, name) vapply(x, `[[`, character(1L), name)
+
+filter_na <- function(x) Filter(Negate(is.na), x)
+
+is_valid <- function(x) isTRUE(validate(x))

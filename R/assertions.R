@@ -137,3 +137,27 @@ on_failure(xor_na) <- function(call, env) {
          " are expected to be `NA`.")
 }
 
+is_disjoint <- function(x, y) length(intersect(x, y)) == 0L
+
+on_failure(is_disjoint) <- function(call, env) {
+  paste0("`", deparse(call$x), "` and `", deparse(call$y),
+         "` have a nonempty intersection.")
+}
+
+not_na <- function(x) length(x) == 1L && !is.na(x)
+
+on_failure(not_na) <- function(call, env) {
+  paste0("`", deparse(call$x), "` is not a length 1 non-NA value.")
+}
+
+no_na <- function(x) !anyNA(x)
+
+on_failure(no_na) <- function(call, env) {
+  paste0("`", deparse(call$x), "` contains at least 1 NA value.")
+}
+
+all_zero <- function(x) all(x == 0)
+
+on_failure(all_zero) <- function(call, env) {
+  paste0("Some of `", deparse(call$x), "` are not equal to 0.")
+}

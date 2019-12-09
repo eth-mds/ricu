@@ -1,80 +1,124 @@
 
-#' @export
-new_ts_index <- function(col, interval) {
-
-  assert_that(is.string(col), !is.na(col), is_time(interval))
-
-  structure(list(list(meta_col = col, aux_data = interval)),
-            class = c("ts_index", "ts_meta"))
+new_ts_meta <- function(x, subclass) {
+  validate(structure(x, class = c(subclass, "ts_meta")))
 }
 
 #' @export
-new_ts_key <- function(cols) {
-
-  assert_that(is.character(cols), length(cols) > 0L, !anyNA(cols),
-              is_unique(cols))
-
-  structure(Map(list, meta_col = as.list(cols)),
-            class = c("ts_key", "ts_meta"))
+validate.ts_meta <- function(x, ...) {
+  paste0(
+    "No `validate()` method specific to class `", class(x)[1L], "` found."
+  )
 }
 
 #' @export
-new_ts_unit <- function(val_cols, unit_cols = NA, unit_vals = NA) {
-
-  assemble <- function(vco, uco, uva) {
-
-    if (is.na(uco)) uco <- NA_character_
-    if (is.na(uva)) uva <- NA_character_
-
-    assert_that(is.string(vco), is.string(uco), is.string(uva),
-                !is.na(vco), xor_na(uco, uva))
-
-    list(meta_col = vco, aux_col = uco, aux_data = uva)
-  }
-
-  res <- structure(Map(assemble, as.list(val_cols), unit_cols, unit_vals),
-                   class = c("ts_unit", "ts_meta"))
-
-  met <- meta_names(res)
-  aux <- aux_names(res)
-
-  assert_that(is_unique(met), is_unique(aux), is_disjoint(met, aux))
-
-  res
+new_ts_index <- function(index, interval) {
+  new_ts_meta(list(list(meta_col = index, aux_data = interval)), "ts_index")
 }
 
 #' @export
-new_ts_date <- function(time_cols, ind_cols = NA) {
+validate.ts_index <- function(x, tbl = NULL, ...) {
 
-  assemble <- function(tco, ico) {
+  index <- index(x)
+  interval <- interval(x)
 
-    if (is.na(ico)) ico <- NA_character_
+  assert_that(
+    is.string(index), not_na(index),
+    is_time(interval, allow_neg = FALSE), not_na(interval), is.scalar(interval)
+  )
 
-    assert_that(is.string(tco), is.string(ico))
+  if (is.null(tbl)) return(TRUE)
 
-    list(meta_col = tco, aux_col = ico)
-  }
+  time_col <- tbl[[index]]
 
-  structure(Map(assemble, as.list(time_cols), ind_cols),
-            class = c("ts_date", "ts_meta"))
+  validate_that(
+    has_col(tbl, index),
+    identical(index, last_elem(data.table::key(tbl))),
+    all_zero(
+      as.double(time_col) %% as.double(interval, units = units(time_col))
+    )
+  )
 }
 
 #' @export
-new_ts_window <- function(time_cols, delta_cols = NA, delta_vals = NA) {
+new_ts_key <- function(key) {
+  new_ts_meta(Map(list, meta_col = as.list(key)), "ts_key")
+}
 
-  assemble <- function(tim, dco, dva) {
+#' @export
+validate.ts_key <- function(x, tbl = NULL, ...) {
 
-    if (is.na(dco)) dco <- NA_character_
-    if (is.na(dva)) dva <- hours(NA_integer_)
+  key <- key(x)
 
-    assert_that(is.string(tim), is.string(dco), is_time(dva),
-                !is.na(tim), xor_na(dco, dva))
+  assert_that(
+    is.character(key), length(key) > 0L, no_na(key), is_unique(key)
+  )
 
-    list(meta_col = tim, aux_col = dco, aux_data = dva)
-  }
+  if (is.null(tbl)) return(TRUE)
 
-  structure(Map(assemble, as.list(time_cols), delta_cols, delta_vals),
-            class = c("ts_window", "ts_meta"))
+  validate_that(
+    has_cols(tbl, key),
+    identical(key, head(data.table::key(tbl), n = length(key)))
+  )
+}
+
+#' @export
+new_ts_unit <- function(val_cols, unit_cols = NA_character_,
+                        unit_vals = NA_character_) {
+
+  new_ts_meta(Map(list, meta_col = as.list(val_cols), aux_col = unit_cols,
+                        aux_data = unit_vals),
+              "ts_meta")
+}
+
+#' @export
+validate.ts_unit <- function(x, tbl = NULL, ...) {
+
+  val_cols  <- extract_strings(x, "meta_col")
+  unit_cols <- extract_strings(x, "aux_col")
+  unit_vals <- extract_strings(x, "aux_data")
+
+  assert_that(
+    no_na(val_cols), is_unique(val_cols),
+    is_unique(unit_cols, incomparables = NA),
+    same_length(val_cols, unit_cols), same_length(val_cols, unit_vals),
+    xor_na(unit_cols, unit_vals), is_disjoint(val_cols, unit_cols)
+  )
+
+  if (is.null(tbl)) return(TRUE)
+
+  all_cols <- c(val_cols, unit_cols[!is.na(unit_cols)])
+
+  validate_that(has_cols(tbl, all_cols))
+}
+
+#' @export
+new_ts_date <- function(time_cols, ind_cols = NA_character_) {
+  new_ts_meta(Map(list, meta_col = as.list(time_cols), aux_col = ind_cols),
+              "ts_date")
+}
+
+#' @export
+validate.ts_date <- function(x, tbl = NULL, ...) {
+
+  is_lgl <- function(col) is.logical(tbl[[col]])
+
+  time_cols <- extract_strings(x, "meta_col")
+  ind_cols  <- extract_strings(x, "aux_col")
+
+  assert_that(
+    no_na(time_cols), is_unique(time_cols),
+    is_unique(ind_cols, incomparables = NA), same_length(time_cols, ind_cols),
+    is_disjoint(time_cols, ind_cols)
+  )
+
+  if (is.null(tbl)) return(TRUE)
+
+  ind_cols <- ind_cols[!is.na(ind_cols)]
+
+  validate_that(
+    has_cols(tbl, c(time_cols, ind_cols)),
+    all_fun(ind_cols, is_lgl)
+  )
 }
 
 #' @export
@@ -87,9 +131,6 @@ is_ts_index <- function(x) inherits(x, "ts_index")
 is_ts_key <- function(x) inherits(x, "ts_key")
 
 #' @export
-is_ts_window <- function(x) inherits(x, "ts_window")
-
-#' @export
 is_ts_unit <- function(x) inherits(x, "ts_unit")
 
 #' @export
@@ -99,6 +140,9 @@ is_ts_date <- function(x) inherits(x, "ts_date")
 meta_names.ts_meta <- function(x) vapply(x, `[[`, character(1L), "meta_col")
 
 `meta_names<-` <- function(x, value) {
+
+  assert_that(is_ts_meta(x), !is_ts_def(x))
+
   Map(function(x, value) `[[<-`(x, "meta_col", value), x, value)
 }
 
@@ -114,8 +158,11 @@ is_required.ts_key <- function(x, ...) TRUE
 #' @export
 has_aux_names.ts_meta <- function(x) !is.null(x[[1L]][["aux_col"]])
 
+# TODO: write selection fun for aux_naes/aux_data & replacement funs
+
 #' @export
-aux_names.ts_meta <- function(x, meta_col = NULL, allow_multiple = TRUE, ...) {
+aux_names.ts_meta <- function(x, meta_col = NULL, allow_multiple = FALSE,
+                              ...) {
 
   if (!has_aux_names(x)) {
     res <- rep(NA_character_, length(x))
@@ -145,10 +192,12 @@ aux_names.ts_meta <- function(x, meta_col = NULL, allow_multiple = TRUE, ...) {
       stop("If `!allow_multiple` a single entry is allowed per column.")
     }
   }
-
 }
 
 `aux_names<-` <- function(x, value) {
+
+  assert_that(is_ts_meta(x), !is_ts_def(x), has_aux_names(x))
+
   Map(function(x, value) `[[<-`(x, "aux_col", value), x, value)
 }
 
@@ -156,98 +205,43 @@ aux_names.ts_meta <- function(x, meta_col = NULL, allow_multiple = TRUE, ...) {
 has_aux_data.ts_meta <- function(x) !is.null(x[[1L]][["aux_data"]])
 
 #' @export
-aux_data.ts_meta <- function(x) {
+aux_data.ts_meta <- function(x, meta_col = NULL, allow_multiple = FALSE, ...) {
 
-  if (!has_aux_data(x)) return(NULL)
-
-  res <- lapply(x, `[[`, "aux_data")
-  names(res) <- meta_names(x)
-
-  res
-}
-
-#' @export
-validate_def.ts_index <- function(x, tbl, stop_req = TRUE, warn_opt = TRUE,
-                                  ...) {
-
-  col <- meta_names(x)
-  interv <- interval(x)
-
-  validation_helper(x, stop_req, warn_opt,
-    has_col(tbl, col),
-    identical(col, last_elem(data.table::key(tbl))),
-    is_time(interv, allow_neg = FALSE),
-    length(interv) == 1L,
-    all(as.double(tbl[[col]]) %%
-        as.double(interv, units = units(tbl[[col]])) == 0)
-  )
-}
-
-#' @export
-validate_def.ts_key <- function(x, tbl, stop_req = TRUE, warn_opt = TRUE,
-                                ...) {
-
-  cols <- meta_names(x)
-
-  validation_helper(x, stop_req, warn_opt,
-    has_cols(tbl, cols),
-    identical(cols, head(data.table::key(tbl), n = length(cols)))
-  )
-}
-
-#' @export
-validate_def.ts_window <- function(x, tbl, stop_req = TRUE, warn_opt = TRUE,
-                                   ...) {
-
-  validation_helper(x, stop_req, warn_opt,
-    has_time_cols(tbl, c(meta_names(x), aux_names(x)))
-  )
-}
-
-#' @export
-validate_def.ts_date <- function(x, tbl, stop_req = TRUE, warn_opt = TRUE,
-                                 ...) {
-
-  is_lgl <- function(col) is.logical(tbl[[col]])
-
-  aux <- aux_names(x)
-  aux <- aux[!is.na(aux)]
-
-  validation_helper(x, stop_req, warn_opt,
-    has_cols(tbl, c(meta_names(x), aux)),
-    all_fun(aux, is_lgl)
-  )
-}
-
-#' @export
-validate_def.ts_meta <- function(x, tbl, stop_req = TRUE, warn_opt = TRUE,
-                                 ...) {
-
-  validation_helper(x, stop_req, warn_opt,
-    has_cols(tbl, c(meta_names(x), aux_names(x)))
-  )
-}
-
-validation_helper <- function(x, stop_req, warn_opt, ...,
-                              env = parent.frame()) {
-
-  msg_fun <- function(fun, msg) {
-    fun("Error validating ", format(x), ":\n  ", msg)
+  if (!has_aux_data(x)) {
+    res <- rep(list(NULL), length(x))
+  } else {
+    res <- lapply(x, `[[`, "aux_data")
   }
 
-  res <- validate_that(..., env = env)
+  nms <- meta_names(x)
 
-  if (!isTRUE(res)) {
-    if (is_required(x)) {
-      if (stop_req) msg_fun(stop, res)
-      return(NA)
+  if (is.null(meta_col)) {
+
+    stats::setNames(res, nms)
+
+  } else {
+
+    assert_that(is.string(meta_col), is.flag(allow_multiple))
+
+    hits <- meta_col == nms
+
+    if (sum(hits) == 0L) {
+      NULL
+    } else if (sum(hits) == 1L) {
+      res[[hits]]
+    } else if (allow_multiple) {
+      res[hits]
     } else {
-      if (warn_opt) msg_fun(warning, res)
-      return(FALSE)
+      stop("If `!allow_multiple` a single entry is allowed per column.")
     }
   }
+}
 
-  TRUE
+`aux_data<-` <- function(x, value) {
+
+  assert_that(is_ts_meta(x), !is_ts_def(x), has_aux_data(x))
+
+  Map(function(x, value) `[[<-`(x, "aux_data", value), x, value)
 }
 
 #' @export
@@ -298,33 +292,3 @@ key.ts_key <- meta_names
 
 #' @export
 interval.ts_index <- function(x) aux_data(x)[[1L]]
-
-#' @export
-any_date <- function(x, col = index(x)) is_any_date_helper(x, col, 1L)
-
-#' @export
-is_date <- function(x, col = index(x)) is_any_date_helper(x, col, nrow(x))
-
-is_any_date_helper <- function(x, col, length) {
-
-  aux_col <- aux_names(x, "ts_date", col, FALSE)
-
-  if (is.null(aux_col)) rep(FALSE, length)
-  else if (is.na(aux_col)) rep(TRUE, length)
-  else if (length == 1L) any(x[[aux_col]])
-  else x[[aux_col]]
-}
-
-compact_unit <- function(x, col, handler = NULL, expected = NULL) {
-
-  unit <- aux_names(x, "ts_unit", col, FALSE)
-
-  assert_that(is.string(unit))
-
-  unit <- ts_meta(x, "ts_unit")
-  hits <- col == meta_names(unit)
-
-  assert_that(!is.null(units), sum(hits) == 1L)
-
-}
-

@@ -18,7 +18,7 @@ aux_names <- function(x, ...) UseMethod("aux_names", x)
 has_aux_data <- function(x, ...) UseMethod("has_aux_data", x)
 
 #' @export
-aux_data <- function(x) UseMethod("aux_data", x)
+aux_data <- function(x, ...) UseMethod("aux_data", x)
 
 #' @export
 as_ts_def <- function(x) UseMethod("as_ts_def", x)
@@ -39,6 +39,10 @@ interval <- function(x) UseMethod("interval", x)
 ts_def <- function(x) UseMethod("ts_def", x)
 
 #' @export
-validate_def <- function(x, ..., stop_req = TRUE, warn_opt = TRUE) {
-  UseMethod("validate_def", x)
-}
+is_valid <- function(x, ...) UseMethod("is_valid", x)
+
+#' @export
+rm_cols <- function(x, cols, ...) UseMethod("rm_cols", x)
+
+#' @export
+is_unique <- function(x, ...) UseMethod("is_unique", x)

@@ -122,22 +122,48 @@ update_ts_def <- function(x, new, ...) {
   set_ts_def(x, new, ...)
 }
 
+make_valid <- function(meta, tbl, stop_req = TRUE, warn_opt = TRUE) {
+
+  msg_fun <- function(fun, issues) {
+    fun("Error validating `", deparse(meta), "`:\n  -",
+        paste(issues, collapse = "\n  -"))
+  }
+
+  assert_that(is_ts_def(meta), all_fun(meta, is_ts_meta))
+
+  res <- lapply(meta, validate, tbl)
+  req <- vapply(meta, is_required, logical(1L))
+  ok  <- vapply(res, isTRUE, logical(1L))
+
+  req_not_ok <- req & !ok
+
+  if (any(req_not_ok)) {
+    if (stop_req) msg_fun(stop, res[req_not_ok])
+    return(NULL)
+  }
+
+  opt_not_ok <- !req & !ok
+
+  if (any(opt_not_ok) && warn_opt) {
+    msg_fun(warning, res[opt_not_ok])
+  }
+
+  res[ok]
+}
+
 #' @export
 set_ts_def <- function(x, new, warn_opt = TRUE) {
 
   new <- as_ts_def(new)
+  new <- make_valid(new, x, warn_opt = warn_opt)
 
-  is_valid <- validate_def(new, x, warn_opt = warn_opt)
-
-  setattr(x, "ts_def", new[is_valid])
+  setattr(x, "ts_def", new)
 
   x
 }
 
 #' @export
-validate_def.ts_tbl <- function(x, stop_req = TRUE, warn_opt = TRUE, ...) {
-  validate_def(ts_def(x), x, stop_req, warn_opt)
-}
+validate.ts_tbl <- function(x, ...) validate(ts_def(x), x, ...)
 
 #' @export
 unclass_ts_tbl <- function(x) {
@@ -157,19 +183,16 @@ reclass_ts_tbl <- function(x, meta, warn_opt = TRUE) {
     x <- data.table::setkeyv(x, ids)
   }
 
-  is_valid <- validate_def(meta, x, stop_req = FALSE, warn_opt = warn_opt)
+  meta <- make_valid(meta, x, stop_req = FALSE, warn_opt = warn_opt)
 
-  if (anyNA(is_valid)) {
+  if (is.null(meta)) {
     x <- unclass_ts_tbl(x)
   } else {
-    x <- new_ts_tbl(x, meta[is_valid])
+    x <- new_ts_tbl(x, meta)
   }
 
   x
 }
-
-#' @export
-rm_cols <- function(x, cols, ...) UseMethod("rm_cols", x)
 
 #' @export
 rm_cols.ts_tbl <- function(x, cols, ...) {
@@ -249,4 +272,7 @@ has_aux_names.ts_tbl <- function(x) has_aux_names(ts_def(x))
 
 #' @export
 aux_names.ts_tbl <- function(x, ...) aux_names(ts_def(x), ...)
+
+#' @export
+aux_data.ts_tbl <- function(x, ...) aux_data(ts_def(x), ...)
 

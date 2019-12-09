@@ -121,19 +121,6 @@ slide_quo <- function(x, expr, before, after = hours(0L),
 }
 
 #' @export
-is_unique <- function(x, ...) UseMethod("is_unique", x)
-
-#' @export
-is_unique.default <- function(x, ...) {
-  identical(anyDuplicated(x, ...), 0L)
-}
-
-#' @export
-is_unique.ts_tbl <- function(x, by = id_cols(x), ...) {
-  identical(anyDuplicated(x, by = by, ...), 0L)
-}
-
-#' @export
 make_unique <- function(x, expr, fun, ...) {
   if (missing(fun)) {
     make_unique_quo(x, substitute(expr), ...)
@@ -163,19 +150,41 @@ make_unique_quo <- function(x, expr, by = id_cols(x),
 }
 
 #' @export
-secs <- function(x) as.difftime(x, units = "secs")
+is_unique.ts_tbl <- function(x, by = id_cols(x), ...) {
+  identical(anyDuplicated(x, by = by, ...), 0L)
+}
 
 #' @export
-mins <- function(x) as.difftime(x, units = "mins")
+is_unique.default <- function(x, ...) identical(anyDuplicated(x, ...), 0L)
 
 #' @export
-hours <- function(x) as.difftime(x, units = "hours")
+any_date <- function(x, col = index(x)) is_any_date_helper(x, col, 1L)
 
 #' @export
-days <- function(x) as.difftime(x, units = "days")
+is_date <- function(x, col = index(x)) is_any_date_helper(x, col, nrow(x))
 
-#' @export
-weeks <- function(x) as.difftime(x, units = "weeks")
+is_any_date_helper <- function(x, col, length) {
+
+  aux_col <- aux_names(x, "ts_date", col, FALSE)
+
+  if (is.null(aux_col)) rep(FALSE, length)
+  else if (is.na(aux_col)) rep(TRUE, length)
+  else if (length == 1L) any(x[[aux_col]])
+  else x[[aux_col]]
+}
+
+compact_unit <- function(x, col, handler = NULL, expected = NULL) {
+
+  unit <- aux_names(x, "ts_unit", col, FALSE)
+
+  assert_that(is.string(unit))
+
+  unit <- ts_meta(x, "ts_unit")
+  hits <- col == meta_names(unit)
+
+  assert_that(!is.null(units), sum(hits) == 1L)
+
+}
 
 materialize_win <- function(x, ts_win) {
 
