@@ -8,6 +8,14 @@ mimic_admissions <- function(cols = character(0L), rows = NULL,
 }
 
 #' @export
+mimic_chart <- function(cols = character(0L), rows = NULL, id_cols = "hadm_id",
+                        time_col = "charttime", ...) {
+
+  mimic_ts_unit_quo("chartevents", rows, cols, id_cols, time_col,
+                    ..., val_cols = "valuenum", unit_cols = "valueuom")
+}
+
+#' @export
 mimic_icustays <- function(cols = character(0L), rows = NULL,
                            id_cols = "hadm_id", time_col = "intime",
                            ...) {
