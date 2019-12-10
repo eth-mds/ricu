@@ -1,6 +1,8 @@
 language: r
 cache: packages
 
+if: tag IS present
+
 addons:
   apt:
     sources:
