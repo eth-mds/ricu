@@ -164,7 +164,7 @@ on_failure(all_zero) <- function(call, env) {
 
 is_valid <- function(x) isTRUE(validate(x))
 
-on_failure(is_valid) <- function(call, env) eval(call$x, env)
+on_failure(is_valid) <- function(call, env) validate(get(deparse(call$x), env))
 
 same_ts <- function(x, y) {
   identical(key(x), key(y)) && identical(index(x), index(y)) &&

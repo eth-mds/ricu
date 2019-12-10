@@ -72,7 +72,7 @@ new_ts_unit <- function(val_cols, unit_cols = NA_character_,
 
   new_ts_meta(Map(list, meta_col = as.list(val_cols), aux_col = unit_cols,
                         aux_data = unit_vals),
-              "ts_meta")
+              "ts_unit")
 }
 
 #' @export
