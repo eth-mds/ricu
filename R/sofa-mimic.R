@@ -6,7 +6,7 @@ mimic_pao2 <- function(interval = hours(1L), envir = "mimic") {
   res <- mimic_lab(cols = "valuenum", rows = quote(itemid == 50821L),
                    interval = interval, envir = envir)
   res <- rm_cols(res, "valueuom")
-  res <- rename_cols(res, c("hadm_time", "pao2"), c("charttime", "valuenum"))
+  res <- rename_cols(res, c("hadm_time", "pao2"), c(index(res), "valuenum"))
 
   make_unique(res, fun = min)
 }
@@ -21,7 +21,7 @@ mimic_fio2 <- function(add_chart_data = TRUE, interval = hours(1L),
   lab <- rm_cols(lab, "valueuom")
   lab <- rename_cols(lab,
     c("hadm_time", if (add_chart_data) "fi_lab" else "fio2"),
-    c("charttime", "valuenum")
+    c(index(lab), "valuenum")
   )
 
   lab <- make_unique(lab, fun = max)
@@ -33,7 +33,7 @@ mimic_fio2 <- function(add_chart_data = TRUE, interval = hours(1L),
                          interval = interval, envir = envir)
     chart <- rm_cols(chart, "valueuom")
     chart <- rename_cols(chart, c("hadm_time", "fi_chart"),
-                         c("charttime", "valuenum"))
+                         c(index(chart), "valuenum"))
 
     chart <- make_unique(chart, fun = max)
 
@@ -93,8 +93,7 @@ mimic_pafi <- function(pao2 = mimic_pao2(...), fio2 = mimic_fio2(...),
   res
 }
 
-mimic_vent_start <- function(time_scale = "mins", step_size = 1L,
-                             data_env = "mimic") {
+mimic_vent_start <- function(interval = mins(1L), envir = "mimic") {
 
   message("fetching mechanical ventilation start info")
 
@@ -109,65 +108,49 @@ mimic_vent_start <- function(time_scale = "mins", step_size = 1L,
               224703L, 224704L, 224705L, 224706L, 224707L, 224709L, 224738L,
               224746L, 224747L, 224750L, 226873L, 227187L)
 
-  res <- mimic_get_data_items(c(cv_ids, mv_ids), "d_items", data_env,
-    unit_cols = NULL,
-    value_names = "vent_start",
-    split_items = FALSE,
-    time_scale = time_scale,
-    step_size = step_size,
-    agg_fun = first_elem
-  )
-
-  set(res, j = "vent_start", value = NULL)
-
-  res
-}
-
-mimic_vent_stop <- function(time_scale = "mins", step_size = 1L,
-                            data_env = "mimic") {
-
-  get_di <- function(x) {
-    mimic_get_data_items(x, "d_items", data_env,
-      unit_cols = NULL,
-      value_names = "vent_end",
-      split_items = FALSE,
-      time_scale = time_scale,
-      step_size = step_size,
-      agg_fun = first_elem
-    )
-  }
-
-  message("fetching mechanical ventilation vent_stop info")
-
-  res <- rbind(get_di(c(227194L, 225468L, 225477L)),
-               get_di(c(467L, 469L, 226732L)))
-  set(res, j = "vent_end", value = NULL)
+  res <- mimic_chart(rows = substitute(itemid %in% ids,
+                                       list(ids = c(cv_ids, mv_ids))),
+                     interval = interval, envir = envir)
+  res <- rename_cols(res, "hadm_time", index(res))
 
   unique(res)
 }
 
-mimic_vent <- function(vent_start = mimic_vent_start(data_env = data_env),
-                       vent_stop = mimic_vent_stop(data_env = data_env),
+mimic_vent_stop <- function(interval = mins(1L), envir = "mimic") {
+
+  message("fetching mechanical ventilation stop info")
+
+  proc <- mimic_proc_mv(rows = quote(itemid %in% c(227194L, 225468L, 225477L)),
+                        interval = interval, envir = envir)
+  proc <- rename_cols(proc, "hadm_time", index(proc))
+
+  chart <- mimic_chart(rows = quote(itemid %in% c(467L, 469L, 226732L)),
+                       interval = interval, envir = envir)
+  chart <- rename_cols(chart, "hadm_time", index(chart))
+
+  unique(rbind(proc, chart))
+}
+
+mimic_vent <- function(vent_start = mimic_vent_start(envir = envir),
+                       vent_stop = mimic_vent_stop(envir = envir),
                        win_length = hours(6L), min_length = mins(10L),
-                       time_scale = "hours", step_size = 1L,
-                       data_env = "mimic") {
+                       interval = hours(1L), envir = "mimic") {
 
   final_units <- function(x) {
-    units(x) <- time_scale
-    round_to(x, step_size)
+    units(x) <- units(interval)
+    round_to(x, as.double(interval))
   }
 
-  assert_that(same_by_cols(vent_start, vent_stop),
-              same_time_cols(vent_start, vent_stop),
+  assert_that(same_ts(vent_start, vent_stop),
               is_time(win_length, allow_neg = FALSE),
               is_time(min_length, allow_neg = FALSE),
-              min_length < win_length, step_time(vent_start) < min_length)
+              min_length < win_length, interval(vent_start) < min_length)
 
   units(win_length) <- time_unit(vent_start)
   units(min_length) <- time_unit(vent_start)
 
-  vent_start[, start_time := hadm_time]
-  vent_stop[ , stop_time  := hadm_time]
+  vent_start[, start_time := get(index(vent_start))]
+  vent_stop[ , stop_time  := get(index(vent_stop))]
 
   on.exit({
     set(vent_start, j = "start_time", value = NULL)
@@ -185,7 +168,7 @@ mimic_vent <- function(vent_start = mimic_vent_start(data_env = data_env),
 
   res <- unique(
     expand_limits(merged, min_col = "start_time", max_col = "stop_time",
-                  step_size = step_size, id_cols = "hadm_id")
+                  step_size = as.double(interval), id_cols = key(vent_start))
   )
   res <- res[, vent := TRUE]
 
