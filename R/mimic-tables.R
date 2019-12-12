@@ -24,11 +24,22 @@ mimic_icustays <- function(cols = character(0L), rows = NULL,
 }
 
 #' @export
+mimic_input_cv <- function(cols = character(0L), rows = NULL,
+                           id_cols = "hadm_id", time_col = "charttime", ...) {
+
+  val_cols  <- c("amount", "rate", "originalamount", "originalrate")
+  unit_cols <- paste0(val_cols, "uom")
+
+  mimic_ts_unit_quo("inputevents_cv", rows, cols, id_cols, time_col,
+                     ..., val_cols = val_cols, unit_cols = unit_cols)
+}
+
+#' @export
 mimic_input_mv <- function(cols = character(0L), rows = NULL,
                            id_cols = "hadm_id", time_col = "starttime", ...) {
 
-  val_cols  <- c("amount",    "rate",    "totalamount")
-  unit_cols <- c("amountuom", "rateuom", "totalamountuom")
+  val_cols  <- c("amount", "rate", "totalamount")
+  unit_cols <- paste0(val_cols, "uom")
 
   mimic_ts_unit_quo("inputevents_mv", rows, cols, id_cols, time_col,
                      ..., val_cols = val_cols, unit_cols = unit_cols)

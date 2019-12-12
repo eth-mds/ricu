@@ -72,3 +72,17 @@ fix_case_allow_na <- function(x, unit_col, val_col) {
   x <- allow_na(x, unit_col, val_col)
   x
 }
+
+fix_rate <- function(x, unit_col, val_col) {
+
+  drop <- x[[unit_col]] %in% "mcgmin"
+
+  if (any(drop)) {
+    message("Removing ", sum(drop), " absolute (w.r.t. body weight) rates.")
+    x <- x[!drop, ]
+  }
+
+  x[[unit_col]][x[[unit_col]] %in% "mcgkgmin"] <- "mcg/kg/min"
+
+  x
+}

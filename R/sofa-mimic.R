@@ -215,35 +215,25 @@ mimic_map <- function(interval = hours(1L), envir = "mimic") {
   make_unique(chart, fun = min)
 }
 
-mimic_vaso <- function(time_scale = "hours", step_size = 1L,
-                       data_env = "mimic") {
+mimic_vaso <- function(interval = hours(1L), envir = "mimic") {
 
-  fix_rate <- function(x, unit_col, val_col) {
+  get_items <- function(items, fun) {
 
-    drop <- x[[unit_col]] %in% "mcgmin"
+    res <- vector("list", length(items))
 
-    if (any(drop)) {
-      message("Removing ", sum(drop), " absolute (w.r.t. body weight) rates.")
-      x <- x[!drop, ]
+    for (i in seq_along(items)) {
+
+      tmp <- fun(cols = "rate",
+                 rows = substitute(itemid %in% ids, list(ids = items[[i]])),
+                 interval = interval, envir = envir)
+      tmp <- rm_cols(tmp, "rateuom")
+      tmp <- rename_cols(tmp, c("hadm_time", names(items)[i]),
+                         c(index(tmp), "rate"))
+
+      res[[i]] <- make_unique(tmp, fun = max)
     }
 
-    x[[unit_col]][x[[unit_col]] %in% "mcgkgmin"] <- "mcg/kg/min"
-
-    x
-  }
-
-  get_di <- function(itms, name, split = FALSE) {
-    mimic_get_data_items(itms, "d_items", data_env,
-      value_cols = "rate",
-      unit_cols = "rateuom",
-      value_names = name,
-      time_scale = time_scale,
-      step_size = step_size,
-      split_items = split,
-      unit_handler = fix_rate,
-      expected_unit = "mcg/kg/min",
-      agg_fun = max
-    )
+    reduce(merge, res, all = TRUE)
   }
 
   message("fetching vasopressor dosages")
@@ -258,9 +248,8 @@ mimic_vaso <- function(time_scale = "hours", step_size = 1L,
                  dopa   = 221662L,
                  dobu   = 221653L)
 
-  cv_dat <- reduce(merge, Map(get_di, cv_ids, names(cv_ids)), all = TRUE)
-  mv_dat <- reduce(merge, get_di(unlist(mv_ids), names(mv_ids), split = TRUE),
-                   all = TRUE)
+  cv_dat <- get_items(cv_ids, mimic_input_cv)
+  mv_dat <- get_items(mv_ids, mimic_input_mv)
 
   make_unique(rbind(cv_dat, mv_dat), fun = max)
 }
