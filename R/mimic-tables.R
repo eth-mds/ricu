@@ -65,3 +65,12 @@ mimic_prescriptions <- function(cols = character(0L), rows = NULL,
 
   update_ts_def(res, new_ts_date(date_cols))
 }
+
+#' @export
+mimic_proc_mv <- function(cols = character(0L), rows = NULL,
+                          id_cols = "hadm_id", time_col = "starttime", ...) {
+
+  mimic_ts_unit_quo("procedureevents_mv", rows, cols, id_cols, time_col,
+                    ..., val_cols = "value", unit_cols = "valueuom")
+}
+
