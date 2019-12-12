@@ -177,6 +177,8 @@ unclass_ts_tbl <- function(x) {
 #' @export
 reclass_ts_tbl <- function(x, meta, warn_opt = TRUE) {
 
+  if (!is_dt(x)) return(x)
+
   ids <- id_cols(meta)
 
   if (has_cols(x, ids) && !identical(data.table::key(x), ids)) {
