@@ -1,44 +1,41 @@
 
-mimic_pao2 <- function(time_scale = "hours", step_size = 1L,
-                       data_env = "mimic") {
+mimic_pao2 <- function(interval = hours(1L), envir = "mimic") {
 
   message("fetching pao2")
 
-  mimic_get_data_items(50821L, "d_labitems", data_env,
-    value_names = "pao2",
-    time_scale = time_scale,
-    step_size = step_size,
-    unit_handler = fix_case_allow_na,
-    expected_unit = "mm Hg",
-    agg_fun = min
-  )
+  res <- mimic_lab(cols = "valuenum", rows = quote(itemid == 50821L),
+                   interval = interval, envir = envir)
+  res <- rm_cols(res, "valueuom")
+  res <- rename_cols(res, c("hadm_time", "pao2"), c("charttime", "valuenum"))
+
+  make_unique(res, fun = min)
 }
 
-mimic_fio2 <- function(add_chart_data = TRUE, time_scale = "hours",
-                       step_size = 1L, data_env = "mimic") {
+mimic_fio2 <- function(add_chart_data = TRUE, interval = hours(1L),
+                       envir = "mimic") {
 
   message("fetching fio2")
 
-  lab <- mimic_get_data_items(50816L, "d_labitems", data_env,
-    value_names = if (add_chart_data) "fi_lab" else "fio2",
-    time_scale = time_scale,
-    step_size = step_size,
-    unit_handler = fix_percent,
-    expected_unit = "%",
-    agg_fun = max
+  lab <- mimic_lab(cols = "valuenum", rows = quote(itemid == 50816L),
+                   interval = interval, envir = envir)
+  lab <- rm_cols(lab, "valueuom")
+  lab <- rename_cols(lab,
+    c("hadm_time", if (add_chart_data) "fi_lab" else "fio2"),
+    c("charttime", "valuenum")
   )
+
+  lab <- make_unique(lab, fun = max)
 
   if (add_chart_data) {
 
-    chart <- mimic_get_data_items(c(3420L, 223835L), "d_items", data_env,
-      value_names = "fi_chart",
-      time_scale = time_scale,
-      step_size = step_size,
-      split_items = FALSE,
-      unit_handler = fix_percent,
-      expected_unit = "%",
-      agg_fun = max
-    )
+    chart <- mimic_chart(cols = "valuenum",
+                         rows = quote(itemid %in% c(3420L, 223835L)),
+                         interval = interval, envir = envir)
+    chart <- rm_cols(chart, "valueuom")
+    chart <- rename_cols(chart, c("hadm_time", "fi_chart"),
+                         c("charttime", "valuenum"))
+
+    chart <- make_unique(chart, fun = max)
 
     res <- merge(lab, chart, all = TRUE)
     res <- res[, fio2 := ifelse(is.na(fi_lab), fi_chart, fi_lab)]
@@ -59,7 +56,7 @@ mimic_pafi <- function(pao2 = mimic_pao2(...), fio2 = mimic_fio2(...),
                        mode = c("match_vals", "extreme_vals", "fill_gaps"),
                        ...) {
 
-  assert_that(is_ts_tbl(pao2), is_ts_tbl(fio2), same_by_cols(pao2, fio2),
+  assert_that(same_ts(pao2, fio2),
               has_cols(pao2, "pao2"), has_cols(fio2, "fio2"),
               is_time(win_length, allow_neg = FALSE))
 
@@ -68,8 +65,8 @@ mimic_pafi <- function(pao2 = mimic_pao2(...), fio2 = mimic_fio2(...),
   if (identical(mode, "match_vals")) {
 
     res <- rbind(
-      fio2[pao2, on = by_cols(fio2), roll = win_length],
-      pao2[fio2, on = by_cols(fio2), roll = win_length]
+      fio2[pao2, on = id_cols(fio2), roll = win_length],
+      pao2[fio2, on = id_cols(fio2), roll = win_length]
     )
     res <- unique(res)
 
@@ -87,7 +84,7 @@ mimic_pafi <- function(pao2 = mimic_pao2(...), fio2 = mimic_fio2(...),
     )
     res <- slide_quo(res, win_expr, before = win_length, full_window = FALSE)
 
-    setnames(res, c("min_pa", "max_fi"), c("pao2", "fio2"))
+    rename_cols(res, c("pao2", "fio2"), c("min_pa", "max_fi"))
   }
 
   res <- res[, pafi := 100 * pao2 / fio2]
@@ -177,7 +174,7 @@ mimic_vent <- function(vent_start = mimic_vent_start(data_env = data_env),
     set(vent_stop,  j = "stop_time",  value = NULL)
   })
 
-  merged <- vent_stop[vent_start, roll = -win_length, on = by_cols(vent_start)]
+  merged <- vent_stop[vent_start, roll = -win_length, on = id_cols(vent_start)]
 
   merged <- merged[is.na(stop_time), stop_time := start_time + win_length]
   merged <- merged[stop_time - start_time >= min_length, ]
