@@ -175,51 +175,44 @@ mimic_vent <- function(vent_start = mimic_vent_start(envir = envir),
   res
 }
 
-mimic_coag <- function(time_scale = "hours", step_size = 1L,
-                       data_env = "mimic") {
+mimic_coag <- function(interval = hours(1L), envir = "mimic") {
 
   message("fetching platelet counts")
 
-  mimic_get_data_items(51265L, "d_labitems", data_env,
-    value_names = "coag",
-    time_scale = time_scale,
-    step_size = step_size,
-    unit_handler = allow_na,
-    expected_unit = "K/uL",
-    agg_fun = min
-  )
+  res <- mimic_lab(cols = "valuenum", rows = quote(itemid == 51265L),
+                   interval = interval, envir = envir)
+  res <- rm_cols(res, "valueuom")
+  res <- rename_cols(res, c("hadm_time", "coag"), c(index(res), "valuenum"))
+
+  make_unique(res, fun = min)
 }
 
-mimic_bili <- function(time_scale = "hours", step_size = 1L,
-                       data_env = "mimic") {
+mimic_bili <- function(interval = hours(1L), envir = "mimic") {
 
   message("fetching bilirubin measurements")
 
-  mimic_get_data_items(50885L, "d_labitems", data_env,
-    value_names = "bili",
-    time_scale = time_scale,
-    step_size = step_size,
-    unit_handler = allow_na,
-    expected_unit = "mg/dL",
-    agg_fun = max
-  )
+  res <- mimic_lab(cols = "valuenum", rows = quote(itemid == 50885L),
+                   interval = interval, envir = envir)
+  res <- rm_cols(res, "valueuom")
+  res <- rename_cols(res, c("hadm_time", "bili"), c(index(res), "valuenum"))
+
+  make_unique(res, fun = max)
 }
 
-mimic_map <- function(time_scale = "hours", step_size = 1L,
-                      data_env = "mimic") {
+mimic_map <- function(interval = hours(1L), envir = "mimic") {
 
   message("fetching map measurements")
 
   items <- c(52L, 443L, 456L, 6702L, 220052L, 220181L, 225312L)
 
-  mimic_get_data_items(items, "d_items", data_env,
-    value_names = "map",
-    time_scale = time_scale,
-    step_size = step_size,
-    split_items = FALSE,
-    expected_unit = "mmHg",
-    agg_fun = min
-  )
+  chart <- mimic_chart(cols = "valuenum",
+                       rows = substitute(itemid %in% ids, list(ids = items)),
+                       interval = interval, envir = envir)
+  chart <- rm_cols(chart, "valueuom")
+  chart <- rename_cols(chart, c("hadm_time", "map"),
+                       c(index(chart), "valuenum"))
+
+  make_unique(chart, fun = min)
 }
 
 mimic_vaso <- function(time_scale = "hours", step_size = 1L,
