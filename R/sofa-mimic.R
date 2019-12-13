@@ -249,7 +249,7 @@ mimic_gcs <- function(win_length = hours(6L), set_na_max = TRUE,
 
     repl <- is.na(x)
     if (any(repl)) {
-      message("Replacing ", sum(repl), " values with ", val, ".")
+      message("replacing ", sum(repl), " gcs values with ", val)
       x[repl] <- val
     }
 
@@ -282,7 +282,7 @@ mimic_gcs <- function(win_length = hours(6L), set_na_max = TRUE,
   zeros <- reduce(`|`, res[, lapply(.SD, is_val, 0), .SDcols = nams])
 
   if (any(zeros)) {
-    message("Setting ", sum(zeros), " rows to max gcs values due to sedation.")
+    message("setting ", sum(zeros), " rows to max gcs values due to sedation")
     res <- res[zeros, c(nams) := list(4, 5, 6)]
   }
 

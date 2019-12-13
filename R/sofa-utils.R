@@ -46,19 +46,17 @@ sofa_window <- function(tbl,
                         norepi_win_fun = max_or_na, dobu_win_fun  = max_or_na,
                         epi_win_fun    = max_or_na, gcs_win_fun   = min_or_na,
                         crea_win_fun   = max_or_na, urine_win_fun = min_or_na,
-                        win_length = as.difftime(24L, units = "hours")) {
+                        win_length = hours(24L)) {
 
   need_cols <- c("pafi", "vent", "coag", "bili", "map", "dopa", "norepi",
                  "dobu", "epi", "gcs", "crea", "urine_24")
 
-  assert_that(is_dt(tbl), has_cols(tbl, c("hadm_id", "hadm_time", need_cols)),
-              is_regular(tbl),
-              is_time(tbl[["hadm_time"]]),
+  assert_that(has_cols(tbl, need_cols), has_no_gaps(tbl),
               is_time(win_length, allow_neg = FALSE))
 
   message("computing worst values over window")
 
-  tbl <- window_quo(tbl, substitute(
+  tbl <- slide_quo(tbl, substitute(
     list(
       pafi_win = pafi_wf(pafi),
       vent_win = vent_wf(vent),
@@ -86,12 +84,9 @@ sofa_window <- function(tbl,
       crea_wf = crea_win_fun,
       urine_wf = urine_win_fun
     )
-  ), full_window = FALSE, window_length = win_length)
+  ), before = win_length, full_window = FALSE)
 
-  tbl <- data.table::set(tbl, j = need_cols, value = NULL)
-  tbl <- data.table::setnames(tbl, paste0(need_cols, "_win"), need_cols)
-
-  tbl
+  rename_cols(tbl, need_cols, paste0(need_cols, "_win"))
 }
 
 sofa_compute <- function(tbl, na_val = 0L, na_val_resp = na_val,
@@ -102,9 +97,7 @@ sofa_compute <- function(tbl, na_val = 0L, na_val_resp = na_val,
   need_cols <- c("pafi", "vent", "coag", "bili", "map", "dopa", "norepi",
                  "dobu", "epi", "gcs", "crea", "urine_24")
 
-  assert_that(is_dt(tbl), has_cols(tbl, c("hadm_id", "hadm_time", need_cols)),
-              is_regular(tbl),
-              is_time(tbl[["hadm_time"]]))
+  assert_that(has_cols(tbl, , need_cols), has_no_gaps(tbl))
 
   message("computing sofa scores")
 
@@ -122,11 +115,11 @@ sofa_compute <- function(tbl, na_val = 0L, na_val_resp = na_val,
     )
   ]
 
-  tbl <- data.table::set(tbl, j = need_cols, value = NULL)
+  tbl <- rm_cols(tbl, need_cols)
 
   if (!is.null(impute_fun)) {
     tbl <- tbl[, c(sofa_cols) := lapply(.SD, impute_fun), .SDcols = sofa_cols,
-               by = "hadm_id"]
+               by = key(tbl)]
   }
 
   tbl <- tbl[, sofa_score := sofa_resp + sofa_coag + sofa_liver +
