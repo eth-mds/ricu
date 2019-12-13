@@ -351,21 +351,15 @@ mimic_crea <- function(interval = hours(1L), envir = "mimic") {
   make_unique(res, fun = max)
 }
 
-mimic_urine24 <- function(min_win = hours(12L), time_scale = "hours",
-                          step_size = 1L, data_env = "mimic") {
+mimic_urine24 <- function(min_win = hours(12L), interval = hours(1L),
+                          envir = "mimic") {
 
-  handle_ml <- function(x, unit_col, val_col) {
-    x <- x[x[[val_col]] > 0, ]
-    x[[unit_col]][is_val(x[[unit_col]], "ml")] <- "mL"
-    x
-  }
-
-  convert_dt <- function(x) as.numeric(x, time_scale)
+  convert_dt <- function(x) as.double(x, units(interval))
 
   urine_sum <- local({
 
-    min_steps <- ceiling(convert_dt(min_win) / step_size)
-    step_factor <- convert_dt(hours(24L)) / step_size
+    min_steps <- ceiling(convert_dt(min_win) / as.double(interval))
+    step_factor <- convert_dt(hours(24L)) / as.double(interval)
 
     function(x) {
       if (length(x) <= min_steps) return(NA_real_)
@@ -382,29 +376,27 @@ mimic_urine24 <- function(min_win = hours(12L), time_scale = "hours",
             226557L, 226558L, 226559L, 226560L, 226561L, 226563L, 226564L,
             226565L, 226566L, 226567L, 226584L, 227510L)
 
-  res <- mimic_get_data_items(itms, "d_items", data_env,
-    id_cols = c("hadm_id", "icustay_id"),
-    value_names = "urine",
-    time_scale = time_scale,
-    step_size = step_size,
-    split_items = FALSE,
-    unit_handler = handle_ml,
-    expected_unit = "mL",
-    agg_fun = sum,
-    id_names = c("hadm_id", "icustay_id")
-  )
+  res <- mimic_output("value",
+                      substitute(itemid %in% ids, list(ids = itms)),
+                      id_cols = c("hadm_id", "icustay_id"),
+                      interval = interval, envir = envir)
 
-  icu_limits <- mimic_get_icu_stays("min", "max", NULL, time_scale, step_size,
-                                    data_env)
+  res <- rm_cols(res, "valueuom")
+  res <- rename_cols(res, c("hadm_time", "urine"), c(index(res), "value"))
+  res <- make_unique(res, fun = sum)
 
-  res <- fill_gaps(res, limits = icu_limits)
+  icu_limits <- mimic_icustays("outtime", id_cols = c("hadm_id", "icustay_id"),
+                               interval = interval, envir = envir)
+
+  res <- fill_gaps(res, limits = icu_limits, min_col = "intime",
+                   max_col = "outtime")
 
   expr <- substitute(list(urine_24 = win_agg_fun(urine)),
                      list(win_agg_fun = urine_sum))
 
   res <- slide_quo(res, expr, hours(24L))
 
-  res <- rm_ts_cols(res, "icustay_id")
+  res <- rm_cols(res, "icustay_id")
 
   res
 }

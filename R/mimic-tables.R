@@ -63,6 +63,14 @@ mimic_microbio <- function(cols = character(0L), rows = NULL,
 }
 
 #' @export
+mimic_output <- function(cols = character(0L), rows = NULL,
+                         id_cols = "hadm_id", time_col = "charttime", ...) {
+
+  mimic_ts_unit_quo("outputevents", rows, cols, id_cols, time_col,
+                    ..., val_cols = "value", unit_cols = "valueuom")
+}
+
+#' @export
 mimic_prescriptions <- function(cols = character(0L), rows = NULL,
                                 id_cols = "hadm_id", time_col = "startdate",
                                 ...) {

@@ -13,7 +13,9 @@ expand_limits <- function(x, min_col = "min", max_col = "max", step_size = 1L,
 
   unit <- units(x[[min_col]])
 
-  res <- x[, lapply(.SD, as.numeric), .SDcols = c(min_col, max_col),
+  x <- na.omit(x, c(id_cols, min_col, max_col))
+
+  res <- x[, lapply(.SD, as.double), .SDcols = c(min_col, max_col),
            by = id_cols]
   res <- res[, seq_time(get(min_col), get(max_col), step_size, unit),
            by = id_cols]
@@ -66,7 +68,7 @@ fill_gaps <- function(x, limits = NULL, ...) {
                           id_cols = key(x), new_col = time_col)
   }
 
-  assert_that(has_no_gaps(join))
+  assert_that(has_no_gaps(join), same_ts(x, join))
 
   x[join, on = id_cols(x)]
 }

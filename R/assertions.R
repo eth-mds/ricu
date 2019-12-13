@@ -168,7 +168,7 @@ on_failure(is_valid) <- function(call, env) validate(get(deparse(call$x), env))
 
 same_ts <- function(x, y) {
   identical(key(x), key(y)) && identical(index(x), index(y)) &&
-    identical(interval(x), interval(y))
+    all.equal(interval(x), interval(y))
 }
 
 on_failure(same_ts) <- function(call, env) {

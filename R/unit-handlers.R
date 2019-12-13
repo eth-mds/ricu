@@ -86,3 +86,9 @@ fix_rate <- function(x, unit_col, val_col) {
 
   x
 }
+
+handle_ml <- function(x, unit_col, val_col) {
+  x <- x[x[[val_col]] > 0, ]
+  x[[unit_col]][is_val(x[[unit_col]], "ml")] <- "mL"
+  x
+}

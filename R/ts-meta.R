@@ -36,7 +36,7 @@ validate.ts_index <- function(x, tbl = NULL, ...) {
   time_col <- tbl[[index]]
 
   validate_that(
-    has_col(tbl, index),
+    has_time_col(tbl, index),
     identical(index, last_elem(data.table::key(tbl))),
     all_zero(
       as.double(time_col) %% as.double(interval, units = units(time_col))
