@@ -255,41 +255,27 @@ mimic_vaso <- function(interval = hours(1L), envir = "mimic") {
 }
 
 mimic_gcs <- function(win_length = hours(6L), set_na_max = TRUE,
-                      time_scale = "hours", step_size = 1L,
-                      data_env = "mimic") {
-
-  fix_gcs <- function(x, ...) {
-
-    err <- is_val(x[["error"]], 1L)
-    if (any(err)) {
-      message("Removing ", sum(err), " rows due to error == 1L")
-      x <- x[!err, ]
-    }
-
-    assert_that(!any(x[["valuenum"]] == 0))
-
-    sed <- (x[["itemid"]] ==    723L & x[["value"]] == "1.0 ET/Trach") |
-           (x[["itemid"]] == 223900L & x[["value"]] == "No Response-ETT")
-
-    if (any(sed)) {
-      x <- x[sed, valuenum := 0]
-    }
-
-    assert_that(!any(is.na(x[["valuenum"]])))
-
-    x
-  }
+                      interval = hours(1L), envir = "mimic") {
 
   get_di <- function(itms, name) {
-    mimic_get_data_items(itms, "d_items", data_env,
-      extra_cols = c("error", "value"),
-      value_names = name,
-      time_scale = time_scale,
-      step_size = step_size,
-      split_items = FALSE,
-      unit_handler = fix_gcs,
-      expected_unit = NA_character_,
-      agg_fun = min
+
+    res <- mimic_chart(cols = c("valuenum", if (name == "verbal") "value"),
+                       rows = substitute(itemid %in% ids & !fun(error, 1L),
+                                         list(ids = itms, fun = is_val)),
+                       interval = interval, envir = envir)
+
+    res <- res[!is.na(valuenum), ]
+
+    if (name == "verbal") {
+      assert_that(!any(res[["valuenum"]] == 0))
+      res[value == "1.0 ET/Trach" | value == "No Response-ETT", valuenum := 0]
+    }
+
+    res <- rm_cols(res, "valueuom", "value")
+    res <- rename_cols(res, c("hadm_time", name), c(index(res), "valuenum"))
+
+    make_unique(res,
+      fun = if (name == "verbal") function(x) min(x[x > 0], max(x)) else min
     )
   }
 
@@ -321,16 +307,17 @@ mimic_gcs <- function(win_length = hours(6L), set_na_max = TRUE,
   itms <- list(eye    = c(184L, 220739L),
                verbal = c(723L, 223900L),
                motor  = c(454L, 223901L))
-  evm <- names(itms)
+  nams <- names(itms)
 
-  res <- Map(get_di, itms, names(itms))
+  res <- Map(get_di, itms, nams)
+
   res <- reduce(merge, res, all = TRUE)
 
-  zeros <- reduce(`|`, res[, lapply(.SD, is_val, 0), .SDcols = evm])
+  zeros <- reduce(`|`, res[, lapply(.SD, is_val, 0), .SDcols = nams])
 
   if (any(zeros)) {
     message("Setting ", sum(zeros), " rows to max gcs values due to sedation.")
-    res <- res[zeros, c(evm) := list(4, 5, 6)]
+    res <- res[zeros, c(nams) := list(4, 5, 6)]
   }
 
   expr <- substitute(list(eye_imp = fun(eye), verb_imp = fun(verbal),
@@ -339,32 +326,29 @@ mimic_gcs <- function(win_length = hours(6L), set_na_max = TRUE,
   res <- slide_quo(res, expr, before = win_length)
 
   if (set_na_max) {
-    res <- res[, c(evm) := list(
+    res <- res[, c(nams) := list(
       repl_na(eye_imp, 4), repl_na(verb_imp, 5), repl_na(mot_imp, 6)
     )]
   }
 
   res <- res[, gcs := eye_imp + verb_imp + mot_imp]
 
-  res <- set(res, j = c(evm, "eye_imp", "verb_imp", "mot_imp"),
+  res <- set(res, j = c(nams, "eye_imp", "verb_imp", "mot_imp"),
              value = NULL)
 
   res
 }
 
-mimic_crea <- function(time_scale = "hours", step_size = 1L,
-                       data_env = "mimic") {
+mimic_crea <- function(interval = hours(1L), envir = "mimic") {
 
   message("fetching creatinine measurements")
 
-  mimic_get_data_items(50912L, "d_labitems", data_env,
-    value_names = "crea",
-    time_scale = time_scale,
-    step_size = step_size,
-    unit_handler = allow_na,
-    expected_unit = "mg/dL",
-    agg_fun = max
-  )
+  res <- mimic_lab(cols = "valuenum", rows = quote(itemid == 50912L),
+                   interval = interval, envir = envir)
+  res <- rm_cols(res, "valueuom")
+  res <- rename_cols(res, c("hadm_time", "crea"), c(index(res), "valuenum"))
+
+  make_unique(res, fun = max)
 }
 
 mimic_urine24 <- function(min_win = hours(12L), time_scale = "hours",
