@@ -1,4 +1,44 @@
 
+sofa_pafi <- function(pao2, fio2, win_length = hours(2L),
+                      mode = c("match_vals", "extreme_vals", "fill_gaps")) {
+
+  assert_that(same_ts(pao2, fio2),
+              has_cols(pao2, "pao2"), has_cols(fio2, "fio2"),
+              is_time(win_length, allow_neg = FALSE))
+
+  mode <- match.arg(mode)
+
+  if (identical(mode, "match_vals")) {
+
+    res <- rbind(
+      fio2[pao2, on = id_cols(fio2), roll = win_length],
+      pao2[fio2, on = id_cols(fio2), roll = win_length]
+    )
+    res <- unique(res)
+
+  } else {
+
+    res <- merge(pao2, fio2, all = TRUE)
+
+    if (identical(mode, "fill_gaps")) {
+      res <- fill_gaps(res)
+    }
+
+    win_expr <- substitute(
+      list(min_pa = min_fun(pao2), max_fi = max_fun(fio2)),
+      list(min_fun = min_or_na, max_fun = max_or_na)
+    )
+    res <- slide_quo(res, win_expr, before = win_length, full_window = FALSE)
+
+    rename_cols(res, c("pao2", "fio2"), c("min_pa", "max_fi"))
+  }
+
+  res <- res[, pafi := 100 * pao2 / fio2]
+  res <- res[, c("pao2", "fio2") := NULL]
+
+  res
+}
+
 sofa_window <- function(tbl,
                         pafi_win_fun   = min_or_na, vent_win_fun  = last_elem,
                         coag_win_fun   = min_or_na, bili_win_fun  = max_or_na,
