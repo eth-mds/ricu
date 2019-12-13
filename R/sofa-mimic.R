@@ -401,46 +401,44 @@ mimic_urine24 <- function(min_win = hours(12L), interval = hours(1L),
   res
 }
 
-mimic_sofa_vars <- function(pafi  = mimic_pafi(..., data_env = data_env),
-                            vent  = mimic_vent(..., data_env = data_env),
-                            coag  = mimic_coag(..., data_env = data_env),
-                            bili  = mimic_bili(..., data_env = data_env),
-                            map   = mimic_map(..., data_env = data_env),
-                            vaso  = mimic_vaso(..., data_env = data_env),
-                            gcs   = mimic_gcs(..., data_env = data_env),
-                            crea  = mimic_crea(..., data_env = data_env),
-                            urine = mimic_urine24(..., data_env = data_env),
-                            ..., data_env = "mimic") {
+mimic_sofa_vars <- function(
+  pafi  = mimic_pafi(interval = interval, envir = envir),
+  vent  = mimic_vent(interval = interval, envir = envir),
+  coag  = mimic_coag(interval = interval, envir = envir),
+  bili  = mimic_bili(interval = interval, envir = envir),
+  map   = mimic_map(interval = interval, envir = envir),
+  vaso  = mimic_vaso(interval = interval, envir = envir),
+  gcs   = mimic_gcs(interval = interval, envir = envir),
+  crea  = mimic_crea(interval = interval, envir = envir),
+  urine = mimic_urine24(interval = interval, envir = envir),
+  interval = hours(1L), envir = "mimic") {
 
   tables <- list(pafi, vent, coag, bili, map, vaso, gcs, crea, urine)
 
-  assert_that(
-    all(vapply(tables, same_by_cols,   logical(1L), tables[[1L]])),
-    all(vapply(tables, same_time_cols, logical(1L), tables[[1L]]))
-  )
+  assert_that(all(vapply(tables, same_ts, logical(1L), tables[[1L]])))
 
   dat <- reduce(merge, tables, all = TRUE)
 
-  time_scale <- time_unit(dat)
-  time_col <- ts_index(dat)
+  hadm <- mimic_admissions(interval = interval(pafi), envir = envir)
 
-  hadm <- mimic_get_icu_stays(NULL, NULL, "disch", time_scale, ts_step(dat),
-                              data_env)
-  hadm <- hadm[, list(disch = max(disch)), by = "hadm_id"]
-
-  limits <- dat[, list(min = min(get(time_col)), max = max(get(time_col))),
-                by = c(ts_key(dat))]
-  limits <- merge(limits, hadm, by.x = ts_key(dat), by.y = "hadm_id",
+  limits <- dat[, list(min = min(get(index(dat))), max = max(get(index(dat)))),
+                by = c(key(dat))]
+  limits <- merge(limits, hadm, by.x = key(dat), by.y = "hadm_id",
                   all.x = TRUE)
-  limits <- limits[, list(min = min(as.difftime(0, units = time_scale), min),
-                          max = max(max, disch, na.rm = TRUE)), by = "hadm_id"]
+
+  limits <- limits[,
+    list(hadm_id = hadm_id,
+         min = pmin(as.difftime(0, units = time_unit(dat)), min, na.rm = TRUE),
+         max = pmax(max, dischtime, na.rm = TRUE)),
+  ]
 
   fill_gaps(dat, limits = limits)
 }
 
-mimic_sofa <- function(...) {
+#' @export
+mimic_sofa <- function(interval = hours(1L), envir = "mimic") {
 
-  tbl <- mimic_sofa_vars(...)
+  tbl <- mimic_sofa_vars(interval = interval, envir = envir)
   tbl <- sofa_window(tbl)
   tbl <- sofa_compute(tbl)
 
