@@ -262,3 +262,16 @@ eicu_gcs <- function(win_length = hours(6L), set_na_max = TRUE, ...,
     rename_cols(res, "gcs", "gcs_imp")
   }
 }
+
+eicu_crea <- function(interval = hours(1L), envir = "eicu") {
+
+  message("fetching bilirubin measurements")
+
+  res <- eicu_lab("labresult", quote(labname %in% "creatinine"),
+                  interval = interval, envir = envir)
+  res <- rm_cols(res, "labmeasurenameinterface")
+  res <- rename_cols(res, c("hadm_id", "hadm_time", "crea"),
+                          c(key(res), index(res), "labresult"))
+
+  make_unique(res, fun = max)
+}
