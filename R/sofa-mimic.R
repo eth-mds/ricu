@@ -99,46 +99,9 @@ mimic_vent_stop <- function(interval = mins(1L), envir = "mimic") {
 
 mimic_vent <- function(vent_start = mimic_vent_start(envir = envir),
                        vent_stop = mimic_vent_stop(envir = envir),
-                       win_length = hours(6L), min_length = mins(10L),
-                       interval = hours(1L), envir = "mimic") {
+                       ..., envir = "mimic") {
 
-  final_units <- function(x) {
-    units(x) <- units(interval)
-    round_to(x, as.double(interval))
-  }
-
-  assert_that(same_ts(vent_start, vent_stop),
-              is_time(win_length, allow_neg = FALSE),
-              is_time(min_length, allow_neg = FALSE),
-              min_length < win_length, interval(vent_start) < min_length)
-
-  units(win_length) <- time_unit(vent_start)
-  units(min_length) <- time_unit(vent_start)
-
-  vent_start[, start_time := get(index(vent_start))]
-  vent_stop[ , stop_time  := get(index(vent_stop))]
-
-  on.exit({
-    set(vent_start, j = "start_time", value = NULL)
-    set(vent_stop,  j = "stop_time",  value = NULL)
-  })
-
-  merged <- vent_stop[vent_start, roll = -win_length, on = id_cols(vent_start)]
-
-  merged <- merged[is.na(stop_time), stop_time := start_time + win_length]
-  merged <- merged[stop_time - start_time >= min_length, ]
-
-  merged <- merged[, c("start_time", "stop_time") := list(
-    final_units(start_time), final_units(stop_time)
-  )]
-
-  res <- unique(
-    expand_limits(merged, min_col = "start_time", max_col = "stop_time",
-                  step_size = as.double(interval), id_cols = key(vent_start))
-  )
-  res <- res[, vent := TRUE]
-
-  res
+  sofa_vent(vent_start, vent_stop, ...)
 }
 
 mimic_coag <- function(interval = hours(1L), envir = "mimic") {

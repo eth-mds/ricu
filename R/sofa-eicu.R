@@ -55,7 +55,76 @@ eicu_fio2 <- function(add_chart_data = TRUE, interval = hours(1L),
 eicu_pafi <- function(pao2 = eicu_pao2(interval = interval, envir = envir),
                       fio2 = eicu_fio2(interval = interval, envir = envir),
                       ...,
-                      interval = hours(1L), envir = "mimic") {
+                      interval = hours(1L), envir = "eicu") {
 
   sofa_pafi(pao2, fio2, ...)
+}
+
+eicu_vent_start <- function(interval = mins(1L), envir = "eicu") {
+
+  message("fetching mechanical ventilation start info")
+
+  care1 <- eicu_resp_care(rows = quote(ventstartoffset != 0),
+                          time_col = "ventstartoffset", interval = interval,
+                          envir = envir)
+  care1 <- rename_cols(care1, c("hadm_id", "hadm_time"),
+                              c(key(care1), index(care1)))
+
+  care2 <- eicu_resp_care(rows = quote(priorventstartoffset != 0),
+                          time_col = "priorventstartoffset",
+                          interval = interval, envir = envir)
+  care2 <- rename_cols(care2, c("hadm_id", "hadm_time"),
+                              c(key(care2), index(care2)))
+
+  chart <- eicu_resp_chart(
+    rows = quote(
+      respcharttypecat == "respFlowPtVentData" | (
+        respchartvaluelabel == "RT Vent On/Off" &
+        respchartvalue %in% c("Continued", "Start")
+      )
+    ),
+    interval = interval, envir = envir
+  )
+
+  chart <- rename_cols(chart, c("hadm_id", "hadm_time"),
+                              c(key(chart), index(chart)))
+
+  unique(rbind(chart, care1, care2))
+}
+
+eicu_vent_stop <- function(interval = mins(1L), envir = "eicu") {
+
+  message("fetching mechanical ventilation stop info")
+
+  care1 <- eicu_resp_care(rows = quote(ventendoffset != 0),
+                          time_col = "ventendoffset", interval = interval,
+                          envir = envir)
+  care1 <- rename_cols(care1, c("hadm_id", "hadm_time"),
+                              c(key(care1), index(care1)))
+
+  care2 <- eicu_resp_care(rows = quote(priorventendoffset != 0),
+                          time_col = "priorventendoffset",
+                          interval = interval, envir = envir)
+  care2 <- rename_cols(care2, c("hadm_id", "hadm_time"),
+                              c(key(care2), index(care2)))
+
+  chart <- eicu_resp_chart(
+    rows = quote(
+      respchartvaluelabel == "RT Vent On/Off" &
+        respchartvalue %in% c("Off", "off", "Suspended")
+    ),
+    interval = interval, envir = envir
+  )
+
+  chart <- rename_cols(chart, c("hadm_id", "hadm_time"),
+                              c(key(chart), index(chart)))
+
+  unique(rbind(chart, care1, care2))
+}
+
+eicu_vent <- function(vent_start = eicu_vent_start(envir = envir),
+                       vent_stop = eicu_vent_stop(envir = envir),
+                       ..., envir = "eicu") {
+
+  sofa_vent(vent_start, vent_stop, ...)
 }

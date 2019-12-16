@@ -45,6 +45,14 @@ eicu_patient <- function(cols = character(0L), rows = NULL,
 }
 
 #' @export
+eicu_resp_care <- function(cols = character(0L), rows = NULL,
+                           id_cols = "patienthealthsystemstayid",
+                           time_col = "respcarestatusoffset", ...) {
+
+  eicu_ts_quo("respiratorycare", rows, cols, id_cols, time_col, ...)
+}
+
+#' @export
 eicu_vital_period <- function(cols = character(0L), rows = NULL,
                               id_cols = "patienthealthsystemstayid",
                               time_col = "observationoffset", ...) {
