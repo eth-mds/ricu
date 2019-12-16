@@ -53,6 +53,14 @@ eicu_resp_care <- function(cols = character(0L), rows = NULL,
 }
 
 #' @export
+eicu_vital_aperiod <- function(cols = character(0L), rows = NULL,
+                               id_cols = "patienthealthsystemstayid",
+                               time_col = "observationoffset", ...) {
+
+  eicu_ts_quo("vitalaperiodic", rows, cols, id_cols, time_col, ...)
+}
+
+#' @export
 eicu_vital_period <- function(cols = character(0L), rows = NULL,
                               id_cols = "patienthealthsystemstayid",
                               time_col = "observationoffset", ...) {

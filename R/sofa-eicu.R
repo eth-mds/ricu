@@ -123,8 +123,8 @@ eicu_vent_stop <- function(interval = mins(1L), envir = "eicu") {
 }
 
 eicu_vent <- function(vent_start = eicu_vent_start(envir = envir),
-                       vent_stop = eicu_vent_stop(envir = envir),
-                       ..., envir = "eicu") {
+                      vent_stop = eicu_vent_stop(envir = envir),
+                      ..., envir = "eicu") {
 
   sofa_vent(vent_start, vent_stop, ...)
 }
@@ -153,4 +153,18 @@ eicu_bili <- function(interval = hours(1L), envir = "eicu") {
                           c(key(res), index(res), "labresult"))
 
   make_unique(res, fun = max)
+}
+
+eicu_map <- function(interval = hours(1L), envir = "eicu") {
+
+  aper <- eicu_vital_aperiod("noninvasivemean", quote(!is.na(noninvasivemean)),
+                             interval = interval, envir = envir)
+  aper <- rename_cols(aper, c("hadm_id", "hadm_time", "map"),
+                            c(key(aper), index(aper), "noninvasivemean"))
+  peri <- eicu_vital_period("systemicmean", quote(!is.na(systemicmean)),
+                            interval = interval, envir = envir)
+  peri <- rename_cols(peri, c("hadm_id", "hadm_time", "map"),
+                          c(key(peri), index(peri), "systemicmean"))
+
+  make_unique(rbind(aper, peri), fun = min)
 }
