@@ -208,29 +208,6 @@ mimic_gcs <- function(win_length = hours(6L), set_na_max = TRUE,
     )
   }
 
-  repl_na <- function(x, val) {
-
-    repl <- is.na(x)
-    if (any(repl)) {
-      message("replacing ", sum(repl), " gcs values with ", val)
-      x[repl] <- val
-    }
-
-    x
-  }
-
-  impute_na_prev <- function(x) {
-
-    res <- x[length(x)]
-
-    if (is.na(res)) {
-      not_na <- !is.na(x)
-      if (any(not_na)) return(tail(x[not_na], n = 1L))
-    }
-
-    res
-  }
-
   message("fetching gcs scores")
 
   itms <- list(eye    = c(184L, 220739L),
@@ -251,12 +228,12 @@ mimic_gcs <- function(win_length = hours(6L), set_na_max = TRUE,
 
   expr <- substitute(list(eye_imp = fun(eye), verb_imp = fun(verbal),
                           mot_imp = fun(motor)),
-                     list(fun = impute_na_prev))
+                     list(fun = carry_backwards))
   res <- slide_quo(res, expr, before = win_length)
 
   if (set_na_max) {
     res <- res[, c(nams) := list(
-      repl_na(eye_imp, 4), repl_na(verb_imp, 5), repl_na(mot_imp, 6)
+      replace_na(eye_imp, 4), replace_na(verb_imp, 5), replace_na(mot_imp, 6)
     )]
   }
 

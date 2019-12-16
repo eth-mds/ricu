@@ -272,3 +272,17 @@ cap_str <- function(x) paste0(toupper(substring(x, 1,1)), substring(x, 2))
 extract_strings <- function(x, name) vapply(x, `[[`, character(1L), name)
 
 filter_na <- function(x) Filter(Negate(is.na), x)
+
+carry_backwards <- function(x) {
+
+  res <- x[length(x)]
+
+  if (is.na(res)) {
+    not_na <- !is.na(x)
+    if (any(not_na)) return(tail(x[not_na], n = 1L))
+  }
+
+  res
+}
+
+replace_na <- function(x, val) replace(x, is.na(x), val)

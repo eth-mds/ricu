@@ -225,3 +225,40 @@ eicu_vaso <- function(interval = hours(1L), envir = "eicu") {
 
   reduce(merge, res, all = TRUE)
 }
+
+eicu_gcs <- function(win_length = hours(6L), set_na_max = TRUE, ...,
+                     interval = hours(1L), envir = "eicu") {
+
+  message("fetching gcs scores")
+
+  tbl <- eicu_nurse_chart("nursingchartvalue",
+                          quote(nursingchartcelltypevalname == "GCS Total"),
+                          interval = interval, envir = envir)
+  tbl <- rename_cols(tbl, c("hadm_id", "hadm_time", "gcs"),
+                            c(key(tbl), index(tbl), "nursingchartvalue"))
+
+  sed <- eicu_vent(..., interval = interval, envir = envir)
+
+  res <- merge(tbl, sed, by = id_cols(tbl), all.x = TRUE)
+  res <- res[is.na(vent), vent := FALSE]
+
+  if (any(res[["vent"]])) {
+    message("setting ", sum(res[["vent"]]),
+            " rows to max gcs values due to ventilation.")
+    res <- res[(vent), gcs := 15]
+  }
+
+  res <- rm_cols(res, "vent")
+  res <- make_unique(res, fun = min)
+
+  # TODO: expand before sliding, also in mimic
+
+  expr <- substitute(list(gcs_imp = fun(gcs)), list(fun = carry_backwards))
+  res <- slide_quo(res, expr, before = win_length)
+
+  if (set_na_max) {
+    res[, c("gcs", "gcs_imp") := list(replace_na(gcs_imp, 15), NULL)]
+  } else {
+    rename_cols(res, "gcs", "gcs_imp")
+  }
+}

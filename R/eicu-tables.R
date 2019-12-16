@@ -29,6 +29,14 @@ eicu_medication <- function(cols = character(0L), rows = NULL,
 }
 
 #' @export
+eicu_nurse_chart <- function(cols = character(0L), rows = NULL,
+                             id_cols = "patienthealthsystemstayid",
+                             time_col = "nursingchartoffset", ...) {
+
+  eicu_ts_quo("nursecharting", rows, cols, id_cols, time_col, ...)
+}
+
+#' @export
 eicu_resp_chart <- function(cols = character(0L), rows = NULL,
                             id_cols = "patienthealthsystemstayid",
                             time_col = "respchartoffset", ...) {
