@@ -128,3 +128,29 @@ eicu_vent <- function(vent_start = eicu_vent_start(envir = envir),
 
   sofa_vent(vent_start, vent_stop, ...)
 }
+
+eicu_coag <- function(interval = hours(1L), envir = "eicu") {
+
+  message("fetching platelet counts")
+
+  res <- eicu_lab("labresult", quote(labname == "platelets x 1000"),
+                  interval = interval, envir = envir)
+  res <- rm_cols(res, "labmeasurenameinterface")
+  res <- rename_cols(res, c("hadm_id", "hadm_time", "coag"),
+                          c(key(res), index(res), "labresult"))
+
+  make_unique(res, fun = min)
+}
+
+eicu_bili <- function(interval = hours(1L), envir = "eicu") {
+
+  message("fetching bilirubin measurements")
+
+  res <- eicu_lab("labresult", quote(labname %in% "total bilirubin"),
+                  interval = interval, envir = envir)
+  res <- rm_cols(res, "labmeasurenameinterface")
+  res <- rename_cols(res, c("hadm_id", "hadm_time", "bili"),
+                          c(key(res), index(res), "labresult"))
+
+  make_unique(res, fun = max)
+}
