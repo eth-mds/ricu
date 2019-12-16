@@ -164,7 +164,64 @@ eicu_map <- function(interval = hours(1L), envir = "eicu") {
   peri <- eicu_vital_period("systemicmean", quote(!is.na(systemicmean)),
                             interval = interval, envir = envir)
   peri <- rename_cols(peri, c("hadm_id", "hadm_time", "map"),
-                          c(key(peri), index(peri), "systemicmean"))
+                            c(key(peri), index(peri), "systemicmean"))
 
   make_unique(rbind(aper, peri), fun = min)
+}
+
+eicu_vaso <- function(interval = hours(1L), envir = "eicu") {
+
+  get_drug <- function(regex, name, pat) {
+
+    tbl <- eicu_inf_drug(c("drugname", "drugrate", "patientweight"),
+                         substitute(grepl(rx, drugname, ignore.case = TRUE),
+                                    list(rx = regex)),
+                         interval = interval, envir = envir)
+
+    tbl <- tbl[, c("drugrate", "patientweight") := suppressWarnings(
+      list(as.numeric(drugrate), as.numeric(patientweight)))
+    ]
+
+    tbl <- merge(tbl, pat, by = key(tbl), all.x = TRUE)
+    tbl <- tbl[is.na(patientweight), patientweight := admweight]
+
+    tbl <- tbl[
+      grepl(" \\(\\)$", drugname),
+      drugname := sub(" \\(\\)$", " (mcg/min)", drugname)
+    ]
+    tbl <- tbl[
+      grepl("\\(mg/", drugname), c("drugname", "drugrate") := list(
+      sub("\\(mg/", "(mcg/", drugname), drugrate * 1000)
+    ]
+    tbl <- tbl[
+      grepl("/hr\\)$", drugname), c("drugname", "drugrate") := list(
+      sub("/hr\\)$", "/min)", drugname), drugrate / 60)
+    ]
+    tbl <- tbl[
+      grepl("mcg/min", drugname), c("drugname", "drugrate") := list(
+      sub("mcg/min", "mcg/kg/min", drugname), drugrate / patientweight)
+    ]
+
+    # currently all [volume/time] measurements are lost
+
+    tbl <- tbl[grep("\\(mcg/kg/min\\)$", drugname), ]
+    tbl <- tbl[!is.na(drugrate), ]
+    tbl <- tbl[, c("drugname", "patientweight", "admweight") := NULL]
+
+    tbl <- rename_cols(tbl, c("hadm_id", "hadm_time", name),
+                            c(key(tbl), index(tbl), "drugrate"))
+
+    make_unique(tbl, fun = max)
+  }
+
+  patient <- get_table("patient", envir)
+  patient <- patient[, c("patienthealthsystemstayid", "admissionweight")]
+  patient <- patient[, list(admweight = mean(admissionweight, na.rm = TRUE)),
+                     by = "patienthealthsystemstayid"]
+
+  res <- Map(get_drug, c("norepi|levophed", "^epineph", "^dopa", "dobu"),
+                       c("norepi",          "epi",      "dopa",  "dobu"),
+             MoreArgs = list(pat = patient))
+
+  reduce(merge, res, all = TRUE)
 }

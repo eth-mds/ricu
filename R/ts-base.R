@@ -192,3 +192,7 @@ format_ts_meta <- function(...) {
   paste0("<", paste(..., sep = ", ", collapse = "; "), ">")
 }
 
+#' @export
+merge.ts_tbl <- function(x, y, by = id_cols(x), ...) {
+  reclass_ts_tbl(NextMethod(), ts_def(x), warn_opt = FALSE)
+}
