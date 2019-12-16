@@ -39,6 +39,48 @@ sofa_pafi <- function(pao2, fio2, win_length = hours(2L),
   res
 }
 
+sofa_vent <- function(vent_start, vent_stop, win_length = hours(6L),
+                      min_length = mins(10L), interval = hours(1L)) {
+
+  final_units <- function(x) {
+    units(x) <- units(interval)
+    round_to(x, as.double(interval))
+  }
+
+  assert_that(same_ts(vent_start, vent_stop),
+              is_time(win_length, allow_neg = FALSE),
+              is_time(min_length, allow_neg = FALSE),
+              min_length < win_length, interval(vent_start) < min_length)
+
+  units(win_length) <- time_unit(vent_start)
+  units(min_length) <- time_unit(vent_start)
+
+  vent_start[, start_time := get(index(vent_start))]
+  vent_stop[ , stop_time  := get(index(vent_stop))]
+
+  on.exit({
+    set(vent_start, j = "start_time", value = NULL)
+    set(vent_stop,  j = "stop_time",  value = NULL)
+  })
+
+  merged <- vent_stop[vent_start, roll = -win_length, on = id_cols(vent_start)]
+
+  merged <- merged[is.na(stop_time), stop_time := start_time + win_length]
+  merged <- merged[stop_time - start_time >= min_length, ]
+
+  merged <- merged[, c("start_time", "stop_time") := list(
+    final_units(start_time), final_units(stop_time)
+  )]
+
+  res <- unique(
+    expand_limits(merged, min_col = "start_time", max_col = "stop_time",
+                  step_size = as.double(interval), id_cols = key(vent_start))
+  )
+  res <- res[, vent := TRUE]
+
+  res
+}
+
 sofa_window <- function(tbl,
                         pafi_win_fun   = min_or_na, vent_win_fun  = last_elem,
                         coag_win_fun   = min_or_na, bili_win_fun  = max_or_na,
@@ -97,7 +139,7 @@ sofa_compute <- function(tbl, na_val = 0L, na_val_resp = na_val,
   need_cols <- c("pafi", "vent", "coag", "bili", "map", "dopa", "norepi",
                  "dobu", "epi", "gcs", "crea", "urine_24")
 
-  assert_that(has_cols(tbl, , need_cols), has_no_gaps(tbl))
+  assert_that(has_cols(tbl, need_cols), has_no_gaps(tbl))
 
   message("computing sofa scores")
 
@@ -129,13 +171,11 @@ sofa_compute <- function(tbl, na_val = 0L, na_val_resp = na_val,
 }
 
 sofa_resp <- function(pafi, vent, na_val) {
-  ifelse(
-    is_true(pafi < 100), 4L, ifelse(
-      is_true(pafi < 200), 3L, ifelse(
-        is_true(pafi < 300 & vent), 2L, ifelse(
-          is_true(pafi < 400 & vent), 1L, ifelse(
-            is.na(pafi), na_val, 0L
-          )
+  fifelse(
+    is_true(pafi < 100), 4L, fifelse(
+      is_true(pafi < 200), 3L, fifelse(
+        is_true(pafi < 300 & vent), 2L, fifelse(
+          is_true(pafi < 400 & vent), 1L, 0L, na_val
         )
       )
     )
@@ -143,21 +183,19 @@ sofa_resp <- function(pafi, vent, na_val) {
 }
 
 sofa_coag <- function(x, na_val) {
-  ifelse(is.na(x), na_val, 4L - findInterval(x, c(20, 50, 100, 150)))
+  fifelse(is.na(x), na_val, 4L - findInterval(x, c(20, 50, 100, 150)))
 }
 
 sofa_liver <- function(x, na_val) {
-  ifelse(is.na(x), na_val, findInterval(x, c(1.2, 2, 6, 12)))
+  fifelse(is.na(x), na_val, findInterval(x, c(1.2, 2, 6, 12)))
 }
 
 sofa_cardio <- function(map, dopa, norepi, dobu, epi, na_val) {
-  ifelse(
-    is_true(dopa > 15 | epi > 0.1 | norepi > 0.1), 4L, ifelse(
-      is_true(dopa > 5 | epi <= 0.1 | norepi <= 0.1), 3L, ifelse(
-        is_true(dopa <= 5 | !is.na(dobu)), 2L, ifelse(
-          is_true(map < 70), 1L, ifelse(
-            is.na(map), na_val, 0L
-          )
+  fifelse(
+    is_true(dopa > 15 | epi > 0.1 | norepi > 0.1), 4L, fifelse(
+      is_true(dopa > 5 | epi <= 0.1 | norepi <= 0.1), 3L, fifelse(
+        is_true(dopa <= 5 | !is.na(dobu)), 2L, fifelse(
+          is_true(map < 70), 1L, 0L, na_val
         )
       )
     )
@@ -165,17 +203,15 @@ sofa_cardio <- function(map, dopa, norepi, dobu, epi, na_val) {
 }
 
 sofa_cns <- function(x, na_val) {
-  ifelse(is.na(x), na_val, 4L - findInterval(x, c(6, 10, 13, 15)))
+  fifelse(is.na(x), na_val, 4L - findInterval(x, c(6, 10, 13, 15)))
 }
 
 sofa_renal <- function(cre, uri, na_val) {
-  ifelse(
-    is_true(cre >= 5 | uri < 200), 4L, ifelse(
-      is_true((cre >= 3.5 & cre < 5) | uri < 500), 3L, ifelse(
-        is_true(cre >= 2 & cre < 3.5), 2L, ifelse(
-          is_true(cre >= 1.2 & cre < 2), 1L, ifelse(
-            is.na(cre) & is.na(uri), na_val, 0L
-          )
+  fifelse(
+    is_true(cre >= 5 | uri < 200), 4L, fifelse(
+      is_true((cre >= 3.5 & cre < 5) | uri < 500), 3L, fifelse(
+        is_true(cre >= 2 & cre < 3.5), 2L, fifelse(
+          is_true(cre >= 1.2 & cre < 2), 1L, 0L, na_val
         )
       )
     )
