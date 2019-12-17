@@ -37,6 +37,7 @@ eicu_fio2 <- function(add_chart_data = TRUE, interval = hours(1L),
                                 c(key(chart), index(chart), "respchartvalue"))
 
     chart <- make_unique(chart, fun = max)
+    chart <- chart[, fi_chart := suppressWarnings(as.numeric(fi_chart))]
 
     res <- merge(lab, chart, all = TRUE)
     res <- res[, fio2 := fifelse(is.na(fi_lab), fi_chart, fi_lab)]
@@ -287,17 +288,50 @@ eicu_urine24 <- function(min_win = hours(12L), interval = hours(1L),
                                    "patientunitstayid"),
                        interval = interval, envir = envir)
 
-  urine <- make_unique(urine, fun = sum)
+  urine <- rename_cols(urine, c("hadm_id", "icustay_id", "hadm_time", "urine"),
+                       c(key(urine), index(urine), "cellvaluenumeric"))
+
+  urine <- make_unique(urine, fun = sum_or_na)
 
   icu_limits <- eicu_patient("unitdischargeoffset",
                              id_cols = c("patienthealthsystemstayid",
-                                         "patientunitstayid"))
-  icu_limits <- rename_cols(icu_limits, c("min", "max"),
-                            c("unitadmitoffset", "unitdischargeoffset"))
+                                         "patientunitstayid"),
+                             interval = interval, envir = envir)
 
-  res <- sofa_urine24(urine, icu_limits, min_win, interval)
+  icu_limits <- rename_cols(icu_limits,
+    c("hadm_id", "icustay_id", "min", "max"),
+    c(key(icu_limits), "unitadmitoffset", "unitdischargeoffset")
+  )
 
-  res <- rm_cols(res, "patientunitstayid")
+  sofa_urine24(urine, icu_limits, min_win, interval)
+}
 
-  rename_cols(res, c("hadm_id", "hadm_time"), c(key(res), index(res)))
+eicu_sofa_vars <- function(
+  pafi  = eicu_pafi(interval = interval, envir = envir),
+  vent  = eicu_vent(interval = interval, envir = envir),
+  coag  = eicu_coag(interval = interval, envir = envir),
+  bili  = eicu_bili(interval = interval, envir = envir),
+  map   = eicu_map(interval = interval, envir = envir),
+  vaso  = eicu_vaso(interval = interval, envir = envir),
+  gcs   = eicu_gcs(interval = interval, envir = envir),
+  crea  = eicu_crea(interval = interval, envir = envir),
+  urine = eicu_urine24(interval = interval, envir = envir),
+  interval = hours(1L), envir = "eicu") {
+
+  hadm <- eicu_patient(time_col = "hospitaldischargeoffset",
+                       interval = interval(pafi), envir = envir)
+  hadm <- rename_cols(hadm, c("hadm_id", "hadm_time"),
+                            c(key(hadm), index(hadm)))
+
+  sofa_vars(pafi, vent, coag, bili, map, vaso, gcs, crea, urine, unique(hadm))
+}
+
+#' @export
+eicu_sofa <- function(interval = hours(1L), envir = "eicu") {
+
+  tbl <- eicu_sofa_vars(interval = interval, envir = envir)
+  tbl <- sofa_window(tbl)
+  tbl <- sofa_compute(tbl)
+
+  tbl
 }

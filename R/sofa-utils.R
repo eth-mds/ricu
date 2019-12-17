@@ -104,7 +104,34 @@ sofa_urine24 <- function(urine, limits, min_win = hours(12L),
   expr <- substitute(list(urine_24 = win_agg_fun(urine)),
                      list(win_agg_fun = urine_sum))
 
-  slide_quo(res, expr, hours(24L))
+  res <- slide_quo(res, expr, hours(24L))
+
+  res <- rm_cols(res, "icustay_id")
+
+  make_unique(res, fun = sum_or_na)
+}
+
+sofa_vars <- function(pafi, vent, coag, bili, map, vaso, gcs, crea, urine,
+                      admissions) {
+
+  tables <- list(pafi, vent, coag, bili, map, vaso, gcs, crea, urine)
+
+  assert_that(all(vapply(tables, same_ts, logical(1L), admissions)))
+
+  dat <- reduce(merge, tables, all = TRUE)
+
+  limits <- dat[, list(min = min(get(index(dat))), max = max(get(index(dat)))),
+                by = c(key(dat))]
+  limits <- merge(limits, admissions, by.x = key(dat), by.y = key(admissions),
+                  all.x = TRUE)
+
+  limits <- limits[,
+    list(hadm_id = hadm_id,
+         min = pmin(as.difftime(0, units = time_unit(dat)), min, na.rm = TRUE),
+         max = pmax(max, hadm_time, na.rm = TRUE)),
+  ]
+
+  fill_gaps(dat, limits = limits)
 }
 
 sofa_window <- function(tbl,

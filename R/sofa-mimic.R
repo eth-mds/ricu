@@ -257,25 +257,6 @@ mimic_crea <- function(interval = hours(1L), envir = "mimic") {
   make_unique(res, fun = max)
 }
 
-mimic_urine <- function(interval = hours(1L), envir = "mimic") {
-
-  message("fetching urine measurements")
-
-  itms <- c( 40055L,  40056L,  40057L,  40065L,  40069L,  40085L,  40086L,
-             40094L,  40096L,  40405L,  40428L,  40473L,  40715L,  43175L,
-            226557L, 226558L, 226559L, 226560L, 226561L, 226563L, 226564L,
-            226565L, 226566L, 226567L, 226584L, 227510L)
-
-  res <- mimic_output("value",
-                      substitute(itemid %in% ids, list(ids = itms)),
-                      id_cols = c("hadm_id", "icustay_id"),
-                      interval = interval, envir = envir)
-
-  res <- rm_cols(res, "valueuom")
-  res <- rename_cols(res, c("hadm_time", "urine"), c(index(res), "value"))
-  make_unique(res, fun = sum)
-}
-
 mimic_urine24 <- function(min_win = hours(12L), interval = hours(1L),
                           envir = "mimic") {
 
@@ -292,18 +273,18 @@ mimic_urine24 <- function(min_win = hours(12L), interval = hours(1L),
                         interval = interval, envir = envir)
 
   urine <- rm_cols(urine, "valueuom")
-  urine <- make_unique(urine, fun = sum)
+
+  urine <- rename_cols(urine, c("hadm_time", "urine"),
+                              c(index(urine), "value"))
+
+  urine <- make_unique(urine, fun = sum_or_na)
 
   icu_limits <- mimic_icustays("outtime", id_cols = c("hadm_id", "icustay_id"),
                                interval = interval, envir = envir)
   icu_limits <- rename_cols(icu_limits, c("min", "max"),
                             c("intime", "outtime"))
 
-  res <- sofa_urine24(urine, icu_limits, min_win, interval)
-
-  res <- rm_cols(res, "icustay_id")
-
-  rename_cols(res, c("hadm_id", "hadm_time"), c(key(res), index(res)))
+  sofa_urine24(urine, icu_limits, min_win, interval)
 }
 
 mimic_sofa_vars <- function(
@@ -318,26 +299,10 @@ mimic_sofa_vars <- function(
   urine = mimic_urine24(interval = interval, envir = envir),
   interval = hours(1L), envir = "mimic") {
 
-  tables <- list(pafi, vent, coag, bili, map, vaso, gcs, crea, urine)
-
-  assert_that(all(vapply(tables, same_ts, logical(1L), tables[[1L]])))
-
-  dat <- reduce(merge, tables, all = TRUE)
-
   hadm <- mimic_admissions(interval = interval(pafi), envir = envir)
+  hadm <- rename_cols(hadm, "hadm_time", index(res))
 
-  limits <- dat[, list(min = min(get(index(dat))), max = max(get(index(dat)))),
-                by = c(key(dat))]
-  limits <- merge(limits, hadm, by.x = key(dat), by.y = "hadm_id",
-                  all.x = TRUE)
-
-  limits <- limits[,
-    list(hadm_id = hadm_id,
-         min = pmin(as.difftime(0, units = time_unit(dat)), min, na.rm = TRUE),
-         max = pmax(max, dischtime, na.rm = TRUE)),
-  ]
-
-  fill_gaps(dat, limits = limits)
+  sofa_vars(pafi, vent, coag, bili, map, vaso, gcs, crea, urine, hadm)
 }
 
 #' @export
