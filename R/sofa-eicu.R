@@ -238,6 +238,9 @@ eicu_gcs <- function(win_length = hours(6L), set_na_max = TRUE, ...,
   tbl <- rename_cols(tbl, c("hadm_id", "hadm_time", "gcs"),
                             c(key(tbl), index(tbl), "nursingchartvalue"))
 
+  tbl <- tbl[gcs == "Unable to score due to medication", gcs := 15]
+  tbl <- tbl[, gcs := as.numeric(gcs)]
+
   sed <- eicu_vent(..., interval = interval, envir = envir)
 
   res <- merge(tbl, sed, by = id_cols(tbl), all.x = TRUE)
