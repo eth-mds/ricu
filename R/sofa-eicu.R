@@ -275,3 +275,29 @@ eicu_crea <- function(interval = hours(1L), envir = "eicu") {
 
   make_unique(res, fun = max)
 }
+
+eicu_urine24 <- function(min_win = hours(12L), interval = hours(1L),
+                         envir = "eicu") {
+
+  message("fetching urine measurements")
+
+  urine <- eicu_in_out("cellvaluenumeric",
+                       quote(celllabel %in% c("Urine", "URINE CATHETER")),
+                       id_cols = c("patienthealthsystemstayid",
+                                   "patientunitstayid"),
+                       interval = interval, envir = envir)
+
+  urine <- make_unique(urine, fun = sum)
+
+  icu_limits <- eicu_patient("unitdischargeoffset",
+                             id_cols = c("patienthealthsystemstayid",
+                                         "patientunitstayid"))
+  icu_limits <- rename_cols(icu_limits, c("min", "max"),
+                            c("unitadmitoffset", "unitdischargeoffset"))
+
+  res <- sofa_urine24(urine, icu_limits, min_win, interval)
+
+  res <- rm_cols(res, "patientunitstayid")
+
+  rename_cols(res, c("hadm_id", "hadm_time"), c(key(res), index(res)))
+}

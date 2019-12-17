@@ -81,6 +81,32 @@ sofa_vent <- function(vent_start, vent_stop, win_length = hours(6L),
   res
 }
 
+sofa_urine24 <- function(urine, limits, min_win = hours(12L),
+                         interval = hours(1L)) {
+
+  convert_dt <- function(x) as.double(x, units(interval))
+
+  urine_sum <- local({
+
+    min_steps <- ceiling(convert_dt(min_win) / as.double(interval))
+    step_factor <- convert_dt(hours(24L)) / as.double(interval)
+
+    function(x) {
+      if (length(x) <= min_steps) return(NA_real_)
+      else sum(x, na.rm = TRUE) * step_factor / length(x)
+    }
+  })
+
+  assert_that(is_time(min_win, allow_neg = FALSE), min_win <= hours(24L))
+
+  res <- fill_gaps(urine, limits = limits)
+
+  expr <- substitute(list(urine_24 = win_agg_fun(urine)),
+                     list(win_agg_fun = urine_sum))
+
+  slide_quo(res, expr, hours(24L))
+}
+
 sofa_window <- function(tbl,
                         pafi_win_fun   = min_or_na, vent_win_fun  = last_elem,
                         coag_win_fun   = min_or_na, bili_win_fun  = max_or_na,

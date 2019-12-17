@@ -8,6 +8,14 @@ eicu_inf_drug <- function(cols = character(0L), rows = NULL,
 }
 
 #' @export
+eicu_in_out <- function(cols = character(0L), rows = NULL,
+                        id_cols = "patienthealthsystemstayid",
+                        time_col = "intakeoutputoffset", ...) {
+
+  eicu_ts_quo("intakeoutput", rows, cols, id_cols, time_col, ...)
+}
+
+#' @export
 eicu_lab <- function(cols = character(0L), rows = NULL,
                      id_cols = "patienthealthsystemstayid",
                      time_col = "labresultoffset", ...) {

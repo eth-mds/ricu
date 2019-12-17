@@ -14,6 +14,7 @@ expand_limits <- function(x, min_col = "min", max_col = "max", step_size = 1L,
   unit <- units(x[[min_col]])
 
   x <- na.omit(x, c(id_cols, min_col, max_col))
+  x <- x[min <= max, ]
 
   res <- x[, lapply(.SD, as.double), .SDcols = c(min_col, max_col),
            by = id_cols]
