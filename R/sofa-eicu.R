@@ -9,7 +9,7 @@ eicu_pao2 <- function(interval = hours(1L), envir = "eicu") {
   res <- rename_cols(res, c("hadm_id", "hadm_time", "pao2"),
                           c(key(res), index(res), "labresult"))
 
-  make_unique(res, fun = min)
+  make_unique(res, fun = min_or_na)
 }
 
 eicu_fio2 <- function(add_chart_data = TRUE, interval = hours(1L),
@@ -25,7 +25,7 @@ eicu_fio2 <- function(add_chart_data = TRUE, interval = hours(1L),
     c(key(lab), index(lab), "labresult")
   )
 
-  lab <- make_unique(lab, fun = max)
+  lab <- make_unique(lab, fun = max_or_na)
 
   if (add_chart_data) {
 
@@ -36,7 +36,7 @@ eicu_fio2 <- function(add_chart_data = TRUE, interval = hours(1L),
     chart <- rename_cols(chart, c("hadm_id", "hadm_time", "fi_chart"),
                                 c(key(chart), index(chart), "respchartvalue"))
 
-    chart <- make_unique(chart, fun = max)
+    chart <- make_unique(chart, fun = max_or_na)
     chart <- chart[, fi_chart := suppressWarnings(as.numeric(fi_chart))]
 
     res <- merge(lab, chart, all = TRUE)
@@ -140,7 +140,7 @@ eicu_coag <- function(interval = hours(1L), envir = "eicu") {
   res <- rename_cols(res, c("hadm_id", "hadm_time", "coag"),
                           c(key(res), index(res), "labresult"))
 
-  make_unique(res, fun = min)
+  make_unique(res, fun = min_or_na)
 }
 
 eicu_bili <- function(interval = hours(1L), envir = "eicu") {
@@ -153,7 +153,7 @@ eicu_bili <- function(interval = hours(1L), envir = "eicu") {
   res <- rename_cols(res, c("hadm_id", "hadm_time", "bili"),
                           c(key(res), index(res), "labresult"))
 
-  make_unique(res, fun = max)
+  make_unique(res, fun = max_or_na)
 }
 
 eicu_map <- function(interval = hours(1L), envir = "eicu") {
@@ -167,7 +167,7 @@ eicu_map <- function(interval = hours(1L), envir = "eicu") {
   peri <- rename_cols(peri, c("hadm_id", "hadm_time", "map"),
                             c(key(peri), index(peri), "systemicmean"))
 
-  make_unique(rbind(aper, peri), fun = min)
+  make_unique(rbind(aper, peri), fun = min_or_na)
 }
 
 eicu_vaso <- function(interval = hours(1L), envir = "eicu") {
@@ -212,7 +212,7 @@ eicu_vaso <- function(interval = hours(1L), envir = "eicu") {
     tbl <- rename_cols(tbl, c("hadm_id", "hadm_time", name),
                             c(key(tbl), index(tbl), "drugrate"))
 
-    make_unique(tbl, fun = max)
+    make_unique(tbl, fun = max_or_na)
   }
 
   patient <- get_table("patient", envir)
@@ -253,7 +253,7 @@ eicu_gcs <- function(win_length = hours(6L), set_na_max = TRUE, ...,
   }
 
   res <- rm_cols(res, "vent")
-  res <- make_unique(res, fun = min)
+  res <- make_unique(res, fun = min_or_na)
 
   # TODO: expand before sliding, also in mimic
 
@@ -277,7 +277,7 @@ eicu_crea <- function(interval = hours(1L), envir = "eicu") {
   res <- rename_cols(res, c("hadm_id", "hadm_time", "crea"),
                           c(key(res), index(res), "labresult"))
 
-  make_unique(res, fun = max)
+  make_unique(res, fun = max_or_na)
 }
 
 eicu_urine24 <- function(min_win = hours(12L), interval = hours(1L),

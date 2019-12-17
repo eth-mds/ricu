@@ -8,7 +8,7 @@ mimic_pao2 <- function(interval = hours(1L), envir = "mimic") {
   res <- rm_cols(res, "valueuom")
   res <- rename_cols(res, c("hadm_time", "pao2"), c(index(res), "valuenum"))
 
-  make_unique(res, fun = min)
+  make_unique(res, fun = min_or_na)
 }
 
 mimic_fio2 <- function(add_chart_data = TRUE, interval = hours(1L),
@@ -24,7 +24,7 @@ mimic_fio2 <- function(add_chart_data = TRUE, interval = hours(1L),
     c(index(lab), "valuenum")
   )
 
-  lab <- make_unique(lab, fun = max)
+  lab <- make_unique(lab, fun = max_or_na)
 
   if (add_chart_data) {
 
@@ -35,7 +35,7 @@ mimic_fio2 <- function(add_chart_data = TRUE, interval = hours(1L),
     chart <- rename_cols(chart, c("hadm_time", "fi_chart"),
                          c(index(chart), "valuenum"))
 
-    chart <- make_unique(chart, fun = max)
+    chart <- make_unique(chart, fun = max_or_na)
 
     res <- merge(lab, chart, all = TRUE)
     res <- res[, fio2 := fifelse(is.na(fi_lab), fi_chart, fi_lab)]
@@ -113,7 +113,7 @@ mimic_coag <- function(interval = hours(1L), envir = "mimic") {
   res <- rm_cols(res, "valueuom")
   res <- rename_cols(res, c("hadm_time", "coag"), c(index(res), "valuenum"))
 
-  make_unique(res, fun = min)
+  make_unique(res, fun = min_or_na)
 }
 
 mimic_bili <- function(interval = hours(1L), envir = "mimic") {
@@ -125,7 +125,7 @@ mimic_bili <- function(interval = hours(1L), envir = "mimic") {
   res <- rm_cols(res, "valueuom")
   res <- rename_cols(res, c("hadm_time", "bili"), c(index(res), "valuenum"))
 
-  make_unique(res, fun = max)
+  make_unique(res, fun = max_or_na)
 }
 
 mimic_map <- function(interval = hours(1L), envir = "mimic") {
@@ -141,7 +141,7 @@ mimic_map <- function(interval = hours(1L), envir = "mimic") {
   chart <- rename_cols(chart, c("hadm_time", "map"),
                        c(index(chart), "valuenum"))
 
-  make_unique(chart, fun = min)
+  make_unique(chart, fun = min_or_na)
 }
 
 mimic_vaso <- function(interval = hours(1L), envir = "mimic") {
@@ -159,7 +159,7 @@ mimic_vaso <- function(interval = hours(1L), envir = "mimic") {
       tmp <- rename_cols(tmp, c("hadm_time", names(items)[i]),
                          c(index(tmp), "rate"))
 
-      res[[i]] <- make_unique(tmp, fun = max)
+      res[[i]] <- make_unique(tmp, fun = max_or_na)
     }
 
     reduce(merge, res, all = TRUE)
@@ -180,7 +180,7 @@ mimic_vaso <- function(interval = hours(1L), envir = "mimic") {
   cv_dat <- get_items(cv_ids, mimic_input_cv)
   mv_dat <- get_items(mv_ids, mimic_input_mv)
 
-  make_unique(rbind(cv_dat, mv_dat), fun = max)
+  make_unique(rbind(cv_dat, mv_dat), fun = max_or_na)
 }
 
 mimic_gcs <- function(win_length = hours(6L), set_na_max = TRUE,
@@ -254,7 +254,7 @@ mimic_crea <- function(interval = hours(1L), envir = "mimic") {
   res <- rm_cols(res, "valueuom")
   res <- rename_cols(res, c("hadm_time", "crea"), c(index(res), "valuenum"))
 
-  make_unique(res, fun = max)
+  make_unique(res, fun = max_or_na)
 }
 
 mimic_urine24 <- function(min_win = hours(12L), interval = hours(1L),
@@ -300,7 +300,7 @@ mimic_sofa_vars <- function(
   interval = hours(1L), envir = "mimic") {
 
   hadm <- mimic_admissions(interval = interval(pafi), envir = envir)
-  hadm <- rename_cols(hadm, "hadm_time", index(res))
+  hadm <- rename_cols(hadm, "hadm_time", index(hadm))
 
   sofa_vars(pafi, vent, coag, bili, map, vaso, gcs, crea, urine, hadm)
 }
