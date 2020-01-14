@@ -225,10 +225,10 @@ sofa_compute <- function(tbl, na_val = 0L, na_val_resp = na_val,
 
 sofa_resp <- function(pafi, vent, na_val) {
   fifelse(
-    is_true(pafi < 100), 4L, fifelse(
-      is_true(pafi < 200), 3L, fifelse(
-        is_true(pafi < 300 & vent), 2L, fifelse(
-          is_true(pafi < 400 & vent), 1L, 0L, na_val
+    is_true(pafi < 100 & vent), 4L, fifelse(
+      is_true(pafi < 200 & vent), 3L, fifelse(
+        is_true(pafi < 300), 2L, fifelse(
+          is_true(pafi < 400), 1L, 0L, na_val
         )
       )
     )
