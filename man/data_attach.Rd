@@ -4,11 +4,13 @@
 \name{attach_mimic}
 \alias{attach_mimic}
 \alias{attach_eicu}
+\alias{attach_hirid}
 \alias{data}
 \alias{mimic}
 \alias{mimic_demo}
 \alias{eicu}
 \alias{eicu_demo}
+\alias{hirid}
 \alias{attach_datasource}
 \alias{setup_proxy_env}
 \title{Data attach utilities}
@@ -28,6 +30,8 @@ attach_eicu(
   envir = if (demo) eicu_demo else eicu
 )
 
+attach_hirid(dir = data_dir("hirid"), config = get_config("hirid-setup"))
+
 data
 
 mimic
@@ -37,6 +41,8 @@ mimic_demo
 eicu
 
 eicu_demo
+
+hirid
 
 attach_datasource(dir, config)
 

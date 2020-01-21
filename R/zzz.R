@@ -35,6 +35,7 @@
   attach_mimic(demo = FALSE)
   attach_eicu(demo = TRUE)
   attach_eicu(demo = FALSE)
+  attach_hirid()
 
   if (base::getRversion() < "3.6.2") {
 

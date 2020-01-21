@@ -1,0 +1,118 @@
+{
+  "name": "hirid_data",
+  "base_url": "https://physionet.org/files/hirid",
+  "version": "0.1",
+  "tables": {
+    "general": {
+      "col_spec": {
+        "patientid": {
+          "type": "col_integer"
+        },
+        "admissiontime": {
+          "type": "col_datetime",
+          "format": "%Y-%m-%d %H:%M:%S"
+        },
+        "sex": {
+          "type": "col_character"
+        },
+        "age": {
+          "type": "col_integer"
+        }
+      }
+    },
+    "observations": {
+      "col_spec": {
+        "patientid": {
+          "type": "col_integer"
+        },
+        "datetime": {
+          "type": "col_datetime",
+          "format": "%Y-%m-%d %H:%M:%S"
+        },
+        "entertime": {
+          "type": "col_datetime",
+          "format": "%Y-%m-%d %H:%M:%S"
+        },
+        "status": {
+          "type": "col_integer"
+        },
+        "stringvalue": {
+          "type": "col_character"
+        },
+        "type": {
+          "type": "col_character"
+        },
+        "value": {
+          "type": "col_double"
+        },
+        "variableid": {
+          "type": "col_integer"
+        }
+      },
+      "partitioning": {
+        "patientid": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16]
+      }
+    },
+    "ordinal": {
+      "col_spec": {
+        "variableid": {
+          "type": "col_integer"
+        },
+        "code": {
+          "type": "col_integer"
+        },
+        "stringvalue": {
+          "type": "col_character"
+        }
+      }
+    },
+    "pharma": {
+      "col_spec": {
+        "patientid": {
+          "type": "col_integer"
+        },
+        "pharmaid": {
+          "type": "col_integer"
+        },
+        "givenat": {
+          "type": "col_datetime",
+          "format": "%Y-%m-%d %H:%M:%S"
+        },
+        "enteredentryat": {
+          "type": "col_datetime",
+          "format": "%Y-%m-%d %H:%M:%S"
+        },
+        "givendose": {
+          "type": "col_double"
+        },
+        "cumulativedose": {
+          "type": "col_double"
+        },
+        "fluidamount_calc": {
+          "type": "col_double"
+        },
+        "cumulfluidamount_calc": {
+          "type": "col_double"
+        },
+        "doseunit": {
+          "type": "col_character"
+        },
+        "route": {
+          "type": "col_character"
+        },
+        "infusionid": {
+          "type": "col_integer"
+        },
+        "typeid": {
+          "type": "col_integer"
+        },
+        "subtypeid": {
+          "type": "col_double"
+        },
+        "recordstatus": {
+          "type": "col_integer"
+        }
+      }
+    }
+  }
+}

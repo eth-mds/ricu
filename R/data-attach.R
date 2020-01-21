@@ -39,9 +39,24 @@ attach_eicu <- function(demo = FALSE, dir = eicu_data_dir(demo),
 
   attach_datasource(dir, config)
 
-
   if (!is.null(envir)) {
     setup_proxy_env(config, envir)
+  }
+
+  invisible(NULL)
+}
+
+#' @rdname data_attach
+#'
+#' @export
+#'
+attach_hirid <- function(dir = data_dir("hirid"),
+                         config = get_config("hirid-setup")) {
+
+  attach_datasource(dir, config)
+
+  if (!is.null(hirid)) {
+    setup_proxy_env(config, hirid)
   }
 
   invisible(NULL)
@@ -76,6 +91,12 @@ eicu <- new.env()
 #' @export
 #'
 eicu_demo <- new.env()
+
+#' @rdname data_attach
+#'
+#' @export
+#'
+hirid <- new.env()
 
 #' @rdname data_attach
 #'
