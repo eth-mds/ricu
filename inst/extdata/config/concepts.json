@@ -1,0 +1,1431 @@
+{
+  "alanine_aminotransferase": {
+    "mimic": [
+      {
+        "id": 50861,
+        "table": "labevents",
+        "column": "itemid"
+      }
+    ],
+    "eicu": [
+      {
+        "id": "ALT (SGPT)",
+        "table": "lab",
+        "column": "labname"
+      }
+    ],
+    "hirid": [
+      {
+        "id": 20002600,
+        "table": "observations",
+        "column": "variableid"
+      }
+    ]
+  },
+  "albumin": {
+    "mimic": [
+      {
+        "id": 50862,
+        "table": "labevents",
+        "column": "itemid"
+      }
+    ],
+    "eicu": [
+      {
+        "id": "albumin",
+        "table": "lab",
+        "column": "labname"
+      }
+    ],
+    "hirid": [
+      {
+        "id": 24000605,
+        "table": "observations",
+        "column": "variableid"
+      }
+    ]
+  },
+  "alkaline_phosphatase": {
+    "mimic": [
+      {
+        "id": 50863,
+        "table": "labevents",
+        "column": "itemid"
+      }
+    ],
+    "eicu": [
+      {
+        "id": "alkaline phos.",
+        "table": "lab",
+        "column": "labname"
+      }
+    ],
+    "hirid": [
+      {
+        "id": 24000550,
+        "table": "observations",
+        "column": "variableid"
+      }
+    ]
+  },
+  "asparate_aminotransferase": {
+    "mimic": [
+      {
+        "id": 50878,
+        "table": "labevents",
+        "column": "itemid"
+      }
+    ],
+    "eicu": [
+      {
+        "id": "AST (SGOT)",
+        "table": "lab",
+        "column": "labname"
+      }
+    ],
+    "hirid": [
+      {
+        "id": 24000330,
+        "table": "observations",
+        "column": "variableid"
+      }
+    ]
+  },
+  "base_excess": {
+    "mimic": [
+      {
+        "id": 50802,
+        "table": "labevents",
+        "column": "itemid"
+      }
+    ],
+    "eicu": [
+      {
+        "id": "Base Excess",
+        "table": "lab",
+        "column": "labname"
+      }
+    ],
+    "hirid": [
+      {
+        "id": 20001300,
+        "table": "observations",
+        "column": "variableid"
+      }
+    ]
+  },
+  "basophils": {
+    "mimic": [
+      {
+        "id": 51146,
+        "table": "labevents",
+        "column": "itemid"
+      }
+    ],
+    "eicu": [
+      {
+        "id": "-basos",
+        "table": "lab",
+        "column": "labname"
+      }
+    ],
+    "hirid": [
+      {
+        "id": {},
+        "table": "observations",
+        "column": "variableid"
+      }
+    ]
+  },
+  "bicarbonate": {
+    "mimic": [
+      {
+        "id": 50882,
+        "table": "labevents",
+        "column": "itemid"
+      }
+    ],
+    "eicu": [
+      {
+        "id": "bicarbonate",
+        "table": "lab",
+        "column": "labname"
+      }
+    ],
+    "hirid": [
+      {
+        "id": 20004200,
+        "table": "observations",
+        "column": "variableid"
+      }
+    ]
+  },
+  "bilirubin_total": {
+    "mimic": [
+      {
+        "id": 50885,
+        "table": "labevents",
+        "column": "itemid"
+      }
+    ],
+    "eicu": [
+      {
+        "id": "total bilirubin",
+        "table": "lab",
+        "column": "labname"
+      }
+    ],
+    "hirid": [
+      {
+        "id": 20004300,
+        "table": "observations",
+        "column": "variableid"
+      }
+    ]
+  },
+  "c_reactive_protein": {
+    "mimic": [
+      {
+        "id": 50889,
+        "table": "labevents",
+        "column": "itemid"
+      }
+    ],
+    "eicu": [
+      {
+        "id": "CRP",
+        "table": "lab",
+        "column": "labname"
+      }
+    ],
+    "hirid": [
+      {
+        "id": 20002200,
+        "table": "observations",
+        "column": "variableid"
+      }
+    ]
+  },
+  "calcium": {
+    "mimic": [
+      {
+        "id": 50893,
+        "table": "labevents",
+        "column": "itemid"
+      }
+    ],
+    "eicu": [
+      {
+        "id": "calcium",
+        "table": "lab",
+        "column": "labname"
+      }
+    ],
+    "hirid": [
+      {
+        "id": 20005100,
+        "table": "observations",
+        "column": "variableid"
+      }
+    ]
+  },
+  "calcium_ionized": {
+    "mimic": [
+      {
+        "id": 50808,
+        "table": "labevents",
+        "column": "itemid"
+      }
+    ],
+    "eicu": [
+      {
+        "id": "ionized calcium",
+        "table": "lab",
+        "column": "labname"
+      }
+    ],
+    "hirid": [
+      {
+        "id": 24000522,
+        "table": "observations",
+        "column": "variableid"
+      }
+    ]
+  },
+  "calculated_total_co2": {
+    "mimic": [
+      {
+        "id": 50804,
+        "table": "labevents",
+        "column": "itemid"
+      }
+    ],
+    "eicu": [
+      {
+        "id": "Total CO2",
+        "table": "lab",
+        "column": "labname"
+      }
+    ],
+    "hirid": [
+      {
+        "id": {},
+        "table": "observations",
+        "column": "variableid"
+      }
+    ]
+  },
+  "carboxyhemoglobin": {
+    "mimic": [
+      {
+        "id": 0,
+        "table": "labevents",
+        "column": "itemid"
+      }
+    ],
+    "eicu": [
+      {
+        "id": "Carboxyhemoglobin",
+        "table": "lab",
+        "column": "labname"
+      }
+    ],
+    "hirid": [
+      {
+        "id": 24000526,
+        "table": "observations",
+        "column": "variableid"
+      }
+    ]
+  },
+  "chloride": {
+    "mimic": [
+      {
+        "id": 50902,
+        "table": "labevents",
+        "column": "itemid"
+      }
+    ],
+    "eicu": [
+      {
+        "id": "chloride",
+        "table": "lab",
+        "column": "labname"
+      }
+    ],
+    "hirid": [
+      {
+        "id": 24000439,
+        "table": "observations",
+        "column": "variableid"
+      },
+      {
+        "id": 24000521,
+        "table": "observations",
+        "column": "variableid"
+      }
+    ]
+  },
+  "creatine_kinase": {
+    "mimic": [
+      {
+        "id": 50910,
+        "table": "labevents",
+        "column": "itemid"
+      }
+    ],
+    "eicu": [
+      {
+        "id": "CPK",
+        "table": "lab",
+        "column": "labname"
+      }
+    ],
+    "hirid": [
+      {
+        "id": 24000210,
+        "table": "observations",
+        "column": "variableid"
+      }
+    ]
+  },
+  "creatine_kinase_mb": {
+    "mimic": [
+      {
+        "id": 50911,
+        "table": "labevents",
+        "column": "itemid"
+      }
+    ],
+    "eicu": [
+      {
+        "id": "CPK-MB",
+        "table": "lab",
+        "column": "labname"
+      }
+    ],
+    "hirid": [
+      {
+        "id": 24000220,
+        "table": "observations",
+        "column": "variableid"
+      }
+    ]
+  },
+  "creatinine": {
+    "mimic": [
+      {
+        "id": 50912,
+        "table": "labevents",
+        "column": "itemid"
+      }
+    ],
+    "eicu": [
+      {
+        "id": "creatinine",
+        "table": "lab",
+        "column": "labname"
+      }
+    ],
+    "hirid": [
+      {
+        "id": 20000600,
+        "table": "observations",
+        "column": "variableid"
+      }
+    ]
+  },
+  "diastolic_bp": {
+    "mimic": [
+      {
+        "id": 220051,
+        "table": "chartevents",
+        "column": "itemid"
+      },
+      {
+        "id": 8368,
+        "table": "chartevents",
+        "column": "itemid"
+      },
+      {
+        "id": 8441,
+        "table": "chartevents",
+        "column": "itemid"
+      },
+      {
+        "id": 8555,
+        "table": "chartevents",
+        "column": "itemid"
+      },
+      {
+        "id": 220180,
+        "table": "chartevents",
+        "column": "itemid"
+      }
+    ],
+    "eicu": [
+      {
+        "id": {},
+        "table": "vitalperiodic",
+        "column": "systemicdiastolic"
+      }
+    ],
+    "hirid": [
+      {
+        "id": 120,
+        "table": "observations",
+        "column": "variableid"
+      }
+    ]
+  },
+  "eosinophils": {
+    "mimic": [
+      {
+        "id": 51200,
+        "table": "labevents",
+        "column": "itemid"
+      }
+    ],
+    "eicu": [
+      {
+        "id": "-eos",
+        "table": "lab",
+        "column": "labname"
+      }
+    ],
+    "hirid": [
+      {
+        "id": {},
+        "table": "observations",
+        "column": "variableid"
+      }
+    ]
+  },
+  "fibrinogen": {
+    "mimic": [
+      {
+        "id": 51214,
+        "table": "labevents",
+        "column": "itemid"
+      }
+    ],
+    "eicu": [
+      {
+        "id": "fibrinogen",
+        "table": "lab",
+        "column": "labname"
+      }
+    ],
+    "hirid": [
+      {
+        "id": 24000536,
+        "table": "observations",
+        "column": "variableid"
+      }
+    ]
+  },
+  "fio2": {
+    "mimic": [
+      {
+        "id": 223835,
+        "table": "chartevents",
+        "column": "itemid"
+      },
+      {
+        "id": 3420,
+        "table": "chartevents",
+        "column": "itemid"
+      }
+    ],
+    "eicu": [
+      {
+        "id": "FiO2",
+        "table": "respiratorycharting",
+        "column": "respchartvaluelabel"
+      },
+      {
+        "id": "FiO2",
+        "table": "lab",
+        "column": "labname"
+      }
+    ],
+    "hirid": [
+      {
+        "id": 2010,
+        "table": "observations",
+        "column": "variableid"
+      }
+    ]
+  },
+  "glucose": {
+    "mimic": [
+      {
+        "id": 50809,
+        "table": "labevents",
+        "column": "itemid"
+      },
+      {
+        "id": 50931,
+        "table": "labevents",
+        "column": "itemid"
+      }
+    ],
+    "eicu": [
+      {
+        "id": "glucose",
+        "table": "lab",
+        "column": "labname"
+      },
+      {
+        "id": "bedside glucose",
+        "table": "lab",
+        "column": "labname"
+      }
+    ],
+    "hirid": [
+      {
+        "id": 20005110,
+        "table": "observations",
+        "column": "variableid"
+      },
+      {
+        "id": 24000523,
+        "table": "observations",
+        "column": "variableid"
+      },
+      {
+        "id": 24000585,
+        "table": "observations",
+        "column": "variableid"
+      }
+    ]
+  },
+  "heart_rate": {
+    "mimic": [
+      {
+        "id": 220045,
+        "table": "chartevents",
+        "column": "itemid"
+      },
+      {
+        "id": 211,
+        "table": "chartevents",
+        "column": "itemid"
+      }
+    ],
+    "eicu": [
+      {
+        "id": {},
+        "table": "vitalperiodic",
+        "column": "heartrate"
+      }
+    ],
+    "hirid": [
+      {
+        "id": 200,
+        "table": "observations",
+        "column": "variableid"
+      }
+    ]
+  },
+  "hematocrit": {
+    "mimic": [
+      {
+        "id": 51221,
+        "table": "labevents",
+        "column": "itemid"
+      }
+    ],
+    "eicu": [
+      {
+        "id": "Hct",
+        "table": "lab",
+        "column": "labname"
+      }
+    ],
+    "hirid": [
+      {
+        "id": {},
+        "table": "observations",
+        "column": "variableid"
+      }
+    ]
+  },
+  "hemoglobin": {
+    "mimic": [
+      {
+        "id": 51222,
+        "table": "labevents",
+        "column": "itemid"
+      }
+    ],
+    "eicu": [
+      {
+        "id": "Hgb",
+        "table": "lab",
+        "column": "labname"
+      }
+    ],
+    "hirid": [
+      {
+        "id": 24000548,
+        "table": "observations",
+        "column": "variableid"
+      },
+      {
+        "id": 20000900,
+        "table": "observations",
+        "column": "variableid"
+      },
+      {
+        "id": 24000836,
+        "table": "observations",
+        "column": "variableid"
+      }
+    ]
+  },
+  "inr_pt": {
+    "mimic": [
+      {
+        "id": 51237,
+        "table": "labevents",
+        "column": "itemid"
+      }
+    ],
+    "eicu": [
+      {
+        "id": "PT - INR",
+        "table": "lab",
+        "column": "labname"
+      }
+    ],
+    "hirid": [
+      {
+        "id": 24000567,
+        "table": "observations",
+        "column": "variableid"
+      }
+    ]
+  },
+  "lactate": {
+    "mimic": [
+      {
+        "id": 50813,
+        "table": "labevents",
+        "column": "itemid"
+      }
+    ],
+    "eicu": [
+      {
+        "id": "lactate",
+        "table": "lab",
+        "column": "labname"
+      }
+    ],
+    "hirid": [
+      {
+        "id": 24000524,
+        "table": "observations",
+        "column": "variableid"
+      }
+    ]
+  },
+  "lymphocytes": {
+    "mimic": [
+      {
+        "id": 51244,
+        "table": "labevents",
+        "column": "itemid"
+      }
+    ],
+    "eicu": [
+      {
+        "id": "-lymphs",
+        "table": "lab",
+        "column": "labname"
+      }
+    ],
+    "hirid": [
+      {
+        "id": 24000480,
+        "table": "observations",
+        "column": "variableid"
+      }
+    ]
+  },
+  "magnesium": {
+    "mimic": [
+      {
+        "id": 50960,
+        "table": "labevents",
+        "column": "itemid"
+      }
+    ],
+    "eicu": [
+      {
+        "id": "magnesium",
+        "table": "lab",
+        "column": "labname"
+      }
+    ],
+    "hirid": [
+      {
+        "id": 24000230,
+        "table": "observations",
+        "column": "variableid"
+      }
+    ]
+  },
+  "mch": {
+    "mimic": [
+      {
+        "id": 51248,
+        "table": "labevents",
+        "column": "itemid"
+      }
+    ],
+    "eicu": [
+      {
+        "id": "MCH",
+        "table": "lab",
+        "column": "labname"
+      }
+    ],
+    "hirid": [
+      {
+        "id": 24000160,
+        "table": "observations",
+        "column": "variableid"
+      }
+    ]
+  },
+  "mchc": {
+    "mimic": [
+      {
+        "id": 51249,
+        "table": "labevents",
+        "column": "itemid"
+      }
+    ],
+    "eicu": [
+      {
+        "id": "MCHC",
+        "table": "lab",
+        "column": "labname"
+      }
+    ],
+    "hirid": [
+      {
+        "id": 24000170,
+        "table": "observations",
+        "column": "variableid"
+      }
+    ]
+  },
+  "mcv": {
+    "mimic": [
+      {
+        "id": 51250,
+        "table": "labevents",
+        "column": "itemid"
+      }
+    ],
+    "eicu": [
+      {
+        "id": "MCV",
+        "table": "lab",
+        "column": "labname"
+      }
+    ],
+    "hirid": [
+      {
+        "id": 24000150,
+        "table": "observations",
+        "column": "variableid"
+      }
+    ]
+  },
+  "mean_bp": {
+    "mimic": [
+      {
+        "id": 220052,
+        "table": "chartevents",
+        "column": "itemid"
+      },
+      {
+        "id": 6072,
+        "table": "chartevents",
+        "column": "itemid"
+      },
+      {
+        "id": 456,
+        "table": "chartevents",
+        "column": "itemid"
+      },
+      {
+        "id": 52,
+        "table": "chartevents",
+        "column": "itemid"
+      },
+      {
+        "id": 220181,
+        "table": "chartevents",
+        "column": "itemid"
+      }
+    ],
+    "eicu": [
+      {
+        "id": {},
+        "table": "vitalperiodic",
+        "column": "systemicmean"
+      }
+    ],
+    "hirid": [
+      {
+        "id": 110,
+        "table": "observations",
+        "column": "variableid"
+      }
+    ]
+  },
+  "methemoglobin": {
+    "mimic": [
+      {
+        "id": 50814,
+        "table": "labevents",
+        "column": "itemid"
+      }
+    ],
+    "eicu": [
+      {
+        "id": "Methemoglobin",
+        "table": "lab",
+        "column": "labname"
+      }
+    ],
+    "hirid": [
+      {
+        "id": 24000549,
+        "table": "observations",
+        "column": "variableid"
+      }
+    ]
+  },
+  "neutrophils": {
+    "mimic": [
+      {
+        "id": 51256,
+        "table": "labevents",
+        "column": "itemid"
+      }
+    ],
+    "eicu": [
+      {
+        "id": "-polys",
+        "table": "lab",
+        "column": "labname"
+      }
+    ],
+    "hirid": [
+      {
+        "id": 24000550,
+        "table": "observations",
+        "column": "variableid"
+      }
+    ]
+  },
+  "o2_saturation": {
+    "mimic": [
+      {
+        "id": 220277,
+        "table": "chartevents",
+        "column": "itemid"
+      },
+      {
+        "id": 226253,
+        "table": "chartevents",
+        "column": "itemid"
+      },
+      {
+        "id": 646,
+        "table": "chartevents",
+        "column": "itemid"
+      },
+      {
+        "id": 50817,
+        "table": "labevents",
+        "column": "itemid"
+      }
+    ],
+    "eicu": [
+      {
+        "id": {},
+        "table": "vitalperiodic",
+        "column": "sao2"
+      },
+      {
+        "id": "O2 Sat (%)",
+        "table": "lab",
+        "column": "labname"
+      }
+    ],
+    "hirid": [
+      {
+        "id": 4000,
+        "table": "observations",
+        "column": "variableid"
+      },
+      {
+        "id": 8280,
+        "table": "observations",
+        "column": "variableid"
+      },
+      {
+        "id": 20000800,
+        "table": "observations",
+        "column": "variableid"
+      }
+    ]
+  },
+  "pa_co2": {
+    "mimic": [
+      {
+        "id": 50818,
+        "table": "labevents",
+        "column": "itemid"
+      }
+    ],
+    "eicu": [
+      {
+        "id": "paCO2",
+        "table": "lab",
+        "column": "labname"
+      }
+    ],
+    "hirid": [
+      {
+        "id": 20001200,
+        "table": "observations",
+        "column": "variableid"
+      }
+    ]
+  },
+  "pa_o2": {
+    "mimic": [
+      {
+        "id": 50821,
+        "table": "labevents",
+        "column": "itemid"
+      }
+    ],
+    "eicu": [
+      {
+        "id": "paO2",
+        "table": "lab",
+        "column": "labname"
+      }
+    ],
+    "hirid": [
+      {
+        "id": 20000200,
+        "table": "observations",
+        "column": "variableid"
+      }
+    ]
+  },
+  "ph": {
+    "mimic": [
+      {
+        "id": 50820,
+        "table": "labevents",
+        "column": "itemid"
+      }
+    ],
+    "eicu": [
+      {
+        "id": "pH",
+        "table": "lab",
+        "column": "labname"
+      }
+    ],
+    "hirid": [
+      {
+        "id": 20000300,
+        "table": "observations",
+        "column": "variableid"
+      }
+    ]
+  },
+  "phosphate": {
+    "mimic": [
+      {
+        "id": 50970,
+        "table": "labevents",
+        "column": "itemid"
+      }
+    ],
+    "eicu": [
+      {
+        "id": "phosphate",
+        "table": "lab",
+        "column": "labname"
+      }
+    ],
+    "hirid": [
+      {
+        "id": 20002500,
+        "table": "observations",
+        "column": "variableid"
+      }
+    ]
+  },
+  "platelet_count": {
+    "mimic": [
+      {
+        "id": 51265,
+        "table": "labevents",
+        "column": "itemid"
+      }
+    ],
+    "eicu": [
+      {
+        "id": "platelets x 1000",
+        "table": "lab",
+        "column": "labname"
+      }
+    ],
+    "hirid": [
+      {
+        "id": 20000110,
+        "table": "observations",
+        "column": "variableid"
+      }
+    ]
+  },
+  "potassium": {
+    "mimic": [
+      {
+        "id": 50971,
+        "table": "labevents",
+        "column": "itemid"
+      }
+    ],
+    "eicu": [
+      {
+        "id": "potassium",
+        "table": "lab",
+        "column": "labname"
+      }
+    ],
+    "hirid": [
+      {
+        "id": 20000500,
+        "table": "observations",
+        "column": "variableid"
+      },
+      {
+        "id": 24000520,
+        "table": "observations",
+        "column": "variableid"
+      },
+      {
+        "id": 24000833,
+        "table": "observations",
+        "column": "variableid"
+      },
+      {
+        "id": 24000867,
+        "table": "observations",
+        "column": "variableid"
+      }
+    ]
+  },
+  "prothrombine_time": {
+    "mimic": [
+      {
+        "id": 51274,
+        "table": "labevents",
+        "column": "itemid"
+      }
+    ],
+    "eicu": [
+      {
+        "id": "PT",
+        "table": "lab",
+        "column": "labname"
+      }
+    ],
+    "hirid": [
+      {
+        "id": {},
+        "table": "observations",
+        "column": "variableid"
+      }
+    ]
+  },
+  "ptt": {
+    "mimic": [
+      {
+        "id": 51275,
+        "table": "labevents",
+        "column": "itemid"
+      }
+    ],
+    "eicu": [
+      {
+        "id": "PTT",
+        "table": "lab",
+        "column": "labname"
+      }
+    ],
+    "hirid": [
+      {
+        "id": 20004410,
+        "table": "observations",
+        "column": "variableid"
+      }
+    ]
+  },
+  "rdw": {
+    "mimic": [
+      {
+        "id": 51277,
+        "table": "labevents",
+        "column": "itemid"
+      }
+    ],
+    "eicu": [
+      {
+        "id": "RDW",
+        "table": "lab",
+        "column": "labname"
+      }
+    ],
+    "hirid": [
+      {
+        "id": {},
+        "table": "observations",
+        "column": "variableid"
+      }
+    ]
+  },
+  "red_blood_cells": {
+    "mimic": [
+      {
+        "id": 51279,
+        "table": "labevents",
+        "column": "itemid"
+      }
+    ],
+    "eicu": [
+      {
+        "id": "RBC",
+        "table": "lab",
+        "column": "labname"
+      }
+    ],
+    "hirid": [
+      {
+        "id": {},
+        "table": "observations",
+        "column": "variableid"
+      }
+    ]
+  },
+  "respiratory_rate": {
+    "mimic": [
+      {
+        "id": 220210,
+        "table": "chartevents",
+        "column": "itemid"
+      },
+      {
+        "id": 224688,
+        "table": "chartevents",
+        "column": "itemid"
+      },
+      {
+        "id": 224689,
+        "table": "chartevents",
+        "column": "itemid"
+      },
+      {
+        "id": 224690,
+        "table": "chartevents",
+        "column": "itemid"
+      },
+      {
+        "id": 618,
+        "table": "chartevents",
+        "column": "itemid"
+      },
+      {
+        "id": 619,
+        "table": "chartevents",
+        "column": "itemid"
+      }
+    ],
+    "eicu": [
+      {
+        "id": {},
+        "table": "vitalperiodic",
+        "column": "respiration"
+      }
+    ],
+    "hirid": [
+      {
+        "id": 300,
+        "table": "observations",
+        "column": "variableid"
+      },
+      {
+        "id": 310,
+        "table": "observations",
+        "column": "variableid"
+      }
+    ]
+  },
+  "sedimentation_rate": {
+    "mimic": [
+      {
+        "id": 51288,
+        "table": "labevents",
+        "column": "itemid"
+      }
+    ],
+    "eicu": [
+      {
+        "id": {},
+        "table": "lab",
+        "column": "labname"
+      }
+    ],
+    "hirid": [
+      {
+        "id": 24000668,
+        "table": "observations",
+        "column": "variableid"
+      }
+    ]
+  },
+  "sodium": {
+    "mimic": [
+      {
+        "id": 50983,
+        "table": "labevents",
+        "column": "itemid"
+      }
+    ],
+    "eicu": [
+      {
+        "id": "sodium",
+        "table": "lab",
+        "column": "labname"
+      }
+    ],
+    "hirid": [
+      {
+        "id": 20000400,
+        "table": "observations",
+        "column": "variableid"
+      },
+      {
+        "id": 24000519,
+        "table": "observations",
+        "column": "variableid"
+      },
+      {
+        "id": 24000658,
+        "table": "observations",
+        "column": "variableid"
+      },
+      {
+        "id": 24000835,
+        "table": "observations",
+        "column": "variableid"
+      },
+      {
+        "id": 24000866,
+        "table": "observations",
+        "column": "variableid"
+      }
+    ]
+  },
+  "systolic_bp": {
+    "mimic": [
+      {
+        "id": 220050,
+        "table": "chartevents",
+        "column": "itemid"
+      },
+      {
+        "id": 51,
+        "table": "chartevents",
+        "column": "itemid"
+      },
+      {
+        "id": 455,
+        "table": "chartevents",
+        "column": "itemid"
+      },
+      {
+        "id": 6701,
+        "table": "chartevents",
+        "column": "itemid"
+      },
+      {
+        "id": 220179,
+        "table": "chartevents",
+        "column": "itemid"
+      }
+    ],
+    "eicu": [
+      {
+        "id": {},
+        "table": "vitalperiodic",
+        "column": "systemicsystolic"
+      }
+    ],
+    "hirid": [
+      {
+        "id": 100,
+        "table": "observations",
+        "column": "variableid"
+      }
+    ]
+  },
+  "troponin_t": {
+    "mimic": [
+      {
+        "id": 51003,
+        "table": "labevents",
+        "column": "itemid"
+      }
+    ],
+    "eicu": [
+      {
+        "id": "troponin - T",
+        "table": "lab",
+        "column": "labname"
+      }
+    ],
+    "hirid": [
+      {
+        "id": 24000538,
+        "table": "observations",
+        "column": "variableid"
+      },
+      {
+        "id": 24000806,
+        "table": "observations",
+        "column": "variableid"
+      }
+    ]
+  },
+  "urea_nitrogen": {
+    "mimic": [
+      {
+        "id": 51006,
+        "table": "labevents",
+        "column": "itemid"
+      }
+    ],
+    "eicu": [
+      {
+        "id": "BUN",
+        "table": "lab",
+        "column": "labname"
+      }
+    ],
+    "hirid": [
+      {
+        "id": 20004100,
+        "table": "observations",
+        "column": "variableid"
+      }
+    ]
+  },
+  "white_blood_cells": {
+    "mimic": [
+      {
+        "id": 51301,
+        "table": "labevents",
+        "column": "itemid"
+      }
+    ],
+    "eicu": [
+      {
+        "id": "WBC x 1000",
+        "table": "lab",
+        "column": "labname"
+      }
+    ],
+    "hirid": [
+      {
+        "id": 20000700,
+        "table": "observations",
+        "column": "variableid"
+      }
+    ]
+  }
+}
