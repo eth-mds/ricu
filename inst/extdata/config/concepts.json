@@ -438,6 +438,87 @@
       }
     ]
   },
+  "dobutamine": {
+    "mimic": [
+      {
+        "id": 221653,
+        "table": "inputevents_mv",
+        "column": "itemid"
+      },
+      {
+        "id": 30042,
+        "table": "inputevents_cv",
+        "column": "itemid"
+      },
+      {
+        "id": 30306,
+        "table": "inputevents_cv",
+        "column": "itemid"
+      }
+    ],
+    "eicu": [
+      {
+        "id": "Dobutamine (mcg/kg/min)",
+        "table": "infusiondrug",
+        "column": "drugname"
+      },
+      {
+        "id": "Dobutamine (ml/hr)",
+        "table": "infusiondrug",
+        "column": "drugname"
+      },
+      {
+        "id": "Dobutamine ()",
+        "table": "infusiondrug",
+        "column": "drugname"
+      }
+    ],
+    "hirid": [
+      {
+        "id": 426,
+        "table": "pharma",
+        "column": "variableid"
+      }
+    ]
+  },
+  "dopamine": {
+    "mimic": [
+      {
+        "id": 221662,
+        "table": "inputevents_mv",
+        "column": "itemid"
+      },
+      {
+        "id": 30043,
+        "table": "inputevents_cv",
+        "column": "itemid"
+      },
+      {
+        "id": 30125,
+        "table": "inputevents_cv",
+        "column": "itemid"
+      },
+      {
+        "id": 30307,
+        "table": "inputevents_cv",
+        "column": "itemid"
+      }
+    ],
+    "eicu": [
+      {
+        "id": "Dopamine (mcg/kg/min)",
+        "table": "infusiondrug",
+        "column": "drugname"
+      }
+    ],
+    "hirid": [
+      {
+        "id": {},
+        "table": "pharma",
+        "column": "variableid"
+      }
+    ]
+  },
   "eosinophils": {
     "mimic": [
       {
@@ -457,6 +538,74 @@
       {
         "id": {},
         "table": "observations",
+        "column": "variableid"
+      }
+    ]
+  },
+  "epinephrine": {
+    "mimic": [
+      {
+        "id": 221289,
+        "table": "inputevents_mv",
+        "column": "itemid"
+      },
+      {
+        "id": 30044,
+        "table": "inputevents_cv",
+        "column": "itemid"
+      },
+      {
+        "id": 30119,
+        "table": "inputevents_cv",
+        "column": "itemid"
+      },
+      {
+        "id": 30309,
+        "table": "inputevents_cv",
+        "column": "itemid"
+      }
+    ],
+    "eicu": [
+      {
+        "id": "Epinephrine (mcg/kg/min)",
+        "table": "infusiondrug",
+        "column": "drugname"
+      },
+      {
+        "id": "Epinephrine (ml/hr)",
+        "table": "infusiondrug",
+        "column": "drugname"
+      },
+      {
+        "id": "Epinephrine (mcg/min)",
+        "table": "infusiondrug",
+        "column": "drugname"
+      }
+    ],
+    "hirid": [
+      {
+        "id": 71,
+        "table": "pharma",
+        "column": "variableid"
+      },
+      {
+        "id": 1000750,
+        "table": "pharma",
+        "column": "variableid"
+      },
+      {
+        "id": 1000649,
+        "table": "pharma",
+        "column": "variableid"
+      },
+      {
+        "id": 1000650,
+        "table": "pharma",
+        "column": "variableid"
+      },
+      {
+        "id": 1000655,
+        "table": "pharma",
         "column": "variableid"
       }
     ]
@@ -512,6 +661,113 @@
     "hirid": [
       {
         "id": 2010,
+        "table": "observations",
+        "column": "variableid"
+      }
+    ]
+  },
+  "gcs_eye": {
+    "mimic": [
+      {
+        "id": 223900,
+        "table": "chartevents",
+        "column": "itemid"
+      },
+      {
+        "id": 723,
+        "table": "chartevents",
+        "column": "itemid"
+      }
+    ],
+    "eicu": [
+      {
+        "id": {},
+        "table": "nursecharting",
+        "column": "nursechartcelltypevalname"
+      }
+    ],
+    "hirid": [
+      {
+        "id": 10000100,
+        "table": "observations",
+        "column": "variableid"
+      }
+    ]
+  },
+  "gcs_motor": {
+    "mimic": [
+      {
+        "id": 220739,
+        "table": "chartevents",
+        "column": "itemid"
+      },
+      {
+        "id": 184,
+        "table": "chartevents",
+        "column": "itemid"
+      }
+    ],
+    "eicu": [
+      {
+        "id": {},
+        "table": "nursecharting",
+        "column": "nursechartcelltypevalname"
+      }
+    ],
+    "hirid": [
+      {
+        "id": 10000300,
+        "table": "observations",
+        "column": "variableid"
+      }
+    ]
+  },
+  "gcs_total": {
+    "mimic": [
+      {
+        "id": {},
+        "table": "chartevents",
+        "column": "itemid"
+      }
+    ],
+    "eicu": [
+      {
+        "id": "GCS Total",
+        "table": "nursecharting",
+        "column": "nursechartcelltypevalname"
+      }
+    ],
+    "hirid": [
+      {
+        "id": {},
+        "table": "observations",
+        "column": "variableid"
+      }
+    ]
+  },
+  "gcs_verbal": {
+    "mimic": [
+      {
+        "id": 223901,
+        "table": "chartevents",
+        "column": "itemid"
+      },
+      {
+        "id": 454,
+        "table": "chartevents",
+        "column": "itemid"
+      }
+    ],
+    "eicu": [
+      {
+        "id": {},
+        "table": "nursecharting",
+        "column": "nursechartcelltypevalname"
+      }
+    ],
+    "hirid": [
+      {
+        "id": 10000200,
         "table": "observations",
         "column": "variableid"
       }
@@ -894,6 +1150,64 @@
       }
     ]
   },
+  "norepinephrine": {
+    "mimic": [
+      {
+        "id": 221906,
+        "table": "inputevents_mv",
+        "column": "itemid"
+      },
+      {
+        "id": 30047,
+        "table": "inputevents_cv",
+        "column": "itemid"
+      },
+      {
+        "id": 30120,
+        "table": "inputevents_cv",
+        "column": "itemid"
+      }
+    ],
+    "eicu": [
+      {
+        "id": "Norepinephrine (mcg/kg/min)",
+        "table": "infusiondrug",
+        "column": "drugname"
+      },
+      {
+        "id": "Norepinephrine (ml/hr)",
+        "table": "infusiondrug",
+        "column": "drugname"
+      },
+      {
+        "id": "Norepinephrine (mcg/min)",
+        "table": "infusiondrug",
+        "column": "drugname"
+      }
+    ],
+    "hirid": [
+      {
+        "id": 1000462,
+        "table": "pharma",
+        "column": "variableid"
+      },
+      {
+        "id": 1000656,
+        "table": "pharma",
+        "column": "variableid"
+      },
+      {
+        "id": 1000657,
+        "table": "pharma",
+        "column": "variableid"
+      },
+      {
+        "id": 1000658,
+        "table": "pharma",
+        "column": "variableid"
+      }
+    ]
+  },
   "o2_saturation": {
     "mimic": [
       {
@@ -1146,6 +1460,29 @@
       }
     ]
   },
+  "rass_scale": {
+    "mimic": [
+      {
+        "id": {},
+        "table": {},
+        "column": {}
+      }
+    ],
+    "eicu": [
+      {
+        "id": "Sedation Score",
+        "table": "nursecharting",
+        "column": "nursingchartcelltypevalname"
+      }
+    ],
+    "hirid": [
+      {
+        "id": 15001565,
+        "table": "observations",
+        "column": "variableid"
+      }
+    ]
+  },
   "rdw": {
     "mimic": [
       {
@@ -1354,6 +1691,34 @@
       }
     ]
   },
+  "tracheostomy": {
+    "mimic": [
+      {
+        "id": "No Response-ETT",
+        "table": "chartevents",
+        "column": "value"
+      },
+      {
+        "id": "1.0 ET/Trach",
+        "table": "chartevents",
+        "column": "value"
+      }
+    ],
+    "eicu": [
+      {
+        "id": {},
+        "table": {},
+        "column": {}
+      }
+    ],
+    "hirid": [
+      {
+        "id": 15001552,
+        "table": "observations",
+        "column": "variableid"
+      }
+    ]
+  },
   "troponin_t": {
     "mimic": [
       {
@@ -1400,6 +1765,651 @@
     "hirid": [
       {
         "id": 20004100,
+        "table": "observations",
+        "column": "variableid"
+      }
+    ]
+  },
+  "urine_cumulative": {
+    "mimic": [
+      {
+        "id": {},
+        "table": "outputevents",
+        "column": "itemid"
+      }
+    ],
+    "eicu": [
+      {
+        "id": {},
+        "table": "nursecharting",
+        "column": "nursechartcelltypevalname"
+      }
+    ],
+    "hirid": [
+      {
+        "id": 30005110,
+        "table": "observations",
+        "column": "variableid"
+      }
+    ]
+  },
+  "urine_events": {
+    "mimic": [
+      {
+        "id": 40055,
+        "table": "outputevents",
+        "column": "itemid"
+      },
+      {
+        "id": 40056,
+        "table": "outputevents",
+        "column": "itemid"
+      },
+      {
+        "id": 40057,
+        "table": "outputevents",
+        "column": "itemid"
+      },
+      {
+        "id": 40065,
+        "table": "outputevents",
+        "column": "itemid"
+      },
+      {
+        "id": 40069,
+        "table": "outputevents",
+        "column": "itemid"
+      },
+      {
+        "id": 40085,
+        "table": "outputevents",
+        "column": "itemid"
+      },
+      {
+        "id": 40086,
+        "table": "outputevents",
+        "column": "itemid"
+      },
+      {
+        "id": 40094,
+        "table": "outputevents",
+        "column": "itemid"
+      },
+      {
+        "id": 40096,
+        "table": "outputevents",
+        "column": "itemid"
+      },
+      {
+        "id": 40405,
+        "table": "outputevents",
+        "column": "itemid"
+      },
+      {
+        "id": 40428,
+        "table": "outputevents",
+        "column": "itemid"
+      },
+      {
+        "id": 40473,
+        "table": "outputevents",
+        "column": "itemid"
+      },
+      {
+        "id": 40715,
+        "table": "outputevents",
+        "column": "itemid"
+      },
+      {
+        "id": 43175,
+        "table": "outputevents",
+        "column": "itemid"
+      },
+      {
+        "id": 226557,
+        "table": "outputevents",
+        "column": "itemid"
+      },
+      {
+        "id": 226558,
+        "table": "outputevents",
+        "column": "itemid"
+      },
+      {
+        "id": 226559,
+        "table": "outputevents",
+        "column": "itemid"
+      },
+      {
+        "id": 226560,
+        "table": "outputevents",
+        "column": "itemid"
+      },
+      {
+        "id": 226561,
+        "table": "outputevents",
+        "column": "itemid"
+      },
+      {
+        "id": 226563,
+        "table": "outputevents",
+        "column": "itemid"
+      },
+      {
+        "id": 226564,
+        "table": "outputevents",
+        "column": "itemid"
+      },
+      {
+        "id": 226565,
+        "table": "outputevents",
+        "column": "itemid"
+      },
+      {
+        "id": 226566,
+        "table": "outputevents",
+        "column": "itemid"
+      },
+      {
+        "id": 226567,
+        "table": "outputevents",
+        "column": "itemid"
+      },
+      {
+        "id": 226584,
+        "table": "outputevents",
+        "column": "itemid"
+      },
+      {
+        "id": 227510,
+        "table": "outputevents",
+        "column": "itemid"
+      }
+    ],
+    "eicu": [
+      {
+        "id": "Urine",
+        "table": "intakeoutput",
+        "column": "celllabel"
+      },
+      {
+        "id": "URINE CATHETER",
+        "table": "intakeoutput",
+        "column": "celllabel"
+      },
+      {
+        "id": "Urinary Catheter Output: Indwelling/Continuous Ure",
+        "table": "intakeoutput",
+        "column": "celllabel"
+      },
+      {
+        "id": "Indwelling Catheter Output",
+        "table": "intakeoutput",
+        "column": "celllabel"
+      }
+    ],
+    "hirid": [
+      {
+        "id": {},
+        "table": "observations",
+        "column": "variableid"
+      }
+    ]
+  },
+  "urine_hourly": {
+    "mimic": [
+      {
+        "id": {},
+        "table": "outputevents",
+        "column": "itemid"
+      }
+    ],
+    "eicu": [
+      {
+        "id": {},
+        "table": "nursecharting",
+        "column": "nursechartcelltypevalname"
+      }
+    ],
+    "hirid": [
+      {
+        "id": 10020000,
+        "table": "observations",
+        "column": "variableid"
+      }
+    ]
+  },
+  "vent_end": {
+    "mimic": [
+      {
+        "id": 227194,
+        "table": "procedureevents_mv",
+        "column": "itemid"
+      },
+      {
+        "id": 225468,
+        "table": "procedureevents_mv",
+        "column": "itemid"
+      },
+      {
+        "id": 225477,
+        "table": "procedureevents_mv",
+        "column": "itemid"
+      },
+      {
+        "id": 467,
+        "table": "chartevents",
+        "column": "itemid"
+      },
+      {
+        "id": 469,
+        "table": "chartevents",
+        "column": "itemid"
+      },
+      {
+        "id": 226732,
+        "table": "chartevents",
+        "column": "itemid"
+      }
+    ],
+    "eicu": [
+      {
+        "id": {},
+        "table": "respiratorycare",
+        "column": "ventendoffset"
+      },
+      {
+        "id": {},
+        "table": "respiratorycare",
+        "column": "priorventendoffset"
+      },
+      {
+        "id": "Off",
+        "table": "respiratorycharting",
+        "column": "respchartvalue"
+      },
+      {
+        "id": "off",
+        "table": "respiratorycharting",
+        "column": "respchartvalue"
+      },
+      {
+        "id": "Suspended",
+        "table": "respiratorycharting",
+        "column": "respchartvalue"
+      }
+    ],
+    "hirid": [
+      {
+        "id": 15001552,
+        "table": "observations",
+        "column": "variableid"
+      }
+    ]
+  },
+  "vent_start": {
+    "mimic": [
+      {
+        "id": 1,
+        "table": "chartevents",
+        "column": "itemid"
+      },
+      {
+        "id": 60,
+        "table": "chartevents",
+        "column": "itemid"
+      },
+      {
+        "id": 218,
+        "table": "chartevents",
+        "column": "itemid"
+      },
+      {
+        "id": 221,
+        "table": "chartevents",
+        "column": "itemid"
+      },
+      {
+        "id": 223,
+        "table": "chartevents",
+        "column": "itemid"
+      },
+      {
+        "id": 436,
+        "table": "chartevents",
+        "column": "itemid"
+      },
+      {
+        "id": 437,
+        "table": "chartevents",
+        "column": "itemid"
+      },
+      {
+        "id": 444,
+        "table": "chartevents",
+        "column": "itemid"
+      },
+      {
+        "id": 445,
+        "table": "chartevents",
+        "column": "itemid"
+      },
+      {
+        "id": 448,
+        "table": "chartevents",
+        "column": "itemid"
+      },
+      {
+        "id": 449,
+        "table": "chartevents",
+        "column": "itemid"
+      },
+      {
+        "id": 450,
+        "table": "chartevents",
+        "column": "itemid"
+      },
+      {
+        "id": 459,
+        "table": "chartevents",
+        "column": "itemid"
+      },
+      {
+        "id": 501,
+        "table": "chartevents",
+        "column": "itemid"
+      },
+      {
+        "id": 502,
+        "table": "chartevents",
+        "column": "itemid"
+      },
+      {
+        "id": 503,
+        "table": "chartevents",
+        "column": "itemid"
+      },
+      {
+        "id": 505,
+        "table": "chartevents",
+        "column": "itemid"
+      },
+      {
+        "id": 506,
+        "table": "chartevents",
+        "column": "itemid"
+      },
+      {
+        "id": 535,
+        "table": "chartevents",
+        "column": "itemid"
+      },
+      {
+        "id": 543,
+        "table": "chartevents",
+        "column": "itemid"
+      },
+      {
+        "id": 639,
+        "table": "chartevents",
+        "column": "itemid"
+      },
+      {
+        "id": 654,
+        "table": "chartevents",
+        "column": "itemid"
+      },
+      {
+        "id": 667,
+        "table": "chartevents",
+        "column": "itemid"
+      },
+      {
+        "id": 668,
+        "table": "chartevents",
+        "column": "itemid"
+      },
+      {
+        "id": 669,
+        "table": "chartevents",
+        "column": "itemid"
+      },
+      {
+        "id": 670,
+        "table": "chartevents",
+        "column": "itemid"
+      },
+      {
+        "id": 671,
+        "table": "chartevents",
+        "column": "itemid"
+      },
+      {
+        "id": 672,
+        "table": "chartevents",
+        "column": "itemid"
+      },
+      {
+        "id": 681,
+        "table": "chartevents",
+        "column": "itemid"
+      },
+      {
+        "id": 682,
+        "table": "chartevents",
+        "column": "itemid"
+      },
+      {
+        "id": 683,
+        "table": "chartevents",
+        "column": "itemid"
+      },
+      {
+        "id": 684,
+        "table": "chartevents",
+        "column": "itemid"
+      },
+      {
+        "id": 686,
+        "table": "chartevents",
+        "column": "itemid"
+      },
+      {
+        "id": 1211,
+        "table": "chartevents",
+        "column": "itemid"
+      },
+      {
+        "id": 1340,
+        "table": "chartevents",
+        "column": "itemid"
+      },
+      {
+        "id": 1486,
+        "table": "chartevents",
+        "column": "itemid"
+      },
+      {
+        "id": 1600,
+        "table": "chartevents",
+        "column": "itemid"
+      },
+      {
+        "id": 1655,
+        "table": "chartevents",
+        "column": "itemid"
+      },
+      {
+        "id": 2000,
+        "table": "chartevents",
+        "column": "itemid"
+      },
+      {
+        "id": 3459,
+        "table": "chartevents",
+        "column": "itemid"
+      },
+      {
+        "id": 5865,
+        "table": "chartevents",
+        "column": "itemid"
+      },
+      {
+        "id": 5866,
+        "table": "chartevents",
+        "column": "itemid"
+      },
+      {
+        "id": 220339,
+        "table": "chartevents",
+        "column": "itemid"
+      },
+      {
+        "id": 223848,
+        "table": "chartevents",
+        "column": "itemid"
+      },
+      {
+        "id": 223849,
+        "table": "chartevents",
+        "column": "itemid"
+      },
+      {
+        "id": 224419,
+        "table": "chartevents",
+        "column": "itemid"
+      },
+      {
+        "id": 224684,
+        "table": "chartevents",
+        "column": "itemid"
+      },
+      {
+        "id": 224685,
+        "table": "chartevents",
+        "column": "itemid"
+      },
+      {
+        "id": 224686,
+        "table": "chartevents",
+        "column": "itemid"
+      },
+      {
+        "id": 224687,
+        "table": "chartevents",
+        "column": "itemid"
+      },
+      {
+        "id": 224695,
+        "table": "chartevents",
+        "column": "itemid"
+      },
+      {
+        "id": 224696,
+        "table": "chartevents",
+        "column": "itemid"
+      },
+      {
+        "id": 224697,
+        "table": "chartevents",
+        "column": "itemid"
+      },
+      {
+        "id": 224700,
+        "table": "chartevents",
+        "column": "itemid"
+      },
+      {
+        "id": 224701,
+        "table": "chartevents",
+        "column": "itemid"
+      },
+      {
+        "id": 224702,
+        "table": "chartevents",
+        "column": "itemid"
+      },
+      {
+        "id": 224703,
+        "table": "chartevents",
+        "column": "itemid"
+      },
+      {
+        "id": 224704,
+        "table": "chartevents",
+        "column": "itemid"
+      },
+      {
+        "id": 224705,
+        "table": "chartevents",
+        "column": "itemid"
+      },
+      {
+        "id": 224706,
+        "table": "chartevents",
+        "column": "itemid"
+      },
+      {
+        "id": 224707,
+        "table": "chartevents",
+        "column": "itemid"
+      },
+      {
+        "id": 224709,
+        "table": "chartevents",
+        "column": "itemid"
+      },
+      {
+        "id": 224738,
+        "table": "chartevents",
+        "column": "itemid"
+      },
+      {
+        "id": 224746,
+        "table": "chartevents",
+        "column": "itemid"
+      },
+      {
+        "id": 224747,
+        "table": "chartevents",
+        "column": "itemid"
+      },
+      {
+        "id": 224750,
+        "table": "chartevents",
+        "column": "itemid"
+      },
+      {
+        "id": 226873,
+        "table": "chartevents",
+        "column": "itemid"
+      },
+      {
+        "id": 227187,
+        "table": "chartevents",
+        "column": "itemid"
+      }
+    ],
+    "eicu": [
+      {
+        "id": {},
+        "table": "respiratorycare",
+        "column": "ventstartoffset"
+      },
+      {
+        "id": {},
+        "table": "respiratorycare",
+        "column": "priorventstartoffset"
+      },
+      {
+        "id": "respFlowPtVentData",
+        "table": "respiratorycharting",
+        "column": "respcharttypecat"
+      }
+    ],
+    "hirid": [
+      {
+        "id": 15001552,
         "table": "observations",
         "column": "variableid"
       }

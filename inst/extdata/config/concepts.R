@@ -624,11 +624,335 @@ cfg <- list(
     hirid = list(
       list(id = 24000220L, table = "observations", column = "variableid")
     )
+  ),
+  gcs_eye = list(
+    mimic = list(
+      list(id = 223900L, table = "chartevents", column = "itemid"),
+      list(id = 723L, table = "chartevents", column = "itemid")
+    ),
+    eicu = list(
+      list(id = NULL, table = "nursecharting",
+           column = "nursechartcelltypevalname")
+    ),
+    hirid = list(
+      list(id = 10000100L, table = "observations", column = "variableid")
+    )
+  ),
+  gcs_verbal = list(
+    mimic = list(
+      list(id = 223901L, table = "chartevents", column = "itemid"),
+      list(id = 454L, table = "chartevents", column = "itemid")
+    ),
+    eicu = list(
+      list(id = NULL, table = "nursecharting",
+           column = "nursechartcelltypevalname")
+    ),
+    hirid = list(
+        list(id = 10000200L, table = "observations", column = "variableid")
+      )
+  ),
+  gcs_motor = list(
+    mimic = list(
+      list(id = 220739L, table = "chartevents", column = "itemid"),
+      list(id = 184L, table = "chartevents", column = "itemid")
+    ),
+    eicu = list(
+      list(id = NULL, table = "nursecharting",
+           column = "nursechartcelltypevalname")
+    ),
+    hirid = list(
+        list(id = 10000300L, table = "observations", column = "variableid")
+      )
+  ),
+  gcs_total = list(
+    mimic = list(
+      list(id = NULL, table = "chartevents", column = "itemid")
+    ),
+    eicu = list(
+      list(id = "GCS Total", table = "nursecharting",
+           column = "nursechartcelltypevalname")
+    ),
+    hirid = list(
+      list(id = NULL, table = "observations", column = "variableid")
+    )
+  ),
+  urine_events = list(
+    mimic = list(
+      list(id = 40055L, table = "outputevents", column = "itemid"),
+      list(id = 40056L, table = "outputevents", column = "itemid"),
+      list(id = 40057L, table = "outputevents", column = "itemid"),
+      list(id = 40065L, table = "outputevents", column = "itemid"),
+      list(id = 40069L, table = "outputevents", column = "itemid"),
+      list(id = 40085L, table = "outputevents", column = "itemid"),
+      list(id = 40086L, table = "outputevents", column = "itemid"),
+      list(id = 40094L, table = "outputevents", column = "itemid"),
+      list(id = 40096L, table = "outputevents", column = "itemid"),
+      list(id = 40405L, table = "outputevents", column = "itemid"),
+      list(id = 40428L, table = "outputevents", column = "itemid"),
+      list(id = 40473L, table = "outputevents", column = "itemid"),
+      list(id = 40715L, table = "outputevents", column = "itemid"),
+      list(id = 43175L, table = "outputevents", column = "itemid"),
+      list(id = 226557L, table = "outputevents", column = "itemid"),
+      list(id = 226558L, table = "outputevents", column = "itemid"),
+      list(id = 226559L, table = "outputevents", column = "itemid"),
+      list(id = 226560L, table = "outputevents", column = "itemid"),
+      list(id = 226561L, table = "outputevents", column = "itemid"),
+      list(id = 226563L, table = "outputevents", column = "itemid"),
+      list(id = 226564L, table = "outputevents", column = "itemid"),
+      list(id = 226565L, table = "outputevents", column = "itemid"),
+      list(id = 226566L, table = "outputevents", column = "itemid"),
+      list(id = 226567L, table = "outputevents", column = "itemid"),
+      list(id = 226584L, table = "outputevents", column = "itemid"),
+      list(id = 227510L, table = "outputevents", column = "itemid")
+    ),
+    eicu = list(
+      list(id = "Urine", table = "intakeoutput", column = "celllabel"),
+      list(id = "URINE CATHETER", table = "intakeoutput",
+           column = "celllabel"),
+      list(id = "Urinary Catheter Output: Indwelling/Continuous Ure",
+           table = "intakeoutput", column = "celllabel"),
+      list(id = "Indwelling Catheter Output", table = "intakeoutput",
+           column = "celllabel")
+    ),
+    hirid = list(
+      list(id = NULL, table = "observations", column = "variableid")
+    )
+  ),
+  urine_hourly = list(
+    mimic = list(
+      list(id = NULL, table = "outputevents", column = "itemid")
+    ),
+    eicu = list(
+      list(id = NULL, table = "nursecharting",
+           column = "nursechartcelltypevalname")
+    ),
+    hirid = list(
+      list(id = 10020000L, table = "observations", column = "variableid")
+    )
+  ),
+  urine_cumulative = list(
+    mimic = list(
+      list(id = NULL, table = "outputevents", column = "itemid")
+    ),
+    eicu = list(
+      list(id = NULL, table = "nursecharting",
+           column = "nursechartcelltypevalname")
+    ),
+    hirid = list(
+      list(id = 30005110L, table = "observations", column = "variableid")
+    )
+  ),
+  dobutamine = list(
+    mimic = list(
+      list(id = 221653L, table = "inputevents_mv", column = "itemid"),
+      list(id = 30042L, table = "inputevents_cv", column = "itemid"),
+      list(id = 30306L, table = "inputevents_cv", column = "itemid")
+    ),
+    eicu = list(
+      list(id = "Dobutamine (mcg/kg/min)", table = "infusiondrug",
+           column = "drugname"),
+      list(id = "Dobutamine (ml/hr)", table = "infusiondrug",
+           column = "drugname"),
+      list(id = "Dobutamine ()", table = "infusiondrug", column = "drugname")
+    ),
+    hirid = list(
+      list(id = 426L, table = "pharma", column = "variableid")
+    )
+  ),
+  dopamine = list(
+    mimic = list(
+      list(id = 221662L, table = "inputevents_mv", column = "itemid"),
+      list(id = 30043L, table = "inputevents_cv", column = "itemid"),
+      list(id = 30125L, table = "inputevents_cv", column = "itemid"),
+      list(id = 30307L, table = "inputevents_cv", column = "itemid")
+    ),
+    eicu = list(
+      list(id = "Dopamine (mcg/kg/min)", table = "infusiondrug",
+           column = "drugname")
+    ),
+    hirid = list(
+      list(id = NULL, table = "pharma", column = "variableid")
+    )
+  ),
+  norepinephrine = list(
+    mimic = list(
+      list(id = 221906L, table = "inputevents_mv", column = "itemid"),
+      list(id = 30047L, table = "inputevents_cv", column = "itemid"),
+      list(id = 30120L, table = "inputevents_cv", column = "itemid")
+    ),
+    eicu = list(
+      list(id = "Norepinephrine (mcg/kg/min)", table = "infusiondrug",
+           column = "drugname"),
+      list(id = "Norepinephrine (ml/hr)", table = "infusiondrug",
+           column = "drugname"),
+      list(id = "Norepinephrine (mcg/min)", table = "infusiondrug",
+           column = "drugname")
+    ),
+    hirid = list(
+      list(id = 1000462L, table = "pharma", column = "variableid"),
+      list(id = 1000656L, table = "pharma", column = "variableid"),
+      list(id = 1000657L, table = "pharma", column = "variableid"),
+      list(id = 1000658L, table = "pharma", column = "variableid")
+    )
+  ),
+  epinephrine = list(
+    mimic = list(
+      list(id = 221289L, table = "inputevents_mv", column = "itemid"),
+      list(id = 30044L, table = "inputevents_cv", column = "itemid"),
+      list(id = 30119L, table = "inputevents_cv", column = "itemid"),
+      list(id = 30309L, table = "inputevents_cv", column = "itemid")
+    ),
+    eicu = list(
+      list(id = "Epinephrine (mcg/kg/min)", table = "infusiondrug",
+           column = "drugname"),
+      list(id = "Epinephrine (ml/hr)", table = "infusiondrug",
+           column = "drugname"),
+      list(id = "Epinephrine (mcg/min)", table = "infusiondrug",
+           column = "drugname")
+    ),
+    hirid = list(
+      list(id = 71L, table = "pharma", column = "variableid"),
+      list(id = 1000750L, table = "pharma", column = "variableid"),
+      list(id = 1000649L, table = "pharma", column = "variableid"),
+      list(id = 1000650L, table = "pharma", column = "variableid"),
+      list(id = 1000655L, table = "pharma", column = "variableid")
+    )
+  ),
+  vent_start = list(
+    mimic = list(
+      list(id = 1L, table = "chartevents", column = "itemid"),
+      list(id = 60L, table = "chartevents", column = "itemid"),
+      list(id = 218L, table = "chartevents", column = "itemid"),
+      list(id = 221L, table = "chartevents", column = "itemid"),
+      list(id = 223L, table = "chartevents", column = "itemid"),
+      list(id = 436L, table = "chartevents", column = "itemid"),
+      list(id = 437L, table = "chartevents", column = "itemid"),
+      list(id = 444L, table = "chartevents", column = "itemid"),
+      list(id = 445L, table = "chartevents", column = "itemid"),
+      list(id = 448L, table = "chartevents", column = "itemid"),
+      list(id = 449L, table = "chartevents", column = "itemid"),
+      list(id = 450L, table = "chartevents", column = "itemid"),
+      list(id = 459L, table = "chartevents", column = "itemid"),
+      list(id = 501L, table = "chartevents", column = "itemid"),
+      list(id = 502L, table = "chartevents", column = "itemid"),
+      list(id = 503L, table = "chartevents", column = "itemid"),
+      list(id = 505L, table = "chartevents", column = "itemid"),
+      list(id = 506L, table = "chartevents", column = "itemid"),
+      list(id = 535L, table = "chartevents", column = "itemid"),
+      list(id = 543L, table = "chartevents", column = "itemid"),
+      list(id = 639L, table = "chartevents", column = "itemid"),
+      list(id = 654L, table = "chartevents", column = "itemid"),
+      list(id = 667L, table = "chartevents", column = "itemid"),
+      list(id = 668L, table = "chartevents", column = "itemid"),
+      list(id = 669L, table = "chartevents", column = "itemid"),
+      list(id = 670L, table = "chartevents", column = "itemid"),
+      list(id = 671L, table = "chartevents", column = "itemid"),
+      list(id = 672L, table = "chartevents", column = "itemid"),
+      list(id = 681L, table = "chartevents", column = "itemid"),
+      list(id = 682L, table = "chartevents", column = "itemid"),
+      list(id = 683L, table = "chartevents", column = "itemid"),
+      list(id = 684L, table = "chartevents", column = "itemid"),
+      list(id = 686L, table = "chartevents", column = "itemid"),
+      list(id = 1211L, table = "chartevents", column = "itemid"),
+      list(id = 1340L, table = "chartevents", column = "itemid"),
+      list(id = 1486L, table = "chartevents", column = "itemid"),
+      list(id = 1600L, table = "chartevents", column = "itemid"),
+      list(id = 1655L, table = "chartevents", column = "itemid"),
+      list(id = 2000L, table = "chartevents", column = "itemid"),
+      list(id = 3459L, table = "chartevents", column = "itemid"),
+      list(id = 5865L, table = "chartevents", column = "itemid"),
+      list(id = 5866L, table = "chartevents", column = "itemid"),
+      list(id = 220339L, table = "chartevents", column = "itemid"),
+      list(id = 223848L, table = "chartevents", column = "itemid"),
+      list(id = 223849L, table = "chartevents", column = "itemid"),
+      list(id = 224419L, table = "chartevents", column = "itemid"),
+      list(id = 224684L, table = "chartevents", column = "itemid"),
+      list(id = 224685L, table = "chartevents", column = "itemid"),
+      list(id = 224686L, table = "chartevents", column = "itemid"),
+      list(id = 224687L, table = "chartevents", column = "itemid"),
+      list(id = 224695L, table = "chartevents", column = "itemid"),
+      list(id = 224696L, table = "chartevents", column = "itemid"),
+      list(id = 224697L, table = "chartevents", column = "itemid"),
+      list(id = 224700L, table = "chartevents", column = "itemid"),
+      list(id = 224701L, table = "chartevents", column = "itemid"),
+      list(id = 224702L, table = "chartevents", column = "itemid"),
+      list(id = 224703L, table = "chartevents", column = "itemid"),
+      list(id = 224704L, table = "chartevents", column = "itemid"),
+      list(id = 224705L, table = "chartevents", column = "itemid"),
+      list(id = 224706L, table = "chartevents", column = "itemid"),
+      list(id = 224707L, table = "chartevents", column = "itemid"),
+      list(id = 224709L, table = "chartevents", column = "itemid"),
+      list(id = 224738L, table = "chartevents", column = "itemid"),
+      list(id = 224746L, table = "chartevents", column = "itemid"),
+      list(id = 224747L, table = "chartevents", column = "itemid"),
+      list(id = 224750L, table = "chartevents", column = "itemid"),
+      list(id = 226873L, table = "chartevents", column = "itemid"),
+      list(id = 227187L, table = "chartevents", column = "itemid")
+    ),
+    eicu = list(
+      list(id = NULL, table = "respiratorycare", column = "ventstartoffset"),
+      list(id = NULL, table = "respiratorycare",
+           column = "priorventstartoffset"),
+      list(id = "respFlowPtVentData", table = "respiratorycharting",
+           column = "respcharttypecat")
+    ),
+    hirid = list(
+      list(id = 15001552L, table = "observations", column = "variableid")
+    )
+  ),
+  vent_end = list(
+    mimic = list(
+      list(id = 227194L, table = "procedureevents_mv", column = "itemid"),
+      list(id = 225468L, table = "procedureevents_mv", column = "itemid"),
+      list(id = 225477L, table = "procedureevents_mv", column = "itemid"),
+      list(id = 467L, table = "chartevents", column = "itemid"),
+      list(id = 469L, table = "chartevents", column = "itemid"),
+      list(id = 226732L, table = "chartevents", column = "itemid")
+    ),
+    eicu = list(
+      list(id = NULL, table = "respiratorycare", column = "ventendoffset"),
+      list(id = NULL, table = "respiratorycare",
+           column = "priorventendoffset"),
+      list(id = "Off", table = "respiratorycharting",
+           column = "respchartvalue"),
+      list(id = "off", table = "respiratorycharting",
+           column = "respchartvalue"),
+      list(id = "Suspended", table = "respiratorycharting",
+           column = "respchartvalue")
+    ),
+    hirid = list(
+      list(id = 15001552L, table = "observations", column = "variableid")
+    )
+  ),
+  tracheostomy = list(
+    mimic = list(
+      list(id = "No Response-ETT", table = "chartevents", column = "value"),
+      list(id = "1.0 ET/Trach", table = "chartevents", column = "value")
+    ),
+    eicu = list(
+      list(id = NULL, table = NULL, column = NULL)
+    ),
+    hirid = list(
+      list(id = 15001552L, table = "observations", column = "variableid")
+    )
+  ),
+  rass_scale = list(
+    mimic = list(
+      list(id = NULL, table = NULL, column = NULL)
+    ),
+    eicu = list(
+      list(id = "Sedation Score", table = "nursecharting",
+           column = "nursingchartcelltypevalname")
+    ),
+    hirid = list(
+      list(id = 15001565L, table = "observations", column = "variableid")
+    )
   )
 )
 
 jsonlite::write_json(
-  cfg[order(names(cfg))],
+  cfg[order(names(cfg)
+)],
   "concepts.json",
   auto_unbox = TRUE,
   pretty = TRUE
