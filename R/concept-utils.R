@@ -1,18 +1,45 @@
 
-get_concepts <- function(cfg = get_config("concepts"), envir = NULL) {
+#' @export
+get_concepts <- function(envir = NULL, concept_sel = NULL,
+                         dictionary = get_config("concept_dict")) {
 
   check_each <- function(x, entries = c("id", "table", "column")) {
     is.list(x) && all(vapply(x, has_name, logical(1L), entries))
   }
 
-  if (!is.null(envir)) {
-    assert_that(is.string(envir))
-    cfg <- lapply(cfg, `[[`, sub("_demo$", "", envir))
+  check_name <- function(table, x) x %in% names(table)
+
+  if (!is.null(concept_sel)) {
+    assert_that(all(concept_sel %in% names(dictionary)))
+    dictionary <- dictionary[concept_sel]
   }
 
-  assert_that(all(vapply(cfg, check_each, logical(1L))))
+  if (!is.null(envir)) {
 
-  cfg
+    assert_that(
+      is.string(envir),
+      all(vapply(dictionary, check_name, logical(1L), envir))
+    )
+
+    dictionary <- lapply(dictionary, `[[`, sub("_demo$", "", envir))
+  }
+
+  assert_that(all(vapply(dictionary, check_each, logical(1L))))
+
+  dictionary
+}
+
+#' @export
+get_col_config <- function(envir = NULL, config = get_config("default_cols")) {
+
+  if (!is.null(envir)) {
+    assert_that(is.string(envir), envir %in% names(config))
+    config <- config[[sub("_demo$", "", envir)]]
+  }
+
+  assert_that(is.list(config))
+
+  config
 }
 
 prepare_queries <- function(items) {
@@ -50,31 +77,35 @@ prepare_queries <- function(items) {
   lapply(seq_along(res[[1L]]), inside_out, res)
 }
 
-load_data <- function(items = get_concepts(envir = envir), envir = "mimic",
-                      val_col = "valuenum", agg_fun = mean, ...) {
+#' @export
+load_data <- function(items = get_concepts(envir),
+                      col_cfg = get_col_config(envir), envir = "mimic",
+                      agg_fun = function(x) median(x, na.rm = TRUE), ...) {
 
-  drop_cols <- function(x, cols) x[, c(cols) := NULL]
+  preproc_each <- function(x, nme, val) {
 
-  preproc_each <- function(x, nme, rm) {
-
-    x <- x[, agg_fun(get(val_col)), by = c(id_cols(x))]
+    x <- x[, agg_fun(get(val)), by = c(id_cols(x))]
     x <- data.table::setnames(x, c(id_cols(x), nme))
 
     x
   }
 
-  load_each <- function(tbl, id_col, mapping, query, ...) {
+  load_each <- function(tbl, item_col, mapping, query, ...) {
 
-    dat <- load_fun(tbl, query, c(id_col, val_col) ,..., envir = envir)
-    dat <- dat[, feature := mapping[as.character(itemid)]]
+    cfg <- col_cfg[[tbl]]
+
+    assert_that(has_name(cfg, c("id_col", "time_col", "val_col")))
+
+    dat <- load_fun(tbl, query, c(item_col, cfg[["val_col"]]),
+                    id_cols = cfg[["id_col"]], time_col = cfg[["time_col"]],
+                    ..., envir = envir)
+
+    dat <- dat[, feature := mapping[as.character(get(item_col))]]
     dat <- split(dat, by = "feature")
-    dat <- Map(preproc_each, dat, names(dat),
-               MoreArgs = list(rm = c("feature", id_col)))
+    dat <- Map(preproc_each, dat, names(dat), cfg[["val_col"]])
 
-    reduce(merge, dat, by = id_cols(dat[[1L]]), all = TRUE)
+    reduce(merge, dat, by = c(cfg[["id_col"]], cfg[["time_col"]]), all = TRUE)
   }
-
-  assert_that(is.string(val_col))
 
   load_fun <- switch(sub("_demo$", "", envir),
                      mimic = mimic_ts_quo,
