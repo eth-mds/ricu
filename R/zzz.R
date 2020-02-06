@@ -37,7 +37,7 @@
   attach_eicu(demo = FALSE)
   attach_hirid()
 
-  if (base::getRversion() < "3.6.2") {
+  if (base::getRversion() <= "4.0.0") {
 
     if (missing(pkgname)) prefix <- ""
     else                  prefix <- "ricu::"
