@@ -205,6 +205,8 @@ min_or_na <- agg_or_na(min)
 max_or_na <- agg_or_na(max)
 sum_or_na <- agg_or_na(sum)
 
+dbl_med <- function(x) as.double(median(x, na.rm = TRUE))
+
 #' @export
 secs <- function(x) as.difftime(x, units = "secs")
 

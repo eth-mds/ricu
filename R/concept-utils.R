@@ -44,75 +44,112 @@ get_col_config <- function(envir = NULL, config = get_config("default_cols")) {
 
 prepare_queries <- function(items) {
 
-  inside_out <- function(ind, lst) lapply(lst, `[[`, ind)
+  inside_out <- function(x) {
+    res <- lapply(names(x[[1L]]), function(i) lapply(x, `[[`, i))
+    names(res) <- names(x[[1L]])
+    res
+  }
 
   ulst <- function(x) unlist(x, recursive = FALSE, use.names = FALSE)
 
-  split_uq <- function(x, y) lapply(split(x, y), unique)
-
-  build_query <- function(id, tbl, col, map) {
-
-    map <- stats::setNames(ulst(inside_out("name", map)),
-                                inside_out("id", map))
-
-    assert_that(is.string(col), is.string(tbl))
-
-    list(table = tbl, id_col = col, mapping = map,
-      query = substitute(col %in% id, list(col = as.name(col), id = id))
-    )
+  prep_item <- function(x, nme) {
+    c(inside_out(x), list(name = rep(list(nme), length(x))))
   }
 
-  mapping <- Map(
-    function(nme, lst) Map(list, name = nme, id = lapply(lst, `[[`, "id")),
-    names(items), items
-  )
+  prep_items <- function(x) {
+    res <- Map(prep_item, x, names(x))
+    lapply(inside_out(res), ulst)
+  }
 
-  items <- lapply(c("id", "table", "column"), inside_out, ulst(items))
-  items <- lapply(items, ulst)
+  build_query <- function(id, table, column, name) {
 
-  mapping <- split_uq(ulst(mapping), items[c(2L, 3L)])
-  items <- lapply(items, split_uq, items[c(2L, 3L)])
+    tbl  <- unique(ulst(table))
+    cols <- ulst(column)
+    nme  <- ulst(name)
 
-  res <- do.call(Map, c(build_query, items, list(mapping)))
-  lapply(seq_along(res[[1L]]), inside_out, res)
+    assert_that(is.string(tbl), is.character(nme))
+
+    null_id <- vapply(id, is.null, logical(1L))
+
+    if (any(null_id)) {
+
+      assert_that(all(null_id), is.character(cols),
+                  length(name) == length(cols))
+
+      map <- list(new = nme, old = cols)
+      query <- NULL
+
+    } else {
+
+      cols <- unique(cols)
+      ids <- ulst(id)
+
+      assert_that(is.string(cols), length(nme) == length(ids))
+
+      map <- list(new = nme, old = ids)
+      query <- substitute(col %in% id, list(col = as.name(cols), id = ids))
+    }
+
+    list(table = tbl, id_col = cols, mapping = map, query = query)
+  }
+
+  itms <- prep_items(items)
+  splt <- data.table::fifelse(vapply(itms[["id"]], is.null, logical(1L)), "",
+                              ulst(itms[["column"]]))
+  splt <- interaction(ulst(itms[["table"]]), splt, drop = TRUE)
+
+  do.call(Map, c(build_query, lapply(itms, split, splt)))
 }
 
 #' @export
 load_data <- function(items = get_concepts(envir),
                       col_cfg = get_col_config(envir), envir = "mimic",
-                      agg_fun = function(x) median(x, na.rm = TRUE), ...) {
+                      patient_ids = NULL, agg_fun = dbl_med, ...) {
 
-  preproc_each <- function(x, nme, val) {
+  load_each <- function(x, ...) {
 
-    x <- x[, agg_fun(get(val)), by = c(id_cols(x))]
-    x <- data.table::setnames(x, c(id_cols(x), nme))
-
-    x
-  }
-
-  load_each <- function(tbl, item_col, mapping, query, ...) {
-
+    tbl <- x[["table"]]
     cfg <- col_cfg[[tbl]]
+    qry <- x[["query"]]
+    map <- x[["mapping"]]
 
     assert_that(has_name(cfg, c("id_col", "time_col", "val_col")))
 
-    dat <- load_fun(tbl, query, c(item_col, cfg[["val_col"]]),
+    dat <- load_fun(tbl, qry, c(x[["id_col"]], cfg[["val_col"]]),
                     id_cols = cfg[["id_col"]], time_col = cfg[["time_col"]],
                     ..., envir = envir)
 
-    dat <- dat[, feature := mapping[as.character(get(item_col))]]
-    dat <- split(dat, by = "feature")
-    dat <- Map(preproc_each, dat, names(dat), cfg[["val_col"]])
+    if (!is.null(patient_ids)) {
+      browser()
+    }
 
-    reduce(merge, dat, all = TRUE)
+    if (is.null(qry)) {
+
+      dat <- rename_cols(dat, map[["new"]], map[["old"]])
+
+      keep <- rowSums(
+        is.na(dat[, map[["new"]], with = FALSE])) < length(map[["new"]]
+      )
+
+      make_unique(dat[keep, ], fun = agg_fun)
+
+    } else {
+
+      dat <- split(dat, by = x[["id_col"]], keep.by = FALSE)
+      new_names <- map[["new"]][match(names(dat), map[["old"]])]
+
+      dat <- Map(rename_cols, dat, new_names, cfg[["val_col"]])
+      dat <- lapply(dat, make_unique, fun = agg_fun)
+
+      reduce(merge, dat, all = TRUE)
+    }
   }
 
   load_fun <- switch(sub("_demo$", "", envir),
                      mimic = mimic_ts_quo,
                      eicu = eicu_ts_quo)
 
-  res <- do.call(Map, c(load_each, prepare_queries(items),
-                 MoreArgs = list(...)))
+  res <- lapply(prepare_queries(items), load_each, ...)
 
   if (length(res) > 1L) {
     reduce(merge, res, all = TRUE)

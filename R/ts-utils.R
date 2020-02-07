@@ -142,14 +142,10 @@ make_unique_quo <- function(x, expr, by = id_cols(x),
   if (length(cols) == 0L) return(unique(x))
 
   if (is.function(expr)) {
-    x <- x[, lapply(.SD, expr, ...), .SDcols = cols, by = by]
+    x[, lapply(.SD, expr, ...), .SDcols = cols, by = by]
   } else {
-    x <- x[, eval(expr), by = by]
+    x[, eval(expr), by = by]
   }
-
-  assert_that(is_unique(x, by = by))
-
-  x
 }
 
 #' @export

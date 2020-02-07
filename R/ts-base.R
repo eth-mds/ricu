@@ -193,6 +193,17 @@ format_ts_meta <- function(...) {
 }
 
 #' @export
-merge.ts_tbl <- function(x, y, by = id_cols(x), ...) {
-  reclass_ts_tbl(NextMethod(), ts_def(x), warn_opt = FALSE)
+merge.ts_tbl <- function(x, y, by = NULL, by.x = NULL, by.y = NULL, ...) {
+
+  if (is.null(by)) {
+    if (is.null(by.x)) by.x <- id_cols(x)
+    if (is.null(by.y) && is_ts_tbl(y)) by.y <- id_cols(y)
+  } else {
+    by.x <- by
+    by.y <- by
+  }
+
+  res <- data.table::merge.data.table(x, y, by.x = by.x, by.y = by.y, ...)
+
+  reclass_ts_tbl(res, ts_def(x), warn_opt = FALSE)
 }

@@ -247,7 +247,7 @@ set_key <- function(x, new) update_ts_def(x, new_tbl_key(x, new))
 meta_cols <- function(x) flapply(ts_def(x), aux_names)
 
 #' @export
-data_cols <- function(x) setdiff(colnames(x), meta_cols(x))
+data_cols <- function(x) setdiff(colnames(x), c(id_cols(x), meta_cols(x)))
 
 #' @export
 id_cols <- function(x) c(key(x), index(x))
