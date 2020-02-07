@@ -117,6 +117,6 @@ load_data <- function(items = get_concepts(envir),
   if (length(res) > 1L) {
     reduce(merge, res, all = TRUE)
   } else {
-    res
+    res[[1L]]
   }
 }
