@@ -104,12 +104,19 @@ load_data <- function(items = get_concepts(envir),
     dat <- split(dat, by = "feature")
     dat <- Map(preproc_each, dat, names(dat), cfg[["val_col"]])
 
-    reduce(merge, dat, by = c(cfg[["id_col"]], cfg[["time_col"]]), all = TRUE)
+    reduce(merge, dat, all = TRUE)
   }
 
   load_fun <- switch(sub("_demo$", "", envir),
                      mimic = mimic_ts_quo,
                      eicu = eicu_ts_quo)
 
-  do.call(Map, c(load_each, prepare_queries(items), MoreArgs = list(...)))
+  res <- do.call(Map, c(load_each, prepare_queries(items),
+                 MoreArgs = list(...)))
+
+  if (length(res) > 1L) {
+    reduce(merge, res, all = TRUE)
+  } else {
+    res
+  }
 }
