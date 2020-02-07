@@ -184,8 +184,8 @@ export(unclass_ts_tbl)
 export(update_ts_def)
 export(validate)
 export(weeks)
-if (getRversion() >= "3.6.2") { S3method(cbind, ts_tbl) }
-if (getRversion() >= "3.6.2") { S3method(rbind, ts_tbl) }
+if (getRversion() >= "4.0.0") { S3method(cbind, ts_tbl) }
+if (getRversion() >= "4.0.0") { S3method(rbind, ts_tbl) }
 importFrom(assertthat,"on_failure<-")
 importFrom(assertthat,assert_that)
 importFrom(assertthat,has_attr)

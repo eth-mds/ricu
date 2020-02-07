@@ -139,10 +139,10 @@ as.data.frame.ts_tbl <- function(x, row.names = NULL, optional = FALSE, ...) {
   reclass_ts_tbl(res, meta)
 }
 
-#' @rawNamespace if (getRversion() >= "3.6.2") { S3method(cbind, ts_tbl) }
+#' @rawNamespace if (getRversion() >= "4.0.0") { S3method(cbind, ts_tbl) }
 cbind.ts_tbl <- .cbind.ts_tbl
 
-#' @rawNamespace if (getRversion() >= "3.6.2") { S3method(rbind, ts_tbl) }
+#' @rawNamespace if (getRversion() >= "4.0.0") { S3method(rbind, ts_tbl) }
 rbind.ts_tbl <- .rbind.ts_tbl
 
 #' @export
