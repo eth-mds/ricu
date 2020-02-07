@@ -14,7 +14,7 @@
 \alias{attach_datasource}
 \alias{setup_proxy_env}
 \title{Data attach utilities}
-\format{An object of class \code{environment} of length 4.}
+\format{An object of class \code{environment} of length 5.}
 \usage{
 attach_mimic(
   demo = FALSE,
