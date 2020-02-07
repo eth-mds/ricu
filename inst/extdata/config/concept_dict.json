@@ -131,7 +131,7 @@
     ],
     "hirid": [
       {
-        "id": {},
+        "id": null,
         "table": "observations",
         "column": "variableid"
       }
@@ -269,7 +269,7 @@
     ],
     "hirid": [
       {
-        "id": {},
+        "id": null,
         "table": "observations",
         "column": "variableid"
       }
@@ -425,7 +425,7 @@
     ],
     "eicu": [
       {
-        "id": {},
+        "id": null,
         "table": "vitalperiodic",
         "column": "systemicdiastolic"
       }
@@ -513,7 +513,7 @@
     ],
     "hirid": [
       {
-        "id": {},
+        "id": null,
         "table": "pharma",
         "column": "variableid"
       }
@@ -536,7 +536,7 @@
     ],
     "hirid": [
       {
-        "id": {},
+        "id": null,
         "table": "observations",
         "column": "variableid"
       }
@@ -681,7 +681,7 @@
     ],
     "eicu": [
       {
-        "id": {},
+        "id": null,
         "table": "nursecharting",
         "column": "nursechartcelltypevalname"
       }
@@ -709,7 +709,7 @@
     ],
     "eicu": [
       {
-        "id": {},
+        "id": null,
         "table": "nursecharting",
         "column": "nursechartcelltypevalname"
       }
@@ -725,7 +725,7 @@
   "gcs_total": {
     "mimic": [
       {
-        "id": {},
+        "id": null,
         "table": "chartevents",
         "column": "itemid"
       }
@@ -739,7 +739,7 @@
     ],
     "hirid": [
       {
-        "id": {},
+        "id": null,
         "table": "observations",
         "column": "variableid"
       }
@@ -760,7 +760,7 @@
     ],
     "eicu": [
       {
-        "id": {},
+        "id": null,
         "table": "nursecharting",
         "column": "nursechartcelltypevalname"
       }
@@ -831,7 +831,7 @@
     ],
     "eicu": [
       {
-        "id": {},
+        "id": null,
         "table": "vitalperiodic",
         "column": "heartrate"
       }
@@ -861,7 +861,7 @@
     ],
     "hirid": [
       {
-        "id": {},
+        "id": null,
         "table": "observations",
         "column": "variableid"
       }
@@ -1091,7 +1091,7 @@
     ],
     "eicu": [
       {
-        "id": {},
+        "id": null,
         "table": "vitalperiodic",
         "column": "systemicmean"
       }
@@ -1233,7 +1233,7 @@
     ],
     "eicu": [
       {
-        "id": {},
+        "id": null,
         "table": "vitalperiodic",
         "column": "sao2"
       },
@@ -1431,7 +1431,7 @@
     ],
     "hirid": [
       {
-        "id": {},
+        "id": null,
         "table": "observations",
         "column": "variableid"
       }
@@ -1463,9 +1463,9 @@
   "rass_scale": {
     "mimic": [
       {
-        "id": {},
-        "table": {},
-        "column": {}
+        "id": null,
+        "table": null,
+        "column": null
       }
     ],
     "eicu": [
@@ -1500,7 +1500,7 @@
     ],
     "hirid": [
       {
-        "id": {},
+        "id": null,
         "table": "observations",
         "column": "variableid"
       }
@@ -1523,7 +1523,7 @@
     ],
     "hirid": [
       {
-        "id": {},
+        "id": null,
         "table": "observations",
         "column": "variableid"
       }
@@ -1564,7 +1564,7 @@
     ],
     "eicu": [
       {
-        "id": {},
+        "id": null,
         "table": "vitalperiodic",
         "column": "respiration"
       }
@@ -1592,7 +1592,7 @@
     ],
     "eicu": [
       {
-        "id": {},
+        "id": null,
         "table": "lab",
         "column": "labname"
       }
@@ -1678,7 +1678,7 @@
     ],
     "eicu": [
       {
-        "id": {},
+        "id": null,
         "table": "vitalperiodic",
         "column": "systemicsystolic"
       }
@@ -1706,9 +1706,9 @@
     ],
     "eicu": [
       {
-        "id": {},
-        "table": {},
-        "column": {}
+        "id": null,
+        "table": null,
+        "column": null
       }
     ],
     "hirid": [
@@ -1773,14 +1773,14 @@
   "urine_cumulative": {
     "mimic": [
       {
-        "id": {},
+        "id": null,
         "table": "outputevents",
         "column": "itemid"
       }
     ],
     "eicu": [
       {
-        "id": {},
+        "id": null,
         "table": "nursecharting",
         "column": "nursechartcelltypevalname"
       }
@@ -1950,7 +1950,7 @@
     ],
     "hirid": [
       {
-        "id": {},
+        "id": null,
         "table": "observations",
         "column": "variableid"
       }
@@ -1959,14 +1959,14 @@
   "urine_hourly": {
     "mimic": [
       {
-        "id": {},
+        "id": null,
         "table": "outputevents",
         "column": "itemid"
       }
     ],
     "eicu": [
       {
-        "id": {},
+        "id": null,
         "table": "nursecharting",
         "column": "nursechartcelltypevalname"
       }
@@ -2014,12 +2014,12 @@
     ],
     "eicu": [
       {
-        "id": {},
+        "id": null,
         "table": "respiratorycare",
         "column": "ventendoffset"
       },
       {
-        "id": {},
+        "id": null,
         "table": "respiratorycare",
         "column": "priorventendoffset"
       },
@@ -2392,12 +2392,12 @@
     ],
     "eicu": [
       {
-        "id": {},
+        "id": null,
         "table": "respiratorycare",
         "column": "ventstartoffset"
       },
       {
-        "id": {},
+        "id": null,
         "table": "respiratorycare",
         "column": "priorventstartoffset"
       },
