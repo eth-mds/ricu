@@ -53,21 +53,37 @@ cfg <- list(
     hospital = list(),
     infusiondrug = list(),
     intakeoutput = list(),
-    lab = list(),
+    lab = list(
+      id_col = "patienthealthsystemstayid",
+      time_col = "labresultoffset",
+      val_col = "labresult"
+    ),
     medication = list(),
     microlab = list(),
     note = list(),
     nurseassessment = list(),
     nursecare = list(),
-    nursecharting = list(),
+    nursecharting = list(
+      id_col = "patienthealthsystemstayid",
+      time_col = "nursingchartoffset",
+      val_col = "nursingchartvalue"
+    ),
     pasthistory = list(),
     patient = list(),
     physicalexam = list(),
     respiratorycare = list(),
     respiratorycharting = list(),
     treatment = list(),
-    vitalaperiodic = list(),
-    vitalperiodic = list()
+    vitalaperiodic = list(
+      id_col = "patienthealthsystemstayid",
+      time_col = "observationoffset",
+      val_col = NULL
+    ),
+    vitalperiodic = list(
+      id_col = "patienthealthsystemstayid",
+      time_col = "observationoffset",
+      val_col = NULL
+    )
   ),
   hirid = list(
     general = list(),
@@ -77,5 +93,5 @@ cfg <- list(
   )
 )
 
-jsonlite::write_json(cfg, "default_cols.json", auto_unbox = TRUE,
-                     pretty = TRUE)
+jsonlite::write_json(cfg, "default_cols.json", null = "null",
+                     auto_unbox = TRUE, pretty = TRUE)

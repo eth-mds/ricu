@@ -52,21 +52,37 @@
     "hospital": [],
     "infusiondrug": [],
     "intakeoutput": [],
-    "lab": [],
+    "lab": {
+      "id_col": "patienthealthsystemstayid",
+      "time_col": "labresultoffset",
+      "val_col": "labresult"
+    },
     "medication": [],
     "microlab": [],
     "note": [],
     "nurseassessment": [],
     "nursecare": [],
-    "nursecharting": [],
+    "nursecharting": {
+      "id_col": "patienthealthsystemstayid",
+      "time_col": "nursingchartoffset",
+      "val_col": "nursingchartvalue"
+    },
     "pasthistory": [],
     "patient": [],
     "physicalexam": [],
     "respiratorycare": [],
     "respiratorycharting": [],
     "treatment": [],
-    "vitalaperiodic": [],
-    "vitalperiodic": []
+    "vitalaperiodic": {
+      "id_col": "patienthealthsystemstayid",
+      "time_col": "observationoffset",
+      "val_col": null
+    },
+    "vitalperiodic": {
+      "id_col": "patienthealthsystemstayid",
+      "time_col": "observationoffset",
+      "val_col": null
+    }
   },
   "hirid": {
     "general": [],
