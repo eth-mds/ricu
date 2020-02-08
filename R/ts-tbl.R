@@ -257,11 +257,27 @@ interval.ts_tbl <- function(x) interval(ts_def(x))
 
 #' @export
 set_interval <- function(x, new) {
+
+  if (is_ts_tbl(x)) {
+    set(x, j = index(x),
+        value = round_to(x[[index(x)]], as.double(new, time_unit(x))))
+  }
+
   update_ts_def(x, new_tbl_index(x, index(x), new))
 }
 
 #' @export
 time_unit <- function(x) units(x[[index(x)]])
+
+#' @export
+set_time_unit <- function(x, new) {
+
+  if (is_ts_tbl(x)) {
+    set(x, j = index(x), value = `units<-`(x[[index(x)]], new))
+  }
+
+  update_ts_def(x, new_tbl_index(x, index(x), `units<-`(interval(x), new)))
+}
 
 #' @export
 time_step <- function(x) as.double(interval(x), units = time_unit(x))
