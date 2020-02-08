@@ -94,8 +94,8 @@ prepare_queries <- function(items) {
   }
 
   itms <- prep_items(items)
-  splt <- data.table::fifelse(vapply(itms[["id"]], is.null, logical(1L)), "",
-                              ulst(itms[["column"]]))
+  splt <- fifelse(vapply(itms[["id"]], is.null, logical(1L)), "",
+                  ulst(itms[["column"]]))
   splt <- interaction(ulst(itms[["table"]]), splt, drop = TRUE)
 
   do.call(Map, c(build_query, lapply(itms, split, splt)))
@@ -120,7 +120,16 @@ load_data <- function(items = get_concepts(envir),
                     ..., envir = envir)
 
     if (!is.null(patient_ids)) {
-      browser()
+
+      if (inherits(patient_ids, "data.frame")) {
+        assert_that(has_name(patient_ids, key(dat)))
+        join <- unique(patient_ids[, key(dat), with = FALSE])
+      } else {
+        assert_that(is.atomic(patient_ids))
+        join <- setnames(setDT(list(patient_ids)), key(dat))
+      }
+
+      dat <- merge(dat, join, by = key(dat), all = TRUE)
     }
 
     if (is.null(qry)) {
