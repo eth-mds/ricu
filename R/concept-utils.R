@@ -101,23 +101,30 @@ prepare_queries <- function(items) {
   do.call(Map, c(build_query, lapply(itms, split, splt)))
 }
 
+determine_loader <- function(envir) {
+  fun <- switch(sub("_demo$", "", envir), mimic = mimic_ts_quo,
+                                          eicu  = eicu_ts_quo)
+  function(...) fun(..., envir = envir)
+}
+
 #' @export
-load_data <- function(items = get_concepts(envir),
-                      col_cfg = get_col_config(envir), envir = "mimic",
-                      patient_ids = NULL, agg_fun = dbl_med, ...) {
+load_data <- function(envir, concepts, patient_ids = NULL,
+                      items = get_concepts(envir, concepts),
+                      col_cfg = get_col_config(envir),
+                      load_fun = determine_loader(envir),
+                      agg_fun = dbl_med, ...) {
 
   load_each <- function(x, ...) {
 
-    tbl <- x[["table"]]
-    cfg <- col_cfg[[tbl]]
-    qry <- x[["query"]]
+    cfg <- col_cfg[[x[["table"]]]]
     map <- x[["mapping"]]
 
     assert_that(has_name(cfg, c("id_col", "time_col", "val_col")))
 
-    dat <- load_fun(tbl, qry, c(x[["id_col"]], cfg[["val_col"]]),
+    dat <- load_fun(table = x[["table"]], row_quo = x[["query"]],
+                    cols = c(x[["id_col"]], cfg[["val_col"]]),
                     id_cols = cfg[["id_col"]], time_col = cfg[["time_col"]],
-                    ..., envir = envir)
+                    ...)
 
     if (!is.null(patient_ids)) {
 
@@ -132,7 +139,7 @@ load_data <- function(items = get_concepts(envir),
       dat <- merge(dat, unique(join), by = key(dat), all = FALSE)
     }
 
-    if (is.null(qry)) {
+    if (is.null(x[["query"]])) {
 
       dat <- rename_cols(dat, map[["new"]], map[["old"]])
       make_unique(dat[not_all_na(dat), ], fun = agg_fun)
@@ -149,24 +156,21 @@ load_data <- function(items = get_concepts(envir),
     }
   }
 
-  regroup_features <- function(x) {
+  is_hit <- function(haystack, needle) needle %in% names(haystack)
 
-    is_hit <- function(haystack, needle) needle %in% names(haystack)
+  keep <- function(x) length(id_cols(x)) < ncol(x)
 
-    keep <- function(tbl) length(id_cols(tbl)) < ncol(tbl)
+  move_feature <- function(tbl, feat) {
+    ret <- tbl[, c(id_cols(tbl), feat), with = FALSE]
+    set(tbl, j = feat, value = NULL)
+    ret
+  }
 
-    move_feat <- function(grp, feat) {
-      ret <- grp[, c(id_cols(grp), feat), with = FALSE]
-      set(grp, j = feat, value = NULL)
-      ret
-    }
-
-    feats <- unlist(lapply(x, data_cols))
-    dups <- feats[duplicated(feats)]
+  regroup_features <- function(x, dups) {
 
     dups <- lapply(dups, function(dup) {
       hits <- vapply(x, is_hit, logical(1L), dup)
-      new_tbl <- lapply(x[hits], move_feat, dup)
+      new_tbl <- lapply(x[hits], move_feature, dup)
       if (sum(hits) > 1L) make_unique(do.call(rbind, new_tbl), fun = agg_fun)
       else new_tbl
     })
@@ -174,15 +178,21 @@ load_data <- function(items = get_concepts(envir),
     c(dups, x[vapply(x, keep, logical(1L))])
   }
 
-  load_fun <- switch(sub("_demo$", "", envir),
-                     mimic = mimic_ts_quo,
-                     eicu = eicu_ts_quo)
-
   res <- lapply(prepare_queries(items), load_each, ...)
 
   if (length(res) > 1L) {
-    reduce(merge, regroup_features(res), all = TRUE)
+
+    feats <- unlist(lapply(res, data_cols))
+    dups <- feats[duplicated(feats)]
+
+    if (length(dups)) {
+      res <- regroup_features(res, dups)
+    }
+
+    reduce(merge, res, all = TRUE)
+
   } else {
+
     res[[1L]]
   }
 }
