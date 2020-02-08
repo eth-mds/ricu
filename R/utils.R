@@ -308,3 +308,7 @@ split_indices <- function(len, n_chunks) {
     as.integer(bins)
   }
 }
+
+not_all_na <- function(x, cols = data_cols(x)) {
+  rowSums(is.na(x[, cols, with = FALSE])) < length(cols)
+}

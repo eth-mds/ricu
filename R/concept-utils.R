@@ -123,24 +123,19 @@ load_data <- function(items = get_concepts(envir),
 
       if (inherits(patient_ids, "data.frame")) {
         assert_that(has_name(patient_ids, key(dat)))
-        join <- unique(patient_ids[, key(dat), with = FALSE])
+        join <- patient_ids[, key(dat), with = FALSE]
       } else {
         assert_that(is.atomic(patient_ids))
         join <- setnames(setDT(list(patient_ids)), key(dat))
       }
 
-      dat <- merge(dat, join, by = key(dat), all = TRUE)
+      dat <- merge(dat, unique(join), by = key(dat), all = FALSE)
     }
 
     if (is.null(qry)) {
 
       dat <- rename_cols(dat, map[["new"]], map[["old"]])
-
-      keep <- rowSums(
-        is.na(dat[, map[["new"]], with = FALSE])) < length(map[["new"]]
-      )
-
-      make_unique(dat[keep, ], fun = agg_fun)
+      make_unique(dat[not_all_na(dat), ], fun = agg_fun)
 
     } else {
 
@@ -154,6 +149,31 @@ load_data <- function(items = get_concepts(envir),
     }
   }
 
+  regroup_features <- function(x) {
+
+    is_hit <- function(haystack, needle) needle %in% names(haystack)
+
+    keep <- function(tbl) length(id_cols(tbl)) < ncol(tbl)
+
+    move_feat <- function(grp, feat) {
+      ret <- grp[, c(id_cols(grp), feat), with = FALSE]
+      set(grp, j = feat, value = NULL)
+      ret
+    }
+
+    feats <- unlist(lapply(x, data_cols))
+    dups <- feats[duplicated(feats)]
+
+    dups <- lapply(dups, function(dup) {
+      hits <- vapply(x, is_hit, logical(1L), dup)
+      new_tbl <- lapply(x[hits], move_feat, dup)
+      if (sum(hits) > 1L) make_unique(do.call(rbind, new_tbl), fun = agg_fun)
+      else new_tbl
+    })
+
+    c(dups, x[vapply(x, keep, logical(1L))])
+  }
+
   load_fun <- switch(sub("_demo$", "", envir),
                      mimic = mimic_ts_quo,
                      eicu = eicu_ts_quo)
@@ -161,7 +181,7 @@ load_data <- function(items = get_concepts(envir),
   res <- lapply(prepare_queries(items), load_each, ...)
 
   if (length(res) > 1L) {
-    reduce(merge, res, all = TRUE)
+    reduce(merge, regroup_features(res), all = TRUE)
   } else {
     res[[1L]]
   }

@@ -267,7 +267,9 @@ set_interval <- function(x, new) {
 }
 
 #' @export
-time_unit <- function(x) units(x[[index(x)]])
+time_unit <- function(x) {
+  if (is_ts_tbl(x)) units(x[[index(x)]]) else units(interval(x))
+}
 
 #' @export
 set_time_unit <- function(x, new) {
@@ -294,3 +296,25 @@ aux_names.ts_tbl <- function(x, ...) aux_names(ts_def(x), ...)
 #' @export
 aux_data.ts_tbl <- function(x, ...) aux_data(ts_def(x), ...)
 
+#' @export
+make_compatible <- function(x, def) {
+
+  def <- ts_def(def)
+
+  assert_that(is_ts_tbl(x), is_ts_def(def))
+
+  if (!setequal(id_cols(x), id_cols(def))) {
+    assert_that(same_length(key(x), key(def)))
+    x <- rename_cols(x, id_cols(def), id_cols(x))
+  }
+
+  if (!identical(time_unit(x), time_unit(def))) {
+    x <- set_time_unit(x, time_unit(def))
+  }
+
+  if (!identical(interval(x), interval(def))) {
+    x <- set_interval(x, interval(def))
+  }
+
+  x
+}

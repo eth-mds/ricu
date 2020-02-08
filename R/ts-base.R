@@ -131,8 +131,11 @@ as.data.frame.ts_tbl <- function(x, row.names = NULL, optional = FALSE, ...) {
 
   lst <- list(...)
 
-  hit <- which(vapply(lst, is_ts_tbl, logical(1L)))[1L]
-  meta <- ts_def(lst[[hit]])
+  ts_tbls <- vapply(lst, is_ts_tbl, logical(1L))
+  first <- which(ts_tbls)[1L]
+  meta <- ts_def(lst[[first]])
+
+  lst[ts_tbls] <- lapply(lst[ts_tbls], make_compatible, meta)
 
   res <- dt_rbl(lst, use.names, fill, idcol)
 
@@ -193,17 +196,9 @@ format_ts_meta <- function(...) {
 }
 
 #' @export
-merge.ts_tbl <- function(x, y, by = NULL, by.x = NULL, by.y = NULL, ...) {
+merge.ts_tbl <- function(x, y, by = id_cols(x), ...) {
 
-  if (is.null(by)) {
-    if (is.null(by.x)) by.x <- id_cols(x)
-    if (is.null(by.y) && is_ts_tbl(y)) by.y <- id_cols(y)
-  } else {
-    by.x <- by
-    by.y <- by
-  }
+  if (is_ts_tbl(y)) y <- make_compatible(y, x)
 
-  res <- data.table::merge.data.table(x, y, by.x = by.x, by.y = by.y, ...)
-
-  reclass_ts_tbl(res, ts_def(x), warn_opt = FALSE)
+  reclass_ts_tbl(NextMethod(), ts_def(x), warn_opt = FALSE)
 }
