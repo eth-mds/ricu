@@ -681,9 +681,9 @@
     ],
     "eicu": [
       {
-        "id": null,
+        "id": "Eyes",
         "table": "nursecharting",
-        "column": "nursechartcelltypevalname"
+        "column": "nursingchartcelltypevalname"
       }
     ],
     "hirid": [
@@ -709,9 +709,9 @@
     ],
     "eicu": [
       {
-        "id": null,
+        "id": "Motor",
         "table": "nursecharting",
-        "column": "nursechartcelltypevalname"
+        "column": "nursingchartcelltypevalname"
       }
     ],
     "hirid": [
@@ -734,7 +734,7 @@
       {
         "id": "GCS Total",
         "table": "nursecharting",
-        "column": "nursechartcelltypevalname"
+        "column": "nursingchartcelltypevalname"
       }
     ],
     "hirid": [
@@ -760,9 +760,9 @@
     ],
     "eicu": [
       {
-        "id": null,
+        "id": "Verbal",
         "table": "nursecharting",
-        "column": "nursechartcelltypevalname"
+        "column": "nursingchartcelltypevalname"
       }
     ],
     "hirid": [
@@ -1782,7 +1782,7 @@
       {
         "id": null,
         "table": "nursecharting",
-        "column": "nursechartcelltypevalname"
+        "column": "nursingchartcelltypevalname"
       }
     ],
     "hirid": [
@@ -1957,20 +1957,8 @@
     ]
   },
   "urine_hourly": {
-    "mimic": [
-      {
-        "id": null,
-        "table": "outputevents",
-        "column": "itemid"
-      }
-    ],
-    "eicu": [
-      {
-        "id": null,
-        "table": "nursecharting",
-        "column": "nursechartcelltypevalname"
-      }
-    ],
+    "mimic": null,
+    "eicu": null,
     "hirid": [
       {
         "id": 10020000,

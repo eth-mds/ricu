@@ -632,8 +632,8 @@ cfg <- list(
       list(id = 723L, table = "chartevents", column = "itemid")
     ),
     eicu = list(
-      list(id = NULL, table = "nursecharting",
-           column = "nursechartcelltypevalname")
+      list(id = "Eyes", table = "nursecharting",
+           column = "nursingchartcelltypevalname")
     ),
     hirid = list(
       list(id = 10000100L, table = "observations", column = "variableid")
@@ -645,8 +645,8 @@ cfg <- list(
       list(id = 454L, table = "chartevents", column = "itemid")
     ),
     eicu = list(
-      list(id = NULL, table = "nursecharting",
-           column = "nursechartcelltypevalname")
+      list(id = "Verbal", table = "nursecharting",
+           column = "nursingchartcelltypevalname")
     ),
     hirid = list(
         list(id = 10000200L, table = "observations", column = "variableid")
@@ -658,8 +658,8 @@ cfg <- list(
       list(id = 184L, table = "chartevents", column = "itemid")
     ),
     eicu = list(
-      list(id = NULL, table = "nursecharting",
-           column = "nursechartcelltypevalname")
+      list(id = "Motor", table = "nursecharting",
+           column = "nursingchartcelltypevalname")
     ),
     hirid = list(
         list(id = 10000300L, table = "observations", column = "variableid")
@@ -671,7 +671,7 @@ cfg <- list(
     ),
     eicu = list(
       list(id = "GCS Total", table = "nursecharting",
-           column = "nursechartcelltypevalname")
+           column = "nursingchartcelltypevalname")
     ),
     hirid = list(
       list(id = NULL, table = "observations", column = "variableid")
@@ -720,13 +720,8 @@ cfg <- list(
     )
   ),
   urine_hourly = list(
-    mimic = list(
-      list(id = NULL, table = "outputevents", column = "itemid")
-    ),
-    eicu = list(
-      list(id = NULL, table = "nursecharting",
-           column = "nursechartcelltypevalname")
-    ),
+    mimic = NULL,
+    eicu = NULL,
     hirid = list(
       list(id = 10020000L, table = "observations", column = "variableid")
     )
@@ -737,7 +732,7 @@ cfg <- list(
     ),
     eicu = list(
       list(id = NULL, table = "nursecharting",
-           column = "nursechartcelltypevalname")
+           column = "nursingchartcelltypevalname")
     ),
     hirid = list(
       list(id = 30005110L, table = "observations", column = "variableid")
