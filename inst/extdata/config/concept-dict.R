@@ -951,5 +951,5 @@ cfg <- list(
   )
 )
 
-jsonlite::write_json(cfg[order(names(cfg))], "concept_dict.json",
+jsonlite::write_json(cfg[order(names(cfg))], "concept-dict.json",
                      null = "null", auto_unbox = TRUE, pretty = TRUE)

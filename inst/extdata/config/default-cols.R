@@ -93,5 +93,5 @@ cfg <- list(
   )
 )
 
-jsonlite::write_json(cfg, "default_cols.json", null = "null",
+jsonlite::write_json(cfg, "default-cols.json", null = "null",
                      auto_unbox = TRUE, pretty = TRUE)

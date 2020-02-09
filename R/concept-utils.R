@@ -1,7 +1,7 @@
 
 #' @export
 get_concepts <- function(envir = NULL, concept_sel = NULL,
-                         dictionary = get_config("concept_dict")) {
+                         dictionary = get_config("concept-dict")) {
 
   check_each <- function(x, entries = c("id", "table", "column")) {
     is.list(x) && all(vapply(x, has_name, logical(1L), entries))
@@ -30,7 +30,7 @@ get_concepts <- function(envir = NULL, concept_sel = NULL,
 }
 
 #' @export
-get_col_config <- function(envir = NULL, config = get_config("default_cols")) {
+get_col_config <- function(envir = NULL, config = get_config("default-cols")) {
 
   if (!is.null(envir)) {
     assert_that(is.string(envir), envir %in% names(config))
@@ -112,7 +112,7 @@ load_data <- function(envir, concepts, patient_ids = NULL,
                       items = get_concepts(envir, concepts),
                       col_cfg = get_col_config(envir),
                       load_fun = determine_loader(envir),
-                      agg_fun = dbl_med, ...) {
+                      agg_fun = dbl_med, interval = hours(1L)) {
 
   load_each <- function(x, ...) {
 
@@ -124,7 +124,7 @@ load_data <- function(envir, concepts, patient_ids = NULL,
     dat <- load_fun(table = x[["table"]], row_quo = x[["query"]],
                     cols = c(x[["id_col"]], cfg[["val_col"]]),
                     id_cols = cfg[["id_col"]], time_col = cfg[["time_col"]],
-                    ...)
+                    interval = interval)
 
     if (!is.null(patient_ids)) {
 
