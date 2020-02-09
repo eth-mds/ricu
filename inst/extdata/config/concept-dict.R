@@ -112,9 +112,7 @@ cfg <- list(
     eicu = list(
       list(id = "Total CO2", table = "lab", column = "labname")
     ),
-    hirid = list(
-      list(id = NULL, table = "observations", column = "variableid")
-    )
+    hirid = NULL
   ),
   alanine_aminotransferase = list(
     mimic = list(
@@ -255,9 +253,7 @@ cfg <- list(
     eicu = list(
       list(id = "PT", table = "lab", column = "labname")
     ),
-    hirid = list(
-      list(id = NULL, table = "observations", column = "variableid")
-    )
+    hirid = NULL
   ),
   rdw = list(
     mimic = list(
@@ -266,9 +262,7 @@ cfg <- list(
       eicu = list(
       list(id = "RDW", table = "lab", column = "labname")
     ),
-    hirid = list(
-      list(id = NULL, table = "observations", column = "variableid")
-    )
+    hirid = NULL
   ),
   alkaline_phosphatase = list(
     mimic = list(
@@ -312,9 +306,7 @@ cfg <- list(
     eicu = list(
       list(id = "Hct", table = "lab", column = "labname")
     ),
-    hirid = list(
-      list(id = NULL, table = "observations", column = "variableid")
-    )
+    hirid = NULL
   ),
   pa_co2 = list(
     mimic = list(
@@ -452,9 +444,7 @@ cfg <- list(
     eicu = list(
       list(id = "-basos", table = "lab", column = "labname")
     ),
-    hirid = list(
-      list(id = NULL, table = "observations", column = "variableid")
-    )
+    hirid = NULL
   ),
   eosinophils = list(
     mimic = list(
@@ -463,9 +453,7 @@ cfg <- list(
     eicu = list(
       list(id = "-eos", table = "lab", column = "labname")
     ),
-    hirid = list(
-      list(id = NULL, table = "observations", column = "variableid")
-    )
+    hirid = NULL
   ),
   neutrophils = list(
     mimic = list(
@@ -600,9 +588,7 @@ cfg <- list(
     eicu = list(
       list(id = "RBC", table = "lab", column = "labname")
     ),
-    hirid = list(
-      list(id = NULL, table = "observations", column = "variableid")
-    )
+    hirid = NULL
   ),
   creatine_kinase = list(
     mimic = list(
@@ -666,16 +652,12 @@ cfg <- list(
       )
   ),
   gcs_total = list(
-    mimic = list(
-      list(id = NULL, table = "chartevents", column = "itemid")
-    ),
+    mimic = NULL,
     eicu = list(
       list(id = "GCS Total", table = "nursecharting",
            column = "nursingchartcelltypevalname")
     ),
-    hirid = list(
-      list(id = NULL, table = "observations", column = "variableid")
-    )
+    hirid = NULL
   ),
   urine_events = list(
     mimic = list(
@@ -715,9 +697,7 @@ cfg <- list(
       list(id = "Indwelling Catheter Output", table = "intakeoutput",
            column = "celllabel")
     ),
-    hirid = list(
-      list(id = NULL, table = "observations", column = "variableid")
-    )
+    hirid = NULL
   ),
   urine_hourly = list(
     mimic = NULL,
@@ -727,9 +707,7 @@ cfg <- list(
     )
   ),
   urine_cumulative = list(
-    mimic = list(
-      list(id = NULL, table = "outputevents", column = "itemid")
-    ),
+    mimic = NULL,
     eicu = list(
       list(id = NULL, table = "nursecharting",
            column = "nursingchartcelltypevalname")
@@ -766,9 +744,7 @@ cfg <- list(
       list(id = "Dopamine (mcg/kg/min)", table = "infusiondrug",
            column = "drugname")
     ),
-    hirid = list(
-      list(id = NULL, table = "pharma", column = "variableid")
-    )
+    hirid = NULL
   ),
   norepinephrine = list(
     mimic = list(
@@ -925,17 +901,13 @@ cfg <- list(
       list(id = "No Response-ETT", table = "chartevents", column = "value"),
       list(id = "1.0 ET/Trach", table = "chartevents", column = "value")
     ),
-    eicu = list(
-      list(id = NULL, table = NULL, column = NULL)
-    ),
+    eicu = NULL,
     hirid = list(
       list(id = 15001552L, table = "observations", column = "variableid")
     )
   ),
   rass_scale = list(
-    mimic = list(
-      list(id = NULL, table = NULL, column = NULL)
-    ),
+    mimic = NULL,
     eicu = list(
       list(id = "Sedation Score", table = "nursecharting",
            column = "nursingchartcelltypevalname")

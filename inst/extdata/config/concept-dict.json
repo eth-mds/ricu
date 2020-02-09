@@ -129,13 +129,7 @@
         "column": "labname"
       }
     ],
-    "hirid": [
-      {
-        "id": null,
-        "table": "observations",
-        "column": "variableid"
-      }
-    ]
+    "hirid": null
   },
   "bicarbonate": {
     "mimic": [
@@ -267,13 +261,7 @@
         "column": "labname"
       }
     ],
-    "hirid": [
-      {
-        "id": null,
-        "table": "observations",
-        "column": "variableid"
-      }
-    ]
+    "hirid": null
   },
   "carboxyhemoglobin": {
     "mimic": [
@@ -511,13 +499,7 @@
         "column": "drugname"
       }
     ],
-    "hirid": [
-      {
-        "id": null,
-        "table": "pharma",
-        "column": "variableid"
-      }
-    ]
+    "hirid": null
   },
   "eosinophils": {
     "mimic": [
@@ -534,13 +516,7 @@
         "column": "labname"
       }
     ],
-    "hirid": [
-      {
-        "id": null,
-        "table": "observations",
-        "column": "variableid"
-      }
-    ]
+    "hirid": null
   },
   "epinephrine": {
     "mimic": [
@@ -723,13 +699,7 @@
     ]
   },
   "gcs_total": {
-    "mimic": [
-      {
-        "id": null,
-        "table": "chartevents",
-        "column": "itemid"
-      }
-    ],
+    "mimic": null,
     "eicu": [
       {
         "id": "GCS Total",
@@ -737,13 +707,7 @@
         "column": "nursingchartcelltypevalname"
       }
     ],
-    "hirid": [
-      {
-        "id": null,
-        "table": "observations",
-        "column": "variableid"
-      }
-    ]
+    "hirid": null
   },
   "gcs_verbal": {
     "mimic": [
@@ -859,13 +823,7 @@
         "column": "labname"
       }
     ],
-    "hirid": [
-      {
-        "id": null,
-        "table": "observations",
-        "column": "variableid"
-      }
-    ]
+    "hirid": null
   },
   "hemoglobin": {
     "mimic": [
@@ -1429,13 +1387,7 @@
         "column": "labname"
       }
     ],
-    "hirid": [
-      {
-        "id": null,
-        "table": "observations",
-        "column": "variableid"
-      }
-    ]
+    "hirid": null
   },
   "ptt": {
     "mimic": [
@@ -1461,13 +1413,7 @@
     ]
   },
   "rass_scale": {
-    "mimic": [
-      {
-        "id": null,
-        "table": null,
-        "column": null
-      }
-    ],
+    "mimic": null,
     "eicu": [
       {
         "id": "Sedation Score",
@@ -1498,13 +1444,7 @@
         "column": "labname"
       }
     ],
-    "hirid": [
-      {
-        "id": null,
-        "table": "observations",
-        "column": "variableid"
-      }
-    ]
+    "hirid": null
   },
   "red_blood_cells": {
     "mimic": [
@@ -1521,13 +1461,7 @@
         "column": "labname"
       }
     ],
-    "hirid": [
-      {
-        "id": null,
-        "table": "observations",
-        "column": "variableid"
-      }
-    ]
+    "hirid": null
   },
   "respiratory_rate": {
     "mimic": [
@@ -1704,13 +1638,7 @@
         "column": "value"
       }
     ],
-    "eicu": [
-      {
-        "id": null,
-        "table": null,
-        "column": null
-      }
-    ],
+    "eicu": null,
     "hirid": [
       {
         "id": 15001552,
@@ -1771,13 +1699,7 @@
     ]
   },
   "urine_cumulative": {
-    "mimic": [
-      {
-        "id": null,
-        "table": "outputevents",
-        "column": "itemid"
-      }
-    ],
+    "mimic": null,
     "eicu": [
       {
         "id": null,
@@ -1948,13 +1870,7 @@
         "column": "celllabel"
       }
     ],
-    "hirid": [
-      {
-        "id": null,
-        "table": "observations",
-        "column": "variableid"
-      }
-    ]
+    "hirid": null
   },
   "urine_hourly": {
     "mimic": null,
