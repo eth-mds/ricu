@@ -112,7 +112,8 @@ load_data <- function(envir, concepts, patient_ids = NULL,
                       items = get_concepts(envir, concepts),
                       col_cfg = get_col_config(envir),
                       load_fun = determine_loader(envir),
-                      agg_fun = group_median, interval = hours(1L)) {
+                      agg_fun = function(...) dt_gmedian(..., na.rm = TRUE),
+                      interval = hours(1L)) {
 
   load_each <- function(x) {
 
@@ -148,7 +149,7 @@ load_data <- function(envir, concepts, patient_ids = NULL,
       dat <- rename_cols(dat, map[["new"]], map[["old"]])
       dat <- dat[not_all_na(dat), ]
 
-      group_median(dat)
+      agg_fun(dat)
 
     } else {
 
@@ -157,7 +158,7 @@ load_data <- function(envir, concepts, patient_ids = NULL,
 
       dat <- split(dat, by = x[["id_col"]], keep.by = FALSE)
       dat <- Map(rename_cols, dat, names(dat), cfg[["val_col"]])
-      dat <- lapply(dat, group_median)
+      dat <- lapply(dat, agg_fun)
 
       reduce(merge, dat, all = TRUE)
     }
