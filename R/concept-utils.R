@@ -111,8 +111,7 @@ determine_loader <- function(envir) {
 load_data <- function(envir, concepts, patient_ids = NULL,
                       items = get_concepts(envir, concepts),
                       col_cfg = get_col_config(envir),
-                      load_fun = determine_loader(envir),
-                      agg_fun = function(...) dt_gmedian(..., na.rm = TRUE),
+                      load_fun = determine_loader(envir), agg_fun = dt_gmedian,
                       interval = hours(1L)) {
 
   load_each <- function(x) {
@@ -179,7 +178,7 @@ load_data <- function(envir, concepts, patient_ids = NULL,
     dups <- lapply(dups, function(dup) {
       hits <- vapply(x, is_hit, logical(1L), dup)
       new_tbl <- lapply(x[hits], move_feature, dup)
-      if (sum(hits) > 1L) make_unique(do.call(rbind, new_tbl), fun = agg_fun)
+      if (sum(hits) > 1L) agg_fun(do.call(rbind, new_tbl))
       else new_tbl
     })
 

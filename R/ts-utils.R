@@ -185,50 +185,50 @@ compact_unit <- function(x, col, handler = NULL, expected = NULL) {
 
 }
 
-dt_gmin <- function(x, by = id_cols(x), cols = data_cols(x), ...) {
-  x[, lapply(.SD, min, ...), by = by, .SDcols = cols]
+dt_gmin <- function(x, by = id_cols(x), cols = data_cols(x), na.rm = TRUE) {
+  x[, lapply(.SD, min, na.rm = na.rm), by = by, .SDcols = cols]
 }
 
-dt_gmax <- function(x, by = id_cols(x), cols = data_cols(x), ...) {
-  x[, lapply(.SD, max, ...), by = by, .SDcols = cols]
+dt_gmax <- function(x, by = id_cols(x), cols = data_cols(x), na.rm = TRUE) {
+  x[, lapply(.SD, max, na.rm = na.rm), by = by, .SDcols = cols]
 }
 
-dt_gmean <- function(x, by = id_cols(x), cols = data_cols(x), ...) {
-  x[, lapply(.SD, mean, ...), by = by, .SDcols = cols]
+dt_gmean <- function(x, by = id_cols(x), cols = data_cols(x), na.rm = TRUE) {
+  x[, lapply(.SD, mean, na.rm = na.rm), by = by, .SDcols = cols]
 }
 
-dt_gmedian <- function(x, by = id_cols(x), cols = data_cols(x), ...) {
-  x[, lapply(.SD, median, ...), by = by, .SDcols = cols]
+dt_gmedian <- function(x, by = id_cols(x), cols = data_cols(x), na.rm = TRUE) {
+  x[, lapply(.SD, median, na.rm = na.rm), by = by, .SDcols = cols]
 }
 
-dt_gvar <- function(x, by = id_cols(x), cols = data_cols(x), ...) {
-  x[, lapply(.SD, var, ...), by = by, .SDcols = cols]
+dt_gvar <- function(x, by = id_cols(x), cols = data_cols(x), na.rm = TRUE) {
+  x[, lapply(.SD, var, na.rm = na.rm), by = by, .SDcols = cols]
 }
 
-dt_gsd <- function(x, by = id_cols(x), cols = data_cols(x), ...) {
-  x[, lapply(.SD, sd, ...), by = by, .SDcols = cols]
+dt_gsd <- function(x, by = id_cols(x), cols = data_cols(x), na.rm = TRUE) {
+  x[, lapply(.SD, sd, na.rm = na.rm), by = by, .SDcols = cols]
 }
 
-dt_gsum <- function(x, by = id_cols(x), cols = data_cols(x), ...) {
-  x[, lapply(.SD, sum, ...), by = by, .SDcols = cols]
+dt_gsum <- function(x, by = id_cols(x), cols = data_cols(x), na.rm = TRUE) {
+  x[, lapply(.SD, sum, na.rm = na.rm), by = by, .SDcols = cols]
 }
 
-dt_gprod <- function(x, by = id_cols(x), cols = data_cols(x), ...) {
-  x[, lapply(.SD, prod, ...), by = by, .SDcols = cols]
+dt_gprod <- function(x, by = id_cols(x), cols = data_cols(x), na.rm = TRUE) {
+  x[, lapply(.SD, prod, na.rm = na.rm), by = by, .SDcols = cols]
 }
 
-dt_gfirst <- function(x, by = id_cols(x), cols = data_cols(x), ...) {
-  x[, lapply(.SD, first, ...), by = by, .SDcols = cols]
+dt_gfirst <- function(x, by = id_cols(x), cols = data_cols(x)) {
+  x[, lapply(.SD, first), by = by, .SDcols = cols]
 }
 
-dt_glast <- function(x, by = id_cols(x), cols = data_cols(x), ...) {
-  x[, lapply(.SD, last, ...), by = by, .SDcols = cols]
+dt_glast <- function(x, by = id_cols(x), cols = data_cols(x)) {
+  x[, lapply(.SD, last), by = by, .SDcols = cols]
 }
 
-dt_ghead <- function(x, by = id_cols(x), cols = data_cols(x), ...) {
-  x[, lapply(.SD, head, ...), by = by, .SDcols = cols]
+dt_ghead <- function(x, by = id_cols(x), cols = data_cols(x)) {
+  x[, lapply(.SD, head), by = by, .SDcols = cols]
 }
 
-dt_gtail <- function(x, by = id_cols(x), cols = data_cols(x), ...) {
-  x[, lapply(.SD, tail, ...), by = by, .SDcols = cols]
+dt_gtail <- function(x, by = id_cols(x), cols = data_cols(x)) {
+  x[, lapply(.SD, tail), by = by, .SDcols = cols]
 }
