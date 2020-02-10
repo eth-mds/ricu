@@ -112,14 +112,18 @@ load_data <- function(envir, concepts, patient_ids = NULL,
                       items = get_concepts(envir, concepts),
                       col_cfg = get_col_config(envir),
                       load_fun = determine_loader(envir),
-                      agg_fun = dbl_med, interval = hours(1L)) {
+                      agg_fun = group_median, interval = hours(1L)) {
 
-  load_each <- function(x, ...) {
+  load_each <- function(x) {
 
     cfg <- col_cfg[[x[["table"]]]]
     map <- x[["mapping"]]
 
     assert_that(has_name(cfg, c("id_col", "time_col", "val_col")))
+
+    message("fetching ",
+            paste0("`", unique(map[["new"]]), "`", collapse = ", "),
+            " from `", x[["table"]], "`.")
 
     dat <- load_fun(table = x[["table"]], row_quo = x[["query"]],
                     cols = c(x[["id_col"]], cfg[["val_col"]]),
@@ -142,15 +146,18 @@ load_data <- function(envir, concepts, patient_ids = NULL,
     if (is.null(x[["query"]])) {
 
       dat <- rename_cols(dat, map[["new"]], map[["old"]])
-      make_unique(dat[not_all_na(dat), ], fun = agg_fun)
+      dat <- dat[not_all_na(dat), ]
+
+      group_median(dat)
 
     } else {
 
-      dat <- split(dat, by = x[["id_col"]], keep.by = FALSE)
-      new_names <- map[["new"]][match(names(dat), map[["old"]])]
+      map <- stats::setNames(map[["new"]], map[["old"]])
+      dat <- dat[, c(x[["id_col"]]) := map[as.character(get(x[["id_col"]]))]]
 
-      dat <- Map(rename_cols, dat, new_names, cfg[["val_col"]])
-      dat <- lapply(dat, make_unique, fun = agg_fun)
+      dat <- split(dat, by = x[["id_col"]], keep.by = FALSE)
+      dat <- Map(rename_cols, dat, names(dat), cfg[["val_col"]])
+      dat <- lapply(dat, group_median)
 
       reduce(merge, dat, all = TRUE)
     }
@@ -178,7 +185,7 @@ load_data <- function(envir, concepts, patient_ids = NULL,
     c(dups, x[vapply(x, keep, logical(1L))])
   }
 
-  res <- lapply(prepare_queries(items), load_each, ...)
+  res <- lapply(prepare_queries(items), load_each)
 
   if (length(res) > 1L) {
 
