@@ -91,8 +91,9 @@ cfg <- list(
       list(id = 20000800L, table = "observations", column = "variableid")
     )
   ),
-  fio2 = list(
+  fi_o2 = list(
     mimic = list(
+      list(id = 50816L, table = "labevents", column = "itemid"),
       list(id = 223835L, table = "chartevents", column = "itemid"),
       list(id = 3420L, table = "chartevents", column = "itemid")
     ),
@@ -507,9 +508,7 @@ cfg <- list(
     mimic = list(
       list(id = 51288L, table = "labevents", column = "itemid")
     ),
-    eicu = list(
-      list(id = NULL, table = "lab", column = "labname")
-    ),
+    eicu = NULL,
     hirid = list(
       list(id = 24000668L, table = "observations", column = "variableid")
     )
@@ -708,10 +707,7 @@ cfg <- list(
   ),
   urine_cumulative = list(
     mimic = NULL,
-    eicu = list(
-      list(id = NULL, table = "nursecharting",
-           column = "nursingchartcelltypevalname")
-    ),
+    eicu = NULL,
     hirid = list(
       list(id = 30005110L, table = "observations", column = "variableid")
     )

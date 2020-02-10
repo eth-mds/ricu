@@ -586,31 +586,13 @@
       }
     ]
   },
-  "fibrinogen": {
+  "fi_o2": {
     "mimic": [
       {
-        "id": 51214,
+        "id": 50816,
         "table": "labevents",
         "column": "itemid"
-      }
-    ],
-    "eicu": [
-      {
-        "id": "fibrinogen",
-        "table": "lab",
-        "column": "labname"
-      }
-    ],
-    "hirid": [
-      {
-        "id": 24000536,
-        "table": "observations",
-        "column": "variableid"
-      }
-    ]
-  },
-  "fio2": {
-    "mimic": [
+      },
       {
         "id": 223835,
         "table": "chartevents",
@@ -637,6 +619,29 @@
     "hirid": [
       {
         "id": 2010,
+        "table": "observations",
+        "column": "variableid"
+      }
+    ]
+  },
+  "fibrinogen": {
+    "mimic": [
+      {
+        "id": 51214,
+        "table": "labevents",
+        "column": "itemid"
+      }
+    ],
+    "eicu": [
+      {
+        "id": "fibrinogen",
+        "table": "lab",
+        "column": "labname"
+      }
+    ],
+    "hirid": [
+      {
+        "id": 24000536,
         "table": "observations",
         "column": "variableid"
       }
@@ -1524,13 +1529,7 @@
         "column": "itemid"
       }
     ],
-    "eicu": [
-      {
-        "id": null,
-        "table": "lab",
-        "column": "labname"
-      }
-    ],
+    "eicu": null,
     "hirid": [
       {
         "id": 24000668,
@@ -1700,13 +1699,7 @@
   },
   "urine_cumulative": {
     "mimic": null,
-    "eicu": [
-      {
-        "id": null,
-        "table": "nursecharting",
-        "column": "nursingchartcelltypevalname"
-      }
-    ],
+    "eicu": null,
     "hirid": [
       {
         "id": 30005110,
