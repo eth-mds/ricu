@@ -1,6 +1,6 @@
 
 #' @export
-get_concepts <- function(envir = NULL, concept_sel = NULL,
+get_concepts <- function(source = NULL, concept_sel = NULL,
                          dictionary = get_config("concept-dict")) {
 
   check_each <- function(x, entries = c("id", "table", "column")) {
@@ -14,14 +14,14 @@ get_concepts <- function(envir = NULL, concept_sel = NULL,
     dictionary <- dictionary[concept_sel]
   }
 
-  if (!is.null(envir)) {
+  if (!is.null(source)) {
 
     assert_that(
-      is.string(envir),
-      all(vapply(dictionary, check_name, logical(1L), envir))
+      is.string(source),
+      all(vapply(dictionary, check_name, logical(1L), source))
     )
 
-    dictionary <- lapply(dictionary, `[[`, sub("_demo$", "", envir))
+    dictionary <- lapply(dictionary, `[[`, sub("_demo$", "", source))
   }
 
   assert_that(all(vapply(dictionary, check_each, logical(1L))))
@@ -30,11 +30,18 @@ get_concepts <- function(envir = NULL, concept_sel = NULL,
 }
 
 #' @export
-get_col_config <- function(envir = NULL, config = get_config("default-cols")) {
+get_col_config <- function(source = NULL, table = NULL,
+                           config = get_config("default-cols")) {
 
-  if (!is.null(envir)) {
-    assert_that(is.string(envir), envir %in% names(config))
-    config <- config[[sub("_demo$", "", envir)]]
+  if (!is.null(source)) {
+    source <- sub("_demo$", "", source)
+    assert_that(is.string(source), source %in% names(config))
+    config <- config[[source]]
+  }
+
+  if (!is.null(table)) {
+    assert_that(is.string(table), table %in% names(config))
+    config <- config[[table]]
   }
 
   assert_that(is.list(config))
@@ -42,7 +49,7 @@ get_col_config <- function(envir = NULL, config = get_config("default-cols")) {
   config
 }
 
-prepare_queries <- function(items) {
+prepare_concepts <- function(items) {
 
   inside_out <- function(x) {
     res <- lapply(names(x[[1L]]), function(i) lapply(x, `[[`, i))
@@ -61,7 +68,7 @@ prepare_queries <- function(items) {
     lapply(inside_out(res), ulst)
   }
 
-  build_query <- function(id, table, column, name) {
+  structure_concept <- function(id, table, column, name) {
 
     tbl  <- unique(ulst(table))
     cols <- ulst(column)
@@ -74,23 +81,20 @@ prepare_queries <- function(items) {
     if (any(null_id)) {
 
       assert_that(all(null_id), is.character(cols),
-                  length(name) == length(cols))
+                  length(nme) == length(cols))
 
-      map <- list(new = nme, old = cols)
-      query <- NULL
+      item_col <- NULL
+      ids <- cols
 
     } else {
 
-      cols <- unique(cols)
+      item_col <- unique(cols)
       ids <- ulst(id)
 
-      assert_that(is.string(cols), length(nme) == length(ids))
-
-      map <- list(new = nme, old = ids)
-      query <- substitute(col %in% id, list(col = as.name(cols), id = ids))
+      assert_that(is.string(item_col), length(nme) == length(ids))
     }
 
-    list(table = tbl, id_col = cols, mapping = map, query = query)
+    list(table = tbl, item_col = item_col, items = ids, names = nme)
   }
 
   itms <- prep_items(items)
@@ -98,108 +102,58 @@ prepare_queries <- function(items) {
                   ulst(itms[["column"]]))
   splt <- interaction(ulst(itms[["table"]]), splt, drop = TRUE)
 
-  do.call(Map, c(build_query, lapply(itms, split, splt)))
-}
-
-determine_loader <- function(envir) {
-  fun <- switch(sub("_demo$", "", envir), mimic = mimic_ts_quo,
-                                          eicu  = eicu_ts_quo)
-  function(...) fun(..., envir = envir)
+  do.call(Map, c(structure_concept, lapply(itms, split, splt)))
 }
 
 #' @export
-load_data <- function(envir, concepts, patient_ids = NULL,
-                      items = get_concepts(envir, concepts),
-                      col_cfg = get_col_config(envir),
-                      load_fun = determine_loader(envir), agg_fun = dt_gmedian,
-                      interval = hours(1L)) {
+load_concepts <- function(source, concepts, patient_ids = NULL,
+                          items = get_concepts(source, concepts),
+                          col_cfg = get_col_config(source),
+                          load_fun = determine_loader(source),
+                          agg_fun = dt_gmedian, interval = hours(1L)) {
 
-  load_each <- function(x) {
+  combine_feats <- function(x) {
 
-    cfg <- col_cfg[[x[["table"]]]]
-    map <- x[["mapping"]]
-
-    assert_that(has_name(cfg, c("id_col", "time_col", "val_col")))
-
-    message("fetching ",
-            paste0("`", unique(map[["new"]]), "`", collapse = ", "),
-            " from `", x[["table"]], "`.")
-
-    dat <- load_fun(table = x[["table"]], row_quo = x[["query"]],
-                    cols = c(x[["id_col"]], cfg[["val_col"]]),
-                    id_cols = cfg[["id_col"]], time_col = cfg[["time_col"]],
-                    interval = interval)
-
-    if (!is.null(patient_ids)) {
-
-      if (inherits(patient_ids, "data.frame")) {
-        assert_that(has_name(patient_ids, key(dat)))
-        join <- patient_ids[, key(dat), with = FALSE]
-      } else {
-        assert_that(is.atomic(patient_ids))
-        join <- setnames(setDT(list(patient_ids)), key(dat))
-      }
-
-      dat <- merge(dat, unique(join), by = key(dat), all = FALSE)
-    }
-
-    if (is.null(x[["query"]])) {
-
-      dat <- rename_cols(dat, map[["new"]], map[["old"]])
-      dat <- dat[not_all_na(dat), ]
-
-      agg_fun(dat)
-
-    } else {
-
-      map <- stats::setNames(map[["new"]], map[["old"]])
-      dat <- dat[, c(x[["id_col"]]) := map[as.character(get(x[["id_col"]]))]]
-
-      dat <- split(dat, by = x[["id_col"]], keep.by = FALSE)
-      dat <- Map(rename_cols, dat, names(dat), cfg[["val_col"]])
-      dat <- lapply(dat, agg_fun)
-
-      reduce(merge, dat, all = TRUE)
-    }
-  }
-
-  is_hit <- function(haystack, needle) needle %in% names(haystack)
-
-  keep <- function(x) length(id_cols(x)) < ncol(x)
-
-  move_feature <- function(tbl, feat) {
-    ret <- tbl[, c(id_cols(tbl), feat), with = FALSE]
-    set(tbl, j = feat, value = NULL)
-    ret
-  }
-
-  regroup_features <- function(x, dups) {
-
-    dups <- lapply(dups, function(dup) {
-      hits <- vapply(x, is_hit, logical(1L), dup)
-      new_tbl <- lapply(x[hits], move_feature, dup)
-      if (sum(hits) > 1L) agg_fun(do.call(rbind, new_tbl))
-      else new_tbl
-    })
-
-    c(dups, x[vapply(x, keep, logical(1L))])
-  }
-
-  res <- lapply(prepare_queries(items), load_each)
-
-  if (length(res) > 1L) {
-
-    feats <- unlist(lapply(res, data_cols))
+    feats <- vapply(x, data_cols, character(1L))
     dups <- feats[duplicated(feats)]
 
-    if (length(dups)) {
-      res <- regroup_features(res, dups)
-    }
+    if (length(dups) == 0L) return(x)
 
+    c(lapply(dups, function(dup) do.call(rbind, x[feats == dup])),
+      x[!feats %in% dups])
+  }
+
+  unique_feats <- function(x, agg) {
+
+  }
+
+  if (is.function(agg_fun)) {
+    agg_fun <- rep(list(agg_fun), length(items))
+    names(agg_fun) <- names(items)
+  }
+
+  assert_that(is.list(agg_fun), has_name(agg_fun, names(items)),
+              all(vapply(agg_fun, is.function, logical(1L))))
+
+  grouped_concepts <- prepare_concepts(items)
+  tables <- vapply(grouped_concepts, `[[`, character(1L), "table")
+
+  args <- Map(c,
+    list(load_items, source = source), grouped_concepts, col_cfg[tables],
+    list(patient_ids = patient_ids, extra_cols = NULL, interval = interval)
+  )
+
+  res <- lapply(args, do.call)
+  res <- unlist(res, recursive = FALSE)
+
+  res   <- combine_feats(res)
+  feats <- vapply(res, data_cols, character(1L))
+
+  res <- Map(do.call, agg_fun[feats], res)
+
+  if (length(res) > 1L) {
     reduce(merge, res, all = TRUE)
-
   } else {
-
     res[[1L]]
   }
 }
