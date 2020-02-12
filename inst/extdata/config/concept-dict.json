@@ -1252,7 +1252,9 @@
       {
         "id": 50821,
         "table": "labevents",
-        "column": "itemid"
+        "column": "itemid",
+        "extra_cols": "valueuom",
+        "resolver": "check_mmhg"
       }
     ],
     "eicu": [

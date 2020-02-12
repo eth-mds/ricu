@@ -124,8 +124,7 @@ load_items <- function(source, table, item_col, items, names, id_col,
         names(resolvers) <- items
       }
 
-      assert_that(is.list(resolvers), has_name(resolvers, items),
-                  all(vapply(resolvers, is.function, logical(1L))))
+      assert_that(is.list(resolvers), has_name(resolvers, items))
 
       dat <- split(dat, by = item_col, keep.by = FALSE)
       dat <- Map(resolve, dat, resolvers[names(dat)])
