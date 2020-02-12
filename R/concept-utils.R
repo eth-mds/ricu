@@ -109,7 +109,6 @@ prepare_concepts <- function(items) {
 load_concepts <- function(source, concepts, patient_ids = NULL,
                           items = get_concepts(source, concepts),
                           col_cfg = get_col_config(source),
-                          load_fun = determine_loader(source),
                           aggregate = "median", interval = hours(1L)) {
 
   combine_feats <- function(x) {
@@ -131,9 +130,11 @@ load_concepts <- function(source, concepts, patient_ids = NULL,
     }
   }
 
-  if (!is.list(aggregate)) {
+  if (is.function(aggregate) || is.string(aggregate)) {
     aggregate <- rep(list(aggregate), length(items))
     names(aggregate) <- names(items)
+  } else if (is.atomic(aggregate)) {
+    aggregate <- as.list(aggregate)
   }
 
   assert_that(is.list(aggregate), has_name(aggregate, names(items)))

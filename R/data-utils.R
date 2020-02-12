@@ -62,7 +62,7 @@ load_items <- function(source, table, item_col, items, names, id_col,
 
   extract_col <- function(col, x) x[, c(id_cols(dat), col), with = FALSE]
 
-  rm_na <- function(x, col) x[!is.na(col), ]
+  rm_na <- function(x, col) x[!is.na(get(col)), ]
 
   if (is.null(item_col)) {
     query <- NULL
@@ -70,9 +70,8 @@ load_items <- function(source, table, item_col, items, names, id_col,
     query <- substitute(col %in% id, list(col = as.name(item_col), id = items))
   }
 
-  message("fetching\n  * ",
-          paste0("`", unique(names), "`", collapse = "\n  * "),
-          "\nfrom `", source, "::", table, "`.")
+  message("loading from `", source, "::", table, "`:\n  * ",
+          paste0("`", unique(names), "`", collapse = "\n  * "))
 
   dat <- data_ts_quo(source, table = table, row_quo = query,
                      cols = c(item_col, val_col, extra_cols),
