@@ -120,26 +120,7 @@ as.data.frame.ts_tbl <- function(x, row.names = NULL, optional = FALSE, ...) {
 
 #' @export
 .rbind.ts_tbl <- function(..., use.names = TRUE, fill = FALSE, idcol = NULL) {
-
-  cond_as <- function(x) {
-    if (is.list(x)) x else data.table::as.data.table(x)
-  }
-
-  dt_rbl <- function(x, use.names, fill, idcol) {
-    data.table::rbindlist(lapply(x, cond_as), use.names, fill, idcol)
-  }
-
-  lst <- list(...)
-
-  ts_tbls <- vapply(lst, is_ts_tbl, logical(1L))
-  first <- which(ts_tbls)[1L]
-  meta <- ts_def(lst[[first]])
-
-  lst[ts_tbls] <- lapply(lst[ts_tbls], make_compatible, meta)
-
-  res <- dt_rbl(lst, use.names, fill, idcol)
-
-  reclass_ts_tbl(res, meta)
+  rbind_lst(list(...), use.names = use.names, fill = fill, idcol = idcol)
 }
 
 #' @rawNamespace if (getRversion() >= "4.0.0") { S3method(cbind, ts_tbl) }
