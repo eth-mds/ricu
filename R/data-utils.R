@@ -76,7 +76,7 @@ load_items <- function(source, table, item_col, items, names, id_col,
 
   dat <- data_ts_quo(source, table = table, row_quo = query,
                      cols = c(item_col, val_col, extra_cols),
-                     id_cols = id_cols, time_col = time_col,
+                     id_cols = id_col, time_col = time_col,
                      interval = interval)
 
   if (!is.null(patient_ids)) {

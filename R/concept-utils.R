@@ -110,7 +110,7 @@ load_concepts <- function(source, concepts, patient_ids = NULL,
                           items = get_concepts(source, concepts),
                           col_cfg = get_col_config(source),
                           load_fun = determine_loader(source),
-                          agg_fun = dt_gmedian, interval = hours(1L)) {
+                          aggregate = "median", interval = hours(1L)) {
 
   combine_feats <- function(x) {
 
@@ -123,33 +123,35 @@ load_concepts <- function(source, concepts, patient_ids = NULL,
       x[!feats %in% dups])
   }
 
-  unique_feats <- function(x, agg) {
-
+  do_aggregate <- function(x, fun) {
+    if (is.function(x)) {
+      x[, lapply(.SD, last), by = id_cols(x), .SDcols = data_cols(x)]
+    } else {
+      dt_gforce(x, fun, by = id_cols(x), cols = data_cols(x), na.rm = TRUE)
+    }
   }
 
-  if (is.function(agg_fun)) {
-    agg_fun <- rep(list(agg_fun), length(items))
-    names(agg_fun) <- names(items)
+  if (!is.list(aggregate)) {
+    aggregate <- rep(list(aggregate), length(items))
+    names(aggregate) <- names(items)
   }
 
-  assert_that(is.list(agg_fun), has_name(agg_fun, names(items)),
-              all(vapply(agg_fun, is.function, logical(1L))))
+  assert_that(is.list(aggregate), has_name(aggregate, names(items)))
 
   grouped_concepts <- prepare_concepts(items)
   tables <- vapply(grouped_concepts, `[[`, character(1L), "table")
 
-  args <- Map(c,
-    list(load_items, source = source), grouped_concepts, col_cfg[tables],
-    list(patient_ids = patient_ids, extra_cols = NULL, interval = interval)
-  )
+  args <- Map(c, grouped_concepts, col_cfg[tables])
+  extra_args <- list(source = source, patient_ids = patient_ids,
+                     extra_cols = NULL, interval = interval)
 
-  res <- lapply(args, do.call)
+  res <- lapply(args, function(x) do.call(load_items, c(x, extra_args)))
   res <- unlist(res, recursive = FALSE)
 
   res   <- combine_feats(res)
   feats <- vapply(res, data_cols, character(1L))
 
-  res <- Map(do.call, agg_fun[feats], res)
+  res <- Map(do_aggregate, res, aggregate[feats])
 
   if (length(res) > 1L) {
     reduce(merge, res, all = TRUE)
