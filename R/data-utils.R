@@ -8,7 +8,7 @@ data_ts <- function(source, table, row_expr, ...) {
 data_ts_quo <- function(source, ...) {
 
   fun <- switch(
-    sub("_demo$", "", source),
+    as_src(source),
     mimic = mimic_ts_quo,
     eicu  = eicu_ts_quo,
     hirid = stop("TODO"),
@@ -27,7 +27,7 @@ data_tbl <- function(source, table, row_expr, ...) {
 data_tbl_quo <- function(source, ...) {
 
   fun <- switch(
-    sub("_demo$", "", source),
+    as_src(source),
     mimic = mimic_tbl_quo,
     eicu  = eicu_tbl_quo,
     hirid = stop("TODO"),

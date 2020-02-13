@@ -201,8 +201,13 @@ agg_or_na <- function(agg_fun) {
   }
 }
 
+#' @export
 min_or_na <- agg_or_na(min)
+
+#' @export
 max_or_na <- agg_or_na(max)
+
+#' @export
 sum_or_na <- agg_or_na(sum)
 
 dbl_med <- function(x) as.double(median(x, na.rm = TRUE))
@@ -312,3 +317,5 @@ split_indices <- function(len, n_chunks) {
 not_all_na <- function(x, cols = data_cols(x)) {
   rowSums(is.na(x[, cols, with = FALSE])) < length(cols)
 }
+
+as_src <- function(x) sub("_demo$", "", x)

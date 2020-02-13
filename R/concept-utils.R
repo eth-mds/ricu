@@ -11,7 +11,7 @@ get_concepts <- function(source, concept_sel = NULL,
 
   assert_that(is.string(source), is.list(dictionary))
 
-  src <- sub("_demo$", "", source)
+  src <- as_src(source)
 
   if (!is.null(concept_sel)) {
 
@@ -86,7 +86,7 @@ get_col_config <- function(source = NULL, table = NULL,
                            config = get_config("default-cols")) {
 
   if (!is.null(source)) {
-    source <- sub("_demo$", "", source)
+    source <- as_src(source)
     assert_that(is.string(source), source %in% names(config))
     config <- config[[source]]
   }
