@@ -1,5 +1,5 @@
 
-check_mmhg <- function(x) {
-	assert_that(identical(unique(x[["valueuom"]]), "mm Hg"))
+check_mmhg <- function(x, unit_col, ...) {
+	assert_that(identical(unique(x[[unit_col]]), "mm Hg"))
 	x
 }

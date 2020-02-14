@@ -323,7 +323,7 @@ cfg <- list(
   pa_o2 = list(
     mimic = list(
       list(id = 50821L, table = "labevents", column = "itemid",
-           extra_cols = "valueuom", resolver = "check_mmhg")
+           resolver = "check_mmhg", unit_col = "valueuom", error_col = "flag")
     ),
     eicu = list(
       list(id = "paO2", table = "lab", column = "labname")

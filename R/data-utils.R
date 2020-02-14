@@ -58,8 +58,7 @@ prepare_patient_ids <- function(x, key) {
 #' @export
 load_items <- function(source, table, item_col, items, names, id_col,
                        time_col, val_col, patient_ids = NULL,
-                       extra_cols = NULL, resolvers = NULL,
-                       interval = hours(1L)) {
+                       resolvers = NULL, interval = hours(1L), ...) {
 
   extract_col <- function(col, x) x[, c(id_cols(dat), col), with = FALSE]
 
@@ -67,7 +66,13 @@ load_items <- function(source, table, item_col, items, names, id_col,
 
   map_names <- function(old) stats::setNames(names, items)[as.character(old)]
 
-  resolve <- function(x, fun) if (is.null(fun)) x else fun(x)
+  resolve <- function(x, fun) {
+    if (!is.null(fun) && !length(extra_cols)) fun(x)
+    else if (!is.null(fun)) do.call(fun, c(list(x), extra_cols))
+    else x
+  }
+
+  extra_cols <- list(...)
 
   if (is.null(item_col)) {
     query <- NULL
@@ -75,7 +80,7 @@ load_items <- function(source, table, item_col, items, names, id_col,
     query <- substitute(col %in% id, list(col = as.name(item_col), id = items))
   }
 
-  if (!is.null(extra_cols) && is.null(resolvers)) {
+  if (length(extra_cols) && is.null(resolvers)) {
     warning("`extra_cols` is only effective is `resolvers` is specified.")
   }
 
@@ -83,7 +88,7 @@ load_items <- function(source, table, item_col, items, names, id_col,
           paste0("`", unique(names), "`", collapse = "\n  * "))
 
   dat <- data_ts_quo(source, table = table, row_quo = query,
-                     cols = c(item_col, val_col, extra_cols),
+                     cols = c(item_col, val_col, unlist(extra_cols)),
                      id_cols = id_col, time_col = time_col,
                      interval = interval)
 
@@ -96,7 +101,7 @@ load_items <- function(source, table, item_col, items, names, id_col,
   if (is.null(query)) {
 
     if (!is.null(resolvers)) dat <- resolvers(dat)
-    if (!is.null(extra_cols)) dat <- rm_cols(dat, extra_cols)
+    if (length(extra_cols)) dat <- rm_cols(dat, unlist(extra_cols))
 
     dat <- rename_cols(dat, names, items)
     dat <- lapply(names, extract_col, dat)
@@ -106,8 +111,8 @@ load_items <- function(source, table, item_col, items, names, id_col,
 
     if (is.null(resolvers)) {
 
-      if (!is.null(extra_cols)) {
-        dat <- rm_cols(dat, extra_cols)
+      if (length(extra_cols)) {
+        dat <- rm_cols(dat, unlist(extra_cols))
       }
 
       dat <- dat[, c(item_col) := map_names(get(item_col))]
@@ -128,7 +133,7 @@ load_items <- function(source, table, item_col, items, names, id_col,
 
       dat <- split(dat, by = item_col, keep.by = FALSE)
       dat <- Map(resolve, dat, resolvers[names(dat)])
-      dat <- lapply(dat, rm_cols, extra_cols)
+      dat <- lapply(dat, rm_cols, unlist(extra_cols))
       dat <- Map(rename_cols, dat, map_names(names(dat)), val_col)
       dat <- combine_feats(dat)
     }
