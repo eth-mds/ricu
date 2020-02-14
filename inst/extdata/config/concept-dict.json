@@ -650,12 +650,12 @@
   "gcs_eye": {
     "mimic": [
       {
-        "id": 223900,
+        "id": 184,
         "table": "chartevents",
         "column": "itemid"
       },
       {
-        "id": 723,
+        "id": 220739,
         "table": "chartevents",
         "column": "itemid"
       }
@@ -678,12 +678,12 @@
   "gcs_motor": {
     "mimic": [
       {
-        "id": 220739,
+        "id": 454,
         "table": "chartevents",
         "column": "itemid"
       },
       {
-        "id": 184,
+        "id": 223901,
         "table": "chartevents",
         "column": "itemid"
       }
@@ -704,7 +704,13 @@
     ]
   },
   "gcs_total": {
-    "mimic": null,
+    "mimic": [
+      {
+        "id": 198,
+        "table": "chartevents",
+        "column": "itemid"
+      }
+    ],
     "eicu": [
       {
         "id": "GCS Total",
@@ -717,12 +723,12 @@
   "gcs_verbal": {
     "mimic": [
       {
-        "id": 223901,
+        "id": 723,
         "table": "chartevents",
         "column": "itemid"
       },
       {
-        "id": 454,
+        "id": 223900,
         "table": "chartevents",
         "column": "itemid"
       }
@@ -1027,12 +1033,12 @@
   "mean_bp": {
     "mimic": [
       {
-        "id": 220052,
+        "id": 52,
         "table": "chartevents",
         "column": "itemid"
       },
       {
-        "id": 6072,
+        "id": 443,
         "table": "chartevents",
         "column": "itemid"
       },
@@ -1042,12 +1048,22 @@
         "column": "itemid"
       },
       {
-        "id": 52,
+        "id": 6072,
+        "table": "chartevents",
+        "column": "itemid"
+      },
+      {
+        "id": 220052,
         "table": "chartevents",
         "column": "itemid"
       },
       {
         "id": 220181,
+        "table": "chartevents",
+        "column": "itemid"
+      },
+      {
+        "id": 225312,
         "table": "chartevents",
         "column": "itemid"
       }
