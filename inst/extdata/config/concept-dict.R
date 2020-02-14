@@ -44,11 +44,13 @@ cfg <- list(
   ),
   mean_bp = list(
     mimic = list(
-      list(id = 220052L, table = "chartevents", column = "itemid"),
-      list(id = 6072L, table = "chartevents", column = "itemid"),
-      list(id = 456L, table = "chartevents", column = "itemid"),
       list(id = 52L, table = "chartevents", column = "itemid"),
-      list(id = 220181L, table = "chartevents", column = "itemid")
+      list(id = 443L, table = "chartevents", column = "itemid"),
+      list(id = 456L, table = "chartevents", column = "itemid"),
+      list(id = 6072L, table = "chartevents", column = "itemid"),
+      list(id = 220052L, table = "chartevents", column = "itemid"),
+      list(id = 220181L, table = "chartevents", column = "itemid"),
+      list(id = 225312L, table = "chartevents", column = "itemid")
     ),
     eicu = list(
       list(id = NULL, table = "vitalperiodic", column = "systemicmean")
@@ -614,8 +616,8 @@ cfg <- list(
   ),
   gcs_eye = list(
     mimic = list(
-      list(id = 223900L, table = "chartevents", column = "itemid"),
-      list(id = 723L, table = "chartevents", column = "itemid")
+      list(id = 184L, table = "chartevents", column = "itemid"),
+      list(id = 220739L, table = "chartevents", column = "itemid")
     ),
     eicu = list(
       list(id = "Eyes", table = "nursecharting",
@@ -627,8 +629,8 @@ cfg <- list(
   ),
   gcs_verbal = list(
     mimic = list(
-      list(id = 223901L, table = "chartevents", column = "itemid"),
-      list(id = 454L, table = "chartevents", column = "itemid")
+      list(id = 723L, table = "chartevents", column = "itemid"),
+      list(id = 223900L, table = "chartevents", column = "itemid")
     ),
     eicu = list(
       list(id = "Verbal", table = "nursecharting",
@@ -640,8 +642,8 @@ cfg <- list(
   ),
   gcs_motor = list(
     mimic = list(
-      list(id = 220739L, table = "chartevents", column = "itemid"),
-      list(id = 184L, table = "chartevents", column = "itemid")
+      list(id = 454L, table = "chartevents", column = "itemid"),
+      list(id = 223901L, table = "chartevents", column = "itemid")
     ),
     eicu = list(
       list(id = "Motor", table = "nursecharting",
@@ -652,7 +654,9 @@ cfg <- list(
       )
   ),
   gcs_total = list(
-    mimic = NULL,
+    mimic = list(
+      list(id = 198L, table = "chartevents", column = "itemid")
+    ),
     eicu = list(
       list(id = "GCS Total", table = "nursecharting",
            column = "nursingchartcelltypevalname")
