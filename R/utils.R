@@ -318,4 +318,7 @@ not_all_na <- function(x, cols = data_cols(x)) {
   rowSums(is.na(x[, cols, with = FALSE])) < length(cols)
 }
 
-as_src <- function(x) sub("_demo$", "", x)
+as_src <- function(x) {
+  assert_that(is.string(x))
+  sub("_demo$", "", x)
+}
