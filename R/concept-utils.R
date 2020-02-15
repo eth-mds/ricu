@@ -192,12 +192,14 @@ load_concepts <- function(source, concepts = get_concepts(source),
   res <- lapply(args, function(x) do.call(load_items, c(x, extra_args)))
   res <- unlist(res, recursive = FALSE)
 
-  res <- combine_feats(res)
+  res   <- combine_feats(res)
+  feats <- vapply(res, data_cols, character(1L))
 
-  if (!merge && !aggregate) return(res)
+  names(res) <- feats
 
-  res <- Map(do_aggregate, res,
-             aggregate[vapply(res, data_cols, character(1L))])
+  if (!merge && isFALSE(aggregate)) return(res)
+
+  res <- Map(do_aggregate, res, aggregate[feats])
 
   if (!merge) return(res)
 
