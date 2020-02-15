@@ -19,8 +19,16 @@ cfg <- list(
     diagnoses_icd = list(),
     drgcodes = list(),
     icustays = list(),
-    inputevents_cv = list(),
-    inputevents_mv = list(),
+    inputevents_cv = list(
+      id_col = "hadm_id",
+      time_col = "charttime",
+      val_col = "rate"
+    ),
+    inputevents_mv = list(
+      id_col = "hadm_id",
+      time_col = "starttime",
+      val_col = "rate"
+    ),
     labevents = list(
       id_col = "hadm_id",
       time_col = "charttime",
@@ -28,10 +36,18 @@ cfg <- list(
     ),
     microbiologyevents = list(),
     noteevents = list(),
-    outputevents = list(),
+    outputevents = list(
+      id_col = "hadm_id",
+      time_col = "charttime",
+      val_col = "value"
+    ),
     patients = list(),
     prescriptions = list(),
-    procedureevents_mv = list(),
+    procedureevents_mv = list(
+      id_col = "hadm_id",
+      time_col = "starttime",
+      val_col = "value"
+    ),
     procedures_icd = list(),
     services = list(),
     transfers = list()
@@ -51,7 +67,11 @@ cfg <- list(
     customlab = list(),
     diagnosis = list(),
     hospital = list(),
-    infusiondrug = list(),
+    infusiondrug = list(
+      id_col = "patienthealthsystemstayid",
+      time_col = "infusionoffset",
+      val_col = "drugrate"
+    ),
     intakeoutput = list(),
     lab = list(
       id_col = "patienthealthsystemstayid",

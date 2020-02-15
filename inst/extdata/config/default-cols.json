@@ -18,8 +18,16 @@
     "diagnoses_icd": [],
     "drgcodes": [],
     "icustays": [],
-    "inputevents_cv": [],
-    "inputevents_mv": [],
+    "inputevents_cv": {
+      "id_col": "hadm_id",
+      "time_col": "charttime",
+      "val_col": "rate"
+    },
+    "inputevents_mv": {
+      "id_col": "hadm_id",
+      "time_col": "starttime",
+      "val_col": "rate"
+    },
     "labevents": {
       "id_col": "hadm_id",
       "time_col": "charttime",
@@ -27,10 +35,18 @@
     },
     "microbiologyevents": [],
     "noteevents": [],
-    "outputevents": [],
+    "outputevents": {
+      "id_col": "hadm_id",
+      "time_col": "charttime",
+      "val_col": "value"
+    },
     "patients": [],
     "prescriptions": [],
-    "procedureevents_mv": [],
+    "procedureevents_mv": {
+      "id_col": "hadm_id",
+      "time_col": "starttime",
+      "val_col": "value"
+    },
     "procedures_icd": [],
     "services": [],
     "transfers": []
@@ -50,7 +66,11 @@
     "customlab": [],
     "diagnosis": [],
     "hospital": [],
-    "infusiondrug": [],
+    "infusiondrug": {
+      "id_col": "patienthealthsystemstayid",
+      "time_col": "infusionoffset",
+      "val_col": "drugrate"
+    },
     "intakeoutput": [],
     "lab": {
       "id_col": "patienthealthsystemstayid",
