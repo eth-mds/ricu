@@ -1,12 +1,84 @@
 
-sofa_pafi <- function(pao2, fio2, win_length = hours(2L),
-                      mode = c("match_vals", "extreme_vals", "fill_gaps")) {
+#' @export
+sofa_data <- function(source, pafi_win_length = hours(2L),
+                      pafi_mode = c("match_vals", "extreme_vals", "fill_gaps"),
+                      fix_na_fio2 = TRUE, vent_win_length = hours(6L),
+                      vent_min_win = mins(10L), gcs_win_length = hours(6L),
+                      fix_na_gcs = TRUE, urine_min_win = hours(12L),
+                      interval = hours(1L), patient_ids = NULL,
+                      icu_limits = icu_stays(source, interval),
+                      col_cfg = get_col_config(source),
+                      dictionary = get_config("concept-dict")) {
+
+  assert_that(
+    is_time(pafi_win_length, allow_neg = FALSE), pafi_win_length > interval,
+    is.flag(fix_na_fio2), is_time(vent_win_length, allow_neg = FALSE),
+    is_time(vent_min_win, allow_neg = FALSE), vent_min_win < vent_win_length,
+    is_time(gcs_win_length, allow_neg = FALSE), gcs_win_length > interval,
+    is.flag(fix_na_gcs), is_time(urine_min_win, allow_neg = FALSE),
+    urine_min_win > interval, all.equal(interval(icu_limits), interval),
+    urine_min_win <= hours(24L)
+  )
+
+  sel_non_null <- function(x, sel) Filter(Negate(is.null), x[sel])
+
+  pafi_mode <- match.arg(pafi_mode)
+
+  vent_conc <- c("vent_start", "vent_end")
+  gcs_conc <- c("gcs_eye", "gcs_motor", "gcs_verbal", "gcs_total")
+  sed_conc <- c("tracheostomy", "rass_scale")
+  urine_conc <- c("urine_cumulative", "urine_events", "urine_hourly")
+
+  agg_funs <- c(
+    pa_o2 = "min", fi_o2 = "max", vent_start = "sum", vent_end = "sum",
+    platelet_count = "min", bilirubin_total = "max", mean_bp = "min",
+    norepinephrine = "max", epinephrine = "max", dopamine = "max",
+    dobutamine = "max", gcs_eye = "min", gcs_motor = "min", gcs_verbal = "min",
+    gcs_total = "min", tracheostomy = "sum", rass_scale = "min",
+    creatinine = "max", urine_cumulative = "max", urine_events = "sum",
+    urine_hourly = "sum"
+  )
+
+  dat_dict  <- get_concepts(source, setdiff(names(agg_funs), vent_conc),
+                            dictionary)
+  vent_dict <- get_concepts(source, vent_conc, dictionary)
+
+  dat <- c(
+    load_concepts(source, dat_dict,  patient_ids, col_cfg, agg_funs,
+                  interval, merge_data = FALSE),
+    load_concepts(source, vent_dict, patient_ids, col_cfg, agg_funs,
+                  mins(1L), merge_data = FALSE)
+  )
+
+  dat[["pafi"]] <- sofa_pafi(
+    dat[["pa_o2"]], dat[["fi_o2"]], pafi_win_length, pafi_mode, fix_na_fio2
+  )
+
+  dat[["vent"]] <- sofa_vent(
+    dat[["vent_start"]], dat[["vent_end"]], vent_win_length, vent_min_win,
+    interval
+  )
+
+  dat[["gcs"]] <- sofa_gcs(
+    reduce(merge, sel_non_null(dat, gcs_conc), all = TRUE),
+    reduce(merge, sel_non_null(dat, sed_conc), all = TRUE),
+    gcs_win_length, fix_na_gcs
+  )
+
+  dat[["urine"]] <- sofa_urine(
+    reduce(merge, sel_non_null(dat, urine_conc), all = TRUE),
+    icu_limits, urine_min_win, interval
+  )
+
+  dat[c("pa_o2", "fi_o2", vent_conc, gcs_conc, sed_conc, urine_conc)] <- NULL
+
+  reduce(merge, dat, all = TRUE)
+}
+
+sofa_pafi <- function(pao2, fio2, win_length, mode, fix_na_fio2) {
 
   assert_that(same_ts(pao2, fio2),
-              has_cols(pao2, "pao2"), has_cols(fio2, "fio2"),
-              is_time(win_length, allow_neg = FALSE))
-
-  mode <- match.arg(mode)
+              has_cols(pao2, "pa_o2"), has_cols(fio2, "fi_o2"))
 
   if (identical(mode, "match_vals")) {
 
@@ -25,45 +97,47 @@ sofa_pafi <- function(pao2, fio2, win_length = hours(2L),
     }
 
     win_expr <- substitute(
-      list(min_pa = min_fun(pao2), max_fi = max_fun(fio2)),
+      list(min_pa = min_fun(pa_o2), max_fi = max_fun(fi_o2)),
       list(min_fun = min_or_na, max_fun = max_or_na)
     )
     res <- slide_quo(res, win_expr, before = win_length, full_window = FALSE)
 
-    rename_cols(res, c("pao2", "fio2"), c("min_pa", "max_fi"))
+    rename_cols(res, c("pa_o2", "fi_o2"), c("min_pa", "max_fi"))
   }
 
-  res <- res[, pafi := 100 * pao2 / fio2]
-  res <- res[, c("pao2", "fio2") := NULL]
+  if (fix_na_fio2) {
+    res <- res[is.na(fi_o2), fi_o2 := 21]
+  }
+
+  res <- res[!is.na(pa_o2) & !is.na(fi_o2) & fi_o2 != 0, ]
+  res <- res[, pafi := 100 * pa_o2 / fi_o2]
+  res <- res[, c("pa_o2", "fi_o2") := NULL]
 
   res
 }
 
-sofa_vent <- function(vent_start, vent_stop, win_length = hours(6L),
-                      min_length = mins(10L), interval = hours(1L)) {
+sofa_vent <- function(start, stop, win_length, min_length, interval) {
 
   final_units <- function(x) {
     units(x) <- units(interval)
     round_to(x, as.double(interval))
   }
 
-  assert_that(same_ts(vent_start, vent_stop),
-              is_time(win_length, allow_neg = FALSE),
-              is_time(min_length, allow_neg = FALSE),
-              min_length < win_length, interval(vent_start) < min_length)
+  assert_that(same_ts(start, stop),
+              interval(start) < min_length)
 
-  units(win_length) <- time_unit(vent_start)
-  units(min_length) <- time_unit(vent_start)
+  units(win_length) <- time_unit(start)
+  units(min_length) <- time_unit(start)
 
-  vent_start[, start_time := get(index(vent_start))]
-  vent_stop[ , stop_time  := get(index(vent_stop))]
+  start[, start_time := get(index(start))]
+  stop[ , stop_time  := get(index(stop))]
 
   on.exit({
-    set(vent_start, j = "start_time", value = NULL)
-    set(vent_stop,  j = "stop_time",  value = NULL)
+    set(start, j = "start_time", value = NULL)
+    set(stop,  j = "stop_time",  value = NULL)
   })
 
-  merged <- vent_stop[vent_start, roll = -win_length, on = id_cols(vent_start)]
+  merged <- stop[start, roll = -win_length, on = id_cols(start)]
 
   merged <- merged[is.na(stop_time), stop_time := start_time + win_length]
   merged <- merged[stop_time - start_time >= min_length, ]
@@ -74,15 +148,48 @@ sofa_vent <- function(vent_start, vent_stop, win_length = hours(6L),
 
   res <- unique(
     expand_limits(merged, min_col = "start_time", max_col = "stop_time",
-                  step_size = as.double(interval), id_cols = key(vent_start))
+                  step_size = as.double(interval), id_cols = key(start))
   )
   res <- res[, vent := TRUE]
 
   res
 }
 
-sofa_urine24 <- function(urine, limits, min_win = hours(12L),
-                         interval = hours(1L)) {
+sofa_gcs <- function(gcs, sed, win_length, set_na_max) {
+
+  assert_that(same_ts(gcs, sed))
+
+  if (identical(data_cols(sed), "tracheostomy")) {
+    sed <- sed[tracheostomy > 0, is_sed := TRUE]
+    sed <- sed[, tracheostomy := NULL]
+  } else stop("TODO")
+
+  dat <- merge(gcs, sed, all = TRUE)
+
+  gcs_names <- c("gcs_eye", "gcs_verbal", "gcs_motor")
+
+  dat <- dat[is_true(is_sed), c(gcs_names) := list(4, 5, 6)]
+
+  expr <- substitute(list(eye_imp = fun(gcs_eye), verb_imp = fun(gcs_verbal),
+                          mot_imp = fun(gcs_motor), gcs = gcs_total),
+                     list(fun = carry_backwards))
+  dat <- slide_quo(dat, expr, before = win_length)
+
+  if (set_na_max) {
+    dat <- dat[, c(gcs_names) := list(
+      replace_na(eye_imp, 4), replace_na(verb_imp, 5), replace_na(mot_imp, 6)
+    )]
+  }
+
+  dat <- dat[, gcs := fifelse(is.na(gcs), eye_imp + verb_imp + mot_imp, gcs)]
+
+  dat <- set(dat, j = c(gcs_names, "eye_imp", "verb_imp", "mot_imp"),
+             value = NULL)
+
+  dat
+}
+
+sofa_urine <- function(urine, limits, min_win, interval) {
 
   convert_dt <- function(x) as.double(x, units(interval))
 
@@ -97,18 +204,21 @@ sofa_urine24 <- function(urine, limits, min_win = hours(12L),
     }
   })
 
-  assert_that(is_time(min_win, allow_neg = FALSE), min_win <= hours(24L))
+  assert_that(identical(key(urine), key(limits)),
+              has_name(limits, c("intime", "outtime")),
+              all.equal(interval(urine), interval(limits)))
 
-  res <- fill_gaps(urine, limits = limits)
+  if (!identical(data_cols(urine), "urine_events")) {
+    stop("TODO")
+  }
 
-  expr <- substitute(list(urine_24 = win_agg_fun(urine)),
+  res <- fill_gaps(urine, limits = limits, min_col = "intime",
+                   max_col = "outtime")
+
+  expr <- substitute(list(urine_24 = win_agg_fun(urine_events)),
                      list(win_agg_fun = urine_sum))
 
-  res <- slide_quo(res, expr, hours(24L))
-
-  res <- rm_cols(res, "icustay_id")
-
-  make_unique(res, fun = sum_or_na)
+  slide_quo(res, expr, hours(24L))
 }
 
 sofa_vars <- function(pafi, vent, coag, bili, map, vaso, gcs, crea, urine,

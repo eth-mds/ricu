@@ -69,7 +69,7 @@ fill_gaps <- function(x, limits = NULL, ...) {
                           id_cols = key(x), new_col = time_col)
   }
 
-  assert_that(has_no_gaps(join), same_ts(x, join))
+  assert_that(same_ts(x, join))
 
   x[join, on = id_cols(x)]
 }
