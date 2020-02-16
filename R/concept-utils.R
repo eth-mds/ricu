@@ -171,7 +171,7 @@ load_concepts <- function(source, concepts = get_concepts(source),
 
   assert_that(is.list(concepts), !is.null(names(concepts)))
 
-  if (is.null(aggregate) || is.function(aggregate) || is.string(aggregate)) {
+  if (is.null(aggregate) || is.function(aggregate) || is.string(aggregate)) {
     aggregate <- rep(list(aggregate), length(items))
     names(aggregate) <- names(items)
   } else if (is.atomic(aggregate)) {
