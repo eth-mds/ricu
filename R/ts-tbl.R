@@ -261,6 +261,7 @@ set_interval <- function(x, new) {
   if (is_ts_tbl(x)) {
     set(x, j = index(x),
         value = round_to(x[[index(x)]], as.double(new, time_unit(x))))
+    setkeyv(x, id_cols(x))
   }
 
   update_ts_def(x, new_tbl_index(x, index(x), new))
@@ -312,7 +313,7 @@ make_compatible <- function(x, def) {
     x <- set_time_unit(x, time_unit(def))
   }
 
-  if (!identical(interval(x), interval(def))) {
+  if (!all.equal(interval(x), interval(def))) {
     x <- set_interval(x, interval(def))
   }
 

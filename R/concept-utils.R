@@ -149,7 +149,7 @@ combine_feats <- function(x) {
 load_concepts <- function(source, concepts = get_concepts(source),
                           patient_ids = NULL, col_cfg = get_col_config(source),
                           aggregate = "median", interval = hours(1L),
-                          merge = TRUE) {
+                          merge_data = TRUE) {
 
   do_aggregate <- function(x, fun) {
     if (is.function(fun)) {
@@ -162,7 +162,7 @@ load_concepts <- function(source, concepts = get_concepts(source),
     }
   }
 
-  assert_that(is.flag(merge), is_time(interval, allow_neg = FALSE))
+  assert_that(is.flag(merge_data), is_time(interval, allow_neg = FALSE))
 
   if (is.character(concepts)) {
     concepts <- get_concepts(source, concept_sel = concepts,
@@ -197,11 +197,11 @@ load_concepts <- function(source, concepts = get_concepts(source),
 
   names(res) <- feats
 
-  if (!merge && isFALSE(aggregate)) return(res)
+  if (!merge_data && isFALSE(aggregate)) return(res)
 
   res <- Map(do_aggregate, res, aggregate[feats])
 
-  if (!merge) return(res)
+  if (!merge_data) return(res)
 
   if (length(res) > 1L) {
     reduce(merge, res, all = TRUE)
