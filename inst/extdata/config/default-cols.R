@@ -92,7 +92,11 @@ cfg <- list(
     patient = list(),
     physicalexam = list(),
     respiratorycare = list(),
-    respiratorycharting = list(),
+    respiratorycharting = list(
+      id_col = "patienthealthsystemstayid",
+      time_col = "respchartoffset",
+      val_col = "respchartvalue"
+    ),
     treatment = list(),
     vitalaperiodic = list(
       id_col = "patienthealthsystemstayid",
@@ -113,5 +117,8 @@ cfg <- list(
   )
 )
 
-jsonlite::write_json(cfg, "default-cols.json", null = "null",
-                     auto_unbox = TRUE, pretty = TRUE)
+file <- file.path(rprojroot::find_root(rprojroot::is_r_package), "inst",
+                  "extdata", "config", "default-cols.json")
+
+jsonlite::write_json(cfg, file, null = "null", auto_unbox = TRUE,
+                     pretty = TRUE)

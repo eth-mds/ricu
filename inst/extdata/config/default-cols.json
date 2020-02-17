@@ -91,7 +91,11 @@
     "patient": [],
     "physicalexam": [],
     "respiratorycare": [],
-    "respiratorycharting": [],
+    "respiratorycharting": {
+      "id_col": "patienthealthsystemstayid",
+      "time_col": "respchartoffset",
+      "val_col": "respchartvalue"
+    },
     "treatment": [],
     "vitalaperiodic": {
       "id_col": "patienthealthsystemstayid",

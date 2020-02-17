@@ -11,4 +11,12 @@ check_mmhg <- function(x, unit_col, ...) {
 
 as_flag <- function(x, val_col, ...) {
   x[, c(val_col) := 1]
+  x
+}
+
+as_numeric <- function(x, val_col, ...) {
+  x[, c("tmp_col") := as.numeric(val_col)]
+  on.exit(x[, c("tmp_col") := NULL])
+  x[, c(val_col) := NULL]
+  rename_cols(x, val_col, "tmp_col")
 }

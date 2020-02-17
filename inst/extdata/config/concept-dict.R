@@ -101,7 +101,7 @@ cfg <- list(
     ),
     eicu = list(
       list(id = "FiO2", table = "respiratorycharting",
-           column = "respchartvaluelabel"),
+           column = "respchartvaluelabel", resolver = "as_numeric"),
       list(id = "FiO2", table = "lab", column = "labname")
     ),
     hirid = list(

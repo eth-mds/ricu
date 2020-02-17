@@ -608,7 +608,8 @@
       {
         "id": "FiO2",
         "table": "respiratorycharting",
-        "column": "respchartvaluelabel"
+        "column": "respchartvaluelabel",
+        "resolver": "as_numeric"
       },
       {
         "id": "FiO2",
