@@ -83,7 +83,7 @@ load_items <- function(source, table, item_col, items, names, id_col,
   if (is.null(unlist(items))) {
     query <- NULL
   } else {
-    # TODO: reges for string, `==` for length 1 numeric, etc.
+    # TODO: regex for string, `==` for length 1 numeric, etc.
     query <- substitute(col %in% id, list(col = as.name(item_col),
                                           id = unique(unlist(items))))
   }
@@ -111,7 +111,7 @@ load_items <- function(source, table, item_col, items, names, id_col,
     if (!is.null(resolvers)) dat <- resolvers(dat)
     if (length(extra_cols)) dat <- rm_cols(dat, unlist(extra_cols))
 
-    dat <- rename_cols(dat, rep(names, lengths(items)), unlist(items))
+    dat <- rename_cols(dat, names, item_col)
     dat <- lapply(names, extract_col, dat)
     names(dat) <- names
 

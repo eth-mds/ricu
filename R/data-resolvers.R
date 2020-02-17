@@ -14,9 +14,7 @@ as_flag <- function(x, val_col, ...) {
   x
 }
 
-as_numeric <- function(x, val_col, ...) {
-  x[, c("tmp_col") := as.numeric(val_col)]
-  on.exit(x[, c("tmp_col") := NULL])
-  x[, c(val_col) := NULL]
-  rename_cols(x, val_col, "tmp_col")
+percent_as_numeric <- function(x, val_col, ...) {
+  set(x, j = val_col, value = as.numeric(sub("%", "", x[[val_col]])))
+  x
 }
