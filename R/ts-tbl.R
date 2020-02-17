@@ -91,9 +91,6 @@ new_tbl_index <- function(tbl, index, interval) {
 is_ts_tbl <- function(x) inherits(x, "ts_tbl")
 
 #' @export
-ts_def.data.table <- function(x) NULL
-
-#' @export
 ts_def.ts_tbl <- function(x) attr(x, "ts_def")
 
 #' @export
@@ -233,9 +230,6 @@ index.ts_tbl <- function(x) index(ts_def(x))
 set_index <- function(x, new) {
   update_ts_def(x, new_tbl_index(x, new, interval(x)))
 }
-
-#' @export
-key.data.table <- data.table::key
 
 #' @export
 key.ts_tbl <- function(x) key(ts_def(x))

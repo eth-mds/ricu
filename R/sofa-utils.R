@@ -199,7 +199,7 @@ sofa_urine <- function(urine, limits, min_win, interval) {
     step_factor <- convert_dt(hours(24L)) / as.double(interval)
 
     function(x) {
-      if (length(x) <= min_steps) return(NA_real_)
+      if (length(x) < min_steps) return(NA_real_)
       else sum(x, na.rm = TRUE) * step_factor / length(x)
     }
   })
@@ -294,17 +294,16 @@ sofa_window <- function(tbl,
   rename_cols(tbl, need_cols, paste0(need_cols, "_win"))
 }
 
+#' @export
 sofa_compute <- function(tbl, na_val = 0L, na_val_resp = na_val,
                          na_val_coag = na_val, na_val_liver = na_val,
                          na_val_cardio = na_val, na_val_cns = na_val,
                          na_val_renal = na_val, impute_fun = NULL) {
 
-  need_cols <- c("pafi", "vent", "coag", "bili", "map", "dopa", "norepi",
-                 "dobu", "epi", "gcs", "crea", "urine_24")
+  need_cols <- c("pafi", "coag", "bili", "map", "dopa", "norepi",
+                 "dobu", "epi", "gcs", "crea", "urine")
 
-  assert_that(has_cols(tbl, need_cols), has_no_gaps(tbl))
-
-  message("computing sofa scores")
+  assert_that(has_cols(tbl, need_cols))
 
   sofa_cols <- c(
     "sofa_resp", "sofa_coag", "sofa_liver", "sofa_cardio", "sofa_cns",
@@ -313,10 +312,10 @@ sofa_compute <- function(tbl, na_val = 0L, na_val_resp = na_val,
 
   tbl <- tbl[,
     c(sofa_cols) := list(
-      sofa_resp(pafi, vent, na_val_resp), sofa_coag(coag, na_val_coag),
+      sofa_resp(pafi, na_val_resp), sofa_coag(coag, na_val_coag),
       sofa_liver(bili, na_val_liver),
       sofa_cardio(map, dopa, norepi, dobu, epi, na_val_cardio),
-      sofa_cns(gcs, na_val_cns), sofa_renal(crea, urine_24, na_val_renal)
+      sofa_cns(gcs, na_val_cns), sofa_renal(crea, urine, na_val_renal)
     )
   ]
 
@@ -333,10 +332,10 @@ sofa_compute <- function(tbl, na_val = 0L, na_val_resp = na_val,
   tbl
 }
 
-sofa_resp <- function(pafi, vent, na_val) {
+sofa_resp <- function(pafi, na_val) {
   fifelse(
-    is_true(pafi < 100 & vent), 4L, fifelse(
-      is_true(pafi < 200 & vent), 3L, fifelse(
+    is_true(pafi < 100), 4L, fifelse(
+      is_true(pafi < 200), 3L, fifelse(
         is_true(pafi < 300), 2L, fifelse(
           is_true(pafi < 400), 1L, 0L, na_val
         )

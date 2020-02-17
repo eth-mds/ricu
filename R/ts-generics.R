@@ -32,17 +32,34 @@ index <- function(x) UseMethod("index", x)
 #' @export
 key <- function(x) UseMethod("key", x)
 
+#' @method key data.table
+#' @export
+#'
+key.data.table <- data.table::key
+
 #' @export
 interval <- function(x) UseMethod("interval", x)
 
 #' @export
 ts_def <- function(x) UseMethod("ts_def", x)
 
+#' @method ts_def data.table
+#' @export
+#'
+ts_def.data.table <- function(x) NULL
+
 #' @export
 validate <- function(x, ...) UseMethod("validate", x)
 
 #' @export
 rm_cols <- function(x, cols, ...) UseMethod("rm_cols", x)
+
+#' @method rm_cols data.table
+#' @export
+#'
+rm_cols.data.table <- function(x, cols, ...) {
+  x <- set(x, j = cols, value = NULL)
+}
 
 #' @export
 is_unique <- function(x, ...) UseMethod("is_unique", x)
