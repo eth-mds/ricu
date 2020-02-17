@@ -80,9 +80,10 @@ load_items <- function(source, table, item_col, items, names, id_col,
 
   extra_cols <- list(...)
 
-  if (is.null(item_col)) {
+  if (is.null(unlist(items))) {
     query <- NULL
   } else {
+    # TODO: reges for string, `==` for length 1 numeric, etc.
     query <- substitute(col %in% id, list(col = as.name(item_col),
                                           id = unique(unlist(items))))
   }

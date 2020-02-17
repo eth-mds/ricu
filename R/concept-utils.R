@@ -53,7 +53,9 @@ group_concepts <- function(concepts) {
     x
   }
 
-  is_na <- function(x) if (length(x) > 1L) anyNA(x) else is.na(x)
+  is_miss <- function(x) {
+    if (length(x) > 1L) anyNA(x) else is.null(x) || is.na(x)
+  }
 
   add_name <- function(x, name) x[, concept := name]
 
@@ -82,6 +84,10 @@ group_concepts <- function(concepts) {
 
   cleanup <- function(x) {
 
+    if (!has_name(x, "resolver")) {
+      x[, resolver := NA]
+    }
+
     names <- c("item_col", "items", "names", "resolvers")
 
     x <- c(setnames(x[, wide := NULL],
@@ -108,7 +114,7 @@ group_concepts <- function(concepts) {
   res <- lapply(res, rbindlist, fill = TRUE)
   res <- Map(add_name, res, names(res))
   res <- rbindlist(res, fill = TRUE)
-  res <- res[, wide := fifelse(vapply(id, is_na, logical(1L)), "", column)]
+  res <- res[, wide := fifelse(vapply(id, is_miss, logical(1L)), "", column)]
 
   res <- split(res, by = c("table", "wide"))
 
