@@ -143,12 +143,14 @@ get_col_config <- function(source, table = NULL,
 
 combine_feats <- function(x) {
 
+  do_rbind <- function(needle, haystack) rbind_lst(x[haystack == needle])
+
   feats <- vapply(x, data_cols, character(1L))
-  dups <- feats[duplicated(feats)]
+  dups <- unique(feats[duplicated(feats)])
 
   if (length(dups) == 0L) return(x)
 
-  c(lapply(dups, function(y) rbind_lst(x[feats == y])), x[!feats %in% dups])
+  c(lapply(dups, do_rbind, feats), x[!feats %in% dups])
 }
 
 #' @export
@@ -178,8 +180,8 @@ load_concepts <- function(source, concepts = get_concepts(source),
   assert_that(is.list(concepts), !is.null(names(concepts)))
 
   if (is.null(aggregate) || is.function(aggregate) || is.string(aggregate)) {
-    aggregate <- rep(list(aggregate), length(items))
-    names(aggregate) <- names(items)
+    aggregate <- rep(list(aggregate), length(concepts))
+    names(aggregate) <- names(concepts)
   } else if (is.atomic(aggregate)) {
     aggregate <- as.list(aggregate)
   }
