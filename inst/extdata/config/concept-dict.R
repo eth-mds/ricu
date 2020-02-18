@@ -621,7 +621,8 @@ cfg <- list(
     ),
     eicu = list(
       list(id = "Eyes", table = "nursecharting",
-           column = "nursingchartcelltypevalname")
+           column = "nursingchartcelltypevalname",
+           resolver = "force_numeric_val_col")
     ),
     hirid = list(
       list(id = 10000100L, table = "observations", column = "variableid")
@@ -634,7 +635,8 @@ cfg <- list(
     ),
     eicu = list(
       list(id = "Verbal", table = "nursecharting",
-           column = "nursingchartcelltypevalname")
+           column = "nursingchartcelltypevalname",
+           resolver = "force_numeric_val_col")
     ),
     hirid = list(
         list(id = 10000200L, table = "observations", column = "variableid")
@@ -647,7 +649,8 @@ cfg <- list(
     ),
     eicu = list(
       list(id = "Motor", table = "nursecharting",
-           column = "nursingchartcelltypevalname")
+           column = "nursingchartcelltypevalname",
+           resolver = "force_numeric_val_col")
     ),
     hirid = list(
         list(id = 10000300L, table = "observations", column = "variableid")
@@ -659,38 +662,19 @@ cfg <- list(
     ),
     eicu = list(
       list(id = "GCS Total", table = "nursecharting",
-           column = "nursingchartcelltypevalname")
+           column = "nursingchartcelltypevalname",
+           resolver = "force_numeric_val_col")
     ),
     hirid = NULL
   ),
   urine_events = list(
     mimic = list(
-      list(id = 40055L, table = "outputevents", column = "itemid"),
-      list(id = 40056L, table = "outputevents", column = "itemid"),
-      list(id = 40057L, table = "outputevents", column = "itemid"),
-      list(id = 40065L, table = "outputevents", column = "itemid"),
-      list(id = 40069L, table = "outputevents", column = "itemid"),
-      list(id = 40085L, table = "outputevents", column = "itemid"),
-      list(id = 40086L, table = "outputevents", column = "itemid"),
-      list(id = 40094L, table = "outputevents", column = "itemid"),
-      list(id = 40096L, table = "outputevents", column = "itemid"),
-      list(id = 40405L, table = "outputevents", column = "itemid"),
-      list(id = 40428L, table = "outputevents", column = "itemid"),
-      list(id = 40473L, table = "outputevents", column = "itemid"),
-      list(id = 40715L, table = "outputevents", column = "itemid"),
-      list(id = 43175L, table = "outputevents", column = "itemid"),
-      list(id = 226557L, table = "outputevents", column = "itemid"),
-      list(id = 226558L, table = "outputevents", column = "itemid"),
-      list(id = 226559L, table = "outputevents", column = "itemid"),
-      list(id = 226560L, table = "outputevents", column = "itemid"),
-      list(id = 226561L, table = "outputevents", column = "itemid"),
-      list(id = 226563L, table = "outputevents", column = "itemid"),
-      list(id = 226564L, table = "outputevents", column = "itemid"),
-      list(id = 226565L, table = "outputevents", column = "itemid"),
-      list(id = 226566L, table = "outputevents", column = "itemid"),
-      list(id = 226567L, table = "outputevents", column = "itemid"),
-      list(id = 226584L, table = "outputevents", column = "itemid"),
-      list(id = 227510L, table = "outputevents", column = "itemid")
+      list(id = c( 40055L,   40056L,  40057L,  40065L,  40069L,  40085L,
+                   40086L,   40094L,  40096L,  40405L,  40428L,  40473L,
+                   40715L,   43175L, 226557L, 226558L, 226559L, 226560L,
+                  226561L,  226563L, 226564L, 226565L, 226566L, 226567L,
+                  226584L, 227510L),
+           table = "outputevents", column = "itemid")
     ),
     eicu = list(
       list(id = "Urine", table = "intakeoutput", column = "celllabel"),
@@ -725,10 +709,12 @@ cfg <- list(
     ),
     eicu = list(
       list(id = "Dobutamine (mcg/kg/min)", table = "infusiondrug",
-           column = "drugname"),
+           column = "drugname", resolver = "force_numeric_val_col"),
       list(id = "Dobutamine (ml/hr)", table = "infusiondrug",
-           column = "drugname"),
-      list(id = "Dobutamine ()", table = "infusiondrug", column = "drugname")
+           column = "drugname", resolver = "adjust_body_weight",
+           weight_col = "patientweight"),
+      list(id = "Dobutamine ()", table = "infusiondrug", column = "drugname",
+           resolver = "adjust_body_weight", weight_col = "patientweight")
     ),
     hirid = list(
       list(id = 426L, table = "pharma", column = "variableid")
@@ -743,7 +729,7 @@ cfg <- list(
     ),
     eicu = list(
       list(id = "Dopamine (mcg/kg/min)", table = "infusiondrug",
-           column = "drugname")
+           column = "drugname", resolver = "force_numeric_val_col")
     ),
     hirid = NULL
   ),
@@ -755,11 +741,13 @@ cfg <- list(
     ),
     eicu = list(
       list(id = "Norepinephrine (mcg/kg/min)", table = "infusiondrug",
-           column = "drugname"),
+           column = "drugname", resolver = "force_numeric_val_col"),
       list(id = "Norepinephrine (ml/hr)", table = "infusiondrug",
-           column = "drugname"),
+           column = "drugname", resolver = "adjust_body_weight",
+           weight_col = "patientweight"),
       list(id = "Norepinephrine (mcg/min)", table = "infusiondrug",
-           column = "drugname")
+           column = "drugname", resolver = "adjust_body_weight",
+           weight_col = "patientweight")
     ),
     hirid = list(
       list(id = 1000462L, table = "pharma", column = "variableid"),
@@ -777,11 +765,13 @@ cfg <- list(
     ),
     eicu = list(
       list(id = "Epinephrine (mcg/kg/min)", table = "infusiondrug",
-           column = "drugname"),
+           column = "drugname", resolver = "force_numeric_val_col"),
       list(id = "Epinephrine (ml/hr)", table = "infusiondrug",
-           column = "drugname"),
+           column = "drugname", resolver = "adjust_body_weight",
+           weight_col = "patientweight"),
       list(id = "Epinephrine (mcg/min)", table = "infusiondrug",
-           column = "drugname")
+           column = "drugname", resolver = "adjust_body_weight",
+           weight_col = "patientweight")
     ),
     hirid = list(
       list(id = 71L, table = "pharma", column = "variableid"),
@@ -799,20 +789,25 @@ cfg <- list(
              502L,    503L,    505L,    506L,    535L,    543L,    639L,
              654L,    667L,    668L,    669L,    670L,    671L,    672L,
              681L,    682L,    683L,    684L,    686L,   1211L,   1340L,
-            1486L,   1600L,   1655L,   2000L,  3459L,    5865L,   5866L,
+            1486L,   1600L,   1655L,   2000L,   3459L,   5865L,   5866L,
           220339L, 223848L, 223849L, 224419L, 224684L, 224685L, 224686L,
           224687L, 224695L, 224696L, 224697L, 224700L, 224701L, 224702L,
           224703L, 224704L, 224705L, 224706L, 224707L, 224709L, 224738L,
           224746L, 224747L, 224750L, 226873L, 227187L),
-        table = "chartevents", column = "itemid", resolver = "as_flag"
+        table = "chartevents", column = "itemid", resolver = "all_vent_flag"
       )
     ),
     eicu = list(
-      list(id = NULL, table = "respiratorycare", column = "ventstartoffset"),
+      list(id = NULL, table = "respiratorycare", column = "ventstartoffset",
+           resolver = "some_vent_flag"),
       list(id = NULL, table = "respiratorycare",
-           column = "priorventstartoffset"),
+           column = "priorventstartoffset", resolver = "some_vent_flag"),
       list(id = "respFlowPtVentData", table = "respiratorycharting",
-           column = "respcharttypecat")
+           column = "respcharttypecat", resolver = "all_vent_flag"),
+      list(id = "Continued", table = "respiratorycharting",
+           column = "respchartvalue", resolver = "all_vent_flag"),
+      list(id = "Start", table = "respiratorycharting",
+           column = "respchartvalue", resolver = "all_vent_flag")
     ),
     hirid = list(
       list(id = 15001552L, table = "observations", column = "variableid")
@@ -821,20 +816,21 @@ cfg <- list(
   vent_end = list(
     mimic = list(
       list(id = c(225468L, 225477L, 227194L), table = "procedureevents_mv",
-           column = "itemid", resolver = "as_flag"),
+           column = "itemid", resolver = "all_vent_flag"),
       list(id = c(467L, 469L, 226732L), table = "chartevents",
-           column = "itemid", resolver = "as_flag")
+           column = "itemid", resolver = "all_vent_flag")
     ),
     eicu = list(
-      list(id = NULL, table = "respiratorycare", column = "ventendoffset"),
+      list(id = NULL, table = "respiratorycare", column = "ventendoffset",
+           resolver = "some_vent_flag"),
       list(id = NULL, table = "respiratorycare",
-           column = "priorventendoffset"),
+           column = "priorventendoffset", resolver = "some_vent_flag"),
       list(id = "Off", table = "respiratorycharting",
-           column = "respchartvalue"),
+           column = "respchartvalue", resolver = "all_vent_flag"),
       list(id = "off", table = "respiratorycharting",
-           column = "respchartvalue"),
+           column = "respchartvalue", resolver = "all_vent_flag"),
       list(id = "Suspended", table = "respiratorycharting",
-           column = "respchartvalue")
+           column = "respchartvalue", resolver = "all_vent_flag")
     ),
     hirid = list(
       list(id = 15001552L, table = "observations", column = "variableid")
@@ -854,7 +850,8 @@ cfg <- list(
     mimic = NULL,
     eicu = list(
       list(id = "Sedation Score", table = "nursecharting",
-           column = "nursingchartcelltypevalname")
+           column = "nursingchartcelltypevalname",
+           resolver = "force_numeric_val_col")
     ),
     hirid = list(
       list(id = 15001565L, table = "observations", column = "variableid")

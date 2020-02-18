@@ -6,7 +6,8 @@ eicu_ts <- function(table, row_expr, ...) {
 
 #' @export
 eicu_ts_quo <- function(table, row_quo = NULL, cols = NULL,
-                        id_cols = "hadm_id", time_col = "charttime",
+                        id_cols = "patienthealthsystemstayid",
+                        time_col = "observationoffset",
                         interval = hours(1L), envir = "eicu") {
 
   if (!is.null(cols)) {
@@ -56,8 +57,6 @@ eicu_tbl_quo <- function(table, row_quo = NULL, cols = NULL,
 
   assert_that(is_time(interval, allow_neg = FALSE))
 
-  tbl <- get_table(table, envir)
-
   if (!is.null(cols)) {
 
     assert_that(is.character(cols))
@@ -68,6 +67,9 @@ eicu_tbl_quo <- function(table, row_quo = NULL, cols = NULL,
       get_cols <- c("patientunitstayid",
                     setdiff(cols, "patienthealthsystemstayid"))
     }
+
+  } else{
+    get_cols <- NULL
   }
 
   dat <- prt::subset_quo(get_table(table, envir), row_quo, unique(get_cols))
@@ -81,7 +83,9 @@ eicu_tbl_quo <- function(table, row_quo = NULL, cols = NULL,
 
     if (table == "patient") {
 
-      date_cols <- setdiff(date_cols, "hospitaladmitoffset")
+      if (!"hospitaladmitoffset" %in% cols) {
+        date_cols <- setdiff(date_cols, "hospitaladmitoffset")
+      }
 
       if ("unitadmitoffset" %in% cols) {
         date_cols <- c(date_cols, "unitadmitoffset")
@@ -96,11 +100,17 @@ eicu_tbl_quo <- function(table, row_quo = NULL, cols = NULL,
       dat <- merge(dat, adm, by = "patientunitstayid", all.x = TRUE)
     }
 
-    dat <- dat[, c(date_cols) := lapply(.SD, time_fun, hospitaladmitoffset),
-               .SDcols = date_cols]
+    if (length(date_cols)) {
+      dat <- dat[, c(date_cols) := lapply(.SD, time_fun, hospitaladmitoffset),
+                 .SDcols = date_cols]
+    }
   }
 
-  set(dat, j = setdiff(colnames(dat), cols), value = NULL)
+  to_rm <- setdiff(colnames(dat), cols)
+
+  if (length(to_rm) > 0L) {
+    set(dat, j = to_rm, value = NULL)
+  }
 
   dat
 }

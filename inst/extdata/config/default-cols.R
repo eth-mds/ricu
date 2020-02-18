@@ -72,7 +72,11 @@ cfg <- list(
       time_col = "infusionoffset",
       val_col = "drugrate"
     ),
-    intakeoutput = list(),
+    intakeoutput = list(
+      id_col = "patienthealthsystemstayid",
+      time_col = "intakeoutputoffset",
+      val_col = "outputtotal"
+    ),
     lab = list(
       id_col = "patienthealthsystemstayid",
       time_col = "labresultoffset",
@@ -91,7 +95,11 @@ cfg <- list(
     pasthistory = list(),
     patient = list(),
     physicalexam = list(),
-    respiratorycare = list(),
+    respiratorycare = list(
+      id_col = "patienthealthsystemstayid",
+      time_col = "respcarestatusoffset",
+      val_col = NULL
+    ),
     respiratorycharting = list(
       id_col = "patienthealthsystemstayid",
       time_col = "respchartoffset",

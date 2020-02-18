@@ -60,8 +60,11 @@ load_items <- function(source, table, item_col, items, names, id_col,
                        time_col, val_col, patient_ids = NULL,
                        resolvers = NULL, interval = hours(1L), ...) {
 
+  extra_cols <- list(...)
 
-  extract_col <- function(col, x) x[, c(id_cols(dat), col), with = FALSE]
+  extract_col <- function(col, x, extra = NULL) {
+    x[, c(id_cols(x), col, extra), with = FALSE]
+  }
 
   rm_na <- function(x, col) x[!is.na(get(col)), ]
 
@@ -71,14 +74,12 @@ load_items <- function(source, table, item_col, items, names, id_col,
     map[as.character(old)]
   }
 
-  resolve <- function(x, fun) {
+  resolve <- function(x, fun, val) {
     if (!is.null(fun)) {
       do.call(fun, c(list(x), list(id_col = id_col, time_col = time_col,
-                                   val_col = val_col), extra_cols))
+                                   val_col = val), extra_cols))
     } else x
   }
-
-  extra_cols <- list(...)
 
   if (is.null(unlist(items))) {
     query <- NULL
@@ -108,14 +109,38 @@ load_items <- function(source, table, item_col, items, names, id_col,
 
   if (is.null(query)) {
 
-    if (!is.null(resolvers)) dat <- resolvers(dat)
-    if (length(extra_cols)) dat <- rm_cols(dat, unlist(extra_cols))
+    if (is.null(resolvers)) {
 
-    dat <- rename_cols(dat, names, item_col)
-    dat <- lapply(names, extract_col, dat)
-    names(dat) <- names
+      if (length(extra_cols)) {
+        dat <- rm_cols(dat, unlist(extra_cols))
+      }
+
+      dat <- rename_cols(dat, names, item_col)
+      dat <- lapply(names, extract_col, dat)
+      names(dat) <- names
+
+    } else {
+
+      if (is.function(resolvers)) {
+        resolvers <- rep(list(resolvers), length(item_col))
+      }
+
+      assert_that(is.list(resolvers), length(resolvers) == length(item_col))
+
+      dat <- lapply(item_col, extract_col, dat, unlist(extra_cols))
+      dat <- Map(resolve, dat, resolvers, item_col)
+
+      if (length(extra_cols)) {
+        dat <- lapply(dat, rm_cols, unlist(extra_cols))
+      }
+
+      dat <- Map(rename_cols, dat, names, item_col)
+      dat <- combine_feats(dat)
+    }
 
   } else {
+
+    tmp_col <- new_names(colnames(dat))
 
     if (is.null(resolvers)) {
 
@@ -123,8 +148,13 @@ load_items <- function(source, table, item_col, items, names, id_col,
         dat <- rm_cols(dat, unlist(extra_cols))
       }
 
-      dat <- dat[, c(item_col) := map_names(get(item_col), names, items)]
-      dat <- split(dat, by = item_col, keep.by = FALSE)
+      dat <- dat[, c(tmp_col) := map_names(get(item_col), names, items)]
+
+      if (!identical(val_col, item_col)) {
+        dat <- rm_cols(dat, item_col)
+      }
+
+      dat <- split(dat, by = tmp_col, keep.by = FALSE)
       dat <- Map(rename_cols, dat, names(dat), val_col)
 
     } else {
@@ -135,11 +165,15 @@ load_items <- function(source, table, item_col, items, names, id_col,
 
       assert_that(is.list(resolvers), length(resolvers) == length(items))
 
-      dat <- dat[, c(item_col) := map_names(get(item_col),
+      dat <- dat[, c(tmp_col) := map_names(get(item_col),
                                             seq_along(resolvers), items)]
 
-      dat <- split(dat, by = item_col, keep.by = FALSE)
-      dat <- Map(resolve, dat, resolvers[as.integer(names(dat))])
+      if (!identical(val_col, item_col)) {
+        dat <- rm_cols(dat, item_col)
+      }
+
+      dat <- split(dat, by = tmp_col, keep.by = FALSE)
+      dat <- Map(resolve, dat, resolvers[as.integer(names(dat))], val_col)
 
       if (length(extra_cols)) {
         dat <- lapply(dat, rm_cols, unlist(extra_cols))

@@ -133,10 +133,14 @@ mimic_tbl_quo <- function(table, row_quo = NULL, cols = NULL,
       dat <- merge(dat, adm, by = "hadm_id", all.x = TRUE)
     }
 
-    dat <- dat[, c(date_cols) := lapply(.SD, time_fun, admittime),
-               .SDcols = date_cols]
+    if (length(date_cols)) {
+      dat <- dat[, c(date_cols) := lapply(.SD, time_fun, admittime),
+                 .SDcols = date_cols]
+    }
 
-    set(dat, j = "admittime", value = NULL)
+    if ("admittime" %in% colnames(dat)) {
+      set(dat, j = "admittime", value = NULL)
+    }
   }
 
   dat

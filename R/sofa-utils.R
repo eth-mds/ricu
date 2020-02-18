@@ -6,7 +6,7 @@ sofa_data <- function(source, pafi_win_length = hours(2L),
                       vent_min_win = mins(10L), gcs_win_length = hours(6L),
                       fix_na_gcs = TRUE, urine_min_win = hours(12L),
                       interval = hours(1L), patient_ids = NULL,
-                      icu_limits = icu_stays(source, interval),
+                      icu_limits = icu_stays(source, interval = interval),
                       col_cfg = get_col_config(source),
                       dictionary = get_config("concept-dict")) {
 
@@ -61,7 +61,8 @@ sofa_data <- function(source, pafi_win_length = hours(2L),
 
   dat[["gcs"]] <- sofa_gcs(
     reduce(merge, sel_non_null(dat, gcs_conc), all = TRUE),
-    reduce(merge, sel_non_null(dat, sed_conc), all = TRUE),
+    reduce(merge, c(list(dat[["vent"]]), sel_non_null(dat, sed_conc)),
+           all = TRUE),
     gcs_win_length, fix_na_gcs
   )
 
@@ -72,7 +73,18 @@ sofa_data <- function(source, pafi_win_length = hours(2L),
 
   dat[c("pa_o2", "fi_o2", vent_conc, gcs_conc, sed_conc, urine_conc)] <- NULL
 
-  reduce(merge, dat, all = TRUE)
+  res <- reduce(merge, dat, all = TRUE)
+
+  res <- res[is_true(pafi < 200) & !is_true(vent), pafi := 200]
+  res <- res[, vent := NULL]
+
+  res <- rename_cols(res,
+    c("coag", "bili", "map", "dopa", "norepi", "dobu", "epi", "crea", "urine"),
+    c("platelet_count", "bilirubin_total", "mean_bp", "dopamine",
+      "norepinephrine", "dobutamine", "epinephrine", "creatinine", "urine_24")
+  )
+
+  res
 }
 
 sofa_pafi <- function(pao2, fio2, win_length, mode, fix_na_fio2) {
@@ -157,18 +169,32 @@ sofa_vent <- function(start, stop, win_length, min_length, interval) {
 
 sofa_gcs <- function(gcs, sed, win_length, set_na_max) {
 
-  assert_that(same_ts(gcs, sed))
+  determine_sed <- function(fun, col, tbl) {
 
-  if (identical(data_cols(sed), "tracheostomy")) {
-    sed <- sed[tracheostomy > 0, is_sed := TRUE]
-    sed <- sed[, tracheostomy := NULL]
-  } else stop("TODO")
+    if (col %in% data_cols(tbl)) {
+      set(tbl, j = col, value = is_true(fun(tbl[[col]])))
+    }
+
+    invisible(NULL)
+  }
+
+  sed_feats <- c("tracheostomy", "rass_scale", "vent")
+  sed_funs <- list(function(x) x > 0, function(x) x <= -2, identity)
+
+  assert_that(same_interval(gcs, sed), all(data_cols(sed) %in% sed_feats))
+
+  Map(determine_sed, sed_funs, sed_feats, list(sed))
+
+  sed <- sed[, is_sed := Reduce(`|`, .SD), .SDcols = data_cols(sed)]
+  sed <- set(sed, j = intersect(data_cols(sed), sed_feats), value = NULL)
 
   dat <- merge(gcs, sed, all = TRUE)
 
   gcs_names <- c("gcs_eye", "gcs_verbal", "gcs_motor")
 
   dat <- dat[is_true(is_sed), c(gcs_names) := list(4, 5, 6)]
+
+  # TODO: perhaps expand before sliding?
 
   expr <- substitute(list(eye_imp = fun(gcs_eye), verb_imp = fun(gcs_verbal),
                           mot_imp = fun(gcs_motor), gcs = gcs_total),

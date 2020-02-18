@@ -448,17 +448,22 @@
       {
         "id": "Dobutamine (mcg/kg/min)",
         "table": "infusiondrug",
-        "column": "drugname"
+        "column": "drugname",
+        "resolver": "force_numeric_val_col"
       },
       {
         "id": "Dobutamine (ml/hr)",
         "table": "infusiondrug",
-        "column": "drugname"
+        "column": "drugname",
+        "resolver": "adjust_body_weight",
+        "weight_col": "patientweight"
       },
       {
         "id": "Dobutamine ()",
         "table": "infusiondrug",
-        "column": "drugname"
+        "column": "drugname",
+        "resolver": "adjust_body_weight",
+        "weight_col": "patientweight"
       }
     ],
     "hirid": [
@@ -496,7 +501,8 @@
       {
         "id": "Dopamine (mcg/kg/min)",
         "table": "infusiondrug",
-        "column": "drugname"
+        "column": "drugname",
+        "resolver": "force_numeric_val_col"
       }
     ],
     "hirid": null
@@ -545,17 +551,22 @@
       {
         "id": "Epinephrine (mcg/kg/min)",
         "table": "infusiondrug",
-        "column": "drugname"
+        "column": "drugname",
+        "resolver": "force_numeric_val_col"
       },
       {
         "id": "Epinephrine (ml/hr)",
         "table": "infusiondrug",
-        "column": "drugname"
+        "column": "drugname",
+        "resolver": "adjust_body_weight",
+        "weight_col": "patientweight"
       },
       {
         "id": "Epinephrine (mcg/min)",
         "table": "infusiondrug",
-        "column": "drugname"
+        "column": "drugname",
+        "resolver": "adjust_body_weight",
+        "weight_col": "patientweight"
       }
     ],
     "hirid": [
@@ -665,7 +676,8 @@
       {
         "id": "Eyes",
         "table": "nursecharting",
-        "column": "nursingchartcelltypevalname"
+        "column": "nursingchartcelltypevalname",
+        "resolver": "force_numeric_val_col"
       }
     ],
     "hirid": [
@@ -693,7 +705,8 @@
       {
         "id": "Motor",
         "table": "nursecharting",
-        "column": "nursingchartcelltypevalname"
+        "column": "nursingchartcelltypevalname",
+        "resolver": "force_numeric_val_col"
       }
     ],
     "hirid": [
@@ -716,7 +729,8 @@
       {
         "id": "GCS Total",
         "table": "nursecharting",
-        "column": "nursingchartcelltypevalname"
+        "column": "nursingchartcelltypevalname",
+        "resolver": "force_numeric_val_col"
       }
     ],
     "hirid": null
@@ -738,7 +752,8 @@
       {
         "id": "Verbal",
         "table": "nursecharting",
-        "column": "nursingchartcelltypevalname"
+        "column": "nursingchartcelltypevalname",
+        "resolver": "force_numeric_val_col"
       }
     ],
     "hirid": [
@@ -1152,17 +1167,22 @@
       {
         "id": "Norepinephrine (mcg/kg/min)",
         "table": "infusiondrug",
-        "column": "drugname"
+        "column": "drugname",
+        "resolver": "force_numeric_val_col"
       },
       {
         "id": "Norepinephrine (ml/hr)",
         "table": "infusiondrug",
-        "column": "drugname"
+        "column": "drugname",
+        "resolver": "adjust_body_weight",
+        "weight_col": "patientweight"
       },
       {
         "id": "Norepinephrine (mcg/min)",
         "table": "infusiondrug",
-        "column": "drugname"
+        "column": "drugname",
+        "resolver": "adjust_body_weight",
+        "weight_col": "patientweight"
       }
     ],
     "hirid": [
@@ -1443,7 +1463,8 @@
       {
         "id": "Sedation Score",
         "table": "nursecharting",
-        "column": "nursingchartcelltypevalname"
+        "column": "nursingchartcelltypevalname",
+        "resolver": "force_numeric_val_col"
       }
     ],
     "hirid": [
@@ -1731,132 +1752,7 @@
   "urine_events": {
     "mimic": [
       {
-        "id": 40055,
-        "table": "outputevents",
-        "column": "itemid"
-      },
-      {
-        "id": 40056,
-        "table": "outputevents",
-        "column": "itemid"
-      },
-      {
-        "id": 40057,
-        "table": "outputevents",
-        "column": "itemid"
-      },
-      {
-        "id": 40065,
-        "table": "outputevents",
-        "column": "itemid"
-      },
-      {
-        "id": 40069,
-        "table": "outputevents",
-        "column": "itemid"
-      },
-      {
-        "id": 40085,
-        "table": "outputevents",
-        "column": "itemid"
-      },
-      {
-        "id": 40086,
-        "table": "outputevents",
-        "column": "itemid"
-      },
-      {
-        "id": 40094,
-        "table": "outputevents",
-        "column": "itemid"
-      },
-      {
-        "id": 40096,
-        "table": "outputevents",
-        "column": "itemid"
-      },
-      {
-        "id": 40405,
-        "table": "outputevents",
-        "column": "itemid"
-      },
-      {
-        "id": 40428,
-        "table": "outputevents",
-        "column": "itemid"
-      },
-      {
-        "id": 40473,
-        "table": "outputevents",
-        "column": "itemid"
-      },
-      {
-        "id": 40715,
-        "table": "outputevents",
-        "column": "itemid"
-      },
-      {
-        "id": 43175,
-        "table": "outputevents",
-        "column": "itemid"
-      },
-      {
-        "id": 226557,
-        "table": "outputevents",
-        "column": "itemid"
-      },
-      {
-        "id": 226558,
-        "table": "outputevents",
-        "column": "itemid"
-      },
-      {
-        "id": 226559,
-        "table": "outputevents",
-        "column": "itemid"
-      },
-      {
-        "id": 226560,
-        "table": "outputevents",
-        "column": "itemid"
-      },
-      {
-        "id": 226561,
-        "table": "outputevents",
-        "column": "itemid"
-      },
-      {
-        "id": 226563,
-        "table": "outputevents",
-        "column": "itemid"
-      },
-      {
-        "id": 226564,
-        "table": "outputevents",
-        "column": "itemid"
-      },
-      {
-        "id": 226565,
-        "table": "outputevents",
-        "column": "itemid"
-      },
-      {
-        "id": 226566,
-        "table": "outputevents",
-        "column": "itemid"
-      },
-      {
-        "id": 226567,
-        "table": "outputevents",
-        "column": "itemid"
-      },
-      {
-        "id": 226584,
-        "table": "outputevents",
-        "column": "itemid"
-      },
-      {
-        "id": 227510,
+        "id": [40055, 40056, 40057, 40065, 40069, 40085, 40086, 40094, 40096, 40405, 40428, 40473, 40715, 43175, 226557, 226558, 226559, 226560, 226561, 226563, 226564, 226565, 226566, 226567, 226584, 227510],
         "table": "outputevents",
         "column": "itemid"
       }
@@ -1902,40 +1798,45 @@
         "id": [225468, 225477, 227194],
         "table": "procedureevents_mv",
         "column": "itemid",
-        "resolver": "as_flag"
+        "resolver": "all_vent_flag"
       },
       {
         "id": [467, 469, 226732],
         "table": "chartevents",
         "column": "itemid",
-        "resolver": "as_flag"
+        "resolver": "all_vent_flag"
       }
     ],
     "eicu": [
       {
         "id": null,
         "table": "respiratorycare",
-        "column": "ventendoffset"
+        "column": "ventendoffset",
+        "resolver": "some_vent_flag"
       },
       {
         "id": null,
         "table": "respiratorycare",
-        "column": "priorventendoffset"
+        "column": "priorventendoffset",
+        "resolver": "some_vent_flag"
       },
       {
         "id": "Off",
         "table": "respiratorycharting",
-        "column": "respchartvalue"
+        "column": "respchartvalue",
+        "resolver": "all_vent_flag"
       },
       {
         "id": "off",
         "table": "respiratorycharting",
-        "column": "respchartvalue"
+        "column": "respchartvalue",
+        "resolver": "all_vent_flag"
       },
       {
         "id": "Suspended",
         "table": "respiratorycharting",
-        "column": "respchartvalue"
+        "column": "respchartvalue",
+        "resolver": "all_vent_flag"
       }
     ],
     "hirid": [
@@ -1952,24 +1853,39 @@
         "id": [1, 60, 218, 221, 223, 436, 437, 444, 445, 448, 449, 450, 459, 501, 502, 503, 505, 506, 535, 543, 639, 654, 667, 668, 669, 670, 671, 672, 681, 682, 683, 684, 686, 1211, 1340, 1486, 1600, 1655, 2000, 3459, 5865, 5866, 220339, 223848, 223849, 224419, 224684, 224685, 224686, 224687, 224695, 224696, 224697, 224700, 224701, 224702, 224703, 224704, 224705, 224706, 224707, 224709, 224738, 224746, 224747, 224750, 226873, 227187],
         "table": "chartevents",
         "column": "itemid",
-        "resolver": "as_flag"
+        "resolver": "all_vent_flag"
       }
     ],
     "eicu": [
       {
         "id": null,
         "table": "respiratorycare",
-        "column": "ventstartoffset"
+        "column": "ventstartoffset",
+        "resolver": "some_vent_flag"
       },
       {
         "id": null,
         "table": "respiratorycare",
-        "column": "priorventstartoffset"
+        "column": "priorventstartoffset",
+        "resolver": "some_vent_flag"
       },
       {
         "id": "respFlowPtVentData",
         "table": "respiratorycharting",
-        "column": "respcharttypecat"
+        "column": "respcharttypecat",
+        "resolver": "all_vent_flag"
+      },
+      {
+        "id": "Continued",
+        "table": "respiratorycharting",
+        "column": "respchartvalue",
+        "resolver": "all_vent_flag"
+      },
+      {
+        "id": "Start",
+        "table": "respiratorycharting",
+        "column": "respchartvalue",
+        "resolver": "all_vent_flag"
       }
     ],
     "hirid": [

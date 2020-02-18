@@ -71,7 +71,11 @@
       "time_col": "infusionoffset",
       "val_col": "drugrate"
     },
-    "intakeoutput": [],
+    "intakeoutput": {
+      "id_col": "patienthealthsystemstayid",
+      "time_col": "intakeoutputoffset",
+      "val_col": "outputtotal"
+    },
     "lab": {
       "id_col": "patienthealthsystemstayid",
       "time_col": "labresultoffset",
@@ -90,7 +94,11 @@
     "pasthistory": [],
     "patient": [],
     "physicalexam": [],
-    "respiratorycare": [],
+    "respiratorycare": {
+      "id_col": "patienthealthsystemstayid",
+      "time_col": "respcarestatusoffset",
+      "val_col": null
+    },
     "respiratorycharting": {
       "id_col": "patienthealthsystemstayid",
       "time_col": "respchartoffset",

@@ -322,3 +322,30 @@ as_src <- function(x) {
   assert_that(is.string(x))
   sub("_demo$", "", x)
 }
+
+force_numeric <- function(x) {
+  res <- suppressWarnings(as.numeric(x))
+  new_na <- is.na(res) & !is.na(x)
+  if (sum(is.na(new_na)) > 0L) {
+    message("lost ", round(mean(new_na) * 100, digits = 2),
+            "% of entries due to `force_numeric()`")
+  }
+  res
+}
+
+new_names <- function(old_names = character(0L), n = 1L,
+                      chars = c(letters, LETTERS, 0L:9L), length = 15L) {
+
+  assert_that(
+    is.null(old_names) || is.character(old_names),
+    is.count(n), is.count(length),
+    is.character(chars), length(chars) >= 1L
+  )
+
+  repeat{
+    res <- replicate(n, paste(sample(chars, length), collapse = ""))
+    if (length(res) == length(unique(res)) && !any(res %in% old_names)) break
+  }
+
+  res
+}

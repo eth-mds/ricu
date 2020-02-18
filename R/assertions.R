@@ -78,6 +78,14 @@ on_failure(same_time_unit) <- function(call, env) {
          "` are not on the same time scale.")
 }
 
+same_interval <- function(x, y)
+ isTRUE(all.equal(interval(x), interval(y)))
+
+on_failure(same_interval) <- function(call, env) {
+  paste0("`", deparse(call$x), "` and `", deparse(call$y),
+         "` are not on the same time scale.")
+}
+
 same_id_cols <- function(x, y) setequal(ts_id_cols(x), ts_id_cols(y))
 
 on_failure(same_id_cols) <- function(call, env) {

@@ -69,6 +69,8 @@ fill_gaps <- function(x, limits = NULL, ...) {
                           id_cols = key(x), new_col = time_col)
   }
 
+  join <- unique(join)
+
   assert_that(same_ts(x, join))
 
   x[join, on = id_cols(x)]
