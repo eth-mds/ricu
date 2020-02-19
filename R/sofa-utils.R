@@ -270,27 +270,24 @@ sofa_vars <- function(pafi, vent, coag, bili, map, vaso, gcs, crea, urine,
   fill_gaps(dat, limits = limits)
 }
 
+#' @export
 sofa_window <- function(tbl,
-                        pafi_win_fun   = min_or_na, vent_win_fun  = last_elem,
-                        coag_win_fun   = min_or_na, bili_win_fun  = max_or_na,
-                        map_win_fun    = min_or_na, dopa_win_fun  = max_or_na,
-                        norepi_win_fun = max_or_na, dobu_win_fun  = max_or_na,
-                        epi_win_fun    = max_or_na, gcs_win_fun   = min_or_na,
-                        crea_win_fun   = max_or_na, urine_win_fun = min_or_na,
-                        win_length = hours(24L)) {
+                        pafi_win_fun  = min_or_na, coag_win_fun   = min_or_na,
+                        bili_win_fun  = max_or_na, map_win_fun    = min_or_na,
+                        dopa_win_fun  = max_or_na, norepi_win_fun = max_or_na,
+                        dobu_win_fun  = max_or_na, epi_win_fun    = max_or_na,
+                        gcs_win_fun   = min_or_na, crea_win_fun   = max_or_na,
+                        urine_win_fun = min_or_na, win_length = hours(24L)) {
 
-  need_cols <- c("pafi", "vent", "coag", "bili", "map", "dopa", "norepi",
-                 "dobu", "epi", "gcs", "crea", "urine_24")
+  need_cols <- c("pafi", "coag", "bili", "map", "dopa", "norepi", "dobu",
+                 "epi", "gcs", "crea", "urine")
 
   assert_that(has_cols(tbl, need_cols), has_no_gaps(tbl),
               is_time(win_length, allow_neg = FALSE))
 
-  message("computing worst values over window")
-
   tbl <- slide_quo(tbl, substitute(
     list(
       pafi_win = pafi_wf(pafi),
-      vent_win = vent_wf(vent),
       coag_win = coag_wf(coag),
       bili_win = bili_wf(bili),
       map_win = map_wf(map),
@@ -300,10 +297,9 @@ sofa_window <- function(tbl,
       epi_win = epi_wf(epi),
       gcs_win = gcs_wf(gcs),
       crea_win = crea_wf(crea),
-      urine_24_win = urine_wf(urine_24)
+      urine_win = urine_wf(urine)
     ), list(
       pafi_wf = pafi_win_fun,
-      vent_wf = vent_win_fun,
       coag_wf = coag_win_fun,
       bili_wf = bili_win_fun,
       map_wf = map_win_fun,
@@ -326,8 +322,8 @@ sofa_compute <- function(tbl, na_val = 0L, na_val_resp = na_val,
                          na_val_cardio = na_val, na_val_cns = na_val,
                          na_val_renal = na_val, impute_fun = NULL) {
 
-  need_cols <- c("pafi", "coag", "bili", "map", "dopa", "norepi",
-                 "dobu", "epi", "gcs", "crea", "urine")
+  need_cols <- c("pafi", "coag", "bili", "map", "dopa", "norepi", "dobu",
+                 "epi", "gcs", "crea", "urine")
 
   assert_that(has_cols(tbl, need_cols))
 
