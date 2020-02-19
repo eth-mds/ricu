@@ -238,6 +238,9 @@ sofa_urine <- function(urine, limits, min_win, interval) {
     stop("TODO")
   }
 
+  limits <- merge(limits, unique(urine[, key(limits), with = FALSE]),
+                  all.y = TRUE, by = key(limits))
+
   res <- fill_gaps(urine, limits = limits, min_col = "intime",
                    max_col = "outtime")
 
