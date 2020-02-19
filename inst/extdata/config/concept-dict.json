@@ -259,11 +259,6 @@
         "id": "Total CO2",
         "table": "lab",
         "column": "labname"
-      },
-      {
-        "id": "bicarbonate",
-        "table": "lab",
-        "column": "labname"
       }
     ],
     "hirid": null
