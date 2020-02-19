@@ -113,7 +113,8 @@ cfg <- list(
       list(id = 50804L, table = "labevents", column = "itemid")
     ),
     eicu = list(
-      list(id = "Total CO2", table = "lab", column = "labname")
+      list(id = "Total CO2", table = "lab", column = "labname"),
+      list(id = "bicarbonate", table = "lab", column = "labname")
     ),
     hirid = NULL
   ),
