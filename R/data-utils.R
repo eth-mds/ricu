@@ -107,6 +107,18 @@ load_items <- function(source, table, item_col, items, names, id_col,
     dat  <- merge(dat, join, by = key(dat), all = FALSE)
   }
 
+  if (nrow(dat) == 0L) {
+
+    to_rm <- c(unlist(extra_cols),
+               if (!identical(val_col, item_col)) item_col)
+
+    if (length(to_rm)) {
+      dat <- rm_cols(dat, to_rm)
+    }
+
+    return(list(dat))
+  }
+
   if (is.null(query)) {
 
     if (is.null(resolvers)) {
