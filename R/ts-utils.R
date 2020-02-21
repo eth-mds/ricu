@@ -112,15 +112,19 @@ slide_quo <- function(x, expr, before, after = hours(0L),
     setnames(join, c(id_cols, "min_time", "max_time"))
   }
 
-  set(x, j = "extra_time", value = x[[time_col]])
-  on.exit(set(x, j = "extra_time", value = NULL))
+  tmp_col <- new_names(colnames(x))
+  set(x, j = tmp_col, value = x[[time_col]])
+  on.exit(set(x, j = tmp_col, value = NULL))
 
   on_clauses <- c(
-    id_cols, paste(time_col, "<= max_time"), "extra_time >= min_time"
+    id_cols, paste(time_col, "<= max_time"), paste(tmp_col, ">= min_time")
   )
 
   res <- x[join, eval(expr), on = on_clauses, by = .EACHI, nomatch = NULL]
-  set(res, j = "extra_time", value = NULL)
+
+  assert_that(is_unique(res))
+
+  set(res, j = tmp_col, value = NULL)
 
   res
 }
