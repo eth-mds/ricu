@@ -470,7 +470,7 @@
       {
         "id": 426,
         "table": "pharma",
-        "column": "variableid"
+        "column": "pharmaid"
       }
     ]
   },
@@ -573,27 +573,27 @@
       {
         "id": 71,
         "table": "pharma",
-        "column": "variableid"
+        "column": "pharmaid"
       },
       {
         "id": 1000750,
         "table": "pharma",
-        "column": "variableid"
+        "column": "pharmaid"
       },
       {
         "id": 1000649,
         "table": "pharma",
-        "column": "variableid"
+        "column": "pharmaid"
       },
       {
         "id": 1000650,
         "table": "pharma",
-        "column": "variableid"
+        "column": "pharmaid"
       },
       {
         "id": 1000655,
         "table": "pharma",
-        "column": "variableid"
+        "column": "pharmaid"
       }
     ]
   },
@@ -1189,22 +1189,22 @@
       {
         "id": 1000462,
         "table": "pharma",
-        "column": "variableid"
+        "column": "pharmaid"
       },
       {
         "id": 1000656,
         "table": "pharma",
-        "column": "variableid"
+        "column": "pharmaid"
       },
       {
         "id": 1000657,
         "table": "pharma",
-        "column": "variableid"
+        "column": "pharmaid"
       },
       {
         "id": 1000658,
         "table": "pharma",
-        "column": "variableid"
+        "column": "pharmaid"
       }
     ]
   },

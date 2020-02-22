@@ -717,7 +717,7 @@ cfg <- list(
            resolver = "adjust_body_weight", weight_col = "patientweight")
     ),
     hirid = list(
-      list(id = 426L, table = "pharma", column = "variableid")
+      list(id = 426L, table = "pharma", column = "pharmaid")
     )
   ),
   dopamine = list(
@@ -750,10 +750,10 @@ cfg <- list(
            weight_col = "patientweight")
     ),
     hirid = list(
-      list(id = 1000462L, table = "pharma", column = "variableid"),
-      list(id = 1000656L, table = "pharma", column = "variableid"),
-      list(id = 1000657L, table = "pharma", column = "variableid"),
-      list(id = 1000658L, table = "pharma", column = "variableid")
+      list(id = 1000462L, table = "pharma", column = "pharmaid"),
+      list(id = 1000656L, table = "pharma", column = "pharmaid"),
+      list(id = 1000657L, table = "pharma", column = "pharmaid"),
+      list(id = 1000658L, table = "pharma", column = "pharmaid")
     )
   ),
   epinephrine = list(
@@ -774,11 +774,11 @@ cfg <- list(
            weight_col = "patientweight")
     ),
     hirid = list(
-      list(id = 71L, table = "pharma", column = "variableid"),
-      list(id = 1000750L, table = "pharma", column = "variableid"),
-      list(id = 1000649L, table = "pharma", column = "variableid"),
-      list(id = 1000650L, table = "pharma", column = "variableid"),
-      list(id = 1000655L, table = "pharma", column = "variableid")
+      list(id = 71L, table = "pharma", column = "pharmaid"),
+      list(id = 1000750L, table = "pharma", column = "pharmaid"),
+      list(id = 1000649L, table = "pharma", column = "pharmaid"),
+      list(id = 1000650L, table = "pharma", column = "pharmaid"),
+      list(id = 1000655L, table = "pharma", column = "pharmaid")
     )
   ),
   vent_start = list(

@@ -16,9 +16,12 @@ sofa_data <- function(source, pafi_win_length = hours(2L),
     is_time(vent_min_win, allow_neg = FALSE), vent_min_win < vent_win_length,
     is_time(gcs_win_length, allow_neg = FALSE), gcs_win_length > interval,
     is.flag(fix_na_gcs), is_time(urine_min_win, allow_neg = FALSE),
-    urine_min_win > interval, all.equal(interval(icu_limits), interval),
-    urine_min_win <= hours(24L)
+    urine_min_win > interval, urine_min_win <= hours(24L)
   )
+
+  if (!is.null(icu_limits)) {
+    assert_that(all.equal(interval(icu_limits), interval))
+  }
 
   sel_non_null <- function(x, sel) Filter(Negate(is.null), x[sel])
 
@@ -27,7 +30,7 @@ sofa_data <- function(source, pafi_win_length = hours(2L),
   vent_conc <- c("vent_start", "vent_end")
   gcs_conc <- c("gcs_eye", "gcs_motor", "gcs_verbal", "gcs_total")
   sed_conc <- c("tracheostomy", "rass_scale")
-  urine_conc <- c("urine_cumulative", "urine_events", "urine_hourly")
+  urine_conc <- c("urine_cumulative", "urine_events")
 
   agg_funs <- c(
     pa_o2 = "min", fi_o2 = "max", vent_start = "sum", vent_end = "sum",
@@ -35,8 +38,7 @@ sofa_data <- function(source, pafi_win_length = hours(2L),
     norepinephrine = "max", epinephrine = "max", dopamine = "max",
     dobutamine = "max", gcs_eye = "min", gcs_motor = "min", gcs_verbal = "min",
     gcs_total = "min", tracheostomy = "sum", rass_scale = "min",
-    creatinine = "max", urine_cumulative = "max", urine_events = "sum",
-    urine_hourly = "sum"
+    creatinine = "max", urine_cumulative = "max", urine_events = "sum"
   )
 
   dat_dict  <- get_concepts(source, setdiff(names(agg_funs), vent_conc),
@@ -78,11 +80,14 @@ sofa_data <- function(source, pafi_win_length = hours(2L),
   res <- res[is_true(pafi < 200) & !is_true(vent), pafi := 200]
   res <- res[, vent := NULL]
 
-  res <- rename_cols(res,
-    c("coag", "bili", "map", "dopa", "norepi", "dobu", "epi", "crea", "urine"),
-    c("platelet_count", "bilirubin_total", "mean_bp", "dopamine",
-      "norepinephrine", "dobutamine", "epinephrine", "creatinine", "urine_24")
+  rename <- c(
+    platelet_count = "coag", bilirubin_total = "bili", mean_bp = "map",
+    dopamine = "dopa", norepinephrine = "norepi", dobutamine = "dobu",
+    epinephrine = "epi", creatinine = "crea", urine_24 = "urine"
   )
+  rename <- rename[intersect(names(rename), colnames(res))]
+
+  res <- rename_cols(res, rename, names(rename))
 
   res
 }
@@ -135,23 +140,34 @@ sofa_vent <- function(start, stop, win_length, min_length, interval) {
     round_to(x, as.double(interval))
   }
 
-  assert_that(same_ts(start, stop),
-              interval(start) < min_length)
+  assert_that(interval(start) < min_length)
 
   units(win_length) <- time_unit(start)
   units(min_length) <- time_unit(start)
 
-  start[, start_time := get(index(start))]
-  stop[ , stop_time  := get(index(stop))]
+  if (is.null(stop)) {
 
-  on.exit({
-    set(start, j = "start_time", value = NULL)
-    set(stop,  j = "stop_time",  value = NULL)
-  })
+    merged <- data.table::copy(start)
+    merged <- merged[,
+      c("start_time", "stop_time") := list(datetime, datetime + win_length)
+    ]
 
-  merged <- stop[start, roll = -win_length, on = id_cols(start)]
+  } else {
 
-  merged <- merged[is.na(stop_time), stop_time := start_time + win_length]
+    assert_that(same_ts(start, stop))
+
+    start[, start_time := get(index(start))]
+    stop[ , stop_time  := get(index(stop))]
+
+    on.exit({
+      set(start, j = "start_time", value = NULL)
+      set(stop,  j = "stop_time",  value = NULL)
+    })
+
+    merged <- stop[start, roll = -win_length, on = id_cols(start)]
+    merged <- merged[is.na(stop_time), stop_time := start_time + win_length]
+  }
+
   merged <- merged[stop_time - start_time >= min_length, ]
 
   merged <- merged[, c("start_time", "stop_time") := list(
@@ -194,11 +210,18 @@ sofa_gcs <- function(gcs, sed, win_length, set_na_max) {
 
   dat <- dat[is_true(is_sed), c(gcs_names) := list(4, 5, 6)]
 
+  if ("gcs_total" %in% colnames(dat)) {
+    expr <- substitute(list(eye_imp = fun(gcs_eye), verb_imp = fun(gcs_verbal),
+                            mot_imp = fun(gcs_motor), gcs = gcs_total),
+                       list(fun = carry_backwards))
+  } else {
+    expr <- substitute(list(eye_imp = fun(gcs_eye), verb_imp = fun(gcs_verbal),
+                            mot_imp = fun(gcs_motor)),
+                       list(fun = carry_backwards))
+  }
+
   # TODO: perhaps expand before sliding?
 
-  expr <- substitute(list(eye_imp = fun(gcs_eye), verb_imp = fun(gcs_verbal),
-                          mot_imp = fun(gcs_motor), gcs = gcs_total),
-                     list(fun = carry_backwards))
   dat <- slide_quo(dat, expr, before = win_length)
 
   if (set_na_max) {
@@ -207,7 +230,11 @@ sofa_gcs <- function(gcs, sed, win_length, set_na_max) {
     )]
   }
 
-  dat <- dat[, gcs := fifelse(is.na(gcs), eye_imp + verb_imp + mot_imp, gcs)]
+  if ("gcs" %in% colnames(dat)) {
+    dat <- dat[, gcs := fifelse(is.na(gcs), eye_imp + verb_imp + mot_imp, gcs)]
+  } else {
+    dat <- dat[, gcs := eye_imp + verb_imp + mot_imp]
+  }
 
   dat <- set(dat, j = c(gcs_names, "eye_imp", "verb_imp", "mot_imp"),
              value = NULL)
@@ -218,6 +245,11 @@ sofa_gcs <- function(gcs, sed, win_length, set_na_max) {
 sofa_urine <- function(urine, limits, min_win, interval) {
 
   convert_dt <- function(x) as.double(x, units(interval))
+
+  do_diff <- function(x) {
+    res <- c(diff(x), 0)
+    ifelse(res < 0, x + res, res)
+  }
 
   urine_sum <- local({
 
@@ -230,13 +262,21 @@ sofa_urine <- function(urine, limits, min_win, interval) {
     }
   })
 
+  if (has_name(urine, "urine_cumulative")) {
+    urine[, urine_events := do_diff(urine_cumulative), by = key(urine)]
+  }
+
+  if (is.null(limits)) {
+    limits <- as_ts_tbl(
+      urine[, list(intime = min(get(index(urine))),
+                   outtime = max(get(index(urine)))), by = key(urine)],
+      key(urine), "intime", interval(urine)
+    )
+  }
+
   assert_that(identical(key(urine), key(limits)),
               has_name(limits, c("intime", "outtime")),
               all.equal(interval(urine), interval(limits)))
-
-  if (!identical(data_cols(urine), "urine_events")) {
-    stop("TODO")
-  }
 
   limits <- merge(limits, unique(urine[, key(limits), with = FALSE]),
                   all.y = TRUE, by = key(limits))

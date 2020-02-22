@@ -9,7 +9,7 @@ icu_stays <- function(source, in_time = "intime", out_time = "outtime",
     as_src(source),
     mimic = mimic_icu_stays(in_time, out_time, interval, source),
     eicu  = eicu_icu_stays(in_time, out_time, interval, source),
-    hirid = stop("TODO"),
+    hirid = NULL,
     stop("Data source not recognized.")
   )
 }
