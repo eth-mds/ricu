@@ -11,7 +11,7 @@ data_ts_quo <- function(source, ...) {
     as_src(source),
     mimic = mimic_ts_quo,
     eicu  = eicu_ts_quo,
-    hirid = stop("TODO"),
+    hirid = hirid_ts_quo,
     stop("Data source not recognized.")
   )
 
@@ -30,7 +30,7 @@ data_tbl_quo <- function(source, ...) {
     as_src(source),
     mimic = mimic_tbl_quo,
     eicu  = eicu_tbl_quo,
-    hirid = stop("TODO"),
+    hirid = hirid_tbl_quo,
     stop("Data source not recognized.")
   )
 

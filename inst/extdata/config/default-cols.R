@@ -119,9 +119,17 @@ cfg <- list(
   ),
   hirid = list(
     general = list(),
-    observations = list(),
+    observations = list(
+      id_col = "patientid",
+      time_col = "datetime",
+      val_col = "value"
+    ),
     ordinal = list(),
-    pharma = list()
+    pharma = list(
+      id_col = "patientid",
+      time_col = "givenat",
+      val_col = "givendose"
+    )
   )
 )
 
