@@ -9,12 +9,12 @@ check_mmhg <- function(x, unit_col, ...) {
 	x
 }
 
-all_vent_flag <- function(x, val_col, ...) {
+all_flag <- function(x, val_col, ...) {
   x <- set(x, j = val_col, value = rep(TRUE, nrow(x)))
   x
 }
 
-some_vent_flag <- function(x, time_col, val_col, ...) {
+vent_flag <- function(x, time_col, val_col, ...) {
   x <- x[as.logical(get(val_col)), ]
   x <- set(x, j = c(time_col, val_col),
            value = list(x[[val_col]], rep(TRUE, nrow(x))))

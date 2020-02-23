@@ -42,7 +42,11 @@ cfg <- list(
       val_col = "value"
     ),
     patients = list(),
-    prescriptions = list(),
+    prescriptions = list(
+      id_col = "hadm_id",
+      time_col = "startdate",
+      val_col = "dose_val_rx"
+    ),
     procedureevents_mv = list(
       id_col = "hadm_id",
       time_col = "starttime",

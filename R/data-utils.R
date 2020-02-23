@@ -58,7 +58,8 @@ prepare_patient_ids <- function(x, key) {
 #' @export
 load_items <- function(source, table, item_col, items, names, id_col,
                        time_col, val_col, patient_ids = NULL,
-                       resolvers = NULL, interval = hours(1L), ...) {
+                       resolvers = NULL, regex = FALSE, interval = hours(1L),
+                       ...) {
 
   extra_cols <- list(...)
 
@@ -82,11 +83,26 @@ load_items <- function(source, table, item_col, items, names, id_col,
   }
 
   if (is.null(unlist(items))) {
+
     query <- NULL
+
+  } else if (isTRUE(regex)) {
+
+    assert_that(is.string(names), length(items) == 1L)
+
+    lst <- list(col = as.name(item_col),
+                id = paste(unique(unlist(items)), collapse = "|"))
+    query <- substitute(grepl(id, col, ignore.case = TRUE), lst)
+
+  } else if (length(unique(unlist(items))) == 1L) {
+
+    lst <- list(col = as.name(item_col), id = unique(unlist(items)))
+    query <- substitute(is_val(col, id), lst)
+
   } else {
-    # TODO: regex for string, `==` for length 1 numeric, etc.
-    query <- substitute(col %in% id, list(col = as.name(item_col),
-                                          id = unique(unlist(items))))
+
+    lst <- list(col = as.name(item_col), id = unique(unlist(items)))
+    query <- substitute(col %in% id, lst)
   }
 
   if (length(extra_cols) && is.null(resolvers)) {
@@ -150,6 +166,23 @@ load_items <- function(source, table, item_col, items, names, id_col,
       dat <- combine_feats(dat)
     }
 
+  } else if (isTRUE(regex)) {
+
+    if (!is.null(resolvers)) {
+      assert_that(length(resolvers) == 1L)
+      dat <- resolve(dat, resolvers[[1L]], val_col)
+    }
+
+    if (length(extra_cols)) {
+      dat <- rm_cols(dat, unlist(extra_cols))
+    }
+
+    if (!identical(val_col, item_col)) {
+      dat <- rm_cols(dat, item_col)
+    }
+
+    dat <- list(rename_cols(dat, names, val_col))
+
   } else {
 
     tmp_col <- new_names(colnames(dat))
@@ -178,7 +211,7 @@ load_items <- function(source, table, item_col, items, names, id_col,
       assert_that(is.list(resolvers), length(resolvers) == length(items))
 
       dat <- dat[, c(tmp_col) := map_names(get(item_col),
-                                            seq_along(resolvers), items)]
+                                           seq_along(resolvers), items)]
 
       if (!identical(val_col, item_col)) {
         dat <- rm_cols(dat, item_col)

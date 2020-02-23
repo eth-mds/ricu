@@ -794,20 +794,20 @@ cfg <- list(
           224687L, 224695L, 224696L, 224697L, 224700L, 224701L, 224702L,
           224703L, 224704L, 224705L, 224706L, 224707L, 224709L, 224738L,
           224746L, 224747L, 224750L, 226873L, 227187L),
-        table = "chartevents", column = "itemid", resolver = "all_vent_flag"
+        table = "chartevents", column = "itemid", resolver = "all_flag"
       )
     ),
     eicu = list(
       list(id = NULL, table = "respiratorycare", column = "ventstartoffset",
-           resolver = "some_vent_flag"),
+           resolver = "vent_flag"),
       list(id = NULL, table = "respiratorycare",
-           column = "priorventstartoffset", resolver = "some_vent_flag"),
+           column = "priorventstartoffset", resolver = "vent_flag"),
       list(id = "respFlowPtVentData", table = "respiratorycharting",
-           column = "respcharttypecat", resolver = "all_vent_flag"),
+           column = "respcharttypecat", resolver = "all_flag"),
       list(id = "Continued", table = "respiratorycharting",
-           column = "respchartvalue", resolver = "all_vent_flag"),
+           column = "respchartvalue", resolver = "all_flag"),
       list(id = "Start", table = "respiratorycharting",
-           column = "respchartvalue", resolver = "all_vent_flag")
+           column = "respchartvalue", resolver = "all_flag")
     ),
     hirid = list(
       list(id = 15001552L, table = "observations", column = "variableid")
@@ -816,21 +816,21 @@ cfg <- list(
   vent_end = list(
     mimic = list(
       list(id = c(225468L, 225477L, 227194L), table = "procedureevents_mv",
-           column = "itemid", resolver = "all_vent_flag"),
+           column = "itemid", resolver = "all_flag"),
       list(id = c(467L, 469L, 226732L), table = "chartevents",
-           column = "itemid", resolver = "all_vent_flag")
+           column = "itemid", resolver = "all_flag")
     ),
     eicu = list(
       list(id = NULL, table = "respiratorycare", column = "ventendoffset",
-           resolver = "some_vent_flag"),
+           resolver = "vent_flag"),
       list(id = NULL, table = "respiratorycare",
-           column = "priorventendoffset", resolver = "some_vent_flag"),
+           column = "priorventendoffset", resolver = "vent_flag"),
       list(id = "Off", table = "respiratorycharting",
-           column = "respchartvalue", resolver = "all_vent_flag"),
+           column = "respchartvalue", resolver = "all_flag"),
       list(id = "off", table = "respiratorycharting",
-           column = "respchartvalue", resolver = "all_vent_flag"),
+           column = "respchartvalue", resolver = "all_flag"),
       list(id = "Suspended", table = "respiratorycharting",
-           column = "respchartvalue", resolver = "all_vent_flag")
+           column = "respchartvalue", resolver = "all_flag")
     ),
     hirid = list(
       list(id = 15001552L, table = "observations", column = "variableid")
@@ -855,6 +855,26 @@ cfg <- list(
     ),
     hirid = list(
       list(id = 15001565L, table = "observations", column = "variableid")
+    )
+  ),
+  antibiotics = list(
+    mimic = list(
+      list(
+        id = c(
+          "aztreonam", "bactrim", "cephalexin", "chloramphenicol", "cipro",
+          "flagyl", "metronidazole", "nitrofurantoin", "tazobactam",
+          "rifampin", "sulfadiazine", "timentin", "trimethoprim",
+          "(amika|gentami|vanco)cin",
+          "(amoxi|ampi|dicloxa|naf|oxa|peni|pipera)cillin",
+          "(azithro|clarithro|erythro|clinda|strepto|tobra|vanco)mycin",
+          "cef(azolin|tazidime|adroxil|epime|otetan|otaxime|podoxime|uroxime)",
+          "(doxy|mino|tetra)cycline",
+          "(levofl|moxifl|ofl)oxacin|macro(bid|dantin)",
+          "(una|zo)syn"
+        ),
+        table = "prescriptions", column = "drug", regex = TRUE,
+        resolver = "all_flag"
+      )
     )
   )
 )

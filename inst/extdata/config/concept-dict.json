@@ -68,6 +68,17 @@
       }
     ]
   },
+  "antibiotics": {
+    "mimic": [
+      {
+        "id": ["aztreonam", "bactrim", "cephalexin", "chloramphenicol", "cipro", "flagyl", "metronidazole", "nitrofurantoin", "tazobactam", "rifampin", "sulfadiazine", "timentin", "trimethoprim", "(amika|gentami|vanco)cin", "(amoxi|ampi|dicloxa|naf|oxa|peni|pipera)cillin", "(azithro|clarithro|erythro|clinda|strepto|tobra|vanco)mycin", "cef(azolin|tazidime|adroxil|epime|otetan|otaxime|podoxime|uroxime)", "(doxy|mino|tetra)cycline", "(levofl|moxifl|ofl)oxacin|macro(bid|dantin)", "(una|zo)syn"],
+        "table": "prescriptions",
+        "column": "drug",
+        "regex": true,
+        "resolver": "all_flag"
+      }
+    ]
+  },
   "asparate_aminotransferase": {
     "mimic": [
       {
@@ -1798,13 +1809,13 @@
         "id": [225468, 225477, 227194],
         "table": "procedureevents_mv",
         "column": "itemid",
-        "resolver": "all_vent_flag"
+        "resolver": "all_flag"
       },
       {
         "id": [467, 469, 226732],
         "table": "chartevents",
         "column": "itemid",
-        "resolver": "all_vent_flag"
+        "resolver": "all_flag"
       }
     ],
     "eicu": [
@@ -1812,31 +1823,31 @@
         "id": null,
         "table": "respiratorycare",
         "column": "ventendoffset",
-        "resolver": "some_vent_flag"
+        "resolver": "vent_flag"
       },
       {
         "id": null,
         "table": "respiratorycare",
         "column": "priorventendoffset",
-        "resolver": "some_vent_flag"
+        "resolver": "vent_flag"
       },
       {
         "id": "Off",
         "table": "respiratorycharting",
         "column": "respchartvalue",
-        "resolver": "all_vent_flag"
+        "resolver": "all_flag"
       },
       {
         "id": "off",
         "table": "respiratorycharting",
         "column": "respchartvalue",
-        "resolver": "all_vent_flag"
+        "resolver": "all_flag"
       },
       {
         "id": "Suspended",
         "table": "respiratorycharting",
         "column": "respchartvalue",
-        "resolver": "all_vent_flag"
+        "resolver": "all_flag"
       }
     ],
     "hirid": [
@@ -1853,7 +1864,7 @@
         "id": [1, 60, 218, 221, 223, 436, 437, 444, 445, 448, 449, 450, 459, 501, 502, 503, 505, 506, 535, 543, 639, 654, 667, 668, 669, 670, 671, 672, 681, 682, 683, 684, 686, 1211, 1340, 1486, 1600, 1655, 2000, 3459, 5865, 5866, 220339, 223848, 223849, 224419, 224684, 224685, 224686, 224687, 224695, 224696, 224697, 224700, 224701, 224702, 224703, 224704, 224705, 224706, 224707, 224709, 224738, 224746, 224747, 224750, 226873, 227187],
         "table": "chartevents",
         "column": "itemid",
-        "resolver": "all_vent_flag"
+        "resolver": "all_flag"
       }
     ],
     "eicu": [
@@ -1861,31 +1872,31 @@
         "id": null,
         "table": "respiratorycare",
         "column": "ventstartoffset",
-        "resolver": "some_vent_flag"
+        "resolver": "vent_flag"
       },
       {
         "id": null,
         "table": "respiratorycare",
         "column": "priorventstartoffset",
-        "resolver": "some_vent_flag"
+        "resolver": "vent_flag"
       },
       {
         "id": "respFlowPtVentData",
         "table": "respiratorycharting",
         "column": "respcharttypecat",
-        "resolver": "all_vent_flag"
+        "resolver": "all_flag"
       },
       {
         "id": "Continued",
         "table": "respiratorycharting",
         "column": "respchartvalue",
-        "resolver": "all_vent_flag"
+        "resolver": "all_flag"
       },
       {
         "id": "Start",
         "table": "respiratorycharting",
         "column": "respchartvalue",
-        "resolver": "all_vent_flag"
+        "resolver": "all_flag"
       }
     ],
     "hirid": [

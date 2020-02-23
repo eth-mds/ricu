@@ -90,8 +90,7 @@ group_concepts <- function(concepts) {
 
     names <- c("item_col", "items", "names", "resolvers")
 
-    x <- c(setnames(x[, wide := NULL],
-                    c("column", "id", "concept", "resolver"), names))
+    x <- c(setnames(x, c("column", "id", "concept", "resolver"), names))
 
     x[["table"]] <- uq_one(x[["table"]])
     x[["item_col"]] <- unique(x[["item_col"]])
@@ -100,7 +99,7 @@ group_concepts <- function(concepts) {
     x[["resolvers"]] <- this_that(x[["resolvers"]], all_na, NULL, as_funs)
 
     rest <- setdiff(names(x), c(names, "table"))
-    x[["extra_cols"]] <- rm_null(
+    x[["extra_args"]] <- rm_null(
       lapply(x[rest], this_that, all_na, NULL, uq_no_na)
     )
     x[rest] <- NULL
@@ -114,11 +113,28 @@ group_concepts <- function(concepts) {
   res <- lapply(res, rbindlist, fill = TRUE)
   res <- Map(add_name, res, names(res))
   res <- rbindlist(res, fill = TRUE)
-  res <- res[, wide := fifelse(vapply(id, is_miss, logical(1L)), "", column)]
 
-  res <- split(res, by = c("table", "wide"))
+  if (has_name(res, "regex")) {
 
-  unname(lapply(res, cleanup))
+    newnam <- new_names(colnames(res), 3L)
+
+    res <- res[, c(newnam) := list(
+      table,
+      fifelse(vapply(id, is_miss, logical(1L)), NA_character_, column),
+      fifelse(is_true(regex), seq_len(nrow(res)), NA_integer_)
+    )]
+
+  } else {
+
+    newnam <- new_names(colnames(res), 2L)
+
+    res <- res[, c(newnam) := list(
+      table,
+      fifelse(vapply(id, is_miss, logical(1L)), NA_character_, column)
+    )]
+  }
+
+  unname(lapply(split(res, by = newnam, keep.by = FALSE), cleanup))
 }
 
 #' @export
@@ -190,8 +206,8 @@ load_concepts <- function(source, concepts = get_concepts(source),
 
   grouped_concepts <- group_concepts(concepts)
   tables <- vapply(grouped_concepts, `[[`, character(1L), "table")
-  extra <- lapply(grouped_concepts, `[[`, "extra_cols")
-  grouped_concepts <- lapply(grouped_concepts, `[<-`, "extra_cols", NULL)
+  extra <- lapply(grouped_concepts, `[[`, "extra_args")
+  grouped_concepts <- lapply(grouped_concepts, `[<-`, "extra_args", NULL)
 
   args <- Map(c, grouped_concepts, extra, col_cfg[tables])
   extra_args <- list(source = source, patient_ids = patient_ids,
