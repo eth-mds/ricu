@@ -859,23 +859,33 @@ cfg <- list(
   ),
   antibiotics = list(
     mimic = list(
-      list(
-        id = c(
-          "aztreonam", "bactrim", "cephalexin", "chloramphenicol", "cipro",
-          "flagyl", "metronidazole", "nitrofurantoin", "tazobactam",
-          "rifampin", "sulfadiazine", "timentin", "trimethoprim",
-          "(amika|gentami|vanco)cin",
-          "(amoxi|ampi|dicloxa|naf|oxa|peni|pipera)cillin",
-          "(azithro|clarithro|erythro|clinda|strepto|tobra|vanco)mycin",
-          "cef(azolin|tazidime|adroxil|epime|otetan|otaxime|podoxime|uroxime)",
-          "(doxy|mino|tetra)cycline",
-          "(levofl|moxifl|ofl)oxacin|macro(bid|dantin)",
-          "(una|zo)syn"
-        ),
-        table = "prescriptions", column = "drug", regex = TRUE,
+      list(id = c(
+        "aztreonam", "bactrim", "cephalexin", "chloramphenicol", "cipro",
+        "flagyl", "metronidazole", "nitrofurantoin", "tazobactam",
+        "rifampin", "sulfadiazine", "timentin", "trimethoprim",
+        "(amika|gentami|vanco)cin",
+        "(amoxi|ampi|dicloxa|naf|oxa|peni|pipera)cillin",
+        "(azithro|clarithro|erythro|clinda|strepto|tobra|vanco)mycin",
+        "cef(azolin|tazidime|adroxil|epime|otetan|otaxime|podoxime|uroxime)",
+        "(doxy|mino|tetra)cycline",
+        "(levofl|moxifl|ofl)oxacin|macro(bid|dantin)",
+        "(una|zo)syn"), table = "prescriptions", column = "drug", regex = TRUE,
         resolver = "all_flag"
-      )
-    )
+      ),
+      list(id = c("08-Antibiotics (IV)", "09-Antibiotics (Non IV)"),
+           table = "inputevents_mv", column = "ordercategoryname",
+           resolver = "all_flag")
+    ),
+    eicu = NULL,
+    hirid = NULL
+  ),
+  fluid_sampling = list(
+    mimic = list(
+      list(id = NULL, table = "microbiologyevents", column = "charttime",
+           resolver = "combine_date_time")
+    ),
+    eicu = NULL,
+    hirid = NULL
   )
 )
 

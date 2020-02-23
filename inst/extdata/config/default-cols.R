@@ -34,7 +34,11 @@ cfg <- list(
       time_col = "charttime",
       val_col = "valuenum"
     ),
-    microbiologyevents = list(),
+    microbiologyevents = list(
+      id_col = "hadm_id",
+      time_col = "chartdate",
+      val_col = "isolate_num"
+    ),
     noteevents = list(),
     outputevents = list(
       id_col = "hadm_id",

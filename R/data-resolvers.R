@@ -59,3 +59,11 @@ adjust_body_weight <- function(x, val_col, weight_col, ...) {
   x <- x[, c(val_col) := do_calc(get(val_col), get(weight_col), get("weight"))]
   x
 }
+
+combine_date_time <- function(x, time_col, val_col, ...) {
+  x <- x[, c(time_col, val_col) := list(
+    fifelse(is.na(get(val_col)), get(time_col), get(val_col)),
+    fifelse(is.na(get(val_col)), hours(24L), hours(0L))
+  )]
+  x
+}

@@ -76,8 +76,16 @@
         "column": "drug",
         "regex": true,
         "resolver": "all_flag"
+      },
+      {
+        "id": ["08-Antibiotics (IV)", "09-Antibiotics (Non IV)"],
+        "table": "inputevents_mv",
+        "column": "ordercategoryname",
+        "resolver": "all_flag"
       }
-    ]
+    ],
+    "eicu": null,
+    "hirid": null
   },
   "asparate_aminotransferase": {
     "mimic": [
@@ -669,6 +677,18 @@
         "column": "variableid"
       }
     ]
+  },
+  "fluid_sampling": {
+    "mimic": [
+      {
+        "id": null,
+        "table": "microbiologyevents",
+        "column": "charttime",
+        "resolver": "combine_date_time"
+      }
+    ],
+    "eicu": null,
+    "hirid": null
   },
   "gcs_eye": {
     "mimic": [
