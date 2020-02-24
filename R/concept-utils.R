@@ -182,7 +182,7 @@ load_concepts <- function(source, concepts = get_concepts(source),
       assert_that(is_unique(x, by = id_cols(x)))
       x
     } else {
-      dt_gforce(x, fun, by = id_cols(x), cols = data_cols(x), na.rm = TRUE)
+      dt_gforce(x, fun)
     }
   }
 

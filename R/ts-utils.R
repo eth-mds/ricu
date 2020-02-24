@@ -194,16 +194,23 @@ compact_unit <- function(x, col, handler = NULL, expected = NULL) {
 #' @export
 dt_gforce <- function(x,
                       fun = c("mean", "median", "min", "max", "sum", "prod",
-                              "var", "sd", "first", "last"),
-                      by = id_cols(x), cols = data_cols(x), na.rm = TRUE) {
+                              "var", "sd", "first", "last", "nrow"),
+                      by = id_cols(x), cols = data_cols(x),
+                      na.rm = !fun %in% c("first", "last", "nrow")) {
 
   fun <- match.arg(fun)
 
-  if (fun %in% c("first", "last") && na.rm) {
-    warning("The argument `na.rm` is ignored for first() and last().")
+  if (fun %in% c("first", "last", "nrow") && isTRUE(na.rm)) {
+    warning("The argument `na.rm` is ignored for first(), last(), nrow().")
   }
 
-  switch(fun,
+  assert_that(is.flag(na.rm), all(c(cols, by) %in% colnames(x)))
+
+  if (identical(fun, "nrow")) {
+    assert_that(!"count" %in% by)
+  }
+
+  res <- switch(fun,
     mean   = x[, lapply(.SD, mean, na.rm = na.rm),   by = by, .SDcols = cols],
     median = x[, lapply(.SD, median, na.rm = na.rm), by = by, .SDcols = cols],
     min    = x[, lapply(.SD, min, na.rm = na.rm),    by = by, .SDcols = cols],
@@ -213,6 +220,13 @@ dt_gforce <- function(x,
     var    = x[, lapply(.SD, var, na.rm = na.rm),    by = by, .SDcols = cols],
     sd     = x[, lapply(.SD, sd, na.rm = na.rm),     by = by, .SDcols = cols],
     first  = x[, lapply(.SD, first),                 by = by, .SDcols = cols],
-    last   = x[, lapply(.SD, last),                  by = by, .SDcols = cols]
+    last   = x[, lapply(.SD, last),                  by = by, .SDcols = cols],
+    nrow   = x[, list(count = .N),                   by = by]
   )
+
+  if (identical(fun, "nrow") && length(data_cols(x)) == 1L) {
+    res <- rename_cols(res, data_cols(x), "count")
+  }
+
+  res
 }

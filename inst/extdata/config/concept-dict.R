@@ -324,8 +324,7 @@ cfg <- list(
   ),
   pa_o2 = list(
     mimic = list(
-      list(id = 50821L, table = "labevents", column = "itemid",
-           resolver = "check_mmhg", unit_col = "valueuom", error_col = "flag")
+      list(id = 50821L, table = "labevents", column = "itemid")
     ),
     eicu = list(
       list(id = "paO2", table = "lab", column = "labname")
@@ -711,10 +710,10 @@ cfg <- list(
       list(id = "Dobutamine (mcg/kg/min)", table = "infusiondrug",
            column = "drugname", resolver = "force_numeric_val_col"),
       list(id = "Dobutamine (ml/hr)", table = "infusiondrug",
-           column = "drugname", resolver = "adjust_body_weight",
+           column = "drugname", resolver = "eicu_body_weight",
            weight_col = "patientweight"),
       list(id = "Dobutamine ()", table = "infusiondrug", column = "drugname",
-           resolver = "adjust_body_weight", weight_col = "patientweight")
+           resolver = "eicu_body_weight", weight_col = "patientweight")
     ),
     hirid = list(
       list(id = 426L, table = "pharma", column = "pharmaid")
@@ -743,10 +742,10 @@ cfg <- list(
       list(id = "Norepinephrine (mcg/kg/min)", table = "infusiondrug",
            column = "drugname", resolver = "force_numeric_val_col"),
       list(id = "Norepinephrine (ml/hr)", table = "infusiondrug",
-           column = "drugname", resolver = "adjust_body_weight",
+           column = "drugname", resolver = "eicu_body_weight",
            weight_col = "patientweight"),
       list(id = "Norepinephrine (mcg/min)", table = "infusiondrug",
-           column = "drugname", resolver = "adjust_body_weight",
+           column = "drugname", resolver = "eicu_body_weight",
            weight_col = "patientweight")
     ),
     hirid = list(
@@ -767,10 +766,10 @@ cfg <- list(
       list(id = "Epinephrine (mcg/kg/min)", table = "infusiondrug",
            column = "drugname", resolver = "force_numeric_val_col"),
       list(id = "Epinephrine (ml/hr)", table = "infusiondrug",
-           column = "drugname", resolver = "adjust_body_weight",
+           column = "drugname", resolver = "eicu_body_weight",
            weight_col = "patientweight"),
       list(id = "Epinephrine (mcg/min)", table = "infusiondrug",
-           column = "drugname", resolver = "adjust_body_weight",
+           column = "drugname", resolver = "eicu_body_weight",
            weight_col = "patientweight")
     ),
     hirid = list(
@@ -870,19 +869,26 @@ cfg <- list(
         "(doxy|mino|tetra)cycline",
         "(levofl|moxifl|ofl)oxacin|macro(bid|dantin)",
         "(una|zo)syn"), table = "prescriptions", column = "drug", regex = TRUE,
-        resolver = "all_flag"
+        resolver = "mimic_abx_shift_flag"
       ),
-      list(id = c("08-Antibiotics (IV)", "09-Antibiotics (Non IV)"),
-           table = "inputevents_mv", column = "ordercategoryname",
-           resolver = "all_flag")
+      list(id = c(
+        225798L, 225837L, 225838L, 225840L, 225842L, 225843L, 225844L, 225845L,
+        225847L, 225848L, 225850L, 225851L, 225853L, 225855L, 225857L, 225859L,
+        225860L, 225862L, 225863L, 225865L, 225866L, 225868L, 225869L, 225871L,
+        225873L, 225875L, 225876L, 225877L, 225879L, 225881L, 225882L, 225883L,
+        225884L, 225885L, 225886L, 225888L, 225889L, 225890L, 225892L, 225893L,
+        225895L, 225896L, 225897L, 225898L, 225899L, 225900L, 225902L, 225903L,
+        225905L, 227691L, 228003L),
+        table = "inputevents_mv", column = "itemid", resolver = "all_flag"
+      )
     ),
     eicu = NULL,
     hirid = NULL
   ),
   fluid_sampling = list(
     mimic = list(
-      list(id = NULL, table = "microbiologyevents", column = "charttime",
-           resolver = "combine_date_time")
+      list(id = NULL, table = "microbiologyevents", column = "org_itemid",
+           resolver = "mimic_sampling", aux_time = "charttime")
     ),
     eicu = NULL,
     hirid = NULL

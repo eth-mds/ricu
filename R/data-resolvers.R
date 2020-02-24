@@ -1,14 +1,4 @@
 
-check_mmhg <- function(x, unit_col, ...) {
-
-  assert_that(
-    all(is.na(x[[unit_col]]) |
-      grepl("mm hg", x[[unit_col]], ignore.case = TRUE))
-  )
-
-	x
-}
-
 all_flag <- function(x, val_col, ...) {
   x <- set(x, j = val_col, value = rep(TRUE, nrow(x)))
   x
@@ -47,7 +37,7 @@ force_numeric_val_col <- function(x, val_col, ...) {
   force_numeric_col(x, val_col)
 }
 
-adjust_body_weight <- function(x, val_col, weight_col, ...) {
+eicu_body_weight <- function(x, val_col, weight_col, ...) {
 
   do_calc <- function(rate, w1, w2) rate / fifelse(is.na(w1), w2, w1)
 
@@ -60,10 +50,26 @@ adjust_body_weight <- function(x, val_col, weight_col, ...) {
   x
 }
 
-combine_date_time <- function(x, time_col, val_col, ...) {
-  x <- x[, c(time_col, val_col) := list(
-    fifelse(is.na(get(val_col)), get(time_col), get(val_col)),
-    fifelse(is.na(get(val_col)), hours(24L), hours(0L))
-  )]
+combine_date_time <- function(x, time_col, date_col, date_shift = hours(12L),
+                              ...) {
+  x <- x[, c(time_col) := fifelse(is.na(get(time_col)),
+                                  get(date_col) + date_shift, get(time_col))]
+  x
+}
+
+shift_all_date <- function(x, time_col, shift = hours(12L), ...) {
+  x <- x[, c(time_col) := get(time_col) + shift]
+  x
+}
+
+mimic_abx_shift_flag <- function(x, time_col, val_col, ...) {
+  x <- shift_all_date(x, time_col, hours(12L))
+  x <- all_flag(x, val_col)
+  x
+}
+
+mimic_sampling <- function(x, val_col, time_col, aux_time, ...) {
+  x <- combine_date_time(x, aux_time, time_col, hours(12L))
+  x <- set(x, j = val_col, value = !is.na(x[[val_col]]))
   x
 }

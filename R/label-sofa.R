@@ -46,7 +46,7 @@ sofa_data <- function(source, pafi_win_length = hours(2L),
   vent_dict <- get_concepts(source, vent_conc, dictionary)
 
   dat <- c(
-    load_concepts(source, dat_dict,  patient_ids, col_cfg, agg_funs,
+    load_concepts(source, dat_dict, patient_ids, col_cfg, agg_funs,
                   interval, merge_data = FALSE),
     load_concepts(source, vent_dict, patient_ids, col_cfg, agg_funs,
                   mins(1L), merge_data = FALSE)
