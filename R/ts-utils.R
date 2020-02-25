@@ -197,13 +197,12 @@ rm_na <- function(x, cols = data_cols(x), fun = `|`) {
   assert_that(all(cols %in% colnames(x)))
 
   if (length(cols) == 1L) {
-
-    x[!is.na(get(cols)), ]
-
+    check <- is.na(x[[cols]])
   } else {
-
-    x[Reduce(function(x, y) !fun(is.na(x), is.na(y)), mget(cols)), ]
+    check <- Reduce(fun, lapply(x[, cols, with = FALSE], is.na))
   }
+
+  x[!check, ]
 }
 
 #' @export
