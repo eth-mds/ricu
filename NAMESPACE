@@ -178,6 +178,7 @@ export(unmerge)
 export(update_ts_def)
 export(validate)
 export(weeks)
+export(write_psv)
 if (getRversion() >= "4.0.0") { S3method(cbind, ts_tbl) }
 if (getRversion() >= "4.0.0") { S3method(rbind, ts_tbl) }
 importFrom(assertthat,"on_failure<-")
