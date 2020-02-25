@@ -19,27 +19,6 @@ eicu_ts_quo <- function(table, row_quo = NULL, cols = NULL,
   as_ts_tbl(res, id_cols, time_col, interval)
 }
 
-eicu_ts_unit_quo <- function(table, row_quo = NULL, cols = NULL, ...,
-                             val_cols, unit_cols) {
-
-  assert_that(is.character(val_cols), is.character(unit_cols),
-              length(val_cols) > 0L, same_length(val_cols, unit_cols))
-
-  if (!is.null(cols)) {
-    cols <- c(cols, unit_cols[val_cols %in% cols])
-  }
-
-  res <- eicu_ts_quo(table, row_quo, cols, ...)
-
-  hits <- val_cols %in% colnames(res)
-
-  if (any(hits)) {
-    res <- update_ts_def(res, new_ts_unit(val_cols[hits], unit_cols[hits]))
-  }
-
-  res
-}
-
 #' @export
 eicu_tbl <- function(table, row_expr, ...) {
   eicu_tbl_quo(table, null_or_subs(row_expr), ...)

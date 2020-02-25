@@ -97,36 +97,6 @@ validate.ts_unit <- function(x, tbl = NULL, ...) {
 }
 
 #' @export
-new_ts_date <- function(time_cols, ind_cols = NA_character_) {
-  new_ts_meta(Map(list, meta_col = as.list(time_cols), aux_col = ind_cols),
-              "ts_date")
-}
-
-#' @export
-validate.ts_date <- function(x, tbl = NULL, ...) {
-
-  is_lgl <- function(col) is.logical(tbl[[col]])
-
-  time_cols <- extract_strings(x, "meta_col")
-  ind_cols  <- extract_strings(x, "aux_col")
-
-  assert_that(
-    no_na(time_cols), is_unique(time_cols),
-    is_unique(ind_cols, incomparables = NA), same_length(time_cols, ind_cols),
-    is_disjoint(time_cols, ind_cols)
-  )
-
-  if (is.null(tbl)) return(TRUE)
-
-  ind_cols <- ind_cols[!is.na(ind_cols)]
-
-  validate_that(
-    has_cols(tbl, c(time_cols, ind_cols)),
-    all_fun(ind_cols, is_lgl)
-  )
-}
-
-#' @export
 is_ts_meta <- function(x) inherits(x, "ts_meta")
 
 #' @export
@@ -137,9 +107,6 @@ is_ts_key <- function(x) inherits(x, "ts_key")
 
 #' @export
 is_ts_unit <- function(x) inherits(x, "ts_unit")
-
-#' @export
-is_ts_date <- function(x) inherits(x, "ts_date")
 
 #' @export
 meta_names.ts_meta <- function(x) vapply(x, `[[`, character(1L), "meta_col")

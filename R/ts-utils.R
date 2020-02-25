@@ -163,35 +163,6 @@ is_unique.ts_tbl <- function(x, by = id_cols(x), ...) {
 is_unique.default <- function(x, ...) identical(anyDuplicated(x, ...), 0L)
 
 #' @export
-any_date <- function(x, col = index(x)) is_any_date_helper(x, col, 1L)
-
-#' @export
-is_date <- function(x, col = index(x)) is_any_date_helper(x, col, nrow(x))
-
-is_any_date_helper <- function(x, col, length) {
-
-  aux_col <- aux_names(x, "ts_date", col, FALSE)
-
-  if (is.null(aux_col)) rep(FALSE, length)
-  else if (is.na(aux_col)) rep(TRUE, length)
-  else if (length == 1L) any(x[[aux_col]])
-  else x[[aux_col]]
-}
-
-compact_unit <- function(x, col, handler = NULL, expected = NULL) {
-
-  unit <- aux_names(x, "ts_unit", col, FALSE)
-
-  assert_that(is.string(unit))
-
-  unit <- ts_meta(x, "ts_unit")
-  hits <- col == meta_names(unit)
-
-  assert_that(!is.null(units), sum(hits) == 1L)
-
-}
-
-#' @export
 dt_gforce <- function(x,
                       fun = c("mean", "median", "min", "max", "sum", "prod",
                               "var", "sd", "first", "last"),
