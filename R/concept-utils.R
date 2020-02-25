@@ -177,12 +177,14 @@ load_concepts <- function(source, concepts = get_concepts(source),
 
   do_aggregate <- function(x, fun) {
     if (is.function(fun)) {
-      x[, lapply(.SD, fun), by = id_cols(x), .SDcols = data_cols(x)]
-    } else if (is.null(fun) || is.na(fun)) {
+      x[, lapply(.SD, fun), by = c(id_cols(x)), .SDcols = data_cols(x)]
+    } else if (!is.language(fun) && (is.null(fun) || is.na(fun))) {
       assert_that(is_unique(x, by = id_cols(x)))
       x
-    } else {
+    } else if (is.string(fun)) {
       dt_gforce(x, fun)
+    } else {
+      x[, eval(fun), by = c(id_cols(x))]
     }
   }
 
@@ -195,7 +197,7 @@ load_concepts <- function(source, concepts = get_concepts(source),
 
   assert_that(is.list(concepts), !is.null(names(concepts)))
 
-  if (is.null(aggregate) || is.function(aggregate) || is.string(aggregate)) {
+  if (length(aggregate) == 1L && !is.list(aggregate)) {
     aggregate <- rep(list(aggregate), length(concepts))
     names(aggregate) <- names(concepts)
   } else if (is.atomic(aggregate)) {

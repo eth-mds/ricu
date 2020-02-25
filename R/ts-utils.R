@@ -194,23 +194,19 @@ compact_unit <- function(x, col, handler = NULL, expected = NULL) {
 #' @export
 dt_gforce <- function(x,
                       fun = c("mean", "median", "min", "max", "sum", "prod",
-                              "var", "sd", "first", "last", "nrow"),
+                              "var", "sd", "first", "last"),
                       by = id_cols(x), cols = data_cols(x),
-                      na.rm = !fun %in% c("first", "last", "nrow")) {
+                      na.rm = !fun %in% c("first", "last")) {
 
   fun <- match.arg(fun)
 
-  if (fun %in% c("first", "last", "nrow") && isTRUE(na.rm)) {
-    warning("The argument `na.rm` is ignored for first(), last(), nrow().")
+  if (fun %in% c("first", "last") && isTRUE(na.rm)) {
+    warning("The argument `na.rm` is ignored for `first()` and `last()`")
   }
 
   assert_that(is.flag(na.rm), all(c(cols, by) %in% colnames(x)))
 
-  if (identical(fun, "nrow")) {
-    assert_that(!"count" %in% by)
-  }
-
-  res <- switch(fun,
+  switch(fun,
     mean   = x[, lapply(.SD, mean, na.rm = na.rm),   by = by, .SDcols = cols],
     median = x[, lapply(.SD, median, na.rm = na.rm), by = by, .SDcols = cols],
     min    = x[, lapply(.SD, min, na.rm = na.rm),    by = by, .SDcols = cols],
@@ -220,13 +216,44 @@ dt_gforce <- function(x,
     var    = x[, lapply(.SD, var, na.rm = na.rm),    by = by, .SDcols = cols],
     sd     = x[, lapply(.SD, sd, na.rm = na.rm),     by = by, .SDcols = cols],
     first  = x[, lapply(.SD, first),                 by = by, .SDcols = cols],
-    last   = x[, lapply(.SD, last),                  by = by, .SDcols = cols],
-    nrow   = x[, list(count = .N),                   by = by]
+    last   = x[, lapply(.SD, last),                  by = by, .SDcols = cols]
   )
+}
 
-  if (identical(fun, "nrow") && length(data_cols(x)) == 1L) {
-    res <- rename_cols(res, data_cols(x), "count")
+#' @export
+rm_na <- function(x, cols = data_cols(x), fun = `|`) {
+
+  assert_that(all(cols %in% colnames(x)))
+
+  if (length(cols) == 1L) {
+
+    x[!is.na(get(cols)), ]
+
+  } else {
+
+    x[Reduce(function(x, y) !fun(is.na(x), is.na(y)), mget(cols)), ]
   }
+}
+
+#' @export
+unmerge <- function(x, var_cols = data_cols(x), fixed_cols = id_cols(x),
+                    na_rm = TRUE) {
+
+  assert_that(all(c(var_cols, fixed_cols) %in% colnames(x)), is.flag(na_rm))
+
+  extract_col <- function(col, x) {
+
+    y <- x[, c(fixed_cols, col), with = FALSE]
+
+    if (na_rm) {
+      y <- rm_na(y, col)
+    }
+
+    y
+  }
+
+  res <- lapply(var_cols, extract_col, x)
+  names(res) <- var_cols
 
   res
 }

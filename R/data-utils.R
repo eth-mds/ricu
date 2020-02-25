@@ -63,12 +63,6 @@ load_items <- function(source, table, item_col, items, names, id_col,
 
   extra_cols <- list(...)
 
-  extract_col <- function(col, x, extra = NULL) {
-    x[, c(id_cols(x), col, extra), with = FALSE]
-  }
-
-  rm_na <- function(x, col) x[!is.na(get(col)), ]
-
   map_names <- function(old, map_val, map_key) {
     map <- rep(map_val, lengths(map_key))
     names(map) <- unlist(map_key)
@@ -144,8 +138,7 @@ load_items <- function(source, table, item_col, items, names, id_col,
       }
 
       dat <- rename_cols(dat, names, item_col)
-      dat <- lapply(names, extract_col, dat)
-      names(dat) <- names
+      dat <- unmerge(dat, names, na_rm = FALSE)
 
     } else {
 
@@ -155,7 +148,7 @@ load_items <- function(source, table, item_col, items, names, id_col,
 
       assert_that(is.list(resolvers), length(resolvers) == length(item_col))
 
-      dat <- lapply(item_col, extract_col, dat, unlist(extra_cols))
+      dat <- unmerge(dat, item_col, c(id_cols(dat), unlist(extra_cols)), FALSE)
       dat <- Map(resolve, dat, resolvers, item_col)
 
       if (length(extra_cols)) {
@@ -229,5 +222,5 @@ load_items <- function(source, table, item_col, items, names, id_col,
     }
   }
 
-  Map(rm_na, dat, vapply(dat, data_cols, character(1L)))
+  lapply(dat, rm_na)
 }
