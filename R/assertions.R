@@ -129,15 +129,6 @@ on_failure(same_length) <- function(call, env) {
          deparse(call$y), ".")
 }
 
-has_ts_meta <- function(x, class) {
-  is_ts_tbl(x) && !is.null(ts_def(x)[[class]])
-}
-
-on_failure(has_ts_meta) <- function(call, env) {
-  paste0(deparse(call$x), " does not contain a ts_meta tag of class `",
-         deparse(call$class), "`.")
-}
-
 xor_na <- function(x, y) all(xor(is.na(x), is.na(y)))
 
 on_failure(xor_na) <- function(call, env) {
@@ -164,16 +155,6 @@ on_failure(no_na) <- function(call, env) {
   paste0("`", deparse(call$x), "` contains at least 1 NA value.")
 }
 
-all_zero <- function(x) all(x == 0)
-
-on_failure(all_zero) <- function(call, env) {
-  paste0("Some of `", deparse(call$x), "` are not equal to 0.")
-}
-
-is_valid <- function(x) isTRUE(validate(x))
-
-on_failure(is_valid) <- function(call, env) validate(get(deparse(call$x), env))
-
 same_ts <- function(x, y) {
   identical(key(x), key(y)) && identical(index(x), index(y)) &&
     all.equal(interval(x), interval(y))
@@ -182,4 +163,22 @@ same_ts <- function(x, y) {
 on_failure(same_ts) <- function(call, env) {
   paste0("`", deparse(call$x), "` and `", deparse(call$y),
          "` differ in key, index and/or interval.")
+}
+
+is_dt_key <- function(dt, col, pos) {
+  identical(col, data.table::key(dt)[pos])
+}
+
+on_failure(is_dt_key) <- function(call, env) {
+  paste0("`", eval(call$col), "` is not the data.table key of `",
+         deparse(call$dt), "` in position ", eval(call$pos), ".")
+}
+
+has_interval <- function(x, interval) {
+  all(is.na(x) | as.double(x) %% as.double(interval, units = units(x)) == 0)
+}
+
+on_failure(has_interval) <- function(call, env) {
+  paste0("`", deparse(call$x), "` does not conform to an interval of ",
+         eval(call$interval), ".")
 }

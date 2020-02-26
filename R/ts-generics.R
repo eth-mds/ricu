@@ -3,28 +3,10 @@
 ts_meta <- function(x, ...) UseMethod("ts_meta", x)
 
 #' @export
-meta_names <- function(x) UseMethod("meta_names", x)
+ts_index <- function(x) UseMethod("ts_index", x)
 
 #' @export
-is_required <- function(x, ...) UseMethod("is_required", x)
-
-#' @export
-has_aux_names <- function(x) UseMethod("has_aux_names", x)
-
-#' @export
-aux_names <- function(x, ...) UseMethod("aux_names", x)
-
-#' @export
-has_aux_data <- function(x, ...) UseMethod("has_aux_data", x)
-
-#' @export
-aux_data <- function(x, ...) UseMethod("aux_data", x)
-
-#' @export
-as_ts_def <- function(x) UseMethod("as_ts_def", x)
-
-#' @export
-rename_cols <- function(x, new, old, ...) UseMethod("rename_cols", x)
+ts_key <- function(x) UseMethod("ts_key", x)
 
 #' @export
 index <- function(x) UseMethod("index", x)
@@ -41,25 +23,50 @@ key.data.table <- data.table::key
 interval <- function(x) UseMethod("interval", x)
 
 #' @export
-ts_def <- function(x) UseMethod("ts_def", x)
-
-#' @method ts_def data.table
-#' @export
-#'
-ts_def.data.table <- function(x) NULL
+time_unit <- function(x) UseMethod("time_unit", x)
 
 #' @export
-validate <- function(x, ...) UseMethod("validate", x)
+set_index <- function(x, value) UseMethod("set_index", x)
 
 #' @export
-rm_cols <- function(x, cols, ...) UseMethod("rm_cols", x)
+set_interval <- function(x, value) UseMethod("set_interval", x)
+
+#' @export
+set_key <- function(x, value) UseMethod("set_key", x)
+
+#' @export
+set_time_unit <- function(x, value) UseMethod("set_time_unit", x)
+
+#' @export
+rm_cols <- function(x, cols, ...) {
+  assert_that(all(cols %in% colnames(x)))
+  UseMethod("rm_cols", x)
+}
 
 #' @method rm_cols data.table
 #' @export
 #'
 rm_cols.data.table <- function(x, cols, ...) {
   x <- set(x, j = cols, value = NULL)
+  x
+}
+
+#' @export
+rename_cols <- function(x, new, old, ...) {
+  assert_that(length(new) == length(old))
+  UseMethod("rename_cols", x)
+}
+
+#' @method rename_cols data.table
+#' @export
+#'
+rename_cols.data.table <- function(x, new, old, ...) {
+  x <- data.table::setnames(x, old, new)
+  x
 }
 
 #' @export
 is_unique <- function(x, ...) UseMethod("is_unique", x)
+
+#' @export
+is_unique.default <- function(x, ...) identical(anyDuplicated(x, ...), 0L)

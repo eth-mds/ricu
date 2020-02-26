@@ -4,7 +4,7 @@
 #' @export
 #'
 `[.ts_tbl` <- function(x, ...) {
-  reclass_ts_tbl(NextMethod(), ts_def(x), warn_opt = FALSE)
+  reclass_ts_tbl(NextMethod(), ts_meta(x))
 }
 
 #' @rdname ts_tbl
@@ -38,11 +38,9 @@ format.ts_tbl <- function(x, ..., n = NULL, width = NULL, n_extra = NULL) {
 #' @export
 #'
 tbl_sum.ts_tbl <- function(x) {
-  vap <- function(fun) vapply(ts_def(x), fun, character(1L))
-  req <- function(x) if(is_required(x)) "[*]" else ""
-  meta <- vap(format)
-  names(meta) <- paste0(cap_str(vap(format_class)), vap(req))
-  c("A `ts_tbl`" = prt::dim_desc(x), meta)
+  c("A `ts_tbl`" = prt::dim_desc(x),
+    "Key" = paste0("<`", key(x), "`>"),
+    "Index" = paste0("<`", index(x), "`, ", format(interval(x)), ">"))
 }
 
 #' @param object A `ts_tbl` object.
@@ -101,7 +99,7 @@ as.data.frame.ts_tbl <- function(x, row.names = NULL, optional = FALSE, ...) {
   if (sum(check) == 1L) {
     hit <- which(check)
     lst <- c(lst[hit], lst[-hit])
-    meta <- ts_def(lst[[hit]])
+    meta <- ts_meta(lst[[hit]])
   } else {
     meta <- NULL
   }
@@ -131,50 +129,37 @@ rbind.ts_tbl <- .rbind.ts_tbl
 
 #' @export
 split.ts_tbl <- function(x, ...) {
-  lapply(NextMethod(), reclass_ts_tbl, ts_def(x))
+  lapply(NextMethod(), reclass_ts_tbl, ts_meta(x))
 }
-
-#' @export
-c.ts_meta <- function(x, ...) c_ts_def(as_ts_def(x), list(...))
-
-#' @export
-print.ts_def <- function(x, ...) cat_line(format(x, ...))
 
 #' @export
 print.ts_meta <- function(x, ...) cat_line(format(x, ...))
 
 #' @export
-c.ts_def <- function(x, ...) c_ts_def(x, list(...))
-
-c_ts_def <- function(x, lst) {
-  new_ts_def(c(unclass(x), unlist(lapply(lst, as_ts_def), recursive = FALSE)))
-}
+print.ts_key <- function(x, ...) cat_line(format(x, ...))
 
 #' @export
-`[.ts_def` <- function(x, i, ...) new_ts_def(NextMethod())
-
-#' @export
-format.ts_def <- function(x, ...) {
-  vap <- function(fun) vapply(x, fun, character(1L))
-  req <- function(x) if(is_required(x)) "*" else ""
-  paste0(vap(format_class), vap(req), vap(format), collapse = ", ")
-}
+print.ts_index <- function(x, ...) cat_line(format(x, ...))
 
 #' @export
 format.ts_meta <- function(x, ...) {
-  args <- c(
-    meta_names(x),
-    if (has_aux_names(x)) aux_names(x),
-    if (has_aux_data(x)) vapply(aux_data(x), format, character(1L))
-  )
-  do.call(format_ts_meta, as.list(args))
+  format_one_meta(x, format(ts_key(x)), format(ts_index(x)))
 }
 
-format_class <- function(x) sub("^ts_", "", class(x)[1L])
-
-format_ts_meta <- function(...) {
-  paste0("<", paste(..., sep = ", ", collapse = "; "), ">")
+#' @export
+format.ts_key <- function(x, ...) {
+  format_one_meta(x, paste0("`", key(x), "`"))
 }
+
+#' @export
+format.ts_index <- function(x, ...) {
+  format_one_meta(x, paste0("`", index(x), "`"), format(interval(x)))
+}
+
+format_one_meta <- function(x, ...) {
+  paste0("<", class(x), "[", paste(..., sep = ", "), "]>")
+}
+
 
 #' @export
 merge.ts_tbl <- function(x, y, by = id_cols(x), ...) {
@@ -184,5 +169,5 @@ merge.ts_tbl <- function(x, y, by = id_cols(x), ...) {
     y <- make_compatible(y, x, key(x) %in% by, index(x) %in% by)
   }
 
-  reclass_ts_tbl(NextMethod(), ts_def(x), warn_opt = FALSE)
+  reclass_ts_tbl(NextMethod(), ts_meta(x))
 }

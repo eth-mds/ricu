@@ -32,7 +32,7 @@
 
 ts_tbl(..., key, index = NULL, interval = hours(1L))
 
-as_ts_tbl(tbl, key, index = NULL, interval = hours(1L), ...)
+as_ts_tbl(tbl, key, index = NULL, interval = hours(1L))
 
 is_ts_tbl(x)
 }

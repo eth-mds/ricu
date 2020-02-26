@@ -160,9 +160,6 @@ is_unique.ts_tbl <- function(x, by = id_cols(x), ...) {
 }
 
 #' @export
-is_unique.default <- function(x, ...) identical(anyDuplicated(x, ...), 0L)
-
-#' @export
 dt_gforce <- function(x,
                       fun = c("mean", "median", "min", "max", "sum", "prod",
                               "var", "sd", "first", "last"),
