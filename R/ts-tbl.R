@@ -292,22 +292,27 @@ aux_names.ts_tbl <- function(x, ...) aux_names(ts_def(x), ...)
 aux_data.ts_tbl <- function(x, ...) aux_data(ts_def(x), ...)
 
 #' @export
-make_compatible <- function(x, def) {
+make_compatible <- function(x, def, key = TRUE, index = TRUE) {
 
   def <- ts_def(def)
 
   assert_that(is_ts_tbl(x), is_ts_def(def))
 
-  if (!setequal(id_cols(x), id_cols(def))) {
+  if (key && !setequal(key(x), key(def))) {
     assert_that(same_length(key(x), key(def)))
-    x <- rename_cols(x, id_cols(def), id_cols(x))
+    x <- rename_cols(x, key(def), key(x))
   }
 
-  if (!identical(time_unit(x), time_unit(def))) {
+  if (index && !setequal(index(x), index(def))) {
+    assert_that(same_length(key(x), key(def)))
+    x <- rename_cols(x, index(def), index(x))
+  }
+
+  if (index && !identical(time_unit(x), time_unit(def))) {
     x <- set_time_unit(x, time_unit(def))
   }
 
-  if (!all.equal(interval(x), interval(def))) {
+  if (index && !all.equal(interval(x), interval(def))) {
     x <- set_interval(x, interval(def))
   }
 

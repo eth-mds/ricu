@@ -179,7 +179,10 @@ format_ts_meta <- function(...) {
 #' @export
 merge.ts_tbl <- function(x, y, by = id_cols(x), ...) {
 
-  if (is_ts_tbl(y)) y <- make_compatible(y, x)
+  if (is_ts_tbl(y)) {
+    y <- data.table::copy(y)
+    y <- make_compatible(y, x, key(x) %in% by, index(x) %in% by)
+  }
 
   reclass_ts_tbl(NextMethod(), ts_def(x), warn_opt = FALSE)
 }
