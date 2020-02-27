@@ -1,6 +1,6 @@
 
 #' @export
-ts_meta <- function(x, ...) UseMethod("ts_meta", x)
+ts_meta <- function(x) UseMethod("ts_meta", x)
 
 #' @export
 ts_index <- function(x) UseMethod("ts_index", x)
@@ -29,7 +29,12 @@ time_unit <- function(x) UseMethod("time_unit", x)
 set_index <- function(x, value) UseMethod("set_index", x)
 
 #' @export
-set_interval <- function(x, value) UseMethod("set_interval", x)
+set_interval <- function(x, value) {
+
+  assert_that(is_time(value, allow_neg = FALSE))
+
+  UseMethod("set_interval", x)
+}
 
 #' @export
 set_key <- function(x, value) UseMethod("set_key", x)
@@ -39,7 +44,9 @@ set_time_unit <- function(x, value) UseMethod("set_time_unit", x)
 
 #' @export
 rm_cols <- function(x, cols, ...) {
-  assert_that(all(cols %in% colnames(x)))
+
+  assert_that(has_cols(x, cols), is_unique(cols))
+
   UseMethod("rm_cols", x)
 }
 
@@ -53,7 +60,9 @@ rm_cols.data.table <- function(x, cols, ...) {
 
 #' @export
 rename_cols <- function(x, new, old, ...) {
-  assert_that(length(new) == length(old))
+
+  assert_that(is_unique(new), is_unique(old), same_length(new, old))
+
   UseMethod("rename_cols", x)
 }
 

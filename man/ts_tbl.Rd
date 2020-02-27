@@ -11,7 +11,6 @@
 \alias{as.data.frame.ts_tbl}
 \alias{ts_tbl}
 \alias{as_ts_tbl}
-\alias{is_ts_tbl}
 \title{Methods for creating and inspecting ts_tbl objects}
 \usage{
 \method{[}{ts_tbl}(x, ...)
@@ -33,12 +32,8 @@
 ts_tbl(..., key, index = NULL, interval = hours(1L))
 
 as_ts_tbl(tbl, key, index = NULL, interval = hours(1L))
-
-is_ts_tbl(x)
 }
 \arguments{
-\item{x}{A \code{ts_tbl} object.}
-
 \item{...}{Passed to \code{\link[data.table:data.table]{data.table::data.table()}}/generic compatibility.}
 
 \item{object}{A \code{ts_tbl} object.}

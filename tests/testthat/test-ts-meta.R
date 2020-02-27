@@ -81,7 +81,7 @@ test_that("ts_index", {
 test_that("ts_meta", {
 
   ts_key <- new_ts_key("foo")
-  ts_ind <- new_ts_index("foo", hours(1L))
+  ts_ind <- new_ts_index("bar", hours(1L))
 
   ts_met <- new_ts_meta(ts_key, ts_ind)
 
@@ -90,18 +90,33 @@ test_that("ts_meta", {
   expect_false(is_ts_meta(ts_key))
   expect_false(is_ts_meta(ts_ind))
 
+  expect_error(new_ts_meta(ts_key, ts_key), "is not a `ts_index` object")
+  expect_error(new_ts_meta(ts_ind, ts_ind), "is not a `ts_key` object")
+  expect_error(new_ts_meta(ts_key, new_ts_index("foo", hours(1L))),
+               "not not equal to")
+
   expect_identical(ts_meta(ts_met), ts_met)
   expect_identical(ts_index(ts_met), ts_ind)
   expect_identical(ts_key(ts_met), ts_key)
 
-  renamed <- rename_cols(ts_met, "bar", "foo")
+  renamed <- rename_cols(ts_met, "xyz", "bar")
 
-  expect_identical(key(renamed), "bar")
-  expect_identical(index(renamed), "bar")
+  expect_identical(key(renamed), "foo")
+  expect_identical(index(renamed), "xyz")
   expect_identical(interval(renamed), interval(ts_met))
-  expect_identical(rename_cols(ts_met, "foo", "bar"), ts_met)
+  expect_identical(rename_cols(renamed, "bar", "xyz"), ts_met)
 
-  sk <- set_key(ts_met, "bar")
+  renamed <- rename_cols(ts_met, c("abc", "xyz"), c("foo", "bar"))
+
+  expect_identical(key(renamed), "abc")
+  expect_identical(index(renamed), "xyz")
+  expect_identical(interval(renamed), interval(ts_met))
+
+  expect_error(rename_cols(ts_met, "bar", "foo"), "not not equal to")
+  expect_error(rename_cols(ts_met, c("abc", "abc"), c("foo", "bar")),
+               "not not equal to")
+
+  sk <- set_key(ts_met, "abc")
   expect_true(is_ts_meta(sk))
 
   expect_identical(key(sk), key(renamed))
@@ -109,13 +124,18 @@ test_that("ts_meta", {
   expect_identical(interval(sk), interval(ts_met))
   expect_identical(time_unit(sk), time_unit(ts_met))
 
-  sid <- set_index(ts_met, "bar")
+  sid <- set_index(ts_met, "xyz")
   expect_true(is_ts_meta(sid))
 
   expect_identical(key(sid), key(ts_met))
   expect_identical(index(sid), index(renamed))
   expect_identical(interval(sid), interval(ts_met))
   expect_identical(time_unit(sid), time_unit(ts_met))
+
+  expect_identical(set_key(ts_met, "foo"), ts_met)
+  expect_identical(set_index(ts_met, "bar"), ts_met)
+  expect_error(set_key(ts_met, "bar"), "not not equal to")
+  expect_error(set_index(ts_met, "foo"), "not not equal to")
 
   siv <- set_interval(ts_met, mins(5L))
   expect_true(is_ts_meta(siv))

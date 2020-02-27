@@ -2,10 +2,31 @@
 #' @importFrom assertthat on_failure<- validate_that
 NULL
 
+
+on_failure(is_ts_index) <- function(call, env) {
+  paste0(deparse(call$x), " is not a `ts_index` object")
+}
+
+on_failure(is_ts_key) <- function(call, env) {
+  paste0(deparse(call$x), " is not a `ts_key` object")
+}
+
+on_failure(is_ts_meta) <- function(call, env) {
+  paste0(deparse(call$x), " is not a `ts_meta` object")
+}
+
+on_failure(is_ts_tbl) <- function(call, env) {
+  paste0(deparse(call$x), " is not a `ts_tbl` object")
+}
+
+on_failure(is_unique) <- function(call, env) {
+  paste0(deparse(call$x), " contains duplicate elements")
+}
+
 is_dt <- function(x) data.table::is.data.table(x)
 
 on_failure(is_dt) <- function(call, env) {
-  paste0(deparse(call$x), " is not a `data.table`")
+  paste0(deparse(call$x), " is not a `data.table` object")
 }
 
 has_cols <- function(x, cols) {
@@ -15,10 +36,10 @@ has_cols <- function(x, cols) {
 }
 
 on_failure(has_cols) <- function(call, env) {
-  out_names <- paste0("`", paste0(eval(call$cols, env), collapse = "`, `"),
-                      "`")
-  paste0(deparse(call$x), " does not contain exactly one of the following ",
-         "(unique) column names: ", out_names)
+  cols <- eval(call$cols, env)
+  all <- colnames(eval(call$x, env))
+  paste0(deparse(call$x), " does not contain the following columns: ",
+         paste0("`", paste0(cols[!cols %in% all], collapse = "`, `"), "`"))
 }
 
 has_col <- function(x, col) {
@@ -26,8 +47,8 @@ has_col <- function(x, col) {
 }
 
 on_failure(has_col) <- function(call, env) {
-  paste0(deparse(call$x), " does not contain exactly one column `",
-         eval(call$col, env), "`.")
+  paste0(deparse(call$x), " does not contain column `",
+         eval(call$col, env), "`")
 }
 
 has_time_col <- function(x, col, ...) {
@@ -36,7 +57,7 @@ has_time_col <- function(x, col, ...) {
 
 on_failure(has_time_col) <- function(call, env) {
   paste0(deparse(call$x), " does not contain column `",
-         eval(call$col, env), "` of class `difftime`.")
+         eval(call$col, env), "` of class `difftime`")
 }
 
 has_time_cols <- function(x, cols, ...) {
@@ -45,7 +66,7 @@ has_time_cols <- function(x, cols, ...) {
 
 on_failure(has_time_cols) <- function(call, env) {
   paste0("Not all of ", paste0(eval(call$col, env), collapse = ", "),
-         " are contained in ", deparse(call$x), " as `difftime` objects.")
+         " are contained in ", deparse(call$x), " as `difftime` objects")
 }
 
 is_time <- function(x, allow_neg = TRUE) {
@@ -56,7 +77,7 @@ on_failure(is_time) <- function(call, env) {
   pos <- is.null(call$allow_neg) || !eval(call$allow_neg, env)
   paste0(deparse(call$x), " is not a",
          if (pos) " strictly positive " else " ",
-         "`difftime` object of length 1.")
+         "`difftime` object of length 1")
 }
 
 is_time_vec <- function(x, allow_neg = TRUE) {
@@ -67,15 +88,15 @@ on_failure(is_time_vec) <- function(call, env) {
   pos <- !eval(call$allow_neg, env)
   paste0(deparse(call$x), " is not a",
          if (pos) " strictly positive " else " ",
-         "`difftime` object.")
+         "`difftime` object")
 }
 
 same_time_unit <- function(x, y)
- is_time_vec(x) && is_time_vec(y) && identical(units(x), units(y))
+  is_time_vec(x) && is_time_vec(y) && identical(units(x), units(y))
 
 on_failure(same_time_unit) <- function(call, env) {
   paste0("`", deparse(call$x), "` and `", deparse(call$y),
-         "` are not on the same time scale.")
+         "` are not on the same time scale")
 }
 
 same_interval <- function(x, y)
@@ -83,14 +104,14 @@ same_interval <- function(x, y)
 
 on_failure(same_interval) <- function(call, env) {
   paste0("`", deparse(call$x), "` and `", deparse(call$y),
-         "` are not on the same time scale.")
+         "` are not on the same time scale")
 }
 
 same_id_cols <- function(x, y) setequal(ts_id_cols(x), ts_id_cols(y))
 
 on_failure(same_id_cols) <- function(call, env) {
   paste0(deparse(call$x), " and ", deparse(call$y),
-         " do not share the same `by` columns.")
+         " do not share the same `key` and `index` columns")
 }
 
 same_time_cols <- function(x, y) {
@@ -101,7 +122,7 @@ same_time_cols <- function(x, y) {
 
 on_failure(same_time_cols) <- function(call, env) {
   paste0(deparse(call$x), " and ", deparse(call$y),
-         " do not share the same `time` columns and scale.")
+         " do not share the same `time` columns and scale")
 }
 
 has_unit <- function(x, col, unit) {
@@ -112,47 +133,47 @@ has_unit <- function(x, col, unit) {
 
 on_failure(has_unit) <- function(call, env) {
   paste0("column `", eval(call$col, env), "` of ", deparse(call$x),
-         " does not have unit `", eval(call$unit, env), "`.")
+         " does not have unit `", eval(call$unit, env), "`")
 }
 
 all_fun <- function(x, fun, ...) all(vapply(x, fun, logical(1L), ...))
 
 on_failure(all_fun) <- function(call, env) {
   paste0("some of ", deparse(call$x), " do not satisfy `",
-         deparse(call$fun), "`.")
+         deparse(call$fun), "`")
 }
 
 same_length <- function(x, y) identical(length(x), length(y))
 
 on_failure(same_length) <- function(call, env) {
   paste0(deparse(call$x), " does not have the same length as ",
-         deparse(call$y), ".")
+         deparse(call$y))
 }
 
 xor_na <- function(x, y) all(xor(is.na(x), is.na(y)))
 
 on_failure(xor_na) <- function(call, env) {
   paste0("Either ", deparse(call$x), " xor ", deparse(call$y),
-         " are expected to be `NA`.")
+         " are expected to be `NA`")
 }
 
 is_disjoint <- function(x, y) length(intersect(x, y)) == 0L
 
 on_failure(is_disjoint) <- function(call, env) {
   paste0("`", deparse(call$x), "` and `", deparse(call$y),
-         "` have a nonempty intersection.")
+         "` have a nonempty intersection")
 }
 
 not_na <- function(x) length(x) == 1L && !is.na(x)
 
 on_failure(not_na) <- function(call, env) {
-  paste0("`", deparse(call$x), "` is not a length 1 non-NA value.")
+  paste0("`", deparse(call$x), "` is not a length 1 non-NA value")
 }
 
 no_na <- function(x) !anyNA(x)
 
 on_failure(no_na) <- function(call, env) {
-  paste0("`", deparse(call$x), "` contains at least 1 NA value.")
+  paste0("`", deparse(call$x), "` contains at least 1 NA value")
 }
 
 same_ts <- function(x, y) {
@@ -162,7 +183,7 @@ same_ts <- function(x, y) {
 
 on_failure(same_ts) <- function(call, env) {
   paste0("`", deparse(call$x), "` and `", deparse(call$y),
-         "` differ in key, index and/or interval.")
+         "` differ in key, index and/or interval")
 }
 
 is_dt_key <- function(dt, col, pos) {
@@ -170,15 +191,17 @@ is_dt_key <- function(dt, col, pos) {
 }
 
 on_failure(is_dt_key) <- function(call, env) {
-  paste0("`", eval(call$col), "` is not the data.table key of `",
-         deparse(call$dt), "` in position ", eval(call$pos), ".")
+  paste0("`", eval(call$col, env), "` is not the data.table key of `",
+         deparse(call$dt), "` in position ", eval(call$pos, env))
 }
 
-has_interval <- function(x, interval) {
-  all(is.na(x) | as.double(x) %% as.double(interval, units = units(x)) == 0)
+has_interval <- function(x, col, interval) {
+  all(is.na(x[[col]]) |
+    as.double(x[[col]]) %% as.double(interval, units = units(x[[col]])) == 0)
 }
 
 on_failure(has_interval) <- function(call, env) {
-  paste0("`", deparse(call$x), "` does not conform to an interval of ",
-         eval(call$interval), ".")
+  paste0("column `", eval(call$col, env), "` of ", deparse(call$x),
+         " does not conform to an interval of ",
+         format(eval(call$interval, env)))
 }

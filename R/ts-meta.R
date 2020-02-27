@@ -18,16 +18,23 @@ new_ts_key <- function(key) {
 
 new_ts_meta <- function(ts_key, ts_index) {
 
-  assert_that(is_ts_key(ts_key), is_ts_index(ts_index))
+  assert_that(is_ts_key(ts_key), is_ts_index(ts_index),
+              key(ts_key) != index(ts_index))
 
   structure(list(ts_key = ts_key, ts_index = ts_index), class = "ts_meta")
 }
 
+#' @export
 is_ts_index <- function(x) inherits(x, "ts_index")
 
+#' @export
 is_ts_key <- function(x) inherits(x, "ts_key")
 
+#' @export
 is_ts_meta <- function(x) inherits(x, "ts_meta")
+
+#' @export
+is_ts_tbl <- function(x) inherits(x, "ts_tbl")
 
 ts_meta.ts_meta <- function(x) x
 

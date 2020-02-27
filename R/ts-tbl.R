@@ -25,7 +25,7 @@ ts_tbl <- function(..., key, index = NULL, interval = hours(1L)) {
 #'
 as_ts_tbl <- function(tbl, key, index = NULL, interval = hours(1L)) {
 
-  assert_that(inherits(tbl, "data.frame"))
+  assert_that(inherits(tbl, "data.frame"), is_unique(colnames(tbl)))
 
   if (!is_dt(tbl)) data.table::setDT(tbl)
 
@@ -59,14 +59,6 @@ as_ts_tbl <- function(tbl, key, index = NULL, interval = hours(1L)) {
   tbl
 }
 
-#' @param x A `ts_tbl` object.
-#'
-#' @rdname ts_tbl
-#'
-#' @export
-#'
-is_ts_tbl <- function(x) inherits(x, "ts_tbl")
-
 ts_meta.ts_tbl <- function(x) attr(x, "ts_meta")
 
 set_ts_meta <- function(x, meta, stop_on_fail = TRUE) {
@@ -84,7 +76,7 @@ set_ts_meta <- function(x, meta, stop_on_fail = TRUE) {
 
   check <- validate_that(
     is_dt(x), has_col(x, key), has_col(x, index),
-    has_time_col(x, index), has_interval(x[[index]], interval(meta))
+    has_time_col(x, index), has_interval(x, index, interval(meta))
   )
 
   if (!isTRUE(check)) {
@@ -142,6 +134,8 @@ rm_cols.ts_tbl <- function(x, cols, ...) {
 #' @export
 rename_cols.ts_tbl <- function(x, new, old = colnames(x), ...) {
 
+  assert_that(has_cols(x, old))
+
   meta <- rename_cols(ts_meta(x), new, old)
   x <- setnames(x, old, new)
 
@@ -179,13 +173,19 @@ interval.ts_tbl <- function(x) {
 set_interval.ts_tbl <- function(x, value) {
 
   if (interval(x) > value) {
-    warnings("Higher time resolution does not add missing time steps.")
+    warning("Higher time resolution does not add missing time steps")
   }
 
   set(x, j = index(x),
       value = round_to(time_col(x), as.double(value, time_unit(x))))
 
   set_ts_meta(x, set_interval(ts_meta(x), value))
+
+  if (!identical(units(value), time_unit(x))) {
+    set_time_unit(x, units(value))
+  }
+
+  x
 }
 
 #' @export

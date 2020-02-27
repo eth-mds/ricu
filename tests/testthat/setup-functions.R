@@ -33,3 +33,5 @@ expect_equal_df <- function(object, expected, ..., info = NULL, label = NULL,
 
   invisible(act$val)
 }
+
+cpy <- data.table::copy
