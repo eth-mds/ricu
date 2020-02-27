@@ -90,8 +90,9 @@ load_items <- function(source, table, item_col, items, names, id_col,
 
   } else if (length(unique(unlist(items))) == 1L) {
 
-    lst <- list(col = as.name(item_col), id = unique(unlist(items)))
-    query <- substitute(is_val(col, id), lst)
+    lst <- list(col = as.name(item_col), id = unique(unlist(items)),
+                is_fun = is_val)
+    query <- substitute(is_fun(col, id), lst)
 
   } else {
 
