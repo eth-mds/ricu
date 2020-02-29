@@ -205,3 +205,12 @@ on_failure(has_interval) <- function(call, env) {
          " does not conform to an interval of ",
          format(eval(call$interval, env)))
 }
+
+is_scalar <- function(x, allow_null = FALSE) {
+  is.atomic(x) && length(x) == 1L && !(is.null(x) && allow_null)
+}
+
+on_failure(is_scalar) <- function(call, env) {
+  paste0(deparse(call$x), "is not scalar (i.e. atomic",
+    if (eval(call$col, env)) ", not NULL" else "", " and length 1)")
+}

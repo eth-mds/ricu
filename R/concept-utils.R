@@ -1,5 +1,94 @@
 
 #' @export
+new_item <- function(concept, source, table, column, ids = NULL,
+                     regex = FALSE, callback = NULL, ...) {
+
+  assert_that(is.string(concept), is.string(source), is.string(table),
+              is.string(column), is.atomic(ids), is.flag(regex),
+              is.null(callback) || is.string(callback))
+
+  if (!is.null(callback)) {
+    assert_that(exists(callback, mode = "function"))
+  }
+
+  item <- list(concept = concept, source = source, table = table,
+               column = column, ids = ids, regex = regex, callback = callback)
+
+  extra <- list(...)
+
+  if (length(extra) > 0L) {
+
+    assert_that(all(vapply(extra, is.string, logical(1L))),
+                !is.null(names(extra)), is_unique(names(extra)))
+
+    item <- c(item, extra)
+  }
+
+  structure(list(item), class = "item")
+}
+
+#' @export
+is_item <- function(x) inherits(x, "item")
+
+#' @export
+names.item <- function(x) vapply(x, `[[`, character(1L), "concept")
+
+#' @export
+c.item <- function(...) {
+
+  assert_that(all(vapply(list(...), is_item, logical(1L))))
+
+  structure(NextMethod(), class = "item")
+}
+
+#' @export
+new_concept <- function(name, items, unit = NULL) {
+
+  assert_that(is.string(name), is_item(items),
+              all(vapply(names(items), identical, logical(1L), name)),
+              is.null(unit) || is.string(unit))
+
+  concept <- list(name = name, unit = unit, items = items)
+
+  structure(list(concept), class = "concept")
+}
+
+#' @export
+is_concept <- function(x) inherits(x, "concept")
+
+#' @export
+names.concept <- function(x) vapply(x, `[[`, character(1L), "name")
+
+#' @export
+c.concept <- function(...) {
+
+  assert_that(all(vapply(list(...), is_concept, logical(1L))))
+
+  res <- structure(NextMethod(), class = "concept")
+
+  assert_that(is_unique(names(res)))
+
+  res
+}
+
+#' @export
+new_dictionary <- function(concepts) {
+
+  assert_that(is_concept(concepts), is_unique(names(concepts)))
+
+  structure(list(concepts), class = "dictionary")
+}
+
+#' @export
+is_dictionary <- function(x) inherits(x, "dictionary")
+
+#' @export
+names.dictionary <- function(x) names(x[[1L]])
+
+#' @export
+length.dictionary <- function(x) length(x[[1L]])
+
+#' @export
 get_concepts <- function(source, concept_sel = NULL,
                          dictionary = get_config("concept-dict")) {
 
