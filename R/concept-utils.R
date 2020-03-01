@@ -36,7 +36,10 @@ names.item <- function(x) vapply(x, `[[`, character(1L), "concept")
 #' @export
 c.item <- function(...) {
 
-  assert_that(all(vapply(list(...), is_item, logical(1L))))
+  items <- list(...)
+  items <- Filter(Negate(is.null), items)
+
+  assert_that(all(vapply(items, is_item, logical(1L))))
 
   structure(NextMethod(), class = "item")
 }
@@ -62,7 +65,10 @@ names.concept <- function(x) vapply(x, `[[`, character(1L), "name")
 #' @export
 c.concept <- function(...) {
 
-  assert_that(all(vapply(list(...), is_concept, logical(1L))))
+  concepts <- list(...)
+  concepts <- Filter(Negate(is.null), concepts)
+
+  assert_that(all(vapply(concepts, is_concept, logical(1L))))
 
   res <- structure(NextMethod(), class = "concept")
 
@@ -77,6 +83,41 @@ new_dictionary <- function(concepts) {
   assert_that(is_concept(concepts), is_unique(names(concepts)))
 
   structure(list(concepts), class = "dictionary")
+}
+
+#' @export
+read_dictionary <- function(name = "concept-dict", file = NULL, ...) {
+
+  do_itm <- function(x, nme, conc) {
+    do.call(new_item, c(list(concept = conc, source = nme), x))
+  }
+
+  do_itms <- function(itms, nme, conc) {
+    do.call(c, lapply(itms, do_itm, nme, conc))
+  }
+
+  do_conc <- function(conc, name) {
+    items <- Map(do_itms, conc[["sources"]], names(conc[["sources"]]), name)
+    args <- c(list(name = name), list(do.call(c, items)),
+              conc[names(conc) != "sources"])
+    do.call(new_concept, args)
+  }
+
+  if (!is.null(file)) {
+
+    assert_that(missing(name), file.exists(file))
+
+    dat <- read_json(file, ...)
+
+  } else {
+
+    dat <- get_config(name, ...)
+  }
+
+  concepts <- Map(do_conc, dat, names(dat))
+  concepts <- do.call(c, concepts)
+
+  new_dictionary(concepts)
 }
 
 #' @export
