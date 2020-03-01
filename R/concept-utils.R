@@ -31,7 +31,7 @@ new_item <- function(concept, source, table, column, ids = NULL,
 is_item <- function(x) inherits(x, "item")
 
 #' @export
-names.item <- function(x) vapply(x, `[[`, character(1L), "concept")
+names.item <- function(x) vapply(x, .subset2, character(1L), "concept")
 
 #' @export
 c.item <- function(...) {
@@ -42,6 +42,24 @@ c.item <- function(...) {
   assert_that(all(vapply(items, is_item, logical(1L))))
 
   structure(NextMethod(), class = "item")
+}
+
+#' @export
+`[.item` <- function(x, i, source = NULL, ...) {
+
+  recreate <- function(y) do.call(new_item, y)
+
+  if (!missing(i)) {
+    x <- .subset(x, i)
+  }
+
+  if (!is.null(source)) {
+    assert_that(is.string(source))
+    srcs <- vapply(x, .subset2, character(1L), "source")
+    x <- .subset(x, source == srcs)
+  }
+
+  do.call(c, lapply(x, recreate))
 }
 
 #' @export
@@ -60,7 +78,7 @@ new_concept <- function(name, items, unit = NULL) {
 is_concept <- function(x) inherits(x, "concept")
 
 #' @export
-names.concept <- function(x) vapply(x, `[[`, character(1L), "name")
+names.concept <- function(x) vapply(x, .subset2, character(1L), "name")
 
 #' @export
 c.concept <- function(...) {
@@ -78,12 +96,49 @@ c.concept <- function(...) {
 }
 
 #' @export
+`[.concept` <- function(x, i, source = NULL, ...) {
+
+  do_one <- function(y, src) {
+
+    if (!is.null(src)) {
+      y[["items"]] <- .subset2(y, "items")[source = source]
+    }
+
+    do.call(new_concept, y)
+  }
+
+  if (is.character(i)) {
+    assert_that(length(i) > 0L, all(i %in% names(x)), !anyNA(i))
+    i <- match(i, names(x))
+  }
+
+  do.call(c, lapply(.subset(x, i), do_one, source))
+}
+
+#' @export
 new_dictionary <- function(concepts) {
 
   assert_that(is_concept(concepts), is_unique(names(concepts)))
 
   structure(list(concepts), class = "dictionary")
 }
+
+#' @export
+is_dictionary <- function(x) inherits(x, "dictionary")
+
+#' @export
+names.dictionary <- function(x) names(.subset2(x, 1L))
+
+#' @export
+length.dictionary <- function(x) length(.subset2(x, 1L))
+
+#' @export
+`[.dictionary` <- function(x, i, source = NULL, ...) {
+  new_dictionary(.subset2(x, 1L)[i, source = source, ...])
+}
+
+#' @export
+str.dictionary <- function(x, ...) str(.subset2(x, 1L), ...)
 
 #' @export
 read_dictionary <- function(name = "concept-dict", file = NULL, ...) {
@@ -97,7 +152,8 @@ read_dictionary <- function(name = "concept-dict", file = NULL, ...) {
   }
 
   do_conc <- function(conc, name) {
-    items <- Map(do_itms, conc[["sources"]], names(conc[["sources"]]), name)
+    items <- Map(do_itms, conc[["sources"]], names(conc[["sources"]]), name,
+                 USE.NAMES = FALSE)
     args <- c(list(name = name), list(do.call(c, items)),
               conc[names(conc) != "sources"])
     do.call(new_concept, args)
@@ -114,20 +170,11 @@ read_dictionary <- function(name = "concept-dict", file = NULL, ...) {
     dat <- get_config(name, ...)
   }
 
-  concepts <- Map(do_conc, dat, names(dat))
+  concepts <- Map(do_conc, dat, names(dat), USE.NAMES = FALSE)
   concepts <- do.call(c, concepts)
 
   new_dictionary(concepts)
 }
-
-#' @export
-is_dictionary <- function(x) inherits(x, "dictionary")
-
-#' @export
-names.dictionary <- function(x) names(x[[1L]])
-
-#' @export
-length.dictionary <- function(x) length(x[[1L]])
 
 #' @export
 get_concepts <- function(source, concept_sel = NULL,
