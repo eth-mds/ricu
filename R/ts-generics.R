@@ -45,6 +45,10 @@ set_time_unit <- function(x, value) UseMethod("set_time_unit", x)
 #' @export
 rm_cols <- function(x, cols, ...) {
 
+  if (length(cols) == 0L) {
+    return(x)
+  }
+
   assert_that(has_cols(x, cols), is_unique(cols))
 
   UseMethod("rm_cols", x)
