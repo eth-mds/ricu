@@ -1,5 +1,7 @@
 
-#' @importFrom assertthat on_failure<- validate_that
+#' @importFrom assertthat assert_that on_failure<- validate_that
+#' @importFrom assertthat is.string is.flag is.dir is.scalar is.count
+#' @importFrom assertthat has_name has_attr
 NULL
 
 
