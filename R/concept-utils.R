@@ -251,12 +251,12 @@ group_concepts <- function(concepts) {
   }
 
   items <- as_item(concepts)
+  wide <- vapply(lapply(items, `[[`, "ids"), is.null, logical(1L))
 
   splt <- list(
     vapply(items, `[[`, character(1L), "table"),
-    vapply(items, `[[`, character(1L), "column"),
-    vapply(items, `[[`, logical(1L), "regex"),
-    vapply(lapply(items, `[[`, "ids"), is.null, logical(1L))
+    ifelse(wide, "", vapply(items, `[[`, character(1L), "column")),
+    vapply(items, `[[`, logical(1L), "regex")
   )
 
   lapply(split(items, splt, drop = TRUE), split_swap, concepts)
@@ -323,10 +323,15 @@ load_concepts <- function(source, concepts = get_concepts(source),
     }
 
     tbl <- unique(table)
+    rgx <- unique(regex)
+
+    if (isTRUE(rgx)) {
+      concept <- unique(concept)
+    }
 
     args <- c(list(unique(source), tbl, unique(column), ids, concept),
               col_cfg[[tbl]],
-              list(patient_ids, callback, unique(regex), unit, interval),
+              list(patient_ids, callback, rgx, unit, interval),
               lapply(list(...), uq_na_rm))
 
     do.call(load_items, args)
