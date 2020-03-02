@@ -316,12 +316,18 @@ load_concepts <- function(source, concepts = get_concepts(source),
   do_load <- function(concept, source, table, column, ids = NULL,
                       regex = FALSE, callback = NULL, unit = NULL, ...) {
 
+    uq_na_rm <- function(x) {
+      res <- unique(x)
+      res <- res[!is.na(res)]
+      if (length(res)) res else NULL
+    }
+
     tbl <- unique(table)
 
     args <- c(list(unique(source), tbl, unique(column), ids, concept),
               col_cfg[[tbl]],
               list(patient_ids, callback, unique(regex), unit, interval),
-              lapply(list(...), function(x) unique(x[!is.na(x)])))
+              lapply(list(...), uq_na_rm))
 
     do.call(load_items, args)
   }

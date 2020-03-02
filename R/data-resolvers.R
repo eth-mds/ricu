@@ -88,3 +88,8 @@ multiply_hirid_gluc <- multiply_by(18.016)
 multiply_hirid_phos <- multiply_by(18.016)
 multiply_hirid_urea <- multiply_by(6.006)
 multiply_hirid_bili <- multiply_by(0.058467)
+
+fahrenheit_to_celsius <- function(x, val_col, ...) {
+  x <- set(x, j = val_col, value = (x[[val_col]] - 32) * 5 / 9)
+  x
+}
