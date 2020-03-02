@@ -78,7 +78,6 @@
     }
   },
   "antibiotics": {
-    "unit": null,
     "sources": {
       "mimic": [
         {
@@ -189,6 +188,31 @@
       "hirid": [
         {
           "ids": 20004200,
+          "table": "observations",
+          "column": "variableid"
+        }
+      ]
+    }
+  },
+  "bilirubin_direct": {
+    "sources": {
+      "mimic": [
+        {
+          "id": 50883,
+          "table": "labevents",
+          "column": "itemid"
+        }
+      ],
+      "eicu": [
+        {
+          "id": "Bilirubin, Direct",
+          "table": "lab",
+          "column": "labname"
+        }
+      ],
+      "hirid": [
+        {
+          "id": 24000560,
           "table": "observations",
           "column": "variableid"
         }
@@ -321,7 +345,6 @@
     }
   },
   "carboxyhemoglobin": {
-    "unit": null,
     "sources": {
       "mimic": [
         {
@@ -683,6 +706,17 @@
       ]
     }
   },
+  "et_co2": {
+    "sources": {
+      "hirid": [
+        {
+          "id": [2200, 8290, 30010009],
+          "table": "observations",
+          "column": "variableid"
+        }
+      ]
+    }
+  },
   "fi_o2": {
     "unit": "%",
     "sources": {
@@ -752,7 +786,6 @@
     }
   },
   "fluid_sampling": {
-    "unit": null,
     "sources": {
       "mimic": [
         {
@@ -767,7 +800,6 @@
     }
   },
   "gcs_eye": {
-    "unit": null,
     "sources": {
       "mimic": [
         {
@@ -799,7 +831,6 @@
     }
   },
   "gcs_motor": {
-    "unit": null,
     "sources": {
       "mimic": [
         {
@@ -831,7 +862,6 @@
     }
   },
   "gcs_total": {
-    "unit": null,
     "sources": {
       "mimic": [
         {
@@ -851,7 +881,6 @@
     }
   },
   "gcs_verbal": {
-    "unit": null,
     "sources": {
       "mimic": [
         {
@@ -981,6 +1010,24 @@
       ]
     }
   },
+  "hematocrit.1": {
+    "sources": {
+      "mimic": [
+        {
+          "id": 51221,
+          "table": "labevents",
+          "column": "itemid"
+        }
+      ],
+      "eicu": [
+        {
+          "id": "Hct",
+          "table": "lab",
+          "column": "labname"
+        }
+      ]
+    }
+  },
   "hemoglobin": {
     "unit": "g/dL",
     "sources": {
@@ -1018,7 +1065,6 @@
     }
   },
   "inr_pt": {
-    "unit": null,
     "sources": {
       "mimic": [
         {
@@ -1483,7 +1529,6 @@
     }
   },
   "ph": {
-    "unit": null,
     "sources": {
       "mimic": [
         {
@@ -1648,7 +1693,6 @@
     }
   },
   "rass_scale": {
-    "unit": null,
     "sources": {
       "eicu": [
         {
@@ -1872,8 +1916,38 @@
       ]
     }
   },
+  "temperature": {
+    "sources": {
+      "mimic": [
+        {
+          "id": [676, 677, 223762],
+          "table": "chartevents",
+          "column": "itemid"
+        },
+        {
+          "id": [678, 679, 223761, 224027],
+          "table": "chartevents",
+          "column": "itemid",
+          "resolver": "fahrenheit_to_celsius"
+        }
+      ],
+      "eicu": [
+        {
+          "id": null,
+          "table": "vitalperiodic",
+          "column": "temperature"
+        }
+      ],
+      "hirid": [
+        {
+          "id": [410, 400],
+          "table": "observations",
+          "column": "variableid"
+        }
+      ]
+    }
+  },
   "tracheostomy": {
-    "unit": null,
     "sources": {
       "mimic": [
         {
@@ -1892,6 +1966,24 @@
           "ids": 15001552,
           "table": "observations",
           "column": "variableid"
+        }
+      ]
+    }
+  },
+  "troponin_i": {
+    "sources": {
+      "mimic": [
+        {
+          "id": 51002,
+          "table": "labevents",
+          "column": "itemid"
+        }
+      ],
+      "eicu": [
+        {
+          "id": "troponin - I",
+          "table": "lab",
+          "column": "labname"
         }
       ]
     }
@@ -2013,7 +2105,6 @@
     }
   },
   "vent_end": {
-    "unit": null,
     "sources": {
       "mimic": [
         {
@@ -2071,7 +2162,6 @@
     }
   },
   "vent_start": {
-    "unit": null,
     "sources": {
       "mimic": [
         {

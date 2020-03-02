@@ -199,7 +199,6 @@ cfg <- list(
     )
   ),
   ph = list(
-    unit = NULL,
     sources = list(
       mimic = list(
         list(ids = 50820L, table = "labevents", column = "itemid")
@@ -228,7 +227,6 @@ cfg <- list(
     )
   ),
   inr_pt = list(
-    unit = NULL,
     sources = list(
       mimic = list(
         list(ids = 51237L, table = "labevents", column = "itemid")
@@ -650,7 +648,6 @@ cfg <- list(
     )
   ),
   carboxyhemoglobin = list(
-    unit = NULL,
     sources = list(
       mimic = list(
         list(ids = 0L, table = "labevents", column = "itemid")
@@ -774,7 +771,6 @@ cfg <- list(
     )
   ),
   gcs_eye = list(
-    unit = NULL,
     sources = list(
       mimic = list(
         list(ids = 184L, table = "chartevents", column = "itemid"),
@@ -791,7 +787,6 @@ cfg <- list(
     )
   ),
   gcs_verbal = list(
-    unit = NULL,
     sources = list(
       mimic = list(
         list(ids = 723L, table = "chartevents", column = "itemid"),
@@ -808,7 +803,6 @@ cfg <- list(
     )
   ),
   gcs_motor = list(
-    unit = NULL,
     sources = list(
       mimic = list(
         list(ids = 454L, table = "chartevents", column = "itemid"),
@@ -825,7 +819,6 @@ cfg <- list(
     )
   ),
   gcs_total = list(
-    unit = NULL,
     sources = list(
       mimic = list(
         list(ids = 198L, table = "chartevents", column = "itemid")
@@ -967,7 +960,6 @@ cfg <- list(
     )
   ),
   vent_start = list(
-    unit = NULL,
     sources = list(
       mimic = list(
         list(
@@ -1002,7 +994,6 @@ cfg <- list(
     )
   ),
   vent_end = list(
-    unit = NULL,
     sources = list(
       mimic = list(
         list(ids = c(225468L, 225477L, 227194L), table = "procedureevents_mv",
@@ -1028,7 +1019,6 @@ cfg <- list(
     )
   ),
   tracheostomy = list(
-    unit = NULL,
     sources = list(
       mimic = list(
         list(ids = "No Response-ETT", table = "chartevents", column = "value"),
@@ -1040,7 +1030,6 @@ cfg <- list(
     )
   ),
   rass_scale = list(
-    unit = NULL,
     sources = list(
       eicu = list(
         list(ids = "Sedation Score", table = "nursecharting",
@@ -1053,7 +1042,6 @@ cfg <- list(
     )
   ),
   antibiotics = list(
-    unit = NULL,
     sources = list(
       mimic = list(
         list(ids = c(
@@ -1085,13 +1073,69 @@ cfg <- list(
     )
   ),
   fluid_sampling = list(
-    unit = NULL,
     sources = list(
       mimic = list(
         list(ids = NULL, table = "microbiologyevents", column = "org_itemid",
              callback = "mimic_sampling", aux_time = "charttime")
       ),
       eicu = NULL
+    )
+  ),
+  troponin_i = list(
+    sources = list(
+      mimic = list(
+        list(id = 51002L, table = "labevents", column = "itemid")
+      ),
+      eicu = list(
+        list(id = "troponin - I", table = "lab", column = "labname")
+      )
+    )
+  ),
+  hematocrit = list(
+    sources = list(
+      mimic = list(
+        list(id = 51221L, table = "labevents", column = "itemid")
+      ),
+      eicu = list(
+        list(id = "Hct", table = "lab", column = "labname")
+      )
+    )
+  ),
+  bilirubin_direct = list(
+    sources = list(
+      mimic = list(
+        list(id = 50883L, table = "labevents", column = "itemid")
+      ),
+      eicu = list(
+        list(id = "Bilirubin, Direct", table = "lab", column = "labname")
+      ),
+      hirid = list(
+        list(id = 24000560L, table = "observations", column = "variableid")
+      )
+    )
+  ),
+  temperature = list(
+    sources = list(
+      mimic = list(
+        list(id = c(676L, 677L, 223762L), table = "chartevents",
+             column = "itemid"),
+        list(id = c(678L, 679L, 223761L, 224027L), table = "chartevents",
+             column = "itemid", resolver = "fahrenheit_to_celsius")
+      ),
+      eicu = list(
+        list(id = NULL, table = "vitalperiodic", column = "temperature")
+      ),
+      hirid = list(
+        list(id = c(410L, 400L), table = "observations", column = "variableid")
+      )
+    )
+  ),
+  et_co2 = list(
+    sources = list(
+      hirid = list(
+        list(id = c(2200L, 8290L, 30010009L), table = "observations",
+             column = "variableid")
+      )
     )
   )
 )
