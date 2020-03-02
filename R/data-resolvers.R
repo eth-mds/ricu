@@ -73,3 +73,18 @@ mimic_sampling <- function(x, val_col, time_col, aux_time, ...) {
   x <- set(x, j = val_col, value = !is.na(x[[val_col]]))
   x
 }
+
+multiply_by <- function(factor) {
+  function(x, val_col, ...) {
+    x <- set(x, j = val_col, value = x[[val_col]] * factor)
+    x
+  }
+}
+
+multiply_hirid_crea <- multiply_by(0.011312)
+multiply_hirid_calc <- multiply_by(4.008)
+multiply_hirid_magn <- multiply_by(2.431)
+multiply_hirid_gluc <- multiply_by(18.016)
+multiply_hirid_phos <- multiply_by(18.016)
+multiply_hirid_urea <- multiply_by(6.006)
+multiply_hirid_bili <- multiply_by(0.058467)

@@ -58,8 +58,8 @@ prepare_patient_ids <- function(x, key) {
 #' @export
 load_items <- function(source, table, item_col, items, names, id_col,
                        time_col, val_col, patient_ids = NULL,
-                       resolvers = NULL, regex = FALSE, interval = hours(1L),
-                       ...) {
+                       callback = NULL, regex = FALSE, unit = NULL,
+                       interval = hours(1L), ...) {
 
   extra_cols <- list(...)
 
@@ -75,6 +75,11 @@ load_items <- function(source, table, item_col, items, names, id_col,
                                    val_col = val), extra_cols))
     } else x
   }
+
+  get_fun <- function(x) if (is.na(x)) NULL else get(x, mode = "function")
+
+  assert_that(is.string(source), is.string(table), is.flag(regex),
+              is.string(id_col), is.string(time_col))
 
   if (is.null(unlist(items))) {
 
@@ -100,8 +105,8 @@ load_items <- function(source, table, item_col, items, names, id_col,
     query <- substitute(col %in% id, lst)
   }
 
-  if (length(extra_cols) && is.null(resolvers)) {
-    warning("`extra_cols` is only effective is `resolvers` is specified.")
+  if (length(extra_cols) && is.null(callback)) {
+    warning("`extra_cols` is only effective is `callback` is specified.")
   }
 
   message("loading from `", source, "::", table, "`\n  * ",
@@ -130,9 +135,13 @@ load_items <- function(source, table, item_col, items, names, id_col,
     return(list(dat))
   }
 
+  if (is.character(callback)) {
+    callback <- lapply(callback, get_fun)
+  }
+
   if (is.null(query)) {
 
-    if (is.null(resolvers)) {
+    if (is.null(callback)) {
 
       if (length(extra_cols)) {
         dat <- rm_cols(dat, unlist(extra_cols))
@@ -143,14 +152,14 @@ load_items <- function(source, table, item_col, items, names, id_col,
 
     } else {
 
-      if (is.function(resolvers)) {
-        resolvers <- rep(list(resolvers), length(item_col))
+      if (is.function(callback)) {
+        callback <- rep(list(callback), length(item_col))
       }
 
-      assert_that(is.list(resolvers), length(resolvers) == length(item_col))
+      assert_that(is.list(callback), length(callback) == length(item_col))
 
       dat <- unmerge(dat, item_col, c(id_cols(dat), unlist(extra_cols)), FALSE)
-      dat <- Map(resolve, dat, resolvers, item_col)
+      dat <- Map(resolve, dat, callback, item_col)
 
       if (length(extra_cols)) {
         dat <- lapply(dat, rm_cols, unlist(extra_cols))
@@ -162,9 +171,9 @@ load_items <- function(source, table, item_col, items, names, id_col,
 
   } else if (isTRUE(regex)) {
 
-    if (!is.null(resolvers)) {
-      assert_that(length(resolvers) == 1L)
-      dat <- resolve(dat, resolvers[[1L]], val_col)
+    if (!is.null(callback)) {
+      assert_that(length(callback) == 1L)
+      dat <- resolve(dat, callback[[1L]], val_col)
     }
 
     if (length(extra_cols)) {
@@ -181,7 +190,7 @@ load_items <- function(source, table, item_col, items, names, id_col,
 
     tmp_col <- new_names(colnames(dat))
 
-    if (is.null(resolvers)) {
+    if (is.null(callback)) {
 
       if (length(extra_cols)) {
         dat <- rm_cols(dat, unlist(extra_cols))
@@ -198,21 +207,21 @@ load_items <- function(source, table, item_col, items, names, id_col,
 
     } else {
 
-      if (is.function(resolvers)) {
-        resolvers <- rep(list(resolvers), length(items))
+      if (is.function(callback)) {
+        callback <- rep(list(callback), length(items))
       }
 
-      assert_that(is.list(resolvers), length(resolvers) == length(items))
+      assert_that(is.list(callback), length(callback) == length(items))
 
       dat <- dat[, c(tmp_col) := map_names(get(item_col),
-                                           seq_along(resolvers), items)]
+                                           seq_along(callback), items)]
 
       if (!identical(val_col, item_col)) {
         dat <- rm_cols(dat, item_col)
       }
 
       dat <- split(dat, by = tmp_col, keep.by = FALSE)
-      dat <- Map(resolve, dat, resolvers[as.integer(names(dat))], val_col)
+      dat <- Map(resolve, dat, callback[as.integer(names(dat))], val_col)
 
       if (length(extra_cols)) {
         dat <- lapply(dat, rm_cols, unlist(extra_cols))

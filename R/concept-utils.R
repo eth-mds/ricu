@@ -63,6 +63,19 @@ c.item <- function(...) {
 }
 
 #' @export
+as_item <- function(x) UseMethod("as_item", x)
+
+#' @export
+as_item.item <- function(x) x
+
+#' @method as.data.table item
+#' @export
+as.data.table.item <- function(x, ...) {
+  res <- lapply(x, function(y) do.call(data.table::data.table, y))
+  rbindlist(res, fill = TRUE)
+}
+
+#' @export
 new_concept <- function(name, items, unit = NULL) {
 
   assert_that(is.string(name), is_item(items),
@@ -101,18 +114,50 @@ c.concept <- function(...) {
   do_one <- function(y, src) {
 
     if (!is.null(src)) {
-      y[["items"]] <- .subset2(y, "items")[source = source]
+
+      itms <- .subset2(y, "items")[source = source]
+
+      if (is.null(itms)) {
+        return(NULL)
+      }
+
+      y[["items"]] <- itms
     }
 
     do.call(new_concept, y)
   }
 
-  if (is.character(i)) {
+  if (missing(i)) {
+    i <- TRUE
+  } else if (is.character(i)) {
     assert_that(length(i) > 0L, all(i %in% names(x)), !anyNA(i))
     i <- match(i, names(x))
   }
 
-  do.call(c, lapply(.subset(x, i), do_one, source))
+  res <- lapply(.subset(x, i), do_one, source)
+
+  do.call(c, Filter(Negate(is.null), res))
+}
+
+#' @export
+as_item.concept <- function(x) do.call(c, lapply(x, `[[`, "items"))
+
+#' @export
+as_concept <- function(x) UseMethod("as_concept", x)
+
+#' @export
+as_concept.concept <- function(x) x
+
+#' @method as.data.table concept
+#' @export
+as.data.table.concept <- function(x, ...) {
+
+  do_dt <- function(y) {
+    do.call(data.table, c(as.data.table(y[["items"]]),
+                          y[!names(y) %in% c("items", "name")]))
+  }
+
+  rbindlist(lapply(x, do_dt), fill = TRUE)
 }
 
 #' @export
@@ -127,18 +172,28 @@ new_dictionary <- function(concepts) {
 is_dictionary <- function(x) inherits(x, "dictionary")
 
 #' @export
-names.dictionary <- function(x) names(.subset2(x, 1L))
+names.dictionary <- function(x) names(as_concept(x))
 
 #' @export
-length.dictionary <- function(x) length(.subset2(x, 1L))
+length.dictionary <- function(x) length(as_concept(x))
 
 #' @export
 `[.dictionary` <- function(x, i, source = NULL, ...) {
-  new_dictionary(.subset2(x, 1L)[i, source = source, ...])
+  new_dictionary(as_concept(x)[i, source = source, ...])
 }
 
 #' @export
-str.dictionary <- function(x, ...) str(.subset2(x, 1L), ...)
+str.dictionary <- function(x, ...) str(as_concept(x), ...)
+
+#' @export
+as_item.dictionary <- function(x) as_item(as_concept(x))
+
+#' @export
+as_concept.dictionary <- function(x) .subset2(x, 1L)
+
+#' @method as.data.table dictionary
+#' @export
+as.data.table.dictionary <- function(x, ...) as.data.table(as_concept(x))
 
 #' @export
 read_dictionary <- function(name = "concept-dict", file = NULL, ...) {
@@ -177,141 +232,34 @@ read_dictionary <- function(name = "concept-dict", file = NULL, ...) {
 }
 
 #' @export
-get_concepts <- function(source, concept_sel = NULL,
-                         dictionary = get_config("concept-dict")) {
-
-  check_each <- function(x) {
-    is.list(x) && all(vapply(x, check_item, logical(1L)))
-  }
-
-  check_item <- function(x) {
-    is.list(x) && has_name(x, c("id", "table", "column")) &&
-      all(lengths(x[setdiff(names(x), "id")]) == 1L)
-  }
-
-  check_name <- function(table, x) x %in% names(table)
-
-  assert_that(is.list(dictionary))
-
-  if (!is.null(concept_sel)) {
-
-    assert_that(is.character(concept_sel))
-    hits <- check_name(dictionary, concept_sel)
-
-    if (any(hits)) {
-      assert_that(all(hits))
-      dictionary <- dictionary[concept_sel]
-    }
-  }
-
-  if (!is.null(source)) {
-
-    src <- as_src(source)
-    hits <- vapply(dictionary, check_name, logical(1L), src)
-
-    if (any(hits)) {
-      assert_that(all(hits))
-      dictionary <- lapply(dictionary, `[[`, src)
-    }
-  }
-
-  dictionary <- dictionary[vapply(dictionary, Negate(is.null), logical(1L))]
-
-  assert_that(is.list(dictionary), !is.null(names(dictionary)),
-              all(vapply(dictionary, check_each, logical(1L))))
-
-  dictionary
+get_concepts <- function(source, concepts, ...) {
+  dict <- read_dictionary(...)
+  dict[concepts, source = source]
 }
 
+#' @export
 group_concepts <- function(concepts) {
 
-  id_as_lst <- function(x) {
-    x[["id"]] <- list(x[["id"]])
-    x
+  swap_items <- function(x, new) {
+    x[["items"]] <- new
+    do.call(new_concept, x)
   }
 
-  is_miss <- function(x) {
-    if (length(x) > 1L) anyNA(x) else is.null(x) || is.na(x)
+  split_swap <- function(x, conc) {
+    x <- split(x, names(x))
+    new_dictionary(do.call(c, Map(swap_items, as_concept(conc[names(x)]), x)))
   }
 
-  add_name <- function(x, name) x[, concept := name]
+  items <- as_item(concepts)
 
-  as_funs <- function(x) {
-    lapply(x, function(x) if (is.na(x)) NULL else get(x, mode = "function"))
-  }
+  splt <- list(
+    vapply(items, `[[`, character(1L), "table"),
+    vapply(items, `[[`, character(1L), "column"),
+    vapply(items, `[[`, logical(1L), "regex"),
+    vapply(lapply(items, `[[`, "ids"), is.null, logical(1L))
+  )
 
-  all_na <- function(x) all(is.na(x))
-
-  uq_one <- function(x) {
-    res <- unique(x)
-    assert_that(length(res) == 1L)
-    res
-  }
-
-  uq_no_na <- function(x) uq_one(x[!is.na(x)])
-
-  this_that <- function(x, check_fun, true_val, false_fun) {
-    if (check_fun(x)) true_val else false_fun(x)
-  }
-
-  rm_null <- function(x) {
-    res <- Filter(Negate(is.null), x)
-    if (length(res) == 0L) NULL else res
-  }
-
-  cleanup <- function(x) {
-
-    if (!has_name(x, "resolver")) {
-      x[, resolver := NA]
-    }
-
-    names <- c("item_col", "items", "names", "resolvers")
-
-    x <- c(setnames(x, c("column", "id", "concept", "resolver"), names))
-
-    x[["table"]] <- uq_one(x[["table"]])
-    x[["item_col"]] <- unique(x[["item_col"]])
-
-    x[["items"]] <- this_that(x[["items"]], anyNA, list(NULL), unique)
-    x[["resolvers"]] <- this_that(x[["resolvers"]], all_na, NULL, as_funs)
-
-    rest <- setdiff(names(x), c(names, "table"))
-    x[["extra_args"]] <- rm_null(
-      lapply(x[rest], this_that, all_na, NULL, uq_no_na)
-    )
-    x[rest] <- NULL
-
-    x
-  }
-
-  res <- get_concepts(NULL, NULL, concepts)
-  res <- lapply(res, lapply, id_as_lst)
-
-  res <- lapply(res, rbindlist, fill = TRUE)
-  res <- Map(add_name, res, names(res))
-  res <- rbindlist(res, fill = TRUE)
-
-  if (has_name(res, "regex")) {
-
-    newnam <- new_names(colnames(res), 3L)
-
-    res <- res[, c(newnam) := list(
-      table,
-      fifelse(vapply(id, is_miss, logical(1L)), NA_character_, column),
-      fifelse(is_true(regex), seq_len(nrow(res)), NA_integer_)
-    )]
-
-  } else {
-
-    newnam <- new_names(colnames(res), 2L)
-
-    res <- res[, c(newnam) := list(
-      table,
-      fifelse(vapply(id, is_miss, logical(1L)), NA_character_, column)
-    )]
-  }
-
-  unname(lapply(split(res, by = newnam, keep.by = FALSE), cleanup))
+  lapply(split(items, splt, drop = TRUE), split_swap, concepts)
 }
 
 #' @export
@@ -365,14 +313,26 @@ load_concepts <- function(source, concepts = get_concepts(source),
     }
   }
 
+  do_load <- function(concept, source, table, column, ids = NULL,
+                      regex = FALSE, callback = NULL, unit = NULL, ...) {
+
+    tbl <- unique(table)
+
+    args <- c(list(unique(source), tbl, unique(column), ids, concept),
+              col_cfg[[tbl]],
+              list(patient_ids, callback, unique(regex), unit, interval),
+              lapply(list(...), function(x) unique(x[!is.na(x)])))
+
+    do.call(load_items, args)
+  }
+
   assert_that(is.flag(merge_data), is_time(interval, allow_neg = FALSE))
 
   if (is.character(concepts)) {
-    concepts <- get_concepts(source, concept_sel = concepts,
-                             dictionary = get_config("concept-dict"))
+    concepts <- get_concepts(source, concepts, "concept-dict")
   }
 
-  assert_that(is.list(concepts), !is.null(names(concepts)))
+  assert_that(is_dictionary(concepts))
 
   if (length(aggregate) == 1L && !is.list(aggregate)) {
     aggregate <- rep(list(aggregate), length(concepts))
@@ -383,16 +343,10 @@ load_concepts <- function(source, concepts = get_concepts(source),
 
   assert_that(is.list(aggregate), has_name(aggregate, names(concepts)))
 
-  grouped_concepts <- group_concepts(concepts)
-  tables <- vapply(grouped_concepts, `[[`, character(1L), "table")
-  extra <- lapply(grouped_concepts, `[[`, "extra_args")
-  grouped_concepts <- lapply(grouped_concepts, `[<-`, "extra_args", NULL)
+  res <- lapply(group_concepts(concepts), function(x) {
+    do.call(do_load, c(as.data.table(x)))
+  })
 
-  args <- Map(c, grouped_concepts, extra, col_cfg[tables])
-  extra_args <- list(source = source, patient_ids = patient_ids,
-                     interval = interval)
-
-  res <- lapply(args, function(x) do.call(load_items, c(x, extra_args)))
   res <- unlist(res, recursive = FALSE)
 
   res   <- combine_feats(res)

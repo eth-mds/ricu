@@ -8,7 +8,7 @@ sofa_data <- function(source, pafi_win_length = hours(2L),
                       interval = hours(1L), patient_ids = NULL,
                       icu_limits = icu_stays(source, interval = interval),
                       col_cfg = get_col_config(source),
-                      dictionary = get_config("concept-dict")) {
+                      dictionary = read_dictionary("concept-dict")) {
 
   assert_that(
     is_time(pafi_win_length, allow_neg = FALSE), pafi_win_length > interval,
@@ -41,9 +41,8 @@ sofa_data <- function(source, pafi_win_length = hours(2L),
     creatinine = "max", urine_cumulative = "max", urine_events = "sum"
   )
 
-  dat_dict  <- get_concepts(source, setdiff(names(agg_funs), vent_conc),
-                            dictionary)
-  vent_dict <- get_concepts(source, vent_conc, dictionary)
+  dat_dict  <- dictionary[setdiff(names(agg_funs), vent_conc), source = source]
+  vent_dict <- dictionary[vent_conc, source = source]
 
   dat <- c(
     load_concepts(source, dat_dict, patient_ids, col_cfg, agg_funs,
