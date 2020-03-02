@@ -1120,7 +1120,7 @@ cfg <- list(
         list(id = c(676L, 677L, 223762L), table = "chartevents",
              column = "itemid"),
         list(id = c(678L, 679L, 223761L, 224027L), table = "chartevents",
-             column = "itemid", resolver = "fahrenheit_to_celsius")
+             column = "itemid", callback = "fahrenheit_to_celsius")
       ),
       eicu = list(
         list(id = NULL, table = "vitalperiodic", column = "temperature")

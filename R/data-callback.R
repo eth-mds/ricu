@@ -4,7 +4,7 @@ all_flag <- function(x, val_col, ...) {
   x
 }
 
-vent_flag <- function(x, time_col, val_col, ...) {
+vent_flag <- function(x, val_col, time_col, ...) {
   x <- x[as.logical(get(val_col)), ]
   x <- set(x, j = c(time_col, val_col),
            value = list(x[[val_col]], rep(TRUE, nrow(x))))
@@ -62,7 +62,7 @@ shift_all_date <- function(x, time_col, shift = hours(12L), ...) {
   x
 }
 
-mimic_abx_shift_flag <- function(x, time_col, val_col, ...) {
+mimic_abx_shift_flag <- function(x, val_col, time_col, ...) {
   x <- shift_all_date(x, time_col, hours(12L))
   x <- all_flag(x, val_col)
   x

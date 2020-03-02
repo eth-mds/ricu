@@ -1928,7 +1928,7 @@
           "id": [678, 679, 223761, 224027],
           "table": "chartevents",
           "column": "itemid",
-          "resolver": "fahrenheit_to_celsius"
+          "callback": "fahrenheit_to_celsius"
         }
       ],
       "eicu": [
