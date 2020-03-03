@@ -1089,6 +1089,59 @@
       ]
     }
   },
+  "insulin": {
+    "sources": {
+      "mimic": [
+        {
+          "id": [30045, 30100],
+          "table": "inputevents_cv",
+          "column": "itemid"
+        },
+        {
+          "id": [223258, 223260],
+          "table": "inputevents_mv",
+          "column": "itemid",
+          "amount_col": "amount",
+          "end_col": "endtime",
+          "callback": "distribute_amount"
+        }
+      ],
+      "eicu": [
+        {
+          "id": "Insulin (units/hr)",
+          "table": "infusiondrug",
+          "column": "drugname"
+        },
+        {
+          "id": "Insulin (ml/hr)",
+          "table": "infusiondrug",
+          "column": "drugname"
+        },
+        {
+          "id": "Insulin ()",
+          "table": "infusiondrug",
+          "column": "drugname"
+        },
+        {
+          "id": "Insulin 250 Units Sodium Chloride 0.9% 250 ml (units/hr)",
+          "table": "infusiondrug",
+          "column": "drugname"
+        }
+      ],
+      "hirid": [
+        {
+          "id": 15,
+          "table": "pharma",
+          "column": "pharmaid"
+        },
+        {
+          "id": 1000724,
+          "table": "pharma",
+          "column": "pharmaid"
+        }
+      ]
+    }
+  },
   "lactate": {
     "unit": "mmol/L",
     "sources": {

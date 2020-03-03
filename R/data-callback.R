@@ -93,3 +93,29 @@ fahrenheit_to_celsius <- function(x, val_col, ...) {
   x <- set(x, j = val_col, value = (x[[val_col]] - 32) * 5 / 9)
   x
 }
+
+distribute_amount <- function(x, val_col, id_col, time_col, amount_col,
+                              end_col, ...) {
+
+  unit <- time_unit(x)
+  step <- time_step(x)
+
+  factor <- step / as.double(hours(1L), units = unit)
+
+  orig_cols <- colnames(x)
+
+  expand <- function(start, end, id, val) {
+    seq <- seq(as.numeric(start), as.numeric(end), step)
+    fac <- length(seq) * factor
+    res <- list(id, as.difftime(seq, units = unit), val / fac)
+    names(res) <- c(id_col, time_col, val_col)
+    res
+  }
+
+  x <- x[get(end_col) - get(time_col) >= 0, ]
+  x <- x[, expand(get(time_col), get(end_col), get(id_col), get(amount_col)),
+         by = seq_len(nrow(x))]
+
+  x <- set(x, j = setdiff(colnames(x), orig_cols), value = NULL)
+  x
+}

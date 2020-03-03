@@ -1137,6 +1137,31 @@ cfg <- list(
              column = "variableid")
       )
     )
+  ),
+  insulin = list(
+    sources = list(
+      mimic = list(
+        list(id = c(30045L, 30100L), table = "inputevents_cv",
+             column = "itemid"),
+        list(id = c(223258L, 223260L), table = "inputevents_mv",
+             column = "itemid", amount_col = "amount", end_col = "endtime",
+             callback = "distribute_amount")
+      ),
+      eicu = list(
+        list(id = "Insulin (units/hr)", table = "infusiondrug",
+             column = "drugname"),
+        list(id = "Insulin (ml/hr)", table = "infusiondrug",
+             column = "drugname"),
+        list(id = "Insulin ()", table = "infusiondrug",
+             column = "drugname"),
+        list(id = "Insulin 250 Units Sodium Chloride 0.9% 250 ml (units/hr)",
+             table = "infusiondrug", column = "drugname")
+      ),
+      hirid = list(
+        list(id = 15L, table = "pharma", column = "pharmaid"),
+        list(id = 1000724L, table = "pharma", column = "pharmaid")
+      )
+    )
   )
 )
 
