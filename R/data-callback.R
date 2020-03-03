@@ -99,21 +99,21 @@ distribute_amount <- function(x, val_col, id_col, time_col, amount_col,
 
   unit <- time_unit(x)
   step <- time_step(x)
-
-  factor <- step / as.double(hours(1L), units = unit)
+  inte <- as.double(hours(1L), units = unit)
 
   orig_cols <- colnames(x)
 
-  expand <- function(start, end, id, val) {
-    seq <- seq(as.numeric(start), as.numeric(end), step)
-    fac <- length(seq) * factor
-    res <- list(id, as.difftime(seq, units = unit), val / fac)
+  expand <- function(start, end, id, amount, rate) {
+    seq <- seq(as.numeric(start), as.numeric(end), inte)
+    tim <- as.difftime(round_to(seq, step), units = unit)
+    res <- list(id, tim, amount / length(seq))
     names(res) <- c(id_col, time_col, val_col)
     res
   }
 
   x <- x[get(end_col) - get(time_col) >= 0, ]
-  x <- x[, expand(get(time_col), get(end_col), get(id_col), get(amount_col)),
+  x <- x[, expand(get(time_col), get(end_col), get(id_col), get(amount_col),
+                  get(val_col)),
          by = seq_len(nrow(x))]
 
   x <- set(x, j = setdiff(colnames(x), orig_cols), value = NULL)
