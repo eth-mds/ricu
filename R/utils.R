@@ -79,7 +79,7 @@ default_data_path <- function() {
 ensure_dir <- function(paths) {
 
   is_dir <- file.info(paths, extra_cols = FALSE)[["isdir"]]
-  is_no_dir <- vapply(is_dir, identical, logical(1L), FALSE)
+  is_no_dir <- lgl_ply(is_dir, identical, FALSE)
 
   if (any(is_no_dir)) {
     stop("The following path(s) exist(s) but not as directory:\n  ",
@@ -252,16 +252,6 @@ null_or_subs <- function(x, where = parent.frame(1L)) {
   if (missing(x)) NULL else do.call("substitute", list(substitute(x), where))
 }
 
-same_class <- function(x, y) identical(class(x), class(y))
-
-flapply <- function(x, fun, ..., recursive = FALSE) {
-  unique(unlist(lapply(x, fun, ...), recursive = recursive))
-}
-
-clapply <- function(x, fun, ...) {
-  structure(lapply(x, fun, ...), class = class(x))
-}
-
 replace_with <- function(x, from, to) {
 
   assert_that(same_length(from, to))
@@ -273,12 +263,6 @@ replace_with <- function(x, from, to) {
 
   x
 }
-
-cap_str <- function(x) paste0(toupper(substring(x, 1,1)), substring(x, 2))
-
-extract_strings <- function(x, name) vapply(x, `[[`, character(1L), name)
-
-filter_na <- function(x) Filter(Negate(is.na), x)
 
 carry_backwards <- function(x) {
 
@@ -348,4 +332,12 @@ new_names <- function(old_names = character(0L), n = 1L,
   }
 
   res
+}
+
+chr_ply <- function(x, fun, ..., length = 1L, use_names = FALSE) {
+  vapply(x, fun, character(length), ..., USE.NAMES = use_names)
+}
+
+lgl_ply <- function(x, fun, ..., length = 1L, use_names = FALSE) {
+  vapply(x, fun, logical(length), ..., USE.NAMES = use_names)
 }

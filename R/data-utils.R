@@ -72,6 +72,14 @@ load_items <- function(source, table, item_col, items = NULL, names = NULL,
     warning("`extra_cols` is only effective is `callback` is specified.")
   }
 
+  if (is.null(names)) {
+    if (isTRUE(regex)) {
+      names <- items
+    } else {
+      names <- item_col
+    }
+  }
+
   message("loading from `", source, "::", table, "`\n  * ",
           paste0("`", sort(unique(names)), "`", collapse = "\n  * "))
 
@@ -120,10 +128,6 @@ load_wide <- function(item_cols, id_col, time_col, extra_cols, names,
                       patient_ids, unit, callback, ...) {
 
   to_rm <- unique(unlist(extra_cols))
-
-  if (is.null(names)) {
-    names <- item_cols
-  }
 
   dat <- data_ts_quo(cols = c(item_cols, to_rm), id_cols = id_col,
                      time_col = time_col, ...)
