@@ -112,7 +112,7 @@ slide_quo <- function(x, expr, before, after = hours(0L),
     setnames(join, c(id_cols, "min_time", "max_time"))
   }
 
-  tmp_col <- new_names(colnames(x))
+  tmp_col <- new_names(x)
   set(x, j = tmp_col, value = x[[time_col]])
   on.exit(set(x, j = tmp_col, value = NULL))
 

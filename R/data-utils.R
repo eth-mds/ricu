@@ -197,7 +197,7 @@ load_long <- function(items, item_col, id_col, time_col, val_col, extra_cols,
     return(list(rm_cols(dat, to_rm)))
   }
 
-  tmp_col <- new_names(colnames(dat))
+  tmp_col <- new_names(dat)
 
   if (is.null(callback)) {
 

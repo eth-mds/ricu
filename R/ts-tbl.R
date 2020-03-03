@@ -112,6 +112,8 @@ reclass_ts_tbl <- function(x, meta) {
 
   if (has_attr(x, "ts_meta")) {
     x <- set_ts_class(x)
+  } else {
+    x <- unclass_ts_tbl(x)
   }
 
   x

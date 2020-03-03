@@ -229,7 +229,7 @@ weeks <- function(x) as.difftime(x, units = "weeks")
 
 reduce <- function(f, x, ...) Reduce(function(x, y) f(x, y, ...), x)
 
-round_to <- function(x, to = 1) if (to == 1) floor(x) else to * floor(x / to)
+round_to <- function(x, to = 1) if (to == 1) trunc(x) else to * trunc(x / to)
 
 is_val <- function(x, val) !is.na(x) & x == val
 is_true <- function(x) !is.na(x) & x
@@ -319,6 +319,10 @@ force_numeric <- function(x) {
 
 new_names <- function(old_names = character(0L), n = 1L,
                       chars = c(letters, LETTERS, 0L:9L), length = 15L) {
+
+  if (inherits(old_names, "data.frame")) {
+    old_names <- colnames(old_names)
+  }
 
   assert_that(
     is.null(old_names) || is.character(old_names),

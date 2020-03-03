@@ -33,15 +33,28 @@ mimic_tbl_quo <- function(table, row_quo = NULL, cols = NULL,
 
   assert_that(is_time(interval, allow_neg = FALSE))
 
+  tbl <- get_table(table, envir)
+  adm_cols <- character(0L)
+
   if (!is.null(cols)) {
 
     assert_that(is.character(cols))
 
-    if (table == "admissions") cols <- c("admittime", cols)
-    else                       cols <- c("hadm_id", cols)
+    if (table == "admissions") {
+      tbl_cols <- c("admittime", cols)
+    } else if (table == "patients") {
+      tbl_cols <- c("subject_id", setdiff(cols, "hadm_id"))
+      adm_cols <- intersect("hadm_id", cols)
+    } else {
+      tbl_cols <- c("hadm_id", cols)
+    }
+
+  } else {
+
+    tbl_cols <- NULL
   }
 
-  dat <- prt::subset_quo(get_table(table, envir), row_quo, unique(cols))
+  dat <- prt::subset_quo(tbl, row_quo, unique(tbl_cols))
 
   is_date <- vapply(dat, inherits, logical(1L), "POSIXt")
 
@@ -50,10 +63,20 @@ mimic_tbl_quo <- function(table, row_quo = NULL, cols = NULL,
     date_cols <- colnames(dat)[is_date]
 
     if (table == "admissions") {
+
       date_cols <- setdiff(date_cols, "admittime")
+
     } else {
-      adm <- get_table("admissions", envir)[, c("hadm_id", "admittime")]
-      dat <- merge(dat, adm, by = "hadm_id", all.x = TRUE)
+
+      adm <- get_table("admissions", envir)
+
+      if (table == "patients") {
+        adm <- adm[, c("subject_id", "admittime", adm_cols)]
+        dat <- merge(dat, adm, by = "subject_id", all.x = TRUE)
+      } else {
+        adm <- adm[, c("hadm_id", "admittime", adm_cols)]
+        dat <- merge(dat, adm, by = "hadm_id", all.x = TRUE)
+      }
     }
 
     if (length(date_cols)) {
@@ -61,10 +84,12 @@ mimic_tbl_quo <- function(table, row_quo = NULL, cols = NULL,
                  .SDcols = date_cols]
     }
 
-    if ("admittime" %in% colnames(dat)) {
-      set(dat, j = "admittime", value = NULL)
+    to_rm <- setdiff(colnames(dat), cols)
+
+    if (length(to_rm)) {
+      set(dat, j = to_rm, value = NULL)
     }
   }
 
-  dat
+  dat[]
 }
