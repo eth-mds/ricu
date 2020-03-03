@@ -46,7 +46,8 @@
         {
           "ids": 24000605,
           "table": "observations",
-          "column": "variableid"
+          "column": "variableid",
+          "callback": "multiply_hirid_albu"
         }
       ]
     }
@@ -70,7 +71,7 @@
       ],
       "hirid": [
         {
-          "ids": 24000550,
+          "ids": 20002700,
           "table": "observations",
           "column": "variableid"
         }
@@ -195,6 +196,7 @@
     }
   },
   "bilirubin_direct": {
+    "unit": "mg/dL",
     "sources": {
       "mimic": [
         {
@@ -214,7 +216,8 @@
         {
           "id": 24000560,
           "table": "observations",
-          "column": "variableid"
+          "column": "variableid",
+          "callback": "multiply_hirid_bili"
         }
       ]
     }
@@ -707,6 +710,7 @@
     }
   },
   "et_co2": {
+    "unit": "mmHg",
     "sources": {
       "hirid": [
         {
@@ -780,7 +784,8 @@
         {
           "ids": 24000536,
           "table": "observations",
-          "column": "variableid"
+          "column": "variableid",
+          "callback": "multiply_hirid_fibr"
         }
       ]
     }
@@ -823,7 +828,7 @@
       ],
       "hirid": [
         {
-          "ids": 10000100,
+          "ids": 10000300,
           "table": "observations",
           "column": "variableid"
         }
@@ -854,7 +859,7 @@
       ],
       "hirid": [
         {
-          "ids": 10000300,
+          "ids": 10000200,
           "table": "observations",
           "column": "variableid"
         }
@@ -904,7 +909,7 @@
       ],
       "hirid": [
         {
-          "ids": 10000200,
+          "ids": 10000100,
           "table": "observations",
           "column": "variableid"
         }
@@ -1011,6 +1016,7 @@
     }
   },
   "hematocrit.1": {
+    "unit": "%",
     "sources": {
       "mimic": [
         {
@@ -1049,17 +1055,20 @@
         {
           "ids": 24000548,
           "table": "observations",
-          "column": "variableid"
+          "column": "variableid",
+          "callback": "multiply_hirid_hemo"
         },
         {
           "ids": 20000900,
           "table": "observations",
-          "column": "variableid"
+          "column": "variableid",
+          "callback": "multiply_hirid_hemo"
         },
         {
           "ids": 24000836,
           "table": "observations",
-          "column": "variableid"
+          "column": "variableid",
+          "callback": "multiply_hirid_hemo"
         }
       ]
     }
@@ -1970,6 +1979,7 @@
     }
   },
   "temperature": {
+    "unit": "C",
     "sources": {
       "mimic": [
         {
@@ -2024,6 +2034,7 @@
     }
   },
   "troponin_i": {
+    "unit": "ng/mL",
     "sources": {
       "mimic": [
         {
@@ -2059,11 +2070,6 @@
         }
       ],
       "hirid": [
-        {
-          "ids": 24000538,
-          "table": "observations",
-          "column": "variableid"
-        },
         {
           "ids": 24000806,
           "table": "observations",

@@ -81,11 +81,14 @@ multiply_by <- function(factor) {
   }
 }
 
+multiply_hirid_albu <- multiply_by(0.1)
 multiply_hirid_crea <- multiply_by(0.011312)
 multiply_hirid_calc <- multiply_by(4.008)
+multiply_hirid_fibr <- multiply_by(100)
+multiply_hirid_hemo <- multiply_by(0.)
 multiply_hirid_magn <- multiply_by(2.431)
 multiply_hirid_gluc <- multiply_by(18.016)
-multiply_hirid_phos <- multiply_by(18.016)
+multiply_hirid_phos <- multiply_by(9.497)
 multiply_hirid_urea <- multiply_by(6.006)
 multiply_hirid_bili <- multiply_by(0.058467)
 

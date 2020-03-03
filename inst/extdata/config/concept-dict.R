@@ -342,7 +342,7 @@ cfg <- list(
         list(ids = "alkaline phos.", table = "lab", column = "labname")
       ),
       hirid = list(
-        list(ids = 24000550L, table = "observations", column = "variableid")
+        list(ids = 20002700L, table = "observations", column = "variableid")
       )
     )
   ),
@@ -370,9 +370,12 @@ cfg <- list(
         list(ids = "Hgb", table = "lab", column = "labname")
       ),
       hirid = list(
-        list(ids = 24000548L, table = "observations", column = "variableid"),
-        list(ids = 20000900L, table = "observations", column = "variableid"),
-        list(ids = 24000836L, table = "observations", column = "variableid")
+        list(ids = 24000548L, table = "observations", column = "variableid",
+             callback = "multiply_hirid_hemo"),
+        list(ids = 20000900L, table = "observations", column = "variableid",
+             callback = "multiply_hirid_hemo"),
+        list(ids = 24000836L, table = "observations", column = "variableid",
+             callback = "multiply_hirid_hemo")
       )
     )
   ),
@@ -684,7 +687,6 @@ cfg <- list(
         list(ids = "troponin - T", table = "lab", column = "labname")
       ),
       hirid = list(
-        list(ids = 24000538L, table = "observations", column = "variableid"),
         list(ids = 24000806L, table = "observations", column = "variableid")
       )
     )
@@ -699,7 +701,8 @@ cfg <- list(
         list(ids = "albumin", table = "lab", column = "labname")
       ),
       hirid = list(
-        list(ids = 24000605L, table = "observations", column = "variableid")
+        list(ids = 24000605L, table = "observations", column = "variableid",
+             callback = "multiply_hirid_albu")
       )
     )
   ),
@@ -713,7 +716,8 @@ cfg <- list(
         list(ids = "fibrinogen", table = "lab", column = "labname")
       ),
       hirid = list(
-        list(ids = 24000536L, table = "observations", column = "variableid")
+        list(ids = 24000536L, table = "observations", column = "variableid",
+             callback = "multiply_hirid_fibr")
       )
     )
   ),
@@ -782,7 +786,7 @@ cfg <- list(
            callback = "force_numeric_val_col")
       ),
       hirid = list(
-        list(ids = 10000100L, table = "observations", column = "variableid")
+        list(ids = 10000300L, table = "observations", column = "variableid")
       )
     )
   ),
@@ -798,7 +802,7 @@ cfg <- list(
            callback = "force_numeric_val_col")
       ),
       hirid = list(
-        list(ids = 10000200L, table = "observations", column = "variableid")
+        list(ids = 10000100L, table = "observations", column = "variableid")
       )
     )
   ),
@@ -814,7 +818,7 @@ cfg <- list(
              callback = "force_numeric_val_col")
       ),
       hirid = list(
-        list(ids = 10000300L, table = "observations", column = "variableid")
+        list(ids = 10000200L, table = "observations", column = "variableid")
       )
     )
   ),
@@ -1082,6 +1086,7 @@ cfg <- list(
     )
   ),
   troponin_i = list(
+    unit = "ng/mL",
     sources = list(
       mimic = list(
         list(id = 51002L, table = "labevents", column = "itemid")
@@ -1092,6 +1097,7 @@ cfg <- list(
     )
   ),
   hematocrit = list(
+    unit = "%",
     sources = list(
       mimic = list(
         list(id = 51221L, table = "labevents", column = "itemid")
@@ -1102,6 +1108,7 @@ cfg <- list(
     )
   ),
   bilirubin_direct = list(
+    unit = "mg/dL",
     sources = list(
       mimic = list(
         list(id = 50883L, table = "labevents", column = "itemid")
@@ -1110,11 +1117,13 @@ cfg <- list(
         list(id = "Bilirubin, Direct", table = "lab", column = "labname")
       ),
       hirid = list(
-        list(id = 24000560L, table = "observations", column = "variableid")
+        list(id = 24000560L, table = "observations", column = "variableid",
+             callback = "multiply_hirid_bili")
       )
     )
   ),
   temperature = list(
+    unit = "C",
     sources = list(
       mimic = list(
         list(id = c(676L, 677L, 223762L), table = "chartevents",
@@ -1131,6 +1140,7 @@ cfg <- list(
     )
   ),
   et_co2 = list(
+    unit = "mmHg",
     sources = list(
       hirid = list(
         list(id = c(2200L, 8290L, 30010009L), table = "observations",
