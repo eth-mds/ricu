@@ -15,7 +15,7 @@ data_ts_quo <- function(source, ...) {
     stop("Data source not recognized.")
   )
 
-  fun(..., envir = source)
+  fun(..., source = source)
 }
 
 #' @export
@@ -34,7 +34,7 @@ data_tbl_quo <- function(source, ...) {
     stop("Data source not recognized.")
   )
 
-  fun(..., envir = source)
+  fun(..., source = source)
 }
 
 prepare_patient_ids <- function(x, key) {

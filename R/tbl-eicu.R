@@ -8,13 +8,13 @@ eicu_ts <- function(table, row_expr, ...) {
 eicu_ts_quo <- function(table, row_quo = NULL, cols = NULL,
                         id_cols = "patienthealthsystemstayid",
                         time_col = "observationoffset",
-                        interval = hours(1L), envir = "eicu") {
+                        interval = hours(1L), source = "eicu") {
 
   if (!is.null(cols)) {
     cols <- c(id_cols, time_col, cols)
   }
 
-  res <- eicu_tbl_quo(table, row_quo, cols, interval, envir)
+  res <- eicu_tbl_quo(table, row_quo, cols, interval, source)
 
   as_ts_tbl(res, id_cols, time_col, interval)
 }
@@ -26,7 +26,7 @@ eicu_tbl <- function(table, row_expr, ...) {
 
 #' @export
 eicu_tbl_quo <- function(table, row_quo = NULL, cols = NULL,
-                         interval = hours(1L), envir = "eicu") {
+                         interval = hours(1L), source = "eicu") {
 
   time_fun <- function(x, y) {
     res <- as.difftime(x - y, units = "mins")
@@ -51,7 +51,7 @@ eicu_tbl_quo <- function(table, row_quo = NULL, cols = NULL,
     get_cols <- NULL
   }
 
-  dat <- prt::subset_quo(get_table(table, envir), row_quo, unique(get_cols))
+  dat <- prt::subset_quo(get_table(table, source), row_quo, unique(get_cols))
 
   is_date <- vapply(dat, is.integer, logical(1L)) &
     grepl("offset$", colnames(dat))
@@ -73,7 +73,7 @@ eicu_tbl_quo <- function(table, row_quo = NULL, cols = NULL,
 
     } else {
 
-      adm <- get_table("patient", envir)
+      adm <- get_table("patient", source)
       adm <- adm[, c("patientunitstayid", "patienthealthsystemstayid",
                      "hospitaladmitoffset")]
       dat <- merge(dat, adm, by = "patientunitstayid", all.x = TRUE)

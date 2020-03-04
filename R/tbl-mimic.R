@@ -7,13 +7,13 @@ mimic_ts <- function(table, row_expr, ...) {
 #' @export
 mimic_ts_quo <- function(table, row_quo = NULL, cols = NULL,
                          id_cols = "hadm_id", time_col = "charttime",
-                         interval = hours(1L), envir = "mimic") {
+                         interval = hours(1L), source = "mimic") {
 
   if (!is.null(cols)) {
     cols <- c(id_cols, time_col, cols)
   }
 
-  res <- mimic_tbl_quo(table, row_quo, cols, interval, envir)
+  res <- mimic_tbl_quo(table, row_quo, cols, interval, source)
 
   as_ts_tbl(res, id_cols, time_col, interval)
 }
@@ -25,7 +25,7 @@ mimic_tbl <- function(table, row_expr, ...) {
 
 #' @export
 mimic_tbl_quo <- function(table, row_quo = NULL, cols = NULL,
-                          interval = hours(1L), envir = "mimic") {
+                          interval = hours(1L), source = "mimic") {
 
   time_fun <- function(x, y) {
     round_to(difftime(x, y, units = units(interval)), as.numeric(interval))
@@ -33,7 +33,7 @@ mimic_tbl_quo <- function(table, row_quo = NULL, cols = NULL,
 
   assert_that(is_time(interval, allow_neg = FALSE))
 
-  tbl <- get_table(table, envir)
+  tbl <- get_table(table, source)
   adm_cols <- character(0L)
 
   if (!is.null(cols)) {
@@ -68,7 +68,7 @@ mimic_tbl_quo <- function(table, row_quo = NULL, cols = NULL,
 
     } else {
 
-      adm <- get_table("admissions", envir)
+      adm <- get_table("admissions", source)
 
       if (table == "patients") {
         adm <- adm[, c("subject_id", "admittime", adm_cols)]

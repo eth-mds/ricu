@@ -16,7 +16,8 @@ icu_stays <- function(source, in_time = "intime", out_time = "outtime",
 
 mimic_icu_stays <- function(in_time, out_time, interval, source) {
   res <- mimic_ts_quo("icustays", NULL, c("icustay_id", "outtime"),
-                      "hadm_id", "intime", interval, source)
+                      "hadm_id", "intime", interval = interval,
+                      source = source)
   res <- rename_cols(res, c(in_time, out_time), c("intime", "outtime"))
   res
 }
@@ -25,7 +26,7 @@ eicu_icu_stays <- function(in_time, out_time, interval, source) {
   res <- eicu_ts_quo("patient", NULL,
                      c("patientunitstayid", "unitdischargeoffset"),
                      "patienthealthsystemstayid", "unitadmitoffset",
-                      interval, source)
+                      interval = interval, source = source)
   res <- rename_cols(res, c(in_time, out_time),
                      c("unitadmitoffset", "unitdischargeoffset"))
   res
@@ -46,7 +47,7 @@ patient_age <- function(source, age_col = "age") {
 mimic_age <- function(age_col, source) {
 
   res <- mimic_tbl("patients", cols = c("hadm_id", "dob"),
-                   interval = days(365L), envir = source)
+                   interval = days(365L), source = source)
   res <- setcolorder(res, c("hadm_id", "dob"))
   res <- set(res, j = "dob", value = as.numeric(-res[["dob"]] / 365))
   res <- setnames(res, "dob", age_col)
@@ -57,7 +58,7 @@ mimic_age <- function(age_col, source) {
 eicu_age <- function(age_col, source) {
 
   res <- eicu_tbl("patient", cols = c("patienthealthsystemstayid", "age"),
-                  envir = source)
+                  source = source)
   res <- setnames(res, "age", age_col)
 
   res
@@ -65,7 +66,7 @@ eicu_age <- function(age_col, source) {
 
 hirid_age <- function(age_col, source) {
 
-  res <- hirid_tbl("general", cols = c("patientid", "age"), envir = source)
+  res <- hirid_tbl("general", cols = c("patientid", "age"), source = source)
   res <- setnames(res, "age", age_col)
 
   res

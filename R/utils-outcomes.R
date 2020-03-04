@@ -8,8 +8,8 @@ outcome <- function(source, type = c("mortality", "extended_stay"), ...) {
     match.arg(type),
     mortality = switch(
       as_src(source),
-      mimic = mimic_mortality(...),
-      eicu  = eicu_mortality(...),
+      mimic = mimic_mortality(source, ...),
+      eicu  = eicu_mortality(source, ...),
       hirid = stop("TODO"),
       stop("Data source not recognized.")
     ),
@@ -18,21 +18,23 @@ outcome <- function(source, type = c("mortality", "extended_stay"), ...) {
 
 }
 
-mimic_mortality <- function(id_col = "hadm_id") {
+mimic_mortality <- function(source, id_col = "hadm_id") {
 
   if (!identical(id_col, "hadm_id")) stop("TODO")
 
-  res <- mimic_tbl("admissions", cols = c(id_col, "hospital_expire_flag"))
+  res <- mimic_tbl("admissions", cols = c(id_col, "hospital_expire_flag"),
+                   source = source)
   res[, `:=`(c("expired", "hospital_expire_flag"),
              list(as.logical(hospital_expire_flag), NULL))][]
 }
 
-eicu_mortality <- function(id_col = "patienthealthsystemstayid") {
+eicu_mortality <- function(source, id_col = "patienthealthsystemstayid") {
 
   assert_that(is.string(id_col),
               id_col %in% c("patienthealthsystemstayid", "patientunitstayid"))
 
-  res <- eicu_tbl("patient", cols = c(id_col, "hospitaldischargestatus"))
+  res <- eicu_tbl("patient", cols = c(id_col, "hospitaldischargestatus"),
+                  source = source)
   res <- res[, `:=`(c("expired", "hospitaldischargestatus"),
                     list(hospitaldischargestatus == "Expired", NULL))]
 
