@@ -210,8 +210,6 @@ max_or_na <- agg_or_na(max)
 #' @export
 sum_or_na <- agg_or_na(sum)
 
-dbl_med <- function(x) as.double(median(x, na.rm = TRUE))
-
 #' @export
 secs <- function(x) as.difftime(x, units = "secs")
 
@@ -252,18 +250,6 @@ null_or_subs <- function(x, where = parent.frame(1L)) {
   if (missing(x)) NULL else do.call("substitute", list(substitute(x), where))
 }
 
-replace_with <- function(x, from, to) {
-
-  assert_that(same_length(from, to))
-
-  mapidx <- match(x, from)
-  mapidxNA <- is.na(mapidx)
-
-  x[!mapidxNA] <- to[mapidx[!mapidxNA]]
-
-  x
-}
-
 carry_backwards <- function(x) {
 
   res <- x[length(x)]
@@ -296,10 +282,6 @@ split_indices <- function(len, n_chunks) {
 
     as.integer(bins)
   }
-}
-
-not_all_na <- function(x, cols = data_cols(x)) {
-  rowSums(is.na(x[, cols, with = FALSE])) < length(cols)
 }
 
 as_src <- function(x) {
