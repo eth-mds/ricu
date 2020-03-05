@@ -5,7 +5,7 @@ write_psv <- function(x, dir, na_rm = TRUE) {
   assert_that(is.flag(na_rm))
 
   if (na_rm) {
-    x <- rm_na(x, cols = data_cols(x), fun = `&`)
+    x <- rm_na(x, cols = data_cols(x), mode = "all")
   }
 
   dat <- split(x, by = key(x))

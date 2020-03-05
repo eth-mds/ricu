@@ -189,17 +189,23 @@ dt_gforce <- function(x,
 }
 
 #' @export
-rm_na <- function(x, cols = data_cols(x), fun = `|`) {
+rm_na <- function(x, cols = data_cols(x), mode = c("all", "any")) {
 
-  assert_that(all(cols %in% colnames(x)))
+  mode <- match.arg(mode)
 
-  if (length(cols) == 1L) {
-    check <- is.na(x[[cols]])
-  } else {
-    check <- Reduce(fun, lapply(x[, cols, with = FALSE], is.na))
+  assert_that(has_cols(x, cols))
+
+  if (identical(mode, "any")) {
+    return(na.omit(x, cols))
   }
 
-  x[!check, ]
+  if (length(cols) == 1L) {
+    drop <- is.na(x[[cols]])
+  } else {
+    drop <- Reduce(`&`, lapply(x[, cols, with = FALSE], is.na))
+  }
+
+  x[!drop, ]
 }
 
 #' @export
