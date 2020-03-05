@@ -84,7 +84,7 @@ set_ts_meta <- function(x, meta, stop_on_fail = TRUE) {
     else return(x)
   }
 
-  x <- stats::na.omit(x, id_cols)
+  x <- na.omit(x, id_cols)
 
   setkeyv(x, id_cols)
   setcolorder(x, c(id_cols, setdiff(colnames(x), id_cols)))
@@ -206,6 +206,22 @@ time_step <- function(x) as.double(interval(x), units = time_unit(x))
 
 #' @export
 time_col <- function(x) x[[index(x)]]
+
+#' @export
+data_unit <- function(x) {
+
+  get_unit <- function(col) {
+    if (has_attr(x[[col]], "units")) attr(x[[col]], "units")
+    else NA_character_
+  }
+
+  chr_ply(data_cols(x), get_unit, use_names = TRUE)
+}
+
+#' @export
+units.ts_tbl <- function(x) {
+  setNames(c(time_unit(x), data_unit(x)), c(time_col(x), data_cols(x)))
+}
 
 #' @export
 make_compatible <- function(x, def, key = TRUE, index = TRUE) {
