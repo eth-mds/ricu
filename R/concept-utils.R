@@ -263,7 +263,7 @@ group_concepts <- function(concepts) {
 }
 
 #' @export
-get_col_config <- function(source, table = NULL,
+get_col_config <- function(source = NULL, table = NULL,
                            config = get_config("default-cols")) {
 
   if (!is.null(source)) {
@@ -282,26 +282,29 @@ get_col_config <- function(source, table = NULL,
   config
 }
 
-default_col <- function(colname) {
-
-  assert_that(is.string(colname))
-
-  function(source, table, ...) {
-    assert_that(is.string(source), is.string(table))
-    res <- get_col_config(source, table, ...)[[colname]]
-    assert_that(is.string(res))
-    res
-  }
+#' @export
+default_id_col <- function(source, table, ...) {
+  assert_that(is.string(source), is.string(table))
+  res <- get_col_config(source, table, ...)[["id_col"]]
+  assert_that(is.string(res))
+  res
 }
 
 #' @export
-default_id_col <- default_col("id_col")
+default_time_col <- function(source, table, ...) {
+  assert_that(is.string(source), is.string(table))
+  res <- get_col_config(source, table, ...)[["time_col"]]
+  assert_that(is.string(res))
+  res
+}
 
 #' @export
-default_time_col <- default_col("time_col")
-
-#' @export
-default_val_col <- default_col("val_col")
+default_val_col <- function(source, table, ...) {
+  assert_that(is.string(source), is.string(table))
+  res <- get_col_config(source, table, ...)[["val_col"]]
+  assert_that(is.null(res) || is.string(res))
+  res
+}
 
 combine_feats <- function(x) {
 

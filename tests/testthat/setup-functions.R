@@ -82,7 +82,7 @@ expect_all_equal <- function(object, expected = object[[1L]], ..., info = NULL,
   invisible(act$val)
 }
 
-test_that("expect_all_identical", {
+test_that("expect_all_equal", {
 
   expect_success(expect_all_equal("foo", "foo"))
   expect_success(expect_all_equal(c("foo", "foo"), "foo"))
@@ -96,5 +96,36 @@ test_that("expect_all_identical", {
   expect_success(expect_all_equal(c("foo", "foo")))
   expect_failure(expect_all_equal(c("foo", "bar")))
 })
+
+expect_all <- function(object, info = NULL, label = NULL) {
+
+  act <- quasi_label(rlang::enquo(object), label, arg = "object")
+
+  expect(all(as.logical(act$val)),
+         sprintf("%s contains non-true entries.", act$lab), info = info)
+
+  invisible(act$val)
+}
+
+test_that("expect_all_equal", {
+
+  expect_success(expect_all(TRUE))
+  expect_failure(expect_all(FALSE))
+  expect_success(expect_all(c(TRUE, TRUE)))
+  expect_failure(expect_all(c(TRUE, FALSE)))
+})
+
+expect_fsetequal <- function(object, expected) {
+
+  act <- quasi_label(rlang::enquo(object))
+  exp <- quasi_label(rlang::enquo(expected))
+
+  expect(
+    data.table::fsetequal(act$val, exp$val),
+    sprintf("%s is not fsetequal to %s.", act$lab, exp$lab)
+  )
+
+  invisible(act$val)
+}
 
 cpy <- data.table::copy

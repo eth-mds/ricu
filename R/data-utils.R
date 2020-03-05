@@ -65,29 +65,21 @@ load_items <- function(source, table, item_col, items = NULL, names = NULL,
 
   extra_cols <- list(...)
 
-  assert_that(is.string(source), is.string(table), is.flag(regex),
-              is.string(id_col), is.string(time_col))
-
   if (length(extra_cols) && is.null(callback)) {
     warning("`extra_cols` is only effective is `callback` is specified.")
   }
 
-  if (is.null(names)) {
-    if (isTRUE(regex)) {
-      names <- items
-    } else {
-      names <- item_col
-    }
-  }
+  info <- paste0("`", sort(unique(
+    if (length(names)) names else if (length(items)) items else item_col
+  )), "`", collapse = "\n  * ")
 
-  message("loading from `", source, "::", table, "`\n  * ",
-          paste0("`", sort(unique(names)), "`", collapse = "\n  * "))
-
-  if (!is.null(patient_ids)) {
-    patient_ids <- prepare_patient_ids(patient_ids, key(dat))
-  }
+  message("loading from `", source, "::", table, "`\n  * ", info)
 
   if (length(items) == 0L) {
+
+    if (length(val_col) > 0L) {
+      warning("argument `val_col` is ignored then `items` is NULL.")
+    }
 
     load_wide(item_col, id_col, time_col, extra_cols, names,
               patient_ids, unit, callback, source = source, table = table,
@@ -107,25 +99,80 @@ load_items <- function(source, table, item_col, items = NULL, names = NULL,
   }
 }
 
-do_callback <- function(x, fun, val, ...) {
+do_callback <- function(x, fun, unit, val, ...) {
 
-  if (is.null(fun) || is.na(fun)) {
+  if (is.null(fun) || (!is.function(fun) && is.na(fun))) {
     return(x)
   }
 
-  do.call(fun, c(list(x), list(val_col = val), ...))
+  do.call(fun, c(list(x), list(unit = unit, val_col = val), ...))
 }
 
 map_names <- function(old, map_val, map_key) {
 
-  map <- rep(map_val, lengths(map_key))
+  map <- rep(map_val, length(map_key))
   names(map) <- map_key
 
   map[as.character(old)]
 }
 
+prep_args <- function(arg, items, names) {
+
+  assert_that(same_length(names, items))
+
+  if (is.null(arg)) {
+
+    arg <- rep(list(arg), length(names))
+    names(arg) <- names
+
+  } else if (length(arg) == 1L) {
+
+    arg <- rep(list(arg), length(names))
+    names(arg) <- names
+
+  } else if (same_length(arg, items) && is.null(names(arg))) {
+
+    arg <- lapply(split(arg, names), unique)
+
+  } else {
+
+    arg <- as.list(arg)
+  }
+
+  assert_that(is.list(arg), all(lengths(arg) <= 1L), has_name(arg, names),
+              same_length(arg, unique(names)))
+
+  arg
+}
+
+add_unit <- function(x, unit) {
+
+  if (is.null(unit) || is.na(unit)) {
+    return(x)
+  }
+
+  col <- data_cols(x)
+
+  assert_that(is.string(unit), is.string(col))
+
+  setattr(x[[col]], "units", unit)
+
+  x
+}
+
 load_wide <- function(item_cols, id_col, time_col, extra_cols, names,
                       patient_ids, unit, callback, ...) {
+
+  assert_that(length(item_cols) > 0L)
+
+  if (is.null(names)) {
+    names <- item_cols
+  } else if (length(names) == 1L) {
+    names <- rep(names, length(item_cols))
+  }
+
+  callback <- prep_args(callback, item_cols, names)
+  unit     <- prep_args(unit, item_cols, names)
 
   to_rm <- unique(unlist(extra_cols))
 
@@ -133,14 +180,11 @@ load_wide <- function(item_cols, id_col, time_col, extra_cols, names,
                      time_col = time_col, ...)
 
   if (!is.null(patient_ids)) {
-    dat  <- merge(dat, patient_ids, by = key(dat), all = FALSE)
+    join <- prepare_patient_ids(patient_ids, key(dat))
+    dat  <- merge(dat, join, by = key(dat), all = FALSE)
   }
 
-  if (nrow(dat) == 0L) {
-    return(list(rm_cols(dat, to_rm)))
-  }
-
-  if (is.null(callback)) {
+  if (all_null(callback)) {
 
     dat <- rm_cols(dat, to_rm)
     dat <- rename_cols(dat, names, item_cols)
@@ -148,14 +192,9 @@ load_wide <- function(item_cols, id_col, time_col, extra_cols, names,
 
   } else {
 
-    if (is.function(callback)) {
-      callback <- rep(list(callback), length(item_cols))
-    }
-
-    assert_that(length(callback) == length(item_cols))
-
     dat <- unmerge(dat, item_cols, c(id_cols(dat), to_rm), FALSE)
-    dat <- Map(do_callback, dat, callback, item_cols,
+    dat <- Map(do_callback,
+      dat, callback[names(dat)], unit[names(dat)], names(dat),
       MoreArgs = c(list(id_col = id_col, time_col = time_col), extra_cols)
     )
     dat <- lapply(dat, rm_cols, to_rm)
@@ -164,16 +203,41 @@ load_wide <- function(item_cols, id_col, time_col, extra_cols, names,
     dat <- combine_feats(dat)
   }
 
-  lapply(dat, rm_na)
+  dat <- lapply(dat, rm_na)
+
+  if (!is.null(unit)) {
+    dat <- Map(add_unit, dat, unit[names(dat)])
+  }
+
+  names(dat) <- NULL
+
+  dat
 }
 
 load_long <- function(items, item_col, id_col, time_col, val_col, extra_cols,
                       names, patient_ids, unit, callback, ...) {
 
+  assert_that(length(items) > 0L, is.string(item_col), is.string(val_col))
+
+  if (is.null(names)) {
+
+    names <- items
+    has_names <- FALSE
+
+  } else {
+
+    if (length(names) == 1L) {
+      names <- rep(names, length(items))
+    }
+
+    has_names <- TRUE
+  }
+
+  callback <- prep_args(callback, items, names)
+  unit     <- prep_args(unit, items, names)
+
   uq_items <- unique(items)
   uq_extra <- unique(unlist(extra_cols))
-
-  to_rm <- c(uq_extra, if (!identical(val_col, item_col)) item_col)
 
   if (length(uq_items) == 1L) {
 
@@ -190,53 +254,78 @@ load_long <- function(items, item_col, id_col, time_col, val_col, extra_cols,
                      id_cols = id_col, time_col = time_col, ...)
 
   if (!is.null(patient_ids)) {
+    join <- prepare_patient_ids(patient_ids, key(dat))
     dat  <- merge(dat, join, by = key(dat), all = FALSE)
   }
 
   if (nrow(dat) == 0L) {
-    return(list(rm_cols(dat, to_rm)))
+    dat <- rm_cols(dat, c(uq_extra,
+                          if (!identical(val_col, item_col)) item_col))
+    return(list(dat))
   }
 
-  tmp_col <- new_names(dat)
+  split_col <- new_names(dat)
 
-  if (is.null(callback)) {
-
-    dat <- dat[, c(tmp_col) := map_names(get(item_col), names, items)]
-    dat <- rm_cols(dat, to_rm)
-
-    dat <- split(dat, by = tmp_col, keep.by = FALSE)
-    dat <- Map(rename_cols, dat, names(dat), val_col)
-
+  if (has_names) {
+    dat <- dat[, c(split_col) := map_names(get(item_col), names, items)]
   } else {
+    dat <- dat[, c(split_col) := get(item_col)]
+  }
 
-    if (is.function(callback)) {
-      callback <- rep(list(callback), length(items))
-    }
-
-    assert_that(length(callback) == length(items))
-
-    dat <- dat[, c(tmp_col) := map_names(get(item_col),
-                                         seq_along(callback), items)]
+  if (!identical(val_col, item_col)) {
     dat <- rm_cols(dat, item_col)
+  }
 
-    dat <- split(dat, by = tmp_col, keep.by = FALSE)
-    dat <- Map(do_callback, dat, callback[as.integer(names(dat))],
+  dat <- split(dat, by = split_col, keep.by = FALSE)
+
+  if (!all_null(callback)) {
+
+    dat <- Map(do_callback, dat, callback[names(dat)], unit[names(dat)],
       MoreArgs = c(list(val = val_col, id_col = id_col, time_col = time_col),
                    extra_cols)
     )
-    dat <- lapply(dat, rm_cols, uq_extra)
+  }
 
-    dat <- Map(rename_cols, dat, names[as.integer(names(dat))], val_col)
+  dat <- lapply(dat, rm_cols, extra_cols)
+  dat <- Map(rename_cols, dat, names(dat), val_col)
+
+  if (!is.null(callback)) {
     dat <- combine_feats(dat)
   }
 
-  lapply(dat, rm_na)
+  dat <- lapply(dat, rm_na)
+
+  if (!is.null(unit)) {
+    dat <- Map(add_unit, dat, unit[names(dat)])
+  }
+
+  names(dat) <- NULL
+
+  dat
 }
 
 load_grep <- function(items, item_col, id_col, time_col, val_col, extra_cols,
                       names, patient_ids, unit, callback, ...) {
 
+  prep_arg <- function(x) {
+
+    if (is.null(x)) return(x)
+
+    assert_that(length(x) == 1L)
+
+    if (is.list(x)) x <- x[[1L]]
+
+    x
+  }
+
+  if (is.null(names)) {
+    names <- val_col
+  }
+
   assert_that(is.string(names))
+
+  callback <- prep_arg(callback)
+  unit     <- prep_arg(unit)
 
   uq_extra <- unique(unlist(extra_cols))
 
@@ -250,6 +339,7 @@ load_grep <- function(items, item_col, id_col, time_col, val_col, extra_cols,
                      id_cols = id_col, time_col = time_col, ...)
 
   if (!is.null(patient_ids)) {
+    patient_ids <- prepare_patient_ids(patient_ids, key(dat))
     dat  <- merge(dat, join, by = key(dat), all = FALSE)
   }
 
@@ -257,12 +347,10 @@ load_grep <- function(items, item_col, id_col, time_col, val_col, extra_cols,
     return(list(rm_cols(dat, to_rm)))
   }
 
-  if (!is.null(callback) && !is.na(callback)) {
+  if (is.function(callback) || is.string(callback)) {
 
-    assert_that(length(callback) == 1L)
-
-    dat <- do.call(callback[[1L]],
-      c(list(dat), list(val_col = val_col, id_col = id_col,
+    dat <- do.call(callback,
+      c(list(dat), list(unit = unit, val_col = val_col, id_col = id_col,
                         time_col = time_col), extra_cols)
     )
   }
@@ -270,6 +358,7 @@ load_grep <- function(items, item_col, id_col, time_col, val_col, extra_cols,
   dat <- rm_cols(dat, to_rm)
   dat <- rename_cols(dat, names, val_col)
   dat <- rm_na(dat)
+  dat <- add_unit(dat, unit)
 
   list(dat)
 }
