@@ -145,6 +145,12 @@ on_failure(all_fun) <- function(call, env) {
          deparse(call$fun), "`")
 }
 
+all_null <- function(x) all(vapply(x, is.null, logical(1L)))
+
+on_failure(all_null) <- function(call, env) {
+  paste0("some of ", deparse(call$x), " are not NULL")
+}
+
 same_length <- function(x, y) identical(length(x), length(y))
 
 on_failure(same_length) <- function(call, env) {
@@ -221,4 +227,12 @@ is_scalar <- function(x, allow_null = FALSE) {
 on_failure(is_scalar) <- function(call, env) {
   paste0(deparse(call$x), "is not scalar (i.e. atomic",
     if (eval(call$col, env)) ", not NULL" else "", " and length 1)")
+}
+
+null_or <- function(x, what, ...) {
+  is.null(x) || what(x, ...)
+}
+
+on_failure(null_or) <- function(call, env) {
+  paste0(deparse(call$x), " is neither NULL, nor ", deparse(call$what))
 }
