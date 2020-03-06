@@ -14,23 +14,21 @@ knitr::opts_chunk$set(
   out.width = "100%"
 )
 ```
-# sepsr
+# ricu
 
 <!-- badges: start -->
-[![Travis build status](https://travis-ci.com/septic-tank/sepsr.svg?branch=master)](https://travis-ci.com/septic-tank/sepsr)
-[![Azure pipelines build status](https://img.shields.io/azure-devops/build/septic-tank/sepsr/2)](https://dev.azure.com/septic-tank/sepsr/_build/latest?definitionId=1&branchName=master)
-[![Azure pipelines test status](https://img.shields.io/azure-devops/tests/septic-tank/sepsr/2?color=brightgreen&compact_message)](https://dev.azure.com/septic-tank/sepsr/_build/latest?definitionId=1&branchName=master)
-[![Azure pipelines coverage status](https://img.shields.io/azure-devops/coverage/septic-tank/sepsr/2)](https://dev.azure.com/septic-tank/sepsr/_build/latest?definitionId=1&branchName=master)
+[![R build status](https://github.com/septic-tank/ricu/workflows/R-CMD-check/badge.svg)](https://github.com/septic-tank/ricu/actions)
+[![Codecov test coverage](https://codecov.io/gh/septic-tank/ricu/branch/master/graph/badge.svg)](https://codecov.io/gh/septic-tank/ricu?branch=master)
 <!-- badges: end -->
 
-The goal of sepsr is to ...
+The goal of ricu is to ...
 
 ## Installation
 
-You can install the released version of sepsr from [CRAN](https://CRAN.R-project.org) with:
+You can install the released version of ricu from [CRAN](https://CRAN.R-project.org) with:
 
 ``` r
-install.packages("sepsr")
+install.packages("ricu")
 ```
 
 ## Example

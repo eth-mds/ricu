@@ -14,8 +14,9 @@ Authors@R:
 License: GPL-3
 Encoding: UTF-8
 LazyData: true
+URL: https://github.com/septic-tank/ricu
 Depends:
-    R (>= 3.1.0)
+    R (>= 3.2.0)
 Imports:
     data.table,
     curl,
