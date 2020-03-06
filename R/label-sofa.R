@@ -76,8 +76,9 @@ sofa_data <- function(source, pafi_win_length = hours(2L),
 
   res <- reduce(merge, dat, all = TRUE)
 
-  res <- res[is_true(pafi < 200) & !is_true(vent), pafi := 200]
-  res <- res[, vent := NULL]
+  res <- set(res, is_true(res[["pafi"]] < 200) & !is_true(res[["vent"]]),
+             "pafi", 200)
+  res <- set(res, j = "vent", value = NULL)
 
   rename <- c(
     platelet_count = "coag", bilirubin_total = "bili", mean_bp = "map",
@@ -95,6 +96,8 @@ sofa_pafi <- function(pao2, fio2, win_length, mode, fix_na_fio2) {
 
   assert_that(same_ts(pao2, fio2),
               has_cols(pao2, "pa_o2"), has_cols(fio2, "fi_o2"))
+
+  pa_o2 <- fi_o2 <- NULL
 
   if (identical(mode, "match_vals")) {
 
@@ -126,7 +129,7 @@ sofa_pafi <- function(pao2, fio2, win_length, mode, fix_na_fio2) {
   }
 
   res <- res[!is.na(pa_o2) & !is.na(fi_o2) & fi_o2 != 0, ]
-  res <- res[, pafi := 100 * pa_o2 / fi_o2]
+  res <- res[, c("pafi") := 100 * pa_o2 / fi_o2]
   res <- res[, c("pa_o2", "fi_o2") := NULL]
 
   res
@@ -140,6 +143,8 @@ sofa_vent <- function(start, stop, win_length, min_length, interval) {
   }
 
   assert_that(interval(start) < min_length)
+
+  datetime <- start_time <- stop_time <- NULL
 
   units(win_length) <- time_unit(start)
   units(min_length) <- time_unit(start)
@@ -177,7 +182,7 @@ sofa_vent <- function(start, stop, win_length, min_length, interval) {
     expand_limits(merged, min_col = "start_time", max_col = "stop_time",
                   step_size = as.double(interval), id_cols = key(start))
   )
-  res <- res[, vent := TRUE]
+  res <- res[, c("vent") := TRUE]
 
   res
 }
@@ -200,14 +205,14 @@ sofa_gcs <- function(gcs, sed, win_length, set_na_max) {
 
   Map(determine_sed, sed_funs, sed_feats, list(sed))
 
-  sed <- sed[, is_sed := Reduce(`|`, .SD), .SDcols = data_cols(sed)]
+  sed <- sed[, c("is_sed") := Reduce(`|`, .SD), .SDcols = data_cols(sed)]
   sed <- set(sed, j = intersect(data_cols(sed), sed_feats), value = NULL)
 
   dat <- merge(gcs, sed, all = TRUE)
 
   gcs_names <- c("gcs_eye", "gcs_verbal", "gcs_motor")
 
-  dat <- dat[is_true(is_sed), c(gcs_names) := list(4, 5, 6)]
+  dat <- dat[is_true(get("is_sed")), c(gcs_names) := list(4, 5, 6)]
 
   if ("gcs_total" %in% colnames(dat)) {
     expr <- substitute(list(eye_imp = fun(gcs_eye), verb_imp = fun(gcs_verbal),
@@ -222,6 +227,7 @@ sofa_gcs <- function(gcs, sed, win_length, set_na_max) {
   # TODO: perhaps expand before sliding?
 
   dat <- slide_quo(dat, expr, before = win_length)
+  eye_imp <- verb_imp <- mot_imp <- NULL
 
   if (set_na_max) {
     dat <- dat[, c(gcs_names) := list(
@@ -262,7 +268,8 @@ sofa_urine <- function(urine, limits, min_win, interval) {
   })
 
   if (has_name(urine, "urine_cumulative")) {
-    urine[, urine_events := do_diff(urine_cumulative), by = key(urine)]
+    urine <- urine[, c("urine_events") := do_diff(get("urine_cumulative")),
+                   by = key(urine)]
   }
 
   if (is.null(limits)) {
@@ -287,29 +294,6 @@ sofa_urine <- function(urine, limits, min_win, interval) {
                      list(win_agg_fun = urine_sum))
 
   slide_quo(res, expr, hours(24L))
-}
-
-sofa_vars <- function(pafi, vent, coag, bili, map, vaso, gcs, crea, urine,
-                      admissions) {
-
-  tables <- list(pafi, vent, coag, bili, map, vaso, gcs, crea, urine)
-
-  assert_that(all(vapply(tables, same_ts, logical(1L), admissions)))
-
-  dat <- reduce(merge, tables, all = TRUE)
-
-  limits <- dat[, list(min = min(get(index(dat))), max = max(get(index(dat)))),
-                by = c(key(dat))]
-  limits <- merge(limits, admissions, by.x = key(dat), by.y = key(admissions),
-                  all.x = TRUE)
-
-  limits <- limits[,
-    list(hadm_id = hadm_id,
-         min = pmin(as.difftime(0, units = time_unit(dat)), min, na.rm = TRUE),
-         max = pmax(max, hadm_time, na.rm = TRUE)),
-  ]
-
-  fill_gaps(dat, limits = limits)
 }
 
 #' @export
@@ -376,22 +360,25 @@ sofa_compute <- function(tbl, na_val = 0L, na_val_resp = na_val,
 
   tbl <- tbl[,
     c(sofa_cols) := list(
-      sofa_resp(pafi, na_val_resp), sofa_coag(coag, na_val_coag),
-      sofa_liver(bili, na_val_liver),
-      sofa_cardio(map, dopa, norepi, dobu, epi, na_val_cardio),
-      sofa_cns(gcs, na_val_cns), sofa_renal(crea, urine, na_val_renal)
+      sofa_resp(get("pafi"), na_val_resp),
+      sofa_coag(get("coag"), na_val_coag),
+      sofa_liver(get("bili"), na_val_liver),
+      sofa_cardio(get("map"), get("dopa"), get("norepi"), get("dobu"),
+                  get("epi"), na_val_cardio),
+      sofa_cns(get("gcs"), na_val_cns),
+      sofa_renal(get("crea"), get("urine"), na_val_renal)
     )
   ]
 
   tbl <- rm_cols(tbl, need_cols)
 
   if (!is.null(impute_fun)) {
-    tbl <- tbl[, c(sofa_cols) := lapply(.SD, impute_fun), .SDcols = sofa_cols,
-               by = key(tbl)]
+    tbl <- tbl[, c("sofa_cols") := lapply(.SD, impute_fun),
+               .SDcols = sofa_cols, by = c(key(tbl))]
   }
 
-  tbl <- tbl[, sofa_score := sofa_resp + sofa_coag + sofa_liver +
-                             sofa_cardio + sofa_cns + sofa_renal]
+  tbl <- tbl[, c("sofa_score") := sofa_resp + sofa_coag + sofa_liver +
+                                  sofa_cardio + sofa_cns + sofa_renal]
 
   tbl
 }

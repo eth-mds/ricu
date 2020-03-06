@@ -129,3 +129,4 @@ expect_fsetequal <- function(object, expected) {
 }
 
 cpy <- data.table::copy
+assign("ident_cb", function(x, ...) x, envir = .GlobalEnv)

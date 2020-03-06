@@ -202,7 +202,7 @@ length.dictionary <- function(x) length(as_concept(x))
 }
 
 #' @export
-str.dictionary <- function(x, ...) str(as_concept(x), ...)
+str.dictionary <- function(object, ...) str(as_concept(object), ...)
 
 #' @export
 as_item.dictionary <- function(x) as_item(as_concept(x))

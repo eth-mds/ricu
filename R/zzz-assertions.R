@@ -109,7 +109,7 @@ on_failure(same_interval) <- function(call, env) {
          "` are not on the same time scale")
 }
 
-same_id_cols <- function(x, y) setequal(ts_id_cols(x), ts_id_cols(y))
+same_id_cols <- function(x, y) setequal(id_cols(x), id_cols(y))
 
 on_failure(same_id_cols) <- function(call, env) {
   paste0(deparse(call$x), " and ", deparse(call$y),
@@ -117,9 +117,9 @@ on_failure(same_id_cols) <- function(call, env) {
 }
 
 same_time_cols <- function(x, y) {
-  identical(ts_index(x), ts_index(y)) &&
-    identical(ts_time_unit(x), ts_time_unit(y)) &&
-    identical(ts_time_step(x), ts_time_step(y))
+  identical(index(x), index(y)) &&
+    identical(time_unit(x), time_unit(y)) &&
+    all.equal(time_step(x), time_step(y))
 }
 
 on_failure(same_time_cols) <- function(call, env) {

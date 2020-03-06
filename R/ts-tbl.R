@@ -122,6 +122,8 @@ reclass_ts_tbl <- function(x, meta) {
 #' @export
 rm_cols.ts_tbl <- function(x, cols, ...) {
 
+  cols <- unique(intersect(cols, colnames(x)))
+
   assert_that(has_cols(x, cols))
 
   if (any(id_cols(x) %in% cols)) {

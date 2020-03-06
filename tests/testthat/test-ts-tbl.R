@@ -84,12 +84,9 @@ test_that("rm_cols for ts_tbl", {
   expect_identical(colnames(rm_cols(cpy(tbl), c("a", "b"))), "c")
   expect_is(rm_cols(cpy(tbl), "a"), "data.table")
 
-  expect_error(rm_cols(cpy(tbl), "d"),
-               "does not contain the following columns: `d`")
-  expect_error(rm_cols(cpy(tbl), c("a", "d")),
-               "does not contain the following columns: `d`")
-  expect_error(rm_cols(cpy(tbl), c("a", "a")),
-               "contains duplicate elements")
+  expect_identical(rm_cols(cpy(tbl), "d"), tbl)
+  expect_identical(rm_cols(cpy(tbl), c("a", "d")), rm_cols(cpy(tbl), "a"))
+  expect_identical(rm_cols(cpy(tbl), c("a", "a")), rm_cols(cpy(tbl), "a"))
 })
 
 test_that("set_* for ts_tbl", {
@@ -109,7 +106,7 @@ test_that("set_* for ts_tbl", {
   expect_identical(key(set_key(cpy(tbl), "a")), "a")
 
   expect_error(set_key(cpy(tbl), "c"), "not not equal to")
-  expect_error(set_key(cpy(tbl), c("a", "b")), "not not equal to")
+  expect_error(set_key(cpy(tbl), c("a", "b")), "is not a string")
   expect_error(set_key(cpy(tbl), "f"), "does not contain column `f`")
 
   expect_identical(index(set_index(cpy(tbl), "d")), "d")
@@ -138,6 +135,10 @@ test_that("set_* for ts_tbl", {
                  "Higher time resolution does not add missing time steps")
   expect_error(set_interval(cpy(tbl), "a"),
                "not a strictly positive `difftime` object of length 1")
-  expect_error(set_interval(cpy(tbl), "a"), "not not equal to")
-  expect_error(set_interval(cpy(tbl), "f"), "does not contain column `f`")
+  expect_error(set_interval(cpy(tbl), "a"),
+    "is not a strictly positive `difftime` object of length 1"
+  )
+  expect_error(set_interval(cpy(tbl), "f"),
+    "is not a strictly positive `difftime` object of length 1"
+  )
 })

@@ -91,8 +91,10 @@ si_windows <- function(tbl, abx_win = hours(24L), samp_win = hours(72L),
   res <- unique(rbind(abx_samp[, c(key, "si_time"), with = FALSE],
                       samp_abx[, c(key, "si_time"), with = FALSE]))
 
-  res <- res[, c("si_lwr", "si_upr") := list(si_time - win_args[["si_lwr"]],
-                                             si_time + win_args[["si_upr"]])]
+  res <- res[, c("si_lwr", "si_upr") := list(
+    get("si_time") - win_args[["si_lwr"]],
+    get("si_time") + win_args[["si_upr"]]
+  )]
 
   as_ts_tbl(res, key, "si_time", interval(tbl))
 }

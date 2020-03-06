@@ -114,7 +114,7 @@ test_that("ts_meta", {
 
   expect_error(rename_cols(ts_met, "bar", "foo"), "not not equal to")
   expect_error(rename_cols(ts_met, c("abc", "abc"), c("foo", "bar")),
-               "not not equal to")
+               "contains duplicate elements")
 
   sk <- set_key(ts_met, "abc")
   expect_true(is_ts_meta(sk))

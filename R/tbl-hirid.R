@@ -58,7 +58,7 @@ hirid_tbl_quo <- function(table, row_quo = NULL, cols = NULL,
     adm <- get_table("general", source)[, c("patientid", "admissiontime")]
     dat <- merge(dat, adm, by = "patientid", all.x = TRUE)
 
-    dat <- dat[, c(date_cols) := lapply(.SD, time_fun, admissiontime),
+    dat <- dat[, c(date_cols) := lapply(.SD, time_fun, get("admissiontime")),
                .SDcols = date_cols]
 
     if ("admissiontime" %in% colnames(dat)) {

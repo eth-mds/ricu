@@ -22,10 +22,15 @@ mimic_mortality <- function(source, id_col = "hadm_id") {
 
   if (!identical(id_col, "hadm_id")) stop("TODO")
 
-  res <- mimic_tbl("admissions", cols = c(id_col, "hospital_expire_flag"),
+  exp_flag <- "hospital_expire_flag"
+
+  res <- mimic_tbl("admissions", cols = c(id_col, exp_flag),
                    source = source)
-  res[, `:=`(c("expired", "hospital_expire_flag"),
-             list(as.logical(hospital_expire_flag), NULL))][]
+
+  res <- set(res, j = exp_flag, value = as.logical(res[[exp_flag]]))
+  res <- rename_cols(res, "expired", exp_flag)
+
+  res
 }
 
 eicu_mortality <- function(source, id_col = "patienthealthsystemstayid") {
@@ -33,10 +38,13 @@ eicu_mortality <- function(source, id_col = "patienthealthsystemstayid") {
   assert_that(is.string(id_col),
               id_col %in% c("patienthealthsystemstayid", "patientunitstayid"))
 
-  res <- eicu_tbl("patient", cols = c(id_col, "hospitaldischargestatus"),
-                  source = source)
-  res <- res[, `:=`(c("expired", "hospitaldischargestatus"),
-                    list(hospitaldischargestatus == "Expired", NULL))]
+  status <- "hospitaldischargestatus"
 
-  res[, list(expired = any(expired)), by = id_col]
+  res <- eicu_tbl("patient", cols = c(id_col, status),
+                  source = source)
+
+  res <- set(res, j = status, value = res[[status]] == "Expired")
+  res <- rename_cols(res, "expired", status)
+
+  res[, list(expired = any(get("expired"))), by = id_col]
 }

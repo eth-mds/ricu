@@ -43,7 +43,7 @@ eicu_body_weight <- function(x, val_col, weight_col, ...) {
 
   x <- merge(x, eicu_patient_weight, all.x = TRUE,
              by = "patienthealthsystemstayid")
-  on.exit(x[, weight := NULL])
+  on.exit(set(x, j = "weight", value = NULL))
 
   x <- force_numeric_cols(x, c(val_col, weight_col))
   x <- x[, c(val_col) := do_calc(get(val_col), get(weight_col), get("weight"))]

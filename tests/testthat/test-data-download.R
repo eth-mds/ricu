@@ -24,6 +24,7 @@ test_that("credential management", {
   creds <- with_mock(
     `keyring::key_set_with_value` = function(...) invisible(NULL),
     `ricu:::read_line` = function(...) "bar",
+    `keyring::key_get` = function(...) "bar",
     get_set_physionet_creds("foo")
   )
 

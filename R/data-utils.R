@@ -149,7 +149,7 @@ prep_args <- function(arg, names, items = NULL) {
 
 add_unit <- function(x, unit) {
 
-  if (is.null(unit) || is.na(unit)) {
+  if (is.null(unit) || is.na(unit)) {
     return(x)
   }
 
@@ -341,7 +341,7 @@ load_grep <- function(items, item_col, id_col, time_col, val_col, extra_cols,
                      id_cols = id_col, time_col = time_col, ...)
 
   if (!is.null(patient_ids)) {
-    patient_ids <- prepare_patient_ids(patient_ids, key(dat))
+    join <- prepare_patient_ids(patient_ids, key(dat))
     dat  <- merge(dat, join, by = key(dat), all = FALSE)
   }
 
@@ -349,7 +349,7 @@ load_grep <- function(items, item_col, id_col, time_col, val_col, extra_cols,
     return(list(rm_cols(dat, to_rm)))
   }
 
-  if (is.function(callback) || is.string(callback)) {
+  if (is.function(callback) || is.string(callback)) {
 
     dat <- do.call(callback,
       c(list(dat), list(unit = unit, val_col = val_col, id_col = id_col,

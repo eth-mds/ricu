@@ -11,16 +11,16 @@ test_that("read data items (wide)", {
   expect_all_identical(lapply(dat, data_cols), "sao2")
   expect_all_equal(lapply(dat, interval), hours(1L))
 
-  cb <- function(x, ...) x
-
   expect_message(
-    dat2 <- load_items("eicu_demo", "vitalperiodic", "sao2", callback = cb)
+    dat2 <- load_items("eicu_demo", "vitalperiodic", "sao2",
+                       callback = ident_cb)
   )
 
   expect_identical(dat, dat2)
 
   expect_message(
-    dat2 <- load_items("eicu_demo", "vitalperiodic", "sao2", callback = "cb")
+    dat2 <- load_items("eicu_demo", "vitalperiodic", "sao2",
+                       callback = "ident_cb")
   )
 
   expect_identical(dat, dat2)
@@ -74,18 +74,16 @@ test_that("read data items (long)", {
   expect_all_identical(lapply(dat, data_cols), "50862")
   expect_all_equal(lapply(dat, interval), hours(1L))
 
-  cb <- function(x, ...) x
-
   expect_message(
     dat2 <- load_items("mimic_demo", "labevents", "itemid", 50862L,
-                       callback = cb)
+                       callback = ident_cb)
   )
 
   expect_identical(dat, dat2)
 
   expect_message(
     dat2 <- load_items("mimic_demo", "labevents", "itemid", 50862L,
-                       callback = "cb")
+                       callback = "ident_cb")
   )
 
   expect_identical(dat, dat2)
@@ -241,11 +239,9 @@ test_that("read data items (grep)", {
     c("patienthealthsystemstayid", "infusionoffset", "drugrate"))
   expect_identical(data_unit(dat5[[1L]]), c(drugrate = "mcg/kg/min"))
 
-  cb <- function(x, ...) x
-
   expect_message(
     dat6 <- load_items("eicu_demo", "infusiondrug", "drugname", "dopamine",
-                       regex = TRUE, callback = cb)
+                       regex = TRUE, callback = ident_cb)
   )
 
   expect_identical(dat6, dat)

@@ -68,7 +68,7 @@ eicu_tbl_quo <- function(table, row_quo = NULL, cols = NULL,
 
       if ("unitadmitoffset" %in% cols) {
         date_cols <- c(date_cols, "unitadmitoffset")
-        dat <- dat[, unitadmitoffset := 0]
+        dat <- set(dat, j = "unitadmitoffset", value = 0)
       }
 
     } else {
@@ -80,8 +80,8 @@ eicu_tbl_quo <- function(table, row_quo = NULL, cols = NULL,
     }
 
     if (length(date_cols)) {
-      dat <- dat[, c(date_cols) := lapply(.SD, time_fun, hospitaladmitoffset),
-                 .SDcols = date_cols]
+      dat <- dat[, c(date_cols) := lapply(
+        .SD, time_fun, get("hospitaladmitoffset")), .SDcols = date_cols]
     }
   }
 

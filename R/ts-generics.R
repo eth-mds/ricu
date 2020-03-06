@@ -45,9 +45,7 @@ set_time_unit <- function(x, value) UseMethod("set_time_unit", x)
 #' @export
 rm_cols <- function(x, cols, ...) {
 
-  cols <- intersect(cols, colnames(x))
-
-  if (length(cols) == 0L) {
+  if (length(intersect(cols, colnames(x))) == 0L) {
     return(x)
   }
 
@@ -58,7 +56,7 @@ rm_cols <- function(x, cols, ...) {
 #' @export
 #'
 rm_cols.data.table <- function(x, cols, ...) {
-  x <- set(x, j = cols, value = NULL)
+  x <- set(x, j = unique(intersect(cols, colnames(x))), value = NULL)
   x
 }
 

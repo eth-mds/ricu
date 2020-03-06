@@ -9,7 +9,7 @@ test_that("item constructor", {
   expect_length(itms1, 1L)
   expect_named(itms1, "a")
 
-  itms2 <- c(itm_a, new_item("b", "src", "tbl", "col"))
+  itms2 <- c(itms1, new_item("b", "src", "tbl", "col"))
 
   expect_is(itms2, "item")
   expect_true(is_item(itms2))

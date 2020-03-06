@@ -80,7 +80,7 @@ mimic_tbl_quo <- function(table, row_quo = NULL, cols = NULL,
     }
 
     if (length(date_cols)) {
-      dat <- dat[, c(date_cols) := lapply(.SD, time_fun, admittime),
+      dat <- dat[, c(date_cols) := lapply(.SD, time_fun, get("admittime")),
                  .SDcols = date_cols]
     }
 

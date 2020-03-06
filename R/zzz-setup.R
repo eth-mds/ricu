@@ -5,10 +5,6 @@
 
     fun_name <- as.character(substitute(fun))
 
-    if (!identical(fun_name[1L:2L], c("::", "base"))) {
-      packageStartupMessage("Could not fix `", fun_name[3L], "`.")
-    }
-
     fun_name <- fun_name[3L]
     fun_body <- body(fun)
 
