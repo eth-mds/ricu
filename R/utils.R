@@ -327,3 +327,5 @@ chr_ply <- function(x, fun, ..., length = 1L, use_names = FALSE) {
 lgl_ply <- function(x, fun, ..., length = 1L, use_names = FALSE) {
   vapply(x, fun, logical(length), ..., USE.NAMES = use_names)
 }
+
+map <- function(f, ...) Map(f, ..., USE.NAMES = FALSE)

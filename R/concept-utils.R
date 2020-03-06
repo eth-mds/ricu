@@ -109,6 +109,16 @@ c.concept <- function(...) {
 }
 
 #' @export
+concept <- function(name, ..., unit = NULL) {
+
+  items <- do.call(c,
+    do.call(map, c(new_item, list(concept = name),  list(...)))
+  )
+
+  new_concept(name, items, unit)
+}
+
+#' @export
 `[.concept` <- function(x, i, source = NULL, ...) {
 
   do_one <- function(y, src) {
@@ -148,6 +158,9 @@ as_concept <- function(x) UseMethod("as_concept", x)
 #' @export
 as_concept.concept <- function(x) x
 
+#' @export
+as_dictionary.concept <- function(x) new_dictionary(x)
+
 #' @method as.data.table concept
 #' @export
 as.data.table.concept <- function(x, ...) {
@@ -167,6 +180,12 @@ new_dictionary <- function(concepts) {
 
   structure(list(concepts), class = "dictionary")
 }
+
+#' @export
+as_dictionary <- function(x) UseMethod("as_dictionary", x)
+
+#' @export
+as_dictionary.dictionary <- function(x) x
 
 #' @export
 is_dictionary <- function(x) inherits(x, "dictionary")
@@ -249,6 +268,12 @@ group_concepts <- function(concepts) {
     x <- split(x, names(x))
     new_dictionary(do.call(c, Map(swap_items, as_concept(conc[names(x)]), x)))
   }
+
+  if (is_concept(concepts)) {
+    concepts <- as_dictionary(concepts)
+  }
+
+  assert_that(is_dictionary(concepts))
 
   items <- as_item(concepts)
   wide <- vapply(lapply(items, `[[`, "ids"), is.null, logical(1L))
@@ -367,31 +392,20 @@ load_concepts <- function(source, concepts = get_concepts(source),
     concepts <- get_concepts(source, concepts, "concept-dict")
   }
 
-  assert_that(is_dictionary(concepts))
-
-  if (length(aggregate) == 1L && !is.list(aggregate)) {
-    aggregate <- rep(list(aggregate), length(concepts))
-    names(aggregate) <- names(concepts)
-  } else if (is.atomic(aggregate)) {
-    aggregate <- as.list(aggregate)
-  }
-
-  assert_that(is.list(aggregate), has_name(aggregate, names(concepts)))
-
   res <- lapply(group_concepts(concepts), function(x) {
     do.call(do_load, c(as.data.table(x)))
   })
 
-  res <- unlist(res, recursive = FALSE)
+  res <- unlist(res, recursive = FALSE, use.names = FALSE)
 
   res   <- combine_feats(res)
   feats <- vapply(res, data_cols, character(1L))
 
-  names(res) <- feats
-
   if (!merge_data && isFALSE(aggregate)) return(res)
 
-  res <- Map(do_aggregate, res, aggregate[feats])
+  aggregate <- prep_args(aggregate, names(concepts))
+
+  res <- map(do_aggregate, res, aggregate[feats])
 
   if (!merge_data) return(res)
 

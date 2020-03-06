@@ -61,3 +61,65 @@ test_that("concept/dictionary constructor", {
   expect_length(dict, 2L)
   expect_named(dict, c("a", "b"))
 })
+
+
+test_that("load concepts", {
+
+  gluc <- concept("gluc", "mimic_demo", "labevents", "itemid",
+                  c(50809L, 50931L))
+
+  expect_message(dat1 <- load_concepts("mimic_demo", gluc))
+
+  expect_is(dat1, "ts_tbl")
+  expect_true(is_ts_tbl(dat1))
+  expect_identical(colnames(dat1), c("hadm_id", "charttime", "gluc"))
+  expect_equal(interval(dat1), hours(1L))
+
+  albu <- concept("albu", "mimic_demo", "labevents", "itemid", 50862L)
+
+  expect_message(dat2 <- load_concepts("mimic_demo", c(albu, gluc)))
+
+  expect_setequal(data_cols(dat2), c("gluc", "albu"))
+
+  expect_message(dat3 <- load_concepts("mimic_demo", gluc, merge_data = FALSE))
+
+  expect_is(dat3, "list")
+  expect_length(dat3, 1L)
+
+  dat3 <- dat3[[1L]]
+
+  expect_true(is_ts_tbl(dat3))
+  expect_identical(colnames(dat3), c("hadm_id", "charttime", "gluc"))
+  expect_equal(interval(dat3), hours(1L))
+
+  expect_message(
+    dat4 <- load_concepts("mimic_demo", gluc, aggregate = FALSE,
+                          merge_data = FALSE)
+  )
+
+  expect_is(dat4, "list")
+  expect_length(dat4, 1L)
+
+  dat4 <- dat4[[1L]]
+
+  expect_true(is_ts_tbl(dat4))
+  expect_identical(colnames(dat4), c("hadm_id", "charttime", "gluc"))
+  expect_gt(nrow(dat4), nrow(dat3))
+
+  expect_identical(dat3,
+    dat4[, list(gluc = median(gluc)), by = c(id_cols(dat4))]
+  )
+
+  expect_message(
+    dat5 <- load_concepts("mimic_demo", gluc, aggregate = identity,
+                          merge_data = FALSE)
+  )
+
+  expect_is(dat5, "list")
+  expect_length(dat5, 1L)
+  expect_identical(dat4, dat5[[1L]])
+
+  expect_error(
+    load_concepts("mimic_demo", gluc, aggregate = "identity")
+  )
+})

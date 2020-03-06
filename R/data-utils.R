@@ -116,21 +116,23 @@ map_names <- function(old, map_val, map_key) {
   map[as.character(old)]
 }
 
-prep_args <- function(arg, items, names) {
+prep_args <- function(arg, names, items = NULL) {
 
-  assert_that(same_length(names, items))
+  uq_nms <- unique(names)
 
   if (is.null(arg)) {
 
-    arg <- rep(list(arg), length(names))
-    names(arg) <- names
+    arg <- rep(list(arg), length(uq_nms))
+    names(arg) <- uq_nms
 
   } else if (length(arg) == 1L) {
 
-    arg <- rep(list(arg), length(names))
-    names(arg) <- names
+    arg <- rep(list(arg), length(uq_nms))
+    names(arg) <- uq_nms
 
   } else if (same_length(arg, items) && is.null(names(arg))) {
+
+    assert_that(same_length(names, items))
 
     arg <- lapply(split(arg, names), unique)
 
@@ -139,8 +141,8 @@ prep_args <- function(arg, items, names) {
     arg <- as.list(arg)
   }
 
-  assert_that(is.list(arg), all(lengths(arg) <= 1L), has_name(arg, names),
-              same_length(arg, unique(names)))
+  assert_that(is.list(arg), all(lengths(arg) <= 1L), has_name(arg, uq_nms),
+              same_length(arg, uq_nms))
 
   arg
 }
@@ -171,8 +173,8 @@ load_wide <- function(item_cols, id_col, time_col, extra_cols, names,
     names <- rep(names, length(item_cols))
   }
 
-  callback <- prep_args(callback, item_cols, names)
-  unit     <- prep_args(unit, item_cols, names)
+  callback <- prep_args(callback, names, item_cols)
+  unit     <- prep_args(unit, names, item_cols)
 
   to_rm <- unique(unlist(extra_cols))
 
@@ -233,8 +235,8 @@ load_long <- function(items, item_col, id_col, time_col, val_col, extra_cols,
     has_names <- TRUE
   }
 
-  callback <- prep_args(callback, items, names)
-  unit     <- prep_args(unit, items, names)
+  callback <- prep_args(callback, names, items)
+  unit     <- prep_args(unit, names, items)
 
   uq_items <- unique(items)
   uq_extra <- unique(unlist(extra_cols))
