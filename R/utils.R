@@ -6,8 +6,8 @@
 #'
 #' For data, the default location depends on the operating system as
 #'
-#' | **Platform** | **Location**                          |
-#' | ------------ | ------------------------------------- |
+#' | **Platform** | **Location**                         |
+#' | ------------ | -------------------------------------|
 #' | Linux        | `~/.local/share/ricu`                |
 #' | macOS        | `~/Library/Application Support/ricu` |
 #' | Windows      | `%LOCALAPPDATA%/ricu`                |
@@ -40,40 +40,35 @@
 #'
 #' @export
 #'
-data_dir <- function(subdir = NULL) {
+data_dir <- function(subdir = NULL, create = TRUE) {
 
-  res <- data_dir_path()
+  assert_that(is.flag(create))
+
+  res <- Sys.getenv("RICU_DATA_PATH", unset = NA_character_)
+
+  if (is.na(res)) {
+
+    res <- switch(
+      Sys.info()[["sysname"]],
+      Darwin  = Sys.getenv("XDG_DATA_HOME", "~/Library/Application Support"),
+      Windows = Sys.getenv("LOCALAPPDATA", Sys.getenv("APPDATA")),
+      Sys.getenv("XDG_DATA_HOME", "~/.local/share")
+    )
+
+    res <- file.path(res, "ricu")
+
+  }
 
   if (!is.null(subdir)) {
     assert_that(is.string(subdir))
-    res <- ensure_dir(file.path(res, subdir))
+    res <- file.path(res, subdir)
+  }
+
+  if (create) {
+    res <- ensure_dir(res)
   }
 
   res
-}
-
-default_data_path <- function() {
-
-  root <- switch(
-    Sys.info()[["sysname"]],
-    Darwin  = Sys.getenv("XDG_DATA_HOME", "~/Library/Application Support"),
-    Windows = Sys.getenv("LOCALAPPDATA", Sys.getenv("APPDATA")),
-    Sys.getenv("XDG_DATA_HOME", "~/.local/share")
-  )
-
-  root <- file.path(root, "ricu")
-
-  if (!dir.exists(root)) {
-    message("Attempting to set up data directory at\n  ", root,
-            "\nPlease confirm (Y/n): ", appendLF = FALSE)
-    if (identical(readline(), "Y")) dir.create(root)
-  }
-
-  if (!dir.exists(root)) {
-    stop("Failed to set up data directory at\n  ", root)
-  }
-
-  root
 }
 
 ensure_dir <- function(paths) {
@@ -101,24 +96,19 @@ ensure_dir <- function(paths) {
   invisible(paths)
 }
 
-data_dir_path <- function() {
-
-  env_var <- Sys.getenv("RICU_DATA_PATH", unset = NA_character_)
-
-  if (is.na(env_var)) default_data_path()
-  else                ensure_dir(env_var)
-}
-
 default_config_path <- function() {
   system.file("extdata", "config", package = methods::getPackageName())
 }
 
 config_dir_path <- function() {
 
-  env_var <- Sys.getenv("RICU_CONFIG_PATH", unset = NA_character_)
+  res <- Sys.getenv("RICU_CONFIG_PATH", unset = NA_character_)
 
-  if (is.na(env_var)) default_config_path()
-  else                ensure_dir(env_var)
+  if (is.na(res)) {
+    res <- default_config_path()
+  }
+
+  res
 }
 
 #' For configuration files, the default location is `extdata/config` and the
@@ -154,8 +144,11 @@ get_config <- function(name, dir = NULL, ...) {
 
     usr_file <- file.path(config_dir_path(), file)
 
-    if (file.exists(usr_file)) file <- usr_file
-    else                       file <- file.path(default_config_path(), file)
+    if (file.exists(usr_file)) {
+      file <- usr_file
+    } else {
+      file <- file.path(default_config_path(), file)
+    }
 
   } else {
 

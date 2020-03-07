@@ -16,13 +16,11 @@ percent_as_numeric <- function(x, val_col, ...) {
   x
 }
 
-delayedAssign("eicu_patient_weight", local({
-  patient <- eicu_tbl_quo("patient", cols = c("patienthealthsystemstayid",
-                                              "admissionweight"))
-  patient <- patient[, list(weight = mean(admissionweight, na.rm = TRUE)),
-                     by = "patienthealthsystemstayid"]
-  patient[!is.na(weight), ]
-}))
+aux_tables <- new.env()
+
+delayedAssign("eicu_patient_weight",
+              patient_weight("eicu", weight_col = "weight"),
+              assign.env = aux_tables)
 
 force_numeric_col <- function(x, col) {
   set(x, j = col, value = force_numeric(x[[col]]))
@@ -41,7 +39,7 @@ eicu_body_weight <- function(x, val_col, weight_col, ...) {
 
   do_calc <- function(rate, w1, w2) rate / fifelse(is.na(w1), w2, w1)
 
-  x <- merge(x, eicu_patient_weight, all.x = TRUE,
+  x <- merge(x, aux_tables$eicu_patient_weight, all.x = TRUE,
              by = "patienthealthsystemstayid")
   on.exit(set(x, j = "weight", value = NULL))
 

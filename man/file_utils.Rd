@@ -5,7 +5,7 @@
 \alias{get_config}
 \title{File system utilities}
 \usage{
-data_dir(subdir = NULL)
+data_dir(subdir = NULL, create = TRUE)
 
 get_config(name, dir = NULL, ...)
 }

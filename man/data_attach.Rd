@@ -30,7 +30,10 @@ attach_eicu(
   envir = if (demo) eicu_demo else eicu
 )
 
-attach_hirid(dir = data_dir("hirid"), config = get_config("hirid-setup"))
+attach_hirid(
+  dir = data_dir("hirid", create = FALSE),
+  config = get_config("hirid-setup")
+)
 
 data
 

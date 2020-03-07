@@ -50,7 +50,7 @@ attach_eicu <- function(demo = FALSE, dir = eicu_data_dir(demo),
 #'
 #' @export
 #'
-attach_hirid <- function(dir = data_dir("hirid"),
+attach_hirid <- function(dir = data_dir("hirid", create = FALSE),
                          config = get_config("hirid-setup")) {
 
   attach_datasource(dir, config)
@@ -106,7 +106,7 @@ attach_datasource <- function(dir, config) {
 
   create_data_env <- function(dir, cfg) {
 
-    assert_that(is.dir(dir))
+    dir <- ensure_dir(dir)
 
     missing <- !table_exists_as_fst(cfg, dir)
 
@@ -236,10 +236,10 @@ mimic_data_dir <- function(demo) {
     if (is_pkg_available("mimic.demo")) {
       system.file("extdata", package = "mimic.demo")
     } else {
-      data_dir("mimic-demo")
+      data_dir("mimic-demo", create = FALSE)
     }
   } else {
-    data_dir("mimic")
+    data_dir("mimic", create = FALSE)
   }
 }
 
@@ -256,10 +256,10 @@ eicu_data_dir <- function(demo) {
     if (is_pkg_available("eicu.demo")) {
       system.file("extdata", package = "eicu.demo")
     } else {
-      data_dir("eicu-demo")
+      data_dir("eicu-demo", create = FALSE)
     }
   } else {
-    data_dir("eicu")
+    data_dir("eicu", create = FALSE)
   }
 }
 
