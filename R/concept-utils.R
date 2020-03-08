@@ -56,7 +56,7 @@ c.item <- function(...) {
   if (!is.null(source)) {
     assert_that(is.string(source))
     srcs <- vapply(x, .subset2, character(1L), "source")
-    x <- .subset(x, source == srcs)
+    x <- .subset(x, as_src(source) == srcs)
   }
 
   do.call(c, lapply(x, recreate))
@@ -378,12 +378,22 @@ load_concepts <- function(source, concepts = get_concepts(source),
       concept <- unique(concept)
     }
 
-    args <- c(list(unique(source), tbl, unique(column), ids, concept),
+    args <- c(list(source, tbl, unique(column), ids, concept),
               col_cfg[[tbl]],
               list(patient_ids, callback, rgx, unit, interval),
               lapply(list(...), uq_na_rm))
 
     do.call(load_items, args)
+  }
+
+  prep_load <- function(x, src) {
+
+    args <- c(as.data.table(x))
+
+    assert_that(all(args[["source"]] == as_src(src)))
+    args[["source"]] <- src
+
+    do.call(do_load, args)
   }
 
   assert_that(is.flag(merge_data), is_time(interval, allow_neg = FALSE))
@@ -392,10 +402,7 @@ load_concepts <- function(source, concepts = get_concepts(source),
     concepts <- get_concepts(source, concepts, "concept-dict")
   }
 
-  res <- lapply(group_concepts(concepts), function(x) {
-    do.call(do_load, c(as.data.table(x)))
-  })
-
+  res <- lapply(group_concepts(concepts), prep_load, source)
   res <- unlist(res, recursive = FALSE, use.names = FALSE)
 
   res   <- combine_feats(res)

@@ -141,10 +141,9 @@ prep_args <- function(arg, names, items = NULL) {
     arg <- as.list(arg)
   }
 
-  assert_that(is.list(arg), all(lengths(arg) <= 1L), has_name(arg, uq_nms),
-              same_length(arg, uq_nms))
+  assert_that(is.list(arg), all(lengths(arg) <= 1L), has_name(arg, uq_nms))
 
-  arg
+  arg[uq_nms]
 }
 
 add_unit <- function(x, unit) {

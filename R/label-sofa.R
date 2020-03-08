@@ -50,6 +50,7 @@ sofa_data <- function(source, pafi_win_length = hours(2L),
     load_concepts(source, vent_dict, patient_ids, col_cfg, agg_funs,
                   mins(1L), merge_data = FALSE)
   )
+  names(dat) <- vapply(dat, data_cols, character(1L))
 
   dat[["pafi"]] <- sofa_pafi(
     dat[["pa_o2"]], dat[["fi_o2"]], pafi_win_length, pafi_mode, fix_na_fio2
@@ -76,9 +77,10 @@ sofa_data <- function(source, pafi_win_length = hours(2L),
 
   res <- reduce(merge, dat, all = TRUE)
 
-  res <- set(res, is_true(res[["pafi"]] < 200) & !is_true(res[["vent"]]),
-             "pafi", 200)
-  res <- set(res, j = "vent", value = NULL)
+  res <- res[is_true(get("pafi") < 200) & !is_true(get("vent")),
+             c("pafi") := 200]
+
+  res <- rm_cols(res, "vent")
 
   rename <- c(
     platelet_count = "coag", bilirubin_total = "bili", mean_bp = "map",
@@ -210,39 +212,59 @@ sofa_gcs <- function(gcs, sed, win_length, set_na_max) {
 
   dat <- merge(gcs, sed, all = TRUE)
 
-  gcs_names <- c("gcs_eye", "gcs_verbal", "gcs_motor")
-
-  dat <- dat[is_true(get("is_sed")), c(gcs_names) := list(4, 5, 6)]
+  dat <- dat[is_true(get("is_sed")),
+             c("gcs_eye", "gcs_verbal", "gcs_motor") := list(4, 5, 6)]
 
   if ("gcs_total" %in% colnames(dat)) {
-    expr <- substitute(list(eye_imp = fun(gcs_eye), verb_imp = fun(gcs_verbal),
-                            mot_imp = fun(gcs_motor), gcs = gcs_total),
-                       list(fun = carry_backwards))
+
+    expr <- substitute(
+      list(eye_imp = fun(gcs_eye), verb_imp = fun(gcs_verbal),
+           mot_imp = fun(gcs_motor), tot_imp = fun(gcs_total)),
+      list(fun = carry_backwards)
+    )
+
   } else {
+
     expr <- substitute(list(eye_imp = fun(gcs_eye), verb_imp = fun(gcs_verbal),
                             mot_imp = fun(gcs_motor)),
                        list(fun = carry_backwards))
   }
 
-  # TODO: perhaps expand before sliding?
-
+  dat <- fill_gaps(dat)
   dat <- slide_quo(dat, expr, before = win_length)
-  eye_imp <- verb_imp <- mot_imp <- NULL
 
   if (set_na_max) {
-    dat <- dat[, c(gcs_names) := list(
-      replace_na(eye_imp, 4), replace_na(verb_imp, 5), replace_na(mot_imp, 6)
+
+    if ("tot_imp" %in% colnames(dat)) {
+
+      dat <- dat[, c("eye_imp", "verb_imp", "mot_imp", "tot_imp") := list(
+        replace_na(get("eye_imp"), 4), replace_na(get("verb_imp"), 5),
+        replace_na(get("mot_imp"), 6), replace_na(get("tot_imp"), 15)
+      )]
+
+    } else {
+
+      dat <- dat[, c("eye_imp", "verb_imp", "mot_imp") := list(
+        replace_na(get("eye_imp"), 4), replace_na(get("verb_imp"), 5),
+        replace_na(get("mot_imp"), 6)
+      )]
+    }
+  }
+
+  if ("tot_imp" %in% colnames(dat)) {
+
+    dat <- dat[, c("gcs") := fifelse(
+      is.na(get("tot_imp")),
+      get("eye_imp") + get("verb_imp") + get("mot_imp"),
+      get("tot_imp")
     )]
-  }
 
-  if ("gcs" %in% colnames(dat)) {
-    dat <- dat[, gcs := fifelse(is.na(gcs), eye_imp + verb_imp + mot_imp, gcs)]
   } else {
-    dat <- dat[, gcs := eye_imp + verb_imp + mot_imp]
+
+    dat <- dat[, c("gcs") := get("eye_imp") + get("verb_imp") + get("mot_imp")]
   }
 
-  dat <- set(dat, j = c(gcs_names, "eye_imp", "verb_imp", "mot_imp"),
-             value = NULL)
+  dat <- rm_cols(dat, c("eye_imp", "verb_imp", "mot_imp", "tot_imp"))
 
   dat
 }
