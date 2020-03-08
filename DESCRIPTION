@@ -34,6 +34,8 @@ Suggests:
     xml2,
     covr,
     testthat (>= 2.1.0),
+    withr,
+    pkgload,
     mimic.demo,
     eicu.demo,
     rlang

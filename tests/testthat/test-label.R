@@ -20,8 +20,8 @@ test_that("sofa", {
   expect_identical(key(sowin), "hadm_id")
   expect_identical(index(sowin), "charttime")
   expect_setequal(data_cols(sowin),
-    c("norepi", "dopa", "dobu", "map", "epi", "bili", "crea", "coag", "pafi",
-      "gcs", "urine"))
+    c("sofa_resp", "sofa_coag", "sofa_liver", "sofa_cardio", "sofa_cns",
+      "sofa_renal", "sofa_score"))
   expect_gte(nrow(sowin), nrow(sofa))
   expect_equal(interval(sowin), interval(sofa))
 

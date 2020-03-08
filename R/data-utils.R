@@ -315,7 +315,9 @@ load_grep <- function(items, item_col, id_col, time_col, val_col, extra_cols,
 
     if (is.null(x)) return(x)
 
-    x <- unique(x)
+    if (!is.function(x)) {
+      x <- unique(x)
+    }
 
     assert_that(length(x) == 1L)
 

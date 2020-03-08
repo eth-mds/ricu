@@ -81,7 +81,7 @@ set_ts_meta <- function(x, meta, stop_on_fail = TRUE) {
 
   if (!isTRUE(check)) {
     if (stop_on_fail) stop(check)
-    else return(x)
+    else return(unclass_ts_tbl(x))
   }
 
   x <- na.omit(x, id_cols)
@@ -112,8 +112,6 @@ reclass_ts_tbl <- function(x, meta) {
 
   if (has_attr(x, "ts_meta")) {
     x <- set_ts_class(x)
-  } else {
-    x <- unclass_ts_tbl(x)
   }
 
   x

@@ -390,7 +390,7 @@ load_concepts <- function(source, concepts = get_concepts(source),
 
     args <- c(as.data.table(x))
 
-    assert_that(all(args[["source"]] == as_src(src)))
+    assert_that(all(chr_ply(args[["source"]], as_src) == as_src(src)))
     args[["source"]] <- src
 
     do.call(do_load, args)
