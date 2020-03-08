@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Page not found (404) • ricu</title>
+<title>Methods for creating and inspecting ts_tbl objects — [.ts_tbl • ricu</title>
 
 
 <!-- jquery -->
@@ -29,13 +29,15 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.9.4/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script>
 
 <!-- pkgdown -->
-<link href="pkgdown.css" rel="stylesheet">
-<script src="pkgdown.js"></script>
+<link href="../pkgdown.css" rel="stylesheet">
+<script src="../pkgdown.js"></script>
 
 
 
 
-<meta property="og:title" content="Page not found (404)" />
+<meta property="og:title" content="Methods for creating and inspecting ts_tbl objects — [.ts_tbl" />
+<meta property="og:description" content="Methods for creating and inspecting ts_tbl objects" />
+<meta name="twitter:card" content="summary" />
 
 
 
@@ -54,7 +56,7 @@
   </head>
 
   <body>
-    <div class="container template-title-body">
+    <div class="container template-reference-topic">
       <header>
       <div class="navbar navbar-default navbar-fixed-top" role="navigation">
   <div class="container">
@@ -66,7 +68,7 @@
         <span class="icon-bar"></span>
       </button>
       <span class="navbar-brand">
-        <a class="navbar-link" href="index.html">ricu</a>
+        <a class="navbar-link" href="../index.html">ricu</a>
         <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.0.0.9000</span>
       </span>
     </div>
@@ -74,13 +76,13 @@
     <div id="navbar" class="navbar-collapse collapse">
       <ul class="nav navbar-nav">
         <li>
-  <a href="index.html">
+  <a href="../index.html">
     <span class="fas fa fas fa-home fa-lg"></span>
      
   </a>
 </li>
 <li>
-  <a href="reference/index.html">Reference</a>
+  <a href="../reference/index.html">Reference</a>
 </li>
       </ul>
       <ul class="nav navbar-nav navbar-right">
@@ -101,17 +103,92 @@
       </header>
 
 <div class="row">
-  <div class="contents col-md-9">
+  <div class="col-md-9 contents">
     <div class="page-header">
-      <h1>Page not found (404)</h1>
+    <h1>Methods for creating and inspecting ts_tbl objects</h1>
+    <small class="dont-index">Source: <a href='https://github.com/septic-tank/ricu/blob/master/R/ts-base.R'><code>R/ts-base.R</code></a>, <a href='https://github.com/septic-tank/ricu/blob/master/R/ts-tbl.R'><code>R/ts-tbl.R</code></a></small>
+    <div class="hidden name"><code>ts_tbl.Rd</code></div>
     </div>
 
-Content not found. Please use links in the navbar.
+    <div class="ref-description">
+    <p>Methods for creating and inspecting ts_tbl objects</p>
+    </div>
+
+    <pre class="usage"># S3 method for ts_tbl
+[(x, ...)
+
+# S3 method for ts_tbl
+dimnames(x)
+
+# S3 method for ts_tbl
+print(x, ..., n = NULL, width = NULL, n_extra = NULL)
+
+# S3 method for ts_tbl
+format(x, ..., n = NULL, width = NULL, n_extra = NULL)
+
+# S3 method for ts_tbl
+tbl_sum(x)
+
+# S3 method for ts_tbl
+str(object, ...)
+
+# S3 method for ts_tbl
+as.data.table(x, ...)
+
+# S3 method for ts_tbl
+as.data.frame(x, row.names = NULL, optional = FALSE, ...)
+
+ts_tbl(..., key, index = NULL, interval = hours(1L))
+
+as_ts_tbl(tbl, key, index = NULL, interval = hours(1L))</pre>
+
+    <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
+    <table class="ref-arguments">
+    <colgroup><col class="name" /><col class="desc" /></colgroup>
+    <tr>
+      <th>...</th>
+      <td><p>Passed to <code><a href='https://Rdatatable.gitlab.io/data.table/reference/data.table.html'>data.table::data.table()</a></code>/generic compatibility.</p></td>
+    </tr>
+    <tr>
+      <th>object</th>
+      <td><p>A <code>ts_tbl</code> object.</p></td>
+    </tr>
+    <tr>
+      <th>row.names, optional</th>
+      <td><p>Generic consistency: passing anything other than
+the default value issues a warning.</p></td>
+    </tr>
+    <tr>
+      <th>key</th>
+      <td><p>Character or numeric vector of at least length 1, identifying
+columns that combined with time stamps, uniquely identify rows.</p></td>
+    </tr>
+    <tr>
+      <th>index</th>
+      <td><p>Character or numeric vector of length 1, identifying the
+column that defines temporal ordering.</p></td>
+    </tr>
+    <tr>
+      <th>interval</th>
+      <td><p>Scalar value, defining time steps between rows (assuming
+complete time series data).</p></td>
+    </tr>
+    <tr>
+      <th>tbl</th>
+      <td><p>An object inheriting from <code>data.frame</code>.</p></td>
+    </tr>
+    </table>
+
 
   </div>
+  <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
+    <h2>Contents</h2>
+    <ul class="nav nav-pills nav-stacked">
+      <li><a href="#arguments">Arguments</a></li>
+    </ul>
 
+  </div>
 </div>
-
 
 
       <footer>

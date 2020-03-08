@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Function reference • sepsr</title>
+<title>Function reference • ricu</title>
 
 
 <!-- jquery -->
@@ -18,8 +18,8 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha256-U5ZEeKfGNOja007MMD3YBI0A3OSZOQbeG6z2f2Y0hu8=" crossorigin="anonymous"></script>
 
 <!-- Font Awesome icons -->
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.7.1/css/all.min.css" integrity="sha256-nAmazAk6vS34Xqo0BSrTb+abbtFlgsFK7NKSi6o7Y78=" crossorigin="anonymous" />
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.7.1/css/v4-shims.min.css" integrity="sha256-6qHlizsOWFskGlwVOKuns+D1nB6ssZrHQrNj1wGplHc=" crossorigin="anonymous" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.11.1/css/all.min.css" integrity="sha256-PbSmjxuVAzJ6FPvNYsrXygfGhNJYyZ2GktDbkMBqQZg=" crossorigin="anonymous" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.11.1/css/v4-shims.min.css" integrity="sha256-A6jcAdwFD48VMjlI3GDxUd+eCQa7/KWy6G9oe/ovaPA=" crossorigin="anonymous" />
 
 <!-- clipboard.js -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.4/clipboard.min.js" integrity="sha256-FiZwavyI2V6+EXO1U+xzLG3IKldpiTFf3153ea9zikQ=" crossorigin="anonymous"></script>
@@ -66,7 +66,7 @@
         <span class="icon-bar"></span>
       </button>
       <span class="navbar-brand">
-        <a class="navbar-link" href="../index.html">sepsr</a>
+        <a class="navbar-link" href="../index.html">ricu</a>
         <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.0.0.9000</span>
       </span>
     </div>
@@ -84,7 +84,12 @@
 </li>
       </ul>
       <ul class="nav navbar-nav navbar-right">
-        
+        <li>
+  <a href="https://github.com/septic-tank/ricu">
+    <span class="fab fa fab fa-github fa-lg"></span>
+     
+  </a>
+</li>
       </ul>
       
     </div><!--/.nav-collapse -->
@@ -119,7 +124,7 @@
       <tr>
         
         <td>
-          <p><code><a href="data_attach.html">attach_mimic()</a></code> <code><a href="data_attach.html">attach_eicu()</a></code> <code><a href="data_attach.html">data</a></code> <code><a href="data_attach.html">mimic</a></code> <code><a href="data_attach.html">mimic_demo</a></code> <code><a href="data_attach.html">eicu</a></code> <code><a href="data_attach.html">eicu_demo</a></code> <code><a href="data_attach.html">attach_datasource()</a></code> <code><a href="data_attach.html">setup_proxy_env()</a></code> </p>
+          <p><code><a href="data_attach.html">attach_mimic()</a></code> <code><a href="data_attach.html">attach_eicu()</a></code> <code><a href="data_attach.html">attach_hirid()</a></code> <code><a href="data_attach.html">data</a></code> <code><a href="data_attach.html">mimic</a></code> <code><a href="data_attach.html">mimic_demo</a></code> <code><a href="data_attach.html">eicu</a></code> <code><a href="data_attach.html">eicu_demo</a></code> <code><a href="data_attach.html">hirid</a></code> <code><a href="data_attach.html">attach_datasource()</a></code> <code><a href="data_attach.html">setup_proxy_env()</a></code> </p>
         </td>
         <td><p>Data attach utilities</p></td>
       </tr><tr>
@@ -140,12 +145,18 @@
           <p><code><a href="file_utils.html">data_dir()</a></code> <code><a href="file_utils.html">get_config()</a></code> </p>
         </td>
         <td><p>File system utilities</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="ts_tbl.html">`[`(<i>&lt;ts_tbl&gt;</i>)</a></code> <code><a href="ts_tbl.html">dimnames(<i>&lt;ts_tbl&gt;</i>)</a></code> <code><a href="ts_tbl.html">print(<i>&lt;ts_tbl&gt;</i>)</a></code> <code><a href="ts_tbl.html">format(<i>&lt;ts_tbl&gt;</i>)</a></code> <code><a href="ts_tbl.html">tbl_sum(<i>&lt;ts_tbl&gt;</i>)</a></code> <code><a href="ts_tbl.html">str(<i>&lt;ts_tbl&gt;</i>)</a></code> <code><a href="ts_tbl.html">as.data.table(<i>&lt;ts_tbl&gt;</i>)</a></code> <code><a href="ts_tbl.html">as.data.frame(<i>&lt;ts_tbl&gt;</i>)</a></code> <code><a href="ts_tbl.html">ts_tbl()</a></code> <code><a href="ts_tbl.html">as_ts_tbl()</a></code> </p>
+        </td>
+        <td><p>Methods for creating and inspecting ts_tbl objects</p></td>
       </tr>
     </tbody>
     </table>
   </div>
 
-  <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
+  <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <h2>Contents</h2>
     <ul class="nav nav-pills nav-stacked">
       <li><a href="#section-all-functions">All functions</a></li>
@@ -160,7 +171,7 @@
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.4.1.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.4.1.9000.</p>
 </div>
 
       </footer>

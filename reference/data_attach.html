@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Data attach utilities — attach_mimic • sepsr</title>
+<title>Data attach utilities — attach_mimic • ricu</title>
 
 
 <!-- jquery -->
@@ -18,8 +18,8 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha256-U5ZEeKfGNOja007MMD3YBI0A3OSZOQbeG6z2f2Y0hu8=" crossorigin="anonymous"></script>
 
 <!-- Font Awesome icons -->
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.7.1/css/all.min.css" integrity="sha256-nAmazAk6vS34Xqo0BSrTb+abbtFlgsFK7NKSi6o7Y78=" crossorigin="anonymous" />
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.7.1/css/v4-shims.min.css" integrity="sha256-6qHlizsOWFskGlwVOKuns+D1nB6ssZrHQrNj1wGplHc=" crossorigin="anonymous" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.11.1/css/all.min.css" integrity="sha256-PbSmjxuVAzJ6FPvNYsrXygfGhNJYyZ2GktDbkMBqQZg=" crossorigin="anonymous" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.11.1/css/v4-shims.min.css" integrity="sha256-A6jcAdwFD48VMjlI3GDxUd+eCQa7/KWy6G9oe/ovaPA=" crossorigin="anonymous" />
 
 <!-- clipboard.js -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.4/clipboard.min.js" integrity="sha256-FiZwavyI2V6+EXO1U+xzLG3IKldpiTFf3153ea9zikQ=" crossorigin="anonymous"></script>
@@ -68,7 +68,7 @@
         <span class="icon-bar"></span>
       </button>
       <span class="navbar-brand">
-        <a class="navbar-link" href="../index.html">sepsr</a>
+        <a class="navbar-link" href="../index.html">ricu</a>
         <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.0.0.9000</span>
       </span>
     </div>
@@ -86,7 +86,12 @@
 </li>
       </ul>
       <ul class="nav navbar-nav navbar-right">
-        
+        <li>
+  <a href="https://github.com/septic-tank/ricu">
+    <span class="fab fa fab fa-github fa-lg"></span>
+     
+  </a>
+</li>
       </ul>
       
     </div><!--/.nav-collapse -->
@@ -101,7 +106,7 @@
   <div class="col-md-9 contents">
     <div class="page-header">
     <h1>Data attach utilities</h1>
-    
+    <small class="dont-index">Source: <a href='https://github.com/septic-tank/ricu/blob/master/R/data-attach.R'><code>R/data-attach.R</code></a></small>
     <div class="hidden name"><code>data_attach.Rd</code></div>
     </div>
 
@@ -109,11 +114,24 @@
     <p>Data attach utilities</p>
     </div>
 
-    <pre class="usage"><span class='fu'>attach_mimic</span>(<span class='kw'>demo</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='kw'>dir</span> <span class='kw'>=</span> <span class='fu'>mimic_data_dir</span>(<span class='no'>demo</span>),
-  <span class='kw'>config</span> <span class='kw'>=</span> <span class='fu'>mimic_config</span>(<span class='no'>demo</span>), <span class='kw'>envir</span> <span class='kw'>=</span> <span class='kw'>if</span> (<span class='no'>demo</span>) <span class='no'>mimic_demo</span> <span class='kw'>else</span> <span class='no'>mimic</span>)
+    <pre class="usage"><span class='fu'>attach_mimic</span>(
+  <span class='kw'>demo</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
+  <span class='kw'>dir</span> <span class='kw'>=</span> <span class='fu'>mimic_data_dir</span>(<span class='no'>demo</span>),
+  <span class='kw'>config</span> <span class='kw'>=</span> <span class='fu'>mimic_config</span>(<span class='no'>demo</span>),
+  <span class='kw'>envir</span> <span class='kw'>=</span> <span class='kw'>if</span> (<span class='no'>demo</span>) <span class='no'>mimic_demo</span> <span class='kw'>else</span> <span class='no'>mimic</span>
+)
 
-<span class='fu'>attach_eicu</span>(<span class='kw'>demo</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='kw'>dir</span> <span class='kw'>=</span> <span class='fu'>eicu_data_dir</span>(<span class='no'>demo</span>),
-  <span class='kw'>config</span> <span class='kw'>=</span> <span class='fu'>eicu_config</span>(<span class='no'>demo</span>), <span class='kw'>envir</span> <span class='kw'>=</span> <span class='kw'>if</span> (<span class='no'>demo</span>) <span class='no'>eicu_demo</span> <span class='kw'>else</span> <span class='no'>eicu</span>)
+<span class='fu'>attach_eicu</span>(
+  <span class='kw'>demo</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
+  <span class='kw'>dir</span> <span class='kw'>=</span> <span class='fu'>eicu_data_dir</span>(<span class='no'>demo</span>),
+  <span class='kw'>config</span> <span class='kw'>=</span> <span class='fu'>eicu_config</span>(<span class='no'>demo</span>),
+  <span class='kw'>envir</span> <span class='kw'>=</span> <span class='kw'>if</span> (<span class='no'>demo</span>) <span class='no'>eicu_demo</span> <span class='kw'>else</span> <span class='no'>eicu</span>
+)
+
+<span class='fu'>attach_hirid</span>(
+  <span class='kw'>dir</span> <span class='kw'>=</span> <span class='fu'><a href='file_utils.html'>data_dir</a></span>(<span class='st'>"hirid"</span>, <span class='kw'>create</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>),
+  <span class='kw'>config</span> <span class='kw'>=</span> <span class='fu'><a href='file_utils.html'>get_config</a></span>(<span class='st'>"hirid-setup"</span>)
+)
 
 <span class='no'>data</span>
 
@@ -124,6 +142,8 @@
 <span class='no'>eicu</span>
 
 <span class='no'>eicu_demo</span>
+
+<span class='no'>hirid</span>
 
 <span class='fu'>attach_datasource</span>(<span class='no'>dir</span>, <span class='no'>config</span>)
 
@@ -159,10 +179,10 @@ forwarding (implemented as active bindings, see
 
     <h2 class="hasAnchor" id="format"><a class="anchor" href="#format"></a>Format</h2>
 
-    <p>An object of class <code>environment</code> of length 4.</p>
+    <p>An object of class <code>environment</code> of length 5.</p>
 
   </div>
-  <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
+  <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <h2>Contents</h2>
     <ul class="nav nav-pills nav-stacked">
       <li><a href="#arguments">Arguments</a></li>
@@ -179,7 +199,7 @@ forwarding (implemented as active bindings, see
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.4.1.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.4.1.9000.</p>
 </div>
 
       </footer>
