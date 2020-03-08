@@ -77,10 +77,6 @@ load_items <- function(source, table, item_col, items = NULL, names = NULL,
 
   if (length(items) == 0L) {
 
-    if (length(val_col) > 0L) {
-      warning("argument `val_col` is ignored then `items` is NULL.")
-    }
-
     load_wide(item_col, id_col, time_col, extra_cols, names,
               patient_ids, unit, callback, source = source, table = table,
               interval = interval)
@@ -118,6 +114,13 @@ map_names <- function(old, map_val, map_key) {
 
 prep_args <- function(arg, names, items = NULL) {
 
+  is_ok <- function(x) {
+    is.null(x) || (is.atomic(x) && length(x) == 1L) || is.function(x) ||
+      is.language(x)
+  }
+
+  all_ok <- function(x) all(lgl_ply(x, is_ok))
+
   uq_nms <- unique(names)
 
   if (is.null(arg)) {
@@ -141,7 +144,7 @@ prep_args <- function(arg, names, items = NULL) {
     arg <- as.list(arg)
   }
 
-  assert_that(is.list(arg), all(lengths(arg) <= 1L), has_name(arg, uq_nms))
+  assert_that(is.list(arg), all_ok(arg), has_name(arg, uq_nms))
 
   arg[uq_nms]
 }
@@ -311,6 +314,8 @@ load_grep <- function(items, item_col, id_col, time_col, val_col, extra_cols,
   prep_arg <- function(x) {
 
     if (is.null(x)) return(x)
+
+    x <- unique(x)
 
     assert_that(length(x) == 1L)
 

@@ -3,7 +3,7 @@
 si_data <- function(source, abx_count_win = hours(24L), abx_min_count = 1L,
                     positive_cultures = FALSE, interval = hours(1L),
                     patient_ids = NULL, col_cfg = get_col_config(source),
-                    dictionary = get_config("concept-dict")) {
+                    dictionary = read_dictionary("concept-dict")) {
 
   if (!identical(as_src(source), "mimic")) stop("TODO")
 
@@ -16,10 +16,11 @@ si_data <- function(source, abx_count_win = hours(24L), abx_min_count = 1L,
   }
 
   funs <- c(antibiotics = "sum", fluid_sampling = samp_fun)
-  dict <- get_concepts(source, names(funs), dictionary)
+  dict <- dictionary[names(funs), source = source]
 
   dat <- load_concepts(source, dict, patient_ids, col_cfg, funs,
                        interval, merge_data = FALSE)
+  names(dat) <- chr_ply(dat, data_cols)
 
   dat[["antibiotics"]] <- si_abx(dat[["antibiotics"]], abx_count_win,
                                  abx_min_count)

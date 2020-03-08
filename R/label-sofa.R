@@ -50,7 +50,7 @@ sofa_data <- function(source, pafi_win_length = hours(2L),
     load_concepts(source, vent_dict, patient_ids, col_cfg, agg_funs,
                   mins(1L), merge_data = FALSE)
   )
-  names(dat) <- vapply(dat, data_cols, character(1L))
+  names(dat) <- chr_ply(dat, data_cols)
 
   dat[["pafi"]] <- sofa_pafi(
     dat[["pa_o2"]], dat[["fi_o2"]], pafi_win_length, pafi_mode, fix_na_fio2
@@ -330,8 +330,10 @@ sofa_window <- function(tbl,
   need_cols <- c("pafi", "coag", "bili", "map", "dopa", "norepi", "dobu",
                  "epi", "gcs", "crea", "urine")
 
-  assert_that(has_cols(tbl, need_cols), has_no_gaps(tbl),
+  assert_that(has_cols(tbl, need_cols),
               is_time(win_length, allow_neg = FALSE))
+
+  tbl <- fill_gaps(tbl)
 
   tbl <- slide_quo(tbl, substitute(
     list(
