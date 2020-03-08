@@ -1,7 +1,7 @@
 
 sofa  <- sofa_data("mimic_demo")
 sowin <- sofa_window(sofa)
-score <- sofa_compute(win)
+score <- sofa_compute(sowin)
 
 test_that("sofa", {
 
@@ -39,7 +39,7 @@ test_that("sofa", {
 si    <- si_data("mimic_demo")
 siwin <- si_windows(si)
 
-test_that("si", {
+test_that("suspicion of infection", {
 
   expect_is(si, "ts_tbl")
   expect_true(is_ts_tbl(si))
@@ -56,4 +56,17 @@ test_that("si", {
   expect_setequal(data_cols(siwin), c("si_lwr", "si_upr"))
   expect_lte(nrow(siwin), nrow(si))
   expect_equal(interval(siwin), interval(si))
+})
+
+sep3 <- sepsis_3(score, siwin)
+
+test_that("sepsis 3", {
+
+  expect_is(sep3, "ts_tbl")
+  expect_true(is_ts_tbl(sep3))
+  expect_identical(key(sep3), "hadm_id")
+  expect_identical(index(sep3), "sep3_time")
+  expect_setequal(data_cols(sep3), "si_time")
+  expect_gt(nrow(sep3), 0L)
+  expect_equal(interval(sep3), hours(1L))
 })

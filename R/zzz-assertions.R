@@ -109,6 +109,13 @@ on_failure(same_interval) <- function(call, env) {
          "` are not on the same time scale")
 }
 
+same_key <- function(x, y) identical(key(x), key(y))
+
+on_failure(same_key) <- function(call, env) {
+  paste0(deparse(call$x), " and ", deparse(call$y),
+         " do not share the same `key`columns")
+}
+
 same_id_cols <- function(x, y) setequal(id_cols(x), id_cols(y))
 
 on_failure(same_id_cols) <- function(call, env) {
