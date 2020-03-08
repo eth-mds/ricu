@@ -27,8 +27,8 @@ sepsis_3 <- function(sofa, si, si_window = c("first", "last", "any"),
   si_window <- match.arg(si_window)
   key <- key(sofa)
 
-  sofa <- set(sofa, j = "join_time1", val = time_col(sofa))
-  sofa <- set(sofa, j = "join_time2", val = time_col(sofa))
+  sofa <- set(sofa, j = "join_time1", value = time_col(sofa))
+  sofa <- set(sofa, j = "join_time2", value = time_col(sofa))
 
   on.exit(rm_cols(sofa, c("join_time1", "join_time2")))
 

@@ -33,7 +33,7 @@ test_that("sofa", {
     c("sofa_resp", "sofa_coag", "sofa_liver", "sofa_cardio", "sofa_cns",
       "sofa_renal", "sofa_score"))
   expect_identical(nrow(score), nrow(sowin))
-  expect_equal(interval(score), interval(sofa)
+  expect_equal(interval(score), interval(sofa))
 })
 
 si    <- si_data("mimic_demo")

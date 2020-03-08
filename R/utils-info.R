@@ -94,7 +94,7 @@ eicu_patient_weight <- function(weight_col, source) {
   res <- res[, list(weight = mean(get("admissionweight"), na.rm = TRUE)),
              by = "patienthealthsystemstayid"]
 
-  res <- res[!is.na(weight), ]
+  res <- res[!is.na(get("weight")), ]
   res <- setnames(res, "weight", weight_col)
 
   res
