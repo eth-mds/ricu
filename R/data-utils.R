@@ -123,12 +123,7 @@ prep_args <- function(arg, names, items = NULL) {
 
   uq_nms <- unique(names)
 
-  if (is.null(arg)) {
-
-    arg <- rep(list(arg), length(uq_nms))
-    names(arg) <- uq_nms
-
-  } else if (length(arg) == 1L) {
+  if (length(arg) <= 1L) {
 
     arg <- rep(list(arg), length(uq_nms))
     names(arg) <- uq_nms
@@ -142,6 +137,10 @@ prep_args <- function(arg, names, items = NULL) {
   } else {
 
     arg <- as.list(arg)
+
+    if (is.null(names(arg)) && is_unique(names) && same_length(arg, names)) {
+      names(arg) <- names
+    }
   }
 
   assert_that(is.list(arg), all_ok(arg), has_name(arg, uq_nms))
@@ -224,21 +223,15 @@ load_long <- function(items, item_col, id_col, time_col, val_col, extra_cols,
   assert_that(length(items) > 0L, is.string(item_col), is.string(val_col))
 
   if (is.null(names)) {
-
     names <- items
-    has_names <- FALSE
-
-  } else {
-
-    if (length(names) == 1L) {
-      names <- rep(names, length(items))
-    }
-
-    has_names <- TRUE
+  } else if (length(names) == 1L) {
+    names <- rep(names, length(items))
   }
 
-  callback <- prep_args(callback, names, items)
-  unit     <- prep_args(unit, names, items)
+  callback <- prep_args(callback, as.character(items))
+  unit_itm <- prep_args(unit, as.character(items))
+  unit_con <- prep_args(unit, names, items)
+  names    <- prep_args(as.character(names), as.character(items))
 
   uq_items <- unique(items)
   uq_extra <- unique(unlist(extra_cols))
@@ -268,39 +261,24 @@ load_long <- function(items, item_col, id_col, time_col, val_col, extra_cols,
     return(list(dat))
   }
 
-  split_col <- new_names(dat)
+  dat <- split(dat, by = item_col, keep.by = identical(val_col, item_col))
 
-  if (has_names) {
-    dat <- dat[, c(split_col) := map_names(get(item_col), names, items)]
-  } else {
-    dat <- dat[, c(split_col) := get(item_col)]
-  }
+  if (!(all_null(callback) || all_na(callback))) {
 
-  if (!identical(val_col, item_col)) {
-    dat <- rm_cols(dat, item_col)
-  }
-
-  dat <- split(dat, by = split_col, keep.by = FALSE)
-
-  if (!all_null(callback)) {
-
-    dat <- Map(do_callback, dat, callback[names(dat)], unit[names(dat)],
+    dat <- Map(do_callback, dat, callback[names(dat)], unit_itm[names(dat)],
       MoreArgs = c(list(val = val_col, id_col = id_col, time_col = time_col),
                    extra_cols)
     )
   }
 
   dat <- lapply(dat, rm_cols, extra_cols)
-  dat <- Map(rename_cols, dat, names(dat), val_col)
+  dat <- Map(rename_cols, dat, names[names(dat)], val_col)
 
-  if (!is.null(callback)) {
-    dat <- combine_feats(dat)
-  }
-
+  dat <- combine_feats(dat)
   dat <- lapply(dat, rm_na)
 
   if (!is.null(unit)) {
-    dat <- Map(add_unit, dat, unit[names(dat)])
+    dat <- Map(add_unit, dat, unit_con[chr_ply(dat, data_cols)])
   }
 
   names(dat) <- NULL

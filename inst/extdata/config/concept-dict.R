@@ -1124,7 +1124,8 @@ cfg <- list(
         list(ids = NULL, table = "vitalperiodic", column = "temperature")
       ),
       hirid = list(
-        list(ids = c(410L, 400L), table = "observations", column = "variableid")
+        list(ids = c(410L, 400L), table = "observations",
+             column = "variableid")
       )
     )
   ),

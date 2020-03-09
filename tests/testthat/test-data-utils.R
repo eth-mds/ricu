@@ -153,7 +153,7 @@ test_that("read data items (long)", {
 
   expect_length(dat3, 2L)
   expect_setequal(chr_ply(dat3, data_cols), c("albu", "gluc"))
-  expect_fsetequal(dat3[[2L]], dat2[[1L]])
+  expect_fsetequal(dat3[[1L]], dat2[[1L]])
 
   expect_message(
     dat3 <- load_items("mimic_demo", "labevents", "itemid",
@@ -167,14 +167,6 @@ test_that("read data items (long)", {
     load_items("mimic_demo", "labevents", "itemid", c(50809L, 50862L, 50931L),
                c("gluc", "albu", "gluc"), unit = c("mg/dL", "g/dL"))
   )
-
-  expect_message(
-    dat4 <- load_items("mimic_demo", "labevents", "itemid",
-                       c(50809L, 50862L, 50931L), c("gluc", "albu", "gluc"),
-                       unit = c(gluc = "mg/dL", albu = "g/dL"))
-  )
-
-  expect_all_identical(dat3, dat4)
 })
 
 test_that("read data items (grep)", {
