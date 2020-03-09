@@ -200,21 +200,21 @@
     "sources": {
       "mimic": [
         {
-          "id": 50883,
+          "ids": 50883,
           "table": "labevents",
           "column": "itemid"
         }
       ],
       "eicu": [
         {
-          "id": "Bilirubin, Direct",
+          "ids": "Bilirubin, Direct",
           "table": "lab",
           "column": "labname"
         }
       ],
       "hirid": [
         {
-          "id": 24000560,
+          "ids": 24000560,
           "table": "observations",
           "column": "variableid",
           "callback": "multiply_hirid_bili"
@@ -714,7 +714,7 @@
     "sources": {
       "hirid": [
         {
-          "id": [2200, 8290, 30010009],
+          "ids": [2200, 8290, 30010009],
           "table": "observations",
           "column": "variableid"
         }
@@ -1015,25 +1015,6 @@
       ]
     }
   },
-  "hematocrit.1": {
-    "unit": "%",
-    "sources": {
-      "mimic": [
-        {
-          "id": 51221,
-          "table": "labevents",
-          "column": "itemid"
-        }
-      ],
-      "eicu": [
-        {
-          "id": "Hct",
-          "table": "lab",
-          "column": "labname"
-        }
-      ]
-    }
-  },
   "hemoglobin": {
     "unit": "g/dL",
     "sources": {
@@ -1102,12 +1083,12 @@
     "sources": {
       "mimic": [
         {
-          "id": [30045, 30100],
+          "ids": [30045, 30100],
           "table": "inputevents_cv",
           "column": "itemid"
         },
         {
-          "id": [223258, 223260],
+          "ids": [223258, 223260],
           "table": "inputevents_mv",
           "column": "itemid",
           "amount_col": "amount",
@@ -1117,34 +1098,34 @@
       ],
       "eicu": [
         {
-          "id": "Insulin (units/hr)",
+          "ids": "Insulin (units/hr)",
           "table": "infusiondrug",
           "column": "drugname"
         },
         {
-          "id": "Insulin (ml/hr)",
+          "ids": "Insulin (ml/hr)",
           "table": "infusiondrug",
           "column": "drugname"
         },
         {
-          "id": "Insulin ()",
+          "ids": "Insulin ()",
           "table": "infusiondrug",
           "column": "drugname"
         },
         {
-          "id": "Insulin 250 Units Sodium Chloride 0.9% 250 ml (units/hr)",
+          "ids": "Insulin 250 Units Sodium Chloride 0.9% 250 ml (units/hr)",
           "table": "infusiondrug",
           "column": "drugname"
         }
       ],
       "hirid": [
         {
-          "id": 15,
+          "ids": 15,
           "table": "pharma",
           "column": "pharmaid"
         },
         {
-          "id": 1000724,
+          "ids": 1000724,
           "table": "pharma",
           "column": "pharmaid"
         }
@@ -1983,12 +1964,12 @@
     "sources": {
       "mimic": [
         {
-          "id": [676, 677, 223762],
+          "ids": [676, 677, 223762],
           "table": "chartevents",
           "column": "itemid"
         },
         {
-          "id": [678, 679, 223761, 224027],
+          "ids": [678, 679, 223761, 224027],
           "table": "chartevents",
           "column": "itemid",
           "callback": "fahrenheit_to_celsius"
@@ -1996,14 +1977,14 @@
       ],
       "eicu": [
         {
-          "id": null,
+          "ids": null,
           "table": "vitalperiodic",
           "column": "temperature"
         }
       ],
       "hirid": [
         {
-          "id": [410, 400],
+          "ids": [410, 400],
           "table": "observations",
           "column": "variableid"
         }
@@ -2038,14 +2019,14 @@
     "sources": {
       "mimic": [
         {
-          "id": 51002,
+          "ids": 51002,
           "table": "labevents",
           "column": "itemid"
         }
       ],
       "eicu": [
         {
-          "id": "troponin - I",
+          "ids": "troponin - I",
           "table": "lab",
           "column": "labname"
         }
@@ -2224,7 +2205,7 @@
     "sources": {
       "mimic": [
         {
-          "id": [1, 60, 218, 221, 223, 436, 437, 444, 445, 448, 449, 450, 459, 501, 502, 503, 505, 506, 535, 543, 639, 654, 667, 668, 669, 670, 671, 672, 681, 682, 683, 684, 686, 1211, 1340, 1486, 1600, 1655, 2000, 3459, 5865, 5866, 220339, 223848, 223849, 224419, 224684, 224685, 224686, 224687, 224695, 224696, 224697, 224700, 224701, 224702, 224703, 224704, 224705, 224706, 224707, 224709, 224738, 224746, 224747, 224750, 226873, 227187],
+          "ids": [1, 60, 218, 221, 223, 436, 437, 444, 445, 448, 449, 450, 459, 501, 502, 503, 505, 506, 535, 543, 639, 654, 667, 668, 669, 670, 671, 672, 681, 682, 683, 684, 686, 1211, 1340, 1486, 1600, 1655, 2000, 3459, 5865, 5866, 220339, 223848, 223849, 224419, 224684, 224685, 224686, 224687, 224695, 224696, 224697, 224700, 224701, 224702, 224703, 224704, 224705, 224706, 224707, 224709, 224738, 224746, 224747, 224750, 226873, 227187],
           "table": "chartevents",
           "column": "itemid",
           "callback": "all_flag"
