@@ -133,35 +133,6 @@ split.ts_tbl <- function(x, ...) {
 }
 
 #' @export
-print.ts_meta <- function(x, ...) cat_line(format(x, ...))
-
-#' @export
-print.tbl_id <- function(x, ...) cat_line(format(x, ...))
-
-#' @export
-print.tbl_index <- function(x, ...) cat_line(format(x, ...))
-
-#' @export
-format.ts_meta <- function(x, ...) {
-  format_one_meta(x, format(tbl_id(x)), format(tbl_index(x)))
-}
-
-#' @export
-format.tbl_id <- function(x, ...) {
-  format_one_meta(x, paste0("`", id(x), "`"))
-}
-
-#' @export
-format.tbl_index <- function(x, ...) {
-  format_one_meta(x, paste0("`", index(x), "`"), format(interval(x)))
-}
-
-format_one_meta <- function(x, ...) {
-  paste0("<", class(x), "[", paste(..., sep = ", "), "]>")
-}
-
-
-#' @export
 merge.ts_tbl <- function(x, y, by = meta_cols(x), ...) {
 
   if (is_ts_tbl(y)) {

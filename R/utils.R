@@ -322,3 +322,7 @@ lgl_ply <- function(x, fun, ..., length = 1L, use_names = FALSE) {
 }
 
 map <- function(f, ...) Map(f, ..., USE.NAMES = FALSE)
+
+format_one_meta <- function(x, ...) {
+  paste0("<", class(x), "[", paste(..., sep = ", "), "]>")
+}
