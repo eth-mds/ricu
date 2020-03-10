@@ -162,7 +162,7 @@ format_one_meta <- function(x, ...) {
 
 
 #' @export
-merge.ts_tbl <- function(x, y, by = id_cols(x), ...) {
+merge.ts_tbl <- function(x, y, by = meta_cols(x), ...) {
 
   if (is_ts_tbl(y)) {
     y <- data.table::copy(y)

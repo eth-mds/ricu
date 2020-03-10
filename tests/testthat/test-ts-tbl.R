@@ -18,7 +18,7 @@ test_that("ts_tbl constructors", {
   expect_identical(key(tbl), "a")
   expect_identical(index(tbl), "b")
   expect_identical(data_cols(tbl), "c")
-  expect_identical(id_cols(tbl), c("a", "b"))
+  expect_identical(meta_cols(tbl), c("a", "b"))
   expect_equal(interval(tbl), hours(1L))
   expect_equal(time_step(tbl), 1L)
   expect_identical(time_unit(tbl), "hours")
@@ -71,6 +71,8 @@ test_that("rename_cols for ts_tbl", {
                "does not contain the following columns: `d`")
   expect_error(rename_cols(cpy(tbl), c("e", "e"), c("b", "c")),
                "contains duplicate elements")
+
+  expect_identical(rename_cols(cpy(tbl), "e", "d", skip_absent = TRUE), tbl)
 })
 
 test_that("rm_cols for ts_tbl", {

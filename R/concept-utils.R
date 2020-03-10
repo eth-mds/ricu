@@ -351,14 +351,14 @@ load_concepts <- function(source, concepts = get_concepts(source),
 
   do_aggregate <- function(x, fun) {
     if (is.function(fun)) {
-      x[, lapply(.SD, fun), by = c(id_cols(x)), .SDcols = data_cols(x)]
+      x[, lapply(.SD, fun), by = c(meta_cols(x)), .SDcols = data_cols(x)]
     } else if (!is.language(fun) && (is.null(fun) || is.na(fun))) {
-      assert_that(is_unique(x, by = id_cols(x)))
+      assert_that(is_unique(x, by = meta_cols(x)))
       x
     } else if (is.string(fun)) {
       dt_gforce(x, fun)
     } else {
-      x[, eval(fun), by = c(id_cols(x))]
+      x[, eval(fun), by = c(meta_cols(x))]
     }
   }
 

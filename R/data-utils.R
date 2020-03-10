@@ -195,7 +195,7 @@ load_wide <- function(item_cols, id_col, time_col, extra_cols, names,
 
   } else {
 
-    dat <- unmerge(dat, item_cols, c(id_cols(dat), to_rm), FALSE)
+    dat <- unmerge(dat, item_cols, c(meta_cols(dat), to_rm), FALSE)
     dat <- Map(do_callback,
       dat, callback[names(dat)], unit[names(dat)], names(dat),
       MoreArgs = c(list(id_col = id_col, time_col = time_col), extra_cols)

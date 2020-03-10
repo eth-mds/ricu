@@ -59,6 +59,9 @@ as_ts_tbl <- function(tbl, key, index = NULL, interval = hours(1L)) {
   tbl
 }
 
+#' @export
+is_ts_tbl <- function(x) inherits(x, "ts_tbl")
+
 ts_meta.ts_tbl <- function(x) attr(x, "ts_meta")
 
 set_ts_meta <- function(x, meta, stop_on_fail = TRUE) {
@@ -72,7 +75,7 @@ set_ts_meta <- function(x, meta, stop_on_fail = TRUE) {
   key <- key(meta)
   index <- index(meta)
 
-  id_cols <- c(key, index)
+  meta_cols <- c(key, index)
 
   check <- validate_that(
     is_dt(x), has_col(x, key), has_col(x, index),
@@ -84,10 +87,10 @@ set_ts_meta <- function(x, meta, stop_on_fail = TRUE) {
     else return(unclass_ts_tbl(x))
   }
 
-  x <- na.omit(x, id_cols)
+  x <- na.omit(x, meta_cols)
 
-  setkeyv(x, id_cols)
-  setcolorder(x, c(id_cols, setdiff(colnames(x), id_cols)))
+  setkeyv(x, meta_cols)
+  setcolorder(x, c(meta_cols, setdiff(colnames(x), meta_cols)))
 
   setattr(x, "ts_meta", meta)
 
@@ -124,7 +127,7 @@ rm_cols.ts_tbl <- function(x, cols, ...) {
 
   assert_that(has_cols(x, cols))
 
-  if (any(id_cols(x) %in% cols)) {
+  if (any(meta_cols(x) %in% cols)) {
     x <- unclass_ts_tbl(x)
   }
 
@@ -134,17 +137,26 @@ rm_cols.ts_tbl <- function(x, cols, ...) {
 }
 
 #' @export
-rename_cols.ts_tbl <- function(x, new, old = colnames(x), ...) {
+rename_cols.ts_tbl <- function(x, new, old = colnames(x), skip_absent = FALSE,
+                               ...) {
 
-  hits <- old %in% colnames(x)
+  assert_that(is.flag(skip_absent))
 
-  new <- new[hits]
-  old <- old[hits]
+  if (skip_absent) {
 
-  assert_that(is_unique(replace(colnames(x), match(old, colnames(x)), new)))
+    hits <- old %in% colnames(x)
+
+    if (sum(hits) == 0L) return(x)
+
+    new <- new[hits]
+    old <- old[hits]
+  }
+
+  assert_that(is_unique(replace(colnames(x), match(old, colnames(x)), new)),
+              has_cols(x, old))
 
   meta <- rename_cols(ts_meta(x), new, old)
-  x <- setnames(x, old, new)
+  x <- setnames(x, old, new, skip_absent)
 
   reclass_ts_tbl(x, meta)
 }
@@ -166,10 +178,10 @@ set_key.ts_tbl <- function(x, value) {
 }
 
 #' @export
-data_cols <- function(x) setdiff(colnames(x), id_cols(x))
+data_cols <- function(x) setdiff(colnames(x), meta_cols(x))
 
 #' @export
-id_cols <- function(x) c(key(x), index(x))
+meta_cols <- function(x) c(key(x), index(x))
 
 #' @export
 interval.ts_tbl <- function(x) {

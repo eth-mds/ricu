@@ -104,8 +104,8 @@ sofa_pafi <- function(pao2, fio2, win_length, mode, fix_na_fio2) {
   if (identical(mode, "match_vals")) {
 
     res <- rbind(
-      fio2[pao2, on = id_cols(fio2), roll = win_length],
-      pao2[fio2, on = id_cols(fio2), roll = win_length]
+      fio2[pao2, on = meta_cols(fio2), roll = win_length],
+      pao2[fio2, on = meta_cols(fio2), roll = win_length]
     )
     res <- unique(res)
 
@@ -170,7 +170,7 @@ sofa_vent <- function(start, stop, win_length, min_length, interval) {
       set(stop,  j = "stop_time",  value = NULL)
     })
 
-    merged <- stop[start, roll = -win_length, on = id_cols(start)]
+    merged <- stop[start, roll = -win_length, on = meta_cols(start)]
     merged <- merged[is.na(stop_time), stop_time := start_time + win_length]
   }
 

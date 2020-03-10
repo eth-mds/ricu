@@ -107,7 +107,7 @@ test_that("load concepts", {
   expect_gt(nrow(dat4), nrow(dat3))
 
   expect_identical(dat3,
-    dat4[, list(gluc = median(gluc)), by = c(id_cols(dat4))]
+    dat4[, list(gluc = median(gluc)), by = c(meta_cols(dat4))]
   )
 
   expect_message(

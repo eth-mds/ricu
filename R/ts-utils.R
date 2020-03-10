@@ -36,7 +36,7 @@ has_no_gaps <- function(x) {
   }
 
   assert_that(is_ts_tbl(x), is_unique(x),
-              identical(data.table::key(x), id_cols(x)))
+              identical(data.table::key(x), meta_cols(x)))
 
   key_cols <- key(x)
 
@@ -73,7 +73,7 @@ fill_gaps <- function(x, limits = NULL, ...) {
 
   assert_that(same_ts(x, join))
 
-  x[join, on = id_cols(x)]
+  x[join, on = meta_cols(x)]
 }
 
 #' @export
@@ -139,7 +139,7 @@ make_unique <- function(x, expr, fun, ...) {
 }
 
 #' @export
-make_unique_quo <- function(x, expr, by = id_cols(x),
+make_unique_quo <- function(x, expr, by = meta_cols(x),
                             cols = setdiff(colnames(x), by), ...) {
 
   assert_that(is_ts_tbl(x))
@@ -155,7 +155,7 @@ make_unique_quo <- function(x, expr, by = id_cols(x),
 }
 
 #' @export
-is_unique.ts_tbl <- function(x, by = id_cols(x), ...) {
+is_unique.ts_tbl <- function(x, by = meta_cols(x), ...) {
   identical(anyDuplicated(x, by = by, ...), 0L)
 }
 
@@ -163,7 +163,7 @@ is_unique.ts_tbl <- function(x, by = id_cols(x), ...) {
 dt_gforce <- function(x,
                       fun = c("mean", "median", "min", "max", "sum", "prod",
                               "var", "sd", "first", "last"),
-                      by = id_cols(x), cols = data_cols(x),
+                      by = meta_cols(x), cols = data_cols(x),
                       na.rm = !fun %in% c("first", "last")) {
 
   fun <- match.arg(fun)
@@ -209,7 +209,7 @@ rm_na <- function(x, cols = data_cols(x), mode = c("all", "any")) {
 }
 
 #' @export
-unmerge <- function(x, var_cols = data_cols(x), fixed_cols = id_cols(x),
+unmerge <- function(x, var_cols = data_cols(x), fixed_cols = meta_cols(x),
                     na_rm = TRUE) {
 
   assert_that(all(c(var_cols, fixed_cols) %in% colnames(x)), is.flag(na_rm))

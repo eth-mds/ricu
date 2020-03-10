@@ -116,9 +116,9 @@ on_failure(same_key) <- function(call, env) {
          " do not share the same `key`columns")
 }
 
-same_id_cols <- function(x, y) setequal(id_cols(x), id_cols(y))
+same_meta_cols <- function(x, y) setequal(meta_cols(x), meta_cols(y))
 
-on_failure(same_id_cols) <- function(call, env) {
+on_failure(same_meta_cols) <- function(call, env) {
   paste0(deparse(call$x), " and ", deparse(call$y),
          " do not share the same `key` and `index` columns")
 }
