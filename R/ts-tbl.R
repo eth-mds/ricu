@@ -2,7 +2,7 @@
 #' Methods for creating and inspecting ts_tbl objects
 #'
 #' @param tbl An object inheriting from `data.frame`.
-#' @param key Character or numeric vector of at least length 1, identifying
+#' @param id Character or numeric vector of at least length 1, identifying
 #' columns that combined with time stamps, uniquely identify rows.
 #' @param index Character or numeric vector of length 1, identifying the
 #' column that defines temporal ordering.
@@ -13,8 +13,8 @@
 #'
 #' @export
 #'
-ts_tbl <- function(..., key, index = NULL, interval = hours(1L)) {
-  as_ts_tbl(data.table::data.table(...), key, index, interval)
+ts_tbl <- function(..., id, index = NULL, interval = hours(1L)) {
+  as_ts_tbl(data.table::data.table(...), id, index, interval)
 }
 
 #' @param ... Passed to [data.table::data.table()]/generic compatibility.
@@ -23,17 +23,17 @@ ts_tbl <- function(..., key, index = NULL, interval = hours(1L)) {
 #'
 #' @export
 #'
-as_ts_tbl <- function(tbl, key, index = NULL, interval = hours(1L)) {
+as_ts_tbl <- function(tbl, id, index = NULL, interval = hours(1L)) {
 
   assert_that(inherits(tbl, "data.frame"), is_unique(colnames(tbl)))
 
   if (!is_dt(tbl)) data.table::setDT(tbl)
 
-  if (is.numeric(key) || is.logical(key)) {
-    key <- colnames(tbl)[key]
+  if (is.numeric(id) || is.logical(id)) {
+    id <- colnames(tbl)[id]
   }
 
-  key <- new_ts_key(key)
+  id <- new_ts_id(id)
 
   if (is.null(index)) {
 
@@ -53,7 +53,7 @@ as_ts_tbl <- function(tbl, key, index = NULL, interval = hours(1L)) {
 
   index <- new_ts_index(index, interval)
 
-  tbl <- set_ts_meta(tbl, new_ts_meta(key, index), stop_on_fail = TRUE)
+  tbl <- set_ts_meta(tbl, new_ts_meta(id, index), stop_on_fail = TRUE)
   tbl <- set_ts_class(tbl)
 
   tbl
@@ -72,13 +72,13 @@ set_ts_meta <- function(x, meta, stop_on_fail = TRUE) {
 
   assert_that(is_ts_meta(meta))
 
-  key <- key(meta)
+  id <- id(meta)
   index <- index(meta)
 
-  meta_cols <- c(key, index)
+  meta_cols <- c(id, index)
 
   check <- validate_that(
-    is_dt(x), has_col(x, key), has_col(x, index),
+    is_dt(x), has_col(x, id), has_col(x, index),
     has_time_col(x, index), has_interval(x, index, interval(meta))
   )
 
@@ -170,18 +170,18 @@ set_index.ts_tbl <- function(x, value) {
 }
 
 #' @export
-key.ts_tbl <- function(x) key(ts_meta(x))
+id.ts_tbl <- function(x) id(ts_meta(x))
 
 #' @export
-set_key.ts_tbl <- function(x, value) {
-  set_ts_meta(x, set_key(ts_meta(x), value))
+set_id.ts_tbl <- function(x, value) {
+  set_ts_meta(x, set_id(ts_meta(x), value))
 }
 
 #' @export
 data_cols <- function(x) setdiff(colnames(x), meta_cols(x))
 
 #' @export
-meta_cols <- function(x) c(key(x), index(x))
+meta_cols <- function(x) c(id(x), index(x))
 
 #' @export
 interval.ts_tbl <- function(x) {
@@ -241,19 +241,19 @@ units.ts_tbl <- function(x) {
 }
 
 #' @export
-make_compatible <- function(x, def, key = TRUE, index = TRUE) {
+make_compatible <- function(x, def, id = TRUE, index = TRUE) {
 
   def <- ts_meta(def)
 
   assert_that(is_ts_tbl(x), is_ts_meta(def))
 
-  if (key && !setequal(key(x), key(def))) {
-    assert_that(same_length(key(x), key(def)))
-    x <- rename_cols(x, key(def), key(x))
+  if (id && !setequal(id(x), id(def))) {
+    assert_that(same_length(id(x), id(def)))
+    x <- rename_cols(x, id(def), id(x))
   }
 
   if (index && !setequal(index(x), index(def))) {
-    assert_that(same_length(key(x), key(def)))
+    assert_that(same_length(id(x), id(def)))
     x <- rename_cols(x, index(def), index(x))
   }
 

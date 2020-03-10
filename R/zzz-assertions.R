@@ -9,8 +9,8 @@ on_failure(is_ts_index) <- function(call, env) {
   paste0(deparse(call$x), " is not a `ts_index` object")
 }
 
-on_failure(is_ts_key) <- function(call, env) {
-  paste0(deparse(call$x), " is not a `ts_key` object")
+on_failure(is_ts_id) <- function(call, env) {
+  paste0(deparse(call$x), " is not a `ts_id` object")
 }
 
 on_failure(is_ts_meta) <- function(call, env) {
@@ -109,18 +109,18 @@ on_failure(same_interval) <- function(call, env) {
          "` are not on the same time scale")
 }
 
-same_key <- function(x, y) identical(key(x), key(y))
+same_id <- function(x, y) identical(id(x), id(y))
 
-on_failure(same_key) <- function(call, env) {
+on_failure(same_id) <- function(call, env) {
   paste0(deparse(call$x), " and ", deparse(call$y),
-         " do not share the same `key`columns")
+         " do not share the same `id`columns")
 }
 
 same_meta_cols <- function(x, y) setequal(meta_cols(x), meta_cols(y))
 
 on_failure(same_meta_cols) <- function(call, env) {
   paste0(deparse(call$x), " and ", deparse(call$y),
-         " do not share the same `key` and `index` columns")
+         " do not share the same `id` and `index` columns")
 }
 
 same_time_cols <- function(x, y) {
@@ -198,22 +198,13 @@ on_failure(all_na) <- function(call, env) {
 }
 
 same_ts <- function(x, y) {
-  identical(key(x), key(y)) && identical(index(x), index(y)) &&
+  identical(id(x), id(y)) && identical(index(x), index(y)) &&
     all.equal(interval(x), interval(y))
 }
 
 on_failure(same_ts) <- function(call, env) {
   paste0("`", deparse(call$x), "` and `", deparse(call$y),
-         "` differ in key, index and/or interval")
-}
-
-is_dt_key <- function(dt, col, pos) {
-  identical(col, data.table::key(dt)[pos])
-}
-
-on_failure(is_dt_key) <- function(call, env) {
-  paste0("`", eval(call$col, env), "` is not the data.table key of `",
-         deparse(call$dt), "` in position ", eval(call$pos, env))
+         "` differ in id, index and/or interval")
 }
 
 has_interval <- function(x, col, interval) {

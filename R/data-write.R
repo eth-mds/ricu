@@ -8,7 +8,7 @@ write_psv <- function(x, dir, na_rm = TRUE) {
     x <- rm_na(x, cols = data_cols(x), mode = "all")
   }
 
-  dat <- split(x, by = key(x))
+  dat <- split(x, by = id(x))
   files <- file.path(dir, paste0(names(dat), sep = ".psv"))
 
   Map(readr::write_delim, dat, files, delim = "|", na = "NaN")

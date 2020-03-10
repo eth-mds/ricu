@@ -38,12 +38,12 @@ has_no_gaps <- function(x) {
   assert_that(is_ts_tbl(x), is_unique(x),
               identical(data.table::key(x), meta_cols(x)))
 
-  key_cols <- key(x)
+  id_cols <- id(x)
 
   res <- x[, check_time_col(get(index(x)), time_step(x)),
-           by = c(key_cols)]
+           by = c(id_cols)]
 
-  all(res[[setdiff(colnames(res), key_cols)]])
+  all(res[[setdiff(colnames(res), id_cols)]])
 }
 
 #' @export
@@ -59,14 +59,14 @@ fill_gaps <- function(x, limits = NULL, ...) {
   if (is.null(limits)) {
 
     limits <- x[, list(min = min(get(time_col)), max = max(get(time_col))),
-                by = c(key(x))]
+                by = c(id(x))]
 
-    join <- expand_limits(limits, "min", "max", time_step(x), key(x), time_col)
+    join <- expand_limits(limits, "min", "max", time_step(x), id(x), time_col)
 
   } else {
 
     join <- expand_limits(limits, ..., step_size = time_step(x),
-                          id_cols = key(x), new_col = time_col)
+                          id_cols = id(x), new_col = time_col)
   }
 
   join <- unique(join)
@@ -88,7 +88,7 @@ slide_quo <- function(x, expr, before, after = hours(0L),
               is_time(after, allow_neg = FALSE))
 
   time_col <- index(x)
-  id_cols  <- key(x)
+  id_cols  <- id(x)
   time_unit <- time_unit(x)
 
   units(before) <- time_unit

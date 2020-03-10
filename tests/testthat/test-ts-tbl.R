@@ -1,11 +1,11 @@
 
 test_that("ts_tbl constructors", {
 
-  tbl <- ts_tbl(a = 1:10, b = hours(1:10), key = "a")
+  tbl <- ts_tbl(a = 1:10, b = hours(1:10), id = "a")
 
   expect_is(tbl, "ts_tbl")
   expect_true(is_ts_tbl(tbl))
-  expect_identical(key(tbl), "a")
+  expect_identical(id(tbl), "a")
   expect_identical(index(tbl), "b")
   expect_equal(interval(tbl), hours(1L))
 
@@ -15,7 +15,7 @@ test_that("ts_tbl constructors", {
 
   expect_is(tbl, "ts_tbl")
   expect_true(is_ts_tbl(tbl))
-  expect_identical(key(tbl), "a")
+  expect_identical(id(tbl), "a")
   expect_identical(index(tbl), "b")
   expect_identical(data_cols(tbl), "c")
   expect_identical(meta_cols(tbl), c("a", "b"))
@@ -26,22 +26,22 @@ test_that("ts_tbl constructors", {
 
   meta <- ts_meta(tbl)
 
-  expect_identical(key(meta), "a")
+  expect_identical(id(meta), "a")
   expect_identical(index(meta), "b")
   expect_equal(interval(meta), hours(1L))
   expect_equal(time_step(meta), 1L)
   expect_identical(time_unit(meta), "hours")
 
   expect_identical(nrow(ts_tbl(a = 1:10, b = hours(c(1:5, NA, 7:10)),
-                               key = "a")), 9L)
+                               id = "a")), 9L)
   expect_identical(nrow(ts_tbl(a = c(1:5, NA, 7:10), b = hours(c(1:10)),
-                               key = "a")), 9L)
+                               id = "a")), 9L)
 
-  expect_error(ts_tbl(a = 1:10, b = mins(1:10), key = "a"),
+  expect_error(ts_tbl(a = 1:10, b = mins(1:10), id = "a"),
                "does not conform to an interval of 1 hours")
-  expect_identical(time_unit(ts_tbl(a = 1:10, b = mins(1:10), key = "a",
+  expect_identical(time_unit(ts_tbl(a = 1:10, b = mins(1:10), id = "a",
                                     interval = mins(1L))), "mins")
-  expect_error(ts_tbl(a = 1:10, b = hours(1:10), key = "a",
+  expect_error(ts_tbl(a = 1:10, b = hours(1:10), id = "a",
                       interval = hours(2L)),
                "does not conform to an interval of 2 hours")
   expect_error(as_ts_tbl(c(dat), "a"),
@@ -50,19 +50,19 @@ test_that("ts_tbl constructors", {
                "does not contain column `c` of class `difftime`")
   expect_error(as_ts_tbl(dat, "a", "d"), "does not contain column `d`")
   expect_error(as_ts_tbl(dat, "b", "b"), "not not equal to")
-  expect_error(ts_tbl(a = 1:10, a = hours(1:10), key = "a"),
+  expect_error(ts_tbl(a = 1:10, a = hours(1:10), id = "a"),
                "contains duplicate elements")
 })
 
 test_that("rename_cols for ts_tbl", {
 
-  tbl <- ts_tbl(a = 1:10, b = hours(1:10), c = rnorm(10), key = "a")
+  tbl <- ts_tbl(a = 1:10, b = hours(1:10), c = rnorm(10), id = "a")
 
-  expect_identical(key(rename_cols(cpy(tbl), "d", "c")), "a")
+  expect_identical(id(rename_cols(cpy(tbl), "d", "c")), "a")
   expect_identical(index(rename_cols(cpy(tbl), "d", "c")), "b")
   expect_identical(data_cols(rename_cols(cpy(tbl), "d", "c")), "d")
 
-  expect_identical(key(rename_cols(cpy(tbl), c("d", "e"), c("b", "c"))), "a")
+  expect_identical(id(rename_cols(cpy(tbl), c("d", "e"), c("b", "c"))), "a")
   expect_identical(index(rename_cols(cpy(tbl), c("d", "e"), c("b", "c"))), "d")
   expect_identical(data_cols(rename_cols(cpy(tbl), c("d", "e"), c("b", "c"))),
                    "e")
@@ -77,7 +77,7 @@ test_that("rename_cols for ts_tbl", {
 
 test_that("rm_cols for ts_tbl", {
 
-  tbl <- ts_tbl(a = 1:10, b = hours(1:10), c = rnorm(10), key = "a")
+  tbl <- ts_tbl(a = 1:10, b = hours(1:10), c = rnorm(10), id = "a")
 
   expect_identical(colnames(rm_cols(cpy(tbl), "c")), c("a", "b"))
   expect_is(rm_cols(cpy(tbl), "c"), "ts_tbl")
@@ -94,9 +94,9 @@ test_that("rm_cols for ts_tbl", {
 test_that("set_* for ts_tbl", {
 
   tbl <- ts_tbl(a = 1:10, b = 1:10, c = hours(1:10), d = hours(1:10),
-                e = rnorm(10), key = "a", index = "c")
+                e = rnorm(10), id = "a", index = "c")
 
-  expect_identical(key(tbl), "a")
+  expect_identical(id(tbl), "a")
   expect_identical(index(tbl), "c")
   expect_equal(interval(tbl), hours(1L))
   expect_equal(time_step(tbl), 1L)
@@ -104,12 +104,12 @@ test_that("set_* for ts_tbl", {
   expect_identical(colnames(tbl), c("a", "c", "b", "d", "e"))
   expect_setequal(time_col(tbl), hours(1:10))
 
-  expect_identical(key(set_key(cpy(tbl), "b")), "b")
-  expect_identical(key(set_key(cpy(tbl), "a")), "a")
+  expect_identical(id(set_id(cpy(tbl), "b")), "b")
+  expect_identical(id(set_id(cpy(tbl), "a")), "a")
 
-  expect_error(set_key(cpy(tbl), "c"), "not not equal to")
-  expect_error(set_key(cpy(tbl), c("a", "b")), "is not a string")
-  expect_error(set_key(cpy(tbl), "f"), "does not contain column `f`")
+  expect_error(set_id(cpy(tbl), "c"), "not not equal to")
+  expect_error(set_id(cpy(tbl), c("a", "b")), "is not a string")
+  expect_error(set_id(cpy(tbl), "f"), "does not contain column `f`")
 
   expect_identical(index(set_index(cpy(tbl), "d")), "d")
   expect_identical(index(set_index(cpy(tbl), "c")), "c")

@@ -6,18 +6,13 @@ ts_meta <- function(x) UseMethod("ts_meta", x)
 ts_index <- function(x) UseMethod("ts_index", x)
 
 #' @export
-ts_key <- function(x) UseMethod("ts_key", x)
+ts_id <- function(x) UseMethod("ts_id", x)
 
 #' @export
 index <- function(x) UseMethod("index", x)
 
 #' @export
-key <- function(x) UseMethod("key", x)
-
-#' @method key data.table
-#' @export
-#'
-key.data.table <- data.table::key
+id <- function(x) UseMethod("id", x)
 
 #' @export
 interval <- function(x) UseMethod("interval", x)
@@ -37,7 +32,7 @@ set_interval <- function(x, value) {
 }
 
 #' @export
-set_key <- function(x, value) UseMethod("set_key", x)
+set_id <- function(x, value) UseMethod("set_id", x)
 
 #' @export
 set_time_unit <- function(x, value) UseMethod("set_time_unit", x)

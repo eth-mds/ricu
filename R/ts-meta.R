@@ -9,26 +9,26 @@ new_ts_index <- function(index, interval) {
   structure(list(col_name = index, interval = interval), class = "ts_index")
 }
 
-new_ts_key <- function(key) {
+new_ts_id <- function(id) {
 
-  assert_that(is.string(key), not_na(key))
+  assert_that(is.string(id), not_na(id))
 
-  structure(list(col_name = key), class = "ts_key")
+  structure(list(col_name = id), class = "ts_id")
 }
 
-new_ts_meta <- function(ts_key, ts_index) {
+new_ts_meta <- function(ts_id, ts_index) {
 
-  assert_that(is_ts_key(ts_key), is_ts_index(ts_index),
-              key(ts_key) != index(ts_index))
+  assert_that(is_ts_id(ts_id), is_ts_index(ts_index),
+              id(ts_id) != index(ts_index))
 
-  structure(list(ts_key = ts_key, ts_index = ts_index), class = "ts_meta")
+  structure(list(ts_id = ts_id, ts_index = ts_index), class = "ts_meta")
 }
 
 #' @export
 is_ts_index <- function(x) inherits(x, "ts_index")
 
 #' @export
-is_ts_key <- function(x) inherits(x, "ts_key")
+is_ts_id <- function(x) inherits(x, "ts_id")
 
 #' @export
 is_ts_meta <- function(x) inherits(x, "ts_meta")
@@ -40,11 +40,11 @@ ts_meta.ts_meta <- function(x) x
 
 ts_index.ts_meta <- function(x) x[["ts_index"]]
 
-ts_key.ts_meta <- function(x) x[["ts_key"]]
+ts_id.ts_meta <- function(x) x[["ts_id"]]
 
 ts_index.ts_index <- function(x) x
 
-ts_key.ts_key <- function(x) x
+ts_id.ts_id <- function(x) x
 
 #' @export
 rename_cols.ts_index <- function(x, new, old, ...) {
@@ -60,13 +60,13 @@ rename_cols.ts_index <- function(x, new, old, ...) {
 }
 
 #' @export
-rename_cols.ts_key <- function(x, new, old, ...)  {
+rename_cols.ts_id <- function(x, new, old, ...)  {
 
-  hit <- key(x) == old
+  hit <- id(x) == old
 
   if (any(hit)) {
     assert_that(sum(hit) == 1L)
-    x <- new_ts_key(new[hit])
+    x <- new_ts_id(new[hit])
   }
 
   x
@@ -96,17 +96,17 @@ time_unit.ts_index <- function(x) units(interval(x))
 time_unit.ts_meta <- function(x) units(interval(x))
 
 #' @export
-key.ts_key <- function(x) x[["col_name"]]
+id.ts_id <- function(x) x[["col_name"]]
 
 #' @export
-key.ts_meta <- function(x) key(ts_key(x))
+id.ts_meta <- function(x) id(ts_id(x))
 
 #' @export
-set_key.ts_key <- function(x, value) new_ts_key(value)
+set_id.ts_id <- function(x, value) new_ts_id(value)
 
 #' @export
-set_key.ts_meta <- function(x, value) {
-  new_ts_meta(set_key(ts_key(x), value), ts_index(x))
+set_id.ts_meta <- function(x, value) {
+  new_ts_meta(set_id(ts_id(x), value), ts_index(x))
 }
 
 #' @export
@@ -114,7 +114,7 @@ set_index.ts_index <- function(x, value) new_ts_index(value, interval(x))
 
 #' @export
 set_index.ts_meta <- function(x, value) {
-  new_ts_meta(ts_key(x), set_index(ts_index(x), value))
+  new_ts_meta(ts_id(x), set_index(ts_index(x), value))
 }
 
 #' @export
@@ -122,7 +122,7 @@ set_interval.ts_index <- function(x, value) new_ts_index(index(x), value)
 
 #' @export
 set_interval.ts_meta <- function(x, value) {
-  new_ts_meta(ts_key(x), set_interval(ts_index(x), value))
+  new_ts_meta(ts_id(x), set_interval(ts_index(x), value))
 }
 
 #' @export
@@ -132,5 +132,5 @@ set_time_unit.ts_index <- function(x, value) {
 
 #' @export
 set_time_unit.ts_meta <- function(x, value) {
-  new_ts_meta(ts_key(x), set_time_unit(ts_index(x), value))
+  new_ts_meta(ts_id(x), set_time_unit(ts_index(x), value))
 }

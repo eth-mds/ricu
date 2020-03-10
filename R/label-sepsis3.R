@@ -20,22 +20,22 @@ sepsis_3 <- function(sofa, si, si_window = c("first", "last", "any"),
                      delta_fun = delta_cummin,
                      sofa_thresh = 2L) {
 
-  assert_that(same_interval(sofa, si), same_key(sofa, si),
+  assert_that(same_interval(sofa, si), same_id(sofa, si),
               has_col(sofa, "sofa_score"),
               has_time_cols(si, c("si_lwr", "si_upr")))
 
   si_window <- match.arg(si_window)
-  key <- key(sofa)
+  id <- id(sofa)
 
   sofa <- set(sofa, j = "join_time1", value = time_col(sofa))
   sofa <- set(sofa, j = "join_time2", value = time_col(sofa))
 
   on.exit(rm_cols(sofa, c("join_time1", "join_time2")))
 
-  join_clause <- c(key, "join_time1 >= si_lwr", "join_time2 <= si_upr")
+  join_clause <- c(id, "join_time1 >= si_lwr", "join_time2 <= si_upr")
 
-  if (si_window == "first") si <- si[, head(.SD, n = 1L), by = key]
-  if (si_window == "last")  si <- si[, tail(.SD, n = 1L), by = key]
+  if (si_window == "first") si <- si[, head(.SD, n = 1L), by = id]
+  if (si_window == "last")  si <- si[, tail(.SD, n = 1L), by = id]
 
   res <- sofa[si, c(list(delta_sofa = delta_fun(get("sofa_score"))),
                     mget(c(index(sofa), index(si)))),
@@ -46,7 +46,7 @@ sepsis_3 <- function(sofa, si, si_window = c("first", "last", "any"),
   res <- rm_cols(res, c("join_time1", "join_time2", "delta_sofa"))
   res <- rename_cols(res, "sep3_time", index(res))
 
-  res <- res[, head(.SD, n = 1L), by = key]
+  res <- res[, head(.SD, n = 1L), by = id]
 
   res
 }

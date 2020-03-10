@@ -75,13 +75,13 @@ si_windows <- function(tbl, abx_win = hours(24L), samp_win = hours(72L),
   win_args <- lapply(win_args, `units<-`, time_unit(tbl))
   list2env(win_args, environment())
 
-  key <- key(tbl)
+  id <- id(tbl)
   ind <- index(tbl)
 
   dat <- Map(span_win, unmerge(tbl, c("abx", "samp")), c("abx", "samp"),
              win_args[c("abx_win", "samp_win")])
 
-  join_clause <- c(key(tbl), paste("win_end >=", ind),
+  join_clause <- c(id(tbl), paste("win_end >=", ind),
                              paste("time_copy <=", ind))
 
   abx_samp <- dat[["abx"]][dat[["samp"]], list(si_time = min_fun(get(ind))),
@@ -89,13 +89,13 @@ si_windows <- function(tbl, abx_win = hours(24L), samp_win = hours(72L),
   samp_abx <- dat[["samp"]][dat[["abx"]], list(si_time = min_fun(get(ind))),
                           on = join_clause, by = .EACHI, nomatch = NULL]
 
-  res <- unique(rbind(abx_samp[, c(key, "si_time"), with = FALSE],
-                      samp_abx[, c(key, "si_time"), with = FALSE]))
+  res <- unique(rbind(abx_samp[, c(id, "si_time"), with = FALSE],
+                      samp_abx[, c(id, "si_time"), with = FALSE]))
 
   res <- res[, c("si_lwr", "si_upr") := list(
     get("si_time") - win_args[["si_lwr"]],
     get("si_time") + win_args[["si_upr"]]
   )]
 
-  as_ts_tbl(res, key, "si_time", interval(tbl))
+  as_ts_tbl(res, id, "si_time", interval(tbl))
 }

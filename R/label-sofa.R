@@ -182,7 +182,7 @@ sofa_vent <- function(start, stop, win_length, min_length, interval) {
 
   res <- unique(
     expand_limits(merged, min_col = "start_time", max_col = "stop_time",
-                  step_size = as.double(interval), id_cols = key(start))
+                  step_size = as.double(interval), id_cols = id(start))
   )
   res <- res[, c("vent") := TRUE]
 
@@ -291,23 +291,23 @@ sofa_urine <- function(urine, limits, min_win, interval) {
 
   if (has_name(urine, "urine_cumulative")) {
     urine <- urine[, c("urine_events") := do_diff(get("urine_cumulative")),
-                   by = key(urine)]
+                   by = id(urine)]
   }
 
   if (is.null(limits)) {
     limits <- as_ts_tbl(
       urine[, list(intime = min(get(index(urine))),
-                   outtime = max(get(index(urine)))), by = key(urine)],
-      key(urine), "intime", interval(urine)
+                   outtime = max(get(index(urine)))), by = id(urine)],
+      id(urine), "intime", interval(urine)
     )
   }
 
-  assert_that(identical(key(urine), key(limits)),
+  assert_that(identical(id(urine), id(limits)),
               has_name(limits, c("intime", "outtime")),
               all.equal(interval(urine), interval(limits)))
 
-  limits <- merge(limits, unique(urine[, key(limits), with = FALSE]),
-                  all.y = TRUE, by = key(limits))
+  limits <- merge(limits, unique(urine[, id(limits), with = FALSE]),
+                  all.y = TRUE, by = id(limits))
 
   res <- fill_gaps(urine, limits = limits, min_col = "intime",
                    max_col = "outtime")
@@ -398,7 +398,7 @@ sofa_compute <- function(tbl, na_val = 0L, na_val_resp = na_val,
 
   if (!is.null(impute_fun)) {
     tbl <- tbl[, c("sofa_cols") := lapply(.SD, impute_fun),
-               .SDcols = sofa_cols, by = c(key(tbl))]
+               .SDcols = sofa_cols, by = c(id(tbl))]
   }
 
   tbl <- tbl[, c("sofa_score") := sofa_resp + sofa_coag + sofa_liver +

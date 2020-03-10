@@ -29,9 +29,9 @@
 
 \method{as.data.frame}{ts_tbl}(x, row.names = NULL, optional = FALSE, ...)
 
-ts_tbl(..., key, index = NULL, interval = hours(1L))
+ts_tbl(..., id, index = NULL, interval = hours(1L))
 
-as_ts_tbl(tbl, key, index = NULL, interval = hours(1L))
+as_ts_tbl(tbl, id, index = NULL, interval = hours(1L))
 }
 \arguments{
 \item{...}{Passed to \code{\link[data.table:data.table]{data.table::data.table()}}/generic compatibility.}
@@ -41,7 +41,7 @@ as_ts_tbl(tbl, key, index = NULL, interval = hours(1L))
 \item{row.names, optional}{Generic consistency: passing anything other than
 the default value issues a warning.}
 
-\item{key}{Character or numeric vector of at least length 1, identifying
+\item{id}{Character or numeric vector of at least length 1, identifying
 columns that combined with time stamps, uniquely identify rows.}
 
 \item{index}{Character or numeric vector of length 1, identifying the

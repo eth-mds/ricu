@@ -183,8 +183,8 @@ load_wide <- function(item_cols, id_col, time_col, extra_cols, names,
                      time_col = time_col, ...)
 
   if (!is.null(patient_ids)) {
-    join <- prepare_patient_ids(patient_ids, key(dat))
-    dat  <- merge(dat, join, by = key(dat), all = FALSE)
+    join <- prepare_patient_ids(patient_ids, id(dat))
+    dat  <- merge(dat, join, by = id(dat), all = FALSE)
   }
 
   if (all_null(callback)) {
@@ -251,8 +251,8 @@ load_long <- function(items, item_col, id_col, time_col, val_col, extra_cols,
                      id_cols = id_col, time_col = time_col, ...)
 
   if (!is.null(patient_ids)) {
-    join <- prepare_patient_ids(patient_ids, key(dat))
-    dat  <- merge(dat, join, by = key(dat), all = FALSE)
+    join <- prepare_patient_ids(patient_ids, id(dat))
+    dat  <- merge(dat, join, by = id(dat), all = FALSE)
   }
 
   if (nrow(dat) == 0L) {
@@ -325,8 +325,8 @@ load_grep <- function(items, item_col, id_col, time_col, val_col, extra_cols,
                      id_cols = id_col, time_col = time_col, ...)
 
   if (!is.null(patient_ids)) {
-    join <- prepare_patient_ids(patient_ids, key(dat))
-    dat  <- merge(dat, join, by = key(dat), all = FALSE)
+    join <- prepare_patient_ids(patient_ids, id(dat))
+    dat  <- merge(dat, join, by = id(dat), all = FALSE)
   }
 
   if (nrow(dat) == 0L) {

@@ -39,7 +39,7 @@ format.ts_tbl <- function(x, ..., n = NULL, width = NULL, n_extra = NULL) {
 #'
 tbl_sum.ts_tbl <- function(x) {
   c("A `ts_tbl`" = prt::dim_desc(x),
-    "Key" = paste0("<`", key(x), "`>"),
+    "Id" = paste0("<`", id(x), "`>"),
     "Index" = paste0("<`", index(x), "`, ", format(interval(x)), ">"))
 }
 
@@ -136,19 +136,19 @@ split.ts_tbl <- function(x, ...) {
 print.ts_meta <- function(x, ...) cat_line(format(x, ...))
 
 #' @export
-print.ts_key <- function(x, ...) cat_line(format(x, ...))
+print.ts_id <- function(x, ...) cat_line(format(x, ...))
 
 #' @export
 print.ts_index <- function(x, ...) cat_line(format(x, ...))
 
 #' @export
 format.ts_meta <- function(x, ...) {
-  format_one_meta(x, format(ts_key(x)), format(ts_index(x)))
+  format_one_meta(x, format(ts_id(x)), format(ts_index(x)))
 }
 
 #' @export
-format.ts_key <- function(x, ...) {
-  format_one_meta(x, paste0("`", key(x), "`"))
+format.ts_id <- function(x, ...) {
+  format_one_meta(x, paste0("`", id(x), "`"))
 }
 
 #' @export
@@ -166,7 +166,7 @@ merge.ts_tbl <- function(x, y, by = meta_cols(x), ...) {
 
   if (is_ts_tbl(y)) {
     y <- data.table::copy(y)
-    y <- make_compatible(y, x, key(x) %in% by, index(x) %in% by)
+    y <- make_compatible(y, x, id(x) %in% by, index(x) %in% by)
   }
 
   reclass_ts_tbl(NextMethod(), ts_meta(x))
