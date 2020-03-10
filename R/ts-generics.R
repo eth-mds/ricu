@@ -3,10 +3,10 @@
 ts_meta <- function(x) UseMethod("ts_meta", x)
 
 #' @export
-ts_index <- function(x) UseMethod("ts_index", x)
+tbl_index <- function(x) UseMethod("tbl_index", x)
 
 #' @export
-ts_id <- function(x) UseMethod("ts_id", x)
+tbl_id <- function(x) UseMethod("tbl_id", x)
 
 #' @export
 index <- function(x) UseMethod("index", x)

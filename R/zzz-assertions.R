@@ -5,12 +5,12 @@
 NULL
 
 
-on_failure(is_ts_index) <- function(call, env) {
-  paste0(deparse(call$x), " is not a `ts_index` object")
+on_failure(is_tbl_index) <- function(call, env) {
+  paste0(deparse(call$x), " is not a `tbl_index` object")
 }
 
-on_failure(is_ts_id) <- function(call, env) {
-  paste0(deparse(call$x), " is not a `ts_id` object")
+on_failure(is_tbl_id) <- function(call, env) {
+  paste0(deparse(call$x), " is not a `tbl_id` object")
 }
 
 on_failure(is_ts_meta) <- function(call, env) {

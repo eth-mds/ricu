@@ -1,103 +1,103 @@
 
-test_that("ts_id", {
+test_that("tbl_id", {
 
-  ts_id <- new_ts_id("foo")
+  tbl_id <- new_tbl_id("foo")
 
-  expect_is(ts_id, "ts_id")
-  expect_true(is_ts_id(ts_id))
-  expect_false(is_ts_id("ts_id"))
-  expect_identical(ts_id(ts_id), ts_id)
+  expect_is(tbl_id, "tbl_id")
+  expect_true(is_tbl_id(tbl_id))
+  expect_false(is_tbl_id("tbl_id"))
+  expect_identical(tbl_id(tbl_id), tbl_id)
 
-  expect_error(new_ts_id(character(0L)))
-  expect_error(new_ts_id(1L))
-  expect_error(new_ts_id(NA_character_))
-  expect_error(new_ts_id(NULL))
-  expect_error(new_ts_id(c("foo", "bar")))
+  expect_error(new_tbl_id(character(0L)))
+  expect_error(new_tbl_id(1L))
+  expect_error(new_tbl_id(NA_character_))
+  expect_error(new_tbl_id(NULL))
+  expect_error(new_tbl_id(c("foo", "bar")))
 
-  expect_identical(id(ts_id), "foo")
-  expect_error(id("ts_id"))
+  expect_identical(id(tbl_id), "foo")
+  expect_error(id("tbl_id"))
   expect_error(id(1L))
-  expect_error(index(ts_id))
-  expect_error(interval(ts_id))
+  expect_error(index(tbl_id))
+  expect_error(interval(tbl_id))
 
-  expect_identical(set_id(ts_id, "bar"), new_ts_id("bar"))
-  expect_error(set_id(ts_id, c("foo", "xyz")))
+  expect_identical(set_id(tbl_id, "bar"), new_tbl_id("bar"))
+  expect_error(set_id(tbl_id, c("foo", "xyz")))
 
-  expect_identical(rename_cols(ts_id, "bar", "foo"), new_ts_id("bar"))
-  expect_identical(rename_cols(ts_id, "foo", "bar"), ts_id)
-  expect_error(rename_cols(ts_id, c("xyz", "foo"), "bar"))
+  expect_identical(rename_cols(tbl_id, "bar", "foo"), new_tbl_id("bar"))
+  expect_identical(rename_cols(tbl_id, "foo", "bar"), tbl_id)
+  expect_error(rename_cols(tbl_id, c("xyz", "foo"), "bar"))
 })
 
-test_that("ts_index", {
+test_that("tbl_index", {
 
-  ts_ind <- new_ts_index("foo", hours(1L))
+  tbl_ind <- new_tbl_index("foo", hours(1L))
 
-  expect_is(ts_ind, "ts_index")
-  expect_true(is_ts_index(ts_ind))
-  expect_false(is_ts_index("ts_ind"))
-  expect_identical(ts_index(ts_ind), ts_ind)
+  expect_is(tbl_ind, "tbl_index")
+  expect_true(is_tbl_index(tbl_ind))
+  expect_false(is_tbl_index("tbl_ind"))
+  expect_identical(tbl_index(tbl_ind), tbl_ind)
 
-  expect_error(new_ts_index(c("foo", "bar"), hours(1L)))
-  expect_error(new_ts_index(character(0L), hours(1L)))
-  expect_error(new_ts_index(NA_character_, hours(1L)))
-  expect_error(new_ts_index(1L, hours(1L)))
-  expect_error(new_ts_index(NULL, hours(1L)))
+  expect_error(new_tbl_index(c("foo", "bar"), hours(1L)))
+  expect_error(new_tbl_index(character(0L), hours(1L)))
+  expect_error(new_tbl_index(NA_character_, hours(1L)))
+  expect_error(new_tbl_index(1L, hours(1L)))
+  expect_error(new_tbl_index(NULL, hours(1L)))
 
-  expect_error(new_ts_index("foo", 1L))
-  expect_error(new_ts_index("foo", NA))
-  expect_error(new_ts_index("foo", as.difftime(NA, units = "hours")))
-  expect_error(new_ts_index("foo", NULL))
+  expect_error(new_tbl_index("foo", 1L))
+  expect_error(new_tbl_index("foo", NA))
+  expect_error(new_tbl_index("foo", as.difftime(NA, units = "hours")))
+  expect_error(new_tbl_index("foo", NULL))
 
-  expect_identical(index(ts_ind), "foo")
-  expect_identical(interval(ts_ind), hours(1L))
-  expect_error(id(ts_ind))
+  expect_identical(index(tbl_ind), "foo")
+  expect_identical(interval(tbl_ind), hours(1L))
+  expect_error(id(tbl_ind))
 
-  expect_error(index("ts_ind"))
-  expect_error(interval("ts_ind"))
+  expect_error(index("tbl_ind"))
+  expect_error(interval("tbl_ind"))
 
-  renamed <- rename_cols(ts_ind, "xyz", "foo")
+  renamed <- rename_cols(tbl_ind, "xyz", "foo")
 
-  expect_is(renamed, "ts_index")
-  expect_true(is_ts_index(renamed))
+  expect_is(renamed, "tbl_index")
+  expect_true(is_tbl_index(renamed))
 
   expect_identical(index(renamed), "xyz")
-  expect_identical(interval(renamed), interval(ts_ind))
+  expect_identical(interval(renamed), interval(tbl_ind))
 
-  fixed <- rename_cols(ts_ind, "xyz", "bar")
+  fixed <- rename_cols(tbl_ind, "xyz", "bar")
 
-  expect_is(fixed, "ts_index")
-  expect_true(is_ts_index(fixed))
+  expect_is(fixed, "tbl_index")
+  expect_true(is_tbl_index(fixed))
 
-  expect_identical(index(fixed), index(ts_ind))
-  expect_identical(interval(fixed), interval(ts_ind))
-  expect_identical(fixed, ts_ind)
+  expect_identical(index(fixed), index(tbl_ind))
+  expect_identical(interval(fixed), interval(tbl_ind))
+  expect_identical(fixed, tbl_ind)
 
-  expect_identical(set_index(ts_ind, "xyz"), renamed)
-  expect_equal(interval(set_time_unit(ts_ind, "mins")), mins(60L))
-  expect_equal(interval(set_interval(ts_ind, mins(5L))), mins(5L))
-  expect_error(set_id(ts_ind, "foo"))
+  expect_identical(set_index(tbl_ind, "xyz"), renamed)
+  expect_equal(interval(set_time_unit(tbl_ind, "mins")), mins(60L))
+  expect_equal(interval(set_interval(tbl_ind, mins(5L))), mins(5L))
+  expect_error(set_id(tbl_ind, "foo"))
 })
 
 test_that("ts_meta", {
 
-  ts_id <- new_ts_id("foo")
-  ts_ind <- new_ts_index("bar", hours(1L))
+  tbl_id <- new_tbl_id("foo")
+  tbl_ind <- new_tbl_index("bar", hours(1L))
 
-  ts_met <- new_ts_meta(ts_id, ts_ind)
+  ts_met <- new_ts_meta(tbl_id, tbl_ind)
 
   expect_is(ts_met, "ts_meta")
   expect_true(is_ts_meta(ts_met))
-  expect_false(is_ts_meta(ts_id))
-  expect_false(is_ts_meta(ts_ind))
+  expect_false(is_ts_meta(tbl_id))
+  expect_false(is_ts_meta(tbl_ind))
 
-  expect_error(new_ts_meta(ts_id, ts_id), "is not a `ts_index` object")
-  expect_error(new_ts_meta(ts_ind, ts_ind), "is not a `ts_id` object")
-  expect_error(new_ts_meta(ts_id, new_ts_index("foo", hours(1L))),
+  expect_error(new_ts_meta(tbl_id, tbl_id), "is not a `tbl_index` object")
+  expect_error(new_ts_meta(tbl_ind, tbl_ind), "is not a `tbl_id` object")
+  expect_error(new_ts_meta(tbl_id, new_tbl_index("foo", hours(1L))),
                "not not equal to")
 
   expect_identical(ts_meta(ts_met), ts_met)
-  expect_identical(ts_index(ts_met), ts_ind)
-  expect_identical(ts_id(ts_met), ts_id)
+  expect_identical(tbl_index(ts_met), tbl_ind)
+  expect_identical(tbl_id(ts_met), tbl_id)
 
   renamed <- rename_cols(ts_met, "xyz", "bar")
 

@@ -33,7 +33,7 @@ as_ts_tbl <- function(tbl, id, index = NULL, interval = hours(1L)) {
     id <- colnames(tbl)[id]
   }
 
-  id <- new_ts_id(id)
+  id <- new_tbl_id(id)
 
   if (is.null(index)) {
 
@@ -51,7 +51,7 @@ as_ts_tbl <- function(tbl, id, index = NULL, interval = hours(1L)) {
     index <- colnames(tbl)[index]
   }
 
-  index <- new_ts_index(index, interval)
+  index <- new_tbl_index(index, interval)
 
   tbl <- set_ts_meta(tbl, new_ts_meta(id, index), stop_on_fail = TRUE)
   tbl <- set_ts_class(tbl)
