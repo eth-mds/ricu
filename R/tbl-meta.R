@@ -24,6 +24,13 @@ new_ts_meta <- function(tbl_id, tbl_index) {
   structure(list(tbl_id = tbl_id, tbl_index = tbl_index), class = "ts_meta")
 }
 
+new_id_meta <- function(tbl_id) {
+
+  assert_that(is_tbl_id(tbl_id))
+
+  structure(list(tbl_id = tbl_id), class = "id_meta")
+}
+
 #' @export
 is_tbl_index <- function(x) inherits(x, "tbl_index")
 
@@ -33,11 +40,20 @@ is_tbl_id <- function(x) inherits(x, "tbl_id")
 #' @export
 is_ts_meta <- function(x) inherits(x, "ts_meta")
 
+#' @export
+is_id_meta <- function(x) inherits(x, "id_meta")
+
 ts_meta.ts_meta <- function(x) x
+
+id_meta.id_meta <- function(x) x
 
 tbl_index.ts_meta <- function(x) x[["tbl_index"]]
 
+tbl_index.id_meta <- function(x) NULL
+
 tbl_id.ts_meta <- function(x) x[["tbl_id"]]
+
+tbl_id.id_meta <- function(x) x[["tbl_id"]]
 
 tbl_index.tbl_index <- function(x) x
 
@@ -75,10 +91,18 @@ rename_cols.ts_meta <- function(x, new, old, ...) {
 }
 
 #' @export
+rename_cols.id_meta <- function(x, new, old, ...) {
+  do.call(new_id_meta, lapply(x, rename_cols, new, old))
+}
+
+#' @export
 index.tbl_index <- function(x) x[["col_name"]]
 
 #' @export
 index.ts_meta <- function(x) index(tbl_index(x))
+
+#' @export
+index.id_meta <- function(x) NULL
 
 #' @export
 interval.tbl_index <- function(x) x[["interval"]]
@@ -87,10 +111,16 @@ interval.tbl_index <- function(x) x[["interval"]]
 interval.ts_meta <- function(x) interval(tbl_index(x))
 
 #' @export
+interval.id_meta <- function(x) NULL
+
+#' @export
 time_unit.tbl_index <- function(x) units(interval(x))
 
 #' @export
 time_unit.ts_meta <- function(x) units(interval(x))
+
+#' @export
+time_unit.id_meta <- function(x) NULL
 
 #' @export
 id.tbl_id <- function(x) x[["col_name"]]
@@ -99,11 +129,19 @@ id.tbl_id <- function(x) x[["col_name"]]
 id.ts_meta <- function(x) id(tbl_id(x))
 
 #' @export
+id.id_meta <- function(x) id(tbl_id(x))
+
+#' @export
 set_id.tbl_id <- function(x, value) new_tbl_id(value)
 
 #' @export
 set_id.ts_meta <- function(x, value) {
   new_ts_meta(set_id(tbl_id(x), value), tbl_index(x))
+}
+
+#' @export
+set_id.id_meta <- function(x, value) {
+  new_id_meta(set_id(tbl_id(x), value))
 }
 
 #' @export

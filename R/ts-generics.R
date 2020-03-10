@@ -3,6 +3,9 @@
 ts_meta <- function(x) UseMethod("ts_meta", x)
 
 #' @export
+id_meta <- function(x) UseMethod("id_meta", x)
+
+#' @export
 tbl_index <- function(x) UseMethod("tbl_index", x)
 
 #' @export
