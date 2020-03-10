@@ -136,8 +136,12 @@ rm_cols.ts_tbl <- function(x, cols, ...) {
 #' @export
 rename_cols.ts_tbl <- function(x, new, old = colnames(x), ...) {
 
-  assert_that(has_cols(x, old),
-              is_unique(replace(colnames(x), match(old, colnames(x)), new)))
+  hits <- old %in% colnames(x)
+
+  new <- new[hits]
+  old <- old[hits]
+
+  assert_that(is_unique(replace(colnames(x), match(old, colnames(x)), new)))
 
   meta <- rename_cols(ts_meta(x), new, old)
   x <- setnames(x, old, new)
