@@ -1,37 +1,70 @@
 
-merge_tables <- function(folder, cfg, n_part = 5) {
+#' @export
+hirid_ts <- function(table, row_expr, ...) {
+  hirid_ts_quo(table, null_or_subs(row_expr), ...)
+}
 
-  resave_tables <- function(old, new, ...) {
+#' @export
+hirid_ts_quo <- function(table, row_quo = NULL, cols = NULL,
+                         id_cols = "patientid", time_col = "datetime",
+                         interval = hours(1L), source = "hirid") {
 
-    dat <- lapply(old, readr::read_csv, ..., skip = 1L)
-    dat <- data.table::rbindlist(lapply(dat, data.table::setDT))
-
-    fst::write_fst(dat, new, compress = 100L)
-    #unlink(old)
-
-    invisible(NULL)
+  if (!is.null(cols)) {
+    cols <- c(id_cols, time_col, cols)
   }
 
-  assert_that(is.count(n_part), has_name(cfg, "col_spec"))
+  res <- hirid_tbl_quo(table, row_quo, cols, interval, source)
 
-  files <- list.files(folder, pattern = "part-[0-9]+\\.csv$",
-                      full.names = TRUE)
-  files <- files[
-    order(as.integer(sub("\\.csv$", "", sub("^part-", "", basename(files)))))
-  ]
+  as_ts_tbl(res, id_cols, time_col, interval)
+}
 
-  col_names <- read_csv_colnames(files[1L])
+#' @export
+hirid_tbl <- function(table, row_expr, ...) {
+  hirid_tbl_quo(table, null_or_subs(row_expr), ...)
+}
 
-  col_spec <- cfg[["col_spec"]]
-  assert_that(has_name(col_spec, col_names))
-  col_spec <- create_col_spec(col_spec[col_names])
+#' @export
+hirid_tbl_quo <- function(table, row_quo = NULL, cols = NULL,
+                          interval = hours(1L), source = "hirid") {
 
-  n_part <- min(n_part, length(files))
+  time_fun <- function(x, y) {
+    round_to(difftime(x, y, units = units(interval)), as.numeric(interval))
+  }
 
-  files <- split(files, split_indices(length(files), n_part))
+  assert_that(is_time(interval, allow_neg = FALSE))
 
-  Map(resave_tables, files,
-      file.path(folder, paste0(seq_along(files), ".fst")),
-      MoreArgs = list(col_names = col_names, col_types = col_spec))
+  if (!is.null(cols)) {
 
+    assert_that(is.character(cols))
+
+    if (table == "general") {
+      cols <- setdiff(cols, "admissiontime")
+    }
+
+    cols <- c("patientid", cols)
+
+  }
+
+  dat <- prt::subset_quo(get_table(table, source), row_quo, unique(cols))
+
+  is_date <- vapply(dat, inherits, logical(1L), "POSIXt")
+
+  if (any(is_date)) {
+
+    assert_that(!identical(table, "general"))
+
+    date_cols <- colnames(dat)[is_date]
+
+    adm <- get_table("general", source)[, c("patientid", "admissiontime")]
+    dat <- merge(dat, adm, by = "patientid", all.x = TRUE)
+
+    dat <- dat[, c(date_cols) := lapply(.SD, time_fun, get("admissiontime")),
+               .SDcols = date_cols]
+
+    if ("admissiontime" %in% colnames(dat)) {
+      set(dat, j = "admissiontime", value = NULL)
+    }
+  }
+
+  dat
 }
