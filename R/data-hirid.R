@@ -1,10 +1,8 @@
 
-#' @export
 hirid_ts <- function(table, row_expr, ...) {
   hirid_ts_quo(table, null_or_subs(row_expr), ...)
 }
 
-#' @export
 hirid_ts_quo <- function(table, row_quo = NULL, cols = NULL,
                          id_cols = "patientid", time_col = "datetime",
                          interval = hours(1L), source = "hirid") {
@@ -18,12 +16,10 @@ hirid_ts_quo <- function(table, row_quo = NULL, cols = NULL,
   as_ts_tbl(res, id_cols, time_col, interval)
 }
 
-#' @export
 hirid_id <- function(table, row_expr, ...) {
   hirid_id_quo(table, null_or_subs(row_expr), ...)
 }
 
-#' @export
 hirid_id_quo <- function(table, row_quo = NULL, cols = NULL,
                          id_cols = "patientid", interval = hours(1L),
                          source = "hirid") {
@@ -37,12 +33,10 @@ hirid_id_quo <- function(table, row_quo = NULL, cols = NULL,
   as_id_tbl(res, id_cols)
 }
 
-#' @export
 hirid_tbl <- function(table, row_expr, ...) {
   hirid_tbl_quo(table, null_or_subs(row_expr), ...)
 }
 
-#' @export
 hirid_tbl_quo <- function(table, row_quo = NULL, cols = NULL,
                           interval = hours(1L), source = "hirid") {
 

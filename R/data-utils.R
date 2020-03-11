@@ -19,6 +19,25 @@ data_ts_quo <- function(source, ...) {
 }
 
 #' @export
+data_id <- function(source, table, row_expr, ...) {
+  data_id_quo(source, table, null_or_subs(row_expr), ...)
+}
+
+#' @export
+data_id_quo <- function(source, ...) {
+
+  fun <- switch(
+    as_src(source),
+    mimic = mimic_id_quo,
+    eicu  = eicu_id_quo,
+    hirid = hirid_id_quo,
+    stop("Data source not recognized.")
+  )
+
+  fun(..., source = source)
+}
+
+#' @export
 data_tbl <- function(source, table, row_expr, ...) {
   data_tbl_quo(source, table, null_or_subs(row_expr), ...)
 }
@@ -179,8 +198,13 @@ load_wide <- function(item_cols, id_col, time_col, extra_cols, names,
 
   to_rm <- unique(unlist(extra_cols))
 
-  dat <- data_ts_quo(cols = c(item_cols, to_rm), id_cols = id_col,
-                     time_col = time_col, ...)
+  if (is.null(time_col)) {
+    dat <- data_id_quo(cols = c(item_cols, to_rm), id_cols = id_col,
+                       ...)
+  } else {
+    dat <- data_ts_quo(cols = c(item_cols, to_rm), id_cols = id_col,
+                       time_col = time_col, ...)
+  }
 
   if (!is.null(patient_ids)) {
     join <- prepare_patient_ids(patient_ids, id(dat))
@@ -247,8 +271,13 @@ load_long <- function(items, item_col, id_col, time_col, val_col, extra_cols,
     query <- substitute(col %in% id, lst)
   }
 
-  dat <- data_ts_quo(row_quo = query, cols = c(item_col, val_col, uq_extra),
-                     id_cols = id_col, time_col = time_col, ...)
+  if (is.null(time_col)) {
+    dat <- data_id_quo(row_quo = query, cols = c(item_col, val_col, uq_extra),
+                       id_cols = id_col, ...)
+  } else {
+    dat <- data_ts_quo(row_quo = query, cols = c(item_col, val_col, uq_extra),
+                       id_cols = id_col, time_col = time_col, ...)
+  }
 
   if (!is.null(patient_ids)) {
     join <- prepare_patient_ids(patient_ids, id(dat))
@@ -321,8 +350,13 @@ load_grep <- function(items, item_col, id_col, time_col, val_col, extra_cols,
               id = paste(unique(items), collapse = "|"))
   query <- substitute(grepl(id, col, ignore.case = TRUE), lst)
 
-  dat <- data_ts_quo(row_quo = query, cols = c(item_col, val_col, uq_extra),
-                     id_cols = id_col, time_col = time_col, ...)
+  if (is.null(time_col)) {
+    dat <- data_id_quo(row_quo = query, cols = c(item_col, val_col, uq_extra),
+                       id_cols = id_col, ...)
+  } else {
+    dat <- data_ts_quo(row_quo = query, cols = c(item_col, val_col, uq_extra),
+                       id_cols = id_col, time_col = time_col, ...)
+  }
 
   if (!is.null(patient_ids)) {
     join <- prepare_patient_ids(patient_ids, id(dat))

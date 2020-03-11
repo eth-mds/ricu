@@ -1,10 +1,8 @@
 
-#' @export
 eicu_ts <- function(table, row_expr, ...) {
   eicu_ts_quo(table, null_or_subs(row_expr), ...)
 }
 
-#' @export
 eicu_ts_quo <- function(table, row_quo = NULL, cols = NULL,
                         id_cols = "patienthealthsystemstayid",
                         time_col = "observationoffset",
@@ -19,12 +17,10 @@ eicu_ts_quo <- function(table, row_quo = NULL, cols = NULL,
   as_ts_tbl(res, id_cols, time_col, interval)
 }
 
-#' @export
 eicu_id <- function(table, row_expr, ...) {
   eicu_id_quo(table, null_or_subs(row_expr), ...)
 }
 
-#' @export
 eicu_id_quo <- function(table, row_quo = NULL, cols = NULL,
                         id_cols = "patienthealthsystemstayid",
                         interval = hours(1L), source = "eicu") {
@@ -38,12 +34,10 @@ eicu_id_quo <- function(table, row_quo = NULL, cols = NULL,
   as_id_tbl(res, id_cols)
 }
 
-#' @export
 eicu_tbl <- function(table, row_expr, ...) {
   eicu_tbl_quo(table, null_or_subs(row_expr), ...)
 }
 
-#' @export
 eicu_tbl_quo <- function(table, row_quo = NULL, cols = NULL,
                          interval = hours(1L), source = "eicu") {
 

@@ -1,10 +1,8 @@
 
-#' @export
 mimic_ts <- function(table, row_expr, ...) {
   mimic_ts_quo(table, null_or_subs(row_expr), ...)
 }
 
-#' @export
 mimic_ts_quo <- function(table, row_quo = NULL, cols = NULL,
                          id_cols = "hadm_id", time_col = "charttime",
                          interval = hours(1L), source = "mimic") {
@@ -18,12 +16,10 @@ mimic_ts_quo <- function(table, row_quo = NULL, cols = NULL,
   as_ts_tbl(res, id_cols, time_col, interval)
 }
 
-#' @export
 mimic_id <- function(table, row_expr, ...) {
   mimic_id_quo(table, null_or_subs(row_expr), ...)
 }
 
-#' @export
 mimic_id_quo <- function(table, row_quo = NULL, cols = NULL,
                          id_cols = "hadm_id", interval = hours(1L),
                          source = "mimic") {
@@ -37,12 +33,10 @@ mimic_id_quo <- function(table, row_quo = NULL, cols = NULL,
   as_id_tbl(res, id_cols)
 }
 
-#' @export
 mimic_tbl <- function(table, row_expr, ...) {
   mimic_tbl_quo(table, null_or_subs(row_expr), ...)
 }
 
-#' @export
 mimic_tbl_quo <- function(table, row_quo = NULL, cols = NULL,
                           interval = hours(1L), source = "mimic") {
 
