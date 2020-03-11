@@ -155,11 +155,6 @@ make_unique_quo <- function(x, expr, by = meta_cols(x),
 }
 
 #' @export
-is_unique.ts_tbl <- function(x, by = meta_cols(x), ...) {
-  identical(anyDuplicated(x, by = by, ...), 0L)
-}
-
-#' @export
 dt_gforce <- function(x,
                       fun = c("mean", "median", "min", "max", "sum", "prod",
                               "var", "sd", "first", "last"),

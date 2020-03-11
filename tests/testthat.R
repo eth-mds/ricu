@@ -61,7 +61,7 @@ run_tests <- function(package,
 }
 
 if (getRversion() < "4.0.0") {
-  to_rm <- c("cbind.ts_tbl", "rbind.ts_tbl")
+  to_rm <- c("cbind.icu_tbl", "rbind.icu_tbl")
 } else {
   to_rm <- NULL
 }

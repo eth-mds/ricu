@@ -1,9 +1,10 @@
 
 #' @export
-ts_meta <- function(x) UseMethod("ts_meta", x)
+tbl_meta <- function(x) UseMethod("tbl_meta", x)
 
-#' @export
-id_meta <- function(x) UseMethod("id_meta", x)
+tbl_class <- function(x) UseMethod("tbl_class", x)
+
+validate_meta <- function(x, meta) UseMethod("validate_meta", meta)
 
 #' @export
 tbl_index <- function(x) UseMethod("tbl_index", x)
@@ -22,6 +23,9 @@ interval <- function(x) UseMethod("interval", x)
 
 #' @export
 time_unit <- function(x) UseMethod("time_unit", x)
+
+#' @export
+meta_cols <- function(x) UseMethod("meta_cols", x)
 
 #' @export
 set_index <- function(x, value) UseMethod("set_index", x)

@@ -4,17 +4,14 @@ new_ts_meta <- function(tbl_id, tbl_index) {
   assert_that(is_tbl_id(tbl_id), is_tbl_index(tbl_index),
               id(tbl_id) != index(tbl_index))
 
-  structure(list(tbl_id = tbl_id, tbl_index = tbl_index), class = "ts_meta")
+  structure(list(tbl_id = tbl_id, tbl_index = tbl_index),
+            class = c("ts_meta", "tbl_meta"))
 }
 
 #' @export
 is_ts_meta <- function(x) inherits(x, "ts_meta")
 
-ts_meta.ts_meta <- function(x) x
-
 tbl_index.ts_meta <- function(x) x[["tbl_index"]]
-
-tbl_id.ts_meta <- function(x) x[["tbl_id"]]
 
 #' @export
 rename_cols.ts_meta <- function(x, new, old, ...) {
@@ -31,7 +28,7 @@ interval.ts_meta <- function(x) interval(tbl_index(x))
 time_unit.ts_meta <- function(x) units(interval(x))
 
 #' @export
-id.ts_meta <- function(x) id(tbl_id(x))
+meta_cols.ts_meta <- function(x) c(id(x), index(x))
 
 #' @export
 set_id.ts_meta <- function(x, value) {
@@ -54,9 +51,18 @@ set_time_unit.ts_meta <- function(x, value) {
 }
 
 #' @export
-print.ts_meta <- function(x, ...) cat_line(format(x, ...))
-
-#' @export
 format.ts_meta <- function(x, ...) {
   format_one_meta(x, format(tbl_id(x)), format(tbl_index(x)))
+}
+
+tbl_class.ts_meta <- function(x) "ts_tbl"
+
+validate_meta.ts_meta <- function(x, meta) {
+
+  ind <- index(meta)
+
+  validate_that(
+    has_col(x, id(meta)), has_col(x, ind),
+    has_time_col(x, ind), has_interval(x, ind, interval(meta))
+  )
 }

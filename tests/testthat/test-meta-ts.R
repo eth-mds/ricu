@@ -16,7 +16,7 @@ test_that("ts_meta", {
   expect_error(new_ts_meta(tbl_id, new_tbl_index("foo", hours(1L))),
                "not not equal to")
 
-  expect_identical(ts_meta(ts_met), ts_met)
+  expect_identical(tbl_meta(ts_met), ts_met)
   expect_identical(tbl_index(ts_met), tbl_ind)
   expect_identical(tbl_id(ts_met), tbl_id)
 

@@ -11,13 +11,13 @@ test_that("id_meta", {
   expect_error(new_id_meta(NULL), "is not a `tbl_id` object")
   expect_error(new_id_meta("tbl_id"), "is not a `tbl_id` object")
 
-  expect_identical(id_meta(id_met), id_met)
+  expect_identical(tbl_meta(id_met), id_met)
   expect_identical(tbl_id(id_met), tbl_id)
 
   expect_identical(id(id_met), "foo")
-  expect_null(index(id_met))
-  expect_null(interval(id_met))
-  expect_null(time_unit(id_met))
+  expect_error(index(id_met), "no applicable method")
+  expect_error(interval(id_met), "no applicable method")
+  expect_error(time_unit(id_met), "no applicable method")
 
   renamed <- rename_cols(id_met, "xyz", "foo")
 
