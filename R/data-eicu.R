@@ -20,6 +20,25 @@ eicu_ts_quo <- function(table, row_quo = NULL, cols = NULL,
 }
 
 #' @export
+eicu_id <- function(table, row_expr, ...) {
+  eicu_id_quo(table, null_or_subs(row_expr), ...)
+}
+
+#' @export
+eicu_id_quo <- function(table, row_quo = NULL, cols = NULL,
+                        id_cols = "patienthealthsystemstayid",
+                        interval = hours(1L), source = "eicu") {
+
+  if (!is.null(cols)) {
+    cols <- c(id_cols, cols)
+  }
+
+  res <- eicu_tbl_quo(table, row_quo, cols, interval, source)
+
+  as_id_tbl(res, id_cols)
+}
+
+#' @export
 eicu_tbl <- function(table, row_expr, ...) {
   eicu_tbl_quo(table, null_or_subs(row_expr), ...)
 }
@@ -36,6 +55,9 @@ eicu_tbl_quo <- function(table, row_quo = NULL, cols = NULL,
 
   assert_that(is_time(interval, allow_neg = FALSE))
 
+  tbl <- get_table(table, source)
+  adm_cols <- character(0L)
+
   if (!is.null(cols)) {
 
     assert_that(is.character(cols))
@@ -45,13 +67,15 @@ eicu_tbl_quo <- function(table, row_quo = NULL, cols = NULL,
     } else {
       get_cols <- c("patientunitstayid",
                     setdiff(cols, "patienthealthsystemstayid"))
+      adm_cols <- intersect("patienthealthsystemstayid", cols)
     }
 
   } else{
     get_cols <- NULL
   }
 
-  dat <- prt::subset_quo(get_table(table, source), row_quo, unique(get_cols))
+  dat <- prt::subset_quo(tbl, row_quo, unique(get_cols))
+  adm <- get_table("patient", source)
 
   is_date <- vapply(dat, is.integer, logical(1L)) &
     grepl("offset$", colnames(dat))
@@ -73,9 +97,7 @@ eicu_tbl_quo <- function(table, row_quo = NULL, cols = NULL,
 
     } else {
 
-      adm <- get_table("patient", source)
-      adm <- adm[, c("patientunitstayid", "patienthealthsystemstayid",
-                     "hospitaladmitoffset")]
+      adm <- adm[, c("patientunitstayid", "hospitaladmitoffset", adm_cols)]
       dat <- merge(dat, adm, by = "patientunitstayid", all.x = TRUE)
     }
 
@@ -83,6 +105,11 @@ eicu_tbl_quo <- function(table, row_quo = NULL, cols = NULL,
       dat <- dat[, c(date_cols) := lapply(
         .SD, time_fun, get("hospitaladmitoffset")), .SDcols = date_cols]
     }
+
+  } else if (length(adm_cols)) {
+
+    adm <- adm[, c("patientunitstayid", adm_cols)]
+    dat <- merge(dat, adm, by = "patientunitstayid", all.x = TRUE)
   }
 
   to_rm <- setdiff(colnames(dat), cols)

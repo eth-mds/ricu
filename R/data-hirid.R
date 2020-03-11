@@ -19,6 +19,25 @@ hirid_ts_quo <- function(table, row_quo = NULL, cols = NULL,
 }
 
 #' @export
+hirid_id <- function(table, row_expr, ...) {
+  hirid_id_quo(table, null_or_subs(row_expr), ...)
+}
+
+#' @export
+hirid_id_quo <- function(table, row_quo = NULL, cols = NULL,
+                         id_cols = "patientid", interval = hours(1L),
+                         source = "hirid") {
+
+  if (!is.null(cols)) {
+    cols <- c(id_cols, cols)
+  }
+
+  res <- hirid_tbl_quo(table, row_quo, cols, interval, source)
+
+  as_id_tbl(res, id_cols)
+}
+
+#' @export
 hirid_tbl <- function(table, row_expr, ...) {
   hirid_tbl_quo(table, null_or_subs(row_expr), ...)
 }

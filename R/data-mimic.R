@@ -19,6 +19,25 @@ mimic_ts_quo <- function(table, row_quo = NULL, cols = NULL,
 }
 
 #' @export
+mimic_id <- function(table, row_expr, ...) {
+  mimic_id_quo(table, null_or_subs(row_expr), ...)
+}
+
+#' @export
+mimic_id_quo <- function(table, row_quo = NULL, cols = NULL,
+                         id_cols = "hadm_id", interval = hours(1L),
+                         source = "mimic") {
+
+  if (!is.null(cols)) {
+    cols <- c(id_cols, cols)
+  }
+
+  res <- mimic_tbl_quo(table, row_quo, cols, interval, source)
+
+  as_id_tbl(res, id_cols)
+}
+
+#' @export
 mimic_tbl <- function(table, row_expr, ...) {
   mimic_tbl_quo(table, null_or_subs(row_expr), ...)
 }
@@ -55,6 +74,7 @@ mimic_tbl_quo <- function(table, row_quo = NULL, cols = NULL,
   }
 
   dat <- prt::subset_quo(tbl, row_quo, unique(tbl_cols))
+  adm <- get_table("admissions", source)
 
   is_date <- vapply(dat, inherits, logical(1L), "POSIXt")
 
@@ -67,8 +87,6 @@ mimic_tbl_quo <- function(table, row_quo = NULL, cols = NULL,
       date_cols <- setdiff(date_cols, "admittime")
 
     } else {
-
-      adm <- get_table("admissions", source)
 
       if (table == "patients") {
         adm <- adm[, c("subject_id", "admittime", adm_cols)]
@@ -84,11 +102,16 @@ mimic_tbl_quo <- function(table, row_quo = NULL, cols = NULL,
                  .SDcols = date_cols]
     }
 
-    to_rm <- setdiff(colnames(dat), cols)
+  } else if (length(adm_cols)) {
 
-    if (length(to_rm)) {
-      set(dat, j = to_rm, value = NULL)
-    }
+    adm <- adm[, c("subject_id", adm_cols)]
+    dat <- merge(dat, adm, by = "subject_id", all.x = TRUE)
+  }
+
+  to_rm <- setdiff(colnames(dat), cols)
+
+  if (length(to_rm)) {
+    set(dat, j = to_rm, value = NULL)
   }
 
   dat[]

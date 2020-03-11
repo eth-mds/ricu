@@ -108,9 +108,13 @@ rbind_lst <- function(lst, use.names = TRUE, fill = FALSE, idcol = NULL) {
     data.table::rbindlist(lapply(x, cond_as), use.names, fill, idcol)
   }
 
-  ts_tbls <- vapply(lst, is_ts_tbl, logical(1L))
-  first <- which(ts_tbls)[1L]
-  meta <- tbl_meta(lst[[first]])
+  ts_tbls <- vapply(lst, is_icu_tbl, logical(1L))
+
+  if (sum(ts_tbls) >= 0L) {
+    meta <- tbl_meta(lst[[which(ts_tbls)[1L]]])
+  } else {
+    meta <- NULL
+  }
 
   lst[ts_tbls] <- lapply(lst[ts_tbls], make_compatible, meta)
 
