@@ -234,11 +234,14 @@ download_pysionet_file <- function(url, dest = NULL, username = NULL,
   }
 
   if (res[["status_code"]] == 401) {
+
     stop("Access to the requested resource was denied. Please set up an ",
          "account at https://physionet.org/ and apply for data access.")
-  }
 
-  assert_that(res[["status_code"]] == 200)
+  } else if (res[["status_code"]] != 200) {
+
+    stop(rawToChar(res[["content"]]))
+  }
 
   message("Successfully downloaded ", basename(url))
 
