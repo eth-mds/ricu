@@ -45,7 +45,9 @@ cfg <- list(
       time_col = "charttime",
       val_col = "value"
     ),
-    patients = list(),
+    patients = list(
+      id_col = "hadm_id"
+    ),
     prescriptions = list(
       id_col = "hadm_id",
       time_col = "startdate",

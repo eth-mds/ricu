@@ -307,29 +307,37 @@ get_col_config <- function(source = NULL, table = NULL,
   config
 }
 
-#' @export
-default_id_col <- function(source, table, ...) {
-  assert_that(is.string(source), is.string(table))
-  res <- get_col_config(source, table, ...)[["id_col"]]
-  assert_that(is.string(res))
-  res
+default_col <- function(name, allow_null = FALSE) {
+
+  assert_that(is.string(name), is.flag(allow_null))
+
+  function(source, table, ...) {
+
+    assert_that(is.string(source), is.string(table))
+
+    res <- get_col_config(source, table, ...)[[name]]
+
+    if (allow_null) {
+      assert_that(is.null(res) || is.string(res))
+    } else {
+      assert_that(is.string(res))
+    }
+
+    res
+  }
 }
 
 #' @export
-default_time_col <- function(source, table, ...) {
-  assert_that(is.string(source), is.string(table))
-  res <- get_col_config(source, table, ...)[["time_col"]]
-  assert_that(is.string(res))
-  res
-}
+default_id_col <- default_col("id_col")
 
 #' @export
-default_val_col <- function(source, table, ...) {
-  assert_that(is.string(source), is.string(table))
-  res <- get_col_config(source, table, ...)[["val_col"]]
-  assert_that(is.null(res) || is.string(res))
-  res
-}
+default_time_col <- default_col("time_col", allow_null = TRUE)
+
+#' @export
+default_val_col <- default_col("val_col", allow_null = TRUE)
+
+#' @export
+default_unit_col <- default_col("unit_col", allow_null = TRUE)
 
 combine_feats <- function(x) {
 
@@ -346,18 +354,31 @@ combine_feats <- function(x) {
 #' @export
 load_concepts <- function(source, concepts = get_concepts(source),
                           patient_ids = NULL, col_cfg = get_col_config(source),
-                          aggregate = "median", interval = hours(1L),
+                          aggregate = NA_character_, interval = hours(1L),
                           merge_data = TRUE) {
 
   do_aggregate <- function(x, fun) {
+
     if (is.function(fun)) {
+
       x[, lapply(.SD, fun), by = c(meta_cols(x)), .SDcols = data_cols(x)]
-    } else if (!is.language(fun) && (is.null(fun) || is.na(fun))) {
+
+    } else if (!is.language(fun) && is.null(fun)) {
+
       assert_that(is_unique(x, by = meta_cols(x)))
       x
+
     } else if (is.string(fun)) {
+
+      if (is.na(fun)) {
+        if (is.numeric(x[[data_cols(x)]])) fun <- "median"
+        else                               fun <- "first"
+      }
+
       dt_gforce(x, fun)
+
     } else {
+
       x[, eval(fun), by = c(meta_cols(x))]
     }
   }
@@ -378,9 +399,13 @@ load_concepts <- function(source, concepts = get_concepts(source),
       concept <- unique(concept)
     }
 
-    args <- c(list(source, tbl, unique(column), ids, concept),
-              col_cfg[[tbl]],
-              list(patient_ids, callback, rgx, unit, interval),
+    cfg_names <- c("id_col", "time_col", "val_col", "unit_col")
+
+    args <- c(list(source = source, table = tbl, item_col = unique(column),
+                   items = ids, names = concept),
+              setNames(col_cfg[[tbl]][cfg_names], cfg_names),
+              list(patient_ids = patient_ids, callback = callback, regex = rgx,
+                   unit = unit, interval = interval),
               lapply(list(...), uq_na_rm))
 
     do.call(load_items, args)

@@ -712,6 +712,13 @@
   "et_co2": {
     "unit": "mmHg",
     "sources": {
+      "mimic": [
+        {
+          "ids": [1817, 228640],
+          "table": "chartevents",
+          "column": "itemid"
+        }
+      ],
       "hirid": [
         {
           "ids": [2200, 8290, 30010009],
@@ -1863,6 +1870,31 @@
           "ids": 24000668,
           "table": "observations",
           "column": "variableid"
+        }
+      ]
+    }
+  },
+  "sex": {
+    "sources": {
+      "mimic": [
+        {
+          "ids": null,
+          "table": "patients",
+          "column": "gender"
+        }
+      ],
+      "eicu": [
+        {
+          "ids": null,
+          "table": "patient",
+          "column": "gender"
+        }
+      ],
+      "hirid": [
+        {
+          "ids": null,
+          "table": "general",
+          "column": "sex"
         }
       ]
     }

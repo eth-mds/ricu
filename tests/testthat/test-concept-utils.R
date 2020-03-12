@@ -122,4 +122,10 @@ test_that("load concepts", {
   expect_error(
     load_concepts("mimic_demo", gluc, aggregate = "identity")
   )
+
+  static <- load_concepts("mimic_demo", "sex")
+
+  expect_is(static, "id_tbl")
+  expect_true(is_id_tbl(static))
+  expect_identical(colnames(static), c("hadm_id", "charttime", "sex"))
 })

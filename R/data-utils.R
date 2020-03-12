@@ -79,6 +79,7 @@ load_items <- function(source, table, item_col, items = NULL, names = NULL,
                        id_col = default_id_col(source, table),
                        time_col = default_time_col(source, table),
                        val_col = default_val_col(source, table),
+                       unit_col = default_unit_col(source, table),
                        patient_ids = NULL, callback = NULL, regex = FALSE,
                        unit = NULL, interval = hours(1L), ...) {
 

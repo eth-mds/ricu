@@ -1132,6 +1132,9 @@ cfg <- list(
   et_co2 = list(
     unit = "mmHg",
     sources = list(
+      mimic = list(
+        list(ids = c(1817L, 228640L), table = "chartevents", column = "itemid")
+      ),
       hirid = list(
         list(ids = c(2200L, 8290L, 30010009L), table = "observations",
              column = "variableid")
@@ -1160,6 +1163,19 @@ cfg <- list(
       hirid = list(
         list(ids = 15L, table = "pharma", column = "pharmaid"),
         list(ids = 1000724L, table = "pharma", column = "pharmaid")
+      )
+    )
+  ),
+  sex = list(
+    sources = list(
+      mimic = list(
+        list(ids = NULL, table = "patients", column = "gender")
+      ),
+      eicu = list(
+        list(ids = NULL, table = "patient", column = "gender")
+      ),
+      hirid = list(
+        list(ids = NULL, table = "general", column = "sex")
       )
     )
   )
