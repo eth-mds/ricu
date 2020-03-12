@@ -40,7 +40,6 @@
 the PhysioNet provided CSV files, but converts all data to fst::fst()
 format, which allows for random row and column access. Large tables are
 split into chunks in order to keep memory requirements under control." />
-<meta name="twitter:card" content="summary" />
 
 
 
@@ -109,7 +108,7 @@ split into chunks in order to keep memory requirements under control." />
   <div class="col-md-9 contents">
     <div class="page-header">
     <h1>Data import utilities</h1>
-    <small class="dont-index">Source: <a href='https://github.com/septic-tank/ricu/blob/master/R/data-import.R'><code>R/data-import.R</code></a></small>
+    <small class="dont-index">Source: <a href='https://github.com/septic-tank/ricu/blob/master/R/setup-import.R'><code>R/setup-import.R</code></a></small>
     <div class="hidden name"><code>data_import.Rd</code></div>
     </div>
 
@@ -174,37 +173,34 @@ a list node defining a single column is a named list with a required,
 string-valued <code>type</code> entry which is interpreted as <code>readr</code> column
 specification function (see <code><a href='https://readr.tidyverse.org/reference/cols.html'>readr::cols()</a></code>). Further list entries will be
 passed as arguments to the column specification function. A column defined
-as</p><pre>list(type = "col_datetime", format = "%Y-%m-%d %H:%M:%S")
-</pre>
+as</p><pre><span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span>(<span class='kw'>type</span> <span class='kw'>=</span> <span class='st'>"col_datetime"</span>, <span class='kw'>format</span> <span class='kw'>=</span> <span class='st'>"%Y-%m-%d %H:%M:%S"</span>)</pre>
 
-<p>will therefore result in a <code>readr</code> column specification like</p><pre>col_datetime(format = "%Y-%m-%d %H:%M:%S")
-</pre>
+<p>will therefore result in a <code>readr</code> column specification like</p><pre><span class='fu'>col_datetime</span>(<span class='kw'>format</span> <span class='kw'>=</span> <span class='st'>"%Y-%m-%d %H:%M:%S"</span>)</pre>
 
 <p>Entries controlling the partitioning of tables, specified as <code>partitioning</code>
 list nodes are expected to be named lists of length 1, where the name
 corresponds to the column used for partitioning and partitions are defined
 as integer vector which is passed to <code><a href='https://rdrr.io/r/base/findInterval.html'>base::findInterval()</a></code>. This implies
 that partitions can only be created on integer valued columns.</p>
-<p>Putting all this together, the expected structure of <code>config</code> is as</p><pre>list(
-  name = "some_name",
-  base_url = "some_url",
-  version = "major.minor",
-  tables = list(
-    file_name_table_1 = list(
-      col_spec = list(
-        colname_1 = list(type = "col_*"),
-        colname_2 = list(type = "col_*"),
-        ...
+<p>Putting all this together, the expected structure of <code>config</code> is as</p><pre><span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span>(
+  <span class='kw'>name</span> <span class='kw'>=</span> <span class='st'>"some_name"</span>,
+  <span class='kw'>base_url</span> <span class='kw'>=</span> <span class='st'>"some_url"</span>,
+  <span class='kw'>version</span> <span class='kw'>=</span> <span class='st'>"major.minor"</span>,
+  <span class='kw'>tables</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span>(
+    <span class='kw'>file_name_table_1</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span>(
+      <span class='kw'>col_spec</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span>(
+        <span class='kw'>colname_1</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span>(<span class='kw'>type</span> <span class='kw'>=</span> <span class='st'>"col_*"</span>),
+        <span class='kw'>colname_2</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span>(<span class='kw'>type</span> <span class='kw'>=</span> <span class='st'>"col_*"</span>),
+        <span class='no'>...</span>
       )
     ),
-    file_name_table_2 = list(
-      col_spec = list(...),
-      partitioning = list(colname_i = c(0L, ))
+    <span class='kw'>file_name_table_2</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span>(
+      <span class='kw'>col_spec</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span>(<span class='no'>...</span>),
+      <span class='kw'>partitioning</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span>(<span class='kw'>colname_i</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>0L</span>, ))
     ),
-    ...
+    <span class='no'>...</span>
   )
-)
-</pre>
+)</pre>
 
 <p>Configurations for the MIMIC-III and eICU databases are available in
 <code>extdata/config</code> as JSON files and can be read in using <code><a href='file_utils.html'>get_config()</a></code>.</p>
