@@ -120,3 +120,9 @@ distribute_amount <- function(x, val_col, id_col, time_col, amount_col,
   x <- set(x, j = setdiff(colnames(x), orig_cols), value = NULL)
   x
 }
+
+mimic_age <- function(x, val_col, unit, ...) {
+  x <- set(x, j = val_col,
+    value = as.double(`units<-`(x[[val_col]], "days") / -365))
+  x
+}

@@ -123,9 +123,11 @@ test_that("load concepts", {
     load_concepts("mimic_demo", gluc, aggregate = "identity")
   )
 
-  static <- load_concepts("mimic_demo", "sex")
+  static <- load_concepts("mimic_demo", c("sex", "age"))
 
   expect_is(static, "id_tbl")
   expect_true(is_id_tbl(static))
-  expect_identical(colnames(static), c("hadm_id", "charttime", "sex"))
+  expect_setequal(colnames(static), c("hadm_id", "sex", "age"))
+  expect_type(static[["age"]], "double")
+  expect_type(static[["sex"]], "character")
 })

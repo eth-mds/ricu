@@ -33,46 +33,6 @@ eicu_icu_stays <- function(in_time, out_time, interval, source) {
 }
 
 #' @export
-patient_age <- function(source, age_col = "age") {
-
-  switch(
-    as_src(source),
-    mimic = mimic_age(age_col, source),
-    eicu  = eicu_age(age_col, source),
-    hirid = hirid_age(age_col, source),
-    stop("Data source not recognized.")
-  )
-}
-
-mimic_age <- function(age_col, source) {
-
-  res <- mimic_tbl("patients", cols = c("hadm_id", "dob"),
-                   interval = days(365L), source = source)
-  res <- setcolorder(res, c("hadm_id", "dob"))
-  res <- set(res, j = "dob", value = as.numeric(-res[["dob"]] / 365))
-  res <- setnames(res, "dob", age_col)
-
-  res
-}
-
-eicu_age <- function(age_col, source) {
-
-  res <- eicu_tbl("patient", cols = c("patienthealthsystemstayid", "age"),
-                  source = source)
-  res <- setnames(res, "age", age_col)
-
-  res
-}
-
-hirid_age <- function(age_col, source) {
-
-  res <- hirid_tbl("general", cols = c("patientid", "age"), source = source)
-  res <- setnames(res, "age", age_col)
-
-  res
-}
-
-#' @export
 patient_weight <- function(source, weight_col = "weight") {
 
   assert_that(is.string(weight_col))

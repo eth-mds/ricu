@@ -1178,6 +1178,21 @@ cfg <- list(
         list(ids = NULL, table = "general", column = "sex")
       )
     )
+  ),
+  age = list(
+    unit = "years",
+    sources = list(
+      mimic = list(
+        list(ids = NULL, table = "patients", column = "dob",
+             callback = "mimic_age")
+      ),
+      eicu = list(
+        list(ids = NULL, table = "patient", column = "age")
+      ),
+      hirid = list(
+        list(ids = NULL, table = "general", column = "age")
+      )
+    )
   )
 )
 

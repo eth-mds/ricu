@@ -1,4 +1,31 @@
 {
+  "age": {
+    "unit": "years",
+    "sources": {
+      "mimic": [
+        {
+          "ids": null,
+          "table": "patients",
+          "column": "dob",
+          "callback": "mimic_age"
+        }
+      ],
+      "eicu": [
+        {
+          "ids": null,
+          "table": "patient",
+          "column": "age"
+        }
+      ],
+      "hirid": [
+        {
+          "ids": null,
+          "table": "general",
+          "column": "age"
+        }
+      ]
+    }
+  },
   "alanine_aminotransferase": {
     "unit": "IU/L",
     "sources": {
