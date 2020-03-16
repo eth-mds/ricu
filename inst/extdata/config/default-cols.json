@@ -102,12 +102,13 @@
       "val_col": "nursingchartvalue"
     },
     "pasthistory": [],
-    "patient": [],
+    "patient": {
+      "id_col": "patienthealthsystemstayid"
+    },
     "physicalexam": [],
     "respiratorycare": {
       "id_col": "patienthealthsystemstayid",
-      "time_col": "respcarestatusoffset",
-      "val_col": null
+      "time_col": "respcarestatusoffset"
     },
     "respiratorycharting": {
       "id_col": "patienthealthsystemstayid",
@@ -117,13 +118,11 @@
     "treatment": [],
     "vitalaperiodic": {
       "id_col": "patienthealthsystemstayid",
-      "time_col": "observationoffset",
-      "val_col": null
+      "time_col": "observationoffset"
     },
     "vitalperiodic": {
       "id_col": "patienthealthsystemstayid",
-      "time_col": "observationoffset",
-      "val_col": null
+      "time_col": "observationoffset"
     }
   },
   "hirid": {

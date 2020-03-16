@@ -1193,6 +1193,14 @@ cfg <- list(
         list(ids = NULL, table = "general", column = "age")
       )
     )
+  ),
+  weight = list(
+    unit = "kg",
+    sources = list(
+      eicu = list(
+        list(ids = NULL, table = "patient", column = "admissionweight")
+      )
+    )
   )
 )
 

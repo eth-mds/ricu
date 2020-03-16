@@ -468,6 +468,9 @@ mk_cfg <- function(is_demo = FALSE) {
   res
 }
 
+path <- file.path(rprojroot::find_root(rprojroot::is_r_package), "inst",
+                  "extdata", "config")
+
 jsonlite::write_json(
   list(
     name = "mimic_data",
@@ -475,7 +478,7 @@ jsonlite::write_json(
     version = "1.4",
     tables = mk_cfg(is_demo = FALSE)
   ),
-  "mimic-setup.json",
+  file.path(path, "mimic-setup.json"),
   auto_unbox = TRUE,
   pretty = TRUE
 )
@@ -487,7 +490,7 @@ jsonlite::write_json(
     version = "1.4",
     tables = mk_cfg(is_demo = TRUE)
   ),
-  "mimic-demo.json",
+  file.path(path, "mimic-demo.json"),
   auto_unbox = TRUE,
   pretty = TRUE
 )

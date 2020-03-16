@@ -66,42 +66,6 @@ attach_hirid <- function(dir = data_dir("hirid", create = FALSE),
 #'
 #' @export
 #'
-data <- new.env()
-
-#' @rdname data_attach
-#'
-#' @export
-#'
-mimic <- new.env()
-
-#' @rdname data_attach
-#'
-#' @export
-#'
-mimic_demo <- new.env()
-
-#' @rdname data_attach
-#'
-#' @export
-#'
-eicu <- new.env()
-
-#' @rdname data_attach
-#'
-#' @export
-#'
-eicu_demo <- new.env()
-
-#' @rdname data_attach
-#'
-#' @export
-#'
-hirid <- new.env()
-
-#' @rdname data_attach
-#'
-#' @export
-#'
 attach_datasource <- function(dir, config) {
 
   create_data_env <- function(dir, cfg) {
@@ -142,13 +106,20 @@ attach_datasource <- function(dir, config) {
     assert_that(all(file.exists(unlist(files))))
 
     prt <- lapply(files, prt::new_prt)
-    list2env(prt, envir = NULL, parent = data)
+    list2env(prt, envir = NULL, parent = get_env("data"))
   }
 
   assert_that(is.string(config[["name"]]))
 
   delayedAssign(config[["name"]], create_data_env(dir, config),
-                assign.env = data)
+                assign.env = get_env("data"))
+
+  assign(config[["name"]], new.env(parent = get_env("aux")),
+         envir = get_env("aux"))
+
+  if (!is.null(config[["setup_hook"]])) {
+    do.call(config[["setup_hook"]], list(source = config[["name"]]))
+  }
 
   invisible(NULL)
 }
@@ -159,30 +130,10 @@ attach_datasource <- function(dir, config) {
 #'
 setup_proxy_env <- function(config, envir = new.env()) {
 
-  info <- paste("For further information on how to set up a data source,",
-                "refer to `?attach_datasource`.")
-
-  get_data_env <- function(name) {
-
-    if (!exists(name, envir = data) ||
-        is.null(res <- get(name, envir = data))) {
-      stop("Data not found for `", name, "`. ", info)
-    }
-
-    res
-  }
-
-  get_table_from_env <- function(table, data) {
-    env <- get_data_env(data)
-    if (exists(table, envir = env)) get(table, envir = env)
-    else stop("Table `", table, "` not found for `", data, "`. ", info)
-  }
-
   create_binding <- function(table_name, dataset_name, envir) {
-    get_table <- function() get_table_from_env(table_name, dataset_name)
-    makeActiveBinding(table_name, get_table, envir)
+    get_tbl_clos <- function() get_table(table_name, dataset_name)
+    makeActiveBinding(table_name, get_tbl_clos, envir)
   }
-
 
   data_name <- config[["name"]]
   tables <- cfg_to_table_name(config)

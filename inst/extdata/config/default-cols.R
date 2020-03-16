@@ -103,12 +103,13 @@ cfg <- list(
       val_col = "nursingchartvalue"
     ),
     pasthistory = list(),
-    patient = list(),
+    patient = list(
+      id_col = "patienthealthsystemstayid"
+    ),
     physicalexam = list(),
     respiratorycare = list(
       id_col = "patienthealthsystemstayid",
-      time_col = "respcarestatusoffset",
-      val_col = NULL
+      time_col = "respcarestatusoffset"
     ),
     respiratorycharting = list(
       id_col = "patienthealthsystemstayid",
@@ -118,13 +119,11 @@ cfg <- list(
     treatment = list(),
     vitalaperiodic = list(
       id_col = "patienthealthsystemstayid",
-      time_col = "observationoffset",
-      val_col = NULL
+      time_col = "observationoffset"
     ),
     vitalperiodic = list(
       id_col = "patienthealthsystemstayid",
-      time_col = "observationoffset",
-      val_col = NULL
+      time_col = "observationoffset"
     )
   ),
   hirid = list(

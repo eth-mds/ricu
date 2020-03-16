@@ -2,6 +2,7 @@
   "name": "eicu_data",
   "base_url": "https://physionet.org/files/eicu-crd",
   "version": "2.0",
+  "setup_hook": "setup_eicu_aux_tables",
   "tables": {
     "admissionDrug.csv.gz": {
       "col_spec": {

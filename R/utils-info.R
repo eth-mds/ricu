@@ -31,31 +31,3 @@ eicu_icu_stays <- function(in_time, out_time, interval, source) {
                      c("unitadmitoffset", "unitdischargeoffset"))
   res
 }
-
-#' @export
-patient_weight <- function(source, weight_col = "weight") {
-
-  assert_that(is.string(weight_col))
-
-  switch(
-    as_src(source),
-    mimic = stop("TODO"),
-    eicu  = eicu_patient_weight(weight_col, source),
-    hirid = NULL,
-    stop("Data source not recognized.")
-  )
-}
-
-eicu_patient_weight <- function(weight_col, source) {
-
-  res <- eicu_tbl_quo("patient", cols = c("patienthealthsystemstayid",
-                                          "admissionweight"), source = source)
-
-  res <- res[, list(weight = mean(get("admissionweight"), na.rm = TRUE)),
-             by = "patienthealthsystemstayid"]
-
-  res <- res[!is.na(get("weight")), ]
-  res <- setnames(res, "weight", weight_col)
-
-  res
-}

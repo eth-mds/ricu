@@ -2311,6 +2311,18 @@
       ]
     }
   },
+  "weight": {
+    "unit": "kg",
+    "sources": {
+      "eicu": [
+        {
+          "ids": null,
+          "table": "patient",
+          "column": "admissionweight"
+        }
+      ]
+    }
+  },
   "white_blood_cells": {
     "unit": "K/uL",
     "sources": {

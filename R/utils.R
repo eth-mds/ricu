@@ -171,21 +171,6 @@ read_json <- function(file, simplifyVector = TRUE, simplifyDataFrame = FALSE,
 
 is_pkg_available <- function(pkg) requireNamespace(pkg, quietly = TRUE)
 
-get_table <- function(table, source) {
-
-  if (is.character(source)) {
-    source <- get0(source, data)
-  }
-
-  assert_that(is.string(table), is.environment(source))
-
-  res <- get0(table, source)
-
-  assert_that(prt::is_prt(res))
-
-  res
-}
-
 agg_or_na <- function(agg_fun) {
   function(x) {
     if (all(is.na(x))) return(x[1L])
@@ -222,7 +207,10 @@ reduce <- function(f, x, ...) Reduce(function(x, y) f(x, y, ...), x)
 
 round_to <- function(x, to = 1) if (to == 1) trunc(x) else to * trunc(x / to)
 
+#' @export
 is_val <- function(x, val) !is.na(x) & x == val
+
+#' @export
 is_true <- function(x) !is.na(x) & x
 
 last_elem <- function(x) x[length(x)]
