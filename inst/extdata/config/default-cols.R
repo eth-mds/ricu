@@ -142,6 +142,9 @@ cfg <- list(
   )
 )
 
+cfg <- c(cfg, mimic_demo = list(cfg[["mimic"]]),
+               eicu_demo = list(cfg[["eicu"]]))
+
 file <- file.path(rprojroot::find_root(rprojroot::is_r_package), "inst",
                   "extdata", "config", "default-cols.json")
 

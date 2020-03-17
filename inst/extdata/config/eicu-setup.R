@@ -554,7 +554,7 @@ path <- file.path(rprojroot::find_root(rprojroot::is_r_package), "inst",
 
 jsonlite::write_json(
   list(
-    name = "eicu_data",
+    name = "eicu",
     base_url = "https://physionet.org/files/eicu-crd",
     version = "2.0",
     setup_hook = "setup_eicu_aux_tables",

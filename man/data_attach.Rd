@@ -4,16 +4,10 @@
 \name{data}
 \alias{data}
 \alias{aux}
-\alias{mimic}
-\alias{mimic_demo}
-\alias{eicu}
-\alias{eicu_demo}
-\alias{hirid}
 \alias{attach_mimic}
 \alias{attach_eicu}
 \alias{attach_hirid}
 \alias{attach_datasource}
-\alias{setup_proxy_env}
 \title{Data attach utilities}
 \format{An object of class \code{environment} of length 5.}
 \usage{
@@ -21,38 +15,27 @@ data
 
 aux
 
-mimic
-
-mimic_demo
-
-eicu
-
-eicu_demo
-
-hirid
-
 attach_mimic(
   demo = FALSE,
   dir = mimic_data_dir(demo),
   config = mimic_config(demo),
-  envir = if (demo) mimic_demo else mimic
+  ...
 )
 
 attach_eicu(
   demo = FALSE,
   dir = eicu_data_dir(demo),
   config = eicu_config(demo),
-  envir = if (demo) eicu_demo else eicu
+  ...
 )
 
 attach_hirid(
   dir = data_dir("hirid", create = FALSE),
-  config = get_config("hirid-setup")
+  config = get_config("hirid-setup"),
+  ...
 )
 
-attach_datasource(dir, config)
-
-setup_proxy_env(config, envir = new.env())
+attach_datasource(dir, config, assign_env = .GlobalEnv)
 }
 \arguments{
 \item{demo}{Logical flag indicating whether to import the respective demo
@@ -64,11 +47,6 @@ passed on to \code{attach_datasource()}.}
 
 \item{config}{Import configuration specified as nested list (see
 \code{\link[=import_datasource]{import_datasource()}} for further information).}
-
-\item{envir}{(Optional) environment that serves as proxy for the environment
-holding references to tables. Passing \code{NULL} foregoes setting up this
-forwarding (implemented as active bindings, see
-\code{\link[base:makeActiveBinding]{base::makeActiveBinding()}}).}
 }
 \description{
 Data attach utilities

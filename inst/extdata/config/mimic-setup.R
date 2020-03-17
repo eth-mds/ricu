@@ -473,7 +473,7 @@ path <- file.path(rprojroot::find_root(rprojroot::is_r_package), "inst",
 
 jsonlite::write_json(
   list(
-    name = "mimic_data",
+    name = "mimic",
     base_url = "https://physionet.org/files/mimiciii",
     version = "1.4",
     tables = mk_cfg(is_demo = FALSE)

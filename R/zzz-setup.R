@@ -27,11 +27,13 @@
     invisible(NULL)
   }
 
-  attach_mimic(demo = TRUE)
-  attach_mimic(demo = FALSE)
-  attach_eicu(demo = TRUE)
-  attach_eicu(demo = FALSE)
-  attach_hirid()
+  pkg_env <- pkg_env()
+
+  attach_mimic(demo = TRUE, assign_env = pkg_env)
+  attach_mimic(demo = FALSE, assign_env = pkg_env)
+  attach_eicu(demo = TRUE, assign_env = pkg_env)
+  attach_eicu(demo = FALSE, assign_env = pkg_env)
+  attach_hirid(assign_env = pkg_env)
 
   if (base::getRversion() < "4.0.0") {
 

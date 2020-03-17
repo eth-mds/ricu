@@ -11,39 +11,25 @@ data <- new.env()
 #'
 aux <- new.env()
 
-#' @rdname data_attach
-#'
 #' @export
-#'
-mimic <- new.env()
+mimic <- NULL
 
-#' @rdname data_attach
-#'
 #' @export
-#'
-mimic_demo <- new.env()
+mimic_demo <- NULL
 
-#' @rdname data_attach
-#'
 #' @export
-#'
-eicu <- new.env()
+eicu <- NULL
 
-#' @rdname data_attach
-#'
 #' @export
-#'
-eicu_demo <- new.env()
+eicu_demo <- NULL
 
-#' @rdname data_attach
-#'
 #' @export
-#'
-hirid <- new.env()
+hirid <- NULL
+
+pkg_env <- function() asNamespace(methods::getPackageName())
 
 get_env <- function(envir = c("data", "aux")) {
-  get(match.arg(envir), envir = asNamespace(methods::getPackageName()),
-      mode = "environment")
+  get(match.arg(envir), envir = pkg_env(), mode = "environment")
 }
 
 get_source <- function(source, envir = "data") {

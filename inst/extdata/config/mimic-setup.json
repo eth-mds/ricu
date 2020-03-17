@@ -1,5 +1,5 @@
 {
-  "name": "mimic_data",
+  "name": "mimic",
   "base_url": "https://physionet.org/files/mimiciii",
   "version": "1.4",
   "tables": {

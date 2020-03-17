@@ -1204,6 +1204,21 @@ cfg <- list(
   )
 )
 
+cfg <- lapply(cfg, function(x) {
+
+  if ("mimic" %in% names(x[["sources"]]))
+    x[["sources"]] <- c(x[["sources"]],
+                        mimic_demo = list(x[["sources"]][["mimic"]]))
+
+  if ("eicu" %in% names(x[["sources"]]))
+    x[["sources"]] <- c(x[["sources"]],
+                        eicu_demo = list(x[["sources"]][["eicu"]]))
+
+  x[["sources"]] <- x[["sources"]][order(names(x[["sources"]]))]
+
+  x
+})
+
 file <- file.path(rprojroot::find_root(rprojroot::is_r_package), "inst",
                   "extdata", "config", "concept-dict.json")
 

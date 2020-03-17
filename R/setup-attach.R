@@ -10,23 +10,12 @@
 #' [import_datasource()] for further information).
 #' @param config Import configuration specified as nested list (see
 #' [import_datasource()] for further information).
-#' @param envir (Optional) environment that serves as proxy for the environment
-#' holding references to tables. Passing `NULL` foregoes setting up this
-#' forwarding (implemented as active bindings, see
-#' [base::makeActiveBinding()]).
 #'
 #' @export
 attach_mimic <- function(demo = FALSE, dir = mimic_data_dir(demo),
-                         config = mimic_config(demo),
-                         envir = if (demo) mimic_demo else mimic) {
+                         config = mimic_config(demo), ...) {
 
-  attach_datasource(dir, config)
-
-  if (!is.null(envir)) {
-    setup_proxy_env(config, envir)
-  }
-
-  invisible(NULL)
+  attach_datasource(dir, config, ...)
 }
 
 #' @rdname data_attach
@@ -34,16 +23,9 @@ attach_mimic <- function(demo = FALSE, dir = mimic_data_dir(demo),
 #' @export
 #'
 attach_eicu <- function(demo = FALSE, dir = eicu_data_dir(demo),
-                        config = eicu_config(demo),
-                        envir = if (demo) eicu_demo else eicu) {
+                        config = eicu_config(demo), ...) {
 
-  attach_datasource(dir, config)
-
-  if (!is.null(envir)) {
-    setup_proxy_env(config, envir)
-  }
-
-  invisible(NULL)
+  attach_datasource(dir, config, ...)
 }
 
 #' @rdname data_attach
@@ -51,22 +33,16 @@ attach_eicu <- function(demo = FALSE, dir = eicu_data_dir(demo),
 #' @export
 #'
 attach_hirid <- function(dir = data_dir("hirid", create = FALSE),
-                         config = get_config("hirid-setup")) {
+                         config = get_config("hirid-setup"), ...) {
 
-  attach_datasource(dir, config)
-
-  if (!is.null(hirid)) {
-    setup_proxy_env(config, hirid)
-  }
-
-  invisible(NULL)
+  attach_datasource(dir, config, ...)
 }
 
 #' @rdname data_attach
 #'
 #' @export
 #'
-attach_datasource <- function(dir, config) {
+attach_datasource <- function(dir, config, assign_env = .GlobalEnv) {
 
   create_data_env <- function(dir, cfg) {
 
@@ -109,41 +85,22 @@ attach_datasource <- function(dir, config) {
     list2env(prt, envir = NULL, parent = get_env("data"))
   }
 
-  assert_that(is.string(config[["name"]]))
+  src <- config[["name"]]
+
+  assert_that(is.string(src), is.environment(assign_env))
 
   delayedAssign(config[["name"]], create_data_env(dir, config),
                 assign.env = get_env("data"))
 
-  assign(config[["name"]], new.env(parent = get_env("aux")),
-         envir = get_env("aux"))
+  assign(src, new.env(parent = get_env("aux")), envir = get_env("aux"))
 
   if (!is.null(config[["setup_hook"]])) {
-    do.call(config[["setup_hook"]], list(source = config[["name"]]))
+    do.call(config[["setup_hook"]], list(source = src))
   }
+
+  assign(src, get_source(src), envir = assign_env)
 
   invisible(NULL)
-}
-
-#' @rdname data_attach
-#'
-#' @export
-#'
-setup_proxy_env <- function(config, envir = new.env()) {
-
-  create_binding <- function(table_name, dataset_name, envir) {
-    get_tbl_clos <- function() get_table(table_name, dataset_name)
-    makeActiveBinding(table_name, get_tbl_clos, envir)
-  }
-
-  data_name <- config[["name"]]
-  tables <- cfg_to_table_name(config)
-
-  assert_that(is.string(data_name), is.character(tables),
-              is.environment(envir))
-
-  lapply(tables, create_binding, data_name, envir)
-
-  envir
 }
 
 cfg_to_table_name <- function(cfg) {
