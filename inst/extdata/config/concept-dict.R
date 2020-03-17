@@ -1072,8 +1072,7 @@ cfg <- list(
           227691L, 228003L),
           table = "inputevents_mv", column = "itemid", callback = "all_flag"
         )
-      ),
-      eicu = NULL
+      )
     )
   ),
   fluid_sampling = list(
@@ -1081,8 +1080,7 @@ cfg <- list(
       mimic = list(
         list(ids = NULL, table = "microbiologyevents", column = "org_itemid",
              callback = "mimic_sampling", aux_time = "charttime")
-      ),
-      eicu = NULL
+      )
     )
   ),
   troponin_i = list(

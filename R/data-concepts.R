@@ -56,7 +56,7 @@ c.item <- function(...) {
   if (!is.null(source)) {
     assert_that(is.string(source))
     srcs <- vapply(x, .subset2, character(1L), "source")
-    x <- .subset(x, as_src(source) == srcs)
+    x <- .subset(x, source == srcs)
   }
 
   do.call(c, lapply(x, recreate))
@@ -228,6 +228,7 @@ read_dictionary <- function(name = "concept-dict", file = NULL, ...) {
   do_conc <- function(conc, name) {
     items <- Map(do_itms, conc[["sources"]], names(conc[["sources"]]), name,
                  USE.NAMES = FALSE)
+    items <- Filter(Negate(is.null), items)
     args <- c(list(name = name), list(do.call(c, items)),
               conc[names(conc) != "sources"])
     do.call(new_concept, args)
@@ -292,7 +293,6 @@ get_col_config <- function(source = NULL, table = NULL,
                            config = get_config("default-cols")) {
 
   if (!is.null(source)) {
-    source <- as_src(source)
     assert_that(is.string(source), source %in% names(config))
     config <- config[[source]]
   }
@@ -415,7 +415,7 @@ load_concepts <- function(source, concepts = get_concepts(source),
 
     args <- c(as.data.table(x))
 
-    assert_that(all(chr_ply(args[["source"]], as_src) == as_src(src)))
+    assert_that(all(lgl_ply(args[["source"]], identical, src)))
     args[["source"]] <- src
 
     do.call(do_load, args)

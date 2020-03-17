@@ -164,8 +164,6 @@
   },
   "antibiotics": {
     "sources": {
-      "eicu": null,
-      "eicu_demo": null,
       "mimic": [
         {
           "ids": ["aztreonam", "bactrim", "cephalexin", "chloramphenicol", "cipro", "flagyl", "metronidazole", "nitrofurantoin", "tazobactam", "rifampin", "sulfadiazine", "timentin", "trimethoprim", "(amika|gentami|vanco)cin", "(amoxi|ampi|dicloxa|naf|oxa|peni|pipera)cillin", "(azithro|clarithro|erythro|clinda|strepto|tobra|vanco)mycin", "cef(azolin|tazidime|adroxil|epime|otetan|otaxime|podoxime|uroxime)", "(doxy|mino|tetra)cycline", "(levofl|moxifl|ofl)oxacin|macro(bid|dantin)", "(una|zo)syn"],
@@ -1321,8 +1319,6 @@
   },
   "fluid_sampling": {
     "sources": {
-      "eicu": null,
-      "eicu_demo": null,
       "mimic": [
         {
           "ids": null,

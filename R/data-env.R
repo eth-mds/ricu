@@ -11,21 +11,6 @@ data <- new.env()
 #'
 aux <- new.env()
 
-#' @export
-mimic <- NULL
-
-#' @export
-mimic_demo <- NULL
-
-#' @export
-eicu <- NULL
-
-#' @export
-eicu_demo <- NULL
-
-#' @export
-hirid <- NULL
-
 pkg_env <- function() asNamespace(methods::getPackageName())
 
 get_env <- function(envir = c("data", "aux")) {
