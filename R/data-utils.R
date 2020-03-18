@@ -5,17 +5,20 @@ data_ts <- function(source, table, row_expr, ...) {
 }
 
 #' @export
-data_ts_quo <- function(source, ...) {
+data_ts_quo <- function(source, table, row_quo = NULL, cols = NULL,
+                        id_cols = default_id_col(source, table),
+                        time_col = default_time_col(source, table),
+                        interval = hours(1L),
+                        data_fun = get_data_fun(source)) {
 
-  fun <- switch(
-    as_src(source),
-    mimic = mimic_ts_quo,
-    eicu  = eicu_ts_quo,
-    hirid = hirid_ts_quo,
-    stop("Data source not recognized.")
-  )
+  if (!is.null(cols)) {
+    cols <- c(id_cols, time_col, cols)
+  }
 
-  fun(..., source = source)
+  res <- data_tbl_quo(source, table, row_quo, cols, interval)
+  res <- as_ts_tbl(res, id_cols, time_col, interval)
+
+  res
 }
 
 #' @export
@@ -24,17 +27,19 @@ data_id <- function(source, table, row_expr, ...) {
 }
 
 #' @export
-data_id_quo <- function(source, ...) {
+data_id_quo <- function(source, table, row_quo = NULL, cols = NULL,
+                        id_cols = default_id_col(source, table),
+                        interval = hours(1L),
+                        data_fun = get_data_fun(source)) {
 
-  fun <- switch(
-    as_src(source),
-    mimic = mimic_id_quo,
-    eicu  = eicu_id_quo,
-    hirid = hirid_id_quo,
-    stop("Data source not recognized.")
-  )
+  if (!is.null(cols)) {
+    cols <- c(id_cols, cols)
+  }
 
-  fun(..., source = source)
+  res <- data_tbl_quo(source, table, row_quo, cols, interval)
+  res <- as_id_tbl(res, id_cols)
+
+  res
 }
 
 #' @export
@@ -43,18 +48,102 @@ data_tbl <- function(source, table, row_expr, ...) {
 }
 
 #' @export
-data_tbl_quo <- function(source, ...) {
+data_tbl_quo <- function(source, table, row_quo = NULL, cols = NULL,
+                         interval = hours(1L),
+                         data_fun = get_data_fun(source)) {
 
-  fun <- switch(
-    as_src(source),
-    mimic = mimic_tbl_quo,
-    eicu  = eicu_tbl_quo,
-    hirid = hirid_tbl_quo,
-    stop("Data source not recognized.")
-  )
+  assert_that(is.string(source), is.string(table),
+              null_or(row_quo, is.language),
+              null_or(cols, is.character),
+              is_time(interval, allow_neg = FALSE),
+              is.function(data_fun))
 
-  fun(..., source = source)
+  res <- data_fun(table = table, row_quo = row_quo, cols = cols,
+                  interval = interval, source = source)
+
+  assert_that(is_dt(res))
+
+  if (!is.null(cols)) {
+    assert_that(has_cols(res, cols))
+  }
+
+  res[]
 }
+
+default_data_fun <- function(source, table, row_quo = NULL, cols = NULL, ...) {
+  prt::subset_quo(get_table(table, source), row_quo, unique(cols))
+}
+
+#' @export
+get_col_config <- function(source = NULL, table = NULL,
+                           config = get_config("default-cols")) {
+
+  if (!is.null(source)) {
+    assert_that(is.string(source), has_name(config, source))
+    config <- config[[source]]
+  }
+
+  if ("tables" %in% names(config)) {
+    config <- config[["tables"]]
+  }
+
+  if (!is.null(table)) {
+    assert_that(is.string(table), table %in% names(config))
+    config <- config[[table]]
+  }
+
+  assert_that(is.list(config))
+
+  config
+}
+
+get_data_fun <- function(source = NULL, config = get_config("default-cols")) {
+
+  if (!is.null(source)) {
+    assert_that(is.string(source), has_name(config, source))
+    config <- config[[source]]
+  }
+
+  res <- config[["data_fun"]]
+
+  if (is.null(res)) {
+    default_data_fun
+  } else {
+    get(res, mode = "function")
+  }
+}
+
+default_col <- function(name, allow_null = FALSE) {
+
+  assert_that(is.string(name), is.flag(allow_null))
+
+  function(source, table, ...) {
+
+    assert_that(is.string(source), is.string(table))
+
+    res <- get_col_config(source, table, ...)[[name]]
+
+    if (allow_null) {
+      assert_that(is.null(res) || is.string(res))
+    } else {
+      assert_that(is.string(res))
+    }
+
+    res
+  }
+}
+
+#' @export
+default_id_col <- default_col("id_col")
+
+#' @export
+default_time_col <- default_col("time_col", allow_null = TRUE)
+
+#' @export
+default_val_col <- default_col("val_col", allow_null = TRUE)
+
+#' @export
+default_unit_col <- default_col("unit_col", allow_null = TRUE)
 
 prepare_patient_ids <- function(x, key) {
 

@@ -288,57 +288,6 @@ group_concepts <- function(concepts) {
   lapply(split(items, splt, drop = TRUE), split_swap, concepts)
 }
 
-#' @export
-get_col_config <- function(source = NULL, table = NULL,
-                           config = get_config("default-cols")) {
-
-  if (!is.null(source)) {
-    assert_that(is.string(source), source %in% names(config))
-    config <- config[[source]]
-  }
-
-  if (!is.null(table)) {
-    assert_that(is.string(table), table %in% names(config))
-    config <- config[[table]]
-  }
-
-  assert_that(is.list(config))
-
-  config
-}
-
-default_col <- function(name, allow_null = FALSE) {
-
-  assert_that(is.string(name), is.flag(allow_null))
-
-  function(source, table, ...) {
-
-    assert_that(is.string(source), is.string(table))
-
-    res <- get_col_config(source, table, ...)[[name]]
-
-    if (allow_null) {
-      assert_that(is.null(res) || is.string(res))
-    } else {
-      assert_that(is.string(res))
-    }
-
-    res
-  }
-}
-
-#' @export
-default_id_col <- default_col("id_col")
-
-#' @export
-default_time_col <- default_col("time_col", allow_null = TRUE)
-
-#' @export
-default_val_col <- default_col("val_col", allow_null = TRUE)
-
-#' @export
-default_unit_col <- default_col("unit_col", allow_null = TRUE)
-
 combine_feats <- function(x) {
 
   do_rbind <- function(needle, haystack) rbind_lst(x[haystack == needle])

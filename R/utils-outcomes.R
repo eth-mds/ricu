@@ -24,8 +24,7 @@ mimic_mortality <- function(source, id_col = "hadm_id") {
 
   exp_flag <- "hospital_expire_flag"
 
-  res <- mimic_tbl("admissions", cols = c(id_col, exp_flag),
-                   source = source)
+  res <- data_tbl(source, "admissions", cols = c(id_col, exp_flag))
 
   res <- set(res, j = exp_flag, value = as.logical(res[[exp_flag]]))
   res <- rename_cols(res, "expired", exp_flag)
@@ -40,8 +39,7 @@ eicu_mortality <- function(source, id_col = "patienthealthsystemstayid") {
 
   status <- "hospitaldischargestatus"
 
-  res <- eicu_tbl("patient", cols = c(id_col, status),
-                  source = source)
+  res <- data_tbl(source, "patient", cols = c(id_col, status))
 
   res <- set(res, j = status, value = res[[status]] == "Expired")
   res <- rename_cols(res, "expired", status)

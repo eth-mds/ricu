@@ -15,18 +15,17 @@ icu_stays <- function(source, in_time = "intime", out_time = "outtime",
 }
 
 mimic_icu_stays <- function(in_time, out_time, interval, source) {
-  res <- mimic_ts_quo("icustays", NULL, c("icustay_id", "outtime"),
-                      "hadm_id", "intime", interval = interval,
-                      source = source)
+  res <- data_ts_quo(source, "icustays", NULL, c("icustay_id", "outtime"),
+                     "hadm_id", "intime", interval = interval)
   res <- rename_cols(res, c(in_time, out_time), c("intime", "outtime"))
   res
 }
 
 eicu_icu_stays <- function(in_time, out_time, interval, source) {
-  res <- eicu_ts_quo("patient", NULL,
+  res <- data_ts_quo(source, "patient", NULL,
                      c("patientunitstayid", "unitdischargeoffset"),
                      "patienthealthsystemstayid", "unitadmitoffset",
-                      interval = interval, source = source)
+                      interval = interval)
   res <- rename_cols(res, c(in_time, out_time),
                      c("unitadmitoffset", "unitdischargeoffset"))
   res
