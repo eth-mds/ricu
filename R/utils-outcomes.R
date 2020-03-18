@@ -7,10 +7,12 @@ outcome <- function(source, type = c("mortality", "extended_stay"), ...) {
   switch(
     match.arg(type),
     mortality = switch(
-      as_src(source),
-      mimic = mimic_mortality(source, ...),
-      eicu  = eicu_mortality(source, ...),
-      hirid = stop("TODO"),
+      source,
+      mimic      = ,
+      mimic_demo = mimic_mortality(source, ...),
+      eicu       = ,
+      eicu_demo  = eicu_mortality(source, ...),
+      hirid      = stop("TODO"),
       stop("Data source not recognized.")
     ),
     extended_stay = stop("TODO")

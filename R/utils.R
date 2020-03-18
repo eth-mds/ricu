@@ -265,11 +265,6 @@ split_indices <- function(len, n_chunks) {
   }
 }
 
-as_src <- function(x) {
-  assert_that(is.string(x))
-  sub("_demo$", "", x)
-}
-
 force_numeric <- function(x) {
   res <- suppressWarnings(as.numeric(x))
   new_na <- is.na(res) & !is.na(x)

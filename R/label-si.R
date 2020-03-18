@@ -5,7 +5,7 @@ si_data <- function(source, abx_count_win = hours(24L), abx_min_count = 1L,
                     patient_ids = NULL, col_cfg = get_col_config(source),
                     dictionary = read_dictionary("concept-dict")) {
 
-  if (!identical(as_src(source), "mimic")) stop("TODO")
+  if (!source %in% c("mimic", "mimic_demo")) stop("TODO")
 
   assert_that(is.count(abx_min_count), is.flag(positive_cultures))
 

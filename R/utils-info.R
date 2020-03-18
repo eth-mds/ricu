@@ -6,10 +6,12 @@ icu_stays <- function(source, in_time = "intime", out_time = "outtime",
   assert_that(is.string(in_time), is.string(out_time))
 
   switch(
-    as_src(source),
-    mimic = mimic_icu_stays(in_time, out_time, interval, source),
-    eicu  = eicu_icu_stays(in_time, out_time, interval, source),
-    hirid = NULL,
+    source,
+    mimic      = ,
+    mimic_demo = mimic_icu_stays(in_time, out_time, interval, source),
+    eicu       = ,
+    eicu_demo  = eicu_icu_stays(in_time, out_time, interval, source),
+    hirid      = NULL,
     stop("Data source not recognized.")
   )
 }
