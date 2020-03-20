@@ -302,7 +302,8 @@ combine_feats <- function(x) {
 
 #' @export
 load_concepts <- function(source, concepts = get_concepts(source),
-                          patient_ids = NULL, col_cfg = get_col_config(source),
+                          patient_ids = NULL,
+                          col_cfg = get_col_config(source, "all"),
                           aggregate = NA_character_, interval = hours(1L),
                           merge_data = TRUE) {
 
@@ -348,11 +349,10 @@ load_concepts <- function(source, concepts = get_concepts(source),
       concept <- unique(concept)
     }
 
-    cfg_names <- c("id_col", "time_col", "val_col", "unit_col")
-
     args <- c(list(source = source, table = tbl, item_col = unique(column),
-                   items = ids, names = concept),
-              setNames(col_cfg[[tbl]][cfg_names], cfg_names),
+                   items = ids, names = concept,
+                   id_col = get_col_config(NULL, "id_cols", col_cfg)),
+              get_col_config(NULL, config = col_cfg, table = tbl),
               list(patient_ids = patient_ids, callback = callback, regex = rgx,
                    unit = unit, interval = interval),
               lapply(list(...), uq_na_rm))
@@ -370,7 +370,8 @@ load_concepts <- function(source, concepts = get_concepts(source),
     do.call(do_load, args)
   }
 
-  assert_that(is.flag(merge_data), is_time(interval, allow_neg = FALSE))
+  assert_that(is.flag(merge_data), is_time(interval, allow_neg = FALSE),
+              has_name(col_cfg, c("data_fun", "id_cols", "tables")))
 
   if (is.character(concepts)) {
     concepts <- get_concepts(source, concepts, "concept-dict")

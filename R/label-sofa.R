@@ -7,7 +7,7 @@ sofa_data <- function(source, pafi_win_length = hours(2L),
                       fix_na_gcs = TRUE, urine_min_win = hours(12L),
                       interval = hours(1L), patient_ids = NULL,
                       icu_limits = icu_stays(source, interval = interval),
-                      col_cfg = get_col_config(source),
+                      col_cfg = get_col_config(source, "all"),
                       dictionary = read_dictionary("concept-dict")) {
 
   assert_that(

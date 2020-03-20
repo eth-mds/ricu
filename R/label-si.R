@@ -2,7 +2,8 @@
 #' @export
 si_data <- function(source, abx_count_win = hours(24L), abx_min_count = 1L,
                     positive_cultures = FALSE, interval = hours(1L),
-                    patient_ids = NULL, col_cfg = get_col_config(source),
+                    patient_ids = NULL,
+                    col_cfg = get_col_config(source, "all"),
                     dictionary = read_dictionary("concept-dict")) {
 
   if (!source %in% c("mimic", "mimic_demo")) stop("TODO")

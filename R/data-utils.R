@@ -6,16 +6,16 @@ data_ts <- function(source, table, row_expr, ...) {
 
 #' @export
 data_ts_quo <- function(source, table, row_quo = NULL, cols = NULL,
-                        id_cols = default_id_col(source, table),
+                        id_cols = default_id_col(source),
                         time_col = default_time_col(source, table),
                         interval = hours(1L),
-                        data_fun = get_data_fun(source)) {
+                        data_fun = get_col_config(source, "data_fun")) {
 
   if (!is.null(cols)) {
     cols <- c(id_cols, time_col, cols)
   }
 
-  res <- data_tbl_quo(source, table, row_quo, cols, interval)
+  res <- data_tbl_quo(source, table, row_quo, cols, interval, data_fun)
   res <- as_ts_tbl(res, id_cols, time_col, interval)
 
   res
@@ -28,15 +28,15 @@ data_id <- function(source, table, row_expr, ...) {
 
 #' @export
 data_id_quo <- function(source, table, row_quo = NULL, cols = NULL,
-                        id_cols = default_id_col(source, table),
+                        id_cols = default_id_col(source),
                         interval = hours(1L),
-                        data_fun = get_data_fun(source)) {
+                        data_fun = get_col_config(source, "data_fun")) {
 
   if (!is.null(cols)) {
     cols <- c(id_cols, cols)
   }
 
-  res <- data_tbl_quo(source, table, row_quo, cols, interval)
+  res <- data_tbl_quo(source, table, row_quo, cols, interval, data_fun)
   res <- as_id_tbl(res, id_cols)
 
   res
@@ -50,7 +50,7 @@ data_tbl <- function(source, table, row_expr, ...) {
 #' @export
 data_tbl_quo <- function(source, table, row_quo = NULL, cols = NULL,
                          interval = hours(1L),
-                         data_fun = get_data_fun(source)) {
+                         data_fun = get_col_config(source, "data_fun")) {
 
   assert_that(is.string(source), is.string(table),
               null_or(row_quo, is.language),
@@ -75,75 +75,100 @@ default_data_fun <- function(source, table, row_quo = NULL, cols = NULL, ...) {
 }
 
 #' @export
-get_col_config <- function(source = NULL, table = NULL,
-                           config = get_config("default-cols")) {
+get_col_config <- function(source = NULL,
+                           what = c("tables", "id_cols", "data_fun", "all"),
+                           config = get_config("default-cols"), ...) {
+
+  what <- match.arg(what)
 
   if (!is.null(source)) {
     assert_that(is.string(source), has_name(config, source))
     config <- config[[source]]
   }
 
-  if ("tables" %in% names(config)) {
-    config <- config[["tables"]]
+  if (identical(what, "all")) {
+
+    config
+
+  } else {
+
+    assert_that(has_name(config, what))
+
+    switch(
+      what,
+      tables   = get_default_cols(config[[what]], ...),
+      id_cols  = get_id_col(config[[what]], ...),
+      data_fun = get_data_fun(config[[what]], ...),
+    )
   }
-
-  if (!is.null(table)) {
-    assert_that(is.string(table), table %in% names(config))
-    config <- config[[table]]
-  }
-
-  assert_that(is.list(config))
-
-  config
 }
 
-get_data_fun <- function(source = NULL, config = get_config("default-cols")) {
+get_data_fun <- function(cfg) {
 
-  if (!is.null(source)) {
-    assert_that(is.string(source), has_name(config, source))
-    config <- config[[source]]
-  }
-
-  res <- config[["data_fun"]]
-
-  if (is.null(res)) {
+  if (is.null(cfg)) {
     default_data_fun
   } else {
-    get(res, mode = "function")
+    get(cfg, mode = "function")
   }
 }
 
-default_col <- function(name, allow_null = FALSE) {
+get_id_col <- function(cfg, type = c("hadm", "icustay", "patient")) {
 
-  assert_that(is.string(name), is.flag(allow_null))
+  type <- match.arg(type)
 
-  function(source, table, ...) {
+  assert_that(type %in% names(cfg))
 
-    assert_that(is.string(source), is.string(table))
+  cfg[[type]]
+}
 
-    res <- get_col_config(source, table, ...)[[name]]
+get_default_cols <- function(cfg, table = NULL) {
 
-    if (allow_null) {
-      assert_that(is.null(res) || is.string(res))
-    } else {
-      assert_that(is.string(res))
+  get_one <- function(x) {
+
+    cfg_names <- c("time_col", "val_col", "unit_col")
+
+    if (is.null(names(x))) {
+      assert_that(identical(x, list()))
     }
 
+    assert_that(all(names(x) %in% cfg_names))
+    res <- setNames(x[cfg_names], cfg_names)
+    assert_that(all(lgl_ply(res, is.string) | lgl_ply(res, is.null)))
     res
+  }
+
+  if (is.null(table)) {
+    lapply(cfg, get_one)
+  } else {
+    assert_that(is.string(table), has_name(cfg, table))
+    get_one(cfg[[table]])
+  }
+}
+
+
+get_default_col <- function(name) {
+
+  assert_that(is.string(name))
+
+  function(source, table, ...) {
+    assert_that(is.string(source), is.string(table))
+    get_col_config(source, "tables", ..., table = table)[[name]]
   }
 }
 
 #' @export
-default_id_col <- default_col("id_col")
+default_time_col <- get_default_col("time_col")
 
 #' @export
-default_time_col <- default_col("time_col", allow_null = TRUE)
+default_val_col <- get_default_col("val_col")
 
 #' @export
-default_val_col <- default_col("val_col", allow_null = TRUE)
+default_unit_col <- get_default_col("unit_col")
 
-#' @export
-default_unit_col <- default_col("unit_col", allow_null = TRUE)
+default_id_col <- function(source, ...) {
+  assert_that(is.string(source))
+  get_col_config(source, "id_cols", ...)
+}
 
 prepare_patient_ids <- function(x, key) {
 
@@ -165,12 +190,13 @@ prepare_patient_ids <- function(x, key) {
 
 #' @export
 load_items <- function(source, table, item_col, items = NULL, names = NULL,
-                       id_col = default_id_col(source, table),
+                       id_col = default_id_col(source),
                        time_col = default_time_col(source, table),
                        val_col = default_val_col(source, table),
                        unit_col = default_unit_col(source, table),
                        patient_ids = NULL, callback = NULL, regex = FALSE,
-                       unit = NULL, interval = hours(1L), ...) {
+                       unit = NULL, interval = hours(1L),
+                       data_fun = get_col_config(source, "data_fun"), ...) {
 
   extra_cols <- list(...)
 
@@ -188,19 +214,19 @@ load_items <- function(source, table, item_col, items = NULL, names = NULL,
 
     load_wide(item_col, id_col, time_col, extra_cols, names,
               patient_ids, unit, callback, source = source, table = table,
-              interval = interval)
+              interval = interval, data_fun = data_fun)
 
   } else if (isTRUE(regex)) {
 
     load_grep(items, item_col, id_col, time_col, val_col, extra_cols, names,
               patient_ids, unit, callback, source = source, table = table,
-              interval = interval)
+              interval = interval, data_fun = data_fun)
 
   } else {
 
     load_long(items, item_col, id_col, time_col, val_col, extra_cols, names,
               patient_ids, unit, callback, source = source, table = table,
-              interval = interval)
+              interval = interval, data_fun = data_fun)
   }
 }
 
