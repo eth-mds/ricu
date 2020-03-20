@@ -6,17 +6,17 @@ data_ts <- function(source, table, row_expr, ...) {
 
 #' @export
 data_ts_quo <- function(source, table, row_quo = NULL, cols = NULL,
-                        id_cols = default_id_col(source),
+                        id_col = default_id_col(source),
                         time_col = default_time_col(source, table),
                         interval = hours(1L),
                         data_fun = get_col_config(source, "data_fun")) {
 
   if (!is.null(cols)) {
-    cols <- c(id_cols, time_col, cols)
+    cols <- c(id_col, time_col, cols)
   }
 
   res <- data_tbl_quo(source, table, row_quo, cols, interval, data_fun)
-  res <- as_ts_tbl(res, id_cols, time_col, interval)
+  res <- as_ts_tbl(res, id_col, time_col, interval)
 
   res
 }
@@ -28,16 +28,16 @@ data_id <- function(source, table, row_expr, ...) {
 
 #' @export
 data_id_quo <- function(source, table, row_quo = NULL, cols = NULL,
-                        id_cols = default_id_col(source),
+                        id_col = default_id_col(source),
                         interval = hours(1L),
                         data_fun = get_col_config(source, "data_fun")) {
 
   if (!is.null(cols)) {
-    cols <- c(id_cols, cols)
+    cols <- c(id_col, cols)
   }
 
   res <- data_tbl_quo(source, table, row_quo, cols, interval, data_fun)
-  res <- as_id_tbl(res, id_cols)
+  res <- as_id_tbl(res, id_col)
 
   res
 }
@@ -118,7 +118,14 @@ get_id_col <- function(cfg, type = c("hadm", "icustay", "patient")) {
 
   assert_that(type %in% names(cfg))
 
-  cfg[[type]]
+  res <- cfg[[type]]
+
+  if (is.null(res)) {
+    stop("The selected data source does not allow for ", type, " ids to be ",
+         "used.")
+  }
+
+  res
 }
 
 get_default_cols <- function(cfg, table = NULL) {
@@ -316,10 +323,10 @@ load_wide <- function(item_cols, id_col, time_col, extra_cols, names,
   to_rm <- unique(unlist(extra_cols))
 
   if (is.null(time_col)) {
-    dat <- data_id_quo(cols = c(item_cols, to_rm), id_cols = id_col,
+    dat <- data_id_quo(cols = c(item_cols, to_rm), id_col = id_col,
                        ...)
   } else {
-    dat <- data_ts_quo(cols = c(item_cols, to_rm), id_cols = id_col,
+    dat <- data_ts_quo(cols = c(item_cols, to_rm), id_col = id_col,
                        time_col = time_col, ...)
   }
 
@@ -390,10 +397,10 @@ load_long <- function(items, item_col, id_col, time_col, val_col, extra_cols,
 
   if (is.null(time_col)) {
     dat <- data_id_quo(row_quo = query, cols = c(item_col, val_col, uq_extra),
-                       id_cols = id_col, ...)
+                       id_col = id_col, ...)
   } else {
     dat <- data_ts_quo(row_quo = query, cols = c(item_col, val_col, uq_extra),
-                       id_cols = id_col, time_col = time_col, ...)
+                       id_col = id_col, time_col = time_col, ...)
   }
 
   if (!is.null(patient_ids)) {
@@ -469,10 +476,10 @@ load_grep <- function(items, item_col, id_col, time_col, val_col, extra_cols,
 
   if (is.null(time_col)) {
     dat <- data_id_quo(row_quo = query, cols = c(item_col, val_col, uq_extra),
-                       id_cols = id_col, ...)
+                       id_col = id_col, ...)
   } else {
     dat <- data_ts_quo(row_quo = query, cols = c(item_col, val_col, uq_extra),
-                       id_cols = id_col, time_col = time_col, ...)
+                       id_col = id_col, time_col = time_col, ...)
   }
 
   if (!is.null(patient_ids)) {

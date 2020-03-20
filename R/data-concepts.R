@@ -302,7 +302,7 @@ combine_feats <- function(x) {
 
 #' @export
 load_concepts <- function(source, concepts = get_concepts(source),
-                          patient_ids = NULL,
+                          id_type = "hadm", patient_ids = NULL,
                           col_cfg = get_col_config(source, "all"),
                           aggregate = NA_character_, interval = hours(1L),
                           merge_data = TRUE) {
@@ -349,12 +349,14 @@ load_concepts <- function(source, concepts = get_concepts(source),
       concept <- unique(concept)
     }
 
+    id_col <- get_col_config(NULL, "id_cols", col_cfg, type = id_type)
+
     args <- c(list(source = source, table = tbl, item_col = unique(column),
-                   items = ids, names = concept,
-                   id_col = get_col_config(NULL, "id_cols", col_cfg)),
+                   items = ids, names = concept, id_col = id_col),
               get_col_config(NULL, config = col_cfg, table = tbl),
               list(patient_ids = patient_ids, callback = callback, regex = rgx,
-                   unit = unit, interval = interval),
+                   unit = unit, interval = interval,
+                   data_fun = get_col_config(NULL, "data_fun", col_cfg)),
               lapply(list(...), uq_na_rm))
 
     do.call(load_items, args)
