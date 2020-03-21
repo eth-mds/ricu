@@ -476,6 +476,7 @@ jsonlite::write_json(
     name = "mimic",
     base_url = "https://physionet.org/files/mimiciii",
     version = "1.4",
+    setup_hook = "setup_mimic_aux_tables",
     tables = mk_cfg(is_demo = FALSE)
   ),
   file.path(path, "mimic-setup.json"),
@@ -488,6 +489,7 @@ jsonlite::write_json(
     name = "mimic_demo",
     base_url = "https://physionet.org/files/mimiciii-demo",
     version = "1.4",
+    setup_hook = "setup_mimic_aux_tables",
     tables = mk_cfg(is_demo = TRUE)
   ),
   file.path(path, "mimic-demo.json"),

@@ -2,6 +2,7 @@
   "name": "mimic",
   "base_url": "https://physionet.org/files/mimiciii",
   "version": "1.4",
+  "setup_hook": "setup_mimic_aux_tables",
   "tables": {
     "ADMISSIONS.csv.gz": {
       "col_spec": {

@@ -1,7 +1,8 @@
 {
-  "name": "hirid_data",
+  "name": "hirid",
   "base_url": "https://physionet.org/files/hirid",
   "version": "0.1",
+  "setup_hook": "setup_hirid_aux_tables",
   "tables": {
     "general": {
       "col_spec": {

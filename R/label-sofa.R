@@ -5,10 +5,13 @@ sofa_data <- function(source, pafi_win_length = hours(2L),
                       fix_na_fio2 = TRUE, vent_win_length = hours(6L),
                       vent_min_win = mins(10L), gcs_win_length = hours(6L),
                       fix_na_gcs = TRUE, urine_min_win = hours(12L),
-                      interval = hours(1L), patient_ids = NULL,
+                      interval = hours(1L), id_type = "hadm",
+                      patient_ids = NULL,
                       icu_limits = icu_stays(source, interval = interval),
                       col_cfg = get_col_config(source, "all"),
                       dictionary = read_dictionary("concept-dict")) {
+
+  if (!identical(id_type, "hadm")) stop ("TODO")
 
   assert_that(
     is_time(pafi_win_length, allow_neg = FALSE), pafi_win_length > interval,
@@ -45,9 +48,9 @@ sofa_data <- function(source, pafi_win_length = hours(2L),
   vent_dict <- dictionary[vent_conc, source = source]
 
   dat <- c(
-    load_concepts(source, dat_dict, patient_ids, col_cfg, agg_funs,
+    load_concepts(source, dat_dict, id_type, patient_ids, col_cfg, agg_funs,
                   interval, merge_data = FALSE),
-    load_concepts(source, vent_dict, patient_ids, col_cfg, agg_funs,
+    load_concepts(source, vent_dict, id_type, patient_ids, col_cfg, agg_funs,
                   mins(1L), merge_data = FALSE)
   )
   names(dat) <- chr_ply(dat, data_cols)
