@@ -64,7 +64,8 @@ cfg <- list(
     data_fun = "eicu_tbl_quo",
     id_cols = list(
       icustay = "patientunitstayid",
-      hadm = "patienthealthsystemstayid"
+      hadm = "patienthealthsystemstayid",
+      patient = "uniquepid"
     ),
     tables = list(
       admissiondrug = list(),

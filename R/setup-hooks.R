@@ -23,11 +23,34 @@ setup_mimic_aux_tables <- function(source) {
 
 setup_eicu_aux_tables <- function(source) {
 
-  id_map_cols <- c("patienthealthsystemstayid", "patientunitstayid",
-                   "hospitaladmitoffset", "unitdischargeoffset")
+  eicu_id_map <- function(src) {
 
-  delayedAssign("id_map",
-                get_table("patient", source)[, id_map_cols],
+    dob <- function(x, y) mean(x + y, na.rm = TRUE)
+
+    time_cols <- c("hospitaladmitoffset", "hospitaldischargeoffset",
+                   "unitdischargeoffset")
+    id_cols   <- c("uniquepid", "patienthealthsystemstayid",
+                   "patientunitstayid")
+
+    res <- get_table("patient", src)[, c(id_cols, "age", time_cols)]
+
+    res[["age"]][res[["age"]] == "> 89"] <- "90"
+    res[["age"]] <- as.difftime(-as.numeric(res[["age"]]) * 365 * 24 * 60,
+                                units = "mins")
+    res <- rename_cols(res, "birthoffset", "age")
+
+    res <- res[, c(time_cols) := lapply(.SD, as.difftime, units = "mins"),
+               .SDcols = time_cols]
+
+    res <- res[, c("birthoffset") := dob(get("birthoffset"),
+                                         get("hospitaladmitoffset")),
+               by = "uniquepid"]
+
+    res
+  }
+
+
+  delayedAssign("id_map", eicu_id_map(source),
                 assign.env = get_source(source, "aux"))
 
   delayedAssign("patient_weight",
