@@ -115,18 +115,29 @@ test_that("expect_all_equal", {
   expect_failure(expect_all(c(TRUE, FALSE)))
 })
 
-expect_fsetequal <- function(object, expected) {
+expect_fsetequal <- function(object, expected, ...) {
 
   act <- quasi_label(rlang::enquo(object))
   exp <- quasi_label(rlang::enquo(expected))
 
   expect(
-    data.table::fsetequal(act$val, exp$val),
+    data.table::fsetequal(act$val, exp$val, ...),
     sprintf("%s is not fsetequal to %s.", act$lab, exp$lab)
   )
 
   invisible(act$val)
 }
+
+test_that("expect_fsetequal", {
+
+  dt1 <- data.table::data.table(a = letters[1:10], b = 1:10)
+  dt2 <- data.table::data.table(a = LETTERS[1:10], b = 1:10)
+
+  expect_success(expect_fsetequal(dt1, dt1))
+  expect_success(expect_fsetequal(dt1, dt1[sample(1:10), ]))
+  expect_failure(expect_fsetequal(dt1, dt2))
+  expect_failure(expect_fsetequal(dt1, dt1[-1L, ]))
+})
 
 cpy <- data.table::copy
 assign("ident_cb", function(x, ...) x, envir = .GlobalEnv)
