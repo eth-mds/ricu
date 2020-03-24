@@ -302,7 +302,7 @@ combine_feats <- function(x) {
 
 #' @export
 load_concepts <- function(source, concepts = get_concepts(source),
-                          id_type = "hadm", patient_ids = NULL,
+                          id_type = "icustay", patient_ids = NULL,
                           col_cfg = get_col_config(source, "all"),
                           aggregate = NA_character_, interval = hours(1L),
                           merge_data = TRUE) {

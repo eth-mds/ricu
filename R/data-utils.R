@@ -112,7 +112,7 @@ get_data_fun <- function(cfg) {
   }
 }
 
-get_id_col <- function(cfg, type = c("hadm", "icustay", "patient")) {
+get_id_col <- function(cfg, type = c("icustay", "hadm", "patient")) {
 
   type <- match.arg(type)
 
