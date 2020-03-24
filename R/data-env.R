@@ -46,7 +46,7 @@ get_table <- function(table, source, envir = "data") {
   }
 
   if (!(prt::is_prt(res) || is_dt(res))) {
-    stop("Expecting `", source, "::", table, "` to eitehr be a `prt` object ",
+    stop("Expecting `", source, "::", table, "` to either be a `prt` object ",
          "or inherit from `data.table`.")
   }
 

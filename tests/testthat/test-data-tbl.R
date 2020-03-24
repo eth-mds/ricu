@@ -1,54 +1,90 @@
 
-test_that("mimic ts_tbl", {
+test_that("mimic data_tbl", {
 
-  albu <- data_ts("mimic_demo", "labevents", is_val(itemid, 50862L), "value",
-                  time_col = "charttime")
+  cols <- c("hadm_id", "charttime", "value")
+  alb1 <- data_tbl("mimic_demo", "labevents", is_val(itemid, 50862L), cols)
 
-  expect_is(albu, "ts_tbl")
-  expect_true(is_ts_tbl(albu))
-  expect_identical(id(albu), "hadm_id")
-  expect_identical(index(albu), "charttime")
-  expect_equal(interval(albu), hours(1L))
-  expect_identical(data_cols(albu), "value")
+  expect_is(alb1, "data.table")
+  expect_named(alb1, cols)
+  expect_is(alb1[["charttime"]], "difftime")
+  expect_identical(units(alb1[["charttime"]]), "hours")
+
+
+  alb2 <- data_tbl("mimic_demo", "labevents", is_val(itemid, 50862L), cols,
+                   mins(60L))
+
+  expect_identical(units(alb2[["charttime"]]), "mins")
+
+  units(alb2[["charttime"]]) <- "hours"
+
+  expect_fsetequal(alb1, alb2)
+
+  alb2 <- data_tbl("mimic_demo", "labevents", is_val(itemid, 50862L),
+                   cols[-2L])
+
+  expect_fsetequal(alb1[, c("hadm_id", "value"), with = FALSE], alb2)
+
+  expect_warning(
+    alb2 <- data_tbl("mimic_demo", "labevents", is_val(itemid, 50862L),
+                     cols[-1L]),
+    "an ID column is required"
+  )
+
+  expect_is(alb2, "data.table")
+  expect_named(alb2, cols[-1L])
+  expect_is(alb2[["charttime"]], "POSIXt")
+
+  expect_error(
+    data_tbl("mimic_demo", "labevents", is_val(itemid, 50862L),
+             c("icustay_id", "charttime", "value")),
+    class = "vctrs_error_subscript_oob"
+  )
+
+  expect_fsetequal(data_tbl("mimic_demo", "d_labitems"),
+                   get_table("d_labitems", "mimic_demo")[])
 })
 
-test_that("mimic id_tbl", {
+test_that("eicu data_tbl", {
 
-  sex <- data_id("mimic_demo", "patients", cols = "gender")
+  cols <- c("patientunitstayid", "labresultoffset", "labresult")
+  alb1 <- data_tbl("eicu_demo", "lab", is_val(labname, "albumin"), cols)
 
-  expect_is(sex, "id_tbl")
-  expect_true(is_id_tbl(sex))
-  expect_identical(id(sex), "hadm_id")
-  expect_identical(data_cols(sex), "gender")
-})
+  expect_is(alb1, "data.table")
+  expect_named(alb1, cols)
+  expect_is(alb1[["labresultoffset"]], "difftime")
+  expect_identical(units(alb1[["labresultoffset"]]), "hours")
 
-test_that("eicu ts_tbl", {
+  alb2 <- data_tbl("eicu_demo", "lab", is_val(labname, "albumin"), cols,
+                   mins(60L))
 
-  albu <- data_ts("eicu_demo", "lab", is_val(labname, "albumin"), "labresult",
-                  time_col = "labresultoffset")
+  expect_identical(units(alb2[["labresultoffset"]]), "mins")
 
-  expect_is(albu, "ts_tbl")
-  expect_true(is_ts_tbl(albu))
-  expect_identical(id(albu), "patienthealthsystemstayid")
-  expect_identical(index(albu), "labresultoffset")
-  expect_equal(interval(albu), hours(1L))
-  expect_identical(data_cols(albu), "labresult")
+  units(alb2[["labresultoffset"]]) <- "hours"
 
-})
+  expect_fsetequal(alb1, alb2)
 
-test_that("eicu id_tbl", {
+  alb2 <- data_tbl("eicu_demo", "lab", is_val(labname, "albumin"),
+                   cols[-2L])
 
-  age <- data_id("eicu_demo", "patient", cols = "age")
+  expect_fsetequal(alb1[, c("patientunitstayid", "labresult"), with = FALSE],
+                   alb2)
 
-  expect_is(age, "id_tbl")
-  expect_true(is_id_tbl(age))
-  expect_identical(id(age), "patienthealthsystemstayid")
-  expect_identical(data_cols(age), "age")
+  expect_warning(
+    alb2 <- data_tbl("eicu_demo", "lab", is_val(labname, "albumin"),
+                     cols[-1L]),
+    "an ID column is required"
+  )
 
-  adx <- data_id("eicu_demo", "admissiondx", cols = "admitdxname")
+  expect_is(alb2, "data.table")
+  expect_named(alb2, cols[-1L])
+  expect_is(alb2[["labresultoffset"]], "integer")
 
-  expect_is(adx, "id_tbl")
-  expect_true(is_id_tbl(adx))
-  expect_identical(id(adx), "patienthealthsystemstayid")
-  expect_identical(data_cols(adx), "admitdxname")
+  expect_error(
+    data_tbl("eicu_demo", "lab", is_val(labname, "albumin"),
+             c("patienthealthsystemstayid", "labresultoffset", "labresult")),
+    class = "vctrs_error_subscript_oob"
+  )
+
+  expect_fsetequal(data_tbl("eicu_demo", "hospital"),
+                   get_table("hospital", "eicu_demo")[])
 })
