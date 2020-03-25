@@ -1,31 +1,13 @@
 
-prepare_patient_ids <- function(x, key) {
-
-  res <- if (inherits(x, "data.frame")) {
-
-    assert_that(has_name(x, key))
-
-    if (inherits(x, "data.table")) x[, key, with = FALSE]
-    else                           x[, key]
-
-  } else {
-
-    assert_that(is.atomic(x))
-    setnames(setDT(list(x)), key)
-  }
-
-  unique(res)
-}
-
 #' @export
 load_items <- function(source, table, item_col, items = NULL, names = NULL,
-                       id_col = default_id_col(source),
-                       time_col = default_time_col(source, table),
-                       val_col = default_val_col(source, table),
-                       unit_col = default_unit_col(source, table),
+                       id_col = default_id_col(source, cfg),
+                       time_col = default_time_col(source, table, cfg),
+                       val_col = default_val_col(source, table, cfg),
+                       unit_col = default_unit_col(source, table, cfg),
                        patient_ids = NULL, callback = NULL, regex = FALSE,
                        unit = NULL, interval = hours(1L),
-                       data_fun = get_col_config(source, "data_fun"), ...) {
+                       cfg = get_col_config(source, "all"), ...) {
 
   extra_cols <- list(...)
 
@@ -43,20 +25,38 @@ load_items <- function(source, table, item_col, items = NULL, names = NULL,
 
     load_wide(item_col, id_col, time_col, extra_cols, names,
               patient_ids, unit, callback, source = source, table = table,
-              interval = interval, data_fun = data_fun)
+              interval = interval, cfg = cfg)
 
   } else if (isTRUE(regex)) {
 
     load_grep(items, item_col, id_col, time_col, val_col, extra_cols, names,
               patient_ids, unit, callback, source = source, table = table,
-              interval = interval, data_fun = data_fun)
+              interval = interval, cfg = cfg)
 
   } else {
 
     load_long(items, item_col, id_col, time_col, val_col, extra_cols, names,
               patient_ids, unit, callback, source = source, table = table,
-              interval = interval, data_fun = data_fun)
+              interval = interval, cfg = cfg)
   }
+}
+
+prepare_patient_ids <- function(x, key) {
+
+  res <- if (inherits(x, "data.frame")) {
+
+    assert_that(has_name(x, key))
+
+    if (inherits(x, "data.table")) x[, key, with = FALSE]
+    else                           x[, key]
+
+  } else {
+
+    assert_that(is.atomic(x))
+    setnames(setDT(list(x)), key)
+  }
+
+  unique(res)
 }
 
 do_callback <- function(x, fun, unit, val, ...) {

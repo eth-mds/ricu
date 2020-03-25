@@ -2,42 +2,14 @@
 mimic_tbl_quo <- function(table, row_quo = NULL, cols = NULL,
                           interval = hours(1L), source = "mimic") {
 
-  time_fun <- function(x, y) {
-    round_to(difftime(x, y, units = units(interval)), as.numeric(interval))
-  }
+  difftime_tbl_quo(source, table, row_quo, cols,
+                   c("icustay_id", "hadm_id", "subject_id"), interval)
+}
 
-  dat <- prt::subset_quo(get_table(table, source), row_quo, unique(cols))
+hirid_tbl_quo <- function(table, row_quo = NULL, cols = NULL,
+                          interval = hours(1L), source = "hirid") {
 
-  date_cols <- colnames(dat)[vapply(dat, inherits, logical(1L), "POSIXt")]
-
-  id_cand <- c("icustay_id", "hadm_id", "subject_id")
-  id_col    <- intersect(id_cand, colnames(dat))[1L]
-  start_col <- setNames(c("dob", "admittime", "intime"), id_cand)[id_col]
-
-  if (length(date_cols)) {
-
-    if (is.na(id_col)) {
-
-      warning("In order to return relative times, an ID column is required.")
-
-    } else {
-
-      id_map <- get_table("id_map", source, "aux")
-      id_map <- unique(id_map[, c(id_col, start_col), with = FALSE])
-
-      dat <- merge(dat, id_map, by = id_col)
-
-      dat <- dat[, c(date_cols) := lapply(.SD, time_fun, get(start_col)),
-                 .SDcols = date_cols]
-
-      dat <- set(dat, j = start_col, value = NULL)
-    }
-
-  } else if (!is.na(id_col)) {
-    dat <- na.omit(dat, id_col)
-  }
-
-  dat
+  difftime_tbl_quo(source, table, row_quo, cols, "patientid", interval)
 }
 
 eicu_tbl_quo <- function(table, row_quo = NULL, cols = NULL,
@@ -49,7 +21,7 @@ eicu_tbl_quo <- function(table, row_quo = NULL, cols = NULL,
     round_to(res, as.numeric(interval))
   }
 
-  dat <- prt::subset_quo(get_table(table, source), row_quo, unique(cols))
+  dat <- default_data_fun(table, row_quo, cols, source = source)
 
   id_col <- "patientunitstayid"
 
@@ -75,38 +47,48 @@ eicu_tbl_quo <- function(table, row_quo = NULL, cols = NULL,
   dat
 }
 
-hirid_tbl_quo <- function(table, row_quo = NULL, cols = NULL,
-                          interval = hours(1L), source = "hirid") {
+default_data_fun <- function(table, row_quo = NULL, cols = NULL, interval,
+                             source) {
 
-  time_fun <- function(x, y) {
-    round_to(difftime(x, y, units = units(interval)), as.numeric(interval))
+  if (!missing(interval)) {
+    warning("Specifying a time interval has no effect.")
   }
 
-  dat <- prt::subset_quo(get_table(table, source), row_quo, unique(cols))
+  prt::subset_quo(get_table(table, source), row_quo, unique(cols))
+}
 
-  id_col    <- "patientid"
-  start_col <- "admissiontime"
+difftime_tbl_quo <- function(src, tbl, row, col, id_cand, ival) {
 
+  time_fun <- function(x, y, int) {
+    round_to(difftime(x, y, units = units(int)), as.numeric(int))
+  }
+
+  dat <- default_data_fun(tbl, row, col, source = src)
+
+  id_col    <- intersect(id_cand, colnames(dat))[1L]
   date_cols <- colnames(dat)[vapply(dat, inherits, logical(1L), "POSIXt")]
 
   if (length(date_cols)) {
 
-    if (id_col %in% colnames(dat)) {
+    if (is.na(id_col)) {
 
-      dat <- merge(dat, get_table("id_map", source, "aux"), by = id_col)
-
-      dat <- dat[, c(date_cols) := lapply(.SD, time_fun, get(start_col)),
-                 .SDcols = date_cols]
-
-      dat <- set(dat, j = start_col, value = NULL)
+      warning("In order to return relative times, an ID column is required.")
 
     } else {
-      warning("In order to return relative times, an ID column is required.")
+
+      dat <- merge(dat, get_table(id_col, src, "aux"), by.x = id_col,
+                   by.y = "id")
+
+      dat <- dat[, c(date_cols) := lapply(.SD, time_fun, get("origin"), ival),
+                 .SDcols = date_cols]
+
+      dat <- set(dat, j = "origin", value = NULL)
     }
 
-  } else if (id_col %in% colnames(dat)) {
+  } else if (!is.na(id_col)) {
     dat <- na.omit(dat, id_col)
   }
 
   dat
+
 }

@@ -355,8 +355,7 @@ load_concepts <- function(source, concepts = get_concepts(source),
                    items = ids, names = concept, id_col = id_col),
               get_col_config(NULL, config = col_cfg, table = tbl),
               list(patient_ids = patient_ids, callback = callback, regex = rgx,
-                   unit = unit, interval = interval,
-                   data_fun = get_col_config(NULL, "data_fun", col_cfg)),
+                   unit = unit, interval = interval, cfg = col_cfg),
               lapply(list(...), uq_na_rm))
 
     do.call(load_items, args)

@@ -6,16 +6,13 @@ data_ts <- function(source, table, row_expr, ...) {
 
 #' @export
 data_ts_quo <- function(source, table, row_quo = NULL, cols = NULL,
-                        id_col = default_id_col(source),
-                        time_col = default_time_col(source, table),
+                        id_col = default_id_col(config = cfg),
+                        time_col = default_time_col(table, config = cfg),
                         interval = hours(1L),
-                        data_fun = get_col_config(source, "data_fun")) {
+                        cfg = get_col_config(source, "all")) {
 
-  if (!is.null(cols)) {
-    cols <- c(id_col, time_col, cols)
-  }
-
-  res <- data_tbl_quo(source, table, row_quo, cols, interval, data_fun)
+  res <- data_tbl_quo(source, table, row_quo, cols, interval,
+                      get_col_config(NULL, "data_fun", cfg))
   res <- as_ts_tbl(res, id_col, time_col, interval)
 
   res
@@ -28,15 +25,16 @@ data_id <- function(source, table, row_expr, ...) {
 
 #' @export
 data_id_quo <- function(source, table, row_quo = NULL, cols = NULL,
-                        id_col = default_id_col(source),
+                        id_col = default_id_col(source, cfg),
                         interval = hours(1L),
-                        data_fun = get_col_config(source, "data_fun")) {
+                        cfg = get_col_config(source, "all")) {
 
   if (!is.null(cols)) {
     cols <- c(id_col, cols)
   }
 
-  res <- data_tbl_quo(source, table, row_quo, cols, interval, data_fun)
+  res <- data_tbl_quo(source, table, row_quo, cols, interval,
+                      get_col_config(NULL, "data_fun", cfg))
   res <- as_id_tbl(res, id_col)
 
   res
@@ -68,10 +66,6 @@ data_tbl_quo <- function(source, table, row_quo = NULL, cols = NULL,
   }
 
   res[]
-}
-
-default_data_fun <- function(source, table, row_quo = NULL, cols = NULL, ...) {
-  prt::subset_quo(get_table(table, source), row_quo, unique(cols))
 }
 
 #' @export
@@ -112,17 +106,28 @@ get_data_fun <- function(cfg) {
   }
 }
 
-get_id_col <- function(cfg, type = c("icustay", "hadm", "patient")) {
+get_id_col <- function(cfg, type = "icustay") {
 
-  type <- match.arg(type)
+  opts <- c("icustay", "hadm", "patient")
 
-  assert_that(type %in% names(cfg))
+  type <- match.arg(type, c(opts, "all"))
 
-  res <- cfg[[type]]
+  if (identical(type, "all")) {
 
-  if (is.null(res)) {
-    stop("The selected data source does not allow for ", type, " ids to be ",
-         "used.")
+    res <- unlist(Filter(Negate(is.na), cfg[opts]))
+
+    assert_that(length(res) > 0L)
+
+  } else {
+
+    assert_that(type %in% names(cfg))
+
+    res <- cfg[[type]]
+
+    if (is.null(res)) {
+      stop("The selected data source does not allow for ", type, " ids to be ",
+           "used.")
+    }
   }
 
   res
@@ -157,7 +162,7 @@ get_default_col <- function(name) {
 
   assert_that(is.string(name))
 
-  function(source, table, ...) {
+  function(table, source = NULL, ...) {
     assert_that(is.string(source), is.string(table))
     get_col_config(source, "tables", ..., table = table)[[name]]
   }

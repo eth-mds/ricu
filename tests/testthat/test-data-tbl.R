@@ -9,7 +9,6 @@ test_that("mimic data_tbl", {
   expect_is(alb1[["charttime"]], "difftime")
   expect_identical(units(alb1[["charttime"]]), "hours")
 
-
   alb2 <- data_tbl("mimic_demo", "labevents", is_val(itemid, 50862L), cols,
                    mins(60L))
 
