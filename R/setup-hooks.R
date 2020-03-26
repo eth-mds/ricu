@@ -1,7 +1,7 @@
 
 origin_tbl <- function(src, tbl, id, orig) {
   res <- get_table(tbl, src)[, c(id, orig)]
-  res <- rename_cols(res, c("id", "origin"), c(id, orig))
+  res <- rename_cols(res, c("id", "origin"))
   res
 }
 
@@ -30,6 +30,14 @@ setup_mimic_aux_tables <- function(source) {
                .SDcols = dt_cols]
 
     res <- rm_cols(res, "intime")
+    res <- rename_cols(res, c("hadm", "patient", "birth", "hosp_in",
+                              "hosp_out", "icustay", "icu_out"))
+    res <- data.table::setcolorder(res,
+      c("patient", "hadm", "icustay", "birth", "hosp_in", "hosp_out",
+        "icu_out")
+    )
+
+    res
   }
 
   delayedAssign("id_map", mimic_id_map(source),
@@ -52,8 +60,6 @@ setup_eicu_aux_tables <- function(source) {
 
   eicu_id_map <- function(src) {
 
-    dob <- function(x, y) mean(x + y, na.rm = TRUE)
-
     time_cols <- c("hospitaladmitoffset", "hospitaldischargeoffset",
                    "unitdischargeoffset")
     id_cols   <- c("uniquepid", "patienthealthsystemstayid",
@@ -64,14 +70,14 @@ setup_eicu_aux_tables <- function(source) {
     res[["age"]][res[["age"]] == "> 89"] <- "90"
     res[["age"]] <- as.difftime(-as.numeric(res[["age"]]) * 365 * 24 * 60,
                                 units = "mins")
-    res <- rename_cols(res, "birthoffset", "age")
 
     res <- res[, c(time_cols) := lapply(.SD, as.difftime, units = "mins"),
                .SDcols = time_cols]
 
-    res <- res[, c("birthoffset") := dob(get("birthoffset"),
-                                         get("hospitaladmitoffset")),
-               by = "uniquepid"]
+    res <- rename_cols(res, c("patient", "hadm", "icustay", "birth", "hosp_in",
+                              "hosp_out", "icu_out"))
+
+    res <- res[, c("birth") := get("birth") + get("hosp_in"), by = "patient"]
 
     res
   }
