@@ -28,13 +28,14 @@ setup_mimic_aux_tables <- function(source) {
 
     res <- res[, c(dt_cols) := lapply(.SD, as_dt, get("intime")),
                .SDcols = dt_cols]
-
     res <- rm_cols(res, "intime")
+    res <- data.table::set(res, j = "intime", value = mins(0L))
+
     res <- rename_cols(res, c("hadm", "patient", "birth", "hosp_in",
-                              "hosp_out", "icustay", "icu_out"))
+                              "hosp_out", "icustay", "icu_out", "icu_in"))
     res <- data.table::setcolorder(res,
       c("patient", "hadm", "icustay", "birth", "hosp_in", "hosp_out",
-        "icu_out")
+        "icu_in", "icu_out")
     )
 
     res
@@ -67,17 +68,24 @@ setup_eicu_aux_tables <- function(source) {
 
     res <- get_table("patient", src)[, c(id_cols, "age", time_cols)]
 
-    res[["age"]][res[["age"]] == "> 89"] <- "90"
-    res[["age"]] <- as.difftime(-as.numeric(res[["age"]]) * 365 * 24 * 60,
-                                units = "mins")
+    res <- data.table::set(res, which(res[["age"]] == "> 89"), "age", "90")
+    res <- data.table::set(res, j = c("age", "icu_in"), value = list(
+      as.difftime(-as.numeric(res[["age"]]) * 365 * 24 * 60, units = "mins"),
+      mins(0L)
+    ))
 
     res <- res[, c(time_cols) := lapply(.SD, as.difftime, units = "mins"),
                .SDcols = time_cols]
+    res <- res[, c("age") := get("age") + get("hospitaladmitoffset"),
+               by = "uniquepid"]
 
     res <- rename_cols(res, c("patient", "hadm", "icustay", "birth", "hosp_in",
-                              "hosp_out", "icu_out"))
+                              "hosp_out", "icu_out", "icu_in"))
 
-    res <- res[, c("birth") := get("birth") + get("hosp_in"), by = "patient"]
+    res <- data.table::setcolorder(res,
+      c("patient", "hadm", "icustay", "birth", "hosp_in", "hosp_out",
+        "icu_in", "icu_out")
+    )
 
     res
   }
