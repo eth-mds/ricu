@@ -63,7 +63,7 @@ rm_cols.data.table <- function(x, cols, ...) {
 }
 
 #' @export
-rename_cols <- function(x, new, old, ...) {
+rename_cols <- function(x, new, old = colnames(x), ...) {
 
   assert_that(is_unique(new), is_unique(old), same_length(new, old))
 
@@ -73,7 +73,7 @@ rename_cols <- function(x, new, old, ...) {
 #' @method rename_cols data.table
 #' @export
 #'
-rename_cols.data.table <- function(x, new, old, ...) {
+rename_cols.data.table <- function(x, new, old = colnames(x), ...) {
   x <- data.table::setnames(x, old, new)
   x
 }
