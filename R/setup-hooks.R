@@ -5,13 +5,35 @@ origin_tbl <- function(src, tbl, id, orig) {
   res
 }
 
+map_id_cols <- function(subset = NULL) {
+
+  opts <- c("patient", "hadm", "icustay")
+
+  if (is.null(subset)) {
+    return(opts)
+  }
+
+  assert_that(is.character(subset), length(subset) > 0L,
+              all(subset %in% opts))
+
+  intersect(opts, subset)
+}
+
+map_in_cols <- function(ids = map_id_cols()) {
+  setNames(c("birth", "hosp_in", "icu_in"), map_id_cols())[map_id_cols(ids)]
+}
+
+map_out_cols <- function(ids = map_id_cols()) {
+  setNames(c("death", "hosp_out", "icu_out"), map_id_cols())[map_id_cols(ids)]
+}
+
 setup_mimic_aux_tables <- function(source) {
 
   mimic_id_map <- function(src) {
 
     as_dt <- function(x, y) round_to(difftime(x, y, units = "mins"))
 
-    pat <- get_table("patients", src)[, c("subject_id", "dob")]
+    pat <- get_table("patients", src)[, c("subject_id", "dob", "dod")]
     adm <- get_table("admissions", src)[,
       c("subject_id", "hadm_id", "admittime", "dischtime")
     ]
@@ -24,19 +46,19 @@ setup_mimic_aux_tables <- function(source) {
 
     res <- merge(res, icu, by = "hadm_id")
 
-    dt_cols <- c("dob", "admittime", "dischtime", "outtime")
+    dt_cols <- c("dob", "dod", "admittime", "dischtime", "outtime")
 
     res <- res[, c(dt_cols) := lapply(.SD, as_dt, get("intime")),
                .SDcols = dt_cols]
     res <- rm_cols(res, "intime")
     res <- data.table::set(res, j = "intime", value = mins(0L))
 
-    res <- rename_cols(res, c("hadm", "patient", "birth", "hosp_in",
-                              "hosp_out", "icustay", "icu_out", "icu_in"))
     res <- data.table::setcolorder(res,
-      c("patient", "hadm", "icustay", "birth", "hosp_in", "hosp_out",
-        "icu_in", "icu_out")
+      c("subject_id", "hadm_id", "icustay_id", "dob", "admittime",
+        "intime", "dod", "dischtime", "outtime")
     )
+
+    res <- rename_cols(res, c(map_id_cols(), map_in_cols(), map_out_cols()))
 
     res
   }
@@ -61,31 +83,23 @@ setup_eicu_aux_tables <- function(source) {
 
   eicu_id_map <- function(src) {
 
+    id_cols   <- c("patienthealthsystemstayid", "patientunitstayid")
     time_cols <- c("hospitaladmitoffset", "hospitaldischargeoffset",
                    "unitdischargeoffset")
-    id_cols   <- c("uniquepid", "patienthealthsystemstayid",
-                   "patientunitstayid")
 
-    res <- get_table("patient", src)[, c(id_cols, "age", time_cols)]
-
-    res <- data.table::set(res, which(res[["age"]] == "> 89"), "age", "90")
-    res <- data.table::set(res, j = c("age", "icu_in"), value = list(
-      as.difftime(-as.numeric(res[["age"]]) * 365 * 24 * 60, units = "mins"),
-      mins(0L)
-    ))
+    res <- get_table("patient", src)[, c(id_cols, time_cols)]
+    res <- res[, c("icu_in") := mins(0L)]
 
     res <- res[, c(time_cols) := lapply(.SD, as.difftime, units = "mins"),
                .SDcols = time_cols]
-    res <- res[, c("age") := get("age") + get("hospitaladmitoffset"),
-               by = "uniquepid"]
-
-    res <- rename_cols(res, c("patient", "hadm", "icustay", "birth", "hosp_in",
-                              "hosp_out", "icu_out", "icu_in"))
 
     res <- data.table::setcolorder(res,
-      c("patient", "hadm", "icustay", "birth", "hosp_in", "hosp_out",
-        "icu_in", "icu_out")
+      c(id_cols, time_cols[1L], "icu_in", time_cols[2L:3L])
     )
+
+    ids <- map_id_cols(c("hadm", "icustay"))
+
+    res <- rename_cols(res, c(ids, map_in_cols(ids), map_out_cols(ids)))
 
     res
   }
