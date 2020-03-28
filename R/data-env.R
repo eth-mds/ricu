@@ -45,10 +45,12 @@ get_table <- function(table, source, envir = "data") {
          "`?attach_datasource`.")
   }
 
-  if (!(prt::is_prt(res) || is_dt(res))) {
+  if (is_dt(res)) {
+    data.table::copy(res)
+  } else if (prt::is_prt(res)) {
+    res
+  } else {
     stop("Expecting `", source, "::", table, "` to either be a `prt` object ",
          "or inherit from `data.table`.")
   }
-
-  res
 }

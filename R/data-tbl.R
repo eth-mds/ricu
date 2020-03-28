@@ -16,9 +16,7 @@ eicu_tbl_quo <- function(table, row_quo = NULL, cols = NULL,
                          interval = hours(1L), source = "eicu") {
 
   time_fun <- function(x) {
-    res <- as.difftime(x, units = "mins")
-    units(res) <- units(interval)
-    round_to(res, as.numeric(interval))
+    re_time(as.difftime(x, units = "mins"), interval)
   }
 
   dat <- default_data_fun(table, row_quo, cols, source = source)

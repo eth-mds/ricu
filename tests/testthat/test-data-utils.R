@@ -1,4 +1,17 @@
 
+test_that("mimic data_ts", {
+
+  alb <- data_ts("mimic_demo", "labevents", is_val(itemid, 50862L), "value",
+                 "icustay_id", "charttime")
+
+  expect_is(alb, "ts_tbl")
+
+  alb <- data_ts("eicu_demo", "lab", is_val(labname, "albumin"), "labresult",
+                 "patienthealthsystemstayid", "labresultoffset")
+
+  expect_is(alb, "ts_tbl")
+})
+
 test_that("read data items (wide)", {
 
   expect_message(dat <- load_items("eicu_demo", "vitalperiodic", "sao2"))

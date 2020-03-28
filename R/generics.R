@@ -83,3 +83,13 @@ is_unique <- function(x, ...) UseMethod("is_unique", x)
 
 #' @export
 is_unique.default <- function(x, ...) identical(anyDuplicated(x, ...), 0L)
+
+#' @export
+upgrade_id <- function(x, source, to = "icustay", from = "hadm") {
+  UseMethod("upgrade_id", x)
+}
+
+#' @export
+downgrade_id <- function(x, source, to = "hadm", from = "icustay") {
+  UseMethod("downgrade_id", x)
+}

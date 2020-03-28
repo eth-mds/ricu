@@ -5,7 +5,7 @@ origin_tbl <- function(src, tbl, id, orig) {
   res
 }
 
-map_id_cols <- function(subset = NULL) {
+map_id_cols <- function(subset = NULL, as_factor = FALSE) {
 
   opts <- c("patient", "hadm", "icustay")
 
@@ -16,7 +16,13 @@ map_id_cols <- function(subset = NULL) {
   assert_that(is.character(subset), length(subset) > 0L,
               all(subset %in% opts))
 
-  intersect(opts, subset)
+  res <- intersect(opts, subset)
+
+  if (as_factor) {
+    res <- factor(res, opts, ordered = TRUE)
+  }
+
+  res
 }
 
 map_in_cols <- function(ids = map_id_cols()) {

@@ -1,10 +1,10 @@
 
 #' @export
 load_items <- function(source, table, item_col, items = NULL, names = NULL,
-                       id_col = default_id_col(source, cfg),
-                       time_col = default_time_col(source, table, cfg),
-                       val_col = default_val_col(source, table, cfg),
-                       unit_col = default_unit_col(source, table, cfg),
+                       id_col = default_id_col(config = cfg),
+                       time_col = default_time_col(table, config = cfg),
+                       val_col = default_val_col(table, config = cfg),
+                       unit_col = default_unit_col(table, config = cfg),
                        patient_ids = NULL, callback = NULL, regex = FALSE,
                        unit = NULL, interval = hours(1L),
                        cfg = get_col_config(source, "all"), ...) {

@@ -203,6 +203,10 @@ days <- function(x) as.difftime(x, units = "days")
 #' @export
 weeks <- function(x) as.difftime(x, units = "weeks")
 
+re_time <- function(x, interval) {
+  round_to(`units<-`(x, units(interval)), as.double(interval))
+}
+
 reduce <- function(f, x, ...) Reduce(function(x, y) f(x, y, ...), x)
 
 round_to <- function(x, to = 1) if (to == 1) trunc(x) else to * trunc(x / to)

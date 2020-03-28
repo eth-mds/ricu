@@ -6,14 +6,15 @@ new_tbl_index <- function(index, interval) {
     is_time(interval, allow_neg = FALSE), not_na(interval), is.scalar(interval)
   )
 
-  structure(list(col_name = index, interval = interval), class = "tbl_index")
+  structure(list(col_name = unname(index), interval = interval),
+            class = "tbl_index")
 }
 
 new_tbl_id <- function(id) {
 
   assert_that(is.string(id), not_na(id))
 
-  structure(list(col_name = id), class = "tbl_id")
+  structure(list(col_name = unname(id)), class = "tbl_id")
 }
 
 #' @export
