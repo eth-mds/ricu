@@ -7,56 +7,113 @@
       "patient": "subject_id"
     },
     "tables": {
-      "admissions": [],
-      "callout": [],
-      "caregivers": [],
+      "admissions": {
+        "time_col": "admittime",
+        "val_col": "admission_type"
+      },
+      "callout": {
+        "time_col": "callout_outcome",
+        "val_col": "outcometime"
+      },
+      "caregivers": {
+        "id_col": "cgid",
+        "val_col": "label"
+      },
       "chartevents": {
         "time_col": "charttime",
-        "val_col": "valuenum"
+        "val_col": "valuenum",
+        "unit_col": "valueuom"
       },
-      "cptevents": [],
-      "d_cpt": [],
-      "d_icd_diagnoses": [],
-      "d_icd_procedures": [],
-      "d_items": [],
-      "d_labitems": [],
-      "datetimeevents": [],
-      "diagnoses_icd": [],
-      "drgcodes": [],
-      "icustays": [],
+      "cptevents": {
+        "time_col": "chartdate",
+        "val_col": "cpt_cd"
+      },
+      "d_cpt": {
+        "id_col": "subsectionrange",
+        "val_col": "subsectionheader"
+      },
+      "d_icd_diagnoses": {
+        "id_col": "icd9_code",
+        "val_col": "short_title"
+      },
+      "d_icd_procedures": {
+        "id_col": "icd9_code",
+        "val_col": "short_title"
+      },
+      "d_items": {
+        "id_col": "itemid",
+        "val_col": "label"
+      },
+      "d_labitems": {
+        "id_col": "itemid",
+        "val_col": "label"
+      },
+      "datetimeevents": {
+        "time_col": "charttime",
+        "val_col": "itemid"
+      },
+      "diagnoses_icd": {
+        "val_col": "icd9_code"
+      },
+      "drgcodes": {
+        "val_col": "drg_code"
+      },
+      "icustays": {
+        "time_col": "intime",
+        "val_col": "last_careunit"
+      },
       "inputevents_cv": {
         "time_col": "charttime",
-        "val_col": "rate"
+        "val_col": "rate",
+        "unit_col": "rateuom"
       },
       "inputevents_mv": {
         "time_col": "starttime",
-        "val_col": "rate"
+        "val_col": "rate",
+        "unit_col": "rateuom"
       },
       "labevents": {
         "time_col": "charttime",
-        "val_col": "valuenum"
+        "val_col": "valuenum",
+        "unit_col": "valueuom"
       },
       "microbiologyevents": {
         "time_col": "chartdate",
         "val_col": "isolate_num"
       },
-      "noteevents": [],
+      "noteevents": {
+        "time_col": "chartdate",
+        "val_col": "text"
+      },
       "outputevents": {
         "time_col": "charttime",
-        "val_col": "value"
+        "val_col": "value",
+        "unit_col": "valueuom"
       },
-      "patients": [],
+      "patients": {
+        "val_col": "expire_flag"
+      },
       "prescriptions": {
         "time_col": "startdate",
-        "val_col": "dose_val_rx"
+        "val_col": "dose_val_rx",
+        "unit_col": "dose_unit_rx"
       },
       "procedureevents_mv": {
         "time_col": "starttime",
-        "val_col": "value"
+        "val_col": "value",
+        "unit_col": "valueuom"
       },
-      "procedures_icd": [],
-      "services": [],
-      "transfers": []
+      "procedures_icd": {
+        "val_col": "icd9_code"
+      },
+      "services": {
+        "time_col": "transfertime",
+        "val_col": "curr_service"
+      },
+      "transfers": {
+        "time_col": "intime",
+        "val_col": "curr_careunit"
+      }
     }
   },
   "eicu": {
@@ -67,44 +124,103 @@
       "patient": "uniquepid"
     },
     "tables": {
-      "admissiondrug": [],
-      "admissiondx": [],
-      "allergy": [],
+      "admissiondrug": {
+        "time_col": "drugoffset",
+        "val_col": "drugdosage",
+        "unit_col": "drugunit"
+      },
+      "admissiondx": {
+        "time_col": "admitdxenteredoffset",
+        "val_col": "admitdxtext"
+      },
+      "allergy": {
+        "time_col": "allergyoffset",
+        "val_col": "allergyname"
+      },
       "apacheapsvar": [],
-      "apachepatientresult": [],
+      "apachepatientresult": {
+        "val_col": "apachescore"
+      },
       "apachepredvar": [],
-      "careplancareprovider": [],
-      "careplaneol": [],
-      "careplangeneral": [],
-      "careplangoal": [],
-      "careplaninfectiousdisease": [],
-      "customlab": [],
-      "diagnosis": [],
-      "hospital": [],
+      "careplancareprovider": {
+        "time_col": "careprovidersaveoffset",
+        "val_col": "specialty"
+      },
+      "careplaneol": {
+        "time_col": "cpleoldiscussionoffset"
+      },
+      "careplangeneral": {
+        "time_col": "cplitemoffset",
+        "val_col": "cplitemvalue"
+      },
+      "careplangoal": {
+        "time_col": "cplgoaloffset",
+        "val_col": "cplgoalvalue"
+      },
+      "careplaninfectiousdisease": {
+        "time_col": "cplinfectdiseaseoffset",
+        "val_col": "infectdiseasesite"
+      },
+      "customlab": {
+        "time_col": "labotheroffset",
+        "val_col": "labotherresult"
+      },
+      "diagnosis": {
+        "time_col": "diagnosisoffset",
+        "val_col": "icd9code"
+      },
+      "hospital": {
+        "id_col": "hospitalid",
+        "val_col": "numbedscategory"
+      },
       "infusiondrug": {
         "time_col": "infusionoffset",
         "val_col": "drugrate"
       },
       "intakeoutput": {
         "time_col": "intakeoutputoffset",
-        "val_col": "outputtotal"
+        "val_col": "cellvaluenumeric"
       },
       "lab": {
         "time_col": "labresultoffset",
-        "val_col": "labresult"
+        "val_col": "labresult",
+        "unit_col": "labmeasurenamesystem"
       },
-      "medication": [],
-      "microlab": [],
-      "note": [],
-      "nurseassessment": [],
-      "nursecare": [],
+      "medication": {
+        "time_col": "drugstartoffset",
+        "val_col": "dosage"
+      },
+      "microlab": {
+        "time_col": "culturetakenoffset",
+        "val_col": "organism"
+      },
+      "note": {
+        "time_col": "noteoffset",
+        "val_col": "notetext"
+      },
+      "nurseassessment": {
+        "time_col": "nurseassessoffset",
+        "val_col": "cellattributevalue"
+      },
+      "nursecare": {
+        "time_col": "nursecareoffset",
+        "val_col": "cellattributevalue"
+      },
       "nursecharting": {
         "time_col": "nursingchartoffset",
-        "val_col": "nursingchartvalue"
+        "val_col": "cellattributevalue"
       },
-      "pasthistory": [],
-      "patient": [],
-      "physicalexam": [],
+      "pasthistory": {
+        "time_col": "pasthistoryoffset",
+        "val_col": "pasthistoryvalue"
+      },
+      "patient": {
+        "val_col": "unitdischargestatus"
+      },
+      "physicalexam": {
+        "time_col": "physicalexamoffset",
+        "val_col": "physicalexamvalue"
+      },
       "respiratorycare": {
         "time_col": "respcarestatusoffset"
       },
@@ -112,7 +228,10 @@
         "time_col": "respchartoffset",
         "val_col": "respchartvalue"
       },
-      "treatment": [],
+      "treatment": {
+        "time_col": "treatmentoffset",
+        "val_col": "treatmentstring"
+      },
       "vitalaperiodic": {
         "time_col": "observationoffset"
       },
@@ -147,56 +266,113 @@
       "patient": "subject_id"
     },
     "tables": {
-      "admissions": [],
-      "callout": [],
-      "caregivers": [],
+      "admissions": {
+        "time_col": "admittime",
+        "val_col": "admission_type"
+      },
+      "callout": {
+        "time_col": "callout_outcome",
+        "val_col": "outcometime"
+      },
+      "caregivers": {
+        "id_col": "cgid",
+        "val_col": "label"
+      },
       "chartevents": {
         "time_col": "charttime",
-        "val_col": "valuenum"
+        "val_col": "valuenum",
+        "unit_col": "valueuom"
       },
-      "cptevents": [],
-      "d_cpt": [],
-      "d_icd_diagnoses": [],
-      "d_icd_procedures": [],
-      "d_items": [],
-      "d_labitems": [],
-      "datetimeevents": [],
-      "diagnoses_icd": [],
-      "drgcodes": [],
-      "icustays": [],
+      "cptevents": {
+        "time_col": "chartdate",
+        "val_col": "cpt_cd"
+      },
+      "d_cpt": {
+        "id_col": "subsectionrange",
+        "val_col": "subsectionheader"
+      },
+      "d_icd_diagnoses": {
+        "id_col": "icd9_code",
+        "val_col": "short_title"
+      },
+      "d_icd_procedures": {
+        "id_col": "icd9_code",
+        "val_col": "short_title"
+      },
+      "d_items": {
+        "id_col": "itemid",
+        "val_col": "label"
+      },
+      "d_labitems": {
+        "id_col": "itemid",
+        "val_col": "label"
+      },
+      "datetimeevents": {
+        "time_col": "charttime",
+        "val_col": "itemid"
+      },
+      "diagnoses_icd": {
+        "val_col": "icd9_code"
+      },
+      "drgcodes": {
+        "val_col": "drg_code"
+      },
+      "icustays": {
+        "time_col": "intime",
+        "val_col": "last_careunit"
+      },
       "inputevents_cv": {
         "time_col": "charttime",
-        "val_col": "rate"
+        "val_col": "rate",
+        "unit_col": "rateuom"
       },
       "inputevents_mv": {
         "time_col": "starttime",
-        "val_col": "rate"
+        "val_col": "rate",
+        "unit_col": "rateuom"
       },
       "labevents": {
         "time_col": "charttime",
-        "val_col": "valuenum"
+        "val_col": "valuenum",
+        "unit_col": "valueuom"
       },
       "microbiologyevents": {
         "time_col": "chartdate",
         "val_col": "isolate_num"
       },
-      "noteevents": [],
+      "noteevents": {
+        "time_col": "chartdate",
+        "val_col": "text"
+      },
       "outputevents": {
         "time_col": "charttime",
-        "val_col": "value"
+        "val_col": "value",
+        "unit_col": "valueuom"
       },
-      "patients": [],
+      "patients": {
+        "val_col": "expire_flag"
+      },
       "prescriptions": {
         "time_col": "startdate",
-        "val_col": "dose_val_rx"
+        "val_col": "dose_val_rx",
+        "unit_col": "dose_unit_rx"
       },
       "procedureevents_mv": {
         "time_col": "starttime",
-        "val_col": "value"
+        "val_col": "value",
+        "unit_col": "valueuom"
       },
-      "procedures_icd": [],
-      "services": [],
-      "transfers": []
+      "procedures_icd": {
+        "val_col": "icd9_code"
+      },
+      "services": {
+        "time_col": "transfertime",
+        "val_col": "curr_service"
+      },
+      "transfers": {
+        "time_col": "intime",
+        "val_col": "curr_careunit"
+      }
     }
   },
   "eicu_demo": {
@@ -207,44 +383,103 @@
       "patient": "uniquepid"
     },
     "tables": {
-      "admissiondrug": [],
-      "admissiondx": [],
-      "allergy": [],
+      "admissiondrug": {
+        "time_col": "drugoffset",
+        "val_col": "drugdosage",
+        "unit_col": "drugunit"
+      },
+      "admissiondx": {
+        "time_col": "admitdxenteredoffset",
+        "val_col": "admitdxtext"
+      },
+      "allergy": {
+        "time_col": "allergyoffset",
+        "val_col": "allergyname"
+      },
       "apacheapsvar": [],
-      "apachepatientresult": [],
+      "apachepatientresult": {
+        "val_col": "apachescore"
+      },
       "apachepredvar": [],
-      "careplancareprovider": [],
-      "careplaneol": [],
-      "careplangeneral": [],
-      "careplangoal": [],
-      "careplaninfectiousdisease": [],
-      "customlab": [],
-      "diagnosis": [],
-      "hospital": [],
+      "careplancareprovider": {
+        "time_col": "careprovidersaveoffset",
+        "val_col": "specialty"
+      },
+      "careplaneol": {
+        "time_col": "cpleoldiscussionoffset"
+      },
+      "careplangeneral": {
+        "time_col": "cplitemoffset",
+        "val_col": "cplitemvalue"
+      },
+      "careplangoal": {
+        "time_col": "cplgoaloffset",
+        "val_col": "cplgoalvalue"
+      },
+      "careplaninfectiousdisease": {
+        "time_col": "cplinfectdiseaseoffset",
+        "val_col": "infectdiseasesite"
+      },
+      "customlab": {
+        "time_col": "labotheroffset",
+        "val_col": "labotherresult"
+      },
+      "diagnosis": {
+        "time_col": "diagnosisoffset",
+        "val_col": "icd9code"
+      },
+      "hospital": {
+        "id_col": "hospitalid",
+        "val_col": "numbedscategory"
+      },
       "infusiondrug": {
         "time_col": "infusionoffset",
         "val_col": "drugrate"
       },
       "intakeoutput": {
         "time_col": "intakeoutputoffset",
-        "val_col": "outputtotal"
+        "val_col": "cellvaluenumeric"
       },
       "lab": {
         "time_col": "labresultoffset",
-        "val_col": "labresult"
+        "val_col": "labresult",
+        "unit_col": "labmeasurenamesystem"
       },
-      "medication": [],
-      "microlab": [],
-      "note": [],
-      "nurseassessment": [],
-      "nursecare": [],
+      "medication": {
+        "time_col": "drugstartoffset",
+        "val_col": "dosage"
+      },
+      "microlab": {
+        "time_col": "culturetakenoffset",
+        "val_col": "organism"
+      },
+      "note": {
+        "time_col": "noteoffset",
+        "val_col": "notetext"
+      },
+      "nurseassessment": {
+        "time_col": "nurseassessoffset",
+        "val_col": "cellattributevalue"
+      },
+      "nursecare": {
+        "time_col": "nursecareoffset",
+        "val_col": "cellattributevalue"
+      },
       "nursecharting": {
         "time_col": "nursingchartoffset",
-        "val_col": "nursingchartvalue"
+        "val_col": "cellattributevalue"
       },
-      "pasthistory": [],
-      "patient": [],
-      "physicalexam": [],
+      "pasthistory": {
+        "time_col": "pasthistoryoffset",
+        "val_col": "pasthistoryvalue"
+      },
+      "patient": {
+        "val_col": "unitdischargestatus"
+      },
+      "physicalexam": {
+        "time_col": "physicalexamoffset",
+        "val_col": "physicalexamvalue"
+      },
       "respiratorycare": {
         "time_col": "respcarestatusoffset"
       },
@@ -252,7 +487,10 @@
         "time_col": "respchartoffset",
         "val_col": "respchartvalue"
       },
-      "treatment": [],
+      "treatment": {
+        "time_col": "treatmentoffset",
+        "val_col": "treatmentstring"
+      },
       "vitalaperiodic": {
         "time_col": "observationoffset"
       },
