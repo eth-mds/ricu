@@ -301,7 +301,7 @@ sofa_urine <- function(urine, limits, min_win, interval) {
     limits <- as_ts_tbl(
       urine[, list(intime = min(get(index(urine))),
                    outtime = max(get(index(urine)))), by = id(urine)],
-      id(urine), "intime", interval(urine)
+      id(urine), id_opts(urine), "intime", interval(urine)
     )
   }
 

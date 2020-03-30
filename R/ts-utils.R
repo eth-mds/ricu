@@ -23,7 +23,8 @@ expand_limits <- function(x, min_col = "min", max_col = "max", step_size = 1L,
 
   setnames(res, c(id_cols, new_col))
 
-  as_ts_tbl(res, id_cols, new_col, as.difftime(step_size, units = unit))
+  as_ts_tbl(res, id_cols, index = new_col,
+            interval = as.difftime(step_size, units = unit))
 }
 
 #' @export

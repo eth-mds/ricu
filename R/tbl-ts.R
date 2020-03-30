@@ -1,11 +1,14 @@
 
 #' @export
-ts_tbl <- function(..., id, index = NULL, interval = hours(1L)) {
-  as_ts_tbl(data.table::data.table(...), id, index, interval)
+ts_tbl <- function(..., id, id_opts = NULL, index = NULL,
+                   interval = hours(1L)) {
+
+  as_ts_tbl(data.table::data.table(...), id, id_opts, index, interval)
 }
 
 #' @export
-as_ts_tbl <- function(tbl, id, index = NULL, interval = hours(1L)) {
+as_ts_tbl <- function(tbl, id, id_opts = NULL, index = NULL,
+                      interval = hours(1L)) {
 
   if (!is_dt(tbl)) data.table::setDT(tbl)
 
@@ -30,7 +33,7 @@ as_ts_tbl <- function(tbl, id, index = NULL, interval = hours(1L)) {
   }
 
   new_icu_tbl(tbl,
-    new_ts_meta(new_tbl_id(id), new_tbl_index(index, interval))
+    new_ts_meta(new_tbl_id(id, id_opts), new_tbl_index(index, interval))
   )
 }
 

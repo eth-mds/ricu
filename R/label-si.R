@@ -99,5 +99,5 @@ si_windows <- function(tbl, abx_win = hours(24L), samp_win = hours(72L),
     get("si_time") + win_args[["si_upr"]]
   )]
 
-  as_ts_tbl(res, id, "si_time", interval(tbl))
+  as_ts_tbl(res, id, id_opts(tbl), "si_time", interval(tbl))
 }

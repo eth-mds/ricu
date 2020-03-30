@@ -47,10 +47,10 @@ test_that("ts_tbl constructors", {
                       interval = hours(2L)),
                "does not conform to an interval of 2 hours")
   expect_error(as_ts_tbl(as.matrix(dat), "a"))
-  expect_error(as_ts_tbl(dat, "a", "c"),
+  expect_error(as_ts_tbl(dat, "a", index = "c"),
                "does not contain column `c` of class `difftime`")
-  expect_error(as_ts_tbl(dat, "a", "d"), "does not contain column `d`")
-  expect_error(as_ts_tbl(dat, "b", "b"), "not not equal to")
+  expect_error(as_ts_tbl(dat, "a", index = "d"), "does not contain column `d`")
+  expect_error(as_ts_tbl(dat, "b", index = "b"), "not not equal to")
   expect_error(ts_tbl(a = 1:10, a = hours(1:10), id = "a"), "not not equal to")
 })
 

@@ -58,7 +58,15 @@ rename_cols.icu_tbl <- function(x, new, old = colnames(x), skip_absent = FALSE,
 id.icu_tbl <- function(x) id(tbl_meta(x))
 
 #' @export
+id_opts.icu_tbl <- function(x) id_opts(tbl_meta(x))
+
+#' @export
 set_id.icu_tbl <- function(x, value) set_meta(x, set_id(tbl_meta(x), value))
+
+#' @export
+set_id_opts.icu_tbl <- function(x, value) {
+  set_meta(x, set_id_opts(tbl_meta(x), value))
+}
 
 #' @export
 index.icu_tbl <- function(x) index(tbl_meta(x))

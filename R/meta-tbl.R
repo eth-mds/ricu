@@ -10,11 +10,24 @@ new_tbl_index <- function(index, interval) {
             class = "tbl_index")
 }
 
-new_tbl_id <- function(id) {
+new_tbl_id <- function(id, opts = NULL) {
 
   assert_that(is.string(id), not_na(id))
 
-  structure(list(col_name = unname(id)), class = "tbl_id")
+  if (!is.null(opts)) {
+
+    assert_that(is.character(opts), !is.null(names(opts)), length(opts) > 0L)
+
+    if (!id %in% opts) {
+
+      warning("id `", id, "` is incompatible with id options ",
+              paste0("`", opts, "`", collapse = ", "))
+
+      opts <- NULL
+    }
+  }
+
+  structure(list(col_name = unname(id), id_opts = opts), class = "tbl_id")
 }
 
 #' @export
@@ -47,7 +60,7 @@ rename_cols.tbl_id <- function(x, new, old, ...)  {
 
   if (any(hit)) {
     assert_that(sum(hit) == 1L)
-    x <- new_tbl_id(new[hit])
+    x <- new_tbl_id(new[hit], id_opts(x))
   }
 
   x
@@ -66,7 +79,13 @@ time_unit.tbl_index <- function(x) units(interval(x))
 id.tbl_id <- function(x) x[["col_name"]]
 
 #' @export
-set_id.tbl_id <- function(x, value) new_tbl_id(value)
+id_opts.tbl_id <- function(x) x[["id_opts"]]
+
+#' @export
+set_id.tbl_id <- function(x, value) new_tbl_id(value, id_opts(x))
+
+#' @export
+set_id_opts.tbl_id <- function(x, value) new_tbl_id(id(x), value)
 
 #' @export
 set_index.tbl_index <- function(x, value) new_tbl_index(value, interval(x))

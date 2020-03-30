@@ -19,6 +19,9 @@ index <- function(x) UseMethod("index", x)
 id <- function(x) UseMethod("id", x)
 
 #' @export
+id_opts <- function(x) UseMethod("id_opts", x)
+
+#' @export
 interval <- function(x) UseMethod("interval", x)
 
 #' @export
@@ -40,6 +43,9 @@ set_interval <- function(x, value) {
 
 #' @export
 set_id <- function(x, value) UseMethod("set_id", x)
+
+#' @export
+set_id_opts <- function(x, value) UseMethod("set_id_opts", x)
 
 #' @export
 set_time_unit <- function(x, value) UseMethod("set_time_unit", x)

@@ -12,12 +12,12 @@ data_ts_quo <- function(source, table, row_quo = NULL, cols = NULL,
                         cfg = get_col_config(source, "all")) {
 
   tbl <- get_table(table, source)
+  ids <- get_col_config(NULL, "id_cols", cfg, "all")
 
   if (!id_col %in% colnames(tbl)) {
 
-    candid <- get_col_config(NULL, "id_cols", cfg, "all")
-    aux_id <- tail(candid[candid %in% colnames(tbl)], n = 1L)
-    id_col <- candid[candid == id_col]
+    aux_id <- tail(ids[ids %in% colnames(tbl)], n = 1L)
+    id_col <- ids[ids == id_col]
 
   } else {
     aux_id <- id_col
@@ -29,7 +29,7 @@ data_ts_quo <- function(source, table, row_quo = NULL, cols = NULL,
 
   res <- data_tbl_quo(source, table, row_quo, cols, interval,
                       get_col_config(NULL, "data_fun", cfg))
-  res <- as_ts_tbl(res, aux_id, time_col, interval)
+  res <- as_ts_tbl(res, aux_id, ids, time_col, interval)
 
   if (!identical(id_col, aux_id)) {
     res <- rename_cols(res, names(aux_id), aux_id)
@@ -52,12 +52,12 @@ data_id_quo <- function(source, table, row_quo = NULL, cols = NULL,
                         cfg = get_col_config(source, "all")) {
 
   tbl <- get_table(table, source)
+  ids <- get_col_config(NULL, "id_cols", cfg, "all")
 
   if (!id_col %in% colnames(tbl)) {
 
-    candid <- get_col_config(NULL, "id_cols", cfg, "all")
-    aux_id <- tail(candid[candid %in% colnames(tbl)], n = 1L)
-    id_col <- candid[candid == id_col]
+    aux_id <- tail(ids[ids %in% colnames(tbl)], n = 1L)
+    id_col <- ids[ids == id_col]
 
   } else {
     aux_id <- id_col
@@ -69,7 +69,7 @@ data_id_quo <- function(source, table, row_quo = NULL, cols = NULL,
 
   res <- data_tbl_quo(source, table, row_quo, cols, interval,
                       get_col_config(NULL, "data_fun", cfg))
-  res <- as_id_tbl(res, aux_id)
+  res <- as_id_tbl(res, aux_id, ids)
 
   if (!identical(id_col, aux_id)) {
     res <- rename_cols(res, names(aux_id), aux_id)

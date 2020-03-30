@@ -1,9 +1,11 @@
 
 #' @export
-id_tbl <- function(..., id) as_id_tbl(data.table::data.table(...), id)
+id_tbl <- function(..., id, id_opts = NULL) {
+  as_id_tbl(data.table::data.table(...), id, id_opts)
+}
 
 #' @export
-as_id_tbl <- function(tbl, id) {
+as_id_tbl <- function(tbl, id, id_opts = NULL) {
 
   if (!is_dt(tbl)) data.table::setDT(tbl)
 
@@ -11,7 +13,7 @@ as_id_tbl <- function(tbl, id) {
     id <- colnames(tbl)[id]
   }
 
-  new_icu_tbl(tbl, new_id_meta(new_tbl_id(id)))
+  new_icu_tbl(tbl, new_id_meta(new_tbl_id(id, id_opts)))
 }
 
 #' @export
