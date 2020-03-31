@@ -13,4 +13,10 @@ id.tbl_meta <- function(x) id(tbl_id(x))
 id_opts.tbl_meta <- function(x) id_opts(tbl_id(x))
 
 #' @export
+format.tbl_meta <- function(x, ...) {
+  paste0("<", vapply(x, format, character(1L), ...), ">", collapse = ", ")
+}
+
+#' @export
 print.tbl_meta <- function(x, ...) cat_line(format(x, ...))
+

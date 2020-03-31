@@ -41,6 +41,9 @@ as_ts_tbl <- function(tbl, id, id_opts = NULL, index = NULL,
 is_ts_tbl <- function(x) inherits(x, "ts_tbl")
 
 #' @export
+tbl_index.icu_tbl <- function(x) tbl_index(tbl_meta(x))
+
+#' @export
 set_index.ts_tbl <- function(x, value) {
   set_meta(x, set_index(tbl_meta(x), value))
 }
@@ -90,8 +93,7 @@ time_col <- function(x) x[[index(x)]]
 #' @export
 tbl_sum.ts_tbl <- function(x) {
   setNames(
-    c(prt::dim_desc(x), paste0("<`", id(x), "`>"),
-      paste0("<`", index(x), "`, ", format(interval(x)), ">")),
+    c(prt::dim_desc(x), format(tbl_id(x)), format(tbl_index(x))),
     c(paste0("A `", tbl_class(x), "`"), "Id", "Index")
   )
 }

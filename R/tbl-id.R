@@ -23,7 +23,7 @@ is_id_tbl <- function(x) inherits(x, "id_tbl")
 #' @export
 tbl_sum.id_tbl <- function(x) {
   setNames(
-    c(prt::dim_desc(x), paste0("<`", id(x), "`>")),
+    c(prt::dim_desc(x), format(tbl_id(x))),
     c(paste0("A `", tbl_class(x), "`"), "Id")
   )
 }

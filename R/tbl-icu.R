@@ -14,6 +14,9 @@ is_icu_tbl <- function(x) inherits(x, "icu_tbl")
 tbl_meta.icu_tbl <- function(x) attr(x, "tbl_meta")
 
 #' @export
+tbl_id.icu_tbl <- function(x) tbl_id(tbl_meta(x))
+
+#' @export
 rm_cols.icu_tbl <- function(x, cols, ...) {
 
   cols <- unique(intersect(cols, colnames(x)))

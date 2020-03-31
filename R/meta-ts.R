@@ -50,11 +50,6 @@ set_time_unit.ts_meta <- function(x, value) {
   new_ts_meta(tbl_id(x), set_time_unit(tbl_index(x), value))
 }
 
-#' @export
-format.ts_meta <- function(x, ...) {
-  format_one_meta(x, format(tbl_id(x)), format(tbl_index(x)))
-}
-
 tbl_class.ts_meta <- function(x) "ts_tbl"
 
 validate_meta.ts_meta <- function(x, meta) {

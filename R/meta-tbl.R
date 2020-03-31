@@ -16,7 +16,11 @@ new_tbl_id <- function(id, opts = NULL) {
 
   if (!is.null(opts)) {
 
-    assert_that(is.character(opts), !is.null(names(opts)), length(opts) > 0L)
+    assert_that(is.character(opts), length(opts) > 0L)
+
+    if (!is.null(names(opts))) {
+      assert_that(length(intersect(opts, names(opts))) == 0L)
+    }
 
     if (!id %in% opts) {
 
@@ -105,11 +109,28 @@ print.tbl_id <- function(x, ...) cat_line(format(x, ...))
 print.tbl_index <- function(x, ...) cat_line(format(x, ...))
 
 #' @export
-format.tbl_id <- function(x, ...) {
-  format_one_meta(x, paste0("`", id(x), "`"))
+format.tbl_id <- function(x, fancy = l10n_info()$`UTF-8`, ...) {
+
+  opts <- id_opts(x)
+
+  if (is.null(opts)) {
+    opts <- ""
+  } else {
+    if (is.null(names(opts))) {
+      opts <- paste0("`", opts, "`")
+    } else {
+      mark <- id(x) == opts
+      opts <- paste0(ifelse(mark, if (fancy) "\u001b[1m" else "*", ""),
+                     names(opts),
+                     ifelse(mark, if (fancy) "\u001b[22m" else "*", ""))
+    }
+    opts <- paste0(" (", paste(opts, collapse = " < "), ")")
+  }
+
+  paste0("`", id(x), "`", opts)
 }
 
 #' @export
 format.tbl_index <- function(x, ...) {
-  format_one_meta(x, paste0("`", index(x), "`"), format(interval(x)))
+  paste0("`", index(x), "` (", format(interval(x)), ")")
 }

@@ -22,11 +22,6 @@ set_id.id_meta <- function(x, value) {
   new_id_meta(set_id(tbl_id(x), value))
 }
 
-#' @export
-format.id_meta <- function(x, ...) {
-  format_one_meta(x, format(tbl_id(x)))
-}
-
 tbl_class.id_meta <- function(x) "id_tbl"
 
 validate_meta.id_meta <- function(x, meta) {
