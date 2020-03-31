@@ -19,6 +19,7 @@ test_that("tbl_id", {
   expect_error(id(1L))
   expect_error(index(tbl_id))
   expect_error(interval(tbl_id))
+  expect_null(id_opts(tbl_id))
 
   expect_identical(set_id(tbl_id, "bar"), new_tbl_id("bar"))
   expect_error(set_id(tbl_id, c("foo", "xyz")))
@@ -26,6 +27,59 @@ test_that("tbl_id", {
   expect_identical(rename_cols(tbl_id, "bar", "foo"), new_tbl_id("bar"))
   expect_identical(rename_cols(tbl_id, "foo", "bar"), tbl_id)
   expect_error(rename_cols(tbl_id, c("xyz", "foo"), "bar"))
+
+  opts <- c("bar", "foo", "baz")
+  tbl_id <- new_tbl_id("foo", opts)
+
+  expect_identical(id(tbl_id), "foo")
+  expect_identical(id_opts(tbl_id), opts)
+
+  expect_identical(set_id(tbl_id, "bar"), new_tbl_id("bar", opts))
+  expect_warning(tbl_id <- set_id(tbl_id, "xyz"),
+                "id `xyz` is incompatible with id options `bar`, `foo`, `baz`")
+  expect_null(id_opts(tbl_id))
+
+  tbl_id <- new_tbl_id("foo", opts)
+  tbl_id <- set_id_opts(tbl_id, rev(opts))
+
+  expect_identical(id(tbl_id), "foo")
+  expect_identical(id_opts(tbl_id), rev(opts))
+
+  expect_error(set_id_opts(tbl_id, rep(opts, 2)))
+
+  expect_warning(tbl_id <- new_tbl_id("foo", opts[-2L]),
+                 "id `foo` is incompatible with id options `bar`, `baz`")
+  expect_null(id_opts(tbl_id))
+
+  opts <- setNames(opts, LETTERS[1:3])
+  tbl_id <- new_tbl_id("foo", opts)
+
+  expect_identical(id(tbl_id), "foo")
+  expect_identical(id_opts(tbl_id), opts)
+
+  tbl_id <- rename_cols(tbl_id, letters[1:3], c("bar", "foo", "baz"))
+
+  expect_identical(id(tbl_id), "b")
+  expect_identical(id_opts(tbl_id), setNames(letters[1:3], LETTERS[1:3]))
+
+  tbl_id <- new_tbl_id("foo", opts)
+  tbl_id <- rename_cols(tbl_id, letters[1:3], c("bar", "foo", "xyz"))
+
+  expect_identical(id(tbl_id), "b")
+  expect_identical(id_opts(tbl_id), setNames(c("a", "b", "baz"), LETTERS[1:3]))
+
+  tbl_id <- new_tbl_id("foo", opts)
+  tbl_id <- rename_cols(tbl_id, "xyz", "bar")
+
+  expect_identical(id(tbl_id), "foo")
+  expect_identical(id_opts(tbl_id), setNames(c("xyz", "foo", "baz"),
+                                             LETTERS[1:3]))
+
+  expect_error(rename_cols(new_tbl_id("foo", opts), "baz", "bar"))
+
+  tbl_id <- new_tbl_id("foo", opts)
+
+  expect_identical(rename_cols(tbl_id, "a", "xyz"), tbl_id)
 })
 
 test_that("tbl_index", {

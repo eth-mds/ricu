@@ -16,7 +16,7 @@ new_tbl_id <- function(id, opts = NULL) {
 
   if (!is.null(opts)) {
 
-    assert_that(is.character(opts), length(opts) > 0L)
+    assert_that(is.character(opts), length(opts) > 0L, is_unique(opts))
 
     if (!is.null(names(opts))) {
       assert_that(length(intersect(opts, names(opts))) == 0L)
@@ -60,14 +60,28 @@ rename_cols.tbl_index <- function(x, new, old, ...) {
 #' @export
 rename_cols.tbl_id <- function(x, new, old, ...)  {
 
-  hit <- id(x) == old
+  old_id <- id(x)
+  id_hit <- old_id == old
 
-  if (any(hit)) {
-    assert_that(sum(hit) == 1L)
-    x <- new_tbl_id(new[hit], id_opts(x))
+  old_opt <- id_opts(x)
+  opt_hit <- match(old, old_opt)
+
+  if (any(id_hit)) {
+    assert_that(sum(id_hit) == 1L)
+    new_id <- new[id_hit]
+  } else {
+    new_id <- old_id
   }
 
-  x
+  no_hit <- is.na(opt_hit)
+
+  if (!all(no_hit)) {
+    new_opt <- replace(old_opt, opt_hit[!no_hit], new[!no_hit])
+  } else {
+    new_opt <- old_opt
+  }
+
+  new_tbl_id(new_id, new_opt)
 }
 
 #' @export
@@ -111,6 +125,10 @@ print.tbl_index <- function(x, ...) cat_line(format(x, ...))
 #' @export
 format.tbl_id <- function(x, fancy = l10n_info()$`UTF-8`, ...) {
 
+  code <- function(hits, code) {
+    ifelse(hits, if (fancy) paste0("\u001b[", code, "m") else "*", "")
+  }
+
   opts <- id_opts(x)
 
   if (is.null(opts)) {
@@ -120,9 +138,7 @@ format.tbl_id <- function(x, fancy = l10n_info()$`UTF-8`, ...) {
       opts <- paste0("`", opts, "`")
     } else {
       mark <- id(x) == opts
-      opts <- paste0(ifelse(mark, if (fancy) "\u001b[1m" else "*", ""),
-                     names(opts),
-                     ifelse(mark, if (fancy) "\u001b[22m" else "*", ""))
+      opts <- paste0(code(mark, 4), names(opts), code(mark, 24))
     }
     opts <- paste0(" (", paste(opts, collapse = " < "), ")")
   }
