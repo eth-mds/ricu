@@ -138,7 +138,7 @@ get_id_col <- function(cfg, type = "hadm") {
 
   if (identical(type, "all")) {
 
-    res <- unlist(Filter(Negate(is.na), cfg[map_id_cols()]))
+    res <- unlist(Filter(Negate(is.null), cfg[map_id_cols()]))
 
     assert_that(length(res) > 0L)
 
