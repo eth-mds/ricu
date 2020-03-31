@@ -52,6 +52,16 @@ test_that("ts_tbl constructors", {
   expect_error(as_ts_tbl(dat, "a", index = "d"), "does not contain column `d`")
   expect_error(as_ts_tbl(dat, "b", index = "b"), "not not equal to")
   expect_error(ts_tbl(a = 1:10, a = hours(1:10), id = "a"), "not not equal to")
+
+  opts <- c("a", "x")
+  tbl <- ts_tbl(a = 1:10, b = hours(1:10), id = "a", id_opts = opts)
+
+  expect_identical(id_opts(tbl), opts)
+
+  opts <- setNames(c("a", "x"), c("A", "X"))
+  tbl <- ts_tbl(a = 1:10, b = hours(1:10), id = "a", id_opts = opts)
+
+  expect_identical(id_opts(tbl), opts)
 })
 
 test_that("rename_cols for ts_tbl", {

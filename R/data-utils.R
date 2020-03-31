@@ -15,13 +15,12 @@ data_ts_quo <- function(source, table, row_quo = NULL, cols = NULL,
   ids <- get_col_config(NULL, "id_cols", cfg, "all")
 
   if (!id_col %in% colnames(tbl)) {
-
     aux_id <- tail(ids[ids %in% colnames(tbl)], n = 1L)
-    id_col <- ids[ids == id_col]
-
   } else {
     aux_id <- id_col
   }
+
+  id_col <- ids[ids == id_col]
 
   if (!is.null(cols)) {
     cols <- c(aux_id, time_col, cols)
@@ -31,13 +30,7 @@ data_ts_quo <- function(source, table, row_quo = NULL, cols = NULL,
                       get_col_config(NULL, "data_fun", cfg))
   res <- as_ts_tbl(res, aux_id, ids, time_col, interval)
 
-  if (!identical(id_col, aux_id)) {
-    res <- rename_cols(res, names(aux_id), aux_id)
-    res <- change_id(res, source, to = names(id_col), from = names(aux_id))
-    res <- rename_cols(res, id_col, names(id_col))
-  }
-
-  res
+  change_id(res, source, to = names(id_col))
 }
 
 #' @export
@@ -55,13 +48,12 @@ data_id_quo <- function(source, table, row_quo = NULL, cols = NULL,
   ids <- get_col_config(NULL, "id_cols", cfg, "all")
 
   if (!id_col %in% colnames(tbl)) {
-
     aux_id <- tail(ids[ids %in% colnames(tbl)], n = 1L)
-    id_col <- ids[ids == id_col]
-
   } else {
     aux_id <- id_col
   }
+
+  id_col <- ids[ids == id_col]
 
   if (!is.null(cols)) {
     cols <- c(aux_id, cols)
@@ -71,13 +63,7 @@ data_id_quo <- function(source, table, row_quo = NULL, cols = NULL,
                       get_col_config(NULL, "data_fun", cfg))
   res <- as_id_tbl(res, aux_id, ids)
 
-  if (!identical(id_col, aux_id)) {
-    res <- rename_cols(res, names(aux_id), aux_id)
-    res <- change_id(res, source, to = names(id_col), from = names(aux_id))
-    res <- rename_cols(res, id_col, names(id_col))
-  }
-
-  res
+  change_id(res, source, to = names(id_col))
 }
 
 #' @export
@@ -289,14 +275,47 @@ downgrade_id_map <- function(src, to, from, interval = NULL,
   map
 }
 
-change_id <- function(x, source, to, from) {
+#' @export
+id_name <- function(x, col = id(x)) {
+  opts <- id_opts(x)
+  if (is.null(opts)) col
+  else if (is.null(names(opts))) opts[match(col, opts)]
+  else names(opts[match(col, opts)])
+}
 
-  assert_that(is.string(to), is.string(from), from != to)
+id_col <- function(x, name) {
+  opts <- id_opts(x)
+  if (is.null(opts)) name
+  else if (is.null(names(opts))) opts[match(name, opts)]
+  else unname(opts[match(name, names(opts))])
+}
 
-  if (map_id_cols(from, TRUE) < map_id_cols(to, TRUE)) {
+#' @export
+next_id <- function(x, n = 1L) {
+  names(id_opts(x)[id_pos(x) + n])
+}
+
+#' @export
+prev_id <- function(x, n = 1L) next_id(x, -n)
+
+id_pos <- function(x, id = id_name(x)) {
+  opts <- id_opts(x)
+  if (is.null(opts)) 1L
+  else if (is.null(names(opts))) match(id, opts)
+  else match(id, names(opts))
+}
+
+#' @export
+change_id <- function(x, source, to, from = id_name(x)) {
+
+  assert_that(is.string(to), is.string(from))
+
+  if (id_pos(x, from) < id_pos(x, to)) {
     upgrade_id(x, source, to, from)
-  } else {
+  } else if (id_pos(x, from) > id_pos(x, to)) {
     downgrade_id(x, source, to, from)
+  } else {
+    x
   }
 }
 
@@ -310,11 +329,17 @@ upgrade_id.ts_tbl <- function(x, source, to, from) {
   x <- x[, c(tmp) := get(index(x))]
   on.exit(rm_cols(x, tmp))
 
-  res <- x[map, on = c(from, paste(tmp, c(">= lwr", "< upr"))), nomatch = NULL]
+  join <- c(paste(id_col(x, from), "==", from),
+            paste(tmp, c(">= lwr", "< upr")))
 
-  res <- set_id(res, to)
+  res  <- x[map, on = join, nomatch = NULL]
+
+  new <- id_col(x, to)
+  res <- rename_cols(res, new, to)
+  res <- set_id(res, new)
+
   res <- res[, c(index(x)) := get(index(x)) - get(sft)]
-  res <- rm_cols(res, c(from, tmp, sft))
+  res <- rm_cols(res, c(id_col(x, from), tmp, sft))
 
   res
 }
@@ -323,9 +348,14 @@ upgrade_id.ts_tbl <- function(x, source, to, from) {
 upgrade_id.id_tbl <- function(x, source, to, from) {
 
   map <- upgrade_id_map(source, to, from)
-  res <- merge(x, map, by = from)
-  res <- set_id(res, to)
-  res <- rm_cols(res, from)
+
+  res <- merge(x, map, by.x = id_col(x, from), by.y = from)
+
+  new <- id_col(x, to)
+  res <- rename_cols(res, new, to)
+  res <- set_id(res, new)
+
+  res <- rm_cols(res, id_col(x, from))
 
   res
 }
@@ -336,11 +366,14 @@ downgrade_id.ts_tbl <- function(x, source, to, from) {
   sft <- new_names(x)
   map <- downgrade_id_map(source, to, from, interval(x), sft)
 
-  res <- merge(x, map, by = from)
+  res <- merge(x, map, by.x = id_col(x, from), by.y = from)
 
-  res <- set_id(res, to)
+  new <- id_col(x, to)
+  res <- rename_cols(res, new, to)
+  res <- set_id(res, new)
+
   res <- res[, c(index(x)) := get(index(x)) - get(sft)]
-  res <- rm_cols(res, c(from, sft))
+  res <- rm_cols(res, c(id_col(x, from), sft))
 
   res
 }
@@ -349,9 +382,14 @@ downgrade_id.ts_tbl <- function(x, source, to, from) {
 downgrade_id.id_tbl <- function(x, source, to, from) {
 
   map <- downgrade_id_map(source, to, from)
-  res <- merge(x, map, by = from)
-  res <- set_id(res, to)
-  res <- rm_cols(res, from)
+
+  res <- merge(x, map, by.x = id_col(x, from), by.y = from)
+
+  new <- id_col(x, to)
+  res <- rename_cols(res, new, to)
+  res <- set_id(res, new)
+
+  res <- rm_cols(res, id_col(x, from))
 
   res
 }

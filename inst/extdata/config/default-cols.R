@@ -121,8 +121,7 @@ cfg <- list(
     data_fun = "eicu_tbl_quo",
     id_cols = list(
       icustay = "patientunitstayid",
-      hadm = "patienthealthsystemstayid",
-      patient = "uniquepid"
+      hadm = "patienthealthsystemstayid"
     ),
     tables = list(
       admissiondrug = list(

@@ -120,8 +120,7 @@
     "data_fun": "eicu_tbl_quo",
     "id_cols": {
       "icustay": "patientunitstayid",
-      "hadm": "patienthealthsystemstayid",
-      "patient": "uniquepid"
+      "hadm": "patienthealthsystemstayid"
     },
     "tables": {
       "admissiondrug": {
@@ -379,8 +378,7 @@
     "data_fun": "eicu_tbl_quo",
     "id_cols": {
       "icustay": "patientunitstayid",
-      "hadm": "patienthealthsystemstayid",
-      "patient": "uniquepid"
+      "hadm": "patienthealthsystemstayid"
     },
     "tables": {
       "admissiondrug": {

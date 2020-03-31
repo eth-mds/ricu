@@ -91,11 +91,11 @@ is_unique <- function(x, ...) UseMethod("is_unique", x)
 is_unique.default <- function(x, ...) identical(anyDuplicated(x, ...), 0L)
 
 #' @export
-upgrade_id <- function(x, source, to = "icustay", from = "hadm") {
+upgrade_id <- function(x, source, to = next_id(x), from = id_name(x)) {
   UseMethod("upgrade_id", x)
 }
 
 #' @export
-downgrade_id <- function(x, source, to = "hadm", from = "icustay") {
+downgrade_id <- function(x, source, to = prev_id(x), from = id_name(x)) {
   UseMethod("downgrade_id", x)
 }
