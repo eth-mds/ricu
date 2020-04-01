@@ -150,7 +150,7 @@ test_that("read data items (long)", {
   expect_length(dat2, 2L)
   expect_setequal(chr_ply(dat2, data_cols), c("glucA", "glucB"))
   expect_all_identical(dat,
-    Map(rename_cols, dat2, c("50931", "50809"), lapply(dat2, data_cols))
+    Map(rename_cols, dat2, c("50809", "50931"), lapply(dat2, data_cols))
   )
 
   expect_message(
@@ -184,6 +184,22 @@ test_that("read data items (long)", {
     load_items("mimic_demo", "labevents", "itemid", c(50809L, 50862L, 50931L),
                c("gluc", "albu", "gluc"), unit = c("mg/dL", "g/dL"))
   )
+
+  expect_message(
+    dat3 <- load_items("mimic_demo", "labevents", "itemid",
+                       c(50809L, 50862L, 50931L, 50862L),
+                       c("gluc", "albu1", "gluc", "albu2"))
+  )
+
+  expect_length(dat3, 3L)
+  expect_setequal(chr_ply(dat3, data_cols), c("albu1", "albu2", "gluc"))
+
+  albu1 <- rename_cols(dat3[[which(chr_ply(dat3, data_cols) == "albu1")]],
+                       "albu", "albu1")
+  albu2 <- rename_cols(dat3[[which(chr_ply(dat3, data_cols) == "albu2")]],
+                       "albu", "albu2")
+
+  expect_equal(albu1, albu2)
 })
 
 test_that("read data items (grep)", {

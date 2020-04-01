@@ -85,31 +85,34 @@ prep_args <- function(arg, names, items = NULL) {
 
   all_ok <- function(x) all(lgl_ply(x, is_ok))
 
-  uq_nms <- unique(names)
-
   if (length(arg) <= 1L) {
 
-    arg <- rep(list(arg), length(uq_nms))
-    names(arg) <- uq_nms
+    arg <- rep(list(arg), length(names))
+    names(arg) <- names
 
   } else if (same_length(arg, items) && is.null(names(arg))) {
 
     assert_that(same_length(names, items))
 
     arg <- lapply(split(arg, names), unique)
+    arg <- arg[names]
 
   } else {
 
     arg <- as.list(arg)
 
-    if (is.null(names(arg)) && is_unique(names) && same_length(arg, names)) {
-      names(arg) <- names
+    if (is.null(names(arg))) {
+      if (same_length(arg, names)) names(arg) <- names
+    } else {
+      arg <- arg[names]
     }
+
+    assert_that(has_name(arg, names))
   }
 
-  assert_that(is.list(arg), all_ok(arg), has_name(arg, uq_nms))
+  assert_that(is.list(arg), all_ok(arg))
 
-  arg[uq_nms]
+  arg
 }
 
 add_unit <- function(x, unit) {
@@ -200,8 +203,9 @@ load_long <- function(items, item_col, id_col, time_col, val_col, extra_cols,
 
   callback <- prep_args(callback, as.character(items))
   unit_itm <- prep_args(unit, as.character(items))
-  unit_con <- prep_args(unit, names, items)
   names    <- prep_args(as.character(names), as.character(items))
+
+  unit_con <- prep_args(unit, as.character(names), items)
 
   uq_items <- unique(items)
   uq_extra <- unique(unlist(extra_cols))
@@ -237,17 +241,20 @@ load_long <- function(items, item_col, id_col, time_col, val_col, extra_cols,
   }
 
   dat <- split(dat, by = item_col, keep.by = identical(val_col, item_col))
+  dat <- dat[names(names)]
+
+  ok  <- lgl_ply(dat, Negate(is.null))
+  dat <- copy_dt_refs(dat[ok])
 
   if (!(all_null(callback) || all_na(callback))) {
-
-    dat <- Map(do_callback, dat, callback[names(dat)], unit_itm[names(dat)],
+    dat <- Map(do_callback, dat, callback[ok], unit_itm[ok],
       MoreArgs = c(list(val = val_col, id_col = id_col, time_col = time_col),
                    extra_cols)
     )
   }
 
   dat <- lapply(dat, rm_cols, extra_cols)
-  dat <- Map(rename_cols, dat, names[names(dat)], val_col)
+  dat <- Map(rename_cols, dat, names[ok], val_col)
 
   dat <- combine_feats(dat)
   dat <- lapply(dat, rm_na)
@@ -327,4 +334,15 @@ load_grep <- function(items, item_col, id_col, time_col, val_col, extra_cols,
   dat <- add_unit(dat, unit)
 
   list(dat)
+}
+
+copy_dt_refs <- function(x) {
+
+  to_copy <- duplicated(chr_ply(x, data.table::address))
+
+  if (any(to_copy)) {
+    x[to_copy] <- lapply(x[to_copy], data.table::copy)
+  }
+
+  x
 }

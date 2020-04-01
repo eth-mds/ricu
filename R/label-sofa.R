@@ -11,8 +11,6 @@ sofa_data <- function(source, pafi_win_length = hours(2L),
                       col_cfg = get_col_config(source, "all"),
                       dictionary = read_dictionary("concept-dict")) {
 
-  if (!identical(id_type, "hadm")) stop ("TODO")
-
   assert_that(
     is_time(pafi_win_length, allow_neg = FALSE), pafi_win_length > interval,
     is.flag(fix_na_fio2), is_time(vent_win_length, allow_neg = FALSE),
