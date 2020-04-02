@@ -75,6 +75,22 @@ test_that("read data items (wide)", {
   )
 
   expect_setequal(chr_ply(dat, data_cols), c("temp", "sat"))
+
+  expect_message(
+    dat <- load_items("eicu_demo", "vitalperiodic",
+                      c("temperature", "sao2", "sao2"),
+                      names = c("temp", "sat1", "sat2"))
+  )
+
+  expect_length(dat, 3L)
+  expect_setequal(chr_ply(dat, data_cols), c("temp", "sat1", "sat2"))
+
+  sat1 <- rename_cols(dat[[which(chr_ply(dat, data_cols) == "sat1")]],
+                      "sao2", "sat1")
+  sat2 <- rename_cols(dat[[which(chr_ply(dat, data_cols) == "sat2")]],
+                      "sao2", "sat2")
+
+  expect_equal(sat1, sat2)
 })
 
 test_that("read data items (long)", {

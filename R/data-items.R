@@ -143,6 +143,7 @@ load_wide <- function(item_cols, id_col, time_col, extra_cols, names,
 
   callback <- prep_args(callback, item_cols)
   unit_itm <- prep_args(unit, item_cols)
+
   unit_con <- prep_args(unit, names, item_cols)
 
   to_rm <- unique(unlist(extra_cols))
@@ -163,22 +164,21 @@ load_wide <- function(item_cols, id_col, time_col, extra_cols, names,
   if (all_null(callback)) {
 
     dat <- rm_cols(dat, to_rm)
-    dat <- rename_cols(dat, names, item_cols)
-    dat <- unmerge(dat, names, na_rm = FALSE)
+    dat <- unmerge(dat, item_cols, na_rm = FALSE)
+    dat <- Map(rename_cols, dat, names, item_cols)
 
   } else {
 
     dat <- unmerge(dat, item_cols, c(meta_cols(dat), to_rm), FALSE)
-    dat <- Map(do_callback,
-      dat, callback[names(dat)], unit_itm[names(dat)], names(dat),
+    dat <- Map(do_callback, dat, callback, unit_itm, names(dat),
       MoreArgs = c(list(id_col = id_col, time_col = time_col), extra_cols)
     )
     dat <- lapply(dat, rm_cols, to_rm)
 
     dat <- Map(rename_cols, dat, names, item_cols)
-    dat <- combine_feats(dat)
   }
 
+  dat <- combine_feats(dat)
   dat <- lapply(dat, rm_na)
 
   if (!is.null(unit)) {
