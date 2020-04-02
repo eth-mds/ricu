@@ -121,3 +121,15 @@ mimic_age <- function(x, val_col, unit, ...) {
     value = as.double(`units<-`(x[[val_col]], "days") / -365))
   x
 }
+
+hirid_vent_start <- function(x, val_col, ...) {
+  all_flag(x[get(val_col) == 1, ], val_col)
+}
+
+hirid_vent_end <- function(x, val_col, ...) {
+  all_flag(x[get(val_col) > 2, ])
+}
+
+hirid_trach <- function(x, val_col, ...) {
+  all_flag(x[get(val_col) == 2, ])
+}

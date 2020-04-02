@@ -4,28 +4,24 @@
     "sources": {
       "eicu": [
         {
-          "ids": null,
           "table": "patient",
           "column": "age"
         }
       ],
       "eicu_demo": [
         {
-          "ids": null,
           "table": "patient",
           "column": "age"
         }
       ],
       "hirid": [
         {
-          "ids": null,
           "table": "general",
           "column": "age"
         }
       ],
       "mimic": [
         {
-          "ids": null,
           "table": "patients",
           "column": "dob",
           "callback": "mimic_age"
@@ -33,7 +29,6 @@
       ],
       "mimic_demo": [
         {
-          "ids": null,
           "table": "patients",
           "column": "dob",
           "callback": "mimic_age"
@@ -643,12 +638,7 @@
       ],
       "hirid": [
         {
-          "ids": 24000439,
-          "table": "observations",
-          "column": "variableid"
-        },
-        {
-          "ids": 24000521,
+          "ids": [24000439, 24000521],
           "table": "observations",
           "column": "variableid"
         }
@@ -795,14 +785,12 @@
     "sources": {
       "eicu": [
         {
-          "ids": null,
           "table": "vitalperiodic",
           "column": "systemicdiastolic"
         }
       ],
       "eicu_demo": [
         {
-          "ids": null,
           "table": "vitalperiodic",
           "column": "systemicdiastolic"
         }
@@ -816,54 +804,14 @@
       ],
       "mimic": [
         {
-          "ids": 220051,
-          "table": "chartevents",
-          "column": "itemid"
-        },
-        {
-          "ids": 8368,
-          "table": "chartevents",
-          "column": "itemid"
-        },
-        {
-          "ids": 8441,
-          "table": "chartevents",
-          "column": "itemid"
-        },
-        {
-          "ids": 8555,
-          "table": "chartevents",
-          "column": "itemid"
-        },
-        {
-          "ids": 220180,
+          "ids": [8368, 8441, 8555, 220051, 220180],
           "table": "chartevents",
           "column": "itemid"
         }
       ],
       "mimic_demo": [
         {
-          "ids": 220051,
-          "table": "chartevents",
-          "column": "itemid"
-        },
-        {
-          "ids": 8368,
-          "table": "chartevents",
-          "column": "itemid"
-        },
-        {
-          "ids": 8441,
-          "table": "chartevents",
-          "column": "itemid"
-        },
-        {
-          "ids": 8555,
-          "table": "chartevents",
-          "column": "itemid"
-        },
-        {
-          "ids": 220180,
+          "ids": [8368, 8441, 8555, 220051, 220180],
           "table": "chartevents",
           "column": "itemid"
         }
@@ -881,14 +829,7 @@
           "callback": "force_numeric_val_col"
         },
         {
-          "ids": "Dobutamine (ml/hr)",
-          "table": "infusiondrug",
-          "column": "drugname",
-          "callback": "eicu_body_weight",
-          "weight_col": "patientweight"
-        },
-        {
-          "ids": "Dobutamine ()",
+          "ids": ["Dobutamine ()", "Dobutamine (ml/hr)"],
           "table": "infusiondrug",
           "column": "drugname",
           "callback": "eicu_body_weight",
@@ -903,14 +844,7 @@
           "callback": "force_numeric_val_col"
         },
         {
-          "ids": "Dobutamine (ml/hr)",
-          "table": "infusiondrug",
-          "column": "drugname",
-          "callback": "eicu_body_weight",
-          "weight_col": "patientweight"
-        },
-        {
-          "ids": "Dobutamine ()",
+          "ids": ["Dobutamine ()", "Dobutamine (ml/hr)"],
           "table": "infusiondrug",
           "column": "drugname",
           "callback": "eicu_body_weight",
@@ -926,35 +860,15 @@
       ],
       "mimic": [
         {
-          "ids": 221653,
+          "ids": [30042, 30306, 221653],
           "table": "inputevents_mv",
-          "column": "itemid"
-        },
-        {
-          "ids": 30042,
-          "table": "inputevents_cv",
-          "column": "itemid"
-        },
-        {
-          "ids": 30306,
-          "table": "inputevents_cv",
           "column": "itemid"
         }
       ],
       "mimic_demo": [
         {
-          "ids": 221653,
+          "ids": [30042, 30306, 221653],
           "table": "inputevents_mv",
-          "column": "itemid"
-        },
-        {
-          "ids": 30042,
-          "table": "inputevents_cv",
-          "column": "itemid"
-        },
-        {
-          "ids": 30306,
-          "table": "inputevents_cv",
           "column": "itemid"
         }
       ]
@@ -981,45 +895,15 @@
       ],
       "mimic": [
         {
-          "ids": 221662,
+          "ids": [30043, 30125, 30307, 221662],
           "table": "inputevents_mv",
-          "column": "itemid"
-        },
-        {
-          "ids": 30043,
-          "table": "inputevents_cv",
-          "column": "itemid"
-        },
-        {
-          "ids": 30125,
-          "table": "inputevents_cv",
-          "column": "itemid"
-        },
-        {
-          "ids": 30307,
-          "table": "inputevents_cv",
           "column": "itemid"
         }
       ],
       "mimic_demo": [
         {
-          "ids": 221662,
+          "ids": [30043, 30125, 30307, 221662],
           "table": "inputevents_mv",
-          "column": "itemid"
-        },
-        {
-          "ids": 30043,
-          "table": "inputevents_cv",
-          "column": "itemid"
-        },
-        {
-          "ids": 30125,
-          "table": "inputevents_cv",
-          "column": "itemid"
-        },
-        {
-          "ids": 30307,
-          "table": "inputevents_cv",
           "column": "itemid"
         }
       ]
@@ -1069,14 +953,7 @@
           "callback": "force_numeric_val_col"
         },
         {
-          "ids": "Epinephrine (ml/hr)",
-          "table": "infusiondrug",
-          "column": "drugname",
-          "callback": "eicu_body_weight",
-          "weight_col": "patientweight"
-        },
-        {
-          "ids": "Epinephrine (mcg/min)",
+          "ids": ["Epinephrine (ml/hr)", "Epinephrine (mcg/min)"],
           "table": "infusiondrug",
           "column": "drugname",
           "callback": "eicu_body_weight",
@@ -1091,14 +968,7 @@
           "callback": "force_numeric_val_col"
         },
         {
-          "ids": "Epinephrine (ml/hr)",
-          "table": "infusiondrug",
-          "column": "drugname",
-          "callback": "eicu_body_weight",
-          "weight_col": "patientweight"
-        },
-        {
-          "ids": "Epinephrine (mcg/min)",
+          "ids": ["Epinephrine (ml/hr)", "Epinephrine (mcg/min)"],
           "table": "infusiondrug",
           "column": "drugname",
           "callback": "eicu_body_weight",
@@ -1107,72 +977,22 @@
       ],
       "hirid": [
         {
-          "ids": 71,
-          "table": "pharma",
-          "column": "pharmaid"
-        },
-        {
-          "ids": 1000750,
-          "table": "pharma",
-          "column": "pharmaid"
-        },
-        {
-          "ids": 1000649,
-          "table": "pharma",
-          "column": "pharmaid"
-        },
-        {
-          "ids": 1000650,
-          "table": "pharma",
-          "column": "pharmaid"
-        },
-        {
-          "ids": 1000655,
+          "ids": [71, 1000649, 1000650, 1000655, 1000750],
           "table": "pharma",
           "column": "pharmaid"
         }
       ],
       "mimic": [
         {
-          "ids": 221289,
+          "ids": [30044, 30119, 30309, 221289],
           "table": "inputevents_mv",
-          "column": "itemid"
-        },
-        {
-          "ids": 30044,
-          "table": "inputevents_cv",
-          "column": "itemid"
-        },
-        {
-          "ids": 30119,
-          "table": "inputevents_cv",
-          "column": "itemid"
-        },
-        {
-          "ids": 30309,
-          "table": "inputevents_cv",
           "column": "itemid"
         }
       ],
       "mimic_demo": [
         {
-          "ids": 221289,
+          "ids": [30044, 30119, 30309, 221289],
           "table": "inputevents_mv",
-          "column": "itemid"
-        },
-        {
-          "ids": 30044,
-          "table": "inputevents_cv",
-          "column": "itemid"
-        },
-        {
-          "ids": 30119,
-          "table": "inputevents_cv",
-          "column": "itemid"
-        },
-        {
-          "ids": 30309,
-          "table": "inputevents_cv",
           "column": "itemid"
         }
       ]
@@ -1242,35 +1062,15 @@
       ],
       "mimic": [
         {
-          "ids": 50816,
+          "ids": [3420, 50816, 223835],
           "table": "labevents",
-          "column": "itemid"
-        },
-        {
-          "ids": 223835,
-          "table": "chartevents",
-          "column": "itemid"
-        },
-        {
-          "ids": 3420,
-          "table": "chartevents",
           "column": "itemid"
         }
       ],
       "mimic_demo": [
         {
-          "ids": 50816,
+          "ids": [3420, 50816, 223835],
           "table": "labevents",
-          "column": "itemid"
-        },
-        {
-          "ids": 223835,
-          "table": "chartevents",
-          "column": "itemid"
-        },
-        {
-          "ids": 3420,
-          "table": "chartevents",
           "column": "itemid"
         }
       ]
@@ -1321,7 +1121,6 @@
     "sources": {
       "mimic": [
         {
-          "ids": null,
           "table": "microbiologyevents",
           "column": "org_itemid",
           "callback": "mimic_sampling",
@@ -1330,7 +1129,6 @@
       ],
       "mimic_demo": [
         {
-          "ids": null,
           "table": "microbiologyevents",
           "column": "org_itemid",
           "callback": "mimic_sampling",
@@ -1366,24 +1164,14 @@
       ],
       "mimic": [
         {
-          "ids": 184,
-          "table": "chartevents",
-          "column": "itemid"
-        },
-        {
-          "ids": 220739,
+          "ids": [184, 220739],
           "table": "chartevents",
           "column": "itemid"
         }
       ],
       "mimic_demo": [
         {
-          "ids": 184,
-          "table": "chartevents",
-          "column": "itemid"
-        },
-        {
-          "ids": 220739,
+          "ids": [184, 220739],
           "table": "chartevents",
           "column": "itemid"
         }
@@ -1417,24 +1205,14 @@
       ],
       "mimic": [
         {
-          "ids": 454,
-          "table": "chartevents",
-          "column": "itemid"
-        },
-        {
-          "ids": 223901,
+          "ids": [454, 223901],
           "table": "chartevents",
           "column": "itemid"
         }
       ],
       "mimic_demo": [
         {
-          "ids": 454,
-          "table": "chartevents",
-          "column": "itemid"
-        },
-        {
-          "ids": 223901,
+          "ids": [454, 223901],
           "table": "chartevents",
           "column": "itemid"
         }
@@ -1502,24 +1280,14 @@
       ],
       "mimic": [
         {
-          "ids": 723,
-          "table": "chartevents",
-          "column": "itemid"
-        },
-        {
-          "ids": 223900,
+          "ids": [723, 223900],
           "table": "chartevents",
           "column": "itemid"
         }
       ],
       "mimic_demo": [
         {
-          "ids": 723,
-          "table": "chartevents",
-          "column": "itemid"
-        },
-        {
-          "ids": 223900,
+          "ids": [723, 223900],
           "table": "chartevents",
           "column": "itemid"
         }
@@ -1555,19 +1323,7 @@
       ],
       "hirid": [
         {
-          "ids": 20005110,
-          "table": "observations",
-          "column": "variableid",
-          "callback": "multiply_hirid_gluc"
-        },
-        {
-          "ids": 24000523,
-          "table": "observations",
-          "column": "variableid",
-          "callback": "multiply_hirid_gluc"
-        },
-        {
-          "ids": 24000585,
+          "ids": [20005110, 24000523, 24000585],
           "table": "observations",
           "column": "variableid",
           "callback": "multiply_hirid_gluc"
@@ -1575,24 +1331,14 @@
       ],
       "mimic": [
         {
-          "ids": 50809,
-          "table": "labevents",
-          "column": "itemid"
-        },
-        {
-          "ids": 50931,
+          "ids": [50809, 50931],
           "table": "labevents",
           "column": "itemid"
         }
       ],
       "mimic_demo": [
         {
-          "ids": 50809,
-          "table": "labevents",
-          "column": "itemid"
-        },
-        {
-          "ids": 50931,
+          "ids": [50809, 50931],
           "table": "labevents",
           "column": "itemid"
         }
@@ -1604,14 +1350,12 @@
     "sources": {
       "eicu": [
         {
-          "ids": null,
           "table": "vitalperiodic",
           "column": "heartrate"
         }
       ],
       "eicu_demo": [
         {
-          "ids": null,
           "table": "vitalperiodic",
           "column": "heartrate"
         }
@@ -1625,24 +1369,14 @@
       ],
       "mimic": [
         {
-          "ids": 220045,
-          "table": "chartevents",
-          "column": "itemid"
-        },
-        {
-          "ids": 211,
+          "ids": [211, 220045],
           "table": "chartevents",
           "column": "itemid"
         }
       ],
       "mimic_demo": [
         {
-          "ids": 220045,
-          "table": "chartevents",
-          "column": "itemid"
-        },
-        {
-          "ids": 211,
+          "ids": [211, 220045],
           "table": "chartevents",
           "column": "itemid"
         }
@@ -1701,19 +1435,7 @@
       ],
       "hirid": [
         {
-          "ids": 24000548,
-          "table": "observations",
-          "column": "variableid",
-          "callback": "multiply_hirid_hemo"
-        },
-        {
-          "ids": 20000900,
-          "table": "observations",
-          "column": "variableid",
-          "callback": "multiply_hirid_hemo"
-        },
-        {
-          "ids": 24000836,
+          "ids": [24000548, 24000836, 20000900],
           "table": "observations",
           "column": "variableid",
           "callback": "multiply_hirid_hemo"
@@ -1778,56 +1500,23 @@
     "sources": {
       "eicu": [
         {
-          "ids": "Insulin (units/hr)",
+          "ids": "^insulin (250.+)?\\(((ml|units)/hr)?\\)$",
           "table": "infusiondrug",
-          "column": "drugname"
-        },
-        {
-          "ids": "Insulin (ml/hr)",
-          "table": "infusiondrug",
-          "column": "drugname"
-        },
-        {
-          "ids": "Insulin ()",
-          "table": "infusiondrug",
-          "column": "drugname"
-        },
-        {
-          "ids": "Insulin 250 Units Sodium Chloride 0.9% 250 ml (units/hr)",
-          "table": "infusiondrug",
-          "column": "drugname"
+          "column": "drugname",
+          "regex": true
         }
       ],
       "eicu_demo": [
         {
-          "ids": "Insulin (units/hr)",
+          "ids": "^insulin (250.+)?\\(((ml|units)/hr)?\\)$",
           "table": "infusiondrug",
-          "column": "drugname"
-        },
-        {
-          "ids": "Insulin (ml/hr)",
-          "table": "infusiondrug",
-          "column": "drugname"
-        },
-        {
-          "ids": "Insulin ()",
-          "table": "infusiondrug",
-          "column": "drugname"
-        },
-        {
-          "ids": "Insulin 250 Units Sodium Chloride 0.9% 250 ml (units/hr)",
-          "table": "infusiondrug",
-          "column": "drugname"
+          "column": "drugname",
+          "regex": true
         }
       ],
       "hirid": [
         {
-          "ids": 15,
-          "table": "pharma",
-          "column": "pharmaid"
-        },
-        {
-          "ids": 1000724,
+          "ids": [15, 1000724],
           "table": "pharma",
           "column": "pharmaid"
         }
@@ -2110,14 +1799,12 @@
     "sources": {
       "eicu": [
         {
-          "ids": null,
           "table": "vitalperiodic",
           "column": "systemicmean"
         }
       ],
       "eicu_demo": [
         {
-          "ids": null,
           "table": "vitalperiodic",
           "column": "systemicmean"
         }
@@ -2131,74 +1818,14 @@
       ],
       "mimic": [
         {
-          "ids": 52,
-          "table": "chartevents",
-          "column": "itemid"
-        },
-        {
-          "ids": 443,
-          "table": "chartevents",
-          "column": "itemid"
-        },
-        {
-          "ids": 456,
-          "table": "chartevents",
-          "column": "itemid"
-        },
-        {
-          "ids": 6072,
-          "table": "chartevents",
-          "column": "itemid"
-        },
-        {
-          "ids": 220052,
-          "table": "chartevents",
-          "column": "itemid"
-        },
-        {
-          "ids": 220181,
-          "table": "chartevents",
-          "column": "itemid"
-        },
-        {
-          "ids": 225312,
+          "ids": [52, 443, 456, 6072, 220052, 220181, 225312],
           "table": "chartevents",
           "column": "itemid"
         }
       ],
       "mimic_demo": [
         {
-          "ids": 52,
-          "table": "chartevents",
-          "column": "itemid"
-        },
-        {
-          "ids": 443,
-          "table": "chartevents",
-          "column": "itemid"
-        },
-        {
-          "ids": 456,
-          "table": "chartevents",
-          "column": "itemid"
-        },
-        {
-          "ids": 6072,
-          "table": "chartevents",
-          "column": "itemid"
-        },
-        {
-          "ids": 220052,
-          "table": "chartevents",
-          "column": "itemid"
-        },
-        {
-          "ids": 220181,
-          "table": "chartevents",
-          "column": "itemid"
-        },
-        {
-          "ids": 225312,
+          "ids": [52, 443, 456, 6072, 220052, 220181, 225312],
           "table": "chartevents",
           "column": "itemid"
         }
@@ -2296,14 +1923,7 @@
           "callback": "force_numeric_val_col"
         },
         {
-          "ids": "Norepinephrine (ml/hr)",
-          "table": "infusiondrug",
-          "column": "drugname",
-          "callback": "eicu_body_weight",
-          "weight_col": "patientweight"
-        },
-        {
-          "ids": "Norepinephrine (mcg/min)",
+          "ids": ["Norepinephrine (ml/hr)", "Norepinephrine (mcg/min)"],
           "table": "infusiondrug",
           "column": "drugname",
           "callback": "eicu_body_weight",
@@ -2318,14 +1938,7 @@
           "callback": "force_numeric_val_col"
         },
         {
-          "ids": "Norepinephrine (ml/hr)",
-          "table": "infusiondrug",
-          "column": "drugname",
-          "callback": "eicu_body_weight",
-          "weight_col": "patientweight"
-        },
-        {
-          "ids": "Norepinephrine (mcg/min)",
+          "ids": ["Norepinephrine (ml/hr)", "Norepinephrine (mcg/min)"],
           "table": "infusiondrug",
           "column": "drugname",
           "callback": "eicu_body_weight",
@@ -2334,57 +1947,22 @@
       ],
       "hirid": [
         {
-          "ids": 1000462,
-          "table": "pharma",
-          "column": "pharmaid"
-        },
-        {
-          "ids": 1000656,
-          "table": "pharma",
-          "column": "pharmaid"
-        },
-        {
-          "ids": 1000657,
-          "table": "pharma",
-          "column": "pharmaid"
-        },
-        {
-          "ids": 1000658,
+          "ids": [1000462, 1000656, 1000657, 1000658],
           "table": "pharma",
           "column": "pharmaid"
         }
       ],
       "mimic": [
         {
-          "ids": 221906,
+          "ids": [30047, 30120, 221906],
           "table": "inputevents_mv",
-          "column": "itemid"
-        },
-        {
-          "ids": 30047,
-          "table": "inputevents_cv",
-          "column": "itemid"
-        },
-        {
-          "ids": 30120,
-          "table": "inputevents_cv",
           "column": "itemid"
         }
       ],
       "mimic_demo": [
         {
-          "ids": 221906,
+          "ids": [30047, 30120, 221906],
           "table": "inputevents_mv",
-          "column": "itemid"
-        },
-        {
-          "ids": 30047,
-          "table": "inputevents_cv",
-          "column": "itemid"
-        },
-        {
-          "ids": 30120,
-          "table": "inputevents_cv",
           "column": "itemid"
         }
       ]
@@ -2395,7 +1973,6 @@
     "sources": {
       "eicu": [
         {
-          "ids": null,
           "table": "vitalperiodic",
           "column": "sao2"
         },
@@ -2407,7 +1984,6 @@
       ],
       "eicu_demo": [
         {
-          "ids": null,
           "table": "vitalperiodic",
           "column": "sao2"
         },
@@ -2419,62 +1995,22 @@
       ],
       "hirid": [
         {
-          "ids": 4000,
-          "table": "observations",
-          "column": "variableid"
-        },
-        {
-          "ids": 8280,
-          "table": "observations",
-          "column": "variableid"
-        },
-        {
-          "ids": 20000800,
+          "ids": [4000, 8280, 20000800],
           "table": "observations",
           "column": "variableid"
         }
       ],
       "mimic": [
         {
-          "ids": 220277,
+          "ids": [646, 220277, 226253, 50817],
           "table": "chartevents",
-          "column": "itemid"
-        },
-        {
-          "ids": 226253,
-          "table": "chartevents",
-          "column": "itemid"
-        },
-        {
-          "ids": 646,
-          "table": "chartevents",
-          "column": "itemid"
-        },
-        {
-          "ids": 50817,
-          "table": "labevents",
           "column": "itemid"
         }
       ],
       "mimic_demo": [
         {
-          "ids": 220277,
+          "ids": [646, 220277, 226253, 50817],
           "table": "chartevents",
-          "column": "itemid"
-        },
-        {
-          "ids": 226253,
-          "table": "chartevents",
-          "column": "itemid"
-        },
-        {
-          "ids": 646,
-          "table": "chartevents",
-          "column": "itemid"
-        },
-        {
-          "ids": 50817,
-          "table": "labevents",
           "column": "itemid"
         }
       ]
@@ -2699,22 +2235,7 @@
       ],
       "hirid": [
         {
-          "ids": 20000500,
-          "table": "observations",
-          "column": "variableid"
-        },
-        {
-          "ids": 24000520,
-          "table": "observations",
-          "column": "variableid"
-        },
-        {
-          "ids": 24000833,
-          "table": "observations",
-          "column": "variableid"
-        },
-        {
-          "ids": 24000867,
+          "ids": [20000500, 24000520, 24000833, 24000867],
           "table": "observations",
           "column": "variableid"
         }
@@ -2906,90 +2427,33 @@
     "sources": {
       "eicu": [
         {
-          "ids": null,
           "table": "vitalperiodic",
           "column": "respiration"
         }
       ],
       "eicu_demo": [
         {
-          "ids": null,
           "table": "vitalperiodic",
           "column": "respiration"
         }
       ],
       "hirid": [
         {
-          "ids": 300,
-          "table": "observations",
-          "column": "variableid"
-        },
-        {
-          "ids": 310,
+          "ids": [300, 310],
           "table": "observations",
           "column": "variableid"
         }
       ],
       "mimic": [
         {
-          "ids": 220210,
-          "table": "chartevents",
-          "column": "itemid"
-        },
-        {
-          "ids": 224688,
-          "table": "chartevents",
-          "column": "itemid"
-        },
-        {
-          "ids": 224689,
-          "table": "chartevents",
-          "column": "itemid"
-        },
-        {
-          "ids": 224690,
-          "table": "chartevents",
-          "column": "itemid"
-        },
-        {
-          "ids": 618,
-          "table": "chartevents",
-          "column": "itemid"
-        },
-        {
-          "ids": 619,
+          "ids": [618, 619, 220210, 224688, 224689, 224690],
           "table": "chartevents",
           "column": "itemid"
         }
       ],
       "mimic_demo": [
         {
-          "ids": 220210,
-          "table": "chartevents",
-          "column": "itemid"
-        },
-        {
-          "ids": 224688,
-          "table": "chartevents",
-          "column": "itemid"
-        },
-        {
-          "ids": 224689,
-          "table": "chartevents",
-          "column": "itemid"
-        },
-        {
-          "ids": 224690,
-          "table": "chartevents",
-          "column": "itemid"
-        },
-        {
-          "ids": 618,
-          "table": "chartevents",
-          "column": "itemid"
-        },
-        {
-          "ids": 619,
+          "ids": [618, 619, 220210, 224688, 224689, 224690],
           "table": "chartevents",
           "column": "itemid"
         }
@@ -3026,35 +2490,30 @@
     "sources": {
       "eicu": [
         {
-          "ids": null,
           "table": "patient",
           "column": "gender"
         }
       ],
       "eicu_demo": [
         {
-          "ids": null,
           "table": "patient",
           "column": "gender"
         }
       ],
       "hirid": [
         {
-          "ids": null,
           "table": "general",
           "column": "sex"
         }
       ],
       "mimic": [
         {
-          "ids": null,
           "table": "patients",
           "column": "gender"
         }
       ],
       "mimic_demo": [
         {
-          "ids": null,
           "table": "patients",
           "column": "gender"
         }
@@ -3080,27 +2539,7 @@
       ],
       "hirid": [
         {
-          "ids": 20000400,
-          "table": "observations",
-          "column": "variableid"
-        },
-        {
-          "ids": 24000519,
-          "table": "observations",
-          "column": "variableid"
-        },
-        {
-          "ids": 24000658,
-          "table": "observations",
-          "column": "variableid"
-        },
-        {
-          "ids": 24000835,
-          "table": "observations",
-          "column": "variableid"
-        },
-        {
-          "ids": 24000866,
+          "ids": [20000400, 24000519, 24000658, 24000835, 24000866],
           "table": "observations",
           "column": "variableid"
         }
@@ -3126,14 +2565,12 @@
     "sources": {
       "eicu": [
         {
-          "ids": null,
           "table": "vitalperiodic",
           "column": "systemicsystolic"
         }
       ],
       "eicu_demo": [
         {
-          "ids": null,
           "table": "vitalperiodic",
           "column": "systemicsystolic"
         }
@@ -3147,54 +2584,14 @@
       ],
       "mimic": [
         {
-          "ids": 220050,
-          "table": "chartevents",
-          "column": "itemid"
-        },
-        {
-          "ids": 51,
-          "table": "chartevents",
-          "column": "itemid"
-        },
-        {
-          "ids": 455,
-          "table": "chartevents",
-          "column": "itemid"
-        },
-        {
-          "ids": 6701,
-          "table": "chartevents",
-          "column": "itemid"
-        },
-        {
-          "ids": 220179,
+          "ids": [51, 455, 6701, 220050, 220179],
           "table": "chartevents",
           "column": "itemid"
         }
       ],
       "mimic_demo": [
         {
-          "ids": 220050,
-          "table": "chartevents",
-          "column": "itemid"
-        },
-        {
-          "ids": 51,
-          "table": "chartevents",
-          "column": "itemid"
-        },
-        {
-          "ids": 455,
-          "table": "chartevents",
-          "column": "itemid"
-        },
-        {
-          "ids": 6701,
-          "table": "chartevents",
-          "column": "itemid"
-        },
-        {
-          "ids": 220179,
+          "ids": [51, 455, 6701, 220050, 220179],
           "table": "chartevents",
           "column": "itemid"
         }
@@ -3206,14 +2603,12 @@
     "sources": {
       "eicu": [
         {
-          "ids": null,
           "table": "vitalperiodic",
           "column": "temperature"
         }
       ],
       "eicu_demo": [
         {
-          "ids": null,
           "table": "vitalperiodic",
           "column": "temperature"
         }
@@ -3259,29 +2654,20 @@
         {
           "ids": 15001552,
           "table": "observations",
-          "column": "variableid"
+          "column": "variableid",
+          "callback": "hirid_trach"
         }
       ],
       "mimic": [
         {
-          "ids": "No Response-ETT",
-          "table": "chartevents",
-          "column": "value"
-        },
-        {
-          "ids": "1.0 ET/Trach",
+          "ids": ["1.0 ET/Trach", "No Response-ETT"],
           "table": "chartevents",
           "column": "value"
         }
       ],
       "mimic_demo": [
         {
-          "ids": "No Response-ETT",
-          "table": "chartevents",
-          "column": "value"
-        },
-        {
-          "ids": "1.0 ET/Trach",
+          "ids": ["1.0 ET/Trach", "No Response-ETT"],
           "table": "chartevents",
           "column": "value"
         }
@@ -3419,46 +2805,28 @@
     "sources": {
       "eicu": [
         {
-          "ids": "Urine",
+          "ids": ["Urine", "URINE CATHETER"],
           "table": "intakeoutput",
           "column": "celllabel"
         },
         {
-          "ids": "URINE CATHETER",
+          "ids": ["catheter.+output", "output.+catheter"],
           "table": "intakeoutput",
-          "column": "celllabel"
-        },
-        {
-          "ids": "Urinary Catheter Output: Indwelling/Continuous Ure",
-          "table": "intakeoutput",
-          "column": "celllabel"
-        },
-        {
-          "ids": "Indwelling Catheter Output",
-          "table": "intakeoutput",
-          "column": "celllabel"
+          "column": "celllabel",
+          "regex": true
         }
       ],
       "eicu_demo": [
         {
-          "ids": "Urine",
+          "ids": ["Urine", "URINE CATHETER"],
           "table": "intakeoutput",
           "column": "celllabel"
         },
         {
-          "ids": "URINE CATHETER",
+          "ids": ["catheter.+output", "output.+catheter"],
           "table": "intakeoutput",
-          "column": "celllabel"
-        },
-        {
-          "ids": "Urinary Catheter Output: Indwelling/Continuous Ure",
-          "table": "intakeoutput",
-          "column": "celllabel"
-        },
-        {
-          "ids": "Indwelling Catheter Output",
-          "table": "intakeoutput",
-          "column": "celllabel"
+          "column": "celllabel",
+          "regex": true
         }
       ],
       "mimic": [
@@ -3493,31 +2861,17 @@
     "sources": {
       "eicu": [
         {
-          "ids": null,
           "table": "respiratorycare",
           "column": "ventendoffset",
           "callback": "vent_flag"
         },
         {
-          "ids": null,
           "table": "respiratorycare",
           "column": "priorventendoffset",
           "callback": "vent_flag"
         },
         {
-          "ids": "Off",
-          "table": "respiratorycharting",
-          "column": "respchartvalue",
-          "callback": "all_flag"
-        },
-        {
-          "ids": "off",
-          "table": "respiratorycharting",
-          "column": "respchartvalue",
-          "callback": "all_flag"
-        },
-        {
-          "ids": "Suspended",
+          "ids": ["off", "Off", "Suspended"],
           "table": "respiratorycharting",
           "column": "respchartvalue",
           "callback": "all_flag"
@@ -3525,31 +2879,17 @@
       ],
       "eicu_demo": [
         {
-          "ids": null,
           "table": "respiratorycare",
           "column": "ventendoffset",
           "callback": "vent_flag"
         },
         {
-          "ids": null,
           "table": "respiratorycare",
           "column": "priorventendoffset",
           "callback": "vent_flag"
         },
         {
-          "ids": "Off",
-          "table": "respiratorycharting",
-          "column": "respchartvalue",
-          "callback": "all_flag"
-        },
-        {
-          "ids": "off",
-          "table": "respiratorycharting",
-          "column": "respchartvalue",
-          "callback": "all_flag"
-        },
-        {
-          "ids": "Suspended",
+          "ids": ["off", "Off", "Suspended"],
           "table": "respiratorycharting",
           "column": "respchartvalue",
           "callback": "all_flag"
@@ -3559,7 +2899,8 @@
         {
           "ids": 15001552,
           "table": "observations",
-          "column": "variableid"
+          "column": "variableid",
+          "callback": "hirid_vent_end"
         }
       ],
       "mimic": [
@@ -3596,65 +2937,37 @@
     "sources": {
       "eicu": [
         {
-          "ids": null,
           "table": "respiratorycare",
           "column": "ventstartoffset",
           "callback": "vent_flag"
         },
         {
-          "ids": null,
           "table": "respiratorycare",
           "column": "priorventstartoffset",
           "callback": "vent_flag"
         },
         {
-          "ids": "respFlowPtVentData",
+          "ids": ["Start", "Continued", "respFlowPtVentData"],
           "table": "respiratorycharting",
           "column": "respcharttypecat",
-          "callback": "all_flag"
-        },
-        {
-          "ids": "Continued",
-          "table": "respiratorycharting",
-          "column": "respchartvalue",
-          "callback": "all_flag"
-        },
-        {
-          "ids": "Start",
-          "table": "respiratorycharting",
-          "column": "respchartvalue",
           "callback": "all_flag"
         }
       ],
       "eicu_demo": [
         {
-          "ids": null,
           "table": "respiratorycare",
           "column": "ventstartoffset",
           "callback": "vent_flag"
         },
         {
-          "ids": null,
           "table": "respiratorycare",
           "column": "priorventstartoffset",
           "callback": "vent_flag"
         },
         {
-          "ids": "respFlowPtVentData",
+          "ids": ["Start", "Continued", "respFlowPtVentData"],
           "table": "respiratorycharting",
           "column": "respcharttypecat",
-          "callback": "all_flag"
-        },
-        {
-          "ids": "Continued",
-          "table": "respiratorycharting",
-          "column": "respchartvalue",
-          "callback": "all_flag"
-        },
-        {
-          "ids": "Start",
-          "table": "respiratorycharting",
-          "column": "respchartvalue",
           "callback": "all_flag"
         }
       ],
@@ -3662,7 +2975,8 @@
         {
           "ids": 15001552,
           "table": "observations",
-          "column": "variableid"
+          "column": "variableid",
+          "callback": "hirid_vent_start"
         }
       ],
       "mimic": [
@@ -3688,14 +3002,12 @@
     "sources": {
       "eicu": [
         {
-          "ids": null,
           "table": "patient",
           "column": "admissionweight"
         }
       ],
       "eicu_demo": [
         {
-          "ids": null,
           "table": "patient",
           "column": "admissionweight"
         }

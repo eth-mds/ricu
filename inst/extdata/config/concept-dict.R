@@ -4,11 +4,10 @@ cfg <- list(
     unit = "bpm",
     sources = list(
       mimic = list(
-        list(ids = 220045L, table = "chartevents", column = "itemid"),
-        list(ids = 211L, table = "chartevents", column = "itemid")
+        list(ids = c(211L, 220045L), table = "chartevents", column = "itemid")
       ),
       eicu = list(
-        list(ids = NULL, table = "vitalperiodic", column = "heartrate")
+        list(table = "vitalperiodic", column = "heartrate")
       ),
       hirid = list(
         list(ids = 200L, table = "observations", column = "variableid")
@@ -19,14 +18,11 @@ cfg <- list(
     unit = "mmHg",
     sources = list(
       mimic = list(
-        list(ids = 220050L, table = "chartevents", column = "itemid"),
-        list(ids = 51L, table = "chartevents", column = "itemid"),
-        list(ids = 455L, table = "chartevents", column = "itemid"),
-        list(ids = 6701L, table = "chartevents", column = "itemid"),
-        list(ids = 220179L, table = "chartevents", column = "itemid")
+        list(ids = c(51L, 455L, 6701L, 220050L, 220179L),
+             table = "chartevents", column = "itemid")
       ),
       eicu = list(
-        list(ids = NULL, table = "vitalperiodic", column = "systemicsystolic")
+        list(table = "vitalperiodic", column = "systemicsystolic")
       ),
       hirid = list(
         list(ids = 100L, table = "observations", column = "variableid")
@@ -37,14 +33,11 @@ cfg <- list(
     unit = "mmHg",
     sources = list(
       mimic = list(
-        list(ids = 220051L, table = "chartevents", column = "itemid"),
-        list(ids = 8368L, table = "chartevents", column = "itemid"),
-        list(ids = 8441L, table = "chartevents", column = "itemid"),
-        list(ids = 8555L, table = "chartevents", column = "itemid"),
-        list(ids = 220180L, table = "chartevents", column = "itemid")
+        list(ids = c(8368L, 8441L, 8555L, 220051L, 220180L),
+             table = "chartevents", column = "itemid")
       ),
       eicu = list(
-        list(ids = NULL, table = "vitalperiodic", column = "systemicdiastolic")
+        list(table = "vitalperiodic", column = "systemicdiastolic")
       ),
       hirid = list(
         list(ids = 120L, table = "observations", column = "variableid")
@@ -55,16 +48,11 @@ cfg <- list(
     unit = "mmHg",
     sources = list(
       mimic = list(
-        list(ids = 52L, table = "chartevents", column = "itemid"),
-        list(ids = 443L, table = "chartevents", column = "itemid"),
-        list(ids = 456L, table = "chartevents", column = "itemid"),
-        list(ids = 6072L, table = "chartevents", column = "itemid"),
-        list(ids = 220052L, table = "chartevents", column = "itemid"),
-        list(ids = 220181L, table = "chartevents", column = "itemid"),
-        list(ids = 225312L, table = "chartevents", column = "itemid")
+        list(ids = c(52L, 443L, 456L, 6072L, 220052L, 220181L, 225312L),
+             table = "chartevents", column = "itemid")
       ),
       eicu = list(
-        list(ids = NULL, table = "vitalperiodic", column = "systemicmean")
+        list(table = "vitalperiodic", column = "systemicmean")
       ),
       hirid = list(
         list(ids = 110L, table = "observations", column = "variableid")
@@ -75,19 +63,15 @@ cfg <- list(
     unit = "insp/min",
     sources = list(
       mimic = list(
-        list(ids = 220210L, table = "chartevents", column = "itemid"),
-        list(ids = 224688L, table = "chartevents", column = "itemid"),
-        list(ids = 224689L, table = "chartevents", column = "itemid"),
-        list(ids = 224690L, table = "chartevents", column = "itemid"),
-        list(ids = 618L, table = "chartevents", column = "itemid"),
-        list(ids = 619L, table = "chartevents", column = "itemid")
+        list(ids = c(618L, 619L, 220210L, 224688L, 224689L, 224690L),
+             table = "chartevents", column = "itemid")
       ),
       eicu = list(
-        list(ids = NULL, table = "vitalperiodic", column = "respiration")
+        list(table = "vitalperiodic", column = "respiration")
       ),
       hirid = list(
-        list(ids = 300L, table = "observations", column = "variableid"),
-        list(ids = 310L, table = "observations", column = "variableid")
+        list(ids = c(300L, 310L), table = "observations",
+             column = "variableid")
       )
     )
   ),
@@ -95,19 +79,16 @@ cfg <- list(
     unit = "%",
     sources = list(
       mimic = list(
-        list(ids = 220277L, table = "chartevents", column = "itemid"),
-        list(ids = 226253L, table = "chartevents", column = "itemid"),
-        list(ids = 646L, table = "chartevents", column = "itemid"),
-        list(ids = 50817L, table = "labevents", column = "itemid")
+        list(ids = c(646L, 220277L, 226253L, 50817L), table = "chartevents",
+             column = "itemid")
       ),
       eicu = list(
-        list(ids = NULL, table = "vitalperiodic", column = "sao2"),
+        list(table = "vitalperiodic", column = "sao2"),
         list(ids = "O2 Sat (%)", table = "lab", column = "labname")
       ),
       hirid = list(
-        list(ids = 4000L, table = "observations", column = "variableid"),
-        list(ids = 8280L, table = "observations", column = "variableid"),
-        list(ids = 20000800L, table = "observations", column = "variableid")
+        list(ids = c(4000L, 8280L, 20000800L), table = "observations",
+             column = "variableid")
       )
     )
   ),
@@ -115,13 +96,12 @@ cfg <- list(
     unit = "%",
     sources = list(
       mimic = list(
-        list(ids = 50816L, table = "labevents", column = "itemid"),
-        list(ids = 223835L, table = "chartevents", column = "itemid"),
-        list(ids = 3420L, table = "chartevents", column = "itemid")
+        list(ids = c(3420L, 50816L, 223835L), table = "labevents",
+             column = "itemid")
       ),
       eicu = list(
         list(ids = "FiO2", table = "respiratorycharting",
-           column = "respchartvaluelabel", callback = "percent_as_numeric"),
+             column = "respchartvaluelabel", callback = "percent_as_numeric"),
         list(ids = "FiO2", table = "lab", column = "labname")
       ),
       hirid = list(
@@ -370,12 +350,8 @@ cfg <- list(
         list(ids = "Hgb", table = "lab", column = "labname")
       ),
       hirid = list(
-        list(ids = 24000548L, table = "observations", column = "variableid",
-             callback = "multiply_hirid_hemo"),
-        list(ids = 20000900L, table = "observations", column = "variableid",
-             callback = "multiply_hirid_hemo"),
-        list(ids = 24000836L, table = "observations", column = "variableid",
-             callback = "multiply_hirid_hemo")
+        list(ids = c(24000548L, 24000836L, 20000900L), table = "observations",
+             column = "variableid", callback = "multiply_hirid_hemo")
       )
     )
   ),
@@ -499,8 +475,8 @@ cfg <- list(
         list(ids = "chloride", table = "lab", column = "labname")
       ),
       hirid = list(
-        list(ids = 24000439L, table = "observations", column = "variableid"),
-        list(ids = 24000521L, table = "observations", column = "variableid")
+        list(ids = c(24000439L, 24000521L), table = "observations",
+             column = "variableid")
       )
     )
   ),
@@ -529,10 +505,8 @@ cfg <- list(
         list(ids = "potassium", table = "lab", column = "labname")
       ),
       hirid = list(
-        list(ids = 20000500L, table = "observations", column = "variableid"),
-        list(ids = 24000520L, table = "observations", column = "variableid"),
-        list(ids = 24000833L, table = "observations", column = "variableid"),
-        list(ids = 24000867L, table = "observations", column = "variableid")
+        list(ids = c(20000500L, 24000520L, 24000833L, 24000867L),
+             table = "observations", column = "variableid")
       )
     )
   ),
@@ -546,11 +520,8 @@ cfg <- list(
         list(ids = "sodium", table = "lab", column = "labname")
       ),
       hirid = list(
-        list(ids = 20000400L, table = "observations", column = "variableid"),
-        list(ids = 24000519L, table = "observations", column = "variableid"),
-        list(ids = 24000658L, table = "observations", column = "variableid"),
-        list(ids = 24000835L, table = "observations", column = "variableid"),
-        list(ids = 24000866L, table = "observations", column = "variableid")
+        list(ids = c(20000400L, 24000519L, 24000658L, 24000835L, 24000866L),
+             table = "observations", column = "variableid")
       )
     )
   ),
@@ -594,20 +565,15 @@ cfg <- list(
     unit = "mg/dL",
     sources = list(
       mimic = list(
-        list(ids = 50809L, table = "labevents", column = "itemid"),
-        list(ids = 50931L, table = "labevents", column = "itemid")
+        list(ids = c(50809L, 50931L), table = "labevents", column = "itemid")
       ),
       eicu = list(
         list(ids = "glucose", table = "lab", column = "labname"),
         list(ids = "bedside glucose", table = "lab", column = "labname")
       ),
       hirid = list(
-        list(ids = 20005110L, table = "observations", column = "variableid",
-             callback = "multiply_hirid_gluc"),
-        list(ids = 24000523L, table = "observations", column = "variableid",
-             callback = "multiply_hirid_gluc"),
-        list(ids = 24000585L, table = "observations", column = "variableid",
-             callback = "multiply_hirid_gluc")
+        list(ids = c(20005110L, 24000523L, 24000585L), table = "observations",
+             column = "variableid", callback = "multiply_hirid_gluc")
       )
     )
   ),
@@ -777,13 +743,12 @@ cfg <- list(
   gcs_eye = list(
     sources = list(
       mimic = list(
-        list(ids = 184L, table = "chartevents", column = "itemid"),
-        list(ids = 220739L, table = "chartevents", column = "itemid")
+        list(ids = c(184L, 220739L), table = "chartevents", column = "itemid")
       ),
       eicu = list(
         list(ids = "Eyes", table = "nursecharting",
-           column = "nursingchartcelltypevalname",
-           callback = "force_numeric_val_col")
+             column = "nursingchartcelltypevalname",
+             callback = "force_numeric_val_col")
       ),
       hirid = list(
         list(ids = 10000300L, table = "observations", column = "variableid")
@@ -793,13 +758,12 @@ cfg <- list(
   gcs_verbal = list(
     sources = list(
       mimic = list(
-        list(ids = 723L, table = "chartevents", column = "itemid"),
-        list(ids = 223900L, table = "chartevents", column = "itemid")
+        list(ids = c(723L, 223900L), table = "chartevents", column = "itemid")
       ),
       eicu = list(
         list(ids = "Verbal", table = "nursecharting",
-           column = "nursingchartcelltypevalname",
-           callback = "force_numeric_val_col")
+             column = "nursingchartcelltypevalname",
+             callback = "force_numeric_val_col")
       ),
       hirid = list(
         list(ids = 10000100L, table = "observations", column = "variableid")
@@ -809,8 +773,7 @@ cfg <- list(
   gcs_motor = list(
     sources = list(
       mimic = list(
-        list(ids = 454L, table = "chartevents", column = "itemid"),
-        list(ids = 223901L, table = "chartevents", column = "itemid")
+        list(ids = c(454L, 223901L), table = "chartevents", column = "itemid")
       ),
       eicu = list(
         list(ids = "Motor", table = "nursecharting",
@@ -838,7 +801,7 @@ cfg <- list(
     unit = "mL",
     sources = list(
       mimic = list(
-        list(ids = c( 40055L,   40056L,  40057L,  40065L,  40069L,  40085L,
+        list(ids = c(40055L,   40056L,  40057L,  40065L,  40069L,  40085L,
                      40086L,   40094L,  40096L,  40405L,  40428L,  40473L,
                      40715L,   43175L, 226557L, 226558L, 226559L, 226560L,
                     226561L,  226563L, 226564L, 226565L, 226566L, 226567L,
@@ -846,13 +809,10 @@ cfg <- list(
              table = "outputevents", column = "itemid")
       ),
       eicu = list(
-        list(ids = "Urine", table = "intakeoutput", column = "celllabel"),
-        list(ids = "URINE CATHETER", table = "intakeoutput",
+        list(ids = c("Urine", "URINE CATHETER"), table = "intakeoutput",
              column = "celllabel"),
-        list(ids = "Urinary Catheter Output: Indwelling/Continuous Ure",
-             table = "intakeoutput", column = "celllabel"),
-        list(ids = "Indwelling Catheter Output", table = "intakeoutput",
-             column = "celllabel")
+        list(ids = c("catheter.+output", "output.+catheter"),
+             table = "intakeoutput", column = "celllabel", regex = TRUE)
       )
   )
   ),
@@ -876,17 +836,14 @@ cfg <- list(
     unit = "mcg/kg/min",
     sources = list(
       mimic = list(
-        list(ids = 221653L, table = "inputevents_mv", column = "itemid"),
-        list(ids = 30042L, table = "inputevents_cv", column = "itemid"),
-        list(ids = 30306L, table = "inputevents_cv", column = "itemid")
+        list(ids = c(30042L, 30306L, 221653L), table = "inputevents_mv",
+             column = "itemid")
       ),
       eicu = list(
         list(ids = "Dobutamine (mcg/kg/min)", table = "infusiondrug",
              column = "drugname", callback = "force_numeric_val_col"),
-        list(ids = "Dobutamine (ml/hr)", table = "infusiondrug",
-             column = "drugname", callback = "eicu_body_weight",
-             weight_col = "patientweight"),
-        list(ids = "Dobutamine ()", table = "infusiondrug", column = "drugname",
+        list(ids = c("Dobutamine ()", "Dobutamine (ml/hr)"),
+             table = "infusiondrug", column = "drugname",
              callback = "eicu_body_weight", weight_col = "patientweight")
       ),
       hirid = list(
@@ -898,10 +855,8 @@ cfg <- list(
     unit = "mcg/kg/min",
     sources = list(
       mimic = list(
-        list(ids = 221662L, table = "inputevents_mv", column = "itemid"),
-        list(ids = 30043L, table = "inputevents_cv", column = "itemid"),
-        list(ids = 30125L, table = "inputevents_cv", column = "itemid"),
-        list(ids = 30307L, table = "inputevents_cv", column = "itemid")
+        list(ids = c(30043L, 30125L, 30307L, 221662L),
+             table = "inputevents_mv", column = "itemid")
       ),
       eicu = list(
         list(ids = "Dopamine (mcg/kg/min)", table = "infusiondrug",
@@ -913,25 +868,19 @@ cfg <- list(
     unit = "mcg/kg/min",
     sources = list(
       mimic = list(
-        list(ids = 221906L, table = "inputevents_mv", column = "itemid"),
-        list(ids = 30047L, table = "inputevents_cv", column = "itemid"),
-        list(ids = 30120L, table = "inputevents_cv", column = "itemid")
+        list(ids = c(30047L, 30120L, 221906L), table = "inputevents_mv",
+             column = "itemid")
       ),
       eicu = list(
         list(ids = "Norepinephrine (mcg/kg/min)", table = "infusiondrug",
              column = "drugname", callback = "force_numeric_val_col"),
-        list(ids = "Norepinephrine (ml/hr)", table = "infusiondrug",
-             column = "drugname", callback = "eicu_body_weight",
-             weight_col = "patientweight"),
-        list(ids = "Norepinephrine (mcg/min)", table = "infusiondrug",
-             column = "drugname", callback = "eicu_body_weight",
-             weight_col = "patientweight")
+        list(ids = c("Norepinephrine (ml/hr)", "Norepinephrine (mcg/min)"),
+             table = "infusiondrug", column = "drugname",
+             callback = "eicu_body_weight", weight_col = "patientweight")
       ),
       hirid = list(
-        list(ids = 1000462L, table = "pharma", column = "pharmaid"),
-        list(ids = 1000656L, table = "pharma", column = "pharmaid"),
-        list(ids = 1000657L, table = "pharma", column = "pharmaid"),
-        list(ids = 1000658L, table = "pharma", column = "pharmaid")
+        list(ids = c(1000462L, 1000656L, 1000657L, 1000658L), table = "pharma",
+             column = "pharmaid")
       )
     )
   ),
@@ -939,27 +888,19 @@ cfg <- list(
     unit = "mcg/kg/min",
     sources = list(
       mimic = list(
-        list(ids = 221289L, table = "inputevents_mv", column = "itemid"),
-        list(ids = 30044L, table = "inputevents_cv", column = "itemid"),
-        list(ids = 30119L, table = "inputevents_cv", column = "itemid"),
-        list(ids = 30309L, table = "inputevents_cv", column = "itemid")
+        list(ids = c(30044L, 30119L, 30309L, 221289L),
+             table = "inputevents_mv", column = "itemid")
       ),
       eicu = list(
         list(ids = "Epinephrine (mcg/kg/min)", table = "infusiondrug",
              column = "drugname", callback = "force_numeric_val_col"),
-        list(ids = "Epinephrine (ml/hr)", table = "infusiondrug",
-             column = "drugname", callback = "eicu_body_weight",
-             weight_col = "patientweight"),
-        list(ids = "Epinephrine (mcg/min)", table = "infusiondrug",
-             column = "drugname", callback = "eicu_body_weight",
-             weight_col = "patientweight")
+        list(ids = c("Epinephrine (ml/hr)", "Epinephrine (mcg/min)"),
+             table = "infusiondrug", column = "drugname",
+             callback = "eicu_body_weight", weight_col = "patientweight")
       ),
       hirid = list(
-        list(ids = 71L, table = "pharma", column = "pharmaid"),
-        list(ids = 1000750L, table = "pharma", column = "pharmaid"),
-        list(ids = 1000649L, table = "pharma", column = "pharmaid"),
-        list(ids = 1000650L, table = "pharma", column = "pharmaid"),
-        list(ids = 1000655L, table = "pharma", column = "pharmaid")
+        list(ids = c(71L, 1000649L, 1000650L, 1000655L, 1000750L),
+             table = "pharma", column = "pharmaid")
       )
     )
   ),
@@ -981,19 +922,17 @@ cfg <- list(
         )
       ),
       eicu = list(
-        list(ids = NULL, table = "respiratorycare", column = "ventstartoffset",
+        list(table = "respiratorycare", column = "ventstartoffset",
              callback = "vent_flag"),
-        list(ids = NULL, table = "respiratorycare",
-             column = "priorventstartoffset", callback = "vent_flag"),
-        list(ids = "respFlowPtVentData", table = "respiratorycharting",
-             column = "respcharttypecat", callback = "all_flag"),
-        list(ids = "Continued", table = "respiratorycharting",
-             column = "respchartvalue", callback = "all_flag"),
-        list(ids = "Start", table = "respiratorycharting",
-             column = "respchartvalue", callback = "all_flag")
+        list(table = "respiratorycare", column = "priorventstartoffset",
+             callback = "vent_flag"),
+        list(ids = c("Start", "Continued", "respFlowPtVentData"),
+             table = "respiratorycharting", column = "respcharttypecat",
+             callback = "all_flag")
       ),
       hirid = list(
-        list(ids = 15001552L, table = "observations", column = "variableid")
+        list(ids = 15001552L, table = "observations", column = "variableid",
+             callback = "hirid_vent_start")
       )
     )
   ),
@@ -1006,30 +945,28 @@ cfg <- list(
              column = "itemid", callback = "all_flag")
       ),
       eicu = list(
-        list(ids = NULL, table = "respiratorycare", column = "ventendoffset",
+        list(table = "respiratorycare", column = "ventendoffset",
              callback = "vent_flag"),
-        list(ids = NULL, table = "respiratorycare",
-             column = "priorventendoffset", callback = "vent_flag"),
-        list(ids = "Off", table = "respiratorycharting",
-             column = "respchartvalue", callback = "all_flag"),
-        list(ids = "off", table = "respiratorycharting",
-             column = "respchartvalue", callback = "all_flag"),
-        list(ids = "Suspended", table = "respiratorycharting",
+        list(table = "respiratorycare", column = "priorventendoffset",
+             callback = "vent_flag"),
+        list(ids = c("off", "Off", "Suspended"), table = "respiratorycharting",
              column = "respchartvalue", callback = "all_flag")
       ),
       hirid = list(
-        list(ids = 15001552L, table = "observations", column = "variableid")
+        list(ids = 15001552L, table = "observations", column = "variableid",
+             callback = "hirid_vent_end")
       )
     )
   ),
   tracheostomy = list(
     sources = list(
       mimic = list(
-        list(ids = "No Response-ETT", table = "chartevents", column = "value"),
-        list(ids = "1.0 ET/Trach", table = "chartevents", column = "value")
+        list(ids = c("1.0 ET/Trach", "No Response-ETT"), table = "chartevents",
+             column = "value", callback = "all_flag")
       ),
       hirid = list(
-        list(ids = 15001552L, table = "observations", column = "variableid")
+        list(ids = 15001552L, table = "observations", column = "variableid",
+             callback = "hirid_trach")
       )
     )
   ),
@@ -1078,7 +1015,7 @@ cfg <- list(
   fluid_sampling = list(
     sources = list(
       mimic = list(
-        list(ids = NULL, table = "microbiologyevents", column = "org_itemid",
+        list(table = "microbiologyevents", column = "org_itemid",
              callback = "mimic_sampling", aux_time = "charttime")
       )
     )
@@ -1119,7 +1056,7 @@ cfg <- list(
              column = "itemid", callback = "fahrenheit_to_celsius")
       ),
       eicu = list(
-        list(ids = NULL, table = "vitalperiodic", column = "temperature")
+        list(table = "vitalperiodic", column = "temperature")
       ),
       hirid = list(
         list(ids = c(410L, 400L), table = "observations",
@@ -1149,31 +1086,24 @@ cfg <- list(
              callback = "distribute_amount")
       ),
       eicu = list(
-        list(ids = "Insulin (units/hr)", table = "infusiondrug",
-             column = "drugname"),
-        list(ids = "Insulin (ml/hr)", table = "infusiondrug",
-             column = "drugname"),
-        list(ids = "Insulin ()", table = "infusiondrug",
-             column = "drugname"),
-        list(ids = "Insulin 250 Units Sodium Chloride 0.9% 250 ml (units/hr)",
-             table = "infusiondrug", column = "drugname")
+        list(ids = "^insulin (250.+)?\\(((ml|units)/hr)?\\)$",
+             table = "infusiondrug", column = "drugname", regex = TRUE)
       ),
       hirid = list(
-        list(ids = 15L, table = "pharma", column = "pharmaid"),
-        list(ids = 1000724L, table = "pharma", column = "pharmaid")
+        list(ids = c(15L, 1000724L), table = "pharma", column = "pharmaid")
       )
     )
   ),
   sex = list(
     sources = list(
       mimic = list(
-        list(ids = NULL, table = "patients", column = "gender")
+        list(table = "patients", column = "gender")
       ),
       eicu = list(
-        list(ids = NULL, table = "patient", column = "gender")
+        list(table = "patient", column = "gender")
       ),
       hirid = list(
-        list(ids = NULL, table = "general", column = "sex")
+        list(table = "general", column = "sex")
       )
     )
   ),
@@ -1181,14 +1111,13 @@ cfg <- list(
     unit = "years",
     sources = list(
       mimic = list(
-        list(ids = NULL, table = "patients", column = "dob",
-             callback = "mimic_age")
+        list(table = "patients", column = "dob", callback = "mimic_age")
       ),
       eicu = list(
-        list(ids = NULL, table = "patient", column = "age")
+        list(table = "patient", column = "age")
       ),
       hirid = list(
-        list(ids = NULL, table = "general", column = "age")
+        list(table = "general", column = "age")
       )
     )
   ),
@@ -1196,7 +1125,7 @@ cfg <- list(
     unit = "kg",
     sources = list(
       eicu = list(
-        list(ids = NULL, table = "patient", column = "admissionweight")
+        list(table = "patient", column = "admissionweight")
       )
     )
   )
