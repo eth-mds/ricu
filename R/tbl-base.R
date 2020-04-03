@@ -159,9 +159,5 @@ merge.icu_tbl <- function(x, y, by = NULL, by.x = NULL, by.y = NULL, ...) {
     res <- data.table::merge.data.table(x, y, by, ...)
   }
 
-  if (is.null(targ)) {
-    res
-  } else {
-    reclass_tbl(res, targ)
-  }
+  reclass_tbl(res, targ)
 }
