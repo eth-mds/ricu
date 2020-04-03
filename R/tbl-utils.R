@@ -122,5 +122,12 @@ rbind_lst <- function(lst, use.names = TRUE, fill = FALSE, idcol = NULL) {
     on.exit(Map(rename, lst[icu_tbl], old_met))
   }
 
-  reclass_tbl(dt_rbl(lst, use.names, fill, idcol), meta)
+  res <- dt_rbl(lst, use.names, fill, idcol)
+
+  if (is.null(meta)) {
+    res
+  } else {
+    reclass_tbl(res, meta)
+  }
+
 }

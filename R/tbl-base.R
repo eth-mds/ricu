@@ -136,12 +136,11 @@ merge.icu_tbl <- function(x, y, by = NULL, by.x = NULL, by.y = NULL, ...) {
 
   } else {
 
-    if (has_cols(y, meta_cols(x))) {
-
-      if (is.null(by)) by <- meta_cols(x)
-
-      targ <- tbl_meta(x)
+    if (has_cols(y, meta_cols(x)) && is.null(by)) {
+      by <- meta_cols(x)
     }
+
+    targ <- tbl_meta(x)
   }
 
   if (is.null(by)) {
@@ -159,5 +158,9 @@ merge.icu_tbl <- function(x, y, by = NULL, by.x = NULL, by.y = NULL, ...) {
     res <- data.table::merge.data.table(x, y, by, ...)
   }
 
-  reclass_tbl(res, targ)
+  if (is.null(targ)) {
+    res
+  } else {
+    reclass_tbl(res, targ)
+  }
 }
