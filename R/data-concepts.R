@@ -55,12 +55,14 @@ c.item <- function(...) {
 
   if (!is.null(source)) {
     assert_that(is.string(source))
-    srcs <- vapply(x, .subset2, character(1L), "source")
-    x <- .subset(x, source == srcs)
+    x <- .subset(x, source == get_source(x))
   }
 
   do.call(c, lapply(x, recreate))
 }
+
+#' @export
+get_source.item <- function(x) chr_ply(x, .subset2, "source")
 
 #' @export
 as_item <- function(x) UseMethod("as_item", x)
@@ -112,7 +114,7 @@ c.concept <- function(...) {
 concept <- function(name, ..., unit = NULL) {
 
   items <- do.call(c,
-    do.call(map, c(new_item, list(concept = name),  list(...)))
+    do.call(map, c(new_item, list(concept = name), list(...)))
   )
 
   new_concept(name, items, unit)
@@ -150,13 +152,30 @@ concept <- function(name, ..., unit = NULL) {
 }
 
 #' @export
+get_source.concept <- function(x) {
+  res <- lapply(x, `[[`, "items")
+  res <- lapply(res, get_source)
+  chr_ply(res, unique)
+}
+
+#' @export
 as_item.concept <- function(x) do.call(c, lapply(x, `[[`, "items"))
 
 #' @export
-as_concept <- function(x) UseMethod("as_concept", x)
+as_concept <- function(x, ...) UseMethod("as_concept", x)
 
 #' @export
-as_concept.concept <- function(x) x
+as_concept.concept <- function(x, ...) x
+
+#' @export
+as_concept.item <- function(x, ...) {
+
+  nms <- unique(names(x))
+
+  assert_that(length(nms) == 1L)
+
+  new_concept(nms, x, ...)
+}
 
 #' @export
 as_dictionary.concept <- function(x) new_dictionary(x)
@@ -202,13 +221,20 @@ length.dictionary <- function(x) length(as_concept(x))
 }
 
 #' @export
+get_source.dictionary <- function(x) {
+  res <- unique(get_source(as_concept(x)))
+  assert_that(length(res) == 1L)
+  res
+}
+
+#' @export
 str.dictionary <- function(object, ...) str(as_concept(object), ...)
 
 #' @export
 as_item.dictionary <- function(x) as_item(as_concept(x))
 
 #' @export
-as_concept.dictionary <- function(x) .subset2(x, 1L)
+as_concept.dictionary <- function(x, ...) .subset2(x, 1L)
 
 #' @method as.data.table dictionary
 #' @export
@@ -275,6 +301,8 @@ group_concepts <- function(concepts) {
   }
 
   assert_that(is_dictionary(concepts))
+
+  return(split(concepts, seq_along(concepts)))
 
   items <- as_item(concepts)
   wide <- vapply(lapply(items, `[[`, "ids"), is.null, logical(1L))

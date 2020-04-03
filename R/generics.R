@@ -99,3 +99,7 @@ upgrade_id <- function(x, source, to = next_id(x), from = id_name(x)) {
 downgrade_id <- function(x, source, to = prev_id(x), from = id_name(x)) {
   UseMethod("downgrade_id", x)
 }
+
+#' @export
+get_source <- function(x) UseMethod("get_source", x)
+
