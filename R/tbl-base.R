@@ -97,18 +97,71 @@ split.icu_tbl <- function(x, ...) {
 }
 
 #' @export
-merge.icu_tbl <- function(x, y, by = meta_cols(x), ...) {
+merge.icu_tbl <- function(x, y, by = NULL, by.x = NULL, by.y = NULL, ...) {
+
+  if (is_ts_tbl(x) && is_ts_tbl(y)) {
+    assert_that(same_interval(x, y))
+  }
+
+  targ <- NULL
 
   if (is_icu_tbl(y)) {
 
-    y <- data.table::copy(y)
+    if (is_ts_tbl(x) && is_ts_tbl(y)) {
 
-    if (is_ts_tbl(y)) {
-      y <- make_compatible(y, x, id(x) %in% by, index(x) %in% by)
-    } else if (is_id_tbl(y)) {
-      y <- make_compatible(y, x, id(x) %in% by)
+      if (same_meta_cols(x, y)) {
+        if (is.null(by))   by   <- meta_cols(x)
+      } else {
+        if (is.null(by.x)) by.x <- meta_cols(x)
+        if (is.null(by.y)) by.y <- meta_cols(y)
+      }
+
+      targ <- tbl_meta(x)
+
+    } else {
+
+      if (same_id(x, y)) {
+        if (is.null(by))   by   <- id(x)
+      } else {
+        if (is.null(by.x)) by.x <- id(x)
+        if (is.null(by.y)) by.y <- id(y)
+      }
+
+      if (is_ts_tbl(y)) {
+        targ <- set_id(tbl_meta(y), id(x))
+      } else {
+        targ <- tbl_meta(x)
+      }
+    }
+
+  } else {
+
+    if (has_cols(y, meta_cols(x))) {
+
+      if (is.null(by)) by <- meta_cols(x)
+
+      targ <- tbl_meta(x)
     }
   }
 
-  reclass_tbl(NextMethod(), tbl_meta(x))
+  if (is.null(by)) {
+
+    if (is.null(by.x) && is.null(by.y)) {
+      res <- data.table::merge.data.table(x, y, ...)
+    } else if (is.null(by.x)) {
+      res <- data.table::merge.data.table(x, y, by.y = by.y, ...)
+    } else {
+      res <- data.table::merge.data.table(x, y, by.x = by.x, by.y = by.y, ...)
+    }
+
+  } else {
+
+    res <- data.table::merge.data.table(x, y, by, ...)
+  }
+
+  if (is.null(targ)) {
+    res
+  } else {
+    reclass_tbl(res, targ)
+  }
 }

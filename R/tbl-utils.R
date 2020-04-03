@@ -29,13 +29,17 @@ set_meta <- function(x, meta, stop_on_fail = TRUE) {
 }
 
 set_class <- function(x, meta) {
-  setattr(x, "class", unique(c(tbl_class(meta), "icu_tbl", class(x))))
+  setattr(x, "class", unique(c(tbl_class(meta), "icu_tbl", strip_class(x))))
+}
+
+strip_class <- function(x) {
+  setdiff(class(x), c("id_tbl", "ts_tbl", "icu_tbl"))
 }
 
 unclass_tbl <- function(x) {
 
   setattr(x, "tbl_meta", NULL)
-  setattr(x, "class", setdiff(class(x), c("id_tbl", "ts_tbl", "icu_tbl")))
+  setattr(x, "class", strip_class(x))
 
   x
 }
