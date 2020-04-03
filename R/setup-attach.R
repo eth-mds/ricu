@@ -98,7 +98,7 @@ attach_datasource <- function(dir, config, assign_env = .GlobalEnv) {
     do.call(config[["setup_hook"]], list(source = src))
   }
 
-  assign(src, get_source(src), envir = assign_env)
+  assign(src, get_src(src), envir = assign_env)
 
   invisible(NULL)
 }

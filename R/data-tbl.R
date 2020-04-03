@@ -52,7 +52,7 @@ default_data_fun <- function(table, row_quo = NULL, cols = NULL, interval,
     warning("Specifying a time interval has no effect.")
   }
 
-  prt::subset_quo(get_table(table, source), row_quo, unique(cols))
+  prt::subset_quo(get_tbl(table, source), row_quo, unique(cols))
 }
 
 difftime_tbl_quo <- function(src, tbl, row, col, id_cand, ival) {
@@ -74,7 +74,7 @@ difftime_tbl_quo <- function(src, tbl, row, col, id_cand, ival) {
 
     } else {
 
-      dat <- merge(dat, get_table(id_col, src, "aux"), by.x = id_col,
+      dat <- merge(dat, get_tbl(id_col, src, "aux"), by.x = id_col,
                    by.y = "id")
 
       dat <- dat[, c(date_cols) := lapply(.SD, time_fun, get("origin"), ival),

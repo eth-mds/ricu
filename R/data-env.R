@@ -17,7 +17,7 @@ get_env <- function(envir = c("data", "aux")) {
   get(match.arg(envir), envir = pkg_env(), mode = "environment")
 }
 
-get_source <- function(source, envir = "data") {
+get_src <- function(source, envir = "data") {
 
   assert_that(is.string(source))
 
@@ -33,11 +33,11 @@ get_source <- function(source, envir = "data") {
   res
 }
 
-get_table <- function(table, source, envir = "data") {
+get_tbl <- function(table, source, envir = "data") {
 
   assert_that(is.string(table))
 
-  res <- get0(table, envir = get_source(source, envir))
+  res <- get0(table, envir = get_src(source, envir))
 
   if (is.null(res)) {
     stop("Table `", table, "` not found for `", source, "` data source. For ",

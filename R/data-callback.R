@@ -33,7 +33,7 @@ eicu_body_weight <- function(x, val_col, weight_col, ...) {
 
   do_calc <- function(rate, w1, w2) rate / fifelse(is.na(w1), w2, w1)
 
-  weight <- get_table("patient_weight", "eicu", envir = "aux")
+  weight <- get_tbl("patient_weight", "eicu", envir = "aux")
 
   x <- merge(x, weight, all.x = TRUE, by = "patienthealthsystemstayid")
   on.exit(set(x, j = "weight", value = NULL))

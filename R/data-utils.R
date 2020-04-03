@@ -11,7 +11,7 @@ data_ts_quo <- function(source, table, row_quo = NULL, cols = NULL,
                         interval = hours(1L),
                         cfg = get_col_config(source, "all")) {
 
-  tbl <- get_table(table, source)
+  tbl <- get_tbl(table, source)
   ids <- get_col_config(NULL, "id_cols", cfg, "all")
 
   if (!id_col %in% colnames(tbl)) {
@@ -44,7 +44,7 @@ data_id_quo <- function(source, table, row_quo = NULL, cols = NULL,
                         interval = hours(1L),
                         cfg = get_col_config(source, "all")) {
 
-  tbl <- get_table(table, source)
+  tbl <- get_tbl(table, source)
   ids <- get_col_config(NULL, "id_cols", cfg, "all")
 
   if (!id_col %in% colnames(tbl)) {
@@ -227,7 +227,7 @@ upgrade_id_map <- function(src, to, from, interval = NULL,
   out  <- map_out_cols(to)
   cols <- c(from, to, inn, out, orig)
 
-  map <- get_table("id_map", src, "aux")
+  map <- get_tbl("id_map", src, "aux")
   map <- map[, cols, with = FALSE]
 
   map <- map[, c("out", shift_col) := lapply(.SD, reclock, get(orig)),
@@ -251,7 +251,7 @@ downgrade_id_map <- function(src, to, from, interval = NULL,
   assert_that(is.string(from), is.string(to),
               map_id_cols(from, TRUE) > map_id_cols(to, TRUE))
 
-  map <- get_table("id_map", src, "aux")
+  map <- get_tbl("id_map", src, "aux")
 
   if (is.null(interval)) {
     cols <- c(from, to)

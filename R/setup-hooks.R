@@ -1,6 +1,6 @@
 
 origin_tbl <- function(src, tbl, id, orig) {
-  res <- get_table(tbl, src)[, c(id, orig)]
+  res <- get_tbl(tbl, src)[, c(id, orig)]
   res <- rename_cols(res, c("id", "origin"))
   res
 }
@@ -39,14 +39,14 @@ setup_mimic_aux_tables <- function(source) {
 
     as_dt <- function(x, y) round_to(difftime(x, y, units = "mins"))
 
-    pat <- get_table("patients", src)[, c("subject_id", "dob", "dod")]
-    adm <- get_table("admissions", src)[,
+    pat <- get_tbl("patients", src)[, c("subject_id", "dob", "dod")]
+    adm <- get_tbl("admissions", src)[,
       c("subject_id", "hadm_id", "admittime", "dischtime")
     ]
 
     res <- merge(pat, adm, by = "subject_id")
 
-    icu <- get_table("icustays", src)[,
+    icu <- get_tbl("icustays", src)[,
       c("hadm_id", "icustay_id", "intime", "outtime")
     ]
 
@@ -70,19 +70,19 @@ setup_mimic_aux_tables <- function(source) {
   }
 
   delayedAssign("id_map", mimic_id_map(source),
-                assign.env = get_source(source, "aux"))
+                assign.env = get_src(source, "aux"))
 
   delayedAssign("subject_id",
                 origin_tbl(source, "patients", "subject_id", "dob"),
-                assign.env = get_source(source, "aux"))
+                assign.env = get_src(source, "aux"))
 
   delayedAssign("hadm_id",
                 origin_tbl(source, "admissions", "hadm_id", "admittime"),
-                assign.env = get_source(source, "aux"))
+                assign.env = get_src(source, "aux"))
 
   delayedAssign("icustay_id",
                 origin_tbl(source, "icustays", "icustay_id", "intime"),
-                assign.env = get_source(source, "aux"))
+                assign.env = get_src(source, "aux"))
 }
 
 setup_eicu_aux_tables <- function(source) {
@@ -93,7 +93,7 @@ setup_eicu_aux_tables <- function(source) {
     time_cols <- c("hospitaladmitoffset", "hospitaldischargeoffset",
                    "unitdischargeoffset")
 
-    res <- get_table("patient", src)[, c(id_cols, time_cols)]
+    res <- get_tbl("patient", src)[, c(id_cols, time_cols)]
     res <- res[, c("icu_in") := mins(0L)]
 
     res <- res[, c(time_cols) := lapply(.SD, as.difftime, units = "mins"),
@@ -112,16 +112,16 @@ setup_eicu_aux_tables <- function(source) {
 
 
   delayedAssign("id_map", eicu_id_map(source),
-                assign.env = get_source(source, "aux"))
+                assign.env = get_src(source, "aux"))
 
   delayedAssign("patient_weight",
                 load_concepts(source, "weight"),
-                assign.env = get_source(source, "aux"))
+                assign.env = get_src(source, "aux"))
 }
 
 setup_hirid_aux_tables <- function(source) {
 
   delayedAssign("patientid",
                 origin_tbl(source, "general", "patientid", "admissiontime"),
-                assign.env = get_source(source, "aux"))
+                assign.env = get_src(source, "aux"))
 }

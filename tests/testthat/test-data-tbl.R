@@ -40,7 +40,7 @@ test_that("mimic data_tbl", {
   )
 
   expect_fsetequal(data_tbl("mimic_demo", "d_labitems"),
-                   get_table("d_labitems", "mimic_demo")[])
+                   get_tbl("d_labitems", "mimic_demo")[])
 })
 
 test_that("eicu data_tbl", {
@@ -85,5 +85,5 @@ test_that("eicu data_tbl", {
   )
 
   expect_fsetequal(data_tbl("eicu_demo", "hospital"),
-                   get_table("hospital", "eicu_demo")[])
+                   get_tbl("hospital", "eicu_demo")[])
 })
