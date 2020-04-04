@@ -127,9 +127,9 @@ hirid_vent_start <- function(x, val_col, ...) {
 }
 
 hirid_vent_end <- function(x, val_col, ...) {
-  all_flag(x[get(val_col) > 2, ])
+  all_flag(x[get(val_col) > 2, ], val_col)
 }
 
 hirid_trach <- function(x, val_col, ...) {
-  all_flag(x[get(val_col) == 2, ])
+  all_flag(x[get(val_col) == 2, ], val_col)
 }
