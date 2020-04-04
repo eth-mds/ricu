@@ -9,7 +9,7 @@ data_ts_quo <- function(source, table, row_quo = NULL, cols = NULL,
                         id_col = default_id_col(config = cfg),
                         time_col = default_time_col(table, config = cfg),
                         interval = hours(1L),
-                        cfg = get_col_config(source, "all")) {
+                        cfg = get_col_config(source, "all"), ...) {
 
   tbl <- get_tbl(table, source)
   ids <- get_col_config(NULL, "id_cols", cfg, "all")
@@ -30,7 +30,7 @@ data_ts_quo <- function(source, table, row_quo = NULL, cols = NULL,
                       get_col_config(NULL, "data_fun", cfg))
   res <- as_ts_tbl(res, aux_id, ids, time_col, interval)
 
-  change_id(res, source, to = names(id_col))
+  change_id(res, source, to = names(id_col), ...)
 }
 
 #' @export
@@ -42,7 +42,7 @@ data_id <- function(source, table, row_expr, ...) {
 data_id_quo <- function(source, table, row_quo = NULL, cols = NULL,
                         id_col = default_id_col(config = cfg),
                         interval = hours(1L),
-                        cfg = get_col_config(source, "all")) {
+                        cfg = get_col_config(source, "all"), ...) {
 
   tbl <- get_tbl(table, source)
   ids <- get_col_config(NULL, "id_cols", cfg, "all")
@@ -63,7 +63,7 @@ data_id_quo <- function(source, table, row_quo = NULL, cols = NULL,
                       get_col_config(NULL, "data_fun", cfg))
   res <- as_id_tbl(res, aux_id, ids)
 
-  change_id(res, source, to = names(id_col))
+  change_id(res, source, to = names(id_col), ...)
 }
 
 #' @export
@@ -306,21 +306,21 @@ id_pos <- function(x, id = id_name(x)) {
 }
 
 #' @export
-change_id <- function(x, source, to, from = id_name(x)) {
+change_id <- function(x, source, to, from = id_name(x), ...) {
 
   assert_that(is.string(to), is.string(from))
 
   if (id_pos(x, from) < id_pos(x, to)) {
-    upgrade_id(x, source, to, from)
+    upgrade_id(x, source, to, from, ...)
   } else if (id_pos(x, from) > id_pos(x, to)) {
-    downgrade_id(x, source, to, from)
+    downgrade_id(x, source, to, from, ...)
   } else {
     x
   }
 }
 
 #' @export
-upgrade_id.ts_tbl <- function(x, source, to, from) {
+upgrade_id.ts_tbl <- function(x, source, to, from, ...) {
 
   sft <- new_names(x)
   map <- upgrade_id_map(source, to, from, interval(x), sft)
@@ -332,7 +332,7 @@ upgrade_id.ts_tbl <- function(x, source, to, from) {
   join <- c(paste(id_col(x, from), "==", from),
             paste(tmp, c(">= lwr", "< upr")))
 
-  res  <- x[map, on = join, nomatch = NULL]
+  res  <- x[map, on = join, nomatch = NULL, ...]
 
   new <- id_col(x, to)
   res <- rename_cols(res, new, to)
@@ -345,11 +345,11 @@ upgrade_id.ts_tbl <- function(x, source, to, from) {
 }
 
 #' @export
-upgrade_id.id_tbl <- function(x, source, to, from) {
+upgrade_id.id_tbl <- function(x, source, to, from, ...) {
 
   map <- upgrade_id_map(source, to, from)
 
-  res <- merge(x, map, by.x = id_col(x, from), by.y = from)
+  res <- merge(x, map, by.x = id_col(x, from), by.y = from, ...)
 
   new <- id_col(x, to)
   res <- rename_cols(res, new, to)
@@ -361,12 +361,12 @@ upgrade_id.id_tbl <- function(x, source, to, from) {
 }
 
 #' @export
-downgrade_id.ts_tbl <- function(x, source, to, from) {
+downgrade_id.ts_tbl <- function(x, source, to, from, ...) {
 
   sft <- new_names(x)
   map <- downgrade_id_map(source, to, from, interval(x), sft)
 
-  res <- merge(x, map, by.x = id_col(x, from), by.y = from)
+  res <- merge(x, map, by.x = id_col(x, from), by.y = from, ...)
 
   new <- id_col(x, to)
   res <- rename_cols(res, new, to)
@@ -379,11 +379,11 @@ downgrade_id.ts_tbl <- function(x, source, to, from) {
 }
 
 #' @export
-downgrade_id.id_tbl <- function(x, source, to, from) {
+downgrade_id.id_tbl <- function(x, source, to, from, ...) {
 
   map <- downgrade_id_map(source, to, from)
 
-  res <- merge(x, map, by.x = id_col(x, from), by.y = from)
+  res <- merge(x, map, by.x = id_col(x, from), by.y = from, ...)
 
   new <- id_col(x, to)
   res <- rename_cols(res, new, to)
