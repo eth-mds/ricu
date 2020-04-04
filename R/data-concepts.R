@@ -1,4 +1,16 @@
 
+do_new <- function(x, fun, ...) do.call(fun, x, ...)
+
+try_new <- function(x, fun) {
+  tryCatch(do.call(fun, x),
+           error = function(...) unname(do.call("c", lapply(x, do_new, fun))))
+}
+
+as_lst <- function(x) {
+  if (length(x) == 1L) unclass(x)[[1L]]
+  else setNames(unclass(x), names(x))
+}
+
 #' @export
 new_item <- function(concept, source, table, column, ids = NULL,
                      regex = FALSE, callback = NULL, ...) {
@@ -18,7 +30,7 @@ new_item <- function(concept, source, table, column, ids = NULL,
 
   if (length(extra) > 0L) {
 
-    assert_that(all(vapply(extra, is.string, logical(1L))),
+    assert_that(all(lgl_ply(extra, is.string)),
                 !is.null(names(extra)), is_unique(names(extra)))
 
     item <- c(item, extra)
@@ -31,7 +43,7 @@ new_item <- function(concept, source, table, column, ids = NULL,
 is_item <- function(x) inherits(x, "item")
 
 #' @export
-names.item <- function(x) vapply(x, .subset2, character(1L), "concept")
+names.item <- function(x) chr_ply(x, .subset2, "concept")
 
 #' @export
 c.item <- function(...) {
@@ -39,15 +51,13 @@ c.item <- function(...) {
   items <- list(...)
   items <- Filter(Negate(is.null), items)
 
-  assert_that(all(vapply(items, is_item, logical(1L))))
+  assert_that(all(lgl_ply(items, is_item)))
 
   structure(NextMethod(), class = "item")
 }
 
 #' @export
 `[.item` <- function(x, i, source = NULL, ...) {
-
-  recreate <- function(y) do.call(new_item, y)
 
   if (!missing(i)) {
     x <- .subset(x, i)
@@ -58,7 +68,7 @@ c.item <- function(...) {
     x <- .subset(x, source == get_source(x))
   }
 
-  do.call(c, lapply(x, recreate))
+  do.call(c, lapply(x, as_item))
 }
 
 #' @export
@@ -69,6 +79,12 @@ as_item <- function(x) UseMethod("as_item", x)
 
 #' @export
 as_item.item <- function(x) x
+
+#' @export
+as_item.list <- function(x) try_new(x, new_item)
+
+#' @export
+as_list.item <- function(x) as_lst(x)
 
 #' @method as.data.table item
 #' @export
@@ -81,7 +97,7 @@ as.data.table.item <- function(x, ...) {
 new_concept <- function(name, items, unit = NULL) {
 
   assert_that(is.string(name), is_item(items),
-              all(vapply(names(items), identical, logical(1L), name)),
+              all(lgl_ply(names(items), identical, name)),
               is.null(unit) || is.string(unit))
 
   concept <- list(name = name, unit = unit, items = items)
@@ -93,7 +109,7 @@ new_concept <- function(name, items, unit = NULL) {
 is_concept <- function(x) inherits(x, "concept")
 
 #' @export
-names.concept <- function(x) vapply(x, .subset2, character(1L), "name")
+names.concept <- function(x) chr_ply(x, .subset2, "name")
 
 #' @export
 c.concept <- function(...) {
@@ -101,7 +117,7 @@ c.concept <- function(...) {
   concepts <- list(...)
   concepts <- Filter(Negate(is.null), concepts)
 
-  assert_that(all(vapply(concepts, is_concept, logical(1L))))
+  assert_that(all(lgl_ply(concepts, is_concept)))
 
   res <- structure(NextMethod(), class = "concept")
 
@@ -113,8 +129,13 @@ c.concept <- function(...) {
 #' @export
 concept <- function(name, ..., unit = NULL) {
 
+  args <- list(...)
+  lens <- lengths(args)
+
+  assert_that(all(lens == max(lens) | lens == 1L))
+
   items <- do.call(c,
-    do.call(map, c(new_item, list(concept = name), list(...)))
+    do.call(map, c(new_item, list(concept = name), args))
   )
 
   new_concept(name, items, unit)
@@ -178,7 +199,13 @@ as_concept.item <- function(x, ...) {
 }
 
 #' @export
+as_concept.list <- function(x) try_new(x, new_concept)
+
+#' @export
 as_dictionary.concept <- function(x) new_dictionary(x)
+
+#' @export
+as_list.concept <- function(x) as_lst(x)
 
 #' @method as.data.table concept
 #' @export
@@ -205,6 +232,9 @@ as_dictionary <- function(x) UseMethod("as_dictionary", x)
 
 #' @export
 as_dictionary.dictionary <- function(x) x
+
+#' @export
+as_dictionary.list <- function(x) do.call(new_dictionary, x)
 
 #' @export
 is_dictionary <- function(x) inherits(x, "dictionary")
@@ -235,6 +265,9 @@ as_item.dictionary <- function(x) as_item(as_concept(x))
 
 #' @export
 as_concept.dictionary <- function(x, ...) .subset2(x, 1L)
+
+#' @export
+as_list.dictionary <- function(x) as_list(as_concept(x))
 
 #' @method as.data.table dictionary
 #' @export

@@ -9,6 +9,14 @@ test_that("item constructor", {
   expect_length(itms1, 1L)
   expect_named(itms1, "a")
 
+  lst <- as_list(itms1)
+
+  expect_is(lst, "list")
+  expect_length(lst, 7L)
+  expect_named(lst, c("concept", "source", "table", "column", "ids",
+                      "regex", "callback"))
+  expect_identical(as_item(lst), itms1)
+
   itms2 <- c(itms1, new_item("b", "src", "tbl", "col"))
 
   expect_is(itms2, "item")
@@ -24,6 +32,13 @@ test_that("item constructor", {
 
   expect_length(itms3, 3L)
   expect_named(itms3, c("a", "b", "c"))
+
+  lst <- as_list(itms3)
+
+  expect_is(lst, "list")
+  expect_length(lst, 3L)
+  expect_named(lst, c("a", "b", "c"))
+  expect_identical(as_item(lst), itms3)
 })
 
 test_that("concept/dictionary constructor", {
@@ -60,6 +75,44 @@ test_that("concept/dictionary constructor", {
 
   expect_length(dict, 2L)
   expect_named(dict, c("a", "b"))
+
+  expect_error(
+    as_concept(c(new_item("a", "src", "tbl", "col"),
+                 new_item("b", "src", "tbl", "col")))
+  )
+
+  expect_error(
+    c(as_concept(c(new_item("a", "src", "tbl", "col"),
+                   new_item("a", "src", "tbl", "col"))),
+      as_concept(new_item("b", "src", "tbl", "col")),
+      as_concept(new_item("a", "src", "tbl", "col")))
+  )
+
+  conc <- concept("a", "src", c("tbl_a", "tbl_b"), "col")
+
+  expect_length(conc, 1L)
+  expect_length(as_item(conc), 2L)
+
+  expect_error(concept("a", "src", list(c("tbl_a", "tbl_b")), "col"))
+
+  conc <- concept("a", "src", "tbl", "col", c("id_1", "id_2"))
+
+  expect_length(conc, 1L)
+  expect_length(as_item(conc), 2L)
+
+  conc <- concept("a", "src", "tbl", "col", list(c("id_1", "id_2")))
+
+  expect_length(conc, 1L)
+  expect_length(as_item(conc), 1L)
+
+  conc <- concept("a", "src", c("tbl_a", "tbl_b"), c("col_a", "col_b"))
+
+  expect_length(conc, 1L)
+  expect_length(as_item(conc), 2L)
+
+  expect_error(
+    concept("a", "src", c("tbl_a", "tbl_b"), c("col_a", "col_b", "col_c"))
+  )
 })
 
 
@@ -130,4 +183,13 @@ test_that("load concepts", {
   expect_setequal(colnames(static), c("hadm_id", "sex", "age"))
   expect_type(static[["age"]], "double")
   expect_type(static[["sex"]], "character")
+
+  gluc <- as_concept(
+    new_item("gluc", "mimic_demo", "labevents", "itemid", c(50809L, 50931L))
+  )
+  albu <- as_concept(
+    new_item("albu", "mimic_demo", "labevents", "itemid", 50862L)
+  )
+
+  dat2 <- load_concepts("mimic_demo", c(albu, gluc))
 })
