@@ -1,13 +1,8 @@
 
 #' @export
 si_data <- function(source, abx_count_win = hours(24L), abx_min_count = 1L,
-                    positive_cultures = FALSE, interval = hours(1L),
-                    id_type = "hadm", patient_ids = NULL,
-                    col_cfg = get_col_config(source, "all"),
-                    dictionary = read_dictionary("concept-dict")) {
-
-  if (!source %in% c("mimic", "mimic_demo")) stop("TODO")
-  if (!identical(id_type, "hadm")) stop ("TODO")
+                    positive_cultures = FALSE,
+                    dictionary = read_dictionary("concept-dict"), ...) {
 
   assert_that(is.count(abx_min_count), is.flag(positive_cultures))
 
@@ -20,9 +15,7 @@ si_data <- function(source, abx_count_win = hours(24L), abx_min_count = 1L,
   funs <- c(antibiotics = "sum", fluid_sampling = samp_fun)
   dict <- dictionary[names(funs), source = source]
 
-  dat <- load_concepts(source, dict, id_type, patient_ids, col_cfg, funs,
-                       interval, merge_data = FALSE)
-  names(dat) <- chr_ply(dat, data_cols)
+  dat <- load_concepts(dict, source, aggregate = funs, merge_data = FALSE, ...)
 
   dat[["antibiotics"]] <- si_abx(dat[["antibiotics"]], abx_count_win,
                                  abx_min_count)

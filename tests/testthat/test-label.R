@@ -44,7 +44,7 @@ test_that("suspicion of infection", {
   expect_is(si, "ts_tbl")
   expect_true(is_ts_tbl(si))
   expect_identical(id(si), "hadm_id")
-  expect_identical(index(si), "starttime")
+  expect_identical(index(si), "startdate")
   expect_setequal(data_cols(si), c("abx", "samp"))
   expect_gt(nrow(si), 0L)
   expect_equal(interval(si), hours(1L))

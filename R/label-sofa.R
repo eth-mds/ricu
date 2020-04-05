@@ -5,11 +5,9 @@ sofa_data <- function(source, pafi_win_length = hours(2L),
                       fix_na_fio2 = TRUE, vent_win_length = hours(6L),
                       vent_min_win = mins(10L), gcs_win_length = hours(6L),
                       fix_na_gcs = TRUE, urine_min_win = hours(12L),
-                      interval = hours(1L), id_type = "hadm",
-                      patient_ids = NULL,
                       icu_limits = icu_stays(source, interval = interval),
-                      col_cfg = get_col_config(source, "all"),
-                      dictionary = read_dictionary("concept-dict")) {
+                      interval = hours(1L),
+                      dictionary = read_dictionary("concept-dict"), ...) {
 
   assert_that(
     is_time(pafi_win_length, allow_neg = FALSE), pafi_win_length > interval,
@@ -46,12 +44,9 @@ sofa_data <- function(source, pafi_win_length = hours(2L),
   vent_dict <- dictionary[vent_conc, source = source]
 
   dat <- c(
-    load_concepts(source, dat_dict, id_type, patient_ids, col_cfg, agg_funs,
-                  interval, merge_data = FALSE),
-    load_concepts(source, vent_dict, id_type, patient_ids, col_cfg, agg_funs,
-                  mins(1L), merge_data = FALSE)
+    load_concepts(dat_dict, source, agg_funs, FALSE, interval = interval, ...),
+    load_concepts(vent_dict, source, agg_funs, FALSE, interval = mins(1L), ...)
   )
-  names(dat) <- chr_ply(dat, data_cols)
 
   dat[["pafi"]] <- sofa_pafi(
     dat[["pa_o2"]], dat[["fi_o2"]], pafi_win_length, pafi_mode, fix_na_fio2
@@ -161,7 +156,7 @@ sofa_vent <- function(start, stop, win_length, min_length, interval) {
 
   } else {
 
-    assert_that(same_ts(start, stop))
+    assert_that(same_interval(start, stop))
 
     start[, start_time := get(index(start))]
     stop[ , stop_time  := get(index(stop))]
@@ -171,7 +166,8 @@ sofa_vent <- function(start, stop, win_length, min_length, interval) {
       set(stop,  j = "stop_time",  value = NULL)
     })
 
-    merged <- stop[start, roll = -win_length, on = meta_cols(start)]
+    join   <- paste(meta_cols(stop), "==", meta_cols(start))
+    merged <- stop[start, roll = -win_length, on = join]
     merged <- merged[is.na(stop_time), stop_time := start_time + win_length]
   }
 
@@ -183,7 +179,7 @@ sofa_vent <- function(start, stop, win_length, min_length, interval) {
 
   res <- unique(
     expand_limits(merged, min_col = "start_time", max_col = "stop_time",
-                  step_size = as.double(interval), id_cols = id(start))
+                  step_size = as.double(interval), id_cols = id(merged))
   )
   res <- res[, c("vent") := TRUE]
 

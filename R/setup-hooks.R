@@ -115,7 +115,7 @@ setup_eicu_aux_tables <- function(source) {
                 assign.env = get_src(source, "aux"))
 
   delayedAssign("patient_weight",
-                load_concepts(source, "weight"),
+                load_concepts("weight", source),
                 assign.env = get_src(source, "aux"))
 }
 

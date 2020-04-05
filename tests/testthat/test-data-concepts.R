@@ -121,7 +121,7 @@ test_that("load concepts", {
   gluc <- concept("gluc", "mimic_demo", "labevents", "itemid",
                   c(50809L, 50931L))
 
-  expect_message(dat1 <- load_concepts("mimic_demo", gluc))
+  dat1 <- load_concepts(gluc)
 
   expect_is(dat1, "ts_tbl")
   expect_true(is_ts_tbl(dat1))
@@ -130,11 +130,11 @@ test_that("load concepts", {
 
   albu <- concept("albu", "mimic_demo", "labevents", "itemid", 50862L)
 
-  expect_message(dat2 <- load_concepts("mimic_demo", c(albu, gluc)))
+  dat2 <- load_concepts(c(albu, gluc))
 
   expect_setequal(data_cols(dat2), c("gluc", "albu"))
 
-  expect_message(dat3 <- load_concepts("mimic_demo", gluc, merge_data = FALSE))
+  dat3 <- load_concepts(gluc, merge_data = FALSE)
 
   expect_is(dat3, "list")
   expect_length(dat3, 1L)
@@ -145,10 +145,7 @@ test_that("load concepts", {
   expect_identical(colnames(dat3), c("hadm_id", "charttime", "gluc"))
   expect_equal(interval(dat3), hours(1L))
 
-  expect_message(
-    dat4 <- load_concepts("mimic_demo", gluc, aggregate = FALSE,
-                          merge_data = FALSE)
-  )
+  dat4 <- load_concepts(gluc, aggregate = FALSE, merge_data = FALSE)
 
   expect_is(dat4, "list")
   expect_length(dat4, 1L)
@@ -163,20 +160,17 @@ test_that("load concepts", {
     dat4[, list(gluc = median(gluc)), by = c(meta_cols(dat4))]
   )
 
-  expect_message(
-    dat5 <- load_concepts("mimic_demo", gluc, aggregate = identity,
-                          merge_data = FALSE)
-  )
+  dat5 <- load_concepts(gluc, aggregate = identity, merge_data = FALSE)
 
   expect_is(dat5, "list")
   expect_length(dat5, 1L)
   expect_identical(dat4, dat5[[1L]])
 
   expect_error(
-    load_concepts("mimic_demo", gluc, aggregate = "identity")
+    load_concepts(gluc, aggregate = "identity")
   )
 
-  static <- load_concepts("mimic_demo", c("sex", "age"))
+  static <- load_concepts(c("sex", "age"), "mimic_demo")
 
   expect_is(static, "id_tbl")
   expect_true(is_id_tbl(static))
@@ -191,5 +185,7 @@ test_that("load concepts", {
     new_item("albu", "mimic_demo", "labevents", "itemid", 50862L)
   )
 
-  dat2 <- load_concepts("mimic_demo", c(albu, gluc))
+  dat6 <- load_concepts(c(albu, gluc))
+
+  expect_identical(dat2, dat6)
 })

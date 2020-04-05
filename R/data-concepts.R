@@ -51,9 +51,11 @@ c.item <- function(...) {
   items <- list(...)
   items <- Filter(Negate(is.null), items)
 
-  assert_that(all(lgl_ply(items, is_item)))
-
-  structure(NextMethod(), class = "item")
+  if (all(lgl_ply(items, is_item))) {
+    structure(NextMethod(), class = "item")
+  } else {
+    NextMethod()
+  }
 }
 
 #' @export
@@ -86,13 +88,6 @@ as_item.list <- function(x) try_new(x, new_item)
 #' @export
 as_list.item <- function(x) as_lst(x)
 
-#' @method as.data.table item
-#' @export
-as.data.table.item <- function(x, ...) {
-  res <- lapply(x, function(y) do.call(data.table::data.table, y))
-  rbindlist(res, fill = TRUE)
-}
-
 #' @export
 new_concept <- function(name, items, unit = NULL) {
 
@@ -117,11 +112,12 @@ c.concept <- function(...) {
   concepts <- list(...)
   concepts <- Filter(Negate(is.null), concepts)
 
-  assert_that(all(lgl_ply(concepts, is_concept)))
-
-  res <- structure(NextMethod(), class = "concept")
-
-  assert_that(is_unique(names(res)))
+  if (all(lgl_ply(concepts, is_concept))) {
+    res <- structure(NextMethod(), class = "concept")
+    assert_that(is_unique(names(res)))
+  } else {
+    res <- NextMethod()
+  }
 
   res
 }
@@ -199,25 +195,13 @@ as_concept.item <- function(x, ...) {
 }
 
 #' @export
-as_concept.list <- function(x) try_new(x, new_concept)
+as_concept.list <- function(x, ...) try_new(x, new_concept)
 
 #' @export
 as_dictionary.concept <- function(x) new_dictionary(x)
 
 #' @export
 as_list.concept <- function(x) as_lst(x)
-
-#' @method as.data.table concept
-#' @export
-as.data.table.concept <- function(x, ...) {
-
-  do_dt <- function(y) {
-    do.call(data.table, c(as.data.table(y[["items"]]),
-                          y[!names(y) %in% c("items", "name")]))
-  }
-
-  rbindlist(lapply(x, do_dt), fill = TRUE)
-}
 
 #' @export
 new_dictionary <- function(concepts) {
@@ -269,10 +253,6 @@ as_concept.dictionary <- function(x, ...) .subset2(x, 1L)
 #' @export
 as_list.dictionary <- function(x) as_list(as_concept(x))
 
-#' @method as.data.table dictionary
-#' @export
-as.data.table.dictionary <- function(x, ...) as.data.table(as_concept(x))
-
 #' @export
 read_dictionary <- function(name = "concept-dict", file = NULL, ...) {
 
@@ -317,145 +297,242 @@ get_concepts <- function(source, concepts, ...) {
 }
 
 #' @export
-group_concepts <- function(concepts) {
+load_concepts <- function(concepts = get_concepts(source), source,
+                          aggregate = NA_character_, merge_data = TRUE,
+                          ...) {
 
-  swap_items <- function(x, new) {
-    x[["items"]] <- new
-    do.call(new_concept, x)
-  }
-
-  split_swap <- function(x, conc) {
-    x <- split(x, names(x))
-    new_dictionary(do.call(c, Map(swap_items, as_concept(conc[names(x)]), x)))
-  }
-
-  if (is_concept(concepts)) {
-    concepts <- as_dictionary(concepts)
-  }
-
-  assert_that(is_dictionary(concepts))
-
-  return(split(concepts, seq_along(concepts)))
-
-  items <- as_item(concepts)
-  wide <- vapply(lapply(items, `[[`, "ids"), is.null, logical(1L))
-
-  splt <- list(
-    vapply(items, `[[`, character(1L), "table"),
-    ifelse(wide, "", vapply(items, `[[`, character(1L), "column")),
-    vapply(items, `[[`, logical(1L), "regex")
-  )
-
-  lapply(split(items, splt, drop = TRUE), split_swap, concepts)
-}
-
-combine_feats <- function(x) {
-
-  do_rbind <- function(needle, haystack) rbind_lst(x[haystack == needle])
-
-  feats <- vapply(x, data_cols, character(1L))
-  dups <- unique(feats[duplicated(feats)])
-
-  if (length(dups) == 0L) return(x)
-
-  c(lapply(dups, do_rbind, feats), x[!feats %in% dups])
-}
-
-#' @export
-load_concepts <- function(source, concepts = get_concepts(source),
-                          id_type = "hadm", patient_ids = NULL,
-                          col_cfg = get_col_config(source, "all"),
-                          aggregate = NA_character_, interval = hours(1L),
-                          merge_data = TRUE) {
-
-  do_aggregate <- function(x, fun) {
-
-    if (is.function(fun)) {
-
-      x[, lapply(.SD, fun), by = c(meta_cols(x)), .SDcols = data_cols(x)]
-
-    } else if (!is.language(fun) && is.null(fun)) {
-
-      assert_that(is_unique(x, by = meta_cols(x)))
-      x
-
-    } else if (is.string(fun)) {
-
-      if (is.na(fun)) {
-        if (is.numeric(x[[data_cols(x)]])) fun <- "median"
-        else                               fun <- "first"
-      }
-
-      dt_gforce(x, fun)
-
-    } else {
-
-      x[, eval(fun), by = c(meta_cols(x))]
-    }
-  }
-
-  do_load <- function(concept, source, table, column, ids = NULL,
-                      regex = FALSE, callback = NULL, unit = NULL, ...) {
-
-    uq_na_rm <- function(x) {
-      res <- unique(x)
-      res <- res[!is.na(res)]
-      if (length(res)) res else NULL
-    }
-
-    tbl <- unique(table)
-    rgx <- unique(regex)
-
-    if (isTRUE(rgx)) {
-      concept <- unique(concept)
-    }
-
-    id_col <- get_col_config(NULL, "id_cols", col_cfg, type = id_type)
-
-    args <- c(list(source = source, table = tbl, item_col = unique(column),
-                   items = ids, names = concept, id_col = id_col),
-              get_col_config(NULL, config = col_cfg, table = tbl),
-              list(patient_ids = patient_ids, callback = callback, regex = rgx,
-                   unit = unit, interval = interval, cfg = col_cfg),
-              lapply(list(...), uq_na_rm))
-
-    do.call(load_items, args)
-  }
-
-  prep_load <- function(x, src) {
-
-    args <- c(as.data.table(x))
-
-    assert_that(all(lgl_ply(args[["source"]], identical, src)))
-    args[["source"]] <- src
-
-    do.call(do_load, args)
-  }
-
-  assert_that(is.flag(merge_data), is_time(interval, allow_neg = FALSE),
-              has_name(col_cfg, c("data_fun", "id_cols", "tables")))
 
   if (is.character(concepts)) {
     concepts <- get_concepts(source, concepts, "concept-dict")
+  } else if (is_concept(concepts)) {
+    concepts <- as_dictionary(concepts)
   }
 
-  res <- lapply(group_concepts(concepts), prep_load, source)
-  res <- unlist(res, recursive = FALSE, use.names = FALSE)
+  assert_that(is.flag(merge_data), is_dictionary(concepts))
 
-  res   <- combine_feats(res)
-  feats <- vapply(res, data_cols, character(1L))
+  if (length(aggregate) == 1L) {
+    aggregate <- rep(list(aggregate), length(concepts))
+  }
 
-  if (!merge_data && isFALSE(aggregate)) return(res)
+  if (is.null(names(aggregate))) {
+    names(aggregate) <- names(concepts)
+  }
 
-  aggregate <- prep_args(aggregate, names(concepts))
+  assert_that(has_name(aggregate, names(concepts)))
 
-  res <- map(do_aggregate, res, aggregate[feats])
+  concepts <- as_concept(concepts)
 
-  if (!merge_data) return(res)
+  res <- Map(load_concept, concepts, aggregate[names(concepts)],
+             MoreArgs = list(...))
 
-  if (length(res) > 1L) {
+  if (!merge_data) {
+    res
+  } else if (length(res) > 1L) {
     reduce(merge, res, all = TRUE)
   } else {
     res[[1L]]
   }
 }
+
+#' @export
+load_concept <- function(concept, aggregate = NA_character_, na_rm = TRUE,
+                         ...) {
+
+  if (!is_concept(concept)) {
+    concept <- as_concept(concept)
+  }
+
+  assert_that(length(concept) == 1L, is.flag(na_rm))
+
+  res <- lapply(as_item(concept), load_item, unit = concept[["unit"]], ...)
+
+  # TODO: figure out multi source loads: add source as id col -> multi id cols
+
+  res <- rbind_lst(res)
+
+  if (na_rm) {
+    res <- rm_na(res)
+  }
+
+  if (isFALSE(aggregate)) {
+    res
+  } else {
+    do_aggregate(res, aggregate)
+  }
+}
+
+#' @export
+load_item <- function(item, unit = NULL, id_type = "hadm", patient_ids = NULL,
+                      interval = hours(1L),
+                      cfg = get_col_config(get_source(item), "all")) {
+
+  if (!is_item(item)) {
+    item <- as_item(item)
+  }
+
+  assert_that(length(item) == 1L,
+              has_name(cfg, c("data_fun", "id_cols", "tables")))
+
+  item <- as_list(item)
+
+  id_col <- get_col_config(NULL, "id_cols", cfg, type = id_type)
+  ex_col <- get_col_config(NULL, config = cfg, table = item[["table"]])
+
+  if (!is.null(patient_ids)) {
+
+    if (inherits(patient_ids, "data.frame")) {
+      assert_that(has_name(patient_ids, id_col))
+      patient_ids <- patient_ids[[id_col]]
+    }
+
+    assert_that(is.atomic(patient_ids), length(patient_ids) > 0L)
+    patient_ids <- setnames(setDT(list(unique(patient_ids))), id_col)
+  }
+
+  load_args <- c(
+    item[setdiff(names(item), c("concept", "callback"))],
+    list(id_col = id_col), ex_col, list(cfg = cfg, interval = interval)
+  )
+
+  res <- do.call(do_load, load_args)
+
+  if (!is.null(patient_ids)) {
+    res  <- merge(res, patient_ids, by = id_col, all = FALSE)
+  }
+
+  cb_args <- c(
+    list(x = res, unit = unit, id_col = id_col), ex_col,
+    item[setdiff(names(item), c("concept", "table", "regex"))]
+  )
+
+  res <- do.call(do_callback, cb_args)
+  res <- rename_cols(res, item[["concept"]], data_cols(res))
+  res <- add_unit(res, unit)
+
+  res
+}
+
+do_load <- function(source, table, column, ids, regex, ..., id_col, time_col,
+                    val_col, unit_col, interval, cfg) {
+
+  extra_cols <- list(...)
+
+  ids  <- unique(ids)
+  cols <- c(column, unit_col, unique(unlist(extra_cols)))
+  col  <- as.name(column)
+
+  if (length(ids) == 0L) {
+
+    query <- NULL
+
+  } else {
+
+    cols <- c(val_col, cols)
+
+    if (isTRUE(regex)) {
+      query <- substitute(grepl(id, col, ignore.case = TRUE),
+        list(col = col, id = paste(ids, collapse = "|"))
+      )
+    } else if (length(ids) == 1L) {
+      query <- substitute(is_fun(col, id),
+        list(col = col, id = ids, is_fun = is_val)
+      )
+    } else {
+      query <- substitute(col %in% id, list(col = col, id = ids))
+    }
+  }
+
+  if (is.null(time_col)) {
+    data_id_quo(source, table, query, cols, id_col, interval, cfg)
+  } else {
+    data_ts_quo(source, table, query, cols, id_col, time_col, interval, cfg)
+  }
+}
+
+do_callback <- function(x, unit, id_col, time_col, val_col, unit_col, source,
+                        column, ids, callback, ...) {
+
+  extra_cols <- list(...)
+
+  if (length(extra_cols) && is.null(callback)) {
+    warning("`extra_cols` is only effective is `callback` is specified.")
+  }
+
+  if (length(ids) == 0L) {
+    val <- column
+  } else {
+    val <- val_col
+  }
+
+  if (is.string(callback)) {
+    callback <- get0(callback, mode = "function")
+  }
+
+  if (nrow(x) > 0L && is.function(callback)) {
+
+    args <- c(list(x),
+              list(id_col = id_col, time_col = time_col, val_col = val,
+                   unit_col = unit_col),
+              extra_cols,
+              list(source = source, unit = unit))
+
+    x <- do.call(callback, args)
+  }
+
+  if (is.null(time_col)) {
+    assert_that(is_id_tbl(x), identical(id(x), id_col))
+  } else {
+    assert_that(is_ts_tbl(x), identical(meta_cols(x), c(id_col, time_col)))
+  }
+
+  rm_cols(x, setdiff(colnames(x), c(id_col, time_col, val)))
+}
+
+add_unit <- function(x, unit) {
+
+  if (is.null(unit) || is.na(unit)) {
+    return(x)
+  }
+
+  col <- data_cols(x)
+
+  assert_that(is.string(unit), is.string(col))
+
+  setattr(x[[col]], "units", unit)
+
+  x
+}
+
+do_aggregate <- function(x, fun) {
+
+  if (nrow(x) == 0L) {
+    return(x)
+  }
+
+  if (is.function(fun)) {
+
+    x[, lapply(.SD, fun), by = c(meta_cols(x)), .SDcols = data_cols(x)]
+
+  } else if (!is.language(fun) && is.null(fun)) {
+
+    assert_that(is_unique(x, by = meta_cols(x)))
+    x
+
+  } else if (is.string(fun)) {
+
+    if (is.na(fun)) {
+      if (is.numeric(x[[data_cols(x)]])) {
+        fun <- "median"
+      } else {
+        fun <- "first"
+      }
+    }
+
+    dt_gforce(x, fun)
+
+  } else {
+
+    x[, eval(fun), by = c(meta_cols(x))]
+  }
+}
+
