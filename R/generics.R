@@ -102,9 +102,3 @@ downgrade_id <- function(x, source, to = prev_id(x), from = id_name(x), ...) {
 
 #' @export
 get_source <- function(x) UseMethod("get_source", x)
-
-#' @export
-as_list <- function(x) UseMethod("as_list", x)
-
-#' @export
-as_list.default <- function(x) as.list(x)

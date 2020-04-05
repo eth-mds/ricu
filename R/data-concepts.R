@@ -1,16 +1,4 @@
 
-do_new <- function(x, fun, ...) do.call(fun, x, ...)
-
-try_new <- function(x, fun) {
-  tryCatch(do.call(fun, x),
-           error = function(...) unname(do.call("c", lapply(x, do_new, fun))))
-}
-
-as_lst <- function(x) {
-  if (length(x) == 1L) unclass(x)[[1L]]
-  else setNames(unclass(x), names(x))
-}
-
 #' @export
 new_item <- function(concept, source, table, column, ids = NULL,
                      regex = FALSE, callback = NULL, ...) {
@@ -61,6 +49,8 @@ c.item <- function(...) {
 #' @export
 `[.item` <- function(x, i, source = NULL, ...) {
 
+  recreate <- function(y) do.call(new_item, y)
+
   if (!missing(i)) {
     x <- .subset(x, i)
   }
@@ -70,7 +60,7 @@ c.item <- function(...) {
     x <- .subset(x, source == get_source(x))
   }
 
-  do.call(c, lapply(x, as_item))
+  do.call(c, lapply(x, recreate))
 }
 
 #' @export
@@ -81,12 +71,6 @@ as_item <- function(x) UseMethod("as_item", x)
 
 #' @export
 as_item.item <- function(x) x
-
-#' @export
-as_item.list <- function(x) try_new(x, new_item)
-
-#' @export
-as_list.item <- function(x) as_lst(x)
 
 #' @export
 new_concept <- function(name, items, unit = NULL) {
@@ -195,13 +179,7 @@ as_concept.item <- function(x, ...) {
 }
 
 #' @export
-as_concept.list <- function(x, ...) try_new(x, new_concept)
-
-#' @export
 as_dictionary.concept <- function(x) new_dictionary(x)
-
-#' @export
-as_list.concept <- function(x) as_lst(x)
 
 #' @export
 new_dictionary <- function(concepts) {
@@ -216,9 +194,6 @@ as_dictionary <- function(x) UseMethod("as_dictionary", x)
 
 #' @export
 as_dictionary.dictionary <- function(x) x
-
-#' @export
-as_dictionary.list <- function(x) do.call(new_dictionary, x)
 
 #' @export
 is_dictionary <- function(x) inherits(x, "dictionary")
@@ -249,9 +224,6 @@ as_item.dictionary <- function(x) as_item(as_concept(x))
 
 #' @export
 as_concept.dictionary <- function(x, ...) .subset2(x, 1L)
-
-#' @export
-as_list.dictionary <- function(x) as_list(as_concept(x))
 
 #' @export
 read_dictionary <- function(name = "concept-dict", file = NULL, ...) {
@@ -339,7 +311,7 @@ load_concept <- function(concept, aggregate = NA_character_, na_rm = TRUE,
                          ...) {
 
   if (!is_concept(concept)) {
-    concept <- as_concept(concept)
+    concept <- do.call(new_concept, concept)
   }
 
   assert_that(length(concept) == 1L, is.flag(na_rm))
@@ -367,13 +339,13 @@ load_item <- function(item, unit = NULL, id_type = "hadm", patient_ids = NULL,
                       cfg = get_col_config(get_source(item), "all")) {
 
   if (!is_item(item)) {
-    item <- as_item(item)
+    item <- do.call(new_item, item)
   }
 
   assert_that(length(item) == 1L,
               has_name(cfg, c("data_fun", "id_cols", "tables")))
 
-  item <- as_list(item)
+  item <- item[[1L]]
 
   id_col <- get_col_config(NULL, "id_cols", cfg, type = id_type)
   ex_col <- get_col_config(NULL, config = cfg, table = item[["table"]])

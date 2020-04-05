@@ -9,14 +9,6 @@ test_that("item constructor", {
   expect_length(itms1, 1L)
   expect_named(itms1, "a")
 
-  lst <- as_list(itms1)
-
-  expect_is(lst, "list")
-  expect_length(lst, 7L)
-  expect_named(lst, c("concept", "source", "table", "column", "ids",
-                      "regex", "callback"))
-  expect_identical(as_item(lst), itms1)
-
   itms2 <- c(itms1, new_item("b", "src", "tbl", "col"))
 
   expect_is(itms2, "item")
@@ -32,13 +24,6 @@ test_that("item constructor", {
 
   expect_length(itms3, 3L)
   expect_named(itms3, c("a", "b", "c"))
-
-  lst <- as_list(itms3)
-
-  expect_is(lst, "list")
-  expect_length(lst, 3L)
-  expect_named(lst, c("a", "b", "c"))
-  expect_identical(as_item(lst), itms3)
 })
 
 test_that("concept/dictionary constructor", {
