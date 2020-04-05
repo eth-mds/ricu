@@ -44,8 +44,8 @@ sofa_data <- function(source, pafi_win_length = hours(2L),
   vent_dict <- dictionary[vent_conc, source = source]
 
   dat <- c(
-    load_concepts(dat_dict, source, agg_funs, FALSE, interval = interval, ...),
-    load_concepts(vent_dict, source, agg_funs, FALSE, interval = mins(1L), ...)
+    load_concepts(dat_dict, agg_funs, FALSE, interval = interval, ...),
+    load_concepts(vent_dict, agg_funs, FALSE, interval = mins(1L), ...)
   )
 
   dat[["pafi"]] <- sofa_pafi(

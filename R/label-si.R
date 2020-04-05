@@ -15,7 +15,7 @@ si_data <- function(source, abx_count_win = hours(24L), abx_min_count = 1L,
   funs <- c(antibiotics = "sum", fluid_sampling = samp_fun)
   dict <- dictionary[names(funs), source = source]
 
-  dat <- load_concepts(dict, source, aggregate = funs, merge_data = FALSE, ...)
+  dat <- load_concepts(dict, aggregate = funs, merge_data = FALSE, ...)
 
   dat[["antibiotics"]] <- si_abx(dat[["antibiotics"]], abx_count_win,
                                  abx_min_count)

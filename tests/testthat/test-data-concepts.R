@@ -155,7 +155,7 @@ test_that("load concepts", {
     load_concepts(gluc, aggregate = "identity")
   )
 
-  static <- load_concepts(c("sex", "age"), "mimic_demo")
+  static <- load_dictionary("mimic_demo", c("sex", "age"))
 
   expect_is(static, "id_tbl")
   expect_true(is_id_tbl(static))

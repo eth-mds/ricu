@@ -262,37 +262,43 @@ read_dictionary <- function(name = "concept-dict", file = NULL, ...) {
   new_dictionary(concepts)
 }
 
-#' @export
-get_concepts <- function(source, concepts, ...) {
-  dict <- read_dictionary(...)
-  dict[concepts, source = source]
+rep_arg <- function(arg, names) {
+
+  if (length(arg) == 1L) {
+    arg <- rep(list(arg), length(names))
+  }
+
+  if (is.null(names(arg))) {
+    names(arg) <- names
+  }
+
+  assert_that(has_name(arg, names))
+
+  arg
 }
 
 #' @export
-load_concepts <- function(concepts = get_concepts(source), source,
-                          aggregate = NA_character_, merge_data = TRUE,
-                          ...) {
+load_dictionary <- function(source, concepts = NULL,
+                            dict = read_dictionary(), ...) {
 
-
-  if (is.character(concepts)) {
-    concepts <- get_concepts(source, concepts, "concept-dict")
-  } else if (is_concept(concepts)) {
-    concepts <- as_dictionary(concepts)
+  if (is.null(concepts)) {
+    conc <- dict[, source = source]
+  } else {
+    conc <- dict[concepts, source = source]
   }
 
-  assert_that(is.flag(merge_data), is_dictionary(concepts))
+  load_concepts(conc, ...)
+}
 
-  if (length(aggregate) == 1L) {
-    aggregate <- rep(list(aggregate), length(concepts))
-  }
+#' @export
+load_concepts <- function(concepts, aggregate = NA_character_,
+                          merge_data = TRUE, ...) {
 
-  if (is.null(names(aggregate))) {
-    names(aggregate) <- names(concepts)
-  }
+  concepts  <- as_concept(concepts)
 
-  assert_that(has_name(aggregate, names(concepts)))
+  assert_that(is.flag(merge_data), is_concept(concepts))
 
-  concepts <- as_concept(concepts)
+  aggregate <- rep_arg(aggregate, names(concepts))
 
   res <- Map(load_concept, concepts, aggregate[names(concepts)],
              MoreArgs = list(...))
