@@ -1111,7 +1111,7 @@ cfg <- list(
     unit = "years",
     sources = list(
       mimic = list(
-        list(table = "patients", column = "dob", callback = "mimic_age")
+        list(table = "patients", time_col = "dob", callback = "mimic_age")
       ),
       eicu = list(
         list(table = "patient", column = "age")

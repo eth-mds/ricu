@@ -116,9 +116,10 @@ distribute_amount <- function(x, val_col, id_col, time_col, amount_col,
   x
 }
 
-mimic_age <- function(x, val_col, unit, ...) {
-  x <- set(x, j = val_col,
-    value = as.double(`units<-`(x[[val_col]], "days") / -365))
+mimic_age <- function(x, time_col, ...) {
+  x <- as_id_tbl(x, id(x), id_opts(x))
+  x <- set(x, j = time_col,
+    value = as.double(`units<-`(x[[time_col]], "days") / -365))
   x
 }
 

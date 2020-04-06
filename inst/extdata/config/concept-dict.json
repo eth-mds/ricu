@@ -5,32 +5,32 @@
       "eicu": [
         {
           "table": "patient",
-          "column": "age"
+          "time_col": "age"
         }
       ],
       "eicu_demo": [
         {
           "table": "patient",
-          "column": "age"
+          "time_col": "age"
         }
       ],
       "hirid": [
         {
           "table": "general",
-          "column": "age"
+          "time_col": "age"
         }
       ],
       "mimic": [
         {
           "table": "patients",
-          "column": "dob",
+          "time_col": "dob",
           "callback": "mimic_age"
         }
       ],
       "mimic_demo": [
         {
           "table": "patients",
-          "column": "dob",
+          "time_col": "dob",
           "callback": "mimic_age"
         }
       ]

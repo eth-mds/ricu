@@ -1,10 +1,11 @@
 
 #' @export
-new_item <- function(concept, source, table, column, ids = NULL,
+new_item <- function(concept, source, table, column = NULL, ids = NULL,
                      regex = FALSE, callback = NULL, ...) {
 
   assert_that(is.string(concept), is.string(source), is.string(table),
-              is.string(column), is.atomic(ids), is.flag(regex),
+              is.null(column) || is.string(column),
+              is.atomic(ids), is.flag(regex),
               is.null(callback) || is.string(callback))
 
   if (!is.null(callback)) {
@@ -406,18 +407,19 @@ load_item <- function(item, unit = NULL, id_type = "hadm", patient_ids = NULL,
     list(id_col = id_col), ex_col, list(cfg = cfg, interval = interval)
   )
 
-  res <- do.call(do_load, load_args)
+  res <- do.call(do_load, load_args[!duplicated(names(load_args))])
 
   if (!is.null(patient_ids)) {
     res  <- merge(res, patient_ids, by = id_col, all = FALSE)
   }
 
   cb_args <- c(
-    list(x = res, unit = unit, id_col = id_col), ex_col,
-    item[setdiff(names(item), c("concept", "table", "regex"))]
+    list(x = res, unit = unit),
+    item[setdiff(names(item), c("concept", "table", "regex"))],
+    list(id_col = id_col), ex_col
   )
 
-  res <- do.call(do_callback, cb_args)
+  res <- do.call(do_callback, cb_args[!duplicated(names(cb_args))])
   res <- rename_cols(res, item[["concept"]], data_cols(res))
   res <- add_unit(res, unit)
 
@@ -431,7 +433,10 @@ do_load <- function(source, table, column, ids, regex, ..., id_col, time_col,
 
   ids  <- unique(ids)
   cols <- c(column, unit_col, unique(unlist(extra_cols)))
-  col  <- as.name(column)
+
+  if (is.null(cols)) {
+    cols <- character(0L)
+  }
 
   if (length(ids) == 0L) {
 
@@ -440,6 +445,7 @@ do_load <- function(source, table, column, ids, regex, ..., id_col, time_col,
   } else {
 
     cols <- c(val_col, cols)
+    col  <- as.name(column)
 
     if (isTRUE(regex)) {
       query <- substitute(grepl(id, col, ignore.case = TRUE),
@@ -461,8 +467,8 @@ do_load <- function(source, table, column, ids, regex, ..., id_col, time_col,
   }
 }
 
-do_callback <- function(x, unit, id_col, time_col, val_col, unit_col, source,
-                        column, ids, callback, ...) {
+do_callback <- function(x, unit, source, column, ids, callback, ..., id_col,
+                        time_col, val_col, unit_col) {
 
   extra_cols <- list(...)
 
@@ -491,10 +497,12 @@ do_callback <- function(x, unit, id_col, time_col, val_col, unit_col, source,
     x <- do.call(callback, args)
   }
 
-  if (is.null(time_col)) {
-    assert_that(is_id_tbl(x), identical(id(x), id_col))
+  if (is_id_tbl(x)) {
+    assert_that(identical(id(x), id_col))
+  } else if (is_ts_tbl(x)) {
+    assert_that(identical(meta_cols(x), c(id_col, time_col)))
   } else {
-    assert_that(is_ts_tbl(x), identical(meta_cols(x), c(id_col, time_col)))
+    stop("expecting an `id_tbl` or `ts_tbl` object")
   }
 
   rm_cols(x, setdiff(colnames(x), c(id_col, time_col, val)))
