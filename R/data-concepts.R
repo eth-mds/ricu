@@ -56,8 +56,8 @@ c.item <- function(...) {
   }
 
   if (!is.null(source)) {
-    assert_that(is.string(source))
-    x <- .subset(x, source == get_source(x))
+    assert_that(is.character(source), length(source) > 0L)
+    x <- .subset(x, get_source(x) %in% source)
   }
 
   do.call(c, lapply(x, recreate))
@@ -71,6 +71,9 @@ as_item <- function(x) UseMethod("as_item", x)
 
 #' @export
 as_item.item <- function(x) x
+
+#' @export
+as_item.list <- function(x) try_new(x, new_item)
 
 #' @export
 new_concept <- function(name, items, unit = NULL) {
@@ -179,6 +182,9 @@ as_concept.item <- function(x, ...) {
 }
 
 #' @export
+as_concept.list <- function(x, ...) try_new(x, new_concept)
+
+#' @export
 as_dictionary.concept <- function(x) new_dictionary(x)
 
 #' @export
@@ -194,6 +200,9 @@ as_dictionary <- function(x) UseMethod("as_dictionary", x)
 
 #' @export
 as_dictionary.dictionary <- function(x) x
+
+#' @export
+as_dictionary.list <- function(x) do.call(new_dictionary, x)
 
 #' @export
 is_dictionary <- function(x) inherits(x, "dictionary")
@@ -262,9 +271,16 @@ read_dictionary <- function(name = "concept-dict", file = NULL, ...) {
   new_dictionary(concepts)
 }
 
+do_new <- function(x, fun, ...) do.call(fun, x, ...)
+
+try_new <- function(x, fun) {
+  tryCatch(do.call(fun, x),
+           error = function(...) unname(do.call("c", lapply(x, do_new, fun))))
+}
+
 rep_arg <- function(arg, names) {
 
-  if (length(arg) == 1L) {
+  if (length(arg) <= 1L) {
     arg <- rep(list(arg), length(names))
   }
 
@@ -278,13 +294,15 @@ rep_arg <- function(arg, names) {
 }
 
 #' @export
-load_dictionary <- function(source, concepts = NULL,
-                            dict = read_dictionary(), ...) {
+load_dictionary <- function(source = NULL, concepts = NULL,
+                            dictionary = read_dictionary(), ...) {
+
+  dictionary <- as_dictionary(dictionary)
 
   if (is.null(concepts)) {
-    conc <- dict[, source = source]
+    conc <- dictionary[, source = source]
   } else {
-    conc <- dict[concepts, source = source]
+    conc <- dictionary[concepts, source = source]
   }
 
   load_concepts(conc, ...)
@@ -294,7 +312,7 @@ load_dictionary <- function(source, concepts = NULL,
 load_concepts <- function(concepts, aggregate = NA_character_,
                           merge_data = TRUE, ...) {
 
-  concepts  <- as_concept(concepts)
+  concepts <- as_concept(concepts)
 
   assert_that(is.flag(merge_data), is_concept(concepts))
 
@@ -316,16 +334,17 @@ load_concepts <- function(concepts, aggregate = NA_character_,
 load_concept <- function(concept, aggregate = NA_character_, na_rm = TRUE,
                          ...) {
 
-  if (!is_concept(concept)) {
-    concept <- do.call(new_concept, concept)
+  concept <- as_concept(concept)
+
+  if (length(concept) > 1L) {
+    res <- load_concepts(concept, aggregate = aggregate, merge_data = FALSE,
+                         na_rm = na_rm, ...)
+    return(res)
   }
 
   assert_that(length(concept) == 1L, is.flag(na_rm))
 
-  res <- lapply(as_item(concept), load_item, unit = concept[["unit"]], ...)
-
-  # TODO: figure out multi source loads: add source as id col -> multi id cols
-
+  res <- load_items(as_item(concept), units = concept[["unit"]], ...)
   res <- rbind_lst(res)
 
   if (na_rm) {
@@ -340,12 +359,27 @@ load_concept <- function(concept, aggregate = NA_character_, na_rm = TRUE,
 }
 
 #' @export
+load_items <- function(items, units = NULL, ...) {
+
+  items <- as_item(items)
+
+  units <- rep_arg(units, names(items))
+
+  Map(load_item, item = items, unit = units[names(items)],
+      MoreArgs = list(...))
+}
+
+#' @export
 load_item <- function(item, unit = NULL, id_type = "hadm", patient_ids = NULL,
                       interval = hours(1L),
                       cfg = get_col_config(get_source(item), "all")) {
 
-  if (!is_item(item)) {
-    item <- do.call(new_item, item)
+  item <- as_item(item)
+
+  if (length(item) > 1L) {
+    res <- load_items(item, unit, id_type = id_type, patient_ids = patient_ids,
+                      interval = interval, cfg = cfg)
+    return(res)
   }
 
   assert_that(length(item) == 1L,

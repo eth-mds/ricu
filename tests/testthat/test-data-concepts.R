@@ -100,7 +100,6 @@ test_that("concept/dictionary constructor", {
   )
 })
 
-
 test_that("load concepts", {
 
   gluc <- concept("gluc", "mimic_demo", "labevents", "itemid",
