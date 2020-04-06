@@ -7,38 +7,52 @@ ts_tbl <- function(..., id, id_opts = NULL, index = NULL,
 }
 
 #' @export
-as_ts_tbl <- function(tbl, id, id_opts = NULL, index = NULL,
-                      interval = hours(1L)) {
+as_ts_tbl.ts_tbl <- function(x, ...) x
 
-  if (!is_dt(tbl)) data.table::setDT(tbl)
+#' @export
+as_ts_tbl.default <- function(x, id, id_opts = NULL, index = NULL,
+                              interval = hours(1L), ...) {
+
+  if (!is_dt(x)) data.table::setDT(x)
 
   if (is.numeric(id) || is.logical(id)) {
-    id <- colnames(tbl)[id]
+    id <- colnames(x)[id]
   }
+
+  new_icu_tbl(x,
+    new_ts_meta(new_tbl_id(id, id_opts),
+                new_tbl_index(auto_index(x, index), interval))
+  )
+}
+
+auto_index <- function(x, index = NULL) {
 
   if (is.null(index)) {
 
-    hits <- vapply(tbl, is_time_vec, logical(1L))
+    hits <- vapply(x, is_time_vec, logical(1L))
 
     assert_that(sum(hits) == 1L,
       msg = paste("In order to automatically determine the index column,",
                   "exactly one `difftime` column is required.")
     )
 
-    index <- colnames(tbl)[hits]
+    index <- colnames(x)[hits]
 
   } else if (is.numeric(index) || is.logical(index)) {
 
-    index <- colnames(tbl)[index]
+    index <- colnames(x)[index]
   }
 
-  new_icu_tbl(tbl,
-    new_ts_meta(new_tbl_id(id, id_opts), new_tbl_index(index, interval))
-  )
+  index
 }
 
 #' @export
 is_ts_tbl <- function(x) inherits(x, "ts_tbl")
+
+#' @export
+as_id_tbl.ts_tbl <- function(x, ...) {
+  new_icu_tbl(x, new_id_meta(tbl_id(x)))
+}
 
 #' @export
 tbl_index.icu_tbl <- function(x) tbl_index(tbl_meta(x))

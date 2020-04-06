@@ -5,15 +5,26 @@ id_tbl <- function(..., id, id_opts = NULL) {
 }
 
 #' @export
-as_id_tbl <- function(tbl, id, id_opts = NULL) {
+as_id_tbl.id_tbl <- function(x, ...) x
 
-  if (!is_dt(tbl)) data.table::setDT(tbl)
+#' @export
+as_id_tbl.default <- function(x, id, id_opts = NULL, ...) {
+
+  if (!is_dt(x)) data.table::setDT(x)
 
   if (is.numeric(id) || is.logical(id)) {
-    id <- colnames(tbl)[id]
+    id <- colnames(x)[id]
   }
 
-  new_icu_tbl(tbl, new_id_meta(new_tbl_id(id, id_opts)))
+  new_icu_tbl(x, new_id_meta(new_tbl_id(id, id_opts)))
+}
+
+#' @export
+as_ts_tbl.id_tbl <- function(x, index = NULL, interval = hours(1L), ...) {
+
+  new_icu_tbl(x,
+    new_ts_meta(tbl_id(x), new_tbl_index(auto_index(x, index), interval))
+  )
 }
 
 #' @export

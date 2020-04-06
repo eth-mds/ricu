@@ -7,6 +7,12 @@ tbl_class <- function(x) UseMethod("tbl_class", x)
 validate_meta <- function(x, meta) UseMethod("validate_meta", meta)
 
 #' @export
+as_id_tbl <- function(x, ...) UseMethod("as_id_tbl", x)
+
+#' @export
+as_ts_tbl <- function(x, ...) UseMethod("as_ts_tbl", x)
+
+#' @export
 tbl_index <- function(x) UseMethod("tbl_index", x)
 
 #' @export
