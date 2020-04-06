@@ -371,8 +371,8 @@ load_items <- function(items, units = NULL, ...) {
 }
 
 #' @export
-load_item <- function(item, unit = NULL, id_type = "hadm", patient_ids = NULL,
-                      interval = hours(1L),
+load_item <- function(item, unit = NULL, id_type = "hadm",
+                      patient_ids = NULL, interval = hours(1L),
                       cfg = get_col_config(get_source(item), "all")) {
 
   item <- as_item(item)

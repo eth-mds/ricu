@@ -66,15 +66,13 @@ fill_gaps <- function(x, limits = NULL, ...) {
 
   } else {
 
+    id <- if (is_icu_tbl(limits)) id(limits) else id(x)
+
     join <- expand_limits(limits, ..., step_size = time_step(x),
-                          id_cols = id(x), new_col = time_col)
+                          id_cols = id, new_col = time_col)
   }
 
-  join <- unique(join)
-
-  assert_that(same_ts(x, join))
-
-  x[join, on = meta_cols(x)]
+  x[unique(join), on = paste(meta_cols(x), "==", meta_cols(join))]
 }
 
 #' @export

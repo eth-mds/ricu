@@ -5,8 +5,9 @@ sofa_data <- function(source, pafi_win_length = hours(2L),
                       fix_na_fio2 = TRUE, vent_win_length = hours(6L),
                       vent_min_win = mins(10L), gcs_win_length = hours(6L),
                       fix_na_gcs = TRUE, urine_min_win = hours(12L),
-                      icu_limits = icu_stays(source, interval = interval),
-                      interval = hours(1L),
+                      icu_limits = stay_windows(source, id_type,
+                                                interval = interval),
+                      id_type = "hadm", interval = hours(1L),
                       dictionary = read_dictionary("concept-dict"), ...) {
 
   assert_that(
@@ -17,10 +18,6 @@ sofa_data <- function(source, pafi_win_length = hours(2L),
     is.flag(fix_na_gcs), is_time(urine_min_win, allow_neg = FALSE),
     urine_min_win > interval, urine_min_win <= hours(24L)
   )
-
-  if (!is.null(icu_limits)) {
-    assert_that(all.equal(interval(icu_limits), interval))
-  }
 
   sel_non_null <- function(x, sel) Filter(Negate(is.null), x[sel])
 
@@ -44,8 +41,10 @@ sofa_data <- function(source, pafi_win_length = hours(2L),
   vent_dict <- dictionary[vent_conc, source = source]
 
   dat <- c(
-    load_concepts(dat_dict, agg_funs, FALSE, interval = interval, ...),
-    load_concepts(vent_dict, agg_funs, FALSE, interval = mins(1L), ...)
+    load_concepts(dat_dict, agg_funs, FALSE, id_type = id_type,
+                  interval = interval, ...),
+    load_concepts(vent_dict, agg_funs, FALSE, id_type = id_type,
+                  interval = mins(1L), ...)
   )
 
   dat[["pafi"]] <- sofa_pafi(
@@ -292,19 +291,17 @@ sofa_urine <- function(urine, limits, min_win, interval) {
   }
 
   if (is.null(limits)) {
-    limits <- as_ts_tbl(
+    limits <- as_id_tbl(
       urine[, list(intime = min(get(index(urine))),
-                   outtime = max(get(index(urine)))), by = id(urine)],
-      id(urine), id_opts(urine), "intime", interval(urine)
+                   outtime = max(get(index(urine)))), by = c(id(urine))],
+      id(urine), id_opts(urine)
     )
   }
 
-  assert_that(identical(id(urine), id(limits)),
-              has_name(limits, c("intime", "outtime")),
-              all.equal(interval(urine), interval(limits)))
+  assert_that(has_name(limits, c("intime", "outtime")))
 
-  limits <- merge(limits, unique(urine[, id(limits), with = FALSE]),
-                  all.y = TRUE, by = id(limits))
+  limits <- merge(limits, unique(urine[, id(urine), with = FALSE]),
+                  all.y = TRUE, by.x = id(limits), by.y = id(urine))
 
   res <- fill_gaps(urine, limits = limits, min_col = "intime",
                    max_col = "outtime")

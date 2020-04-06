@@ -1,34 +1,24 @@
 
 #' @export
-icu_stays <- function(source, in_time = "intime", out_time = "outtime",
-                      interval = hours(1L)) {
+stay_windows <- function(source, id_type = "icustay", win_type = "icustay",
+                         in_time = "intime", out_time = "outtime",
+                         interval = hours(1L)) {
 
-  assert_that(is.string(in_time), is.string(out_time))
+  reclock <- function(x, y) re_time(x - y, interval)
 
-  switch(
-    source,
-    mimic      = ,
-    mimic_demo = mimic_icu_stays(in_time, out_time, interval, source),
-    eicu       = ,
-    eicu_demo  = eicu_icu_stays(in_time, out_time, interval, source),
-    hirid      = NULL,
-    stop("Data source not recognized.")
-  )
-}
+  orig <- map_in_cols(id_type)
+  inn  <- map_in_cols(win_type)
+  out  <- map_out_cols(win_type)
 
-mimic_icu_stays <- function(in_time, out_time, interval, source) {
-  res <- data_ts_quo(source, "icustays", NULL, c("icustay_id", "outtime"),
-                     "hadm_id", "intime", interval = interval)
-  res <- rename_cols(res, c(in_time, out_time), c("intime", "outtime"))
-  res
-}
+  cols <- unique(c(id_type, win_type, inn, out, orig))
 
-eicu_icu_stays <- function(in_time, out_time, interval, source) {
-  res <- data_ts_quo(source, "patient", NULL,
-                     c("patientunitstayid", "unitdischargeoffset"),
-                     "patienthealthsystemstayid", "unitadmitoffset",
-                      interval = interval)
-  res <- rename_cols(res, c(in_time, out_time),
-                     c("unitadmitoffset", "unitdischargeoffset"))
-  res
+  map <- get_tbl("id_map", source, "aux")
+  map <- map[, cols, with = FALSE]
+
+  map <- map[, c(in_time, out_time) := lapply(.SD, reclock, get(orig)),
+             .SDcols = c(inn, out)]
+  map <- rm_cols(map, setdiff(colnames(map),
+                              c(id_type, win_type, in_time, out_time)))
+
+  as_id_tbl(map, id_type)
 }
