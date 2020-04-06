@@ -110,12 +110,7 @@ setup_eicu_aux_tables <- function(source) {
     res
   }
 
-
   delayedAssign("id_map", eicu_id_map(source),
-                assign.env = get_src(source, "aux"))
-
-  delayedAssign("patient_weight",
-                load_concepts("weight", source),
                 assign.env = get_src(source, "aux"))
 }
 

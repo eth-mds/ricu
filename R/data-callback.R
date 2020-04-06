@@ -29,17 +29,18 @@ force_numeric_val_col <- function(x, val_col, ...) {
   force_numeric_col(x, val_col)
 }
 
-eicu_body_weight <- function(x, val_col, weight_col, ...) {
+eicu_body_weight <- function(x, id_col, val_col, weight_col, source, ...) {
 
   do_calc <- function(rate, w1, w2) rate / fifelse(is.na(w1), w2, w1)
 
-  weight <- get_tbl("patient_weight", "eicu", envir = "aux")
+  weight <- data_id_quo(source, "patient", cols = "admissionweight",
+                        id_col = id_col)
 
-  x <- merge(x, weight, all.x = TRUE, by = "patienthealthsystemstayid")
-  on.exit(set(x, j = "weight", value = NULL))
-
+  x <- merge(x, weight, all.x = TRUE, by = id_col)
   x <- force_numeric_cols(x, c(val_col, weight_col))
-  x <- x[, c(val_col) := do_calc(get(val_col), get(weight_col), get("weight"))]
+  x <- x[, c(val_col) := do_calc(get(val_col), get(weight_col),
+                                 get("admissionweight"))]
+  x <- rm_cols(x, "admissionweight")
   x
 }
 
