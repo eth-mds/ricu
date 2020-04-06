@@ -5,19 +5,21 @@
       "eicu": [
         {
           "table": "patient",
-          "time_col": "age"
+          "column": "age",
+          "callback": "eicu_age"
         }
       ],
       "eicu_demo": [
         {
           "table": "patient",
-          "time_col": "age"
+          "column": "age",
+          "callback": "eicu_age"
         }
       ],
       "hirid": [
         {
           "table": "general",
-          "time_col": "age"
+          "column": "age"
         }
       ],
       "mimic": [

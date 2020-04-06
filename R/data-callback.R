@@ -123,6 +123,12 @@ mimic_age <- function(x, time_col, ...) {
   x
 }
 
+eicu_age <- function(x, val_col, ...) {
+  x <- set(x, which(x[[val_col]] == "> 89"), j = val_col, value = 90)
+  x <- set(x, j = val_col, value = as.numeric(x[[val_col]]))
+  x
+}
+
 hirid_vent_start <- function(x, val_col, ...) {
   all_flag(x[get(val_col) == 1, ], val_col)
 }

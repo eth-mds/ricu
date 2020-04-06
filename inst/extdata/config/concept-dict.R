@@ -1114,7 +1114,7 @@ cfg <- list(
         list(table = "patients", time_col = "dob", callback = "mimic_age")
       ),
       eicu = list(
-        list(table = "patient", column = "age")
+        list(table = "patient", column = "age", callback = "eicu_age")
       ),
       hirid = list(
         list(table = "general", column = "age")
