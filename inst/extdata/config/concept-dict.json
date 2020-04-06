@@ -2662,14 +2662,16 @@
         {
           "ids": ["1.0 ET/Trach", "No Response-ETT"],
           "table": "chartevents",
-          "column": "value"
+          "column": "value",
+          "callback": "all_flag"
         }
       ],
       "mimic_demo": [
         {
           "ids": ["1.0 ET/Trach", "No Response-ETT"],
           "table": "chartevents",
-          "column": "value"
+          "column": "value",
+          "callback": "all_flag"
         }
       ]
     }
@@ -2853,6 +2855,50 @@
           "ids": 10020000,
           "table": "observations",
           "column": "variableid"
+        }
+      ]
+    }
+  },
+  "vasopressin": {
+    "unit": "mcg/kg/min",
+    "sources": {
+      "eicu": [
+        {
+          "ids": ["Vasopressin (ml/hr)", "Vasopressin (units/min)", "Vasopressin ()"],
+          "table": "infusiondrug",
+          "column": "drugname",
+          "callback": "eicu_body_weight",
+          "weight_col": "patientweight"
+        }
+      ],
+      "eicu_demo": [
+        {
+          "ids": ["Vasopressin (ml/hr)", "Vasopressin (units/min)", "Vasopressin ()"],
+          "table": "infusiondrug",
+          "column": "drugname",
+          "callback": "eicu_body_weight",
+          "weight_col": "patientweight"
+        }
+      ],
+      "hirid": [
+        {
+          "ids": [112, 113],
+          "table": "pharma",
+          "column": "pharmaid"
+        }
+      ],
+      "mimic": [
+        {
+          "ids": [30051, 222315],
+          "table": "inputevents_mv",
+          "column": "itemid"
+        }
+      ],
+      "mimic_demo": [
+        {
+          "ids": [30051, 222315],
+          "table": "inputevents_mv",
+          "column": "itemid"
         }
       ]
     }

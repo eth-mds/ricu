@@ -1128,6 +1128,24 @@ cfg <- list(
         list(table = "patient", column = "admissionweight")
       )
     )
+  ),
+  vasopressin = list(
+    unit = "mcg/kg/min",
+    sources = list(
+      mimic = list(
+        list(ids = c(30051L, 222315L), table = "inputevents_mv",
+             column = "itemid")
+      ),
+      eicu = list(
+        list(ids = c("Vasopressin (ml/hr)", "Vasopressin (units/min)",
+                     "Vasopressin ()"),
+             table = "infusiondrug", column = "drugname",
+             callback = "eicu_body_weight", weight_col = "patientweight")
+      ),
+      hirid = list(
+        list(ids = c(112L, 113L), table = "pharma", column = "pharmaid")
+      )
+    )
   )
 )
 
