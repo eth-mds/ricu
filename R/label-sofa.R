@@ -91,7 +91,7 @@ sofa_data <- function(source, pafi_win_length = hours(2L),
 
 sofa_pafi <- function(pao2, fio2, win_length, mode, fix_na_fio2) {
 
-  assert_that(same_ts(pao2, fio2),
+  assert_that(same_interval(pao2, fio2),
               has_cols(pao2, "pa_o2"), has_cols(fio2, "fi_o2"))
 
   pa_o2 <- fi_o2 <- NULL
@@ -99,8 +99,10 @@ sofa_pafi <- function(pao2, fio2, win_length, mode, fix_na_fio2) {
   if (identical(mode, "match_vals")) {
 
     res <- rbind(
-      fio2[pao2, on = meta_cols(fio2), roll = win_length],
-      pao2[fio2, on = meta_cols(fio2), roll = win_length]
+      fio2[pao2, on = paste(meta_cols(fio2), "==", meta_cols(pao2)),
+           roll = win_length],
+      pao2[fio2, on = paste(meta_cols(pao2), "==", meta_cols(fio2)),
+           roll = win_length]
     )
     res <- unique(res)
 

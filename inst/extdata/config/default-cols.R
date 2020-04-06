@@ -208,7 +208,7 @@ cfg <- list(
       ),
       nursecharting = list(
         time_col = "nursingchartoffset",
-        val_col = "cellattributevalue"
+        val_col = "nursingchartvalue"
       ),
       pasthistory = list(
         time_col = "pasthistoryoffset",

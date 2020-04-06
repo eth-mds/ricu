@@ -207,7 +207,7 @@
       },
       "nursecharting": {
         "time_col": "nursingchartoffset",
-        "val_col": "cellattributevalue"
+        "val_col": "nursingchartvalue"
       },
       "pasthistory": {
         "time_col": "pasthistoryoffset",
@@ -465,7 +465,7 @@
       },
       "nursecharting": {
         "time_col": "nursingchartoffset",
-        "val_col": "cellattributevalue"
+        "val_col": "nursingchartvalue"
       },
       "pasthistory": {
         "time_col": "pasthistoryoffset",
