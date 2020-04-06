@@ -38,7 +38,8 @@ Suggests:
     pkgload,
     mimic.demo,
     eicu.demo,
-    rlang
+    rlang,
+    progress
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.0.2
 Additional_repositories: https://septic-tank.github.io/physionet-demo

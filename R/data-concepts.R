@@ -294,6 +294,26 @@ rep_arg <- function(arg, names) {
   arg
 }
 
+progr_init <- function(len = NULL) {
+  if (is_pkg_available("progress")) {
+    progress::progress_bar$new(
+      format = "loading :what [:bar] :percent",
+      total = len
+    )
+  } else {
+    message("loading")
+    NULL
+  }
+}
+
+progr_iter <- function(name, pb = NULL) {
+  if (is.null(pb)) {
+    message("  * `", name, "`")
+  } else {
+    pb$tick(tokens = list(what = name))
+  }
+}
+
 #' @export
 load_dictionary <- function(source = NULL, concepts = NULL,
                             dictionary = read_dictionary(), ...) {
@@ -313,14 +333,21 @@ load_dictionary <- function(source = NULL, concepts = NULL,
 load_concepts <- function(concepts, aggregate = NA_character_,
                           merge_data = TRUE, ...) {
 
+  do_load <- function(x, agg, progress_bar, ...) {
+    progr_iter(x[["name"]], progress_bar)
+    load_concept(concept = x, aggregate = agg, ...)
+  }
+
   concepts <- as_concept(concepts)
 
   assert_that(is.flag(merge_data), is_concept(concepts))
 
   aggregate <- rep_arg(aggregate, names(concepts))
 
-  res <- Map(load_concept, concepts, aggregate[names(concepts)],
-             MoreArgs = list(...))
+  pb <- progr_init(length(concepts))
+
+  res <- Map(do_load, concepts, aggregate[names(concepts)],
+             MoreArgs = c(list(progress_bar = pb), list(...)))
 
   if (!merge_data) {
     res
