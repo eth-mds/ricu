@@ -68,6 +68,11 @@ mimic_sampling <- function(x, val_col, time_col, aux_time, ...) {
   x
 }
 
+eicu_sampling <- function(x, val_col, ...) {
+  x <- set(x, j = val_col, value = !is_val(x[[val_col]], "no growth"))
+  x
+}
+
 multiply_by <- function(factor) {
   function(x, val_col, ...) {
     x <- set(x, j = val_col, value = x[[val_col]] * factor)

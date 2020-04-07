@@ -161,6 +161,46 @@
   },
   "antibiotics": {
     "sources": {
+      "eicu": [
+        {
+          "ids": ["bactrim", "cipro", "flagyl", "metronidazole", "zithromax", "zosyn", "(((amika|cleo|ofloxa)|(azithro|clinda|tobra|vanco)my)c", "(ampi|oxa|peni|pipera)cill|cefazol|levaqu|rifamp)in"],
+          "table": "infusiondrug",
+          "column": "drugname",
+          "regex": true,
+          "callback": "all_flag"
+        },
+        {
+          "ids": ["cipro", "flagyl", "maxipime", "metronidazole", "tazobactam", "zosyn", "cef(azolin|epime)", "(((azithro|clinda|vanco)my|ofloxa", "vanco)c|levaqu|piperacill|roceph)in"],
+          "table": "medication",
+          "column": "drugname",
+          "regex": true,
+          "callback": "all_flag"
+        }
+      ],
+      "eicu_demo": [
+        {
+          "ids": ["bactrim", "cipro", "flagyl", "metronidazole", "zithromax", "zosyn", "(((amika|cleo|ofloxa)|(azithro|clinda|tobra|vanco)my)c", "(ampi|oxa|peni|pipera)cill|cefazol|levaqu|rifamp)in"],
+          "table": "infusiondrug",
+          "column": "drugname",
+          "regex": true,
+          "callback": "all_flag"
+        },
+        {
+          "ids": ["cipro", "flagyl", "maxipime", "metronidazole", "tazobactam", "zosyn", "cef(azolin|epime)", "(((azithro|clinda|vanco)my|ofloxa", "vanco)c|levaqu|piperacill|roceph)in"],
+          "table": "medication",
+          "column": "drugname",
+          "regex": true,
+          "callback": "all_flag"
+        }
+      ],
+      "hirid": [
+        {
+          "ids": [163, 176, 181, 186, 189, 300, 326, 331, 351, 405, 1000234, 1000272, 1000273, 1000274, 1000284, 1000299, 1000300, 1000302, 1000304, 1000305, 1000306, 1000315, 1000317, 1000318, 1000320, 1000321, 1000322, 1000335, 1000348, 1000352, 1000363, 1000365, 1000390, 1000407, 1000408, 1000424, 1000425, 1000426, 1000437, 1000483, 1000507, 1000508, 1000518, 1000519, 1000549, 1000601, 1000648, 1000666, 1000670, 1000671, 1000760, 1000781, 1000791, 1000797, 1000812, 1000825, 1000829, 1000830, 1000837, 1000838, 1000854, 1000855, 1000893, 1000894, 1001005, 1001068, 1001075, 1001079, 1001084, 1001086, 1001095, 1001096, 1001097, 1001098, 1001168, 1001169, 1001170, 1001171, 1001173, 1001193, 1001198],
+          "table": "pharma",
+          "column": "pharmaid",
+          "callback": "all_flag"
+        }
+      ],
       "mimic": [
         {
           "ids": ["aztreonam", "bactrim", "cephalexin", "chloramphenicol", "cipro", "flagyl", "metronidazole", "nitrofurantoin", "tazobactam", "rifampin", "sulfadiazine", "timentin", "trimethoprim", "(amika|gentami|vanco)cin", "(amoxi|ampi|dicloxa|naf|oxa|peni|pipera)cillin", "(azithro|clarithro|erythro|clinda|strepto|tobra|vanco)mycin", "cef(azolin|tazidime|adroxil|epime|otetan|otaxime|podoxime|uroxime)", "(doxy|mino|tetra)cycline", "(levofl|moxifl|ofl)oxacin|macro(bid|dantin)", "(una|zo)syn"],
@@ -1121,6 +1161,20 @@
   },
   "fluid_sampling": {
     "sources": {
+      "eicu": [
+        {
+          "table": "microlab",
+          "column": "organism",
+          "callback": "eicu_sampling"
+        }
+      ],
+      "eicu_demo": [
+        {
+          "table": "microlab",
+          "column": "organism",
+          "callback": "eicu_sampling"
+        }
+      ],
       "mimic": [
         {
           "table": "microbiologyevents",

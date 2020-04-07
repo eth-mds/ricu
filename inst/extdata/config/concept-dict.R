@@ -1006,9 +1006,40 @@ cfg <- list(
           225879L, 225881L, 225882L, 225883L, 225884L, 225885L, 225886L,
           225888L, 225889L, 225890L, 225892L, 225893L, 225895L, 225896L,
           225897L, 225898L, 225899L, 225900L, 225902L, 225903L, 225905L,
-          227691L, 228003L),
-          table = "inputevents_mv", column = "itemid", callback = "all_flag"
+          227691L, 228003L), table = "inputevents_mv", column = "itemid",
+          callback = "all_flag"
         )
+      ),
+      eicu = list(
+        list(ids = c(
+          "bactrim", "cipro", "flagyl", "metronidazole", "zithromax", "zosyn",
+          "(((amika|cleo|ofloxa)|(azithro|clinda|tobra|vanco)my)c",
+          "(ampi|oxa|peni|pipera)cill|cefazol|levaqu|rifamp)in"),
+          table = "infusiondrug", column = "drugname", regex = TRUE,
+          callback = "all_flag"
+        ),
+        list(ids = c(
+          "cipro", "flagyl", "maxipime", "metronidazole", "tazobactam",
+          "zosyn", "cef(azolin|epime)", "(((azithro|clinda|vanco)my|ofloxa",
+          "vanco)c|levaqu|piperacill|roceph)in"), table = "medication",
+          column = "drugname", regex = TRUE, callback = "all_flag"
+        )
+      ),
+      hirid = list(
+        list(ids = c(
+              163L,     176L,     181L,     186L,     189L,     300L,     326L,
+              331L,     351L,     405L, 1000234L, 1000272L, 1000273L, 1000274L,
+          1000284L, 1000299L, 1000300L, 1000302L, 1000304L, 1000305L, 1000306L,
+          1000315L, 1000317L, 1000318L, 1000320L, 1000321L, 1000322L, 1000335L,
+          1000348L, 1000352L, 1000363L, 1000365L, 1000390L, 1000407L, 1000408L,
+          1000424L, 1000425L, 1000426L, 1000437L, 1000483L, 1000507L, 1000508L,
+          1000518L, 1000519L, 1000549L, 1000601L, 1000648L, 1000666L, 1000670L,
+          1000671L, 1000760L, 1000781L, 1000791L, 1000797L, 1000812L, 1000825L,
+          1000829L, 1000830L, 1000837L, 1000838L, 1000854L, 1000855L, 1000893L,
+          1000894L, 1001005L, 1001068L, 1001075L, 1001079L, 1001084L, 1001086L,
+          1001095L, 1001096L, 1001097L, 1001098L, 1001168L, 1001169L, 1001170L,
+          1001171L, 1001173L, 1001193L, 1001198L), table = "pharma",
+          column = "pharmaid", callback = "all_flag")
       )
     )
   ),
@@ -1017,6 +1048,10 @@ cfg <- list(
       mimic = list(
         list(table = "microbiologyevents", column = "org_itemid",
              callback = "mimic_sampling", aux_time = "charttime")
+      ),
+      eicu = list(
+        list(table = "microlab", column = "organism",
+             callback = "eicu_sampling")
       )
     )
   ),
