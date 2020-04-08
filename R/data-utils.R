@@ -302,13 +302,18 @@ stay_windows <- function(source, id_type = "icustay", win_type = "icustay",
 
   assert_that(is_time(interval, allow_neg = FALSE))
 
+  map <- get_tbl("id_map", source, "aux", allow_null = TRUE)
+
+  if (is.null(map)) {
+    return(map)
+  }
+
   orig <- map_in_cols(id_type)
   inn  <- map_in_cols(win_type)
   out  <- map_out_cols(win_type)
 
   cols <- unique(c(id_type, win_type, inn, out, orig))
 
-  map <- get_tbl("id_map", source, "aux")
   map <- map[, cols, with = FALSE]
 
   map <- map[, c(in_time, out_time) := lapply(.SD, reclock, get(orig)),

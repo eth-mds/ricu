@@ -33,11 +33,11 @@ map_out_cols <- function(ids = map_id_cols()) {
   setNames(c("death", "hosp_out", "icu_out"), map_id_cols())[map_id_cols(ids)]
 }
 
+as_dt_min <- function(x, y) round_to(difftime(x, y, units = "mins"))
+
 setup_mimic_aux_tables <- function(source) {
 
   mimic_id_map <- function(src) {
-
-    as_dt <- function(x, y) round_to(difftime(x, y, units = "mins"))
 
     pat <- get_tbl("patients", src)[, c("subject_id", "dob", "dod")]
     adm <- get_tbl("admissions", src)[,
@@ -54,7 +54,7 @@ setup_mimic_aux_tables <- function(source) {
 
     dt_cols <- c("dob", "dod", "admittime", "dischtime", "outtime")
 
-    res <- res[, c(dt_cols) := lapply(.SD, as_dt, get("intime")),
+    res <- res[, c(dt_cols) := lapply(.SD, as_dt_min, get("intime")),
                .SDcols = dt_cols]
     res <- rm_cols(res, "intime")
     res <- data.table::set(res, j = "intime", value = mins(0L))
@@ -115,6 +115,27 @@ setup_eicu_aux_tables <- function(source) {
 }
 
 setup_hirid_aux_tables <- function(source) {
+
+  hirid_id_map <- function(src) {
+
+    dat <- get_tbl("observations", src)[, c("patientid", "datetime")]
+    dat <- dat[, list(out = max(get("datetime"))), by = "patientid"]
+
+    adm <- origin_tbl(source, "general", "patientid", "admissiontime")
+    dat <- merge(dat, adm, by.x = "patientid", by.y = "id")
+
+    new <- c(map_in_cols("icustay"), map_out_cols("icustay"))
+    dat <- dat[, c(new) := list(mins(0L),
+                                as_dt_min(get("out"), get("origin")))]
+
+    dat <- rm_cols(dat, setdiff(colnames(dat), c("patientid", new)))
+    dat <- rename_cols(dat, "icustay", "patientid")
+
+    dat
+  }
+
+  delayedAssign("id_map", hirid_id_map(source),
+                assign.env = get_src(source, "aux"))
 
   delayedAssign("patientid",
                 origin_tbl(source, "general", "patientid", "admissiontime"),

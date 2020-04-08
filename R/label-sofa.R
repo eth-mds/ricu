@@ -82,9 +82,15 @@ sofa_data <- function(source, pafi_win_length = hours(2L),
     dopamine = "dopa", norepinephrine = "norepi", dobutamine = "dobu",
     epinephrine = "epi", creatinine = "crea", urine_24 = "urine"
   )
-  rename <- rename[intersect(names(rename), colnames(res))]
+
+  need_cols <- c("pafi", rename, "gcs")
+  rename    <- rename[intersect(names(rename), colnames(res))]
 
   res <- rename_cols(res, rename, names(rename))
+
+  if (!has_cols(res, need_cols)) {
+    res <- res[, c(setdiff(need_cols, data_cols(res))) := NA_real_]
+  }
 
   res
 }
@@ -289,7 +295,7 @@ sofa_urine <- function(urine, limits, min_win, interval) {
 
   if (has_name(urine, "urine_cumulative")) {
     urine <- urine[, c("urine_events") := do_diff(get("urine_cumulative")),
-                   by = id(urine)]
+                   by = c(id(urine))]
   }
 
   if (is.null(limits)) {
@@ -326,7 +332,7 @@ sofa_window <- function(tbl,
   need_cols <- c("pafi", "coag", "bili", "map", "dopa", "norepi", "dobu",
                  "epi", "gcs", "crea", "urine")
 
-  assert_that(has_cols(tbl, need_cols),
+  assert_that(is_ts_tbl(tbl), has_cols(tbl, need_cols),
               is_time(win_length, allow_neg = FALSE))
 
   tbl <- fill_gaps(tbl)
@@ -371,7 +377,7 @@ sofa_compute <- function(tbl, na_val = 0L, na_val_resp = na_val,
   need_cols <- c("pafi", "coag", "bili", "map", "dopa", "norepi", "dobu",
                  "epi", "gcs", "crea", "urine")
 
-  assert_that(has_cols(tbl, need_cols))
+  assert_that(is_ts_tbl(tbl), has_cols(tbl, need_cols))
 
   sofa_cols <- c(
     "sofa_resp", "sofa_coag", "sofa_liver", "sofa_cardio", "sofa_cns",

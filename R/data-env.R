@@ -33,16 +33,21 @@ get_src <- function(source, envir = "data") {
   res
 }
 
-get_tbl <- function(table, source, envir = "data") {
+get_tbl <- function(table, source, envir = "data", allow_null = FALSE) {
 
-  assert_that(is.string(table))
+  assert_that(is.string(table), is.flag(allow_null))
 
   res <- get0(table, envir = get_src(source, envir))
 
   if (is.null(res)) {
-    stop("Table `", table, "` not found for `", source, "` data source. For ",
-         "further information on how to set up a data source, refer to ",
-         "`?attach_datasource`.")
+
+    if (allow_null) {
+      return(res)
+    } else {
+      stop("Table `", table, "` not found for `", source, "` data source. ",
+           "For further information on how to set up a data source, refer to ",
+           "`?attach_datasource`.")
+    }
   }
 
   if (is_dt(res)) {
