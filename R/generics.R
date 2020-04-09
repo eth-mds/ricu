@@ -106,5 +106,22 @@ downgrade_id <- function(x, source, to = prev_id(x), from = id_name(x), ...) {
   UseMethod("downgrade_id", x)
 }
 
+#' @rdname data_items
+#'
+#' @export
+#'
+as_item <- function(x) UseMethod("as_item", x)
+
+#' @rdname data_concepts
+#'
+#' @export
+#'
+as_concept <- function(x, ...) UseMethod("as_concept", x)
+
+#' @rdname data_dictionary
+#'
+#' @export
+as_dictionary <- function(x) UseMethod("as_dictionary", x)
+
 #' @export
 get_source <- function(x) UseMethod("get_source", x)
