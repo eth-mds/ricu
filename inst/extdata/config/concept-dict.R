@@ -1181,6 +1181,22 @@ cfg <- list(
         list(ids = c(112L, 113L), table = "pharma", column = "pharmaid")
       )
     )
+  ),
+  death = list(
+    sources = list(
+      mimic = list(
+        list(table = "admissions", column = "hospital_expire_flag",
+             callback = "mimic_death")
+      ),
+      eicu = list(
+        list(table = "patient", column = "hospitaldischargestatus",
+             callback = "eicu_death")
+      ),
+      hirid = list(
+        list(ids = c(110L, 200L), table = "observations",
+             column = "variableid", callback = "hirid_death")
+      )
+    )
   )
 )
 

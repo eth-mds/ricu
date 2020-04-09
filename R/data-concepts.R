@@ -517,7 +517,7 @@ do_callback <- function(x, unit, source, column, ids, callback, ..., id_col,
 
     args <- c(list(x),
               list(id_col = id_col, time_col = time_col, val_col = val,
-                   unit_col = unit_col),
+                   item_col = column, unit_col = unit_col),
               extra_cols,
               list(source = source, unit = unit))
 

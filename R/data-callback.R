@@ -146,3 +146,32 @@ hirid_vent_end <- function(x, val_col, ...) {
 hirid_trach <- function(x, val_col, ...) {
   all_flag(x[get(val_col) == 2, ], val_col)
 }
+
+mimic_death <- function(x, val_col, ...) {
+  set(x, j = val_col, value = x[[val_col]] == 1L)
+  x
+}
+
+eicu_death <- function(x, val_col, ...) {
+  set(x, j = val_col, value = x[[val_col]] == "Expired")
+  x
+}
+
+hirid_death <- function(x, id_col, val_col, item_col, ...) {
+
+  threshold <- function(x, col, thresh) {
+    set(x, j = col, value = x[[col]] <= thresh)
+  }
+
+  score <- function(x, id, val) x[, data.table::last(get(val)), by = c(id)]
+
+  tmp <- split(x, by = item_col, keep.by = FALSE)
+  tmp <- lapply(tmp, threshold, val_col, 40)
+  tmp <- lapply(tmp, score, id_col, val_col)
+  tmp <- reduce(merge, tmp, all = TRUE)
+
+  tmp <- tmp[, c(val_col, "V1.x", "V1.y") := list(get("V1.x") | get("V1.y"),
+                                                  NULL, NULL)]
+
+  as_id_tbl(tmp, id(x), id_opts(x))
+}
