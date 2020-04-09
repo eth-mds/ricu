@@ -8,7 +8,6 @@
     },
     "tables": {
       "admissions": {
-        "time_col": "admittime",
         "val_col": "admission_type"
       },
       "callout": {
@@ -266,7 +265,6 @@
     },
     "tables": {
       "admissions": {
-        "time_col": "admittime",
         "val_col": "admission_type"
       },
       "callout": {

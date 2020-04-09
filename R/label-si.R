@@ -31,13 +31,13 @@ si_data <- function(source, abx_count_win = hours(24L), abx_min_count = 1L,
   if ("antibiotics" %in% data_cols(res)) {
     res <- rename_cols(res, "abx", "antibiotics")
   } else {
-    res <- res[, abx := NA]
+    res <- res[, c("abx") := NA]
   }
 
   if ("fluid_sampling" %in% data_cols(res)) {
     res <- rename_cols(res, "samp", "fluid_sampling")
   } else {
-    res <- res[, samp := NA]
+    res <- res[, c("samp") := NA]
   }
 
   res
@@ -106,7 +106,7 @@ si_windows <- function(tbl, mode = c("and", "or"), abx_win = hours(24L),
 
   } else {
 
-    res <- tbl[abx | samp, ]
+    res <- tbl[get("abx") | get("samp"), ]
     res <- rm_cols(res, data_cols(res))
     res <- rename_cols(res, "si_time", ind)
   }

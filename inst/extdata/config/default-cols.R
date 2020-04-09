@@ -9,7 +9,6 @@ cfg <- list(
     ),
     tables = list(
       admissions = list(
-        time_col = "admittime",
         val_col = "admission_type"
       ),
       callout = list(
