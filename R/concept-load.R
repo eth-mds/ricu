@@ -1,5 +1,16 @@
 
+#' Load data from a dictionary
+#'
+#' Using a data `dictionary` (or a subset thereof), data is loaded and pre-
+#' processed as specified by the selected `concepts`.
+#'
+#' @param source,concepts A character vector, used to subset the `dictionary`;
+#' `NULL` means no subsetting
+#' @param dictionary The dictionary to be used
+#' @param ... Passed to [load_concepts()]
+#'
 #' @export
+#'
 load_dictionary <- function(source = NULL, concepts = NULL,
                             dictionary = read_dictionary(), ...) {
 
@@ -7,6 +18,8 @@ load_dictionary <- function(source = NULL, concepts = NULL,
 
   if (is.null(concepts)) {
     conc <- dictionary[, source = source]
+  } else if (is_concept(concepts)) {
+    conc <- dictionary[names(concepts), source = source]
   } else {
     conc <- dictionary[concepts, source = source]
   }
@@ -14,7 +27,21 @@ load_dictionary <- function(source = NULL, concepts = NULL,
   load_concepts(conc, ...)
 }
 
+#' Load concept data
+#'
+#' Data specified as `concept` objects is loaded, aggregated per combination
+#' of id and time-step and merged into wide format.
+#'
+#' @param concepts Vector of `concept` objects to be loaded
+#' @param aggregate Controls how data within concepts is aggregated
+#' @param merge_data Logical flag, specifying whether to merge concepts into
+#' wide format or return a list, each entry corresponding to a concept
+#' @param ... Passed to `load_concept()` and on to [load_items()]
+#'
+#' @rdname load_concept
+#'
 #' @export
+#'
 load_concepts <- function(concepts, aggregate = NA_character_,
                           merge_data = TRUE, ...) {
 
@@ -43,7 +70,13 @@ load_concepts <- function(concepts, aggregate = NA_character_,
   }
 }
 
+#' @param concept Single `concept` object to be loaded
+#' @param na_rm Logical flag, indicating whether to remove `NA` rows
+#'
+#' @rdname load_concept
+#'
 #' @export
+#'
 load_concept <- function(concept, aggregate = NA_character_, na_rm = TRUE,
                          ...) {
 
@@ -71,7 +104,18 @@ load_concept <- function(concept, aggregate = NA_character_, na_rm = TRUE,
   }
 }
 
+#' Load data items
+#'
+#' Load data specified as data `item` objects.
+#'
+#' @param items Vector of data `item` objects
+#' @param units Character vector of units (one per data item)
+#' @param ... Passed on to [load_item()]
+#'
+#' @rdname load_item
+#'
 #' @export
+#'
 load_items <- function(items, units = NULL, ...) {
 
   items <- as_item(items)
@@ -82,7 +126,18 @@ load_items <- function(items, units = NULL, ...) {
       MoreArgs = list(...))
 }
 
+#' @param item Single `item` object
+#' @param unit String describing the unit of measurement of the given item
+#' @param id_type String specifying the patient id type to return
+#' @param patient_ids Optional vector of patient ids to subset the fetched data
+#' with
+#'
+#' @inheritParams data_ts_quo
+#'
+#' @rdname load_item
+#'
 #' @export
+#'
 load_item <- function(item, unit = NULL, id_type = "hadm",
                       patient_ids = NULL, interval = hours(1L),
                       cfg = get_col_config(get_source(item), "all")) {
