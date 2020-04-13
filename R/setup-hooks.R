@@ -118,15 +118,28 @@ setup_hirid_aux_tables <- function(source) {
 
   hirid_id_map <- function(src) {
 
-    dat <- get_tbl("observations", src)[, c("patientid", "datetime")]
-    dat <- dat[, list(out = max(get("datetime"))), by = "patientid"]
+    ind_fun <- function(id, index) {
 
-    adm <- origin_tbl(source, "general", "patientid", "admissiontime")
+      tmp <- data.table::setDT(list(id = id, index = index))
+
+      ind <- tmp[, .I[which.max(get("index"))], by = "id"][["V1"]]
+
+      res <- logical(nrow(tmp))
+      res[ind] <- TRUE
+
+      res
+    }
+
+    quo <- substitute(my_fun(patientid, datetime), list(my_fun = ind_fun))
+    dat <- prt::subset_quo(get_tbl("observations", src), quo,
+                           c("patientid", "datetime"), part_safe = TRUE)
+
+    adm <- origin_tbl(src, "general", "patientid", "admissiontime")
     dat <- merge(dat, adm, by.x = "patientid", by.y = "id")
 
     new <- c(map_in_cols("icustay"), map_out_cols("icustay"))
     dat <- dat[, c(new) := list(mins(0L),
-                                as_dt_min(get("out"), get("origin")))]
+                                as_dt_min(get("datetime"), get("origin")))]
 
     dat <- rm_cols(dat, setdiff(colnames(dat), c("patientid", new)))
     dat <- rename_cols(dat, "icustay", "patientid")
