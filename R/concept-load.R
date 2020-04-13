@@ -140,7 +140,7 @@ load_items <- function(items, units = NULL, ...) {
 #'
 load_item <- function(item, unit = NULL, id_type = "hadm",
                       patient_ids = NULL, interval = hours(1L),
-                      cfg = get_col_config(get_source(item), "all")) {
+                      cfg = get_src_config(item)) {
 
   item <- as_item(item)
 
@@ -150,13 +150,12 @@ load_item <- function(item, unit = NULL, id_type = "hadm",
     return(res)
   }
 
-  assert_that(length(item) == 1L,
-              has_name(cfg, c("data_fun", "id_cols", "tables")))
+  assert_that(length(item) == 1L, is_src_config(cfg))
 
   item <- item[[1L]]
 
-  id_col <- get_col_config(NULL, "id_cols", cfg, type = id_type)
-  ex_col <- get_col_config(NULL, config = cfg, table = item[["table"]])
+  id_col <- get_id_config(cfg, id_type = id_type)
+  ex_col <- get_col_config(cfg, table = item[["table"]])
 
   if (!is.null(patient_ids)) {
 

@@ -13,7 +13,7 @@ load_item(
   id_type = "hadm",
   patient_ids = NULL,
   interval = hours(1L),
-  cfg = get_col_config(get_source(item), "all")
+  cfg = get_src_config(item)
 )
 }
 \arguments{

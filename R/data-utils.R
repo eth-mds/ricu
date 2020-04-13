@@ -1,256 +1,187 @@
 
-#' Low level functions for loading data
-#'
-#' Depending on the desired return type (`ts_tbl`, `id_tbl` or plain
-#' `data.table`) and on whether the row-subsetting argument is a quoted
-#' expression (suffix `_quo`), this set of functions provides the basic
-#' mechanisms for loading data.
-#'
-#' @param source String specifying the data source
-#' @param table String specifying the table from which to load data
-#' @param row_expr Expression to be quoted and used to define a row subsetting;
-#' `NULL` corresponds to no row subsetting
-#' @param ... Forwarded to the corresponding function that takes a quoted
-#' expression and further to `change_id()`
-#'
-#' @rdname load_data
-#'
-#' @export
-#'
-data_ts <- function(source, table, row_expr, ...) {
-  data_ts_quo(source, table, null_or_subs(row_expr), ...)
+new_src_config <- function(name, id_config, col_config,
+                           data_fun = "default_data_fun") {
+
+  id_config <- as_id_config(id_config)
+  col_config <- as_col_config(col_config)
+
+  assert_that(is.string(name), is_id_config(id_config),
+              all_is(col_config, is_col_config), is.string(data_fun),
+              exists(data_fun, mode = "function"))
+
+  structure(list(name = name, id_config = id_config, col_config = col_config,
+                 data_fun = data_fun), class = "src_config")
 }
 
-#' @param row_quo Quoted expression used for defining a row subsetting; `NULL`
-#' corresponds to no row subsetting
-#' @param cols Character vector, specifying the column to return (in addition
-#' to potential columns specified as `id_col` and `time_col`); `NULL`
-#' corresponds to all columns
-#' @param id_col The column defining the id of `ts_tbl` and `id_tbl` objects
-#' @param time_col The column defining the index of `ts_tbl` objects
-#' @param interval The time interval used to discretize time stamps with,
-#' specified as [base::difftime()] object
-#' @param cfg Configuration list used for determining default options for
-#' `id_col` and `time_col` arguments, id options as well as the `data_fun`
-#' argument
-#'
-#' @rdname load_data
-#'
+is_src_config <- function(x) inherits(x, "src_config")
+
 #' @export
-#'
-data_ts_quo <- function(source, table, row_quo = NULL, cols = NULL,
-                        id_col = default_id_col(config = cfg),
-                        time_col = default_time_col(table, config = cfg),
-                        interval = hours(1L),
-                        cfg = get_col_config(source, "all"), ...) {
+get_source.src_config <- function(x) x[["name"]]
 
-  tbl <- get_tbl(table, source)
-  ids <- get_col_config(NULL, "id_cols", cfg, "all")
+new_id_config <- function(cfg) {
 
-  if (!id_col %in% colnames(tbl)) {
-    aux_id <- tail(ids[ids %in% colnames(tbl)], n = 1L)
-  } else {
-    aux_id <- id_col
-  }
+  cfg <- as.list(cfg)
 
-  id_col <- ids[ids == id_col]
+  assert_that(is.list(cfg), length(cfg) > 0L, has_name(cfg, "icustay"),
+              all_is(cfg, is.string), is_unique(c(unlist(cfg), names(cfg))))
 
-  if (!is.null(cols)) {
-    cols <- c(aux_id, time_col, cols)
-  }
-
-  res <- data_tbl_quo(source, table, row_quo, cols, interval,
-                      get_col_config(NULL, "data_fun", cfg))
-  res <- as_ts_tbl(res, aux_id, ids, time_col, interval)
-
-  change_id(res, source, to = names(id_col), ...)
+  structure(
+    cfg[intersect(c("patient", "hadm", "icustay"), names(cfg))],
+    class = "id_config"
+  )
 }
 
-#' @rdname load_data
-#'
-#' @export
-#'
-data_id <- function(source, table, row_expr, ...) {
-  data_id_quo(source, table, null_or_subs(row_expr), ...)
-}
+is_id_config <- function(x) inherits(x, "id_config")
 
-#' @rdname load_data
-#'
-#' @export
-#'
-data_id_quo <- function(source, table, row_quo = NULL, cols = NULL,
-                        id_col = default_id_col(config = cfg),
-                        interval = hours(1L),
-                        cfg = get_col_config(source, "all"), ...) {
+as_id_config <- function(x) UseMethod("as_id_config", x)
 
-  tbl <- get_tbl(table, source)
-  ids <- get_col_config(NULL, "id_cols", cfg, "all")
+as_id_config.id_config <- function(x) x
 
-  if (!id_col %in% colnames(tbl)) {
-    aux_id <- tail(ids[ids %in% colnames(tbl)], n = 1L)
-  } else {
-    aux_id <- id_col
+as_id_config.list <- function(x) new_id_config(x)
+
+new_col_config <- function(table, cfg) {
+
+  opts <- c("id_col", "time_col", "val_col", "unit_col")
+
+  cfg <- as.list(cfg)
+
+  assert_that(is.list(cfg), all_is(cfg, is.string))
+
+  if (length(cfg)) {
+    assert_that(!is.null(names(cfg)), all(names(cfg) %in% opts))
   }
 
-  id_col <- ids[ids == id_col]
+  cfg <- cfg[opts]
+  names(cfg) <- opts
 
-  if (!is.null(cols)) {
-    cols <- c(aux_id, cols)
-  }
-
-  res <- data_tbl_quo(source, table, row_quo, cols, interval,
-                      get_col_config(NULL, "data_fun", cfg))
-  res <- as_id_tbl(res, aux_id, ids)
-
-  change_id(res, source, to = names(id_col), ...)
+  structure(list(table = table, cols = cfg), class = "col_config")
 }
 
-#' @rdname load_data
-#'
-#' @export
-#'
-data_tbl <- function(source, table, row_expr, ...) {
-  data_tbl_quo(source, table, null_or_subs(row_expr), ...)
-}
+is_col_config <- function(x) inherits(x, "col_config")
 
-#' @param data_fun Function used for loading the data; the default uses
-#' [prt::subset_quo()] and for non-default values, a function with arguments
-#' `table`, `row_quo`, `cols`, `interval`, and `source` is expected
-#'
-#' @rdname load_data
-#'
-#' @export
-#'
-data_tbl_quo <- function(source, table, row_quo = NULL, cols = NULL,
-                         interval = hours(1L),
-                         data_fun = get_col_config(source, "data_fun")) {
+as_col_config <- function(x) UseMethod("as_col_config", x)
 
-  assert_that(is.string(source), is.string(table),
-              null_or(row_quo, is.language),
-              null_or(cols, is.character),
-              is_time(interval, allow_neg = FALSE),
-              is.function(data_fun))
+as_col_config.col_config <- function(x) x
 
-  res <- data_fun(table = table, row_quo = row_quo, cols = cols,
-                  interval = interval, source = source)
+as_col_config.list <- function(x) Map(new_col_config, names(x), x)
 
-  assert_that(is_dt(res))
+read_src_config <- function(name = "default-cols", file = NULL, ...) {
 
-  if (!is.null(cols)) {
-    assert_that(has_cols(res, cols))
-  }
+  if (!is.null(file)) {
 
-  res[]
-}
+    assert_that(missing(name), file.exists(file))
 
-#' @export
-get_col_config <- function(source = NULL,
-                           what = c("tables", "id_cols", "data_fun", "all"),
-                           config = get_config("default-cols"), ...) {
-
-  what <- match.arg(what)
-
-  if (!is.null(source)) {
-    assert_that(is.string(source), has_name(config, source))
-    config <- config[[source]]
-  }
-
-  if (identical(what, "all")) {
-
-    config
+    cfg <- read_json(file, ...)
 
   } else {
 
-    assert_that(has_name(config, what))
-
-    switch(
-      what,
-      tables   = get_default_cols(config[[what]], ...),
-      id_cols  = get_id_col(config[[what]], ...),
-      data_fun = get_data_fun(config[[what]], ...),
-    )
+    cfg <- get_config(name, ...)
   }
+
+  Map(new_src_config, names(cfg), lapply(cfg, `[[`, "id_cols"),
+      lapply(cfg, `[[`, "tables"), chr_ply(cfg, `[[`, "data_fun"))
 }
 
-get_data_fun <- function(cfg) {
+get_src_config <- function(x, ...) UseMethod("get_src_config", x)
 
-  if (is.null(cfg)) {
-    default_data_fun
+get_src_config.src_config <- function(x, ...) x
+
+get_src_config.character <- function(x, ...) {
+
+  assert_that(is.string(x))
+
+  cfg <- read_src_config(...)
+
+  assert_that(is.list(cfg), all_is(cfg, is_src_config))
+
+  hit <- x == chr_ply(cfg, get_source)
+
+  assert_that(sum(hit) == 1L)
+
+  cfg[[which(hit)]]
+}
+
+get_src_config.default <- function(x, ...) {
+  get_src_config(unique(get_source(x)), ...)
+}
+
+get_id_config <- function(x, id_type = NULL, ...) {
+
+  if (is_id_config(x)) {
+    cfg <- x
   } else {
-    get(cfg, mode = "function")
-  }
-}
-
-get_id_col <- function(cfg, type = "hadm") {
-
-  type <- match.arg(type, c(map_id_cols(), "all"))
-
-  if (identical(type, "all")) {
-
-    res <- unlist(Filter(Negate(is.null), cfg[map_id_cols()]))
-
-    assert_that(length(res) > 0L)
-
-  } else {
-
-    assert_that(type %in% names(cfg))
-
-    res <- cfg[[type]]
-
-    if (is.null(res)) {
-      stop("The selected data source does not allow for ", type, " ids to be ",
-           "used.")
-    }
+    cfg <- get_src_config(x, ...)[["id_config"]]
+    assert_that(is_id_config(cfg))
   }
 
-  res
+  if (is.null(id_type)) {
+    return(unlist(cfg))
+  }
+
+  assert_that(is.string(id_type), has_name(cfg, id_type))
+
+  cfg[[id_type]]
 }
 
-get_default_cols <- function(cfg, table = NULL) {
+get_col_config <- function(x, table = NULL, ...) {
 
-  get_one <- function(x) {
+  assert_that(null_or(table, is.string))
 
-    cfg_names <- c("time_col", "val_col", "unit_col")
+  if (is_col_config(x)) {
 
-    if (is.null(names(x))) {
-      assert_that(identical(x, list()))
+    res <- x[["cols"]]
+
+    if (is.string(table)) {
+      assert_that(identical(table, x[["table"]]))
     }
 
-    assert_that(all(names(x) %in% cfg_names))
-    res <- setNames(x[cfg_names], cfg_names)
-    assert_that(all(lgl_ply(res, is.string) | lgl_ply(res, is.null)))
-    res
+    return(res)
   }
+
+  if (all_is(x, is_col_config)) {
+    cfg <- x
+  } else {
+    cfg <- get_src_config(x, ...)[["col_config"]]
+    assert_that(all_is(cfg, is_col_config))
+  }
+
+  res <- lapply(cfg, `[[`, "cols")
+
+  null_id <- lgl_ply(lapply(res, `[[`, "id_col"), is.null)
+  def_id  <- get_id_config(x, "icustay", ...)
+
+  res[null_id] <- Map(`[[<-`, res[null_id], "id_col", def_id)
 
   if (is.null(table)) {
-    lapply(cfg, get_one)
-  } else {
-    assert_that(is.string(table), has_name(cfg, table))
-    get_one(cfg[[table]])
+    return(res)
   }
+
+  hit <- table == chr_ply(cfg, `[[`, "table")
+
+  assert_that(sum(hit) == 1L)
+
+  res[[which(hit)]]
 }
 
-
-get_default_col <- function(name) {
-
-  assert_that(is.string(name))
-
-  function(table, source = NULL, ...) {
-    get_col_config(source, "tables", ..., table = table)[[name]]
-  }
+get_data_fun <- function(...) {
+  cfg <- get_src_config(...)[["data_fun"]]
+  get(cfg, mode = "function")
 }
 
-#' @export
-default_time_col <- get_default_col("time_col")
+default_id_col <- function(table, ...) {
+  get_col_config(..., table = table)[["id_col"]]
+}
 
-#' @export
-default_val_col <- get_default_col("val_col")
+default_time_col <- function(table, ...) {
+  get_col_config(..., table = table)[["time_col"]]
+}
 
-#' @export
-default_unit_col <- get_default_col("unit_col")
+default_val_col <- function(table, ...) {
+  get_col_config(..., table = table)[["val_col"]]
+}
 
-default_id_col <- function(source = NULL, ...) {
-  get_col_config(source, "id_cols", ...)
+default_unit_col <- function(table, ...) {
+  get_col_config(..., table = table)[["unit_col"]]
 }
 
 upgrade_id_map <- function(src, to, from, interval = NULL,

@@ -234,3 +234,9 @@ null_or <- function(x, what, ...) {
 on_failure(null_or) <- function(call, env) {
   paste0(deparse(call$x), " is neither NULL, nor ", deparse(call$what))
 }
+
+all_is <- function(x, what, ...) all(lgl_ply(x, what, ...))
+
+on_failure(null_or) <- function(call, env) {
+  paste0("not all of ", deparse(call$x), " satisfy ", deparse(call$what))
+}
