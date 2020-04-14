@@ -118,9 +118,9 @@ config_dir_path <- function() {
 #' Additionally, `get_config()` has a `dir` argument which takes highest
 #' precedence.
 #'
-#' @param name File name of the configuration file (without file ending).
-#' @param dir (Optional) directory name where to look for the specified file.
-#' @param ... Passed to [jsonlite::read_json].
+#' @param name File name of the configuration file (without file ending)
+#' @param dir (Optional) directory name where to look for the specified file
+#' @param ... Passed to [jsonlite::read_json()] or [jsonlite::write_json()]
 #'
 #' @rdname file_utils
 #'
@@ -159,14 +159,44 @@ get_config <- function(name, dir = NULL, ...) {
   read_json(file, ...)
 }
 
-read_json <- function(file, simplifyVector = TRUE, simplifyDataFrame = FALSE,
+read_json <- function(path, simplifyVector = TRUE, simplifyDataFrame = FALSE,
                       simplifyMatrix = FALSE, ...) {
 
-  assert_that(file.exists(file))
+  assert_that(file.exists(path))
 
-  jsonlite::read_json(file, simplifyVector = simplifyVector,
+  jsonlite::read_json(path, simplifyVector = simplifyVector,
                       simplifyDataFrame = simplifyDataFrame,
                       simplifyMatrix = simplifyMatrix, ...)
+}
+
+#' @param x Object to be written
+#'
+#' @rdname file_utils
+#'
+#' @export
+#'
+set_config <- function(x, name, dir = file.path("inst", "extdata", "config"),
+                       ...) {
+
+  assert_that(is.string(name))
+
+  file <- paste0(name, ".json")
+
+  if (!is.null(dir)) {
+
+    assert_that(is.string(dir))
+
+    file <- file.path(dir, file)
+  }
+
+  write_json(x, file, ...)
+}
+
+write_json <- function(x, path, null = "null", auto_unbox = TRUE,
+                       pretty = TRUE, ...) {
+
+  jsonlite::write_json(x, path, null = null, auto_unbox = auto_unbox,
+                       pretty = pretty)
 }
 
 is_pkg_available <- function(pkg) requireNamespace(pkg, quietly = TRUE)

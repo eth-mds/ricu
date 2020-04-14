@@ -549,10 +549,10 @@ mk_cfg <- function(is_demo = FALSE) {
   res
 }
 
-path <- file.path(rprojroot::find_root(rprojroot::is_r_package), "inst",
-                  "extdata", "config")
+pkg_dir <- rprojroot::find_root(rprojroot::is_r_package)
+cfg_dir <- file.path(pkg_dir, "inst", "extdata", "config")
 
-jsonlite::write_json(
+ricu::set_config(
   list(
     name = "eicu",
     base_url = "https://physionet.org/files/eicu-crd",
@@ -560,12 +560,11 @@ jsonlite::write_json(
     setup_hook = "setup_eicu_aux_tables",
     tables = mk_cfg(is_demo = FALSE)
   ),
-  file.path(path, "eicu-setup.json"),
-  auto_unbox = TRUE,
-  pretty = TRUE
+  "eicu-setup",
+  cfg_dir
 )
 
-jsonlite::write_json(
+ricu::set_config(
   list(
     name = "eicu_demo",
     base_url = "https://physionet.org/files/eicu-crd-demo",
@@ -573,7 +572,8 @@ jsonlite::write_json(
     setup_hook = "setup_eicu_aux_tables",
     tables = mk_cfg(is_demo = TRUE)
   ),
-  file.path(path, "eicu-demo.json"),
-  auto_unbox = TRUE,
-  pretty = TRUE
+  "eicu-demo",
+  cfg_dir
 )
+
+devtools::install(pkg_dir)

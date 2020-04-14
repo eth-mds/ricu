@@ -88,7 +88,7 @@ multiply_hirid_hemo <- multiply_by(0.)
 multiply_hirid_magn <- multiply_by(2.431)
 multiply_hirid_gluc <- multiply_by(18.016)
 multiply_hirid_phos <- multiply_by(9.497)
-multiply_hirid_urea <- multiply_by(6.006)
+multiply_hirid_urea <- multiply_by(2.8)
 multiply_hirid_bili <- multiply_by(0.058467)
 
 fahrenheit_to_celsius <- function(x, val_col, ...) {

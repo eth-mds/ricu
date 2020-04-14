@@ -3,21 +3,26 @@
 \name{data_dir}
 \alias{data_dir}
 \alias{get_config}
+\alias{set_config}
 \title{File system utilities}
 \usage{
 data_dir(subdir = NULL, create = TRUE)
 
 get_config(name, dir = NULL, ...)
+
+set_config(x, name, dir = file.path("inst", "extdata", "config"), ...)
 }
 \arguments{
 \item{subdir}{A string specifying a directory that will be made sure to
 exist below the data directory.}
 
-\item{name}{File name of the configuration file (without file ending).}
+\item{name}{File name of the configuration file (without file ending)}
 
-\item{dir}{(Optional) directory name where to look for the specified file.}
+\item{dir}{(Optional) directory name where to look for the specified file}
 
-\item{...}{Passed to \link[jsonlite:read_json]{jsonlite::read_json}.}
+\item{...}{Passed to \code{\link[jsonlite:read_json]{jsonlite::read_json()}} or \code{\link[jsonlite:write_json]{jsonlite::write_json()}}}
+
+\item{x}{Object to be written}
 }
 \description{
 Determine the location where to place data meant to persist between

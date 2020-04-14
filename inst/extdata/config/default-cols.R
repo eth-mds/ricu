@@ -262,8 +262,9 @@ cfg <- list(
 cfg <- c(cfg, mimic_demo = list(cfg[["mimic"]]),
                eicu_demo = list(cfg[["eicu"]]))
 
-file <- file.path(rprojroot::find_root(rprojroot::is_r_package), "inst",
-                  "extdata", "config", "default-cols.json")
+pkg_dir <- rprojroot::find_root(rprojroot::is_r_package)
+cfg_dir <- file.path(pkg_dir, "inst", "extdata", "config")
 
-jsonlite::write_json(cfg, file, null = "null", auto_unbox = TRUE,
-                     pretty = TRUE)
+ricu::set_config(cfg, "default-cols", cfg_dir)
+
+devtools::install(pkg_dir)

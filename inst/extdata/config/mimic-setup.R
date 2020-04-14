@@ -468,10 +468,10 @@ mk_cfg <- function(is_demo = FALSE) {
   res
 }
 
-path <- file.path(rprojroot::find_root(rprojroot::is_r_package), "inst",
-                  "extdata", "config")
+pkg_dir <- rprojroot::find_root(rprojroot::is_r_package)
+cfg_dir <- file.path(pkg_dir, "inst", "extdata", "config")
 
-jsonlite::write_json(
+ricu::set_config(
   list(
     name = "mimic",
     base_url = "https://physionet.org/files/mimiciii",
@@ -479,12 +479,11 @@ jsonlite::write_json(
     setup_hook = "setup_mimic_aux_tables",
     tables = mk_cfg(is_demo = FALSE)
   ),
-  file.path(path, "mimic-setup.json"),
-  auto_unbox = TRUE,
-  pretty = TRUE
+  "mimic-setup",
+  cfg_dir
 )
 
-jsonlite::write_json(
+ricu::set_config(
   list(
     name = "mimic_demo",
     base_url = "https://physionet.org/files/mimiciii-demo",
@@ -492,7 +491,8 @@ jsonlite::write_json(
     setup_hook = "setup_mimic_aux_tables",
     tables = mk_cfg(is_demo = TRUE)
   ),
-  file.path(path, "mimic-demo.json"),
-  auto_unbox = TRUE,
-  pretty = TRUE
+  "mimic-demo",
+  cfg_dir
 )
+
+devtools::install(pkg_dir)
