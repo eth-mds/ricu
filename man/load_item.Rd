@@ -10,7 +10,7 @@ load_items(items, units = NULL, ...)
 load_item(
   item,
   unit = NULL,
-  id_type = "hadm",
+  id_type = "icustay",
   patient_ids = NULL,
   interval = hours(1L),
   cfg = get_src_config(item)

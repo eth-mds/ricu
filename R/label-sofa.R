@@ -7,7 +7,7 @@ sofa_data <- function(source, pafi_win_length = hours(2L),
                       fix_na_gcs = TRUE, urine_min_win = hours(12L),
                       icu_limits = stay_windows(source, id_type,
                                                 interval = interval),
-                      id_type = "hadm", interval = hours(1L),
+                      id_type = "icustay", interval = hours(1L),
                       dictionary = read_dictionary("concept-dict"), ...) {
 
   assert_that(

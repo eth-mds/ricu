@@ -138,7 +138,7 @@ load_items <- function(items, units = NULL, ...) {
 #'
 #' @export
 #'
-load_item <- function(item, unit = NULL, id_type = "hadm",
+load_item <- function(item, unit = NULL, id_type = "icustay",
                       patient_ids = NULL, interval = hours(1L),
                       cfg = get_src_config(item)) {
 

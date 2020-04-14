@@ -8,7 +8,7 @@ test_that("load concepts", {
 
   expect_is(dat1, "ts_tbl")
   expect_true(is_ts_tbl(dat1))
-  expect_identical(colnames(dat1), c("hadm_id", "charttime", "gluc"))
+  expect_identical(colnames(dat1), c("icustay_id", "charttime", "gluc"))
   expect_equal(interval(dat1), hours(1L))
 
   albu <- concept("albu", "mimic_demo", "labevents", "itemid", 50862L)
@@ -25,7 +25,7 @@ test_that("load concepts", {
   dat3 <- dat3[[1L]]
 
   expect_true(is_ts_tbl(dat3))
-  expect_identical(colnames(dat3), c("hadm_id", "charttime", "gluc"))
+  expect_identical(colnames(dat3), c("icustay_id", "charttime", "gluc"))
   expect_equal(interval(dat3), hours(1L))
 
   dat4 <- load_concepts(gluc, aggregate = FALSE, merge_data = FALSE)
@@ -36,7 +36,7 @@ test_that("load concepts", {
   dat4 <- dat4[[1L]]
 
   expect_true(is_ts_tbl(dat4))
-  expect_identical(colnames(dat4), c("hadm_id", "charttime", "gluc"))
+  expect_identical(colnames(dat4), c("icustay_id", "charttime", "gluc"))
   expect_gt(nrow(dat4), nrow(dat3))
 
   expect_identical(dat3,
@@ -57,7 +57,7 @@ test_that("load concepts", {
 
   expect_is(static, "id_tbl")
   expect_true(is_id_tbl(static))
-  expect_setequal(colnames(static), c("hadm_id", "sex", "age"))
+  expect_setequal(colnames(static), c("icustay_id", "sex", "age"))
   expect_type(static[["age"]], "double")
   expect_type(static[["sex"]], "character")
 
