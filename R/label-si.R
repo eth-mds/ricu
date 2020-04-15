@@ -118,3 +118,19 @@ si_windows <- function(tbl, mode = c("and", "or"), abx_win = hours(24L),
 
   res
 }
+
+#' @export
+si <- function(source, ...) {
+
+  args <- list(...)
+
+  assert_that(!has_name(args, "tbl"))
+
+  win_args <- names(args)[names(args) %in% names(formals(si_windows))]
+  dat_args <- setdiff(names(args), win_args)
+
+  dat <- do.call(si_data, c(list(source), args[dat_args]))
+  dat <- do.call(si_windows, c(list(dat), args[win_args]))
+
+  dat
+}

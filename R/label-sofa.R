@@ -327,13 +327,14 @@ sofa_window <- function(tbl,
                         dopa_win_fun  = max_or_na, norepi_win_fun = max_or_na,
                         dobu_win_fun  = max_or_na, epi_win_fun    = max_or_na,
                         gcs_win_fun   = min_or_na, crea_win_fun   = max_or_na,
-                        urine_win_fun = min_or_na, win_length = hours(24L)) {
+                        urine_win_fun = min_or_na,
+                        worst_win_length = hours(24L)) {
 
   need_cols <- c("pafi", "coag", "bili", "map", "dopa", "norepi", "dobu",
                  "epi", "gcs", "crea", "urine")
 
   assert_that(is_ts_tbl(tbl), has_cols(tbl, need_cols),
-              is_time(win_length, allow_neg = FALSE))
+              is_time(worst_win_length, allow_neg = FALSE))
 
   tbl <- fill_gaps(tbl)
 
@@ -363,7 +364,7 @@ sofa_window <- function(tbl,
       crea_wf = crea_win_fun,
       urine_wf = urine_win_fun
     )
-  ), before = win_length, full_window = FALSE)
+  ), before = worst_win_length, full_window = FALSE)
 
   rename_cols(tbl, need_cols, paste0(need_cols, "_win"))
 }
@@ -455,4 +456,22 @@ sofa_renal <- function(cre, uri, na_val) {
       )
     )
   )
+}
+
+#' @export
+sofa <- function(source, ...) {
+
+  args <- list(...)
+
+  assert_that(!has_name(args, "tbl"))
+
+  com_args <- names(args)[names(args) %in% names(formals(sofa_compute))]
+  win_args <- names(args)[names(args) %in% names(formals(sofa_window))]
+  dat_args <- setdiff(names(args), c(com_args, win_args))
+
+  dat <- do.call(sofa_data, c(list(source), args[dat_args]))
+  dat <- do.call(sofa_window, c(list(dat), args[win_args]))
+  dat <- do.call(sofa_compute, c(list(dat), args[com_args]))
+
+  dat
 }
