@@ -327,8 +327,16 @@ sofa_window <- function(tbl,
                         dopa_win_fun  = max_or_na, norepi_win_fun = max_or_na,
                         dobu_win_fun  = max_or_na, epi_win_fun    = max_or_na,
                         gcs_win_fun   = min_or_na, crea_win_fun   = max_or_na,
-                        urine_win_fun = min_or_na,
+                        urine_win_fun = min_or_na, single_win = FALSE,
                         worst_win_length = hours(24L)) {
+
+  filter_max <- function(time, dat) {
+    dat[time >= max(time) - worst_win_length, ]
+  }
+
+  filter_fix <- function(time, dat) {
+    dat[time >= single_win - worst_win_length, ]
+  }
 
   need_cols <- c("pafi", "coag", "bili", "map", "dopa", "norepi", "dobu",
                  "epi", "gcs", "crea", "urine")
@@ -336,37 +344,47 @@ sofa_window <- function(tbl,
   assert_that(is_ts_tbl(tbl), has_cols(tbl, need_cols),
               is_time(worst_win_length, allow_neg = FALSE))
 
-  tbl <- fill_gaps(tbl)
-
-  tbl <- slide_quo(tbl, substitute(
+  expr <- substitute(
     list(
-      pafi_win = pafi_wf(pafi),
-      coag_win = coag_wf(coag),
-      bili_win = bili_wf(bili),
-      map_win = map_wf(map),
-      dopa_win = dopa_wf(dopa),
-      norepi_win = norepi_wf(norepi),
-      dobu_win = dobu_wf(dobu),
-      epi_win = epi_wf(epi),
-      gcs_win = gcs_wf(gcs),
-      crea_win = crea_wf(crea),
+      pafi_win  = pafi_wf(pafi), coag_win   = coag_wf(coag),
+      bili_win  = bili_wf(bili), map_win    = map_wf(map),
+      dopa_win  = dopa_wf(dopa), norepi_win = norepi_wf(norepi),
+      dobu_win  = dobu_wf(dobu), epi_win    = epi_wf(epi),
+      gcs_win   = gcs_wf(gcs),   crea_win   = crea_wf(crea),
       urine_win = urine_wf(urine)
     ), list(
-      pafi_wf = pafi_win_fun,
-      coag_wf = coag_win_fun,
-      bili_wf = bili_win_fun,
-      map_wf = map_win_fun,
-      dopa_wf = dopa_win_fun,
-      norepi_wf = norepi_win_fun,
-      dobu_wf = dobu_win_fun,
-      epi_wf = epi_win_fun,
-      gcs_wf = gcs_win_fun,
-      crea_wf = crea_win_fun,
-      urine_wf = urine_win_fun
+      pafi_wf   = pafi_win_fun,  coag_wf    = coag_win_fun,
+      bili_wf   = bili_win_fun,  map_wf     = map_win_fun,
+      dopa_wf   = dopa_win_fun,  norepi_wf  = norepi_win_fun,
+      dobu_wf   = dobu_win_fun,  epi_wf     = epi_win_fun,
+      gcs_wf    = gcs_win_fun,   crea_wf    = crea_win_fun,
+      urine_wf  = urine_win_fun
     )
-  ), before = worst_win_length, full_window = FALSE)
+  )
 
-  rename_cols(tbl, need_cols, paste0(need_cols, "_win"))
+  if (isFALSE(single_win)) {
+
+    res <- fill_gaps(tbl)
+    res <- slide_quo(res, expr, before = worst_win_length, full_window = FALSE)
+
+  } else {
+
+    id_col <- id(tbl)
+
+    if (isTRUE(single_win)) {
+      res <- tbl[, filter_max(get(index(tbl)), .SD), by = id_col,
+                 .SDcols = data_cols(tbl)]
+    } else {
+      assert_that(is_time(single_win))
+      res <- tbl[, filter_fix(get(index(tbl)), .SD), by = id_col,
+                 .SDcols = data_cols(tbl)]
+    }
+
+    res <- res[, eval(expr), by = id_col]
+    res <- as_id_tbl(res, id_col, id_opts(tbl))
+  }
+
+  rename_cols(res, need_cols, paste0(need_cols, "_win"))
 }
 
 #' @export
@@ -378,7 +396,7 @@ sofa_compute <- function(tbl, na_val = 0L, na_val_resp = na_val,
   need_cols <- c("pafi", "coag", "bili", "map", "dopa", "norepi", "dobu",
                  "epi", "gcs", "crea", "urine")
 
-  assert_that(is_ts_tbl(tbl), has_cols(tbl, need_cols))
+  assert_that(is_icu_tbl(tbl), has_cols(tbl, need_cols))
 
   sofa_cols <- c(
     "sofa_resp", "sofa_coag", "sofa_liver", "sofa_cardio", "sofa_cns",
