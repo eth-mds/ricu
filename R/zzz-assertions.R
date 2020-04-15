@@ -71,6 +71,7 @@ on_failure(has_time_cols) <- function(call, env) {
          " are contained in ", deparse(call$x), " as `difftime` objects")
 }
 
+#' @export
 is_time <- function(x, allow_neg = TRUE) {
   inherits(x, "difftime") && length(x) == 1L && (allow_neg || all(x >= 0))
 }
@@ -82,6 +83,7 @@ on_failure(is_time) <- function(call, env) {
          "`difftime` object of length 1")
 }
 
+#' @export
 is_time_vec <- function(x, allow_neg = TRUE) {
   inherits(x, "difftime") && (allow_neg || all(x >= 0))
 }
