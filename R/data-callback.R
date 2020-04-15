@@ -91,6 +91,8 @@ multiply_hirid_phos <- multiply_by(9.497)
 multiply_hirid_urea <- multiply_by(2.8)
 multiply_hirid_bili <- multiply_by(0.058467)
 
+multiply_eicu_cprot <- multiply_by(10)
+
 fahrenheit_to_celsius <- function(x, val_col, ...) {
   x <- set(x, j = val_col, value = (x[[val_col]] - 32) * 5 / 9)
   x

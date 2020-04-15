@@ -598,7 +598,8 @@ cfg <- list(
         list(ids = 50889L, table = "labevents", column = "itemid")
       ),
       eicu = list(
-        list(ids = "CRP", table = "lab", column = "labname")
+        list(ids = "CRP", table = "lab", column = "labname",
+             callback = "multiply_eicu_cprot")
       ),
       hirid = list(
         list(ids = 20002200L, table = "observations", column = "variableid")

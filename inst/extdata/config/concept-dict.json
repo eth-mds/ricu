@@ -475,14 +475,16 @@
         {
           "ids": "CRP",
           "table": "lab",
-          "column": "labname"
+          "column": "labname",
+          "callback": "multiply_eicu_cprot"
         }
       ],
       "eicu_demo": [
         {
           "ids": "CRP",
           "table": "lab",
-          "column": "labname"
+          "column": "labname",
+          "callback": "multiply_eicu_cprot"
         }
       ],
       "hirid": [
