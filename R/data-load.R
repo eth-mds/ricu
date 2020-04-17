@@ -45,7 +45,7 @@ data_ts_quo <- function(source, table, row_quo = NULL, cols = NULL,
                         cfg = get_src_config(source), ...) {
 
   tbl <- get_tbl(table, source)
-  ids <- get_id_config(cfg)
+  ids <- get_id_cols(cfg)
 
   if (!id_col %in% colnames(tbl)) {
     aux_id <- tail(ids[ids %in% colnames(tbl)], n = 1L)
@@ -84,7 +84,7 @@ data_id_quo <- function(source, table, row_quo = NULL, cols = NULL,
                         cfg = get_src_config(source), ...) {
 
   tbl <- get_tbl(table, source)
-  ids <- get_id_config(cfg)
+  ids <- get_id_cols(cfg)
 
   if (!id_col %in% colnames(tbl)) {
     aux_id <- tail(ids[ids %in% colnames(tbl)], n = 1L)

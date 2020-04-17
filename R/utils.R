@@ -339,3 +339,8 @@ lgl_ply <- function(x, fun, ..., length = 1L, use_names = FALSE) {
 }
 
 map <- function(f, ...) Map(f, ..., USE.NAMES = FALSE)
+
+do_call <- function(x, fun, args = NULL) {
+  if (is.null(args)) do.call(fun, x)
+  else do.call(fun, unname(x[args]))
+}

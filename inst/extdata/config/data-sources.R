@@ -29,23 +29,23 @@ get_table_info <- function(url) {
 
 col_spec_map <- function(type) {
   switch(type,
-    bool = "col_logical()",
+    bool = list(spec = "col_logical"),
     int2 = ,
     int4 = ,
-    int8 = "col_integer()",
+    int8 = list(spec = "col_integer"),
     numeric = ,
-    float8 = "col_double()",
+    float8 = list(spec = "col_double"),
     bpchar = ,
     text = ,
-    varchar = "col_character()",
-    timestamp = "col_datetime(format = \"%Y-%m-%d %H:%M:%S\")",
+    varchar = list(spec = "col_character"),
+    timestamp = list(spec = "col_datetime", format = "%Y-%m-%d %H:%M:%S"),
     stop("unknown type")
   )
 }
 
 as_col_spec <- function(names, types) {
-  Map(list, name = tolower(names), col = names,
-      spec = vapply(types, col_spec_map, character(1L)))
+  Map(c, Map(list, name = tolower(names), col = names),
+         lapply(types, col_spec_map))
 }
 
 as_tbl_spec <- function(files, defaults, tbl_info, partitioning) {
@@ -467,41 +467,43 @@ hirid_tbl_cfg <- function() {
 
   info <- list(
     general = list(
-      patientid = "col_integer()",
-      admissiontime = "col_datetime(format = \"%Y-%m-%d %H:%M:%S\")",
-      sex = "col_character",
-      age = "col_integer()"
+      patientid = list(spec = "col_integer"),
+      admissiontime = list(spec = "col_datetime",
+                           format = "%Y-%m-%d %H:%M:%S"),
+      sex = list(spec = "col_character"),
+      age = list(spec = "col_integer")
     ),
     observations = list(
-      patientid = "col_integer()",
-      datetime = "col_datetime(format = \"%Y-%m-%d %H:%M:%S\")",
-      entertime = "col_datetime(format = \"%Y-%m-%d %H:%M:%S\")",
-      status = "col_integer()",
-      stringvalue = "col_character",
-      type = "col_character",
-      value = "col_double",
-      variableid = "col_integer()"
+      patientid = list(spec = "col_integer"),
+      datetime = list(spec = "col_datetime", format = "%Y-%m-%d %H:%M:%S"),
+      entertime = list(spec = "col_datetime", format = "%Y-%m-%d %H:%M:%S"),
+      status = list(spec = "col_integer"),
+      stringvalue = list(spec = "col_character"),
+      type = list(spec = "col_character"),
+      value = list(spec = "col_double"),
+      variableid = list(spec = "col_integer")
     ),
     ordinal = list(
-      variableid = "col_integer()",
-      code = "col_integer()",
-      stringvalue = "col_character"
+      variableid = list(spec = "col_integer"),
+      code = list(spec = "col_integer"),
+      stringvalue = list(spec = "col_character")
     ),
     pharma = list(
-      patientid = "col_integer()",
-      pharmaid = "col_integer()",
-      givenat = "col_datetime(format = \"%Y-%m-%d %H:%M:%S\")",
-      enteredentryat = "col_datetime(format = \"%Y-%m-%d %H:%M:%S\")",
-      givendose = "col_double",
-      cumulativedose = "col_double",
-      fluidamount_calc = "col_double",
-      cumulfluidamount_calc = "col_double",
-      doseunit = "col_character",
-      route = "col_character",
-      infusionid = "col_integer()",
-      typeid = "col_integer()",
-      subtypeid = "col_double",
-      recordstatus = "col_integer()"
+      patientid = list(spec = "col_integer"),
+      pharmaid = list(spec = "col_integer"),
+      givenat = list(spec = "col_datetime", format = "%Y-%m-%d %H:%M:%S"),
+      enteredentryat = list(spec = "col_datetime",
+                            format = "%Y-%m-%d %H:%M:%S"),
+      givendose = list(spec = "col_double"),
+      cumulativedose = list(spec = "col_double"),
+      fluidamount_calc = list(spec = "col_double"),
+      cumulfluidamount_calc = list(spec = "col_double"),
+      doseunit = list(spec = "col_character"),
+      route = list(spec = "col_character"),
+      infusionid = list(spec = "col_integer"),
+      typeid = list(spec = "col_integer"),
+      subtypeid = list(spec = "col_double"),
+      recordstatus = list(spec = "col_integer")
     )
   )
 
@@ -525,7 +527,7 @@ hirid_tbl_cfg <- function() {
 
   info <- Map(function(x, name) {
     list(table_name = name,
-         cols = Map(list, name = names(x), col = names(x), spec = x))
+         cols = Map(c, Map(list, name = names(x), col = names(x)), x))
   }, info, names(info))
 
   as_tbl_spec(files, defaults, info, part)
@@ -537,9 +539,8 @@ cfg_dir <- file.path(pkg_dir, "inst", "extdata", "config")
 cfg <- list(
   list(
     name = "eicu",
-    base_url = "https://physionet.org/files/eicu-crd",
-    version = "2.0",
-    setup_hook = "setup_eicu_aux_tables",
+    url = "https://physionet.org/files/eicu-crd/2.0",
+    attach_hook = "setup_eicu_aux_tables",
     data_fun = "eicu_tbl_quo",
     id_cols = list(
       icustay = "patientunitstayid",
@@ -549,9 +550,8 @@ cfg <- list(
   ),
   list(
     name = "eicu_demo",
-    base_url = "https://physionet.org/files/eicu-crd-demo",
-    version = "2.0",
-    setup_hook = "setup_eicu_aux_tables",
+    url = "https://physionet.org/files/eicu-crd-demo/2.0",
+    attach_hook = "setup_eicu_aux_tables",
     data_fun = "eicu_tbl_quo",
     id_cols = list(
       icustay = "patientunitstayid",
@@ -561,9 +561,8 @@ cfg <- list(
   ),
   list(
     name = "mimic",
-    base_url = "https://physionet.org/files/mimiciii",
-    version = "1.4",
-    setup_hook = "setup_mimic_aux_tables",
+    url = "https://physionet.org/files/mimiciii/1.4",
+    attach_hook = "setup_mimic_aux_tables",
     data_fun = "mimic_tbl_quo",
     id_cols = list(
       icustay = "icustay_id",
@@ -574,9 +573,8 @@ cfg <- list(
   ),
   list(
     name = "mimic_demo",
-    base_url = "https://physionet.org/files/mimiciii-demo",
-    version = "1.4",
-    setup_hook = "setup_mimic_aux_tables",
+    url = "https://physionet.org/files/mimiciii-demo/1.4",
+    attach_hook = "setup_mimic_aux_tables",
     data_fun = "mimic_tbl_quo",
     id_cols = list(
       icustay = "icustay_id",
@@ -587,9 +585,8 @@ cfg <- list(
   ),
   list(
     name = "hirid",
-    base_url = "https://physionet.org/files/hirid",
-    version = "0.1",
-    setup_hook = "setup_hirid_aux_tables",
+    url = "https://physionet.org/files/hirid/0.1",
+    attach_hook = "setup_hirid_aux_tables",
     data_fun = "hirid_tbl_quo",
     id_cols = list(
       icustay = "patientid"

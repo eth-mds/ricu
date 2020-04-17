@@ -154,8 +154,8 @@ load_item <- function(item, unit = NULL, id_type = "icustay",
 
   item <- item[[1L]]
 
-  id_col <- get_id_config(cfg, id_type = id_type)
-  ex_col <- get_col_config(cfg, table = item[["table"]])
+  id_col <- get_id_cols(cfg, id_type = id_type)
+  ex_col <- get_col_defaults(cfg, table = item[["table"]])
 
   if (!is.null(patient_ids)) {
 
