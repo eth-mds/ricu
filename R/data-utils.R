@@ -65,7 +65,7 @@ as_col_config.col_config <- function(x) x
 
 as_col_config.list <- function(x) Map(new_col_config, names(x), x)
 
-read_src_config <- function(name = "default-cols", file = NULL, ...) {
+read_src_config <- function(name = "data-sources", file = NULL, ...) {
 
   if (!is.null(file)) {
 
@@ -78,8 +78,12 @@ read_src_config <- function(name = "default-cols", file = NULL, ...) {
     cfg <- get_config(name, ...)
   }
 
-  Map(new_src_config, names(cfg), lapply(cfg, `[[`, "id_cols"),
-      lapply(cfg, `[[`, "tables"), chr_ply(cfg, `[[`, "data_fun"))
+  def <- lapply(lapply(cfg, `[[`, "tables"), function(x) {
+    setNames(lapply(x, `[[`, "defaults"), chr_ply(x, `[[`, "name"))
+  })
+
+  Map(new_src_config, chr_ply(cfg, `[[`, "name"), lapply(cfg, `[[`, "id_cols"),
+      def, chr_ply(cfg, `[[`, "data_fun"))
 }
 
 get_src_config <- function(x, ...) UseMethod("get_src_config", x)

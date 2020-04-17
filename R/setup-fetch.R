@@ -322,32 +322,3 @@ download_check_data <- function(dest_folder, tables, url, username,
 
   invisible(NULL)
 }
-
-download_pysionet_schema <- function(url) {
-
-  if (is_pkg_available("xml2")) {
-
-    dat <- download_pysionet_file(url, dest = NULL, username = NULL,
-                                  password = NULL)
-
-    dat <- xml2::read_xml(rawToChar(dat))
-
-    xml2::as_list(dat)
-
-  } else {
-
-    NULL
-  }
-}
-
-download_mimic_schema <- function() {
-  download_pysionet_schema(
-    "https://mit-lcp.github.io/mimic-schema-spy/mimic.mimiciii.xml"
-  )
-}
-
-download_eicu_schema <- function() {
-  download_pysionet_schema(
-    "https://mit-lcp.github.io/eicu-schema-spy/eicu.eicu_crd.xml"
-  )
-}

@@ -29,35 +29,30 @@ get_table_info <- function(url) {
 
 col_spec_map <- function(type) {
   switch(type,
-    bool = list(spec_fun = "col_logical"),
+    bool = "col_logical()",
     int2 = ,
     int4 = ,
-    int8 = list(spec_fun = "col_integer"),
+    int8 = "col_integer()",
     numeric = ,
-    float8 = list(spec_fun = "col_double"),
+    float8 = "col_double()",
     bpchar = ,
     text = ,
-    varchar = list(spec_fun = "col_character"),
-    timestamp = list(spec_fun = "col_datetime",
-                     spec_args = list(format = "%Y-%m-%d %H:%M:%S")),
+    varchar = "col_character()",
+    timestamp = "col_datetime(format = \"%Y-%m-%d %H:%M:%S\")",
     stop("unknown type")
   )
 }
 
 as_col_spec <- function(names, types) {
-
-  do_as <- function(name, type) {
-    c(list(source_name = name, dest_name = tolower(name)), col_spec_map(type))
-  }
-
-  Map(do_as, names, types)
+  Map(list, name = tolower(names), col = names,
+      spec = vapply(types, col_spec_map, character(1L)))
 }
 
 as_tbl_spec <- function(files, defaults, tbl_info, partitioning) {
 
   do_as <- function(file, default, tbl, part) {
 
-    all_cols <- vapply(tbl[["cols"]], `[[`, character(1L), "dest_name")
+    all_cols <- vapply(tbl[["cols"]], `[[`, character(1L), "name")
     name <- tolower(tbl[["table_name"]])
 
     stopifnot(identical(sub("\\.csv(\\.gz)?$", "", tolower(file)), name),
@@ -81,7 +76,8 @@ as_tbl_spec <- function(files, defaults, tbl_info, partitioning) {
 
   tbls <- vapply(tbl_info, `[[`, character(1L), "table_name")
 
-  Map(do_as, files[tbls], defaults[tbls], tbl_info, partitioning[tbls])
+  Map(do_as, files[tbls], defaults[tbls], tbl_info, partitioning[tbls],
+      USE.NAMES = FALSE)
 }
 
 eicu_tbl_cfg <- function(is_demo = FALSE) {
@@ -274,9 +270,9 @@ eicu_tbl_cfg <- function(is_demo = FALSE) {
 
     tbl <- vapply(info, `[[`, character(1L), "table_name") == "respiratorycare"
     new <- info[[which(tbl)]][["cols"]]
-    col <- vapply(new, `[[`, character(1L), "source_name") == "apneaparams"
+    col <- vapply(new, `[[`, character(1L), "col") == "apneaparams"
 
-    new[[which(col)]][["source_name"]] <- "apneaparms"
+    new[[which(col)]][["col"]] <- "apneaparms"
     info[[which(tbl)]][["cols"]] <- new
   }
 
@@ -457,8 +453,8 @@ mimic_tbl_cfg <- function(is_demo = FALSE) {
   } else {
 
     info <- lapply(info, function(x) {
-      x[["cols"]] <- Map(`[[<-`, x[["cols"]], "source_name",
-        toupper(vapply(x[["cols"]], `[[`, character(1L), "source_name"))
+      x[["cols"]] <- Map(`[[<-`, x[["cols"]], "col",
+        toupper(vapply(x[["cols"]], `[[`, character(1L), "col"))
       )
       x
     })
@@ -471,46 +467,41 @@ hirid_tbl_cfg <- function() {
 
   info <- list(
     general = list(
-      patientid = list(spec_fun = "col_integer"),
-      admissiontime = list(spec_fun = "col_datetime",
-                           spec_args = list(format = "%Y-%m-%d %H:%M:%S")),
-      sex = list(spec_fun = "col_character"),
-      age = list(spec_fun = "col_integer")
+      patientid = "col_integer()",
+      admissiontime = "col_datetime(format = \"%Y-%m-%d %H:%M:%S\")",
+      sex = "col_character",
+      age = "col_integer()"
     ),
     observations = list(
-      patientid = list(spec_fun = "col_integer"),
-      datetime = list(spec_fun = "col_datetime",
-                      spec_args = list(format = "%Y-%m-%d %H:%M:%S")),
-      entertime = list(spec_fun = "col_datetime",
-                       spec_args = list(format = "%Y-%m-%d %H:%M:%S")),
-      status = list(spec_fun = "col_integer"),
-      stringvalue = list(spec_fun = "col_character"),
-      type = list(spec_fun = "col_character"),
-      value = list(spec_fun = "col_double"),
-      variableid = list(spec_fun = "col_integer")
+      patientid = "col_integer()",
+      datetime = "col_datetime(format = \"%Y-%m-%d %H:%M:%S\")",
+      entertime = "col_datetime(format = \"%Y-%m-%d %H:%M:%S\")",
+      status = "col_integer()",
+      stringvalue = "col_character",
+      type = "col_character",
+      value = "col_double",
+      variableid = "col_integer()"
     ),
     ordinal = list(
-      variableid = list(spec_fun = "col_integer"),
-      code = list(spec_fun = "col_integer"),
-      stringvalue = list(spec_fun = "col_character")
+      variableid = "col_integer()",
+      code = "col_integer()",
+      stringvalue = "col_character"
     ),
     pharma = list(
-      patientid = list(spec_fun = "col_integer"),
-      pharmaid = list(spec_fun = "col_integer"),
-      givenat = list(spec_fun = "col_datetime",
-                     spec_args = list(format = "%Y-%m-%d %H:%M:%S")),
-      enteredentryat = list(spec_fun = "col_datetime",
-                            spec_args = list(format = "%Y-%m-%d %H:%M:%S")),
-      givendose = list(spec_fun = "col_double"),
-      cumulativedose = list(spec_fun = "col_double"),
-      fluidamount_calc = list(spec_fun = "col_double"),
-      cumulfluidamount_calc = list(spec_fun = "col_double"),
-      doseunit = list(spec_fun = "col_character"),
-      route = list(spec_fun = "col_character"),
-      infusionid = list(spec_fun = "col_integer"),
-      typeid = list(spec_fun = "col_integer"),
-      subtypeid = list(spec_fun = "col_double"),
-      recordstatus = list(spec_fun = "col_integer")
+      patientid = "col_integer()",
+      pharmaid = "col_integer()",
+      givenat = "col_datetime(format = \"%Y-%m-%d %H:%M:%S\")",
+      enteredentryat = "col_datetime(format = \"%Y-%m-%d %H:%M:%S\")",
+      givendose = "col_double",
+      cumulativedose = "col_double",
+      fluidamount_calc = "col_double",
+      cumulfluidamount_calc = "col_double",
+      doseunit = "col_character",
+      route = "col_character",
+      infusionid = "col_integer()",
+      typeid = "col_integer()",
+      subtypeid = "col_double",
+      recordstatus = "col_integer()"
     )
   )
 
@@ -533,9 +524,8 @@ hirid_tbl_cfg <- function() {
   part <- list(observations = list(patientid = 1L:16L))
 
   info <- Map(function(x, name) {
-    list(table_name = name, cols = Map(function(y, nm) {
-      c(list(source_name = nm, dest_name = nm), y)
-    }, x, names(x)))
+    list(table_name = name,
+         cols = Map(list, name = names(x), col = names(x), spec = x))
   }, info, names(info))
 
   as_tbl_spec(files, defaults, info, part)
