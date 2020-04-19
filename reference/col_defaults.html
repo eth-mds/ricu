@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Function reference • ricu</title>
+<title>Default columns — new_col_defaults • ricu</title>
 
 
 <!-- jquery -->
@@ -39,7 +39,9 @@
 
 
 
-<meta property="og:title" content="Function reference" />
+<meta property="og:title" content="Default columns — new_col_defaults" />
+<meta property="og:description" content="A table can have some of its columns marked as default columns for the
+following concepts:" />
 
 
 
@@ -58,7 +60,7 @@
   </head>
 
   <body data-spy="scroll" data-target="#toc">
-    <div class="container template-reference-index">
+    <div class="container template-reference-topic">
       <header>
       <div class="navbar navbar-default navbar-fixed-top" role="navigation">
   <div class="container">
@@ -105,114 +107,64 @@
       </header>
 
 <div class="row">
-  <div class="contents col-md-9">
+  <div class="col-md-9 contents">
     <div class="page-header">
-      <h1>Reference</h1>
+    <h1>Default columns</h1>
+    <small class="dont-index">Source: <a href='https://github.com/septic-tank/ricu/blob/master/R/config-utils.R'><code>R/config-utils.R</code></a></small>
+    <div class="hidden name"><code>col_defaults.Rd</code></div>
     </div>
 
-    <table class="ref-index">
+    <div class="ref-description">
+    <p>A table can have some of its columns marked as default columns for the
+following concepts:</p>
+    </div>
 
-    <colgroup>
-      
-      <col class="alias" />
-      <col class="title" />
-    </colgroup>
+    <pre class="usage"><span class='fu'>new_col_defaults</span>(<span class='no'>table</span>, <span class='no'>cfg</span>)
 
-    <tbody>
-      <tr>
-        <th colspan="2">
-          <h2 id="section-all-functions" class="hasAnchor"><a href="#section-all-functions" class="anchor"></a>All functions</h2>
-          <p class="section-desc"></p>
-        </th>
-      </tr>
-      
-      
-    </tbody><tbody>
-      
-      
-      <tr>
-        
-        <td>
-          <p><code><a href="attach_source.html">data</a></code> <code><a href="attach_source.html">aux</a></code> <code><a href="attach_source.html">attach_source()</a></code> </p>
-        </td>
-        <td><p>Data attach utilities</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="data_concepts.html">new_concept()</a></code> <code><a href="data_concepts.html">is_concept()</a></code> <code><a href="data_concepts.html">concept()</a></code> <code><a href="data_concepts.html">as_concept()</a></code> </p>
-        </td>
-        <td><p>Data concept</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="data_dictionary.html">new_dictionary()</a></code> <code><a href="data_dictionary.html">dictionary()</a></code> <code><a href="data_dictionary.html">is_dictionary()</a></code> <code><a href="data_dictionary.html">read_dictionary()</a></code> <code><a href="data_dictionary.html">as_dictionary()</a></code> </p>
-        </td>
-        <td><p>Concept dictionary</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="data_items.html">new_item()</a></code> <code><a href="data_items.html">item()</a></code> <code><a href="data_items.html">is_item()</a></code> <code><a href="data_items.html">as_item()</a></code> </p>
-        </td>
-        <td><p>Data item</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="download_source.html">download_source()</a></code> </p>
-        </td>
-        <td><p>Data download utilities</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="file_utils.html">data_dir()</a></code> <code><a href="file_utils.html">get_config()</a></code> <code><a href="file_utils.html">set_config()</a></code> </p>
-        </td>
-        <td><p>File system utilities</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="get_col_defaults.html">default_id_col()</a></code> <code><a href="get_col_defaults.html">default_time_col()</a></code> <code><a href="get_col_defaults.html">default_val_col()</a></code> <code><a href="get_col_defaults.html">default_unit_col()</a></code> </p>
-        </td>
-        <td><p>Get default columns</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="get_src_config.html">get_src_config()</a></code> </p>
-        </td>
-        <td><p>Load configuration for a data source</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="import_source.html">import_source()</a></code> </p>
-        </td>
-        <td><p>Data import utilities</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="load_concept.html">load_concepts()</a></code> <code><a href="load_concept.html">load_concept()</a></code> </p>
-        </td>
-        <td><p>Load concept data</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="load_data.html">data_ts()</a></code> <code><a href="load_data.html">data_ts_quo()</a></code> <code><a href="load_data.html">data_id()</a></code> <code><a href="load_data.html">data_id_quo()</a></code> <code><a href="load_data.html">data_tbl()</a></code> <code><a href="load_data.html">data_tbl_quo()</a></code> </p>
-        </td>
-        <td><p>Low level functions for loading data</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="load_dictionary.html">load_dictionary()</a></code> </p>
-        </td>
-        <td><p>Load data from a dictionary</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="load_item.html">load_items()</a></code> <code><a href="load_item.html">load_item()</a></code> </p>
-        </td>
-        <td><p>Load data items</p></td>
-      </tr>
-    </tbody>
+<span class='fu'>is_col_defaults</span>(<span class='no'>x</span>)
+
+<span class='fu'>as_col_defaults</span>(<span class='no'>x</span>)
+
+<span class='co'># S3 method for col_defaults</span>
+<span class='fu'>as_col_defaults</span>(<span class='no'>x</span>)
+
+<span class='co'># S3 method for list</span>
+<span class='fu'>as_col_defaults</span>(<span class='no'>x</span>)
+
+<span class='co'># S3 method for src_config</span>
+<span class='fu'>as_col_defaults</span>(<span class='no'>x</span>)</pre>
+
+    <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
+    <table class="ref-arguments">
+    <colgroup><col class="name" /><col class="desc" /></colgroup>
+    <tr>
+      <th>table</th>
+      <td><p>Table name (string)</p></td>
+    </tr>
+    <tr>
+      <th>cfg</th>
+      <td><p>Named list containing column names</p></td>
+    </tr>
+    <tr>
+      <th>x</th>
+      <td><p>Object to test/coerce</p></td>
+    </tr>
     </table>
-  </div>
 
+    <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
+
+    
+<ul>
+<li><p><code>id_col</code>: column will be used for as id for <code>icu_tbl</code> objects</p></li>
+<li><p><code>time_col</code>: column represents a timestamp variable and will be use as such
+for <code>ts_tbl</code> objects</p></li>
+<li><p><code>val_col</code>: column contains the measured variable of interest</p></li>
+<li><p><code>unit_col</code>: column specifies the unit of measurement in the corresponding
+<code>val_col</code></p></li>
+</ul>
+
+
+  </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">
       <h2 data-toc-skip>Contents</h2>
