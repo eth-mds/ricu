@@ -64,7 +64,7 @@
 #' Configurations for the MIMIC-III and eICU databases are available in
 #' `extdata/config` as JSON files and can be read in using [get_config()].
 #'
-#' @param config Import configuration specified as nested list.
+#' @param x Object of which a [get_src_config()] method is defined
 #' @param dir The directory where the data was downloaded to (see
 #' [download_source()]).
 #' @param cleanup Logical flag, if `TRUE` the original CSV data is deleted
@@ -88,37 +88,37 @@
 #'
 #' @export
 #'
-import_source <- function(config, dir = NULL, cleanup = TRUE) {
+import_source <- function(x, dir = NULL, cleanup = TRUE) {
 
-  config <- get_src_config(config)
+  x <- get_src_config(x)
 
   if (is.null(dir)) {
-    dir <- source_data_dir(config)
+    dir <- source_data_dir(x)
   }
 
   assert_that(is.dir(dir), is.flag(cleanup))
 
-  message("importing `", get_source(config), "`")
+  message("importing `", get_source(x), "`")
 
-  files <- file.path(dir, file_names(config))
+  files <- file.path(dir, file_names(x))
   avail <- lgl_ply(files, all_is, file.exists)
 
   if (any(!avail)) {
 
-    imported <- Map(file.path, dir, fst_names(config))
+    imported <- Map(file.path, dir, fst_names(x))
     imported <- lgl_ply(imported, all_is, file.exists)
 
     missing <- !avail & !imported
 
     if (any(missing)) {
       message("skipping unavailable files for tables:\n  ",
-              paste("`", table_names(config)[missing], "`", collapse = "\n  "))
+              paste("`", table_names(x)[missing], "`", collapse = "\n  "))
     }
   }
 
   assert_that(sum(avail) > 0L)
 
-  for (tbl in get_table_specs(config)) {
+  for (tbl in get_table_specs(x)) {
 
     if (n_partitions(tbl) > 1L) {
       partition_table(tbl, dir, cleanup = cleanup)

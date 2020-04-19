@@ -45,7 +45,7 @@
 #' Celi LA, Mark RG and Badawi O. Scientific Data (2018). DOI:
 #' http://dx.doi.org/10.1038/sdata.2018.178.
 #'
-#' @param config Object of which a [get_src_config()] method is defined
+#' @param x Object of which a [get_src_config()] method is defined
 #' @param dir Destination directory where the downloaded data is written to.
 #' @param tables Character vector specifying the tables to download. If
 #' `NULL`, all available tables are downloaded.
@@ -66,23 +66,23 @@
 #'
 #' @export
 #'
-download_source <- function(config, dir = NULL, tables = NULL, ...) {
+download_source <- function(x, dir = NULL, tables = NULL, ...) {
 
-  config <- get_src_config(config)
+  x <- get_src_config(x)
 
   if (is.null(dir)) {
-    dir <- source_data_dir(config)
+    dir <- source_data_dir(x)
   }
 
   if (is.null(tables)) {
-    tables <- table_names(config)
+    tables <- table_names(x)
   }
 
   assert_that(is.dir(dir), is.character(tables), length(tables) > 0L)
 
-  message("downloading `", get_source(config), "`")
+  message("downloading `", get_source(x), "`")
 
-  download_check_data(dir, tables, get_url(config), ...)
+  download_check_data(dir, tables, get_url(x), ...)
 }
 
 read_line <- function(prompt = "", mask_input = FALSE) {

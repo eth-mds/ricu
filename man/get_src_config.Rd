@@ -27,5 +27,6 @@ the default config directors}
 }
 \description{
 For a data source to become available to ricu, a JSON base configuration
-file is required which is parsed into a \code{src_config} object.
+file is required which is parsed into a \code{src_config} object (see
+\code{\link[=new_src_config]{new_src_config()}}).
 }

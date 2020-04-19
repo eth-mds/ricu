@@ -4,10 +4,10 @@
 \alias{download_source}
 \title{Data download utilities}
 \usage{
-download_source(config, dir = NULL, tables = NULL, ...)
+download_source(x, dir = NULL, tables = NULL, ...)
 }
 \arguments{
-\item{config}{Object of which a \code{\link[=get_src_config]{get_src_config()}} method is defined}
+\item{x}{Object of which a \code{\link[=get_src_config]{get_src_config()}} method is defined}
 
 \item{dir}{Destination directory where the downloaded data is written to.}
 

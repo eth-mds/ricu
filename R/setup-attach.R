@@ -35,7 +35,9 @@ attach_source.list <- function(x, ...) {
 
   assert_that(all_is(x, is_src_config))
 
-  lapply(x, attach_source, ...)
+  for (src in x) {
+    attach_source(src, ...)
+  }
 
   invisible(NULL)
 }
@@ -101,11 +103,10 @@ attach_data_env <- function(x, dir) {
     import_source(x, dir, cleanup = TRUE)
   }
 
-  prt <- lapply(files, prt::new_prt)
-  prt <- lapply(prt, `attr<-`, "id_cols", as_id_cols(x))
-  prt <- Map(`attr<-`, prt, "col_defaults", as_col_defaults(x))
+  dat_tbls <- Map(new_tbl_src, files, list(as_id_cols(x)), as_col_defaults(x),
+                  list(get_data_fun(x)))
 
-  list2env(prt, envir = NULL, parent = get_env("data"))
+  list2env(dat_tbls, envir = NULL, parent = get_env("data"))
 }
 
 attach_aux_env <- function(x) {

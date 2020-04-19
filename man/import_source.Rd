@@ -4,10 +4,10 @@
 \alias{import_source}
 \title{Data import utilities}
 \usage{
-import_source(config, dir = NULL, cleanup = TRUE)
+import_source(x, dir = NULL, cleanup = TRUE)
 }
 \arguments{
-\item{config}{Import configuration specified as nested list.}
+\item{x}{Object of which a \code{\link[=get_src_config]{get_src_config()}} method is defined}
 
 \item{dir}{The directory where the data was downloaded to (see
 \code{\link[=download_source]{download_source()}}).}
