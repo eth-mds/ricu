@@ -54,11 +54,12 @@ as_tbl_spec <- function(files, defaults, tbl_info, partitioning) {
 
     all_cols <- vapply(tbl[["cols"]], `[[`, character(1L), "name")
     name <- tolower(tbl[["table_name"]])
+    common <- unique(sub("(_[0-9]+)?\\.csv(\\.gz)?$", "", tolower(file)))
 
-    stopifnot(identical(sub("\\.csv(\\.gz)?$", "", tolower(file)), name),
+    stopifnot(identical(common, name),
               all(vapply(default, `%in%`, logical(1L), all_cols)))
 
-    res <- list(file = file, name = name, defaults = default)
+    res <- list(files = file, name = name, defaults = default)
 
     if ("num_rows" %in% names(tbl)) {
       res[["num_rows"]] <- tbl[["num_rows"]]
@@ -68,7 +69,8 @@ as_tbl_spec <- function(files, defaults, tbl_info, partitioning) {
 
     if (!is.null(part)) {
       stopifnot(isTRUE(names(part) %in% all_cols))
-      res <- c(res, list(partitioning = part))
+      res <- c(res, list(partitioning = list(col = names(part),
+                                             breaks = part[[1L]])))
     }
 
     res
@@ -507,7 +509,12 @@ hirid_tbl_cfg <- function() {
     )
   )
 
-  files <- paste0(names(info), ".csv.gz")
+  files <- list(
+    "general.csv.gz",
+    paste0("observations_", 1:3, ".csv.gz"),
+    "ordinal.csv.gz",
+    "pharma.csv.gz"
+  )
   names(files) <- names(info)
 
   defaults <- list(

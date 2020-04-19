@@ -45,15 +45,11 @@
 #' Celi LA, Mark RG and Badawi O. Scientific Data (2018). DOI:
 #' http://dx.doi.org/10.1038/sdata.2018.178.
 #'
-#' @param demo Logical switch between demo (TRUE) and full (FALSE) datasets.
-#' @param dest Destination directory where the downloaded data is written to.
-#' @param config List structure with configuration information (see
-#' [import_mimic()] for further information).
-#' @param table_sel Character vector specifying the tables to download. If
+#' @param config Object of which a [get_src_config()] method is defined
+#' @param dir Destination directory where the downloaded data is written to.
+#' @param tables Character vector specifying the tables to download. If
 #' `NULL`, all available tables are downloaded.
 #' @param ... Passed onto keyring, for example [keyring::key_set_with_value()].
-#'
-#' @rdname data_fetch
 #'
 #' @examples
 #' \dontrun{
@@ -61,7 +57,7 @@
 #' dir <- tempdir()
 #' list.files(dir)
 #'
-#' download_mimic(demo = TRUE, dest = dir)
+#' download_datasource("mimic_demo", dir = dir)
 #' list.files(dir)
 #'
 #' unlink(dir, recursive = TRUE)
@@ -70,60 +66,23 @@
 #'
 #' @export
 #'
-download_mimic <- function(demo = FALSE, dest = mimic_data_dir(demo),
-                           config = mimic_config(demo), table_sel = NULL,
-                           ...) {
+download_source <- function(config, dir = NULL, tables = NULL, ...) {
 
-  if (demo) {
-    download_datasource(dest, config, table_sel, ..., username = NULL,
-                        password = NULL)
-  } else {
-    download_datasource(dest, config, table_sel, ...)
+  config <- get_src_config(config)
+
+  if (is.null(dir)) {
+    dir <- source_data_dir(config)
   }
-}
 
-#' @rdname data_fetch
-#'
-#' @export
-#'
-download_eicu <- function(demo = FALSE, dest = eicu_data_dir(demo),
-                          config = eicu_config(demo), table_sel = NULL,
-                          ...) {
-
-  if (demo) {
-    download_datasource(dest, config, table_sel, ..., username = NULL,
-                        password = NULL)
-  } else {
-    download_datasource(dest, config, table_sel, ...)
+  if (is.null(tables)) {
+    tables <- table_names(config)
   }
-}
 
-#' @rdname data_fetch
-#'
-#' @export
-#'
-download_datasource <- function(dest, config, table_sel = NULL, ...) {
+  assert_that(is.dir(dir), is.character(tables), length(tables) > 0L)
 
-  assert_that(is.dir(dest))
+  message("downloading `", get_source(config), "`")
 
-  name <- config[["name"]]
-  version <- config[["version"]]
-  url <- config[["base_url"]]
-  tables <- config[["tables"]]
-
-  assert_that(is.string(name), is.string(version), is.string(url),
-              is.list(tables), !is.null(names(tables)))
-
-  if (is.null(table_sel)) table_sel <- names(tables)
-
-  assert_that(is.character(table_sel), length(table_sel) > 0L,
-              all(table_sel %in% names(tables)))
-
-  message("Downloading ", name, " v", version)
-
-  url <- paste(url, version, sep = "/")
-
-  download_check_data(dest, table_sel, url, ...)
+  download_check_data(dir, tables, get_url(config), ...)
 }
 
 read_line <- function(prompt = "", mask_input = FALSE) {
@@ -243,7 +202,7 @@ download_pysionet_file <- function(url, dest = NULL, username = NULL,
     stop(rawToChar(res[["content"]]))
   }
 
-  message("Successfully downloaded ", basename(url))
+  message("successfully downloaded ", basename(url))
 
   if (is.null(dest)) {
 

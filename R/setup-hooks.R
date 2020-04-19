@@ -35,7 +35,7 @@ map_out_cols <- function(ids = map_id_cols()) {
 
 as_dt_min <- function(x, y) round_to(difftime(x, y, units = "mins"))
 
-setup_mimic_aux_tables <- function(source) {
+setup_mimic_aux_tables <- function(cfg) {
 
   mimic_id_map <- function(src) {
 
@@ -69,23 +69,17 @@ setup_mimic_aux_tables <- function(source) {
     res
   }
 
-  delayedAssign("id_map", mimic_id_map(source),
-                assign.env = get_src(source, "aux"))
+  source <- get_source(cfg)
 
-  delayedAssign("subject_id",
-                origin_tbl(source, "patients", "subject_id", "dob"),
-                assign.env = get_src(source, "aux"))
-
-  delayedAssign("hadm_id",
-                origin_tbl(source, "admissions", "hadm_id", "admittime"),
-                assign.env = get_src(source, "aux"))
-
-  delayedAssign("icustay_id",
-                origin_tbl(source, "icustays", "icustay_id", "intime"),
-                assign.env = get_src(source, "aux"))
+  list(
+    id_map = mimic_id_map(source),
+    subject_id = origin_tbl(source, "patients", "subject_id", "dob"),
+    hadm_id = origin_tbl(source, "admissions", "hadm_id", "admittime"),
+    icustay_id = origin_tbl(source, "icustays", "icustay_id", "intime")
+  )
 }
 
-setup_eicu_aux_tables <- function(source) {
+setup_eicu_aux_tables <- function(cfg) {
 
   eicu_id_map <- function(src) {
 
@@ -110,11 +104,12 @@ setup_eicu_aux_tables <- function(source) {
     res
   }
 
-  delayedAssign("id_map", eicu_id_map(source),
-                assign.env = get_src(source, "aux"))
+  source <- get_source(cfg)
+
+  list(id_map = eicu_id_map(source))
 }
 
-setup_hirid_aux_tables <- function(source) {
+setup_hirid_aux_tables <- function(cfg) {
 
   hirid_id_map <- function(src) {
 
@@ -147,10 +142,10 @@ setup_hirid_aux_tables <- function(source) {
     dat
   }
 
-  delayedAssign("id_map", hirid_id_map(source),
-                assign.env = get_src(source, "aux"))
+  source <- get_source(cfg)
 
-  delayedAssign("patientid",
-                origin_tbl(source, "general", "patientid", "admissiontime"),
-                assign.env = get_src(source, "aux"))
+  list(
+    id_map = hirid_id_map(source),
+    patientid = origin_tbl(source, "general", "patientid", "admissiontime")
+  )
 }

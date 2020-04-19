@@ -1,180 +1,172 @@
 
 #' Data attach utilities
 #'
-#' @rdname data_attach
+#' Attaching a data source sets up an environment containing [prt::new_prt()]
+#' files using [base::delayedAssign()].
 #'
-#' @param demo Logical flag indicating whether to import the respective demo
-#' of full dataset. Only used for determining the correct default arguments
-#' passed on to `attach_datasource()`.
-#' @param dir Data directory where the imported `.fst` files are located (see
-#' [import_datasource()] for further information).
-#' @param config Import configuration specified as nested list (see
-#' [import_datasource()] for further information).
-#'
-#' @export
-attach_mimic <- function(demo = FALSE, dir = mimic_data_dir(demo),
-                         config = mimic_config(demo), ...) {
-
-  attach_datasource(dir, config, ...)
-}
-
-#' @rdname data_attach
+#' @param x Data source to attach
+#' @param ... Forwarded to further calls to `attach_source()`
 #'
 #' @export
 #'
-attach_eicu <- function(demo = FALSE, dir = eicu_data_dir(demo),
-                        config = eicu_config(demo), ...) {
+attach_source <- function(x, ...) UseMethod("attach_source", x)
 
-  attach_datasource(dir, config, ...)
-}
-
-#' @rdname data_attach
+#' @param file File name string pointing to a non-default source configuration
+#' file
+#'
+#' @rdname attach_source
 #'
 #' @export
 #'
-attach_hirid <- function(dir = data_dir("hirid", create = FALSE),
-                         config = get_config("hirid-setup"), ...) {
+attach_source.character <- function(x, file = NULL, ...) {
 
-  attach_datasource(dir, config, ...)
-}
-
-#' @rdname data_attach
-#'
-#' @export
-#'
-attach_datasource <- function(dir, config, assign_env = .GlobalEnv) {
-
-  create_data_env <- function(dir, cfg) {
-
-    dir <- ensure_dir(dir)
-
-    missing <- !table_exists_as_fst(cfg, dir)
-
-    if (any(missing)) {
-
-      todo <- names(cfg[["tables"]])[missing]
-
-      msg <- paste("The following tables are missing from", dir,
-                   paste(names(missing)[missing], collapse = "\n  "),
-                   sep = "\n  ")
-
-      if (interactive()) {
-
-        message(msg)
-        resp <- read_line("Download now (Y/n)? ")
-
-        if (!identical(resp, "Y")) {
-          warning("Cannot continue without the missing data.")
-          return(NULL)
-        }
-
-      } else {
-        warning(msg)
-        return(NULL)
-      }
-
-      download_datasource(dir, cfg, table_sel = todo)
-      import_datasource(dir, cfg, cleanup = TRUE)
-    }
-
-    files <- cfg_to_fst_names(cfg, dir)
-
-    assert_that(all(file.exists(unlist(files))))
-
-    prt <- lapply(files, prt::new_prt)
-    list2env(prt, envir = NULL, parent = get_env("data"))
+  for (src in x) {
+    attach_source(get_src_config(src, file = file), ...)
   }
-
-  src <- config[["name"]]
-
-  assert_that(is.string(src), is.environment(assign_env))
-
-  delayedAssign(config[["name"]], create_data_env(dir, config),
-                assign.env = get_env("data"))
-
-  assign(src, new.env(parent = get_env("aux")), envir = get_env("aux"))
-
-  if (!is.null(config[["setup_hook"]])) {
-    do.call(config[["setup_hook"]], list(source = src))
-  }
-
-  assign(src, get_src(src), envir = assign_env)
 
   invisible(NULL)
 }
 
-cfg_to_table_name <- function(cfg) {
-  assert_that(has_name(cfg, "tables"), !is.null(names(cfg[["tables"]])))
-  sub("\\.csv(\\.gz)?", "", tolower(names(cfg[["tables"]])))
+#' @rdname attach_source
+#'
+#' @export
+#'
+attach_source.list <- function(x, ...) {
+
+  assert_that(all_is(x, is_src_config))
+
+  lapply(x, attach_source, ...)
+
+  invisible(NULL)
 }
 
-cfg_to_fst_names <- function(cfg, dir) {
+#' @param dir Directory used to look for [fst::fst()] files; `NULL` calls
+#' [data_dir()] using the source name as `subdir` argument
+#' @param assign_env Environment in which the data source will become available
+#'
+#' @rdname attach_source
+#'
+#' @export
+#'
+attach_source.src_config <- function(x, dir = NULL, assign_env = .GlobalEnv,
+                                     ...) {
 
-  to_filenames <- function(csv_name, tbl_name) {
 
-    if (has_name(tbls[[csv_name]], "partitioning")) {
-      n_part <- length(tbls[[csv_name]][["partitioning"]][[1L]]) - 1L
-      res <- file.path(dir, tbl_name, seq_len(n_part))
+  assert_that(...length() == 0L, is.environment(assign_env))
+
+  src <- get_source(x)
+
+  if (is.null(dir)) {
+    dir <- source_data_dir(src)
+  }
+
+  delayedAssign(src, attach_data_env(x, dir), assign.env = get_env("data"))
+  delayedAssign(src, attach_aux_env(x),       assign.env = get_env("aux"))
+
+  makeActiveBinding(src, get_from_data_env(src), assign_env)
+
+  invisible(NULL)
+}
+
+attach_data_env <- function(x, dir) {
+
+  assert_that(is_src_config(x), is.string(dir))
+
+  files <- Map(file.path, dir, fst_names(x))
+  names(files) <- table_names(x)
+  missing <- lgl_ply(files, all_is, Negate(file.exists))
+
+  if (any(missing)) {
+
+    todo <- table_names(x)[missing]
+
+    msg <- paste("The following tables are missing from", dir,
+                 paste(todo, collapse = "\n  "), sep = "\n  ")
+
+    if (interactive()) {
+
+      message(msg)
+      resp <- read_line("Download now (Y/n)? ")
+
+      if (!identical(resp, "Y")) {
+        stop("Cannot continue without the missing data.")
+      }
+
     } else {
-      res <- file.path(dir, tbl_name)
+
+      stop(msg)
     }
 
-    paste0(res, ".fst")
+    download_source(x, dir, table_sel = todo)
+    import_source(x, dir, cleanup = TRUE)
   }
 
-  assert_that(has_name(cfg, "tables"))
+  prt <- lapply(files, prt::new_prt)
+  prt <- lapply(prt, `attr<-`, "id_cols", as_id_cols(x))
+  prt <- Map(`attr<-`, prt, "col_defaults", as_col_defaults(x))
 
-  tbls <- cfg[["tables"]]
-  tbl_nms <- cfg_to_table_name(cfg)
-
-  files <- Map(to_filenames, names(tbls), tbl_nms)
-  names(files) <- cfg_to_table_name(cfg)
-
-  files
+  list2env(prt, envir = NULL, parent = get_env("data"))
 }
 
-table_exists_as_fst <- function(cfg, dir) {
-  all_exists <- function(x) all(file.exists(x))
-  files <- cfg_to_fst_names(cfg, dir)
-  vapply(files, all_exists, logical(1L))
+attach_aux_env <- function(x) {
+
+  assert_that(is_src_config(x))
+
+  hook <- x[["attach_hook"]]
+
+  if (is.function(hook)) {
+
+    aux_tbls <- hook(x)
+
+    assert_that(is.list(aux_tbls), !is.null(names(aux_tbls)))
+
+    list2env(aux_tbls, envir = NULL, parent = get_env("aux"))
+
+  } else {
+
+    new.env(parent = get_env("aux"))
+  }
 }
 
-mimic_data_dir <- function(demo) {
-  if (demo) {
-    if (is_pkg_available("mimic.demo")) {
-      system.file("extdata", package = "mimic.demo")
+get_from_data_env <- function(source) {
+
+  source <- force(source)
+
+  function(value) {
+
+    assert_that(missing(value),
+      msg = paste0("Cannot update read-only data source `", source, "`")
+    )
+
+    tryCatch(
+      get_src(source, envir = "data"),
+      error = function(e) {
+        warning(e)
+        NULL
+      }
+    )
+  }
+}
+
+source_data_dir <- function(source) {
+
+  if (is_src_config(source)) {
+    source <- get_source(source)
+  }
+
+  assert_that(is.string(source))
+
+  if (grepl("_demo$", source)) {
+
+    pkg <- sub("_demo$", ".demo", source)
+
+    if (is_pkg_available(pkg)) {
+      system.file("extdata", package = pkg)
     } else {
-      data_dir("mimic-demo", create = FALSE)
+      data_dir(source, create = FALSE)
     }
-  } else {
-    data_dir("mimic", create = FALSE)
-  }
-}
 
-mimic_config <- function(demo) {
-  if (demo) {
-    get_config("mimic-demo")
   } else {
-    get_config("mimic-setup")
-  }
-}
-
-eicu_data_dir <- function(demo) {
-  if (demo) {
-    if (is_pkg_available("eicu.demo")) {
-      system.file("extdata", package = "eicu.demo")
-    } else {
-      data_dir("eicu-demo", create = FALSE)
-    }
-  } else {
-    data_dir("eicu", create = FALSE)
-  }
-}
-
-eicu_config <- function(demo) {
-  if (demo) {
-    get_config("eicu-demo")
-  } else {
-    get_config("eicu-setup")
+    data_dir(source, create = FALSE)
   }
 }

@@ -16,6 +16,9 @@ set_config(x, name, dir = file.path("inst", "extdata", "config"), ...)
 \item{subdir}{A string specifying a directory that will be made sure to
 exist below the data directory.}
 
+\item{create}{Logical flag indicating whether to create the specified
+directory}
+
 \item{name}{File name of the configuration file (without file ending)}
 
 \item{dir}{(Optional) directory name where to look for the specified file}

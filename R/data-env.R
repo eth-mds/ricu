@@ -1,11 +1,11 @@
 
-#' @rdname data_attach
+#' @rdname attach_source
 #'
 #' @export
 #'
 data <- new.env()
 
-#' @rdname data_attach
+#' @rdname attach_source
 #'
 #' @export
 #'

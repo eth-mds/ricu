@@ -10,7 +10,7 @@
     },
     "tables": [
       {
-        "file": "admissionDrug.csv.gz",
+        "files": "admissionDrug.csv.gz",
         "name": "admissiondrug",
         "defaults": {
           "time_col": "drugoffset",
@@ -92,7 +92,7 @@
         ]
       },
       {
-        "file": "admissionDx.csv.gz",
+        "files": "admissionDx.csv.gz",
         "name": "admissiondx",
         "defaults": {
           "time_col": "admitdxenteredoffset",
@@ -133,7 +133,7 @@
         ]
       },
       {
-        "file": "allergy.csv.gz",
+        "files": "allergy.csv.gz",
         "name": "allergy",
         "defaults": {
           "time_col": "allergyoffset",
@@ -209,7 +209,7 @@
         ]
       },
       {
-        "file": "apacheApsVar.csv.gz",
+        "files": "apacheApsVar.csv.gz",
         "name": "apacheapsvar",
         "defaults": [],
         "num_rows": 171177,
@@ -347,7 +347,7 @@
         ]
       },
       {
-        "file": "apachePatientResult.csv.gz",
+        "files": "apachePatientResult.csv.gz",
         "name": "apachepatientresult",
         "defaults": {
           "val_col": "apachescore"
@@ -472,7 +472,7 @@
         ]
       },
       {
-        "file": "apachePredVar.csv.gz",
+        "files": "apachePredVar.csv.gz",
         "name": "apachepredvar",
         "defaults": [],
         "num_rows": 171177,
@@ -735,7 +735,7 @@
         ]
       },
       {
-        "file": "carePlanCareProvider.csv.gz",
+        "files": "carePlanCareProvider.csv.gz",
         "name": "careplancareprovider",
         "defaults": {
           "time_col": "careprovidersaveoffset",
@@ -786,7 +786,7 @@
         ]
       },
       {
-        "file": "carePlanEOL.csv.gz",
+        "files": "carePlanEOL.csv.gz",
         "name": "careplaneol",
         "defaults": {
           "time_col": "cpleoldiscussionoffset"
@@ -821,7 +821,7 @@
         ]
       },
       {
-        "file": "carePlanGeneral.csv.gz",
+        "files": "carePlanGeneral.csv.gz",
         "name": "careplangeneral",
         "defaults": {
           "time_col": "cplitemoffset",
@@ -862,7 +862,7 @@
         ]
       },
       {
-        "file": "carePlanGoal.csv.gz",
+        "files": "carePlanGoal.csv.gz",
         "name": "careplangoal",
         "defaults": {
           "time_col": "cplgoaloffset",
@@ -908,7 +908,7 @@
         ]
       },
       {
-        "file": "carePlanInfectiousDisease.csv.gz",
+        "files": "carePlanInfectiousDisease.csv.gz",
         "name": "careplaninfectiousdisease",
         "defaults": {
           "time_col": "cplinfectdiseaseoffset",
@@ -959,7 +959,7 @@
         ]
       },
       {
-        "file": "customLab.csv.gz",
+        "files": "customLab.csv.gz",
         "name": "customlab",
         "defaults": {
           "time_col": "labotheroffset",
@@ -1005,7 +1005,7 @@
         ]
       },
       {
-        "file": "diagnosis.csv.gz",
+        "files": "diagnosis.csv.gz",
         "name": "diagnosis",
         "defaults": {
           "time_col": "diagnosisoffset",
@@ -1051,7 +1051,7 @@
         ]
       },
       {
-        "file": "hospital.csv.gz",
+        "files": "hospital.csv.gz",
         "name": "hospital",
         "defaults": {
           "id_col": "hospitalid",
@@ -1082,7 +1082,7 @@
         ]
       },
       {
-        "file": "infusionDrug.csv.gz",
+        "files": "infusionDrug.csv.gz",
         "name": "infusiondrug",
         "defaults": {
           "time_col": "infusionoffset",
@@ -1138,7 +1138,7 @@
         ]
       },
       {
-        "file": "intakeOutput.csv.gz",
+        "files": "intakeOutput.csv.gz",
         "name": "intakeoutput",
         "defaults": {
           "time_col": "intakeoutputoffset",
@@ -1209,7 +1209,7 @@
         ]
       },
       {
-        "file": "lab.csv.gz",
+        "files": "lab.csv.gz",
         "name": "lab",
         "defaults": {
           "time_col": "labresultoffset",
@@ -1271,7 +1271,7 @@
         ]
       },
       {
-        "file": "medication.csv.gz",
+        "files": "medication.csv.gz",
         "name": "medication",
         "defaults": {
           "time_col": "drugstartoffset",
@@ -1357,7 +1357,7 @@
         ]
       },
       {
-        "file": "microLab.csv.gz",
+        "files": "microLab.csv.gz",
         "name": "microlab",
         "defaults": {
           "time_col": "culturetakenoffset",
@@ -1403,7 +1403,7 @@
         ]
       },
       {
-        "file": "note.csv.gz",
+        "files": "note.csv.gz",
         "name": "note",
         "defaults": {
           "time_col": "noteoffset",
@@ -1454,7 +1454,7 @@
         ]
       },
       {
-        "file": "nurseAssessment.csv.gz",
+        "files": "nurseAssessment.csv.gz",
         "name": "nurseassessment",
         "defaults": {
           "time_col": "nurseassessoffset",
@@ -1505,7 +1505,7 @@
         ]
       },
       {
-        "file": "nurseCare.csv.gz",
+        "files": "nurseCare.csv.gz",
         "name": "nursecare",
         "defaults": {
           "time_col": "nursecareoffset",
@@ -1556,7 +1556,7 @@
         ]
       },
       {
-        "file": "nurseCharting.csv.gz",
+        "files": "nurseCharting.csv.gz",
         "name": "nursecharting",
         "defaults": {
           "time_col": "nursingchartoffset",
@@ -1606,11 +1606,12 @@
           }
         ],
         "partitioning": {
-          "patientunitstayid": [0, 514528, 1037072, 1453997, 1775421, 2499831, 2937948, 3213286, 999999999]
+          "col": "patientunitstayid",
+          "breaks": [0, 514528, 1037072, 1453997, 1775421, 2499831, 2937948, 3213286, 999999999]
         }
       },
       {
-        "file": "pastHistory.csv.gz",
+        "files": "pastHistory.csv.gz",
         "name": "pasthistory",
         "defaults": {
           "time_col": "pasthistoryoffset",
@@ -1661,7 +1662,7 @@
         ]
       },
       {
-        "file": "patient.csv.gz",
+        "files": "patient.csv.gz",
         "name": "patient",
         "defaults": {
           "val_col": "unitdischargestatus"
@@ -1816,7 +1817,7 @@
         ]
       },
       {
-        "file": "physicalExam.csv.gz",
+        "files": "physicalExam.csv.gz",
         "name": "physicalexam",
         "defaults": {
           "time_col": "physicalexamoffset",
@@ -1857,7 +1858,7 @@
         ]
       },
       {
-        "file": "respiratoryCare.csv.gz",
+        "files": "respiratoryCare.csv.gz",
         "name": "respiratorycare",
         "defaults": {
           "time_col": "respcarestatusoffset"
@@ -2037,7 +2038,7 @@
         ]
       },
       {
-        "file": "respiratoryCharting.csv.gz",
+        "files": "respiratoryCharting.csv.gz",
         "name": "respiratorycharting",
         "defaults": {
           "time_col": "respchartoffset",
@@ -2083,7 +2084,7 @@
         ]
       },
       {
-        "file": "treatment.csv.gz",
+        "files": "treatment.csv.gz",
         "name": "treatment",
         "defaults": {
           "time_col": "treatmentoffset",
@@ -2119,7 +2120,7 @@
         ]
       },
       {
-        "file": "vitalAperiodic.csv.gz",
+        "files": "vitalAperiodic.csv.gz",
         "name": "vitalaperiodic",
         "defaults": {
           "time_col": "observationoffset"
@@ -2194,7 +2195,7 @@
         ]
       },
       {
-        "file": "vitalPeriodic.csv.gz",
+        "files": "vitalPeriodic.csv.gz",
         "name": "vitalperiodic",
         "defaults": {
           "time_col": "observationoffset"
@@ -2298,7 +2299,8 @@
           }
         ],
         "partitioning": {
-          "patientunitstayid": [0, 514528, 1037072, 1453997, 1775421, 2499831, 2937948, 3213286, 999999999]
+          "col": "patientunitstayid",
+          "breaks": [0, 514528, 1037072, 1453997, 1775421, 2499831, 2937948, 3213286, 999999999]
         }
       }
     ]
@@ -2314,7 +2316,7 @@
     },
     "tables": [
       {
-        "file": "admissiondrug.csv.gz",
+        "files": "admissiondrug.csv.gz",
         "name": "admissiondrug",
         "defaults": {
           "time_col": "drugoffset",
@@ -2395,7 +2397,7 @@
         ]
       },
       {
-        "file": "admissionDx.csv.gz",
+        "files": "admissionDx.csv.gz",
         "name": "admissiondx",
         "defaults": {
           "time_col": "admitdxenteredoffset",
@@ -2435,7 +2437,7 @@
         ]
       },
       {
-        "file": "allergy.csv.gz",
+        "files": "allergy.csv.gz",
         "name": "allergy",
         "defaults": {
           "time_col": "allergyoffset",
@@ -2510,7 +2512,7 @@
         ]
       },
       {
-        "file": "apacheApsVar.csv.gz",
+        "files": "apacheApsVar.csv.gz",
         "name": "apacheapsvar",
         "defaults": [],
         "cols": [
@@ -2647,7 +2649,7 @@
         ]
       },
       {
-        "file": "apachePatientResult.csv.gz",
+        "files": "apachePatientResult.csv.gz",
         "name": "apachepatientresult",
         "defaults": {
           "val_col": "apachescore"
@@ -2771,7 +2773,7 @@
         ]
       },
       {
-        "file": "apachePredVar.csv.gz",
+        "files": "apachePredVar.csv.gz",
         "name": "apachepredvar",
         "defaults": [],
         "cols": [
@@ -3033,7 +3035,7 @@
         ]
       },
       {
-        "file": "carePlanCareProvider.csv.gz",
+        "files": "carePlanCareProvider.csv.gz",
         "name": "careplancareprovider",
         "defaults": {
           "time_col": "careprovidersaveoffset",
@@ -3083,7 +3085,7 @@
         ]
       },
       {
-        "file": "carePlanEOL.csv.gz",
+        "files": "carePlanEOL.csv.gz",
         "name": "careplaneol",
         "defaults": {
           "time_col": "cpleoldiscussionoffset"
@@ -3117,7 +3119,7 @@
         ]
       },
       {
-        "file": "carePlanGeneral.csv.gz",
+        "files": "carePlanGeneral.csv.gz",
         "name": "careplangeneral",
         "defaults": {
           "time_col": "cplitemoffset",
@@ -3157,7 +3159,7 @@
         ]
       },
       {
-        "file": "carePlanGoal.csv.gz",
+        "files": "carePlanGoal.csv.gz",
         "name": "careplangoal",
         "defaults": {
           "time_col": "cplgoaloffset",
@@ -3202,7 +3204,7 @@
         ]
       },
       {
-        "file": "carePlanInfectiousDisease.csv.gz",
+        "files": "carePlanInfectiousDisease.csv.gz",
         "name": "careplaninfectiousdisease",
         "defaults": {
           "time_col": "cplinfectdiseaseoffset",
@@ -3252,7 +3254,7 @@
         ]
       },
       {
-        "file": "customLab.csv.gz",
+        "files": "customLab.csv.gz",
         "name": "customlab",
         "defaults": {
           "time_col": "labotheroffset",
@@ -3297,7 +3299,7 @@
         ]
       },
       {
-        "file": "diagnosis.csv.gz",
+        "files": "diagnosis.csv.gz",
         "name": "diagnosis",
         "defaults": {
           "time_col": "diagnosisoffset",
@@ -3342,7 +3344,7 @@
         ]
       },
       {
-        "file": "hospital.csv.gz",
+        "files": "hospital.csv.gz",
         "name": "hospital",
         "defaults": {
           "id_col": "hospitalid",
@@ -3372,7 +3374,7 @@
         ]
       },
       {
-        "file": "infusiondrug.csv.gz",
+        "files": "infusiondrug.csv.gz",
         "name": "infusiondrug",
         "defaults": {
           "time_col": "infusionoffset",
@@ -3427,7 +3429,7 @@
         ]
       },
       {
-        "file": "intakeOutput.csv.gz",
+        "files": "intakeOutput.csv.gz",
         "name": "intakeoutput",
         "defaults": {
           "time_col": "intakeoutputoffset",
@@ -3497,7 +3499,7 @@
         ]
       },
       {
-        "file": "lab.csv.gz",
+        "files": "lab.csv.gz",
         "name": "lab",
         "defaults": {
           "time_col": "labresultoffset",
@@ -3558,7 +3560,7 @@
         ]
       },
       {
-        "file": "medication.csv.gz",
+        "files": "medication.csv.gz",
         "name": "medication",
         "defaults": {
           "time_col": "drugstartoffset",
@@ -3643,7 +3645,7 @@
         ]
       },
       {
-        "file": "microLab.csv.gz",
+        "files": "microLab.csv.gz",
         "name": "microlab",
         "defaults": {
           "time_col": "culturetakenoffset",
@@ -3688,7 +3690,7 @@
         ]
       },
       {
-        "file": "note.csv.gz",
+        "files": "note.csv.gz",
         "name": "note",
         "defaults": {
           "time_col": "noteoffset",
@@ -3738,7 +3740,7 @@
         ]
       },
       {
-        "file": "nurseAssessment.csv.gz",
+        "files": "nurseAssessment.csv.gz",
         "name": "nurseassessment",
         "defaults": {
           "time_col": "nurseassessoffset",
@@ -3788,7 +3790,7 @@
         ]
       },
       {
-        "file": "nurseCare.csv.gz",
+        "files": "nurseCare.csv.gz",
         "name": "nursecare",
         "defaults": {
           "time_col": "nursecareoffset",
@@ -3838,7 +3840,7 @@
         ]
       },
       {
-        "file": "nurseCharting.csv.gz",
+        "files": "nurseCharting.csv.gz",
         "name": "nursecharting",
         "defaults": {
           "time_col": "nursingchartoffset",
@@ -3887,11 +3889,12 @@
           }
         ],
         "partitioning": {
-          "patientunitstayid": [0, 1775421, 999999999]
+          "col": "patientunitstayid",
+          "breaks": [0, 1775421, 999999999]
         }
       },
       {
-        "file": "pastHistory.csv.gz",
+        "files": "pastHistory.csv.gz",
         "name": "pasthistory",
         "defaults": {
           "time_col": "pasthistoryoffset",
@@ -3941,7 +3944,7 @@
         ]
       },
       {
-        "file": "patient.csv.gz",
+        "files": "patient.csv.gz",
         "name": "patient",
         "defaults": {
           "val_col": "unitdischargestatus"
@@ -4095,7 +4098,7 @@
         ]
       },
       {
-        "file": "physicalExam.csv.gz",
+        "files": "physicalExam.csv.gz",
         "name": "physicalexam",
         "defaults": {
           "time_col": "physicalexamoffset",
@@ -4135,7 +4138,7 @@
         ]
       },
       {
-        "file": "respiratoryCare.csv.gz",
+        "files": "respiratoryCare.csv.gz",
         "name": "respiratorycare",
         "defaults": {
           "time_col": "respcarestatusoffset"
@@ -4314,7 +4317,7 @@
         ]
       },
       {
-        "file": "respiratoryCharting.csv.gz",
+        "files": "respiratoryCharting.csv.gz",
         "name": "respiratorycharting",
         "defaults": {
           "time_col": "respchartoffset",
@@ -4359,7 +4362,7 @@
         ]
       },
       {
-        "file": "treatment.csv.gz",
+        "files": "treatment.csv.gz",
         "name": "treatment",
         "defaults": {
           "time_col": "treatmentoffset",
@@ -4394,7 +4397,7 @@
         ]
       },
       {
-        "file": "vitalAperiodic.csv.gz",
+        "files": "vitalAperiodic.csv.gz",
         "name": "vitalaperiodic",
         "defaults": {
           "time_col": "observationoffset"
@@ -4468,7 +4471,7 @@
         ]
       },
       {
-        "file": "vitalPeriodic.csv.gz",
+        "files": "vitalPeriodic.csv.gz",
         "name": "vitalperiodic",
         "defaults": {
           "time_col": "observationoffset"
@@ -4571,7 +4574,8 @@
           }
         ],
         "partitioning": {
-          "patientunitstayid": [0, 1775421, 999999999]
+          "col": "patientunitstayid",
+          "breaks": [0, 1775421, 999999999]
         }
       }
     ]
@@ -4588,7 +4592,7 @@
     },
     "tables": [
       {
-        "file": "ADMISSIONS.csv.gz",
+        "files": "ADMISSIONS.csv.gz",
         "name": "admissions",
         "defaults": {
           "val_col": "admission_type"
@@ -4698,7 +4702,7 @@
         ]
       },
       {
-        "file": "CALLOUT.csv.gz",
+        "files": "CALLOUT.csv.gz",
         "name": "callout",
         "defaults": {
           "time_col": "callout_outcome",
@@ -4835,7 +4839,7 @@
         ]
       },
       {
-        "file": "CAREGIVERS.csv.gz",
+        "files": "CAREGIVERS.csv.gz",
         "name": "caregivers",
         "defaults": {
           "id_col": "cgid",
@@ -4866,7 +4870,7 @@
         ]
       },
       {
-        "file": "CHARTEVENTS.csv.gz",
+        "files": "CHARTEVENTS.csv.gz",
         "name": "chartevents",
         "defaults": {
           "time_col": "charttime",
@@ -4954,11 +4958,12 @@
           }
         ],
         "partitioning": {
-          "itemid": [0, 127, 210, 425, 549, 643, 741, 1483, 3458, 3695, 8440, 8553, 220274, 223921, 224085, 224859, 227629, 999999999]
+          "col": "itemid",
+          "breaks": [0, 127, 210, 425, 549, 643, 741, 1483, 3458, 3695, 8440, 8553, 220274, 223921, 224085, 224859, 227629, 999999999]
         }
       },
       {
-        "file": "CPTEVENTS.csv.gz",
+        "files": "CPTEVENTS.csv.gz",
         "name": "cptevents",
         "defaults": {
           "time_col": "chartdate",
@@ -5030,7 +5035,7 @@
         ]
       },
       {
-        "file": "D_CPT.csv.gz",
+        "files": "D_CPT.csv.gz",
         "name": "d_cpt",
         "defaults": {
           "id_col": "subsectionrange",
@@ -5086,7 +5091,7 @@
         ]
       },
       {
-        "file": "D_ICD_DIAGNOSES.csv.gz",
+        "files": "D_ICD_DIAGNOSES.csv.gz",
         "name": "d_icd_diagnoses",
         "defaults": {
           "id_col": "icd9_code",
@@ -5117,7 +5122,7 @@
         ]
       },
       {
-        "file": "D_ICD_PROCEDURES.csv.gz",
+        "files": "D_ICD_PROCEDURES.csv.gz",
         "name": "d_icd_procedures",
         "defaults": {
           "id_col": "icd9_code",
@@ -5148,7 +5153,7 @@
         ]
       },
       {
-        "file": "D_ITEMS.csv.gz",
+        "files": "D_ITEMS.csv.gz",
         "name": "d_items",
         "defaults": {
           "id_col": "itemid",
@@ -5209,7 +5214,7 @@
         ]
       },
       {
-        "file": "D_LABITEMS.csv.gz",
+        "files": "D_LABITEMS.csv.gz",
         "name": "d_labitems",
         "defaults": {
           "id_col": "itemid",
@@ -5250,7 +5255,7 @@
         ]
       },
       {
-        "file": "DATETIMEEVENTS.csv.gz",
+        "files": "DATETIMEEVENTS.csv.gz",
         "name": "datetimeevents",
         "defaults": {
           "time_col": "charttime",
@@ -5334,7 +5339,7 @@
         ]
       },
       {
-        "file": "DIAGNOSES_ICD.csv.gz",
+        "files": "DIAGNOSES_ICD.csv.gz",
         "name": "diagnoses_icd",
         "defaults": {
           "val_col": "icd9_code"
@@ -5369,7 +5374,7 @@
         ]
       },
       {
-        "file": "DRGCODES.csv.gz",
+        "files": "DRGCODES.csv.gz",
         "name": "drgcodes",
         "defaults": {
           "val_col": "drg_code"
@@ -5419,7 +5424,7 @@
         ]
       },
       {
-        "file": "ICUSTAYS.csv.gz",
+        "files": "ICUSTAYS.csv.gz",
         "name": "icustays",
         "defaults": {
           "time_col": "intime",
@@ -5492,7 +5497,7 @@
         ]
       },
       {
-        "file": "INPUTEVENTS_CV.csv.gz",
+        "files": "INPUTEVENTS_CV.csv.gz",
         "name": "inputevents_cv",
         "defaults": {
           "time_col": "charttime",
@@ -5616,7 +5621,7 @@
         ]
       },
       {
-        "file": "INPUTEVENTS_MV.csv.gz",
+        "files": "INPUTEVENTS_MV.csv.gz",
         "name": "inputevents_mv",
         "defaults": {
           "time_col": "starttime",
@@ -5787,7 +5792,7 @@
         ]
       },
       {
-        "file": "LABEVENTS.csv.gz",
+        "files": "LABEVENTS.csv.gz",
         "name": "labevents",
         "defaults": {
           "time_col": "charttime",
@@ -5845,7 +5850,7 @@
         ]
       },
       {
-        "file": "MICROBIOLOGYEVENTS.csv.gz",
+        "files": "MICROBIOLOGYEVENTS.csv.gz",
         "name": "microbiologyevents",
         "defaults": {
           "time_col": "chartdate",
@@ -5938,7 +5943,7 @@
         ]
       },
       {
-        "file": "NOTEEVENTS.csv.gz",
+        "files": "NOTEEVENTS.csv.gz",
         "name": "noteevents",
         "defaults": {
           "time_col": "chartdate",
@@ -6007,7 +6012,7 @@
         ]
       },
       {
-        "file": "OUTPUTEVENTS.csv.gz",
+        "files": "OUTPUTEVENTS.csv.gz",
         "name": "outputevents",
         "defaults": {
           "time_col": "charttime",
@@ -6086,7 +6091,7 @@
         ]
       },
       {
-        "file": "PATIENTS.csv.gz",
+        "files": "PATIENTS.csv.gz",
         "name": "patients",
         "defaults": {
           "val_col": "expire_flag"
@@ -6140,7 +6145,7 @@
         ]
       },
       {
-        "file": "PRESCRIPTIONS.csv.gz",
+        "files": "PRESCRIPTIONS.csv.gz",
         "name": "prescriptions",
         "defaults": {
           "time_col": "startdate",
@@ -6249,7 +6254,7 @@
         ]
       },
       {
-        "file": "PROCEDUREEVENTS_MV.csv.gz",
+        "files": "PROCEDUREEVENTS_MV.csv.gz",
         "name": "procedureevents_mv",
         "defaults": {
           "time_col": "starttime",
@@ -6390,7 +6395,7 @@
         ]
       },
       {
-        "file": "PROCEDURES_ICD.csv.gz",
+        "files": "PROCEDURES_ICD.csv.gz",
         "name": "procedures_icd",
         "defaults": {
           "val_col": "icd9_code"
@@ -6425,7 +6430,7 @@
         ]
       },
       {
-        "file": "SERVICES.csv.gz",
+        "files": "SERVICES.csv.gz",
         "name": "services",
         "defaults": {
           "time_col": "transfertime",
@@ -6467,7 +6472,7 @@
         ]
       },
       {
-        "file": "TRANSFERS.csv.gz",
+        "files": "TRANSFERS.csv.gz",
         "name": "transfers",
         "defaults": {
           "time_col": "intime",
@@ -6558,7 +6563,7 @@
     },
     "tables": [
       {
-        "file": "admissions.csv",
+        "files": "admissions.csv",
         "name": "admissions",
         "defaults": {
           "val_col": "admission_type"
@@ -6667,7 +6672,7 @@
         ]
       },
       {
-        "file": "callout.csv",
+        "files": "callout.csv",
         "name": "callout",
         "defaults": {
           "time_col": "callout_outcome",
@@ -6803,7 +6808,7 @@
         ]
       },
       {
-        "file": "caregivers.csv",
+        "files": "caregivers.csv",
         "name": "caregivers",
         "defaults": {
           "id_col": "cgid",
@@ -6833,7 +6838,7 @@
         ]
       },
       {
-        "file": "chartevents.csv",
+        "files": "chartevents.csv",
         "name": "chartevents",
         "defaults": {
           "time_col": "charttime",
@@ -6920,11 +6925,12 @@
           }
         ],
         "partitioning": {
-          "itemid": [0, 100000, 999999999]
+          "col": "itemid",
+          "breaks": [0, 100000, 999999999]
         }
       },
       {
-        "file": "cptevents.csv",
+        "files": "cptevents.csv",
         "name": "cptevents",
         "defaults": {
           "time_col": "chartdate",
@@ -6995,7 +7001,7 @@
         ]
       },
       {
-        "file": "d_cpt.csv",
+        "files": "d_cpt.csv",
         "name": "d_cpt",
         "defaults": {
           "id_col": "subsectionrange",
@@ -7050,7 +7056,7 @@
         ]
       },
       {
-        "file": "d_icd_diagnoses.csv",
+        "files": "d_icd_diagnoses.csv",
         "name": "d_icd_diagnoses",
         "defaults": {
           "id_col": "icd9_code",
@@ -7080,7 +7086,7 @@
         ]
       },
       {
-        "file": "d_icd_procedures.csv",
+        "files": "d_icd_procedures.csv",
         "name": "d_icd_procedures",
         "defaults": {
           "id_col": "icd9_code",
@@ -7110,7 +7116,7 @@
         ]
       },
       {
-        "file": "d_items.csv",
+        "files": "d_items.csv",
         "name": "d_items",
         "defaults": {
           "id_col": "itemid",
@@ -7170,7 +7176,7 @@
         ]
       },
       {
-        "file": "d_labitems.csv",
+        "files": "d_labitems.csv",
         "name": "d_labitems",
         "defaults": {
           "id_col": "itemid",
@@ -7210,7 +7216,7 @@
         ]
       },
       {
-        "file": "datetimeevents.csv",
+        "files": "datetimeevents.csv",
         "name": "datetimeevents",
         "defaults": {
           "time_col": "charttime",
@@ -7293,7 +7299,7 @@
         ]
       },
       {
-        "file": "diagnoses_icd.csv",
+        "files": "diagnoses_icd.csv",
         "name": "diagnoses_icd",
         "defaults": {
           "val_col": "icd9_code"
@@ -7327,7 +7333,7 @@
         ]
       },
       {
-        "file": "drgcodes.csv",
+        "files": "drgcodes.csv",
         "name": "drgcodes",
         "defaults": {
           "val_col": "drg_code"
@@ -7376,7 +7382,7 @@
         ]
       },
       {
-        "file": "icustays.csv",
+        "files": "icustays.csv",
         "name": "icustays",
         "defaults": {
           "time_col": "intime",
@@ -7448,7 +7454,7 @@
         ]
       },
       {
-        "file": "inputevents_cv.csv",
+        "files": "inputevents_cv.csv",
         "name": "inputevents_cv",
         "defaults": {
           "time_col": "charttime",
@@ -7571,7 +7577,7 @@
         ]
       },
       {
-        "file": "inputevents_mv.csv",
+        "files": "inputevents_mv.csv",
         "name": "inputevents_mv",
         "defaults": {
           "time_col": "starttime",
@@ -7741,7 +7747,7 @@
         ]
       },
       {
-        "file": "labevents.csv",
+        "files": "labevents.csv",
         "name": "labevents",
         "defaults": {
           "time_col": "charttime",
@@ -7798,7 +7804,7 @@
         ]
       },
       {
-        "file": "microbiologyevents.csv",
+        "files": "microbiologyevents.csv",
         "name": "microbiologyevents",
         "defaults": {
           "time_col": "chartdate",
@@ -7890,7 +7896,7 @@
         ]
       },
       {
-        "file": "outputevents.csv",
+        "files": "outputevents.csv",
         "name": "outputevents",
         "defaults": {
           "time_col": "charttime",
@@ -7968,7 +7974,7 @@
         ]
       },
       {
-        "file": "patients.csv",
+        "files": "patients.csv",
         "name": "patients",
         "defaults": {
           "val_col": "expire_flag"
@@ -8021,7 +8027,7 @@
         ]
       },
       {
-        "file": "prescriptions.csv",
+        "files": "prescriptions.csv",
         "name": "prescriptions",
         "defaults": {
           "time_col": "startdate",
@@ -8129,7 +8135,7 @@
         ]
       },
       {
-        "file": "procedureevents_mv.csv",
+        "files": "procedureevents_mv.csv",
         "name": "procedureevents_mv",
         "defaults": {
           "time_col": "starttime",
@@ -8269,7 +8275,7 @@
         ]
       },
       {
-        "file": "procedures_icd.csv",
+        "files": "procedures_icd.csv",
         "name": "procedures_icd",
         "defaults": {
           "val_col": "icd9_code"
@@ -8303,7 +8309,7 @@
         ]
       },
       {
-        "file": "services.csv",
+        "files": "services.csv",
         "name": "services",
         "defaults": {
           "time_col": "transfertime",
@@ -8344,7 +8350,7 @@
         ]
       },
       {
-        "file": "transfers.csv",
+        "files": "transfers.csv",
         "name": "transfers",
         "defaults": {
           "time_col": "intime",
@@ -8432,7 +8438,7 @@
     },
     "tables": [
       {
-        "file": "general.csv.gz",
+        "files": "general.csv.gz",
         "name": "general",
         "defaults": [],
         "cols": [
@@ -8460,7 +8466,7 @@
         ]
       },
       {
-        "file": "observations.csv.gz",
+        "files": ["observations_1.csv.gz", "observations_2.csv.gz", "observations_3.csv.gz"],
         "name": "observations",
         "defaults": {
           "time_col": "datetime",
@@ -8511,11 +8517,12 @@
           }
         ],
         "partitioning": {
-          "patientid": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16]
+          "col": "patientid",
+          "breaks": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16]
         }
       },
       {
-        "file": "ordinal.csv.gz",
+        "files": "ordinal.csv.gz",
         "name": "ordinal",
         "defaults": [],
         "cols": [
@@ -8537,7 +8544,7 @@
         ]
       },
       {
-        "file": "pharma.csv.gz",
+        "files": "pharma.csv.gz",
         "name": "pharma",
         "defaults": {
           "time_col": "givenat",

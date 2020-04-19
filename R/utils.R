@@ -27,6 +27,8 @@
 #'
 #' @param subdir A string specifying a directory that will be made sure to
 #' exist below the data directory.
+#' @param create Logical flag indicating whether to create the specified
+#' directory
 #'
 #' @rdname file_utils
 #'
@@ -65,27 +67,29 @@ data_dir <- function(subdir = NULL, create = TRUE) {
   }
 
   if (create) {
-    res <- ensure_dir(res)
+    res <- ensure_dirs(res)
   }
 
   res
 }
 
-ensure_dir <- function(paths) {
+ensure_dirs <- function(paths) {
 
-  is_dir <- file.info(paths, extra_cols = FALSE)[["isdir"]]
+  uq_paths <- unique(paths)
+
+  is_dir <- file.info(uq_paths, extra_cols = FALSE)[["isdir"]]
   is_no_dir <- lgl_ply(is_dir, identical, FALSE)
 
   if (any(is_no_dir)) {
     stop("The following path(s) exist(s) but not as directory:\n  ",
-         paste(paths[is_no_dir], collapse = "\n  "))
+         paste(uq_paths[is_no_dir], collapse = "\n  "))
   }
 
-  dirs_to_create <- paths[is.na(is_dir)]
+  dirs_to_create <- uq_paths[is.na(is_dir)]
 
   if (length(dirs_to_create) > 0L) {
 
-    res <- dir.create(dirs_to_create, recursive = TRUE)
+    res <- lgl_ply(dirs_to_create, dir.create, recursive = TRUE)
 
     if (!all(res)) {
       stop("The following directorie(s) could not be created:\n  ",
@@ -336,6 +340,14 @@ chr_ply <- function(x, fun, ..., length = 1L, use_names = FALSE) {
 
 lgl_ply <- function(x, fun, ..., length = 1L, use_names = FALSE) {
   vapply(x, fun, logical(length), ..., USE.NAMES = use_names)
+}
+
+int_ply <- function(x, fun, ..., length = 1L, use_names = FALSE) {
+  vapply(x, fun, integer(length), ..., USE.NAMES = use_names)
+}
+
+dbl_ply <- function(x, fun, ..., length = 1L, use_names = FALSE) {
+  vapply(x, fun, double(length), ..., USE.NAMES = use_names)
 }
 
 map <- function(f, ...) Map(f, ..., USE.NAMES = FALSE)
