@@ -213,28 +213,50 @@ agg_or_na <- function(agg_fun) {
   }
 }
 
+#' @rdname utils
 #' @export
+#'
 min_or_na <- agg_or_na(min)
 
+#' @rdname utils
 #' @export
+#'
 max_or_na <- agg_or_na(max)
 
+#' @rdname utils
 #' @export
+#'
 sum_or_na <- agg_or_na(sum)
 
+#' Difftime utilities
+#'
+#' Utility functions for working with [base::difftime()] objects.
+#'
+#' @param x Object to test/coerce
+#'
+#' @rdname difftime
 #' @export
+#'
 secs <- function(x) as.difftime(x, units = "secs")
 
+#' @rdname difftime
 #' @export
+#'
 mins <- function(x) as.difftime(x, units = "mins")
 
+#' @rdname difftime
 #' @export
+#'
 hours <- function(x) as.difftime(x, units = "hours")
 
+#' @rdname difftime
 #' @export
+#'
 days <- function(x) as.difftime(x, units = "days")
 
+#' @rdname difftime
 #' @export
+#'
 weeks <- function(x) as.difftime(x, units = "weeks")
 
 re_time <- function(x, interval) {
@@ -245,13 +267,30 @@ reduce <- function(f, x, ...) Reduce(function(x, y) f(x, y, ...), x)
 
 round_to <- function(x, to = 1) if (to == 1) trunc(x) else to * trunc(x / to)
 
+#' Utility functions
+#'
+#' Various utility functions
+#'
+#' @param x Object to test
+#'
+#' @rdname utils
 #' @export
+#'
 is_val <- function(x, val) !is.na(x) & x == val
 
+#' @rdname utils
 #' @export
+#'
 is_true <- function(x) !is.na(x) & x
 
+#' @rdname utils
+#' @export
+#'
 last_elem <- function(x) x[length(x)]
+
+#' @rdname utils
+#' @export
+#'
 first_elem <- function(x) x[1L]
 
 cat_line <- function(...) {
@@ -281,6 +320,9 @@ carry_backwards <- function(x) {
   res
 }
 
+#' @rdname utils
+#' @export
+#'
 replace_na <- function(x, val) replace(x, is.na(x), val)
 
 split_indices <- function(len, n_chunks) {

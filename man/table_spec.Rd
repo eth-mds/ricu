@@ -75,6 +75,8 @@ get_part_fun(x, orig_names = FALSE)
 \arguments{
 \item{table}{String valued table name}
 
+\item{files}{A character vector of file names}
+
 \item{cols}{List containing a list per column each holding string valued
 entries \code{name} (column name as used by \code{ricu}), \code{col} (column name as used
 in the raw data) and \code{spec} (name of \code{\link[readr:cols]{readr::cols()}} column specification).
@@ -88,8 +90,6 @@ vector of numeric values that are passed as \code{vec} argument to
 \code{base::findInterval()}}
 
 \item{x}{Object to test/coerce}
-
-\item{fies}{A character vector of file names}
 }
 \description{
 Used when importing a data source, a table specification defines column

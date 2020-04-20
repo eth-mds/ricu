@@ -10,6 +10,15 @@ new_id_meta <- function(tbl_id) {
 is_id_meta <- function(x) inherits(x, "id_meta")
 
 #' @export
+as_id_meta <- function(x) UseMethod("as_id_meta", x)
+
+#' @export
+as_id_meta.id_meta <- function(x) x
+
+#' @export
+as_id_meta.ts_meta <- function(x) new_id_meta(tbl_id(x))
+
+#' @export
 meta_cols.id_meta <- function(x) id(x)
 
 #' @export

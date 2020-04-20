@@ -5,18 +5,3 @@
 #' @importFrom stats setNames na.omit median sd var
 #' @importFrom utils str head tail
 NULL
-
-#' @export mimic
-NULL
-
-#' @export mimic_demo
-NULL
-
-#' @export eicu
-NULL
-
-#' @export eicu_demo
-NULL
-
-#' @export hirid
-NULL

@@ -49,10 +49,19 @@ reclass_tbl <- function(x, meta) {
   x <- set_meta(x, meta, stop_on_fail = FALSE)
 
   if (has_attr(x, "tbl_meta")) {
-    x <- set_class(x, meta)
+    return(set_class(x, meta))
   }
 
-  x
+  if (is_ts_meta(meta)) {
+    meta <- as_id_meta(meta)
+    x <- set_meta(x, meta, stop_on_fail = FALSE)
+  }
+
+  if (has_attr(x, "tbl_meta")) {
+    set_class(x, meta)
+  } else {
+    x
+  }
 }
 
 #' @export

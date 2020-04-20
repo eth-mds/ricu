@@ -205,7 +205,7 @@ as_col_defaults.src_config <- function(x) x[["col_defaults"]]
 #' names and optionally a number of expected rows and a partitioning scheme.
 #'
 #' @param table String valued table name
-#' @param fies A character vector of file names
+#' @param files A character vector of file names
 #' @param cols List containing a list per column each holding string valued
 #' entries `name` (column name as used by `ricu`), `col` (column name as used
 #' in the raw data) and `spec` (name of [readr::cols()] column specification).

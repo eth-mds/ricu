@@ -327,16 +327,8 @@ sofa_window <- function(tbl,
                         dopa_win_fun  = max_or_na, norepi_win_fun = max_or_na,
                         dobu_win_fun  = max_or_na, epi_win_fun    = max_or_na,
                         gcs_win_fun   = min_or_na, crea_win_fun   = max_or_na,
-                        urine_win_fun = min_or_na, single_win = FALSE,
+                        urine_win_fun = min_or_na, explicit_wins  = FALSE,
                         worst_win_length = hours(24L)) {
-
-  filter_max <- function(time, dat) {
-    dat[time >= max(time) - worst_win_length, ]
-  }
-
-  filter_fix <- function(time, dat) {
-    dat[time >= single_win - worst_win_length, ]
-  }
 
   need_cols <- c("pafi", "coag", "bili", "map", "dopa", "norepi", "dobu",
                  "epi", "gcs", "crea", "urine")
@@ -362,26 +354,29 @@ sofa_window <- function(tbl,
     )
   )
 
-  if (isFALSE(single_win)) {
+  if (isFALSE(explicit_wins)) {
 
     res <- fill_gaps(tbl)
     res <- slide_quo(res, expr, before = worst_win_length, full_window = FALSE)
 
   } else {
 
-    id_col <- id(tbl)
+    if (isTRUE(explicit_wins)) {
 
-    if (isTRUE(single_win)) {
-      res <- tbl[, filter_max(get(index(tbl)), .SD), by = id_col,
-                 .SDcols = data_cols(tbl)]
+      ind <- index(tbl)
+
+      win <- tbl[, list(max_time = max(get(ind))), by = c(id(tbl))]
+      win <- win[, c("min_time") := get("max_time") - worst_win_length]
+
+      res <- hop_quo(tbl, expr, win)
+
     } else {
-      assert_that(is_time(single_win))
-      res <- tbl[, filter_fix(get(index(tbl)), .SD), by = id_col,
-                 .SDcols = data_cols(tbl)]
-    }
 
-    res <- res[, eval(expr), by = id_col]
-    res <- as_id_tbl(res, id_col, id_opts(tbl))
+      assert_that(is_time_vec(explicit_wins))
+
+      res <- slide_index_quo(res, expr, explicit_wins,
+                             before = worst_win_length, full_window = FALSE)
+    }
   }
 
   rename_cols(res, need_cols, paste0(need_cols, "_win"))

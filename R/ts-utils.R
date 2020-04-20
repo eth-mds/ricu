@@ -79,47 +79,76 @@ fill_gaps <- function(x, limits = NULL, ...) {
 slide <- function(tbl, expr, ...) slide_quo(tbl, substitute(expr), ...)
 
 #' @export
-slide_quo <- function(x, expr, before, after = hours(0L),
-                      full_window = FALSE) {
+slide_quo <- function(x, expr, before, after = hours(0L), ...) {
 
-  assert_that(is_ts_tbl(x), is_unique(x), is.flag(full_window),
-              is_time(before, allow_neg = FALSE),
+  assert_that(is_time(before, allow_neg = FALSE),
               is_time(after, allow_neg = FALSE))
 
-  time_col <- index(x)
-  id_cols  <- id(x)
-  time_unit <- time_unit(x)
-
-  units(before) <- time_unit
-  units(after)  <- time_unit
+  id_cols <- id(x)
+  ind_col <- index(x)
 
   join <- x[,
-    c(mget(id_cols), list(min_time = get(time_col) - before,
-                          max_time = get(time_col) + after))
+    c(mget(id_cols), list(min_time = get(ind_col) - before,
+                          max_time = get(ind_col) + after))
   ]
+
+  hop_quo(x, expr, join, ..., lwr_col = "min_time", upr_col = "max_time")
+}
+
+#' @export
+slide_index <- function(tbl, expr, ...) {
+  slide_index_quo(tbl, substitute(expr), ...)
+}
+
+#' @export
+slide_index_quo <- function(x, expr, index, before, after = hours(0L), ...) {
+
+  assert_that(is_time_vec(index), is_time(before, allow_neg = FALSE),
+              is_time(after, allow_neg = FALSE))
+
+  join <- x[, list(min_time = index - before,
+                   max_time = index + after), by = c(id(x))]
+
+  hop_quo(x, expr, join, ..., lwr_col = "min_time", upr_col = "max_time")
+}
+
+#' @export
+hop <- function(tbl, expr, ...) hop_quo(tbl, substitute(expr), ...)
+
+#' @export
+hop_quo <- function(x, expr, windows, full_window = FALSE,
+                    lwr_col = "min_time", upr_col = "max_time") {
+
+  assert_that(is_ts_tbl(x), is_unique(x), is.flag(full_window),
+              is_icu_tbl(windows), has_name(windows, c(lwr_col, upr_col)))
+
+  win_id <- id(windows)
+  tbl_id <- id(x)
 
   if (full_window) {
 
-    extremes <- x[, list(grp_min = min(get(time_col)),
-                         grp_max = max(get(time_col))),
-                  by = id_cols]
+    extremes <- x[, list(grp_min = min(get(index(x))),
+                         grp_max = max(get(index(x)))),
+                  by = tbl_id]
 
-    join <- extremes[join, on = c(id_cols, "grp_min <= min_time",
-                                           "grp_max >= max_time"),
-                     nomatch = NULL]
+    join <- c(paste(tbl_id, "==", win_id), paste("grp_min <=", lwr_col),
+                                           paste("grp_max >=", upr_col))
 
-    setnames(join, c(id_cols, "min_time", "max_time"))
+    windows <- extremes[windows, on = join, nomatch = NULL]
+    windows <- as_id_tbl(rename_cols(windows, c(win_id, lwr_col, upr_col)),
+                         id = win_id)
   }
 
+  tbl_ind <- index(x)
+
   tmp_col <- new_names(x)
-  set(x, j = tmp_col, value = x[[time_col]])
+  set(x, j = tmp_col, value = x[[tbl_ind]])
   on.exit(set(x, j = tmp_col, value = NULL))
 
-  on_clauses <- c(
-    id_cols, paste(time_col, "<= max_time"), paste(tmp_col, ">= min_time")
-  )
+  join <- c(paste(tbl_id, "==", win_id), paste(tbl_ind, "<=", upr_col),
+                                         paste(tmp_col, ">=", lwr_col))
 
-  res <- x[join, eval(expr), on = on_clauses, by = .EACHI, nomatch = NULL]
+  res <- x[windows, eval(expr), on = join, by = .EACHI, nomatch = NULL]
 
   assert_that(is_unique(res))
 

@@ -70,6 +70,26 @@ attach_source.src_config <- function(x, dir = NULL, assign_env = .GlobalEnv,
   invisible(NULL)
 }
 
+#' @export mimic
+#'
+NULL
+
+#' @export mimic_demo
+#'
+NULL
+
+#' @export eicu
+#'
+NULL
+
+#' @export eicu_demo
+#'
+NULL
+
+#' @export hirid
+#'
+NULL
+
 attach_data_env <- function(x, dir) {
 
   assert_that(is_src_config(x), is.string(dir))
