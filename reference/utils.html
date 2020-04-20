@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Load data items — load_items • ricu</title>
+<title>Utility functions — min_or_na • ricu</title>
 
 
 <!-- jquery -->
@@ -39,8 +39,8 @@
 
 
 
-<meta property="og:title" content="Load data items — load_items" />
-<meta property="og:description" content="Load data specified as data item objects." />
+<meta property="og:title" content="Utility functions — min_or_na" />
+<meta property="og:description" content="Various utility functions" />
 
 
 
@@ -108,68 +108,37 @@
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Load data items</h1>
-    <small class="dont-index">Source: <a href='https://github.com/septic-tank/ricu/blob/master/R/concept-load.R'><code>R/concept-load.R</code></a></small>
-    <div class="hidden name"><code>load_item.Rd</code></div>
+    <h1>Utility functions</h1>
+    <small class="dont-index">Source: <a href='https://github.com/septic-tank/ricu/blob/master/R/utils.R'><code>R/utils.R</code></a></small>
+    <div class="hidden name"><code>utils.Rd</code></div>
     </div>
 
     <div class="ref-description">
-    <p>Load data specified as data <code>item</code> objects.</p>
+    <p>Various utility functions</p>
     </div>
 
-    <pre class="usage"><span class='fu'>load_items</span>(<span class='no'>items</span>, <span class='kw'>units</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='no'>...</span>)
+    <pre class="usage"><span class='fu'>min_or_na</span>(<span class='no'>x</span>)
 
-<span class='fu'>load_item</span>(
-  <span class='no'>item</span>,
-  <span class='kw'>unit</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>id_type</span> <span class='kw'>=</span> <span class='st'>"icustay"</span>,
-  <span class='kw'>patient_ids</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>interval</span> <span class='kw'>=</span> <span class='fu'><a href='difftime.html'>hours</a></span>(<span class='fl'>1L</span>),
-  <span class='kw'>cfg</span> <span class='kw'>=</span> <span class='fu'><a href='get_src_config.html'>get_src_config</a></span>(<span class='no'>item</span>)
-)</pre>
+<span class='fu'>max_or_na</span>(<span class='no'>x</span>)
+
+<span class='fu'>sum_or_na</span>(<span class='no'>x</span>)
+
+<span class='fu'>is_val</span>(<span class='no'>x</span>, <span class='no'>val</span>)
+
+<span class='fu'>is_true</span>(<span class='no'>x</span>)
+
+<span class='fu'>last_elem</span>(<span class='no'>x</span>)
+
+<span class='fu'>first_elem</span>(<span class='no'>x</span>)
+
+<span class='fu'>replace_na</span>(<span class='no'>x</span>, <span class='no'>val</span>)</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
-      <th>items</th>
-      <td><p>Vector of data <code>item</code> objects</p></td>
-    </tr>
-    <tr>
-      <th>units</th>
-      <td><p>Character vector of units (one per data item)</p></td>
-    </tr>
-    <tr>
-      <th>...</th>
-      <td><p>Passed on to <code>load_item()</code></p></td>
-    </tr>
-    <tr>
-      <th>item</th>
-      <td><p>Single <code>item</code> object</p></td>
-    </tr>
-    <tr>
-      <th>unit</th>
-      <td><p>String describing the unit of measurement of the given item</p></td>
-    </tr>
-    <tr>
-      <th>id_type</th>
-      <td><p>String specifying the patient id type to return</p></td>
-    </tr>
-    <tr>
-      <th>patient_ids</th>
-      <td><p>Optional vector of patient ids to subset the fetched data
-with</p></td>
-    </tr>
-    <tr>
-      <th>interval</th>
-      <td><p>The time interval used to discretize time stamps with,
-specified as <code><a href='https://rdrr.io/r/base/difftime.html'>base::difftime()</a></code> object</p></td>
-    </tr>
-    <tr>
-      <th>cfg</th>
-      <td><p>Configuration list used for determining default options for
-<code>id_col</code> and <code>time_col</code> arguments, id options as well as the <code>data_fun</code>
-argument</p></td>
+      <th>x</th>
+      <td><p>Object to test</p></td>
     </tr>
     </table>
 

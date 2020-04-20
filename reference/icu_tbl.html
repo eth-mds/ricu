@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Load data items — load_items • ricu</title>
+<title>Tabular ICU data — id_tbl • ricu</title>
 
 
 <!-- jquery -->
@@ -39,8 +39,9 @@
 
 
 
-<meta property="og:title" content="Load data items — load_items" />
-<meta property="og:description" content="Load data specified as data item objects." />
+<meta property="og:title" content="Tabular ICU data — id_tbl" />
+<meta property="og:description" content="Two objects central to ricu, id_tbl and ts_tbl (both inheriting
+from icu_tbl) are used to represent tabular data." />
 
 
 
@@ -108,68 +109,57 @@
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Load data items</h1>
-    <small class="dont-index">Source: <a href='https://github.com/septic-tank/ricu/blob/master/R/concept-load.R'><code>R/concept-load.R</code></a></small>
-    <div class="hidden name"><code>load_item.Rd</code></div>
+    <h1>Tabular ICU data</h1>
+    <small class="dont-index">Source: <a href='https://github.com/septic-tank/ricu/blob/master/R/tbl-id.R'><code>R/tbl-id.R</code></a></small>
+    <div class="hidden name"><code>icu_tbl.Rd</code></div>
     </div>
 
     <div class="ref-description">
-    <p>Load data specified as data <code>item</code> objects.</p>
+    <p>Two objects central to <code>ricu</code>, <code>id_tbl</code> and <code>ts_tbl</code> (both inheriting
+from <code>icu_tbl</code>) are used to represent tabular data.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>load_items</span>(<span class='no'>items</span>, <span class='kw'>units</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='no'>...</span>)
+    <pre class="usage"><span class='fu'>id_tbl</span>(<span class='no'>...</span>, <span class='no'>id</span>, <span class='kw'>id_opts</span> <span class='kw'>=</span> <span class='kw'>NULL</span>)
 
-<span class='fu'>load_item</span>(
-  <span class='no'>item</span>,
-  <span class='kw'>unit</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>id_type</span> <span class='kw'>=</span> <span class='st'>"icustay"</span>,
-  <span class='kw'>patient_ids</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>interval</span> <span class='kw'>=</span> <span class='fu'><a href='difftime.html'>hours</a></span>(<span class='fl'>1L</span>),
-  <span class='kw'>cfg</span> <span class='kw'>=</span> <span class='fu'><a href='get_src_config.html'>get_src_config</a></span>(<span class='no'>item</span>)
-)</pre>
+<span class='co'># S3 method for id_tbl</span>
+<span class='fu'>as_id_tbl</span>(<span class='no'>x</span>, <span class='no'>...</span>)
+
+<span class='co'># S3 method for default</span>
+<span class='fu'>as_id_tbl</span>(<span class='no'>x</span>, <span class='no'>id</span>, <span class='kw'>id_opts</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='no'>...</span>)
+
+<span class='co'># S3 method for id_tbl</span>
+<span class='fu'>as_ts_tbl</span>(<span class='no'>x</span>, <span class='kw'>index</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>interval</span> <span class='kw'>=</span> <span class='fu'><a href='difftime.html'>hours</a></span>(<span class='fl'>1L</span>), <span class='no'>...</span>)
+
+<span class='fu'>is_id_tbl</span>(<span class='no'>x</span>)</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
-      <th>items</th>
-      <td><p>Vector of data <code>item</code> objects</p></td>
-    </tr>
-    <tr>
-      <th>units</th>
-      <td><p>Character vector of units (one per data item)</p></td>
-    </tr>
-    <tr>
       <th>...</th>
-      <td><p>Passed on to <code>load_item()</code></p></td>
+      <td><p>forwarded to <code><a href='https://Rdatatable.gitlab.io/data.table/reference/data.table.html'>data.table::data.table()</a></code> or generic consistency</p></td>
     </tr>
     <tr>
-      <th>item</th>
-      <td><p>Single <code>item</code> object</p></td>
+      <th>id</th>
+      <td><p>String valued column name used as <code>id</code> column</p></td>
     </tr>
     <tr>
-      <th>unit</th>
-      <td><p>String describing the unit of measurement of the given item</p></td>
+      <th>id_opts</th>
+      <td><p><code>NULL</code> or a named character vector indicating options to
+which ids may be converted <code>see change_id()</code></p></td>
     </tr>
     <tr>
-      <th>id_type</th>
-      <td><p>String specifying the patient id type to return</p></td>
+      <th>x</th>
+      <td><p>Object to test/coerce</p></td>
     </tr>
     <tr>
-      <th>patient_ids</th>
-      <td><p>Optional vector of patient ids to subset the fetched data
-with</p></td>
+      <th>index</th>
+      <td><p>String valued column name used as index</p></td>
     </tr>
     <tr>
       <th>interval</th>
-      <td><p>The time interval used to discretize time stamps with,
-specified as <code><a href='https://rdrr.io/r/base/difftime.html'>base::difftime()</a></code> object</p></td>
-    </tr>
-    <tr>
-      <th>cfg</th>
-      <td><p>Configuration list used for determining default options for
-<code>id_col</code> and <code>time_col</code> arguments, id options as well as the <code>data_fun</code>
-argument</p></td>
+      <td><p>Scalar <code>difftime</code> object representing the minimal time
+difference between rows</p></td>
     </tr>
     </table>
 
