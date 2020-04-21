@@ -391,14 +391,14 @@
     "sources": {
       "eicu": [
         {
-          "ids": "Bilirubin, Direct",
+          "ids": "direct bilirubin",
           "table": "lab",
           "column": "labname"
         }
       ],
       "eicu_demo": [
         {
-          "ids": "Bilirubin, Direct",
+          "ids": "direct bilirubin",
           "table": "lab",
           "column": "labname"
         }
@@ -645,20 +645,6 @@
           "ids": 24000526,
           "table": "observations",
           "column": "variableid"
-        }
-      ],
-      "mimic": [
-        {
-          "ids": 0,
-          "table": "labevents",
-          "column": "itemid"
-        }
-      ],
-      "mimic_demo": [
-        {
-          "ids": 0,
-          "table": "labevents",
-          "column": "itemid"
         }
       ]
     }
@@ -1899,12 +1885,20 @@
         {
           "table": "vitalperiodic",
           "column": "systemicmean"
+        },
+        {
+          "table": "vitalaperiodic",
+          "column": "noninvasivemean"
         }
       ],
       "eicu_demo": [
         {
           "table": "vitalperiodic",
           "column": "systemicmean"
+        },
+        {
+          "table": "vitalaperiodic",
+          "column": "noninvasivemean"
         }
       ],
       "hirid": [

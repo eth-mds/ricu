@@ -52,7 +52,8 @@ cfg <- list(
              table = "chartevents", column = "itemid")
       ),
       eicu = list(
-        list(table = "vitalperiodic", column = "systemicmean")
+        list(table = "vitalperiodic", column = "systemicmean"),
+        list(table = "vitalaperiodic", column = "noninvasivemean")
       ),
       hirid = list(
         list(ids = 110L, table = "observations", column = "variableid")
@@ -619,9 +620,6 @@ cfg <- list(
   ),
   carboxyhemoglobin = list(
     sources = list(
-      mimic = list(
-        list(ids = 0L, table = "labevents", column = "itemid")
-      ),
       eicu = list(
         list(ids = "Carboxyhemoglobin", table = "lab", column = "labname")
       ),
@@ -1074,7 +1072,7 @@ cfg <- list(
         list(ids = 50883L, table = "labevents", column = "itemid")
       ),
       eicu = list(
-        list(ids = "Bilirubin, Direct", table = "lab", column = "labname")
+        list(ids = "direct bilirubin", table = "lab", column = "labname")
       ),
       hirid = list(
         list(ids = 24000560L, table = "observations", column = "variableid",
