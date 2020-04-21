@@ -177,3 +177,9 @@ hirid_death <- function(x, id_col, val_col, item_col, ...) {
 
   as_id_tbl(tmp, id(x), id_opts(x))
 }
+
+mf_sex <- function(x, val_col, ...) {
+  set(x, i = x[[val_col]] == "M", j = val_col, value = "Male")
+  set(x, i = x[[val_col]] == "F", j = val_col, value = "Female")
+  x
+}

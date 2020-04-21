@@ -2595,19 +2595,22 @@
       "hirid": [
         {
           "table": "general",
-          "column": "sex"
+          "column": "sex",
+          "callback": "mf_sex"
         }
       ],
       "mimic": [
         {
           "table": "patients",
-          "column": "gender"
+          "column": "gender",
+          "callback": "mf_sex"
         }
       ],
       "mimic_demo": [
         {
           "table": "patients",
-          "column": "gender"
+          "column": "gender",
+          "callback": "mf_sex"
         }
       ]
     }

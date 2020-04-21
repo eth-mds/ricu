@@ -1131,13 +1131,13 @@ cfg <- list(
   sex = list(
     sources = list(
       mimic = list(
-        list(table = "patients", column = "gender")
+        list(table = "patients", column = "gender", callback = "mf_sex")
       ),
       eicu = list(
         list(table = "patient", column = "gender")
       ),
       hirid = list(
-        list(table = "general", column = "sex")
+        list(table = "general", column = "sex", callback = "mf_sex")
       )
     )
   ),
