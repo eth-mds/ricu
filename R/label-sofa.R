@@ -293,23 +293,27 @@ sofa_urine <- function(urine, limits, min_win, interval) {
     }
   })
 
+  ind <- index(urine)
+  idx <- id(urine)
+
   if (has_name(urine, "urine_cumulative")) {
+
+    assert_that(!has_name(urine, "urine_events"))
+
     urine <- urine[, c("urine_events") := do_diff(get("urine_cumulative")),
-                   by = c(id(urine))]
+                   by = idx]
   }
 
   if (is.null(limits)) {
-    limits <- as_id_tbl(
-      urine[, list(intime = min(get(index(urine))),
-                   outtime = max(get(index(urine)))), by = c(id(urine))],
-      id(urine), id_opts(urine)
-    )
+
+    limits <- urine[, list(intime = min(..ind), outtime = max(..ind)),
+                    by = idx]
   }
 
   assert_that(has_name(limits, c("intime", "outtime")))
 
-  limits <- merge(limits, unique(urine[, id(urine), with = FALSE]),
-                  all.y = TRUE, by.x = id(limits), by.y = id(urine))
+  limits <- merge(limits, unique(urine[, ..idx]), all.y = TRUE,
+                  by.x = id(limits), by.y = idx)
 
   res <- fill_gaps(urine, limits = limits, min_col = "intime",
                    max_col = "outtime")
@@ -374,7 +378,7 @@ sofa_window <- function(tbl,
 
       assert_that(is_time_vec(explicit_wins))
 
-      res <- slide_index_quo(res, expr, explicit_wins,
+      res <- slide_index_quo(tbl, expr, explicit_wins,
                              before = worst_win_length, full_window = FALSE)
     }
   }
