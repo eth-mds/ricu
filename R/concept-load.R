@@ -252,7 +252,7 @@ do_callback <- function(x, unit, source, column, ids, callback, ..., id_col,
     callback <- get0(callback, mode = "function")
   }
 
-  if (nrow(x) > 0L && is.function(callback)) {
+  if (is.function(callback)) {
 
     args <- c(list(x),
               list(id_col = id_col, time_col = time_col, val_col = val,
