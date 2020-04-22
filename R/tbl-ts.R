@@ -11,6 +11,11 @@ ts_tbl <- function(..., id, id_opts = NULL, index = NULL,
 #' @rdname icu_tbl
 #' @export
 #'
+as_ts_tbl <- function(x, ...) UseMethod("as_ts_tbl", x)
+
+#' @rdname icu_tbl
+#' @export
+#'
 as_ts_tbl.ts_tbl <- function(x, ...) x
 
 #' @rdname icu_tbl

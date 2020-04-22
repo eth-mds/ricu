@@ -1,5 +1,26 @@
 
+#' Read and write utilities
+#'
+#' Support for reading from and writing to `.psv` files as used for the
+#' Physionet Sepsis Challenge.
+#'
+#' @param x Object to write to files
+#' @param dir Directory to write the (many) files to or read from
+#' @param na_rows If `TRUE` missing time steps are filled with `NaN` values,
+#' if `FALSE`, rows where all data columns entries are missing are removed and
+#' if `NULL`, data is written as-is
+#'
+#' @references
+#'
+#' Reyna, M., Josef, C., Jeter, R., Shashikumar, S., Moody, B., Westover, M.
+#' B., Sharma, A., Nemati, S., & Clifford, G. (2019). Early Prediction of
+#' Sepsis from Clinical Data -- the PhysioNet Computing in Cardiology
+#' Challenge 2019 (version 1.0.0). PhysioNet.
+#' https://doi.org/10.13026/v64v-d857.
+#'
+#' @rdname tbl_meta
 #' @export
+#'
 write_psv <- function(x, dir, na_rows = NULL) {
 
   if (isTRUE(na_rows)) {
@@ -18,7 +39,12 @@ write_psv <- function(x, dir, na_rows = NULL) {
   invisible(NULL)
 }
 
+#' @param col_spec A column specification as created by [readr::cols()]
+#' @param id_col Name of the id column (IDs are generated from file names)
+#'
+#' @rdname tbl_meta
 #' @export
+#'
 read_psv <- function(dir, col_spec = NULL, id_col = "stay_id") {
 
   add_id <- function(x, val) {

@@ -64,10 +64,14 @@ reclass_tbl <- function(x, meta) {
   }
 }
 
+#' @rdname meta_utils
 #' @export
+#'
 data_cols <- function(x) setdiff(colnames(x), meta_cols(x))
 
+#' @rdname meta_utils
 #' @export
+#'
 data_unit <- function(x) {
 
   get_unit <- function(col) {
@@ -78,15 +82,17 @@ data_unit <- function(x) {
   chr_ply(data_cols(x), get_unit, use_names = TRUE)
 }
 
+#' @rdname tbl_utils
 #' @export
-rbind_lst <- function(lst, use.names = TRUE, fill = FALSE, idcol = NULL) {
+#'
+rbind_lst <- function(x, ...) {
 
   cond_as <- function(x) {
     if (is.list(x)) x else data.table::as.data.table(x)
   }
 
-  dt_rbl <- function(x, use.names, fill, idcol) {
-    data.table::rbindlist(lapply(x, cond_as), use.names, fill, idcol)
+  dt_rbl <- function(x, ...) {
+    data.table::rbindlist(lapply(x, cond_as), ...)
   }
 
   rename <- function(x, new) {
@@ -100,19 +106,19 @@ rbind_lst <- function(lst, use.names = TRUE, fill = FALSE, idcol = NULL) {
     rename_cols(x, fun(new), fun(x))
   }
 
-  id_tbl <- lgl_ply(lst, is_id_tbl)
-  ts_tbl <- lgl_ply(lst, is_ts_tbl)
+  id_tbl <- lgl_ply(x, is_id_tbl)
+  ts_tbl <- lgl_ply(x, is_ts_tbl)
 
   if (any(id_tbl)) {
 
-    meta <- tbl_meta(lst[[which(id_tbl)[1L]]])
+    meta <- tbl_meta(x[[which(id_tbl)[1L]]])
 
   } else if (any(ts_tbl)) {
 
-    meta <- tbl_meta(lst[[which(ts_tbl)[1L]]])
+    meta <- tbl_meta(x[[which(ts_tbl)[1L]]])
 
     assert_that(
-      all(lgl_ply(lapply(lst[ts_tbl], interval), all.equal, interval(meta))),
+      all(lgl_ply(lapply(x[ts_tbl], interval), all.equal, interval(meta))),
       msg = "cannot mix interval types when row-binding"
     )
 
@@ -123,15 +129,15 @@ rbind_lst <- function(lst, use.names = TRUE, fill = FALSE, idcol = NULL) {
 
   if (!is.null(meta)) {
 
-    icu_tbl <- lgl_ply(lst, is_icu_tbl)
-    old_met <- lapply(lst[icu_tbl], tbl_meta)
+    icu_tbl <- lgl_ply(x, is_icu_tbl)
+    old_met <- lapply(x[icu_tbl], tbl_meta)
 
-    lst[icu_tbl] <- lapply(lst[icu_tbl], rename, meta)
+    x[icu_tbl] <- lapply(x[icu_tbl], rename, meta)
 
-    on.exit(Map(rename, lst[icu_tbl], old_met))
+    on.exit(Map(rename, x[icu_tbl], old_met))
   }
 
-  res <- dt_rbl(lst, use.names, fill, idcol)
+  res <- dt_rbl(x, ...)
 
   if (is.null(meta)) {
     res

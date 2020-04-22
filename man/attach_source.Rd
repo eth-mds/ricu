@@ -8,6 +8,11 @@
 \alias{attach_source.character}
 \alias{attach_source.list}
 \alias{attach_source.src_config}
+\alias{mimic}
+\alias{mimic_demo}
+\alias{eicu}
+\alias{eicu_demo}
+\alias{hirid}
 \title{Data attach utilities}
 \format{An object of class \code{environment} of length 5.}
 \usage{

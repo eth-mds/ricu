@@ -21,6 +21,11 @@ id_tbl <- function(..., id, id_opts = NULL) {
 #' @rdname icu_tbl
 #' @export
 #'
+as_id_tbl <- function(x, ...) UseMethod("as_id_tbl", x)
+
+#' @rdname icu_tbl
+#' @export
+#'
 as_id_tbl.id_tbl <- function(x, ...) x
 
 #' @rdname icu_tbl

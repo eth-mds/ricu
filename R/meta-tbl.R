@@ -1,4 +1,17 @@
 
+#' Table meta data
+#'
+#' Tabular ICU data as used by `ricu` frequently contains a column that defines
+#' a grouping structure (e.g. patient IDs, ICU stay IDs, etc.) and a column
+#' holding time information.
+#'
+#' @param index Column name of the index column
+#' @param interval Minimal time interval between rows
+#'
+#' @rdname tbl_meta
+#' @keywords internal
+#' @export
+#'
 new_tbl_index <- function(index, interval) {
 
   assert_that(
@@ -10,6 +23,13 @@ new_tbl_index <- function(index, interval) {
             class = "tbl_index")
 }
 
+#' @param id Column name of the ID column
+#' @param opts Alternative ID systems
+#'
+#' @rdname tbl_meta
+#' @keywords internal
+#' @export
+#'
 new_tbl_id <- function(id, opts = NULL) {
 
   assert_that(is.string(id), not_na(id))
@@ -34,17 +54,35 @@ new_tbl_id <- function(id, opts = NULL) {
   structure(list(col_name = unname(id), id_opts = opts), class = "tbl_id")
 }
 
+#' @param x Object to query/coerce
+#'
+#' @rdname tbl_meta
+#' @keywords internal
 #' @export
+#'
 is_tbl_index <- function(x) inherits(x, "tbl_index")
 
+#' @rdname tbl_meta
+#' @keywords internal
 #' @export
+#'
 is_tbl_id <- function(x) inherits(x, "tbl_id")
 
+#' @rdname tbl_meta
+#' @keywords internal
+#' @export
+#'
 tbl_index.tbl_index <- function(x) x
 
+#' @rdname tbl_meta
+#' @keywords internal
+#' @export
+#'
 tbl_id.tbl_id <- function(x) x
 
+#' @rdname tbl_utils
 #' @export
+#'
 rename_cols.tbl_index <- function(x, new, old, ...) {
 
   hit <- index(x) == old
@@ -57,7 +95,9 @@ rename_cols.tbl_index <- function(x, new, old, ...) {
   x
 }
 
+#' @rdname tbl_utils
 #' @export
+#'
 rename_cols.tbl_id <- function(x, new, old, ...)  {
 
   old_id <- id(x)
@@ -84,34 +124,56 @@ rename_cols.tbl_id <- function(x, new, old, ...)  {
   new_tbl_id(new_id, new_opt)
 }
 
+#'
+#'
+#' @rdname meta_utils
 #' @export
+#'
 index.tbl_index <- function(x) x[["col_name"]]
 
+#' @rdname meta_utils
 #' @export
+#'
 interval.tbl_index <- function(x) x[["interval"]]
 
+#' @rdname meta_utils
 #' @export
+#'
 time_unit.tbl_index <- function(x) units(interval(x))
 
+#' @rdname meta_utils
 #' @export
+#'
 id.tbl_id <- function(x) x[["col_name"]]
 
+#' @rdname meta_utils
 #' @export
+#'
 id_opts.tbl_id <- function(x) x[["id_opts"]]
 
+#' @rdname meta_utils
 #' @export
+#'
 set_id.tbl_id <- function(x, value) new_tbl_id(value, id_opts(x))
 
+#' @rdname meta_utils
 #' @export
+#'
 set_id_opts.tbl_id <- function(x, value) new_tbl_id(id(x), value)
 
+#' @rdname meta_utils
 #' @export
+#'
 set_index.tbl_index <- function(x, value) new_tbl_index(value, interval(x))
 
+#' @rdname meta_utils
 #' @export
+#'
 set_interval.tbl_index <- function(x, value) new_tbl_index(index(x), value)
 
+#' @rdname meta_utils
 #' @export
+#'
 set_time_unit.tbl_index <- function(x, value) {
   new_tbl_index(index(x), `units<-`(interval(x), value))
 }

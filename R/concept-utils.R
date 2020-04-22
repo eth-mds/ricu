@@ -73,6 +73,13 @@ item <- function(...) {
 #'
 is_item <- function(x) inherits(x, "item")
 
+#' @rdname data_items
+#'
+#' @export
+#'
+as_item <- function(x) UseMethod("as_item", x)
+
+
 #' @export
 names.item <- function(x) chr_ply(x, .subset2, "concept")
 
@@ -105,6 +112,9 @@ c.item <- function(...) {
 
   do.call(c, lapply(x, recreate))
 }
+
+#' @export
+get_source <- function(x) UseMethod("get_source", x)
 
 #' @export
 get_source.item <- function(x) chr_ply(x, .subset2, "source")
@@ -145,6 +155,12 @@ new_concept <- function(name, items, unit = NULL) {
 #' @export
 #'
 is_concept <- function(x) inherits(x, "concept")
+
+#' @rdname data_concepts
+#'
+#' @export
+#'
+as_concept <- function(x, ...) UseMethod("as_concept", x)
 
 #' @export
 names.concept <- function(x) chr_ply(x, .subset2, "name")
@@ -270,6 +286,11 @@ new_dictionary <- function(concepts) {
 #'
 #' @export
 dictionary <- function(...) new_dictionary(list(...))
+
+#' @rdname data_dictionary
+#'
+#' @export
+as_dictionary <- function(x) UseMethod("as_dictionary", x)
 
 #' @param x A potential `dictionary` object
 #'

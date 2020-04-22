@@ -70,22 +70,32 @@ attach_source.src_config <- function(x, dir = NULL, assign_env = .GlobalEnv,
   invisible(NULL)
 }
 
+#' @name mimic
+#' @rdname attach_source
 #' @export mimic
 #'
 NULL
 
+#' @name mimic_demo
+#' @rdname attach_source
 #' @export mimic_demo
 #'
 NULL
 
+#' @name eicu
+#' @rdname attach_source
 #' @export eicu
 #'
 NULL
 
+#' @name eicu_demo
+#' @rdname attach_source
 #' @export eicu_demo
 #'
 NULL
 
+#' @name hirid
+#' @rdname attach_source
 #' @export hirid
 #'
 NULL
