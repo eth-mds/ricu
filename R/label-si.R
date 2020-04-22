@@ -1,5 +1,21 @@
 
+#' Suspicion of infection label
+#'
+#' The Sepsis-3 label is a combination of a suspected infection and an acute
+#' increase in SOFA score by &ge; 2 points.
+#'
+#' @param source String valued name of data source
+#' @param abx_count_win Time span during which to apply the `abx_min_count`
+#' criterion
+#' @param abx_min_count Minimal number of antibiotic administrations
+#' @param positive_cultures Logical flag indicating whether to require
+#' cultures to be positive
+#' @param dictionary `dictionary` object to use for concept lookup
+#' @param ... Passed to [load_concepts()]
+#'
+#' @rdname label_si
 #' @export
+#'
 si_data <- function(source, abx_count_win = hours(24L), abx_min_count = 1L,
                     positive_cultures = FALSE,
                     dictionary = read_dictionary("concept-dict"), ...) {
@@ -61,8 +77,17 @@ si_samp <- function(x) {
   set(x, j = "fluid_sampling", value = x[["fluid_sampling"]] > 0L)
 }
 
+#' @param tbl `ts_tbl` object to use for label computations
+#' @param si_mode Switch between `and`/`or` modes
+#' @param abx_win Time-span within which sampling has to occur
+#' @param samp_win Time-span within which antibiotic administration has to
+#' occur
+#' @param si_lwr,si_upr Lower/upper extent of SI windows
+#'
+#' @rdname label_si
 #' @export
-si_windows <- function(tbl, mode = c("and", "or"), abx_win = hours(24L),
+#'
+si_windows <- function(tbl, si_mode = c("and", "or"), abx_win = hours(24L),
                        samp_win = hours(72L), si_lwr = hours(48L),
                        si_upr = hours(24L)) {
 
@@ -73,7 +98,7 @@ si_windows <- function(tbl, mode = c("and", "or"), abx_win = hours(24L),
 
   min_fun <- function(x) if (length(x) == 0L) x else min(x)
 
-  mode <- match.arg(mode)
+  si_mode <- match.arg(si_mode)
 
   win_args <- list(abx_win = abx_win, samp_win = samp_win, si_lwr = si_lwr,
                    si_upr = si_upr)
@@ -87,7 +112,7 @@ si_windows <- function(tbl, mode = c("and", "or"), abx_win = hours(24L),
   id  <- id(tbl)
   ind <- index(tbl)
 
-  if (identical(mode, "and")) {
+  if (identical(si_mode, "and")) {
 
     dat <- Map(span_win, unmerge(tbl, c("abx", "samp")), c("abx", "samp"),
                win_args[c("abx_win", "samp_win")])
@@ -119,7 +144,9 @@ si_windows <- function(tbl, mode = c("and", "or"), abx_win = hours(24L),
   res
 }
 
+#' @rdname label_si
 #' @export
+#'
 si <- function(source, ...) {
 
   args <- list(...)

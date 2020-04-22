@@ -338,7 +338,7 @@ rep_arg <- function(arg, names) {
 }
 
 progr_init <- function(len = NULL) {
-  if (is_pkg_available("progress")) {
+  if (is_pkg_available("progress") && length(len) > 1L) {
     progress::progress_bar$new(
       format = "loading :what [:bar] :percent",
       total = len

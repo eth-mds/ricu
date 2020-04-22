@@ -7,7 +7,7 @@
 #' @param ... forwarded to [data.table::data.table()] or generic consistency
 #' @param id String valued column name used as `id` column
 #' @param id_opts `NULL` or a named character vector indicating options to
-#' which ids may be converted [see change_id()]
+#' which ids may be converted see [change_id()]
 #'
 #' @rdname icu_tbl
 #' @export

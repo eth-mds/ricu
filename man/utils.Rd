@@ -29,6 +29,8 @@ replace_na(x, val)
 }
 \arguments{
 \item{x}{Object to test}
+
+\item{val}{Value to compare against}
 }
 \description{
 Various utility functions

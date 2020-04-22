@@ -1,5 +1,31 @@
 
+#' SOFA score label
+#'
+#' The SOFA (Sequential Organ Failure Assessment) score is a commonly used
+#' assessment tool used to track a patient's well-being in an ICU.
+#'
+#' @param pafi_win_length Time-span during which matching of PaO2 and FiO2
+#' values is allowed
+#' @param pafi_mode Method for matching PaO2 and FiO2 values
+#' @param fix_na_fio2 Logical flag indicating whether to impute missing FiO2
+#' values with 21
+#' @param vent_win_length Default ventilation window if no stop time can be
+#' matched to a start time
+#' @param vent_min_win Minimal time span between a ventilation start and end
+#' time
+#' @param gcs_win_length Maximal time window for which a GCS value is valid
+#' if no newer measurement is available
+#' @param fix_na_gcs Logical flag controlling imputation of missing GCS values
+#' with the respective maximum values
+#' @param urine_min_win Minimal time span required for calculation of urine/24h
+#' @param icu_limits ICU stay durations used for calculating urine output
+#'
+#' @inheritParams si_data
+#' @inheritParams load_item
+#'
+#' @rdname label_sofa
 #' @export
+#'
 sofa_data <- function(source, pafi_win_length = hours(2L),
                       pafi_mode = c("match_vals", "extreme_vals", "fill_gaps"),
                       fix_na_fio2 = TRUE, vent_win_length = hours(6L),
@@ -293,7 +319,6 @@ sofa_urine <- function(urine, limits, min_win, interval) {
     }
   })
 
-  ind <- index(urine)
   idx <- id(urine)
 
   if (has_name(urine, "urine_cumulative")) {
@@ -306,13 +331,13 @@ sofa_urine <- function(urine, limits, min_win, interval) {
 
   if (is.null(limits)) {
 
-    limits <- urine[, list(intime = min(..ind), outtime = max(..ind)),
-                    by = idx]
+    limits <- urine[, list(intime = min(get(index(urine))),
+                          outtime = max(get(index(urine)))), by = idx]
   }
 
   assert_that(has_name(limits, c("intime", "outtime")))
 
-  limits <- merge(limits, unique(urine[, ..idx]), all.y = TRUE,
+  limits <- merge(limits, unique(urine[, idx, with = FALSE]), all.y = TRUE,
                   by.x = id(limits), by.y = idx)
 
   res <- fill_gaps(urine, limits = limits, min_col = "intime",
@@ -324,7 +349,16 @@ sofa_urine <- function(urine, limits, min_win, interval) {
   slide_quo(res, expr, hours(24L))
 }
 
+#' @param pafi_win_fun,coag_win_fun,bili_win_fun,map_win_fun,dopa_win_fun,norepi_win_fun,dobu_win_fun,epi_win_fun,gcs_win_fun,crea_win_fun,urine_win_fun
+#' functions used to calculate worst values over windows
+#' @param explicit_wins The default `FALSE` iterates over all time steps,
+#' `TRUE` uses only the last time step per patient and a vector of times will
+#' iterate over these explicit time points
+#' @param worst_win_length Time-frame to look back and apply the `*_win_fun`s
+#'
+#' @rdname label_sofa
 #' @export
+#'
 sofa_window <- function(tbl,
                         pafi_win_fun  = min_or_na, coag_win_fun   = min_or_na,
                         bili_win_fun  = max_or_na, map_win_fun    = min_or_na,
@@ -386,7 +420,13 @@ sofa_window <- function(tbl,
   rename_cols(res, need_cols, paste0(need_cols, "_win"))
 }
 
+#' @param na_val Value to use for missing data
+#' @param na_val_resp,na_val_coag,na_val_liver,na_val_cardio,na_val_cns,na_val_renal Feature-specific values to use in case of missing data; default is `na_val`
+#' @param impute_fun Function used to impute missing data; default is NULL
+#'
+#' @rdname label_sofa
 #' @export
+#'
 sofa_compute <- function(tbl, na_val = 0L, na_val_resp = na_val,
                          na_val_coag = na_val, na_val_liver = na_val,
                          na_val_cardio = na_val, na_val_cns = na_val,
@@ -475,7 +515,9 @@ sofa_renal <- function(cre, uri, na_val) {
   )
 }
 
+#' @rdname label_sofa
 #' @export
+#'
 sofa <- function(source, ...) {
 
   args <- list(...)

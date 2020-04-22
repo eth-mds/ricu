@@ -1,15 +1,21 @@
 
+#' @rdname icu_tbl
 #' @export
+#'
 ts_tbl <- function(..., id, id_opts = NULL, index = NULL,
                    interval = hours(1L)) {
 
   as_ts_tbl(data.table::data.table(...), id, id_opts, index, interval)
 }
 
+#' @rdname icu_tbl
 #' @export
+#'
 as_ts_tbl.ts_tbl <- function(x, ...) x
 
+#' @rdname icu_tbl
 #' @export
+#'
 as_ts_tbl.default <- function(x, id, id_opts = NULL, index = NULL,
                               interval = hours(1L), ...) {
 
@@ -46,10 +52,14 @@ auto_index <- function(x, index = NULL) {
   index
 }
 
+#' @rdname icu_tbl
 #' @export
+#'
 is_ts_tbl <- function(x) inherits(x, "ts_tbl")
 
+#' @rdname icu_tbl
 #' @export
+#'
 as_id_tbl.ts_tbl <- function(x, ...) {
   new_icu_tbl(x, new_id_meta(tbl_id(x)))
 }

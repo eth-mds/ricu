@@ -58,7 +58,11 @@ downgrade_id_map <- function(src, to, from, interval = NULL,
   map
 }
 
+#' @param col Name of an id column
+#'
+#' @rdname change_id
 #' @export
+#'
 id_name <- function(x, col = id(x)) {
   opts <- id_opts(x)
   if (is.null(opts)) col
@@ -73,12 +77,18 @@ id_col <- function(x, name) {
   else unname(opts[match(name, names(opts))])
 }
 
+#' @param n Number of jumps in id ordering
+#'
+#' @rdname change_id
 #' @export
+#'
 next_id <- function(x, n = 1L) {
   names(id_opts(x)[id_pos(x) + n])
 }
 
+#' @rdname change_id
 #' @export
+#'
 prev_id <- function(x, n = 1L) next_id(x, -n)
 
 id_pos <- function(x, id = id_name(x)) {
@@ -119,22 +129,51 @@ stay_windows <- function(source, id_type = "icustay", win_type = "icustay",
   as_id_tbl(map, id_type)
 }
 
+#' Switch between id types
+#'
+#' In ICU settings, multiple ID types may be in use which present an ordering
+#' or nested structure, for example patient id, hospital stay id and ICU stay
+#' id. This function allows for converting from one ID to another.
+#'
+#' @param x `icu_tbl` object for which to make the id change
+#' @param source Name of the data source
+#' @param to The destination id type
+#' @param from The current id type
+#'
+#' @rdname change_id
 #' @export
-change_id <- function(x, source, to, from = id_name(x), ...) {
+#'
+change_id <- function(x, source, to, from = id_name(x)) {
 
   assert_that(is.string(to), is.string(from))
 
   if (id_pos(x, from) < id_pos(x, to)) {
-    upgrade_id(x, source, to, from, ...)
+    upgrade_id(x, source, to, from)
   } else if (id_pos(x, from) > id_pos(x, to)) {
-    downgrade_id(x, source, to, from, ...)
+    downgrade_id(x, source, to, from)
   } else {
     x
   }
 }
 
+#' @rdname change_id
 #' @export
-upgrade_id.ts_tbl <- function(x, source, to, from, ...) {
+#'
+upgrade_id <- function(x, source, to = next_id(x), from = id_name(x)) {
+  UseMethod("upgrade_id", x)
+}
+
+#' @rdname change_id
+#' @export
+#'
+downgrade_id <- function(x, source, to = prev_id(x), from = id_name(x)) {
+  UseMethod("downgrade_id", x)
+}
+
+#' @rdname change_id
+#' @export
+#'
+upgrade_id.ts_tbl <- function(x, source, to, from) {
 
   sft <- new_names(x)
   map <- upgrade_id_map(source, to, from, interval(x), sft)
@@ -146,7 +185,7 @@ upgrade_id.ts_tbl <- function(x, source, to, from, ...) {
   join <- c(paste(id_col(x, from), "==", from),
             paste(tmp, c(">= lwr", "< upr")))
 
-  res  <- x[map, on = join, nomatch = NULL, ...]
+  res  <- x[map, on = join, nomatch = NULL, allow.cartesian = TRUE]
 
   new <- id_col(x, to)
   res <- rename_cols(res, new, to)
@@ -158,12 +197,15 @@ upgrade_id.ts_tbl <- function(x, source, to, from, ...) {
   res
 }
 
+#' @rdname change_id
 #' @export
-upgrade_id.id_tbl <- function(x, source, to, from, ...) {
+#'
+upgrade_id.id_tbl <- function(x, source, to, from) {
 
   map <- upgrade_id_map(source, to, from)
 
-  res <- merge(x, map, by.x = id_col(x, from), by.y = from, ...)
+  res <- merge(x, map, by.x = id_col(x, from), by.y = from,
+               allow.cartesian = TRUE)
 
   new <- id_col(x, to)
   res <- rename_cols(res, new, to)
@@ -174,13 +216,15 @@ upgrade_id.id_tbl <- function(x, source, to, from, ...) {
   res
 }
 
+#' @rdname change_id
 #' @export
-downgrade_id.ts_tbl <- function(x, source, to, from, ...) {
+#'
+downgrade_id.ts_tbl <- function(x, source, to, from) {
 
   sft <- new_names(x)
   map <- downgrade_id_map(source, to, from, interval(x), sft)
 
-  res <- merge(x, map, by.x = id_col(x, from), by.y = from, ...)
+  res <- merge(x, map, by.x = id_col(x, from), by.y = from)
 
   new <- id_col(x, to)
   res <- rename_cols(res, new, to)
@@ -192,12 +236,14 @@ downgrade_id.ts_tbl <- function(x, source, to, from, ...) {
   res
 }
 
+#' @rdname change_id
 #' @export
-downgrade_id.id_tbl <- function(x, source, to, from, ...) {
+#'
+downgrade_id.id_tbl <- function(x, source, to, from) {
 
   map <- downgrade_id_map(source, to, from)
 
-  res <- merge(x, map, by.x = id_col(x, from), by.y = from, ...)
+  res <- merge(x, map, by.x = id_col(x, from), by.y = from)
 
   new <- id_col(x, to)
   res <- rename_cols(res, new, to)
