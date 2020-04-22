@@ -62,10 +62,10 @@ dir.exists(file.path(tempdir(), "some_subdir"))
 some_subdir <- data_dir("some_subdir")
 dir.exists(some_subdir)
 
-cfg <- get_config("eicu-demo")
+cfg <- get_config("concept-dict")
 identical(
   cfg,
-  get_config("eicu-demo",
+  get_config("concept-dict",
              system.file("extdata", "config", package = "ricu"))
 )
 

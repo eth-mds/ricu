@@ -129,10 +129,10 @@ config_dir_path <- function() {
 #' @rdname file_utils
 #'
 #' @examples
-#' cfg <- get_config("eicu-demo")
+#' cfg <- get_config("concept-dict")
 #' identical(
 #'   cfg,
-#'   get_config("eicu-demo",
+#'   get_config("concept-dict",
 #'              system.file("extdata", "config", package = "ricu"))
 #' )
 #'
