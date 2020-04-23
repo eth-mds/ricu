@@ -298,6 +298,11 @@ is_val <- function(x, val) !is.na(x) & x == val
 #' @rdname utils
 #' @export
 #'
+not_val <- function(x, val) !is.na(x) & x != val
+
+#' @rdname utils
+#' @export
+#'
 is_true <- function(x) !is.na(x) & x
 
 #' @rdname utils
@@ -325,12 +330,14 @@ null_or_subs <- function(x, where = parent.frame(1L)) {
   if (missing(x)) NULL else do.call("substitute", list(substitute(x), where))
 }
 
+not_na <- function(x) !is.na(x)
+
 carry_backwards <- function(x) {
 
   res <- x[length(x)]
 
   if (is.na(res)) {
-    not_na <- !is.na(x)
+    not_na <- not_na(x)
     if (any(not_na)) return(tail(x[not_na], n = 1L))
   }
 

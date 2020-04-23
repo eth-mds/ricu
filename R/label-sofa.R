@@ -175,39 +175,40 @@ sofa_vent <- function(start, stop, win_length, min_length, interval) {
 
   assert_that(interval(start) < min_length)
 
-  datetime <- start_time <- stop_time <- NULL
-
   units(win_length) <- time_unit(start)
   units(min_length) <- time_unit(start)
 
   if (is.null(stop)) {
 
+    ind <- index(start)
+
     merged <- data.table::copy(start)
     merged <- merged[,
-      c("start_time", "stop_time") := list(datetime, datetime + win_length)
+      c("start_time", "stop_time") := list(get(ind), get(ind) + win_length)
     ]
 
   } else {
 
     assert_that(same_interval(start, stop))
 
-    start[, start_time := get(index(start))]
-    stop[ , stop_time  := get(index(stop))]
+    start[, c("start_time") := get(index(start))]
+    stop[ , c("stop_time")  := get(index(stop))]
 
     on.exit({
-      set(start, j = "start_time", value = NULL)
-      set(stop,  j = "stop_time",  value = NULL)
+      start[, c("start_time") := NULL]
+      stop[,  c("stop_time")  := NULL]
     })
 
     join   <- paste(meta_cols(stop), "==", meta_cols(start))
     merged <- stop[start, roll = -win_length, on = join]
-    merged <- merged[is.na(stop_time), stop_time := start_time + win_length]
+    merged <- merged[is.na(get("stop_time")),
+                     c("stop_time") := get("start_time") + win_length]
   }
 
-  merged <- merged[stop_time - start_time >= min_length, ]
+  merged <- merged[get("stop_time") - get("start_time") >= min_length, ]
 
   merged <- merged[, c("start_time", "stop_time") := list(
-    final_units(start_time), final_units(stop_time)
+    final_units(get("start_time")), final_units(get("stop_time"))
   )]
 
   res <- unique(
@@ -238,7 +239,7 @@ sofa_gcs <- function(gcs, sed, win_length, set_na_max) {
   Map(determine_sed, sed_funs, sed_feats, list(sed))
 
   sed <- sed[, c("is_sed") := Reduce(`|`, .SD), .SDcols = data_cols(sed)]
-  sed <- set(sed, j = intersect(data_cols(sed), sed_feats), value = NULL)
+  sed <- sed[, c(intersect(data_cols(sed), sed_feats)) := NULL]
 
   dat <- merge(gcs, sed, all = TRUE)
 

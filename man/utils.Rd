@@ -5,6 +5,7 @@
 \alias{max_or_na}
 \alias{sum_or_na}
 \alias{is_val}
+\alias{not_val}
 \alias{is_true}
 \alias{last_elem}
 \alias{first_elem}
@@ -18,6 +19,8 @@ max_or_na(x)
 sum_or_na(x)
 
 is_val(x, val)
+
+not_val(x, val)
 
 is_true(x)
 

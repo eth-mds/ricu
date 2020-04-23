@@ -47,8 +47,7 @@ rm_cols <- function(x, cols, ...) {
 #' @export
 #'
 rm_cols.data.table <- function(x, cols, ...) {
-  x <- set(x, j = unique(intersect(cols, colnames(x))), value = NULL)
-  x
+  x[, c(unique(intersect(cols, colnames(x)))) := NULL]
 }
 
 #' @param new New column names
@@ -86,9 +85,7 @@ rm_cols.icu_tbl <- function(x, cols, ...) {
     x <- unclass_tbl(x)
   }
 
-  x <- set(x, j = cols, value = NULL)
-
-  x
+  x[, c(cols) := NULL]
 }
 
 #' @param skip_absent Silently ignore absent columns in `old` (along with

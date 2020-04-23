@@ -1,19 +1,15 @@
 
 all_flag <- function(x, val_col, ...) {
-  x <- set(x, j = val_col, value = rep(TRUE, nrow(x)))
-  x
+  set(x, j = val_col, value = rep(TRUE, nrow(x)))
 }
 
 vent_flag <- function(x, val_col, time_col, ...) {
-  x <- x[as.logical(get(val_col)), ]
-  x <- set(x, j = c(time_col, val_col),
-           value = list(x[[val_col]], rep(TRUE, nrow(x))))
-  x
+  set(x[as.logical(get(val_col)), ], j = c(time_col, val_col),
+      value = list(x[[val_col]], rep(TRUE, nrow(x))))
 }
 
 percent_as_numeric <- function(x, val_col, ...) {
   set(x, j = val_col, value = as.numeric(sub("%", "", x[[val_col]])))
-  x
 }
 
 force_numeric_col <- function(x, col) {
@@ -64,19 +60,18 @@ mimic_abx_shift_flag <- function(x, val_col, time_col, ...) {
 
 mimic_sampling <- function(x, val_col, time_col, aux_time, ...) {
   x <- combine_date_time(x, aux_time, time_col, hours(12L))
-  x <- set(x, j = val_col, value = !is.na(x[[val_col]]))
+  x <- set(x, j = val_col, value = not_na(x[[val_col]]))
   x
 }
 
 eicu_sampling <- function(x, val_col, ...) {
-  x <- set(x, j = val_col, value = !is_val(x[[val_col]], "no growth"))
-  x
+  set(x, j = val_col, value = not_val(x[[val_col]], "no growth"))
 }
 
 multiply_by <- function(factor) {
+  factor <- force(factor)
   function(x, val_col, ...) {
-    x <- set(x, j = val_col, value = x[[val_col]] * factor)
-    x
+    x[, c(val_col) := get(val_col) * factor]
   }
 }
 
@@ -94,8 +89,7 @@ multiply_hirid_bili <- multiply_by(0.058467)
 multiply_eicu_cprot <- multiply_by(10)
 
 fahrenheit_to_celsius <- function(x, val_col, ...) {
-  x <- set(x, j = val_col, value = (x[[val_col]] - 32) * 5 / 9)
-  x
+  x[, c(val_col) := (get(val_col) - 32) * 5 / 9]
 }
 
 distribute_amount <- function(x, val_col, id_col, time_col, amount_col,
@@ -119,8 +113,8 @@ distribute_amount <- function(x, val_col, id_col, time_col, amount_col,
   x <- x[, expand(get(time_col), get(end_col), get(id_col), get(amount_col),
                   get(val_col)),
          by = seq_len(nrow(x))]
+  x <- x[, c(setdiff(colnames(x), orig_cols)) := NULL]
 
-  x <- set(x, j = setdiff(colnames(x), orig_cols), value = NULL)
   x
 }
 
@@ -151,12 +145,10 @@ hirid_trach <- function(x, val_col, ...) {
 
 mimic_death <- function(x, val_col, ...) {
   set(x, j = val_col, value = x[[val_col]] == 1L)
-  x
 }
 
 eicu_death <- function(x, val_col, ...) {
   set(x, j = val_col, value = x[[val_col]] == "Expired")
-  x
 }
 
 hirid_death <- function(x, id_col, val_col, item_col, ...) {
@@ -179,7 +171,7 @@ hirid_death <- function(x, id_col, val_col, item_col, ...) {
 }
 
 mf_sex <- function(x, val_col, ...) {
-  set(x, i = which(x[[val_col]] == "M"), j = val_col, value = "Male")
-  set(x, i = which(x[[val_col]] == "F"), j = val_col, value = "Female")
+  x <- x[get(val_col) == "M", c(val_col) := "Male"]
+  x <- x[get(val_col) == "F", c(val_col) := "Female"]
   x
 }

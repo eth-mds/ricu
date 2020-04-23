@@ -57,7 +57,7 @@ setup_mimic_aux_tables <- function(cfg) {
     res <- res[, c(dt_cols) := lapply(.SD, as_dt_min, get("intime")),
                .SDcols = dt_cols]
     res <- rm_cols(res, "intime")
-    res <- data.table::set(res, j = "intime", value = mins(0L))
+    res <- res[, c("intime") := mins(0L)]
 
     res <- data.table::setcolorder(res,
       c("subject_id", "hadm_id", "icustay_id", "dob", "admittime",

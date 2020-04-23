@@ -189,8 +189,8 @@ hop_quo <- function(x, expr, windows, full_window = FALSE,
   tbl_ind <- index(x)
 
   tmp_col <- new_names(x)
-  set(x, j = tmp_col, value = x[[tbl_ind]])
-  on.exit(set(x, j = tmp_col, value = NULL))
+  x <- x[, c(tmp_col) := get(tbl_ind)]
+  on.exit(x[, c(tmp_col) := NULL])
 
   join <- c(paste(tbl_id, "==", win_id), paste(tbl_ind, "<=", upr_col),
                                          paste(tmp_col, ">=", lwr_col))
@@ -199,7 +199,7 @@ hop_quo <- function(x, expr, windows, full_window = FALSE,
 
   assert_that(is_unique(res))
 
-  set(res, j = tmp_col, value = NULL)
+  res <- res[, c(tmp_col) := NULL]
 
   res
 }

@@ -80,7 +80,7 @@ difftime_tbl_quo <- function(src, tbl, row, col, id_cand, ival) {
       dat <- dat[, c(date_cols) := lapply(.SD, time_fun, get("origin"), ival),
                  .SDcols = date_cols]
 
-      dat <- set(dat, j = "origin", value = NULL)
+      dat <- dat[, c("origin") := NULL]
     }
 
   } else if (!is.na(id_col)) {

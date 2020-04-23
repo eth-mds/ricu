@@ -24,10 +24,11 @@ sepsis_3 <- function(sofa, si, si_window = c("first", "last", "any"),
               has_time_cols(si, c("si_lwr", "si_upr")))
 
   si_window <- match.arg(si_window)
-  id <- id(sofa)
 
-  sofa <- set(sofa, j = "join_time1", value = time_col(sofa))
-  sofa <- set(sofa, j = "join_time2", value = time_col(sofa))
+  id <- id(sofa)
+  ind <- index(sofa)
+
+  sofa <- sofa[, c("join_time1", "join_time2") := list(get(ind), get(ind))]
 
   on.exit(rm_cols(sofa, c("join_time1", "join_time2")))
 
@@ -37,7 +38,7 @@ sepsis_3 <- function(sofa, si, si_window = c("first", "last", "any"),
   if (si_window == "last")  si <- si[, tail(.SD, n = 1L), by = id]
 
   res <- sofa[si, c(list(delta_sofa = delta_fun(get("sofa_score"))),
-                    mget(c(index(sofa), index(si)))),
+                    mget(c(ind, index(si)))),
               on = join_clause, by = .EACHI, nomatch = 0]
 
   res <- res[is_true(get("delta_sofa") >= get("sofa_thresh")), ]
