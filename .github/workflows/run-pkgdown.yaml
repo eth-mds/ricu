@@ -2,10 +2,10 @@ on:
   push:
     branches: master
 
-name: pkgdown
+name: run-pkgdown
 
 jobs:
-  pkgdown:
+  run-pkgdown:
     runs-on: macOS-latest
     steps:
       - uses: actions/checkout@v2
