@@ -112,10 +112,14 @@ set_time_unit.ts_tbl <- function(x, value) {
   set_meta(x, set_time_unit(tbl_meta(x), value))
 }
 
+#' @rdname meta_utils
 #' @export
+#'
 time_step <- function(x) as.double(interval(x), units = time_unit(x))
 
+#' @rdname meta_utils
 #' @export
+#'
 time_col <- function(x) x[[index(x)]]
 
 #' @importFrom tibble tbl_sum

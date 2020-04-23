@@ -22,6 +22,7 @@
 \alias{is_ts_meta}
 \alias{validate_meta.ts_meta}
 \alias{is_tbl_meta}
+\alias{tbl_meta}
 \alias{tbl_meta.tbl_meta}
 \alias{tbl_id.tbl_meta}
 \alias{validate_meta}
@@ -72,6 +73,8 @@ is_ts_meta(x)
 \method{validate_meta}{ts_meta}(x, meta)
 
 is_tbl_meta(x)
+
+tbl_meta(x)
 
 \method{tbl_meta}{tbl_meta}(x)
 

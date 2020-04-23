@@ -1,5 +1,17 @@
 
+#' Time series utility functions
+#'
+#' @param x `ts_tbl` object to use
+#' @param min_col,max_col Name of the columns that represent lower and upper
+#' windows bounds
+#' @param step_size Controls the step size used to interpolate between
+#' `min_col` and `max_col`
+#' @param id_cols Names of the id columns
+#' @param new_col Name of the new index column
+#'
+#' @rdname ts_utils
 #' @export
+#'
 expand_limits <- function(x, min_col = "min", max_col = "max", step_size = 1L,
                           id_cols = NULL, new_col = "hadm_time") {
 
@@ -27,7 +39,9 @@ expand_limits <- function(x, min_col = "min", max_col = "max", step_size = 1L,
             interval = as.difftime(step_size, units = unit))
 }
 
+#' @rdname ts_utils
 #' @export
+#'
 has_no_gaps <- function(x) {
 
   check_time_col <- function(time, step) {
@@ -47,10 +61,16 @@ has_no_gaps <- function(x) {
   all(res[[setdiff(colnames(res), id_cols)]])
 }
 
+#' @rdname ts_utils
 #' @export
+#'
 has_gaps <- Negate(has_no_gaps)
 
+#' @param limits A table with columns for lower and upper window bounds
+#'
+#' @rdname ts_utils
 #' @export
+#'
 fill_gaps <- function(x, limits = NULL, ...) {
 
   assert_that(is_unique(x))
@@ -75,10 +95,20 @@ fill_gaps <- function(x, limits = NULL, ...) {
   x[unique(join), on = paste(meta_cols(x), "==", meta_cols(join))]
 }
 
+#' @param expr Expression (quoted for `*_quo` and unquoted otherwise) to be
+#' evaluated over each window
+#'
+#' @rdname ts_utils
 #' @export
-slide <- function(tbl, expr, ...) slide_quo(tbl, substitute(expr), ...)
+#'
+slide <- function(x, expr, ...) slide_quo(x, substitute(expr), ...)
 
+#' @param before,after Time span to look back/forward
+#' @param ... Passed to the `*_quo` version and from there to `hop_quo()`
+#'
+#' @rdname ts_utils
 #' @export
+#'
 slide_quo <- function(x, expr, before, after = hours(0L), ...) {
 
   assert_that(is_time(before, allow_neg = FALSE),
@@ -95,12 +125,19 @@ slide_quo <- function(x, expr, before, after = hours(0L), ...) {
   hop_quo(x, expr, join, ..., lwr_col = "min_time", upr_col = "max_time")
 }
 
+#' @rdname ts_utils
 #' @export
-slide_index <- function(tbl, expr, ...) {
-  slide_index_quo(tbl, substitute(expr), ...)
+#'
+slide_index <- function(x, expr, ...) {
+  slide_index_quo(x, substitute(expr), ...)
 }
 
+#' @param index A vector of times around which windows are spanned (relative
+#' to the index)
+#'
+#' @rdname ts_utils
 #' @export
+#'
 slide_index_quo <- function(x, expr, index, before, after = hours(0L), ...) {
 
   assert_that(is_time_vec(index), is_time(before, allow_neg = FALSE),
@@ -112,10 +149,20 @@ slide_index_quo <- function(x, expr, index, before, after = hours(0L), ...) {
   hop_quo(x, expr, join, ..., lwr_col = "min_time", upr_col = "max_time")
 }
 
+#' @rdname ts_utils
 #' @export
-hop <- function(tbl, expr, ...) hop_quo(tbl, substitute(expr), ...)
+#'
+hop <- function(x, expr, ...) hop_quo(x, substitute(expr), ...)
 
+#' @param windows An `icu_tbl` defining the windows to span
+#' @param full_window Logical flag controlling how the situation is handled
+#' where the sliding window extends beyond available data
+#' @param lwr_col,upr_col Names of columns (in `windows`) of lower/upper
+#' window bounds
+#'
+#' @rdname ts_utils
 #' @export
+#'
 hop_quo <- function(x, expr, windows, full_window = FALSE,
                     lwr_col = "min_time", upr_col = "max_time") {
 
@@ -157,99 +204,3 @@ hop_quo <- function(x, expr, windows, full_window = FALSE,
   res
 }
 
-#' @export
-make_unique <- function(x, expr, fun, ...) {
-  if (missing(fun)) {
-    make_unique_quo(x, substitute(expr), ...)
-  } else {
-    make_unique_quo(x, fun, ...)
-  }
-}
-
-#' @export
-make_unique_quo <- function(x, expr, by = meta_cols(x),
-                            cols = setdiff(colnames(x), by), ...) {
-
-  assert_that(is_ts_tbl(x))
-
-  if (nrow(x) == 0) return(x)
-  if (length(cols) == 0L) return(unique(x))
-
-  if (is.function(expr)) {
-    x[, lapply(.SD, expr, ...), .SDcols = cols, by = by]
-  } else {
-    x[, eval(expr), by = by]
-  }
-}
-
-#' @export
-dt_gforce <- function(x,
-                      fun = c("mean", "median", "min", "max", "sum", "prod",
-                              "var", "sd", "first", "last"),
-                      by = meta_cols(x), cols = data_cols(x),
-                      na.rm = !fun %in% c("first", "last")) {
-
-  fun <- match.arg(fun)
-
-  if (fun %in% c("first", "last") && isTRUE(na.rm)) {
-    warning("The argument `na.rm` is ignored for `first()` and `last()`")
-  }
-
-  assert_that(is.flag(na.rm), all(c(cols, by) %in% colnames(x)))
-
-  switch(fun,
-    mean   = x[, lapply(.SD, mean, na.rm = na.rm),   by = by, .SDcols = cols],
-    median = x[, lapply(.SD, median, na.rm = na.rm), by = by, .SDcols = cols],
-    min    = x[, lapply(.SD, min, na.rm = na.rm),    by = by, .SDcols = cols],
-    max    = x[, lapply(.SD, max, na.rm = na.rm),    by = by, .SDcols = cols],
-    sum    = x[, lapply(.SD, sum, na.rm = na.rm),    by = by, .SDcols = cols],
-    prod   = x[, lapply(.SD, prod, na.rm = na.rm),   by = by, .SDcols = cols],
-    var    = x[, lapply(.SD, var, na.rm = na.rm),    by = by, .SDcols = cols],
-    sd     = x[, lapply(.SD, sd, na.rm = na.rm),     by = by, .SDcols = cols],
-    first  = x[, lapply(.SD, data.table::first),     by = by, .SDcols = cols],
-    last   = x[, lapply(.SD, data.table::last),      by = by, .SDcols = cols]
-  )
-}
-
-#' @export
-rm_na <- function(x, cols = data_cols(x), mode = c("all", "any")) {
-
-  mode <- match.arg(mode)
-
-  assert_that(has_cols(x, cols))
-
-  if (identical(mode, "any")) {
-    return(na.omit(x, cols))
-  }
-
-  if (length(cols) == 1L) {
-    drop <- is.na(x[[cols]])
-  } else {
-    drop <- Reduce(`&`, lapply(x[, cols, with = FALSE], is.na))
-  }
-
-  x[!drop, ]
-}
-
-#' @export
-unmerge <- function(x, var_cols = data_cols(x), fixed_cols = meta_cols(x),
-                    na_rm = TRUE) {
-
-  assert_that(all(c(var_cols, fixed_cols) %in% colnames(x)), is.flag(na_rm))
-
-  extract_col <- function(col, x) {
-
-    y <- x[, c(fixed_cols, col), with = FALSE]
-
-    if (na_rm) {
-      y <- rm_na(y, col)
-    }
-
-    y
-  }
-
-  res <- lapply(var_cols, extract_col, x)
-  names(res) <- var_cols
-
-  res
-}

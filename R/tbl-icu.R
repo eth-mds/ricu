@@ -121,16 +121,6 @@ rename_cols.icu_tbl <- function(x, new, old = colnames(x), skip_absent = FALSE,
   reclass_tbl(x, meta)
 }
 
-#' @rdname tbl_utils
-#' @export
-#'
-is_unique <- function(x, ...) UseMethod("is_unique", x)
-
-#' @rdname tbl_utils
-#' @export
-#'
-is_unique.default <- function(x, ...) identical(anyDuplicated(x, ...), 0L)
-
 #' @rdname tbl_meta
 #' @keywords internal
 #' @export
@@ -244,11 +234,6 @@ units.icu_tbl <- function(x) {
 #'
 meta_cols.icu_tbl <- function(x) meta_cols(tbl_meta(x))
 
-#' @export
-is_unique.icu_tbl <- function(x, by = meta_cols(x), ...) {
-  identical(anyDuplicated(x, by = by, ...), 0L)
-}
-
 #' @rdname tbl_meta
 #' @keywords internal
 #' @export
@@ -260,3 +245,22 @@ tbl_class <- function(x) UseMethod("tbl_class", x)
 #' @export
 #'
 tbl_class.icu_tbl <- function(x) tbl_class(tbl_meta(x))
+
+#' @rdname meta_utils
+#' @export
+#'
+data_cols <- function(x) setdiff(colnames(x), meta_cols(x))
+
+#' @rdname meta_utils
+#' @export
+#'
+data_unit <- function(x) {
+
+  get_unit <- function(col) {
+    if (has_attr(x[[col]], "units")) attr(x[[col]], "units")
+    else NA_character_
+  }
+
+  chr_ply(data_cols(x), get_unit, use_names = TRUE)
+}
+

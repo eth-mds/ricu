@@ -114,15 +114,15 @@ si_windows <- function(tbl, si_mode = c("and", "or"), abx_win = hours(24L),
 
   if (identical(si_mode, "and")) {
 
-    dat <- Map(span_win, unmerge(tbl, c("abx", "samp")), c("abx", "samp"),
+    dat <- Map(span_win, unmerge(tbl), c("abx", "samp"),
                win_args[c("abx_win", "samp_win")])
 
     join_clause <- c(id, paste(c("win_end >=", "time_copy <="), ind))
 
-    abx_samp <- dat[["abx"]][dat[["samp"]], list(si_time = min_fun(get(ind))),
-                            on = join_clause, by = .EACHI, nomatch = NULL]
-    samp_abx <- dat[["samp"]][dat[["abx"]], list(si_time = min_fun(get(ind))),
-                            on = join_clause, by = .EACHI, nomatch = NULL]
+    abx_samp <- dat[[1L]][dat[[2L]], list(si_time = min_fun(get(ind))),
+                          on = join_clause, by = .EACHI, nomatch = NULL]
+    samp_abx <- dat[[2L]][dat[[1L]], list(si_time = min_fun(get(ind))),
+                          on = join_clause, by = .EACHI, nomatch = NULL]
 
     res <- unique(rbind(abx_samp[, c(id, "si_time"), with = FALSE],
                         samp_abx[, c(id, "si_time"), with = FALSE]))

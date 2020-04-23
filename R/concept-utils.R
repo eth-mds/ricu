@@ -79,7 +79,6 @@ is_item <- function(x) inherits(x, "item")
 #'
 as_item <- function(x) UseMethod("as_item", x)
 
-
 #' @export
 names.item <- function(x) chr_ply(x, .subset2, "concept")
 
@@ -113,7 +112,10 @@ c.item <- function(...) {
   do.call(c, lapply(x, recreate))
 }
 
+#' @rdname data_items
+#'
 #' @export
+#'
 get_source <- function(x) UseMethod("get_source", x)
 
 #' @export

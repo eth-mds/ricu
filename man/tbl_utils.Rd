@@ -12,9 +12,14 @@
 \alias{rename_cols.data.table}
 \alias{rm_cols.icu_tbl}
 \alias{rename_cols.icu_tbl}
+\alias{rbind_lst}
+\alias{rm_na}
+\alias{unmerge}
+\alias{dt_gforce}
 \alias{is_unique}
 \alias{is_unique.default}
-\alias{rbind_lst}
+\alias{make_unique}
+\alias{make_unique_quo}
 \title{Utilities for \code{icu_tbl} objects}
 \usage{
 \method{rename_cols}{id_meta}(x, new, old, ...)
@@ -37,11 +42,27 @@ rename_cols(x, new, old = colnames(x), ...)
 
 \method{rename_cols}{icu_tbl}(x, new, old = colnames(x), skip_absent = FALSE, ...)
 
+rbind_lst(x, ...)
+
+rm_na(x, cols = data_cols(x), mode = c("all", "any"))
+
+unmerge(x, col_groups = as.list(data_cols(x)), by = meta_cols(x), na_rm = TRUE)
+
+dt_gforce(
+  x,
+  fun = c("mean", "median", "min", "max", "sum", "prod", "var", "sd", "first", "last"),
+  by = meta_cols(x),
+  cols = data_cols(x),
+  na_rm = !fun \%in\% c("first", "last")
+)
+
 is_unique(x, ...)
 
 \method{is_unique}{default}(x, ...)
 
-rbind_lst(x, ...)
+make_unique(x, expr, fun, ...)
+
+make_unique_quo(x, expr, by = meta_cols(x), cols = data_cols(x), ...)
 }
 \arguments{
 \item{x}{Object to operate on}
@@ -52,10 +73,26 @@ rbind_lst(x, ...)
 
 \item{...}{Generic consistency}
 
-\item{cols}{Column names of columns to remove}
+\item{cols}{Column names of columns to consider}
 
 \item{skip_absent}{Silently ignore absent columns in \code{old} (along with
 their corresponding replacements in \code{new})}
+
+\item{mode}{Switch between \code{all} where all entries of a row have to be
+missing (for the selected columns) or \code{any}, where a single missing entry
+suffices}
+
+\item{col_groups}{A list of character vectors defining the grouping of
+non-by columns}
+
+\item{by}{Columns that will be present in every one of the resulting tables}
+
+\item{na_rm}{Logical flag indicating whether to remove rows that have all
+missing entries in the respective \code{col_groups} group}
+
+\item{fun}{Function name (as string) to apply over groups}
+
+\item{expr}{Expression to apply over groups}
 }
 \description{
 Utilities for \code{icu_tbl} objects

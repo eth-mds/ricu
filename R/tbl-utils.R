@@ -64,24 +64,6 @@ reclass_tbl <- function(x, meta) {
   }
 }
 
-#' @rdname meta_utils
-#' @export
-#'
-data_cols <- function(x) setdiff(colnames(x), meta_cols(x))
-
-#' @rdname meta_utils
-#' @export
-#'
-data_unit <- function(x) {
-
-  get_unit <- function(col) {
-    if (has_attr(x[[col]], "units")) attr(x[[col]], "units")
-    else NA_character_
-  }
-
-  chr_ply(data_cols(x), get_unit, use_names = TRUE)
-}
-
 #' @rdname tbl_utils
 #' @export
 #'
@@ -145,4 +127,166 @@ rbind_lst <- function(x, ...) {
     reclass_tbl(res, meta)
   }
 
+}
+
+#' @param cols Column names of columns to consider
+#' @param mode Switch between `all` where all entries of a row have to be
+#' missing (for the selected columns) or `any`, where a single missing entry
+#' suffices
+#'
+#' @rdname tbl_utils
+#' @export
+#'
+rm_na <- function(x, cols = data_cols(x), mode = c("all", "any")) {
+
+  mode <- match.arg(mode)
+
+  assert_that(has_cols(x, cols))
+
+  if (identical(mode, "any")) {
+    return(na.omit(x, cols))
+  }
+
+  if (length(cols) == 1L) {
+    drop <- is.na(x[[cols]])
+  } else {
+    drop <- Reduce(`&`, lapply(x[, cols, with = FALSE], is.na))
+  }
+
+  x[!drop, ]
+}
+
+#' @param col_groups A list of character vectors defining the grouping of
+#' non-by columns
+#' @param by Columns that will be present in every one of the resulting tables
+#' @param na_rm Logical flag indicating whether to remove rows that have all
+#' missing entries in the respective `col_groups` group
+#'
+#' @rdname tbl_utils
+#' @export
+#'
+unmerge <- function(x, col_groups = as.list(data_cols(x)), by = meta_cols(x),
+                    na_rm = TRUE) {
+
+  name_has <- function(name, x) has_name(x, name)
+
+  assert_that(has_name(x, by), all_is(col_groups, name_has, x), is.flag(na_rm))
+
+  extract_col <- function(col, x) {
+
+    y <- x[, c(by, col), with = FALSE]
+
+    if (na_rm) {
+      y <- rm_na(y, col)
+    }
+
+    y
+  }
+
+  lapply(col_groups, extract_col, x)
+}
+
+#' @param fun Function name (as string) to apply over groups
+#'
+#' @rdname tbl_utils
+#' @export
+#'
+dt_gforce <- function(x,
+                      fun = c("mean", "median", "min", "max", "sum", "prod",
+                              "var", "sd", "first", "last"),
+                      by = meta_cols(x), cols = data_cols(x),
+                      na_rm = !fun %in% c("first", "last")) {
+
+  fun <- match.arg(fun)
+
+  if (fun %in% c("first", "last") && isTRUE(na_rm)) {
+    warning("The argument `na_rm` is ignored for `first()` and `last()`")
+  }
+
+  assert_that(is.flag(na_rm), all(c(cols, by) %in% colnames(x)))
+
+  switch(fun,
+    mean   = x[, lapply(.SD, mean, na.rm = na_rm),   by = by, .SDcols = cols],
+    median = x[, lapply(.SD, median, na.rm = na_rm), by = by, .SDcols = cols],
+    min    = x[, lapply(.SD, min, na.rm = na_rm),    by = by, .SDcols = cols],
+    max    = x[, lapply(.SD, max, na.rm = na_rm),    by = by, .SDcols = cols],
+    sum    = x[, lapply(.SD, sum, na.rm = na_rm),    by = by, .SDcols = cols],
+    prod   = x[, lapply(.SD, prod, na.rm = na_rm),   by = by, .SDcols = cols],
+    var    = x[, lapply(.SD, var, na.rm = na_rm),    by = by, .SDcols = cols],
+    sd     = x[, lapply(.SD, sd, na.rm = na_rm),     by = by, .SDcols = cols],
+    first  = x[, lapply(.SD, data.table::first),     by = by, .SDcols = cols],
+    last   = x[, lapply(.SD, data.table::last),      by = by, .SDcols = cols]
+  )
+}
+
+#' @rdname tbl_utils
+#' @export
+#'
+is_unique <- function(x, ...) UseMethod("is_unique", x)
+
+#' @rdname tbl_utils
+#' @export
+#'
+is_unique.default <- function(x, ...) identical(anyDuplicated(x, ...), 0L)
+
+#' @export
+is_unique.icu_tbl <- function(x, by = meta_cols(x), ...) {
+  identical(anyDuplicated(x, by = by, ...), 0L)
+}
+
+#' @param expr Expression to apply over groups
+#'
+#' @rdname tbl_utils
+#' @export
+#'
+make_unique <- function(x, expr, fun, ...) {
+
+  if (missing(fun)) {
+
+    make_unique_quo(x, substitute(expr), ...)
+
+  } else {
+
+    make_unique_quo(x, fun, ...)
+  }
+}
+
+#' @rdname tbl_utils
+#' @export
+#'
+make_unique_quo <- function(x, expr, by = meta_cols(x), cols = data_cols(x),
+                            ...) {
+
+  assert_that(is_icu_tbl(x))
+
+  if (nrow(x) == 0) return(x)
+  if (length(cols) == 0L) return(unique(x))
+
+  if (is.function(expr)) {
+
+    x[, lapply(.SD, expr, ...), .SDcols = cols, by = by]
+
+  } else if (!is.language(expr) && is.null(expr)) {
+
+    assert_that(is_unique(x, by = by))
+    x
+
+  } else if (is.character(expr)) {
+
+    assert_that(is.string(expr))
+
+    if (is.na(expr)) {
+      if (is.numeric(x[[data_cols(x)]])) {
+        expr <- "median"
+      } else {
+        expr <- "first"
+      }
+    }
+
+    dt_gforce(x, expr, by = by, cols = cols, ...)
+
+  } else {
+
+    x[, eval(expr), by = by]
+  }
 }

@@ -100,7 +100,7 @@ load_concept <- function(concept, aggregate = NA_character_, na_rm = TRUE,
   if (isFALSE(aggregate)) {
     res
   } else {
-    do_aggregate(res, aggregate)
+    make_unique(res, fun = aggregate)
   }
 }
 
@@ -287,39 +287,6 @@ add_unit <- function(x, unit) {
   setattr(x[[col]], "units", unit)
 
   x
-}
-
-do_aggregate <- function(x, fun) {
-
-  if (nrow(x) == 0L) {
-    return(x)
-  }
-
-  if (is.function(fun)) {
-
-    x[, lapply(.SD, fun), by = c(meta_cols(x)), .SDcols = data_cols(x)]
-
-  } else if (!is.language(fun) && is.null(fun)) {
-
-    assert_that(is_unique(x, by = meta_cols(x)))
-    x
-
-  } else if (is.string(fun)) {
-
-    if (is.na(fun)) {
-      if (is.numeric(x[[data_cols(x)]])) {
-        fun <- "median"
-      } else {
-        fun <- "first"
-      }
-    }
-
-    dt_gforce(x, fun)
-
-  } else {
-
-    x[, eval(fun), by = c(meta_cols(x))]
-  }
 }
 
 rep_arg <- function(arg, names) {

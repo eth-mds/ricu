@@ -7,7 +7,10 @@
 #'
 is_tbl_meta <- function(x) inherits(x, "tbl_meta")
 
+#' @rdname tbl_meta
+#' @keywords internal
 #' @export
+#'
 tbl_meta <- function(x) UseMethod("tbl_meta", x)
 
 #' @rdname tbl_meta

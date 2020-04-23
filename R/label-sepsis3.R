@@ -1,21 +1,20 @@
 
+#' Sepsis 3 label
+#'
+#' The sepsis 3 label consists of a suspected infection combined with an acute
+#' increase in SOFA score.
+#'
+#' @param sofa `ts_tbl` with a column `sofa_score`
+#' @param si `ts_tbl` with columns `si_lwr` and `si_upr` defining windows for
+#' which a suspected infection is valid
+#' @param si_window Switch that can be used to filter SI windows
+#' @param delta_fun Function used to determine the SOFA increase during an SI
+#' window
+#' @param sofa_thresh Required SOFA increase to trigger Sepsis 3
+#'
+#' @rdname sepsis_3
 #' @export
-delta_cummin <- function(x) {
-  x - cummin(ifelse(is.na(x), .Machine$integer.max, x))
-}
-
-#' @export
-delta_start <- function(x) x - x[!is.na(x)][1L]
-
-#' @export
-delta_min <- function(x, shifts = seq.int(0L, 23L)) {
-  if (length(x) == 0L) x
-  else {
-    x - do.call(pmin.int, c(data.table::shift(x, shifts), list(na.rm = TRUE)))
-  }
-}
-
-#' @export
+#'
 sepsis_3 <- function(sofa, si, si_window = c("first", "last", "any"),
                      delta_fun = delta_cummin,
                      sofa_thresh = 2L) {
@@ -50,3 +49,31 @@ sepsis_3 <- function(sofa, si, si_window = c("first", "last", "any"),
 
   res
 }
+
+#' @param x Vector of SOFA scores
+#'
+#' @rdname sepsis_3
+#' @export
+#'
+delta_cummin <- function(x) {
+  x - cummin(ifelse(is.na(x), .Machine$integer.max, x))
+}
+
+#' @rdname sepsis_3
+#' @export
+#'
+delta_start <- function(x) x - x[!is.na(x)][1L]
+
+#' @param shifts Vector of time shifts (multiples of the current interval) over
+#' which [base::pmin()] is evaluated
+#'
+#' @rdname sepsis_3
+#' @export
+#'
+delta_min <- function(x, shifts = seq.int(0L, 23L)) {
+  if (length(x) == 0L) x
+  else {
+    x - do.call(pmin.int, c(data.table::shift(x, shifts), list(na.rm = TRUE)))
+  }
+}
+

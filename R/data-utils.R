@@ -98,7 +98,18 @@ id_pos <- function(x, id = id_name(x)) {
   else match(id, names(opts))
 }
 
+#' Stays
+#'
+#' For a given ID type, get all stays with corresponding start and end times.
+#'
+#' @param id_type Type of ID all returned times are relative to
+#' @param win_type Type of ID for which the in/out times is returned
+#' @param in_time,out_time column names of the returned in/out times
+#'
+#' @inheritParams data_ts_quo
+#'
 #' @export
+#'
 stay_windows <- function(source, id_type = "icustay", win_type = "icustay",
                          in_time = "intime", out_time = "outtime",
                          interval = hours(1L)) {
