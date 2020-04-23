@@ -60,7 +60,7 @@ mimic_abx_shift_flag <- function(x, val_col, time_col, ...) {
 
 mimic_sampling <- function(x, val_col, time_col, aux_time, ...) {
   x <- combine_date_time(x, aux_time, time_col, hours(12L))
-  x <- set(x, j = val_col, value = not_na(x[[val_col]]))
+  x <- set(x, j = val_col, value = !is.na(x[[val_col]]))
   x
 }
 

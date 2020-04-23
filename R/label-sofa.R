@@ -126,8 +126,6 @@ sofa_pafi <- function(pao2, fio2, win_length, mode, fix_na_fio2) {
   assert_that(same_interval(pao2, fio2),
               has_cols(pao2, "pa_o2"), has_cols(fio2, "fi_o2"))
 
-  pa_o2 <- fi_o2 <- NULL
-
   if (identical(mode, "match_vals")) {
 
     res <- rbind(
@@ -147,7 +145,7 @@ sofa_pafi <- function(pao2, fio2, win_length, mode, fix_na_fio2) {
     }
 
     win_expr <- substitute(
-      list(min_pa = min_fun(pa_o2), max_fi = max_fun(fi_o2)),
+      list(min_pa = min_fun(get("pa_o2")), max_fi = max_fun(get("fi_o2"))),
       list(min_fun = min_or_na, max_fun = max_or_na)
     )
     res <- slide_quo(res, win_expr, before = win_length, full_window = FALSE)
@@ -156,11 +154,11 @@ sofa_pafi <- function(pao2, fio2, win_length, mode, fix_na_fio2) {
   }
 
   if (fix_na_fio2) {
-    res <- res[is.na(fi_o2), fi_o2 := 21]
+    res <- res[is.na(get("fi_o2")), c("fi_o2") := 21]
   }
 
-  res <- res[!is.na(pa_o2) & !is.na(fi_o2) & fi_o2 != 0, ]
-  res <- res[, c("pafi") := 100 * pa_o2 / fi_o2]
+  res <- res[!is.na(get("pa_o2")) & !is.na(get("fi_o2")) & get("fi_o2") != 0, ]
+  res <- res[, c("pafi") := 100 * get("pa_o2") / get("fi_o2")]
   res <- res[, c("pa_o2", "fi_o2") := NULL]
 
   res

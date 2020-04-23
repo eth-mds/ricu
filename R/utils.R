@@ -330,8 +330,6 @@ null_or_subs <- function(x, where = parent.frame(1L)) {
   if (missing(x)) NULL else do.call("substitute", list(substitute(x), where))
 }
 
-not_na <- function(x) !is.na(x)
-
 carry_backwards <- function(x) {
 
   res <- x[length(x)]
