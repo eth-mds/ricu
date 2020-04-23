@@ -9,7 +9,7 @@ on:
 name: coverage
 
 jobs:
-  test-coverage:
+  coverage:
     runs-on: macOS-latest
     steps:
       - uses: actions/checkout@v2

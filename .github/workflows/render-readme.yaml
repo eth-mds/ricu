@@ -6,8 +6,7 @@ on:
 name: readme
 
 jobs:
-  render:
-    name: Render README
+  readme:
     runs-on: macOS-latest
     steps:
       - uses: actions/checkout@v2

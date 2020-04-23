@@ -9,7 +9,7 @@ on:
 name: check
 
 jobs:
-  R-CMD-check:
+  check:
     runs-on: ${{ matrix.config.os }}
 
     name: ${{ matrix.config.os }} (${{ matrix.config.r }})
@@ -42,7 +42,7 @@ jobs:
 
       - name: Query dependencies
         run: |
-          install.packages('remotes')
+          install.packages("remotes")
           saveRDS(remotes::dev_package_deps(dependencies = TRUE), "depends.Rds", version = 2)
         shell: Rscript {0}
 
@@ -66,10 +66,15 @@ jobs:
       - name: Install macOS-devel system dependencies
         if: matrix.config.os == 'macOS-latest' && matrix.config.r == 'devel'
         run: |
-          brew install llvm
           echo "::add-path::/usr/local/opt/llvm/bin"
           echo "::set-env name={LDFLAGS}::-L/usr/local/opt/llvm/lib"
           echo "::set-env name={CPPFLAGS}::-I/usr/local/opt/llvm/include"
+
+      - name: Install dependencies
+        run: |
+          remotes::install_deps(dependencies = TRUE)
+          remotes::install_cran("rcmdcheck")
+        shell: Rscript {0}
 
       - name: Check
         env:
