@@ -6,10 +6,10 @@ on:
     branches:
       - master
 
-name: check
+name: check-full
 
 jobs:
-  check:
+  check-full:
     runs-on: ${{ matrix.config.os }}
 
     name: ${{ matrix.config.os }} (${{ matrix.config.r }})
