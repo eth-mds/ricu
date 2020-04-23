@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Utility functions — min_or_na • ricu</title>
+<title>Stays — stay_windows • ricu</title>
 
 
 <!-- jquery -->
@@ -39,8 +39,8 @@
 
 
 
-<meta property="og:title" content="Utility functions — min_or_na" />
-<meta property="og:description" content="Various utility functions" />
+<meta property="og:title" content="Stays — stay_windows" />
+<meta property="og:description" content="For a given ID type, get all stays with corresponding start and end times." />
 
 
 
@@ -108,41 +108,47 @@
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Utility functions</h1>
-    <small class="dont-index">Source: <a href='https://github.com/septic-tank/ricu/blob/master/R/utils.R'><code>R/utils.R</code></a></small>
-    <div class="hidden name"><code>utils.Rd</code></div>
+    <h1>Stays</h1>
+    <small class="dont-index">Source: <a href='https://github.com/septic-tank/ricu/blob/master/R/data-utils.R'><code>R/data-utils.R</code></a></small>
+    <div class="hidden name"><code>stay_windows.Rd</code></div>
     </div>
 
     <div class="ref-description">
-    <p>Various utility functions</p>
+    <p>For a given ID type, get all stays with corresponding start and end times.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>min_or_na</span>(<span class='no'>x</span>)
-
-<span class='fu'>max_or_na</span>(<span class='no'>x</span>)
-
-<span class='fu'>sum_or_na</span>(<span class='no'>x</span>)
-
-<span class='fu'>is_val</span>(<span class='no'>x</span>, <span class='no'>val</span>)
-
-<span class='fu'>is_true</span>(<span class='no'>x</span>)
-
-<span class='fu'>last_elem</span>(<span class='no'>x</span>)
-
-<span class='fu'>first_elem</span>(<span class='no'>x</span>)
-
-<span class='fu'>replace_na</span>(<span class='no'>x</span>, <span class='no'>val</span>)</pre>
+    <pre class="usage"><span class='fu'>stay_windows</span>(
+  <span class='no'>source</span>,
+  <span class='kw'>id_type</span> <span class='kw'>=</span> <span class='st'>"icustay"</span>,
+  <span class='kw'>win_type</span> <span class='kw'>=</span> <span class='st'>"icustay"</span>,
+  <span class='kw'>in_time</span> <span class='kw'>=</span> <span class='st'>"intime"</span>,
+  <span class='kw'>out_time</span> <span class='kw'>=</span> <span class='st'>"outtime"</span>,
+  <span class='kw'>interval</span> <span class='kw'>=</span> <span class='fu'><a href='difftime.html'>hours</a></span>(<span class='fl'>1L</span>)
+)</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
-      <th>x</th>
-      <td><p>Object to test</p></td>
+      <th>source</th>
+      <td><p>String specifying the data source</p></td>
     </tr>
     <tr>
-      <th>val</th>
-      <td><p>Value to compare against</p></td>
+      <th>id_type</th>
+      <td><p>Type of ID all returned times are relative to</p></td>
+    </tr>
+    <tr>
+      <th>win_type</th>
+      <td><p>Type of ID for which the in/out times is returned</p></td>
+    </tr>
+    <tr>
+      <th>in_time, out_time</th>
+      <td><p>column names of the returned in/out times</p></td>
+    </tr>
+    <tr>
+      <th>interval</th>
+      <td><p>The time interval used to discretize time stamps with,
+specified as <code><a href='https://rdrr.io/r/base/difftime.html'>base::difftime()</a></code> object</p></td>
     </tr>
     </table>
 

@@ -184,10 +184,10 @@ to make it apply to all R sessions. For example, it could be set within:</p><ul>
 <span class='fu'><a href='https://rdrr.io/r/base/identical.html'>identical</a></span>(<span class='fu'>data_dir</span>(), <span class='fu'><a href='https://rdrr.io/r/base/tempfile.html'>tempdir</a></span>())</div><div class='output co'>#&gt; [1] TRUE</div><div class='input'>
 <span class='fu'><a href='https://rdrr.io/r/base/files2.html'>dir.exists</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/file.path.html'>file.path</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/tempfile.html'>tempdir</a></span>(), <span class='st'>"some_subdir"</span>))</div><div class='output co'>#&gt; [1] FALSE</div><div class='input'><span class='no'>some_subdir</span> <span class='kw'>&lt;-</span> <span class='fu'>data_dir</span>(<span class='st'>"some_subdir"</span>)
 <span class='fu'><a href='https://rdrr.io/r/base/files2.html'>dir.exists</a></span>(<span class='no'>some_subdir</span>)</div><div class='output co'>#&gt; [1] TRUE</div><div class='input'>
-<span class='no'>cfg</span> <span class='kw'>&lt;-</span> <span class='fu'>get_config</span>(<span class='st'>"eicu-demo"</span>)
+<span class='no'>cfg</span> <span class='kw'>&lt;-</span> <span class='fu'>get_config</span>(<span class='st'>"concept-dict"</span>)
 <span class='fu'><a href='https://rdrr.io/r/base/identical.html'>identical</a></span>(
   <span class='no'>cfg</span>,
-  <span class='fu'>get_config</span>(<span class='st'>"eicu-demo"</span>,
+  <span class='fu'>get_config</span>(<span class='st'>"concept-dict"</span>,
              <span class='fu'><a href='https://rdrr.io/r/base/system.file.html'>system.file</a></span>(<span class='st'>"extdata"</span>, <span class='st'>"config"</span>, <span class='kw'>package</span> <span class='kw'>=</span> <span class='st'>"ricu"</span>))
 )</div><div class='output co'>#&gt; [1] TRUE</div><div class='input'>
 </div></pre>

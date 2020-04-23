@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Utility functions — min_or_na • ricu</title>
+<title>Sepsis 3 label — sepsis_3 • ricu</title>
 
 
 <!-- jquery -->
@@ -39,8 +39,9 @@
 
 
 
-<meta property="og:title" content="Utility functions — min_or_na" />
-<meta property="og:description" content="Various utility functions" />
+<meta property="og:title" content="Sepsis 3 label — sepsis_3" />
+<meta property="og:description" content="The sepsis 3 label consists of a suspected infection combined with an acute
+increase in SOFA score." />
 
 
 
@@ -108,41 +109,63 @@
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Utility functions</h1>
-    <small class="dont-index">Source: <a href='https://github.com/septic-tank/ricu/blob/master/R/utils.R'><code>R/utils.R</code></a></small>
-    <div class="hidden name"><code>utils.Rd</code></div>
+    <h1>Sepsis 3 label</h1>
+    <small class="dont-index">Source: <a href='https://github.com/septic-tank/ricu/blob/master/R/label-sepsis3.R'><code>R/label-sepsis3.R</code></a></small>
+    <div class="hidden name"><code>sepsis_3.Rd</code></div>
     </div>
 
     <div class="ref-description">
-    <p>Various utility functions</p>
+    <p>The sepsis 3 label consists of a suspected infection combined with an acute
+increase in SOFA score.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>min_or_na</span>(<span class='no'>x</span>)
+    <pre class="usage"><span class='fu'>sepsis_3</span>(
+  <span class='no'>sofa</span>,
+  <span class='no'>si</span>,
+  <span class='kw'>si_window</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"first"</span>, <span class='st'>"last"</span>, <span class='st'>"any"</span>),
+  <span class='kw'>delta_fun</span> <span class='kw'>=</span> <span class='no'>delta_cummin</span>,
+  <span class='kw'>sofa_thresh</span> <span class='kw'>=</span> <span class='fl'>2L</span>
+)
 
-<span class='fu'>max_or_na</span>(<span class='no'>x</span>)
+<span class='fu'>delta_cummin</span>(<span class='no'>x</span>)
 
-<span class='fu'>sum_or_na</span>(<span class='no'>x</span>)
+<span class='fu'>delta_start</span>(<span class='no'>x</span>)
 
-<span class='fu'>is_val</span>(<span class='no'>x</span>, <span class='no'>val</span>)
-
-<span class='fu'>is_true</span>(<span class='no'>x</span>)
-
-<span class='fu'>last_elem</span>(<span class='no'>x</span>)
-
-<span class='fu'>first_elem</span>(<span class='no'>x</span>)
-
-<span class='fu'>replace_na</span>(<span class='no'>x</span>, <span class='no'>val</span>)</pre>
+<span class='fu'>delta_min</span>(<span class='no'>x</span>, <span class='kw'>shifts</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/seq.html'>seq.int</a></span>(<span class='fl'>0L</span>, <span class='fl'>23L</span>))</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
-      <th>x</th>
-      <td><p>Object to test</p></td>
+      <th>sofa</th>
+      <td><p><code>ts_tbl</code> with a column <code>sofa_score</code></p></td>
     </tr>
     <tr>
-      <th>val</th>
-      <td><p>Value to compare against</p></td>
+      <th>si</th>
+      <td><p><code>ts_tbl</code> with columns <code>si_lwr</code> and <code>si_upr</code> defining windows for
+which a suspected infection is valid</p></td>
+    </tr>
+    <tr>
+      <th>si_window</th>
+      <td><p>Switch that can be used to filter SI windows</p></td>
+    </tr>
+    <tr>
+      <th>delta_fun</th>
+      <td><p>Function used to determine the SOFA increase during an SI
+window</p></td>
+    </tr>
+    <tr>
+      <th>sofa_thresh</th>
+      <td><p>Required SOFA increase to trigger Sepsis 3</p></td>
+    </tr>
+    <tr>
+      <th>x</th>
+      <td><p>Vector of SOFA scores</p></td>
+    </tr>
+    <tr>
+      <th>shifts</th>
+      <td><p>Vector of time shifts (multiples of the current interval) over
+which <code><a href='https://rdrr.io/r/base/Extremes.html'>base::pmin()</a></code> is evaluated</p></td>
     </tr>
     </table>
 

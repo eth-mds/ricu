@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Utility functions — min_or_na • ricu</title>
+<title>Time series utility functions — expand_limits • ricu</title>
 
 
 <!-- jquery -->
@@ -39,8 +39,8 @@
 
 
 
-<meta property="og:title" content="Utility functions — min_or_na" />
-<meta property="og:description" content="Various utility functions" />
+<meta property="og:title" content="Time series utility functions — expand_limits" />
+<meta property="og:description" content="Time series utility functions" />
 
 
 
@@ -108,41 +108,109 @@
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Utility functions</h1>
-    <small class="dont-index">Source: <a href='https://github.com/septic-tank/ricu/blob/master/R/utils.R'><code>R/utils.R</code></a></small>
-    <div class="hidden name"><code>utils.Rd</code></div>
+    <h1>Time series utility functions</h1>
+    <small class="dont-index">Source: <a href='https://github.com/septic-tank/ricu/blob/master/R/ts-utils.R'><code>R/ts-utils.R</code></a></small>
+    <div class="hidden name"><code>ts_utils.Rd</code></div>
     </div>
 
     <div class="ref-description">
-    <p>Various utility functions</p>
+    <p>Time series utility functions</p>
     </div>
 
-    <pre class="usage"><span class='fu'>min_or_na</span>(<span class='no'>x</span>)
+    <pre class="usage"><span class='fu'>expand_limits</span>(
+  <span class='no'>x</span>,
+  <span class='kw'>min_col</span> <span class='kw'>=</span> <span class='st'>"min"</span>,
+  <span class='kw'>max_col</span> <span class='kw'>=</span> <span class='st'>"max"</span>,
+  <span class='kw'>step_size</span> <span class='kw'>=</span> <span class='fl'>1L</span>,
+  <span class='kw'>id_cols</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
+  <span class='kw'>new_col</span> <span class='kw'>=</span> <span class='st'>"hadm_time"</span>
+)
 
-<span class='fu'>max_or_na</span>(<span class='no'>x</span>)
+<span class='fu'>has_no_gaps</span>(<span class='no'>x</span>)
 
-<span class='fu'>sum_or_na</span>(<span class='no'>x</span>)
+<span class='fu'>has_gaps</span>(<span class='no'>...</span>)
 
-<span class='fu'>is_val</span>(<span class='no'>x</span>, <span class='no'>val</span>)
+<span class='fu'>fill_gaps</span>(<span class='no'>x</span>, <span class='kw'>limits</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='no'>...</span>)
 
-<span class='fu'>is_true</span>(<span class='no'>x</span>)
+<span class='fu'>slide</span>(<span class='no'>x</span>, <span class='no'>expr</span>, <span class='no'>...</span>)
 
-<span class='fu'>last_elem</span>(<span class='no'>x</span>)
+<span class='fu'>slide_quo</span>(<span class='no'>x</span>, <span class='no'>expr</span>, <span class='no'>before</span>, <span class='kw'>after</span> <span class='kw'>=</span> <span class='fu'><a href='difftime.html'>hours</a></span>(<span class='fl'>0L</span>), <span class='no'>...</span>)
 
-<span class='fu'>first_elem</span>(<span class='no'>x</span>)
+<span class='fu'>slide_index</span>(<span class='no'>x</span>, <span class='no'>expr</span>, <span class='no'>...</span>)
 
-<span class='fu'>replace_na</span>(<span class='no'>x</span>, <span class='no'>val</span>)</pre>
+<span class='fu'>slide_index_quo</span>(<span class='no'>x</span>, <span class='no'>expr</span>, <span class='no'>index</span>, <span class='no'>before</span>, <span class='kw'>after</span> <span class='kw'>=</span> <span class='fu'><a href='difftime.html'>hours</a></span>(<span class='fl'>0L</span>), <span class='no'>...</span>)
+
+<span class='fu'>hop</span>(<span class='no'>x</span>, <span class='no'>expr</span>, <span class='no'>...</span>)
+
+<span class='fu'>hop_quo</span>(
+  <span class='no'>x</span>,
+  <span class='no'>expr</span>,
+  <span class='no'>windows</span>,
+  <span class='kw'>full_window</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
+  <span class='kw'>lwr_col</span> <span class='kw'>=</span> <span class='st'>"min_time"</span>,
+  <span class='kw'>upr_col</span> <span class='kw'>=</span> <span class='st'>"max_time"</span>
+)</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
       <th>x</th>
-      <td><p>Object to test</p></td>
+      <td><p><code>ts_tbl</code> object to use</p></td>
     </tr>
     <tr>
-      <th>val</th>
-      <td><p>Value to compare against</p></td>
+      <th>min_col, max_col</th>
+      <td><p>Name of the columns that represent lower and upper
+windows bounds</p></td>
+    </tr>
+    <tr>
+      <th>step_size</th>
+      <td><p>Controls the step size used to interpolate between
+<code>min_col</code> and <code>max_col</code></p></td>
+    </tr>
+    <tr>
+      <th>id_cols</th>
+      <td><p>Names of the id columns</p></td>
+    </tr>
+    <tr>
+      <th>new_col</th>
+      <td><p>Name of the new index column</p></td>
+    </tr>
+    <tr>
+      <th>...</th>
+      <td><p>Passed to the <code>*_quo</code> version and from there to <code>hop_quo()</code></p></td>
+    </tr>
+    <tr>
+      <th>limits</th>
+      <td><p>A table with columns for lower and upper window bounds</p></td>
+    </tr>
+    <tr>
+      <th>expr</th>
+      <td><p>Expression (quoted for <code>*_quo</code> and unquoted otherwise) to be
+evaluated over each window</p></td>
+    </tr>
+    <tr>
+      <th>before, after</th>
+      <td><p>Time span to look back/forward</p></td>
+    </tr>
+    <tr>
+      <th>index</th>
+      <td><p>A vector of times around which windows are spanned (relative
+to the index)</p></td>
+    </tr>
+    <tr>
+      <th>windows</th>
+      <td><p>An <code>icu_tbl</code> defining the windows to span</p></td>
+    </tr>
+    <tr>
+      <th>full_window</th>
+      <td><p>Logical flag controlling how the situation is handled
+where the sliding window extends beyond available data</p></td>
+    </tr>
+    <tr>
+      <th>lwr_col, upr_col</th>
+      <td><p>Names of columns (in <code>windows</code>) of lower/upper
+window bounds</p></td>
     </tr>
     </table>
 

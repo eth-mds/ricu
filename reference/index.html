@@ -139,19 +139,25 @@
       </tr><tr>
         
         <td>
-          <p><code><a href="data_concepts.html">new_concept()</a></code> <code><a href="data_concepts.html">is_concept()</a></code> <code><a href="data_concepts.html">concept()</a></code> <code><a href="data_concepts.html">as_concept()</a></code> </p>
+          <p><code><a href="change_id.html">id_name()</a></code> <code><a href="change_id.html">next_id()</a></code> <code><a href="change_id.html">prev_id()</a></code> <code><a href="change_id.html">change_id()</a></code> <code><a href="change_id.html">upgrade_id()</a></code> <code><a href="change_id.html">downgrade_id()</a></code> </p>
+        </td>
+        <td><p>Switch between id types</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="data_concepts.html">new_concept()</a></code> <code><a href="data_concepts.html">is_concept()</a></code> <code><a href="data_concepts.html">as_concept()</a></code> <code><a href="data_concepts.html">concept()</a></code> </p>
         </td>
         <td><p>Data concept</p></td>
       </tr><tr>
         
         <td>
-          <p><code><a href="data_dictionary.html">new_dictionary()</a></code> <code><a href="data_dictionary.html">dictionary()</a></code> <code><a href="data_dictionary.html">is_dictionary()</a></code> <code><a href="data_dictionary.html">read_dictionary()</a></code> <code><a href="data_dictionary.html">as_dictionary()</a></code> </p>
+          <p><code><a href="data_dictionary.html">new_dictionary()</a></code> <code><a href="data_dictionary.html">dictionary()</a></code> <code><a href="data_dictionary.html">as_dictionary()</a></code> <code><a href="data_dictionary.html">is_dictionary()</a></code> <code><a href="data_dictionary.html">read_dictionary()</a></code> </p>
         </td>
         <td><p>Concept dictionary</p></td>
       </tr><tr>
         
         <td>
-          <p><code><a href="data_items.html">new_item()</a></code> <code><a href="data_items.html">item()</a></code> <code><a href="data_items.html">is_item()</a></code> <code><a href="data_items.html">as_item()</a></code> </p>
+          <p><code><a href="data_items.html">new_item()</a></code> <code><a href="data_items.html">item()</a></code> <code><a href="data_items.html">is_item()</a></code> <code><a href="data_items.html">as_item()</a></code> <code><a href="data_items.html">get_source()</a></code> </p>
         </td>
         <td><p>Data item</p></td>
       </tr><tr>
@@ -187,7 +193,7 @@
       </tr><tr>
         
         <td>
-          <p><code><a href="icu_tbl.html">id_tbl()</a></code> <code><a href="icu_tbl.html">as_id_tbl(<i>&lt;id_tbl&gt;</i>)</a></code> <code><a href="icu_tbl.html">as_id_tbl(<i>&lt;default&gt;</i>)</a></code> <code><a href="icu_tbl.html">as_ts_tbl(<i>&lt;id_tbl&gt;</i>)</a></code> <code><a href="icu_tbl.html">is_id_tbl()</a></code> </p>
+          <p><code><a href="icu_tbl.html">is_icu_tbl()</a></code> <code><a href="icu_tbl.html">id_tbl()</a></code> <code><a href="icu_tbl.html">as_id_tbl()</a></code> <code><a href="icu_tbl.html">is_id_tbl()</a></code> <code><a href="icu_tbl.html">ts_tbl()</a></code> <code><a href="icu_tbl.html">as_ts_tbl()</a></code> <code><a href="icu_tbl.html">is_ts_tbl()</a></code> </p>
         </td>
         <td><p>Tabular ICU data</p></td>
       </tr><tr>
@@ -196,6 +202,18 @@
           <p><code><a href="import_source.html">import_source()</a></code> </p>
         </td>
         <td><p>Data import utilities</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="label_si.html">si_data()</a></code> <code><a href="label_si.html">si_windows()</a></code> <code><a href="label_si.html">si()</a></code> </p>
+        </td>
+        <td><p>Suspicion of infection label</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="label_sofa.html">sofa_data()</a></code> <code><a href="label_sofa.html">sofa_window()</a></code> <code><a href="label_sofa.html">sofa_compute()</a></code> <code><a href="label_sofa.html">sofa()</a></code> </p>
+        </td>
+        <td><p>SOFA score label</p></td>
       </tr><tr>
         
         <td>
@@ -220,6 +238,36 @@
           <p><code><a href="load_item.html">load_items()</a></code> <code><a href="load_item.html">load_item()</a></code> </p>
         </td>
         <td><p>Load data items</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="meta_utils.html">index()</a></code> <code><a href="meta_utils.html">id()</a></code> <code><a href="meta_utils.html">id_opts()</a></code> <code><a href="meta_utils.html">interval()</a></code> <code><a href="meta_utils.html">time_unit()</a></code> <code><a href="meta_utils.html">meta_cols()</a></code> <code><a href="meta_utils.html">set_index()</a></code> <code><a href="meta_utils.html">set_interval()</a></code> <code><a href="meta_utils.html">set_id()</a></code> <code><a href="meta_utils.html">set_id_opts()</a></code> <code><a href="meta_utils.html">set_time_unit()</a></code> <code><a href="meta_utils.html">units(<i>&lt;icu_tbl&gt;</i>)</a></code> <code><a href="meta_utils.html">data_cols()</a></code> <code><a href="meta_utils.html">data_unit()</a></code> <code><a href="meta_utils.html">time_step()</a></code> <code><a href="meta_utils.html">time_col()</a></code> </p>
+        </td>
+        <td><p>Utilities for querying and modifying table meta data</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="sepsis_3.html">sepsis_3()</a></code> <code><a href="sepsis_3.html">delta_cummin()</a></code> <code><a href="sepsis_3.html">delta_start()</a></code> <code><a href="sepsis_3.html">delta_min()</a></code> </p>
+        </td>
+        <td><p>Sepsis 3 label</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="stay_windows.html">stay_windows()</a></code> </p>
+        </td>
+        <td><p>Stays</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="tbl_utils.html">rm_cols()</a></code> <code><a href="tbl_utils.html">rename_cols()</a></code> <code><a href="tbl_utils.html">rbind_lst()</a></code> <code><a href="tbl_utils.html">rm_na()</a></code> <code><a href="tbl_utils.html">unmerge()</a></code> <code><a href="tbl_utils.html">dt_gforce()</a></code> <code><a href="tbl_utils.html">is_unique()</a></code> <code><a href="tbl_utils.html">make_unique()</a></code> <code><a href="tbl_utils.html">make_unique_quo()</a></code> </p>
+        </td>
+        <td><p>Utilities for <code>icu_tbl</code> objects</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="ts_utils.html">expand_limits()</a></code> <code><a href="ts_utils.html">has_no_gaps()</a></code> <code><a href="ts_utils.html">has_gaps()</a></code> <code><a href="ts_utils.html">fill_gaps()</a></code> <code><a href="ts_utils.html">slide()</a></code> <code><a href="ts_utils.html">slide_quo()</a></code> <code><a href="ts_utils.html">slide_index()</a></code> <code><a href="ts_utils.html">slide_index_quo()</a></code> <code><a href="ts_utils.html">hop()</a></code> <code><a href="ts_utils.html">hop_quo()</a></code> </p>
+        </td>
+        <td><p>Time series utility functions</p></td>
       </tr><tr>
         
         <td>

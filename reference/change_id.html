@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Utility functions — min_or_na • ricu</title>
+<title>Switch between id types — id_name • ricu</title>
 
 
 <!-- jquery -->
@@ -39,8 +39,10 @@
 
 
 
-<meta property="og:title" content="Utility functions — min_or_na" />
-<meta property="og:description" content="Various utility functions" />
+<meta property="og:title" content="Switch between id types — id_name" />
+<meta property="og:description" content="In ICU settings, multiple ID types may be in use which present an ordering
+or nested structure, for example patient id, hospital stay id and ICU stay
+id. This function allows for converting from one ID to another." />
 
 
 
@@ -108,41 +110,67 @@
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Utility functions</h1>
-    <small class="dont-index">Source: <a href='https://github.com/septic-tank/ricu/blob/master/R/utils.R'><code>R/utils.R</code></a></small>
-    <div class="hidden name"><code>utils.Rd</code></div>
+    <h1>Switch between id types</h1>
+    <small class="dont-index">Source: <a href='https://github.com/septic-tank/ricu/blob/master/R/data-utils.R'><code>R/data-utils.R</code></a></small>
+    <div class="hidden name"><code>change_id.Rd</code></div>
     </div>
 
     <div class="ref-description">
-    <p>Various utility functions</p>
+    <p>In ICU settings, multiple ID types may be in use which present an ordering
+or nested structure, for example patient id, hospital stay id and ICU stay
+id. This function allows for converting from one ID to another.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>min_or_na</span>(<span class='no'>x</span>)
+    <pre class="usage"><span class='fu'>id_name</span>(<span class='no'>x</span>, <span class='kw'>col</span> <span class='kw'>=</span> <span class='fu'><a href='meta_utils.html'>id</a></span>(<span class='no'>x</span>))
 
-<span class='fu'>max_or_na</span>(<span class='no'>x</span>)
+<span class='fu'>next_id</span>(<span class='no'>x</span>, <span class='kw'>n</span> <span class='kw'>=</span> <span class='fl'>1L</span>)
 
-<span class='fu'>sum_or_na</span>(<span class='no'>x</span>)
+<span class='fu'>prev_id</span>(<span class='no'>x</span>, <span class='kw'>n</span> <span class='kw'>=</span> <span class='fl'>1L</span>)
 
-<span class='fu'>is_val</span>(<span class='no'>x</span>, <span class='no'>val</span>)
+<span class='fu'>change_id</span>(<span class='no'>x</span>, <span class='no'>source</span>, <span class='no'>to</span>, <span class='kw'>from</span> <span class='kw'>=</span> <span class='fu'>id_name</span>(<span class='no'>x</span>))
 
-<span class='fu'>is_true</span>(<span class='no'>x</span>)
+<span class='fu'>upgrade_id</span>(<span class='no'>x</span>, <span class='no'>source</span>, <span class='kw'>to</span> <span class='kw'>=</span> <span class='fu'>next_id</span>(<span class='no'>x</span>), <span class='kw'>from</span> <span class='kw'>=</span> <span class='fu'>id_name</span>(<span class='no'>x</span>))
 
-<span class='fu'>last_elem</span>(<span class='no'>x</span>)
+<span class='fu'>downgrade_id</span>(<span class='no'>x</span>, <span class='no'>source</span>, <span class='kw'>to</span> <span class='kw'>=</span> <span class='fu'>prev_id</span>(<span class='no'>x</span>), <span class='kw'>from</span> <span class='kw'>=</span> <span class='fu'>id_name</span>(<span class='no'>x</span>))
 
-<span class='fu'>first_elem</span>(<span class='no'>x</span>)
+<span class='co'># S3 method for ts_tbl</span>
+<span class='fu'>upgrade_id</span>(<span class='no'>x</span>, <span class='no'>source</span>, <span class='no'>to</span>, <span class='no'>from</span>)
 
-<span class='fu'>replace_na</span>(<span class='no'>x</span>, <span class='no'>val</span>)</pre>
+<span class='co'># S3 method for id_tbl</span>
+<span class='fu'>upgrade_id</span>(<span class='no'>x</span>, <span class='no'>source</span>, <span class='no'>to</span>, <span class='no'>from</span>)
+
+<span class='co'># S3 method for ts_tbl</span>
+<span class='fu'>downgrade_id</span>(<span class='no'>x</span>, <span class='no'>source</span>, <span class='no'>to</span>, <span class='no'>from</span>)
+
+<span class='co'># S3 method for id_tbl</span>
+<span class='fu'>downgrade_id</span>(<span class='no'>x</span>, <span class='no'>source</span>, <span class='no'>to</span>, <span class='no'>from</span>)</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
       <th>x</th>
-      <td><p>Object to test</p></td>
+      <td><p><code>icu_tbl</code> object for which to make the id change</p></td>
     </tr>
     <tr>
-      <th>val</th>
-      <td><p>Value to compare against</p></td>
+      <th>col</th>
+      <td><p>Name of an id column</p></td>
+    </tr>
+    <tr>
+      <th>n</th>
+      <td><p>Number of jumps in id ordering</p></td>
+    </tr>
+    <tr>
+      <th>source</th>
+      <td><p>Name of the data source</p></td>
+    </tr>
+    <tr>
+      <th>to</th>
+      <td><p>The destination id type</p></td>
+    </tr>
+    <tr>
+      <th>from</th>
+      <td><p>The current id type</p></td>
     </tr>
     </table>
 

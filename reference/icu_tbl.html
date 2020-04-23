@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Tabular ICU data — id_tbl • ricu</title>
+<title>Tabular ICU data — is_icu_tbl • ricu</title>
 
 
 <!-- jquery -->
@@ -39,7 +39,7 @@
 
 
 
-<meta property="og:title" content="Tabular ICU data — id_tbl" />
+<meta property="og:title" content="Tabular ICU data — is_icu_tbl" />
 <meta property="og:description" content="Two objects central to ricu, id_tbl and ts_tbl (both inheriting
 from icu_tbl) are used to represent tabular data." />
 
@@ -110,7 +110,7 @@ from icu_tbl) are used to represent tabular data." />
   <div class="col-md-9 contents">
     <div class="page-header">
     <h1>Tabular ICU data</h1>
-    <small class="dont-index">Source: <a href='https://github.com/septic-tank/ricu/blob/master/R/tbl-id.R'><code>R/tbl-id.R</code></a></small>
+    <small class="dont-index">Source: <a href='https://github.com/septic-tank/ricu/blob/master/R/tbl-icu.R'><code>R/tbl-icu.R</code></a>, <a href='https://github.com/septic-tank/ricu/blob/master/R/tbl-id.R'><code>R/tbl-id.R</code></a>, <a href='https://github.com/septic-tank/ricu/blob/master/R/tbl-ts.R'><code>R/tbl-ts.R</code></a></small>
     <div class="hidden name"><code>icu_tbl.Rd</code></div>
     </div>
 
@@ -119,7 +119,11 @@ from icu_tbl) are used to represent tabular data." />
 from <code>icu_tbl</code>) are used to represent tabular data.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>id_tbl</span>(<span class='no'>...</span>, <span class='no'>id</span>, <span class='kw'>id_opts</span> <span class='kw'>=</span> <span class='kw'>NULL</span>)
+    <pre class="usage"><span class='fu'>is_icu_tbl</span>(<span class='no'>x</span>)
+
+<span class='fu'>id_tbl</span>(<span class='no'>...</span>, <span class='no'>id</span>, <span class='kw'>id_opts</span> <span class='kw'>=</span> <span class='kw'>NULL</span>)
+
+<span class='fu'>as_id_tbl</span>(<span class='no'>x</span>, <span class='no'>...</span>)
 
 <span class='co'># S3 method for id_tbl</span>
 <span class='fu'>as_id_tbl</span>(<span class='no'>x</span>, <span class='no'>...</span>)
@@ -130,11 +134,30 @@ from <code>icu_tbl</code>) are used to represent tabular data.</p>
 <span class='co'># S3 method for id_tbl</span>
 <span class='fu'>as_ts_tbl</span>(<span class='no'>x</span>, <span class='kw'>index</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>interval</span> <span class='kw'>=</span> <span class='fu'><a href='difftime.html'>hours</a></span>(<span class='fl'>1L</span>), <span class='no'>...</span>)
 
-<span class='fu'>is_id_tbl</span>(<span class='no'>x</span>)</pre>
+<span class='fu'>is_id_tbl</span>(<span class='no'>x</span>)
+
+<span class='fu'>ts_tbl</span>(<span class='no'>...</span>, <span class='no'>id</span>, <span class='kw'>id_opts</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>index</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>interval</span> <span class='kw'>=</span> <span class='fu'><a href='difftime.html'>hours</a></span>(<span class='fl'>1L</span>))
+
+<span class='fu'>as_ts_tbl</span>(<span class='no'>x</span>, <span class='no'>...</span>)
+
+<span class='co'># S3 method for ts_tbl</span>
+<span class='fu'>as_ts_tbl</span>(<span class='no'>x</span>, <span class='no'>...</span>)
+
+<span class='co'># S3 method for default</span>
+<span class='fu'>as_ts_tbl</span>(<span class='no'>x</span>, <span class='no'>id</span>, <span class='kw'>id_opts</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>index</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>interval</span> <span class='kw'>=</span> <span class='fu'><a href='difftime.html'>hours</a></span>(<span class='fl'>1L</span>), <span class='no'>...</span>)
+
+<span class='fu'>is_ts_tbl</span>(<span class='no'>x</span>)
+
+<span class='co'># S3 method for ts_tbl</span>
+<span class='fu'>as_id_tbl</span>(<span class='no'>x</span>, <span class='no'>...</span>)</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
+    <tr>
+      <th>x</th>
+      <td><p>Object to test/coerce</p></td>
+    </tr>
     <tr>
       <th>...</th>
       <td><p>forwarded to <code><a href='https://Rdatatable.gitlab.io/data.table/reference/data.table.html'>data.table::data.table()</a></code> or generic consistency</p></td>
@@ -146,11 +169,7 @@ from <code>icu_tbl</code>) are used to represent tabular data.</p>
     <tr>
       <th>id_opts</th>
       <td><p><code>NULL</code> or a named character vector indicating options to
-which ids may be converted <code>see change_id()</code></p></td>
-    </tr>
-    <tr>
-      <th>x</th>
-      <td><p>Object to test/coerce</p></td>
+which ids may be converted see <code><a href='change_id.html'>change_id()</a></code></p></td>
     </tr>
     <tr>
       <th>index</th>
