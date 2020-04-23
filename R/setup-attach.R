@@ -172,7 +172,7 @@ get_from_data_env <- function(source) {
     tryCatch(
       get_src(source, envir = "data"),
       error = function(e) {
-        warning(e)
+        message(e)
         NULL
       }
     )

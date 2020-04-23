@@ -27,6 +27,8 @@
     invisible(NULL)
   }
 
+  backports::import(pkgname)
+
   attach_source(c("mimic", "mimic_demo", "eicu", "eicu_demo", "hirid"),
                 assign_env = pkg_env())
 

@@ -26,7 +26,8 @@ Imports:
     jsonlite,
     methods,
     prt,
-    tibble
+    tibble,
+    backports
 Suggests:
     getPass,
     keyring,
