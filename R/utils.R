@@ -335,8 +335,8 @@ carry_backwards <- function(x) {
   res <- x[length(x)]
 
   if (is.na(res)) {
-    not_na <- not_na(x)
-    if (any(not_na)) return(tail(x[not_na], n = 1L))
+    no_na <- not_na(x)
+    if (any(no_na)) return(tail(x[no_na], n = 1L))
   }
 
   res
