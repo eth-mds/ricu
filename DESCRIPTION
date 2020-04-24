@@ -5,7 +5,7 @@ Version: 0.0.0.9000
 Authors@R: c(
     person(given = "Drago",
            family = "Plecko",
-           role = c("aut", "cre"),
+           role = c("aut"),
            email = "drago.plecko@stat.math.ethz.ch"),
     person(given = "Nicolas",
            family = "Bennett",
