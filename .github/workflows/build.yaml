@@ -65,8 +65,8 @@ jobs:
         if: matrix.config.os == 'macOS-latest' && matrix.config.r == 'devel'
         run: |
           echo "::add-path::/usr/local/opt/llvm/bin"
-          echo "::set-env name=CC=/usr/local/opt/llvm/bin/clang
-          echo "::set-env name=CXX=/usr/local/opt/llvm/bin/clang++
+          echo "::set-env name=CC::/usr/local/opt/llvm/bin/clang
+          echo "::set-env name=CXX::/usr/local/opt/llvm/bin/clang++
           echo "::set-env name=LDFLAGS::-L/usr/local/opt/llvm/lib"
           echo "::set-env name=CPPFLAGS::-I/usr/local/opt/llvm/include"
 
