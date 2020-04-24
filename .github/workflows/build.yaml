@@ -6,10 +6,10 @@ on:
     branches:
       - master
 
-name: check
+name: build
 
 jobs:
-  check:
+  build:
     runs-on: ${{ matrix.config.os }}
 
     name: ${{ matrix.config.os }} (${{ matrix.config.r }})
@@ -62,11 +62,11 @@ jobs:
           sudo -s eval "$sysreqs"
 
       - name: Install macOS-devel system dependencies
-         if: matrix.config.os == 'macOS-latest' && matrix.config.r == 'devel'
-         run: |
-           echo "::add-path::/usr/local/opt/llvm/bin"
-           echo "::set-env name=LDFLAGS::-L/usr/local/opt/llvm/lib"
-           echo "::set-env name=CPPFLAGS::-I/usr/local/opt/llvm/include"
+        if: matrix.config.os == 'macOS-latest' && matrix.config.r == 'devel'
+        run: |
+          echo "::add-path::/usr/local/opt/llvm/bin"
+          echo "::set-env name=LDFLAGS::-L/usr/local/opt/llvm/lib"
+          echo "::set-env name=CPPFLAGS::-I/usr/local/opt/llvm/include"
 
       - name: Install dependencies
         run: |
