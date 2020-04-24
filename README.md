@@ -1,12 +1,5 @@
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
-``` r
-old.hooks <- fansi::set_knit_hooks(knitr::knit_hooks)
-```
-
-<STYLE type='text/css' scoped>
-PRE.fansi SPAN {padding-top: .25em; padding-bottom: .25em};
-</STYLE>
 [ricu](https://septic-tank.github.io/ricu/)
 ===========================================
 
