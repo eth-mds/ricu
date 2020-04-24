@@ -46,6 +46,18 @@
 <li>
   <a href="reference/index.html">Reference</a>
 </li>
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+    Articles
+     
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu">
+<li>
+      <a href="articles/demo.html">demo</a>
+    </li>
+  </ul>
+</li>
       </ul>
 <ul class="nav navbar-nav navbar-right">
 <li>
@@ -72,7 +84,7 @@
 </h1></div>
 <!-- badges: start -->
 
-<p>Working with ICU datasets, especially with publicly available ones as provided by <a href="https://physionet.org">Physionet</a> in R is facilitated by <code>ricu</code>, which provides data access, a level of abstraction to encode clinical concepts in a data source agnostic way, as well as classes and utilities for working with the arising types of time series datasets.</p>
+<p>Working with ICU datasets, especially with publicly available ones as provided by <a href="https://physionet.org">PhysioNet</a> in R is facilitated by <code>ricu</code>, which provides data access, a level of abstraction to encode clinical concepts in a data source agnostic way, as well as classes and utilities for working with the arising types of time series datasets.</p>
 <div id="installation" class="section level2">
 <h2 class="hasAnchor">
 <a href="#installation" class="anchor"></a>Installation</h2>
@@ -86,12 +98,58 @@
 rem$value("septic-tank/ricu")</pre></div>
 <p>In order to make sure that some useful utility packages are installed as well, consider installing the packages marked as <code>Suggests</code> as well by running</p>
 <div class="sourceCode" id="cb3"><pre class="r"><span class="kw pkg">remotes</span><span class="kw ns">::</span><span class="fu"><a href="https://remotes.r-lib.org/reference/install_github.html">install_github</a></span>(<span class="st">"septic-tank/ricu"</span>, <span class="kw">dependencies</span> <span class="kw">=</span> <span class="fl">TRUE</span>)</pre></div>
-<p>instead, or by installing some of the utility packages (relevant for downloading and preprocessing Physionet datasets)</p>
+<p>instead, or by installing some of the utility packages (relevant for downloading and preprocessing PhysioNet datasets)</p>
 <div class="sourceCode" id="cb4"><pre class="r"><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html">install.packages</a></span>(<span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">"getPass"</span>, <span class="st">"keyring"</span>, <span class="st">"openssl"</span>, <span class="st">"xml2"</span>))</pre></div>
 <p>and demo dataset packages</p>
 <div class="sourceCode" id="cb5"><pre class="r"><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html">install.packages</a></span>(<span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">"mimic.demo"</span>, <span class="st">"eicu.demo"</span>),
                  <span class="kw">repos</span> <span class="kw">=</span> <span class="st">"https://septic-tank.github.io/physionet-demo"</span>)</pre></div>
 <p>explicitly.</p>
+</div>
+<div id="data-access" class="section level2">
+<h2 class="hasAnchor">
+<a href="#data-access" class="anchor"></a>Data access</h2>
+<p>Out of the box (provided the two data packages <code>mimic.demo</code> and <code>eicu.demo</code> are available), <code>ricu</code> provides access to the demo datasets corresponding to the PhysioNet Clinical Databases eICU and MIMIC-III. Tables are available as</p>
+<div class="sourceCode" id="cb6"><pre class="r"><span class="no">mimic_demo</span>$<span class="no">admissions</span>
+<span class="co">#&gt; # A prt:        129 × 19</span>
+<span class="co">#&gt; # Partitioning: [129] rows</span>
+<span class="co">#&gt;     row_id subject_id hadm_id admittime           dischtime</span>
+<span class="co">#&gt;      &lt;int&gt;      &lt;int&gt;   &lt;int&gt; &lt;dttm&gt;              &lt;dttm&gt;</span>
+<span class="co">#&gt; 1    12258      10006  142345 2164-10-23 21:09:00 2164-11-01 17:15:00</span>
+<span class="co">#&gt; 2    12263      10011  105331 2126-08-14 22:32:00 2126-08-28 18:59:00</span>
+<span class="co">#&gt; 3    12265      10013  165520 2125-10-04 23:36:00 2125-10-07 15:13:00</span>
+<span class="co">#&gt; 4    12269      10017  199207 2149-05-26 17:19:00 2149-06-03 18:42:00</span>
+<span class="co">#&gt; 5    12270      10019  177759 2163-05-14 20:43:00 2163-05-15 12:00:00</span>
+<span class="co">#&gt; …</span>
+<span class="co">#&gt; 125  41055      44083  198330 2112-05-28 15:45:00 2112-06-07 16:50:00</span>
+<span class="co">#&gt; 126  41070      44154  174245 2178-05-14 20:29:00 2178-05-15 09:45:00</span>
+<span class="co">#&gt; 127  41087      44212  163189 2123-11-24 14:14:00 2123-12-30 14:31:00</span>
+<span class="co">#&gt; 128  41090      44222  192189 2180-07-19 06:55:00 2180-07-20 13:00:00</span>
+<span class="co">#&gt; 129  41092      44228  103379 2170-12-15 03:14:00 2170-12-24 18:00:00</span>
+<span class="co">#&gt; # … with 119 more rows, and 14 more variables: deathtime &lt;dttm&gt;,</span>
+<span class="co">#&gt; #   admission_type &lt;chr&gt;, admission_location &lt;chr&gt;, discharge_location &lt;chr&gt;,</span>
+<span class="co">#&gt; #   insurance &lt;chr&gt;, language &lt;chr&gt;, religion &lt;chr&gt;, marital_status &lt;chr&gt;,</span>
+<span class="co">#&gt; #   ethnicity &lt;chr&gt;, edregtime &lt;dttm&gt;, edouttime &lt;dttm&gt;, diagnosis &lt;chr&gt;,</span>
+<span class="co">#&gt; #   hospital_expire_flag &lt;int&gt;, has_chartevents_data &lt;int&gt;</span></pre></div>
+<p>and data can be loaded into an R session for example using</p>
+<div class="sourceCode" id="cb7"><pre class="r"><span class="fu"><a href="reference/load_data.html">data_ts</a></span>(<span class="st">"mimic_demo"</span>, <span class="st">"labevents"</span>, <span class="no">itemid</span> <span class="kw">==</span> <span class="fl">50862L</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">"valuenum"</span>, <span class="st">"valueuom"</span>))
+<span class="co">#&gt; # A `ts_tbl`: 299 × 4</span>
+<span class="co">#&gt; # Id:         `icustay_id` (patient &lt; hadm &lt; [4micustay[24m)</span>
+<span class="co">#&gt; # Index:      `charttime` (1 hours)</span>
+<span class="co">#&gt;     icustay_id charttime valuenum valueuom</span>
+<span class="co">#&gt;          &lt;int&gt; &lt;drtn&gt;       &lt;dbl&gt; &lt;chr&gt;</span>
+<span class="co">#&gt; 1       201006   1 hours      2.4 g/dL</span>
+<span class="co">#&gt; 2       203766 -19 hours      2   g/dL</span>
+<span class="co">#&gt; 3       203766   4 hours      1.7 g/dL</span>
+<span class="co">#&gt; 4       204132   7 hours      3.6 g/dL</span>
+<span class="co">#&gt; 5       204201   9 hours      2.3 g/dL</span>
+<span class="co">#&gt; …</span>
+<span class="co">#&gt; 295     298685 130 hours      1.9 g/dL</span>
+<span class="co">#&gt; 296     298685 154 hours      2   g/dL</span>
+<span class="co">#&gt; 297     298685 203 hours      2   g/dL</span>
+<span class="co">#&gt; 298     298685 273 hours      2.2 g/dL</span>
+<span class="co">#&gt; 299     298685 299 hours      2.5 g/dL</span>
+<span class="co">#&gt; # … with 289 more rows</span></pre></div>
+<p>which returns time series data as <code>ts_tbl</code> object.</p>
 </div>
 </div>
   </div>
