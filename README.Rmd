@@ -7,6 +7,7 @@ output:
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
 ```{r setup, include = FALSE, results = "asis", comment = ""}
+options(crayon.enabled = TRUE)
 knitr::opts_chunk$set(
   collapse = TRUE,
   comment = "#>",
