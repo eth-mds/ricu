@@ -2,15 +2,16 @@ Package: ricu
 Title: Tools for working with publicly available intensive care unit (ICU) datasets
 Description: What the package does (one paragraph).
 Version: 0.0.0.9000
-Authors@R:
+Authors@R: c(
     person(given = "Drago",
            family = "Plecko",
            role = c("aut", "cre"),
-           email = "drago.plecko@stat.math.ethz.ch")
+           email = "drago.plecko@stat.math.ethz.ch"),
     person(given = "Nicolas",
            family = "Bennett",
            role = c("aut", "cre"),
            email = "nicolas.bennett@stat.math.ethz.ch")
+    )
 License: GPL-3
 Encoding: UTF-8
 LazyData: true
