@@ -1,5 +1,12 @@
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
+``` r
+old.hooks <- fansi::set_knit_hooks(knitr::knit_hooks)
+```
+
+<STYLE type='text/css' scoped>
+PRE.fansi SPAN {padding-top: .25em; padding-bottom: .25em};
+</STYLE>
 [ricu](https://septic-tank.github.io/ricu/)
 ===========================================
 
@@ -81,23 +88,24 @@ and data can be loaded into an R session for example using
 
 ``` r
 data_ts("mimic_demo", "labevents", itemid == 50862L, c("valuenum", "valueuom"))
-#> # A `ts_tbl`: 299 × 4
-#> # Id:         `icustay_id` (patient < hadm < [4micustay[24m)
-#> # Index:      `charttime` (1 hours)
-#>     icustay_id charttime valuenum valueuom
-#>          <int> <drtn>       <dbl> <chr>
-#> 1       201006   1 hours      2.4 g/dL
-#> 2       203766 -19 hours      2   g/dL
-#> 3       203766   4 hours      1.7 g/dL
-#> 4       204132   7 hours      3.6 g/dL
-#> 5       204201   9 hours      2.3 g/dL
-#> …
-#> 295     298685 130 hours      1.9 g/dL
-#> 296     298685 154 hours      2   g/dL
-#> 297     298685 203 hours      2   g/dL
-#> 298     298685 273 hours      2.2 g/dL
-#> 299     298685 299 hours      2.5 g/dL
-#> # … with 289 more rows
 ```
 
+<PRE class="fansi fansi-output"><CODE>#&gt; # A `ts_tbl`: 299 × 4
+#&gt; # Id:         `icustay_id` (patient &lt; hadm &lt; <span style='text-decoration: underline;'>icustay</span><span>)
+#&gt; # Index:      `charttime` (1 hours)
+#&gt;     icustay_id charttime valuenum valueuom
+#&gt;          &lt;int&gt; &lt;drtn&gt;       &lt;dbl&gt; &lt;chr&gt;
+#&gt; 1       201006   1 hours      2.4 g/dL
+#&gt; 2       203766 -19 hours      2   g/dL
+#&gt; 3       203766   4 hours      1.7 g/dL
+#&gt; 4       204132   7 hours      3.6 g/dL
+#&gt; 5       204201   9 hours      2.3 g/dL
+#&gt; …
+#&gt; 295     298685 130 hours      1.9 g/dL
+#&gt; 296     298685 154 hours      2   g/dL
+#&gt; 297     298685 203 hours      2   g/dL
+#&gt; 298     298685 273 hours      2.2 g/dL
+#&gt; 299     298685 299 hours      2.5 g/dL
+#&gt; # … with 289 more rows
+</span></CODE></PRE>
 which returns time series data as `ts_tbl` object.

@@ -15,6 +15,11 @@ knitr::opts_chunk$set(
 )
 library(ricu)
 ```
+
+```{r, comment = "", results = "asis"}
+old.hooks <- fansi::set_knit_hooks(knitr::knit_hooks)
+```
+
 # [ricu](https://septic-tank.github.io/ricu/)
 
 <!-- badges: start -->
