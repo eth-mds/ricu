@@ -4,7 +4,8 @@ all_flag <- function(x, val_col, ...) {
 }
 
 vent_flag <- function(x, val_col, time_col, ...) {
-  set(x[as.logical(get(val_col)), ], j = c(time_col, val_col),
+  x <- x[as.logical(get(val_col)), ]
+  set(x, j = c(time_col, val_col),
       value = list(x[[val_col]], rep(TRUE, nrow(x))))
 }
 
