@@ -1587,7 +1587,8 @@
           "ids": "^insulin (250.+)?\\(((ml|units)/hr)?\\)$",
           "table": "infusiondrug",
           "column": "drugname",
-          "regex": true
+          "regex": true,
+          "callback": "force_numeric_val_col"
         }
       ],
       "eicu_demo": [
@@ -1595,7 +1596,8 @@
           "ids": "^insulin (250.+)?\\(((ml|units)/hr)?\\)$",
           "table": "infusiondrug",
           "column": "drugname",
-          "regex": true
+          "regex": true,
+          "callback": "force_numeric_val_col"
         }
       ],
       "hirid": [

@@ -1121,7 +1121,8 @@ cfg <- list(
       ),
       eicu = list(
         list(ids = "^insulin (250.+)?\\(((ml|units)/hr)?\\)$",
-             table = "infusiondrug", column = "drugname", regex = TRUE)
+             table = "infusiondrug", column = "drugname", regex = TRUE,
+             callback = "force_numeric_val_col")
       ),
       hirid = list(
         list(ids = c(15L, 1000724L), table = "pharma", column = "pharmaid")

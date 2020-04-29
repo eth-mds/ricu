@@ -79,7 +79,7 @@ data_id <- function(source, table, row_expr, ...) {
 #' @export
 #'
 data_id_quo <- function(source, table, row_quo = NULL, cols = NULL,
-                        id_col = default_id_col(config = cfg),
+                        id_col = default_id_col(table, cfg),
                         interval = hours(1L),
                         cfg = get_src_config(source), ...) {
 
