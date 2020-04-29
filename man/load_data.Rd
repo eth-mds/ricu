@@ -30,7 +30,7 @@ data_id_quo(
   table,
   row_quo = NULL,
   cols = NULL,
-  id_col = default_id_col(config = cfg),
+  id_col = default_id_col(table, cfg),
   interval = hours(1L),
   cfg = get_src_config(source),
   ...
