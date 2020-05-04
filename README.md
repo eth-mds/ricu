@@ -1,17 +1,31 @@
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
-[ricu](https://septic-tank.github.io/ricu/)
-===========================================
+
+# [ricu](https://septic-tank.github.io/ricu/)
 
 <!-- badges: start -->
-[![Lifecycle](https://img.shields.io/badge/lifecycle-maturing-blue.svg)](https://www.tidyverse.org/lifecycle/#maturing) [![R build status](https://github.com/septic-tank/ricu/workflows/build/badge.svg)](https://github.com/septic-tank/ricu/actions) [![Codecov test coverage](https://codecov.io/gh/septic-tank/ricu/branch/master/graph/badge.svg?token=HvOM3yosW3)](https://codecov.io/gh/septic-tank/ricu) <!-- badges: end -->
 
-Working with ICU datasets, especially with publicly available ones as provided by [PhysioNet](https://physionet.org) in R is facilitated by `ricu`, which provides data access, a level of abstraction to encode clinical concepts in a data source agnostic way, as well as classes and utilities for working with the arising types of time series datasets.
+[![Lifecycle](https://img.shields.io/badge/lifecycle-maturing-blue.svg)](https://www.tidyverse.org/lifecycle/#maturing)
+[![R build
+status](https://github.com/septic-tank/ricu/workflows/build/badge.svg)](https://github.com/septic-tank/ricu/actions?query=workflow%3Abuild)
+[![pkgdown build
+status](https://github.com/septic-tank/ricu/workflows/pkgdown/badge.svg)](https://github.com/septic-tank/ricu/actions?query=workflow%3Apkgdown)
+[![covr
+status](https://github.com/septic-tank/ricu/workflows/coverage/badge.svg)](https://github.com/septic-tank/ricu/actions?query=workflow%3Acoverage)
+[![Codecov test
+coverage](https://codecov.io/gh/septic-tank/ricu/branch/master/graph/badge.svg?token=HvOM3yosW3)](https://codecov.io/gh/septic-tank/ricu)
+<!-- badges: end -->
 
-Installation
-------------
+Working with ICU datasets, especially with publicly available ones as
+provided by [PhysioNet](https://physionet.org) in R is facilitated by
+`ricu`, which provides data access, a level of abstraction to encode
+clinical concepts in a data source agnostic way, as well as classes and
+utilities for working with the arising types of time series datasets.
 
-Currently, installation is only possible from github directly, using the `remotes` if installed
+## Installation
+
+Currently, installation is only possible from github directly, using the
+`remotes` if installed
 
 ``` r
 remotes::install_github("septic-tank/ricu")
@@ -27,13 +41,16 @@ rem <- source(
 rem$value("septic-tank/ricu")
 ```
 
-In order to make sure that some useful utility packages are installed as well, consider installing the packages marked as `Suggests` as well by running
+In order to make sure that some useful utility packages are installed as
+well, consider installing the packages marked as `Suggests` as well by
+running
 
 ``` r
 remotes::install_github("septic-tank/ricu", dependencies = TRUE)
 ```
 
-instead, or by installing some of the utility packages (relevant for downloading and preprocessing PhysioNet datasets)
+instead, or by installing some of the utility packages (relevant for
+downloading and preprocessing PhysioNet datasets)
 
 ``` r
 install.packages(c("getPass", "keyring", "openssl", "xml2"))
@@ -48,10 +65,12 @@ install.packages(c("mimic.demo", "eicu.demo"),
 
 explicitly.
 
-Data access
------------
+## Data access
 
-Out of the box (provided the two data packages `mimic.demo` and `eicu.demo` are available), `ricu` provides access to the demo datasets corresponding to the PhysioNet Clinical Databases eICU and MIMIC-III. Tables are available as
+Out of the box (provided the two data packages `mimic.demo` and
+`eicu.demo` are available), `ricu` provides access to the demo datasets
+corresponding to the PhysioNet Clinical Databases eICU and MIMIC-III.
+Tables are available as
 
 ``` r
 mimic_demo$admissions
@@ -78,6 +97,7 @@ mimic_demo$admissions
 #&gt; #   ethnicity </span><span style='color: #949494;font-style: italic;'>&lt;chr&gt;</span><span style='color: #949494;'>, edregtime </span><span style='color: #949494;font-style: italic;'>&lt;dttm&gt;</span><span style='color: #949494;'>, edouttime </span><span style='color: #949494;font-style: italic;'>&lt;dttm&gt;</span><span style='color: #949494;'>, diagnosis </span><span style='color: #949494;font-style: italic;'>&lt;chr&gt;</span><span style='color: #949494;'>,
 #&gt; #   hospital_expire_flag </span><span style='color: #949494;font-style: italic;'>&lt;int&gt;</span><span style='color: #949494;'>, has_chartevents_data </span><span style='color: #949494;font-style: italic;'>&lt;int&gt;</span><span>
 </span></CODE></PRE>
+
 and data can be loaded into an R session for example using
 
 ``` r
@@ -102,4 +122,5 @@ data_ts("mimic_demo", "labevents", itemid == 50862L, c("valuenum", "valueuom"))
 #&gt; </span><span style='color: #949494;'>299</span><span>     </span><span style='text-decoration: underline;'>298</span><span>685 299 hours      2.5 g/dL
 #&gt; </span><span style='color: #949494;'># … with 289 more rows</span><span>
 </span></CODE></PRE>
+
 which returns time series data as `ts_tbl` object.
