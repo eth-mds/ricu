@@ -111,3 +111,16 @@ iterate over these explicit time points}
 The SOFA (Sequential Organ Failure Assessment) score is a commonly used
 assessment tool used to track a patient's well-being in an ICU.
 }
+\details{
+The SOFA score is evaluated as follows:
+
+\figure{SOFA_table.png}
+
+For each component, the worst value over a window of length \code{worst_win_length} (default \code{hours(24L)}) is taken.
+
+The respiratory component of the SOFA score requires the evaluation of the PaO2/FiO2 ratio. Often, however, both measures are not available at the same time point. Therefore, PaO2 and FiO2 measurements are matched within a window of size \code{pafi_win_length} (default \code{hours(2L)}). NOTE: \code{pafi_mode = "extreme_vals"} should be removed!
+
+The renal component of the SOFA score assigns scores of 3 and 4 in case of a very low urine output. Since the information on urine output is not very reliable at the start of the ICU stay, we do not evaluate urine outputs before a time window of \code{urine_min_win} (default \code{hours(12L)}).
+
+Mechanical ventilation is also part of the SOFA score. In some datasets, ventilation start events are given, which cannot be matched to ventilation end events specifically. In these cases, the duration of the ventilation window is taken to be \code{vent_win_length} (default \code{hours(6L)}).
+}

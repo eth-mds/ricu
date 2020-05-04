@@ -53,6 +53,32 @@ occur}
 \item{si_lwr, si_upr}{Lower/upper extent of SI windows}
 }
 \description{
-The Sepsis-3 label is a combination of a suspected infection and an acute
-increase in SOFA score by ≥ 2 points.
+Suspected infection is defined as co-occurrence of of antibiotic treatment and body-fluid sampling.
+}
+\details{
+Suspected infection can occur in one of the two following ways:
+\itemize{
+\item administration of antibiotics followed by a culture sampling within \code{samp_win} hours
+}\preformatted{      samp_win
+  |---------------|  
+ ABX           sampling (last possible)                
+}
+\itemize{
+\item culture sampling followed by an antibiotic administration within \code{abx_win} hours
+}\preformatted{                     abx_win
+  |---------------------------------------------|  
+sampling                                       ABX (last possible)     
+}
+
+The default values of \code{samp_win} and \code{abx_win} are 24 and 72 hours respectively, as per Singer et.al. \url{https://jamanetwork.com/journals/jama/fullarticle/2492881}.
+
+The ealier of the two times (fluid sampling, antibiotic treatment) is taken as the time of suspected infection (SI time). The suspected infection window (SI window) is defined to start \code{si_lwr} hours before the SI time and end \code{si_upr} hours after the SI time. The default values of 48 and 24 hours (respectively) are chosen as used by Seymour et.al. \url{https://jamanetwork.com/journals/jama/fullarticle/2492875} (see Supplemental Material).\preformatted{               48h                       24h
+ |------------------------------(|)---------------|   
+                               SI time
+}
+
+For some datasets, however, information on body fluid sampling is not available for majority of the patients (eICU data). Therefore, an alternative definition of suspected infection is required. For this, we use administration of multiple antibiotics (argument \code{abx_min_count} determines the required number) within \code{abx_count_win} hours. The first time of antibiotic administration is taken as the SI time in this case.
+}
+\seealso{
+\url{http://www.r-project.org}.
 }

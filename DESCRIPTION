@@ -44,7 +44,8 @@ Suggests:
     progress,
     knitr,
     rmarkdown,
-    fansi
+    fansi,
+    ggplot2
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.0.2
 Additional_repositories: https://septic-tank.github.io/physionet-demo
