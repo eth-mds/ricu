@@ -96,6 +96,9 @@ assessment tool used to track a patient's well-being in an ICU." />
   </a>
   <ul class="dropdown-menu" role="menu">
     <li>
+      <a href="../articles/anus.html">Analysis of Units (An-Us)</a>
+    </li>
+    <li>
       <a href="../articles/demo.html">demo</a>
     </li>
   </ul>
@@ -277,6 +280,14 @@ iterate over these explicit time points</p></td>
     </tr>
     </table>
 
+    <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
+
+    <p>The SOFA score is evaluated as follows:</p>
+<p><img src='figures/SOFA_table.png' alt='' /></p>
+<p>For each component, the worst value over a window of length <code>worst_win_length</code> (default <code><a href='difftime.html'>hours(24L)</a></code>) is taken.</p>
+<p>The respiratory component of the SOFA score requires the evaluation of the PaO2/FiO2 ratio. Often, however, both measures are not available at the same time point. Therefore, PaO2 and FiO2 measurements are matched within a window of size <code>pafi_win_length</code> (default <code><a href='difftime.html'>hours(2L)</a></code>). NOTE: <code>pafi_mode = "extreme_vals"</code> should be removed!</p>
+<p>The renal component of the SOFA score assigns scores of 3 and 4 in case of a very low urine output. Since the information on urine output is not very reliable at the start of the ICU stay, we do not evaluate urine outputs before a time window of <code>urine_min_win</code> (default <code><a href='difftime.html'>hours(12L)</a></code>).</p>
+<p>Mechanical ventilation is also part of the SOFA score. In some datasets, ventilation start events are given, which cannot be matched to ventilation end events specifically. In these cases, the duration of the ventilation window is taken to be <code>vent_win_length</code> (default <code><a href='difftime.html'>hours(6L)</a></code>).</p>
 
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">

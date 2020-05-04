@@ -96,6 +96,9 @@ increase in SOFA score." />
   </a>
   <ul class="dropdown-menu" role="menu">
     <li>
+      <a href="../articles/anus.html">Analysis of Units (An-Us)</a>
+    </li>
+    <li>
       <a href="../articles/demo.html">demo</a>
     </li>
   </ul>
@@ -181,6 +184,15 @@ which <code><a href='https://rdrr.io/r/base/Extremes.html'>base::pmin()</a></cod
     </tr>
     </table>
 
+    <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
+
+    <p>The Sepsis-3 Consensus (Singer et. al. 2016.) defined sepsis as an acute increase in the SOFA score (see <code><a href='label_sofa.html'>sofa</a></code>) of &gt; 2 points within the suspected infection (SI) window (see <code><a href='label_si.html'>si_windows</a></code>):</p>
+<p><img src='figures/sep-3.png' alt='' /></p>
+<p>A patient can potentially have multiple SI windows. The argument <code>si_window</code> is used to control which SI window we focus on (options are <code>"first", "last", "any"</code>).</p>
+<p>Further, although a 2 or more point increase in the SOFA score is defined, it is not perfectly clear to which value the increase refers. For this the <code>delta_fun</code> argument is used. If the increase is required to happen with respect to the minimal SOFA value up to the current time, the <code>delta_cummin</code> function should be used. If, however, we are looking for an increase with respect to the start of the SI window, then the <code>delta_start</code> function should be used.</p>
+    <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
+
+    <div class='dont-index'><p>Sepsis-3 Consensus, Singer et. al. <a href='https://jamanetwork.com/journals/jama/fullarticle/2492881'>https://jamanetwork.com/journals/jama/fullarticle/2492881</a>.</p></div>
 
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
