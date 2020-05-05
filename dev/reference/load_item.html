@@ -132,11 +132,13 @@
     <p>Load data specified as data <code>item</code> objects.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>load_items</span>(<span class='no'>items</span>, <span class='kw'>units</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='no'>...</span>)
+    <pre class="usage"><span class='fu'>load_items</span>(<span class='no'>items</span>, <span class='kw'>units</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>min</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>max</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='no'>...</span>)
 
 <span class='fu'>load_item</span>(
   <span class='no'>item</span>,
   <span class='kw'>unit</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
+  <span class='kw'>min</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
+  <span class='kw'>max</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
   <span class='kw'>id_type</span> <span class='kw'>=</span> <span class='st'>"icustay"</span>,
   <span class='kw'>patient_ids</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
   <span class='kw'>interval</span> <span class='kw'>=</span> <span class='fu'><a href='difftime.html'>hours</a></span>(<span class='fl'>1L</span>),
@@ -153,6 +155,10 @@
     <tr>
       <th>units</th>
       <td><p>Character vector of units (one per data item)</p></td>
+    </tr>
+    <tr>
+      <th>min, max</th>
+      <td><p>Rage of plausible values</p></td>
     </tr>
     <tr>
       <th>...</th>

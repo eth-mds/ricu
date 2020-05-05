@@ -132,13 +132,13 @@
     <p>Clinical concepts are represented by <code>concept</code> objects.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>new_concept</span>(<span class='no'>name</span>, <span class='no'>items</span>, <span class='kw'>unit</span> <span class='kw'>=</span> <span class='kw'>NULL</span>)
+    <pre class="usage"><span class='fu'>new_concept</span>(<span class='no'>name</span>, <span class='no'>items</span>, <span class='kw'>unit</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>min_val</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>max_val</span> <span class='kw'>=</span> <span class='kw'>NULL</span>)
 
 <span class='fu'>is_concept</span>(<span class='no'>x</span>)
 
 <span class='fu'>as_concept</span>(<span class='no'>x</span>, <span class='no'>...</span>)
 
-<span class='fu'>concept</span>(<span class='no'>name</span>, <span class='no'>...</span>, <span class='kw'>unit</span> <span class='kw'>=</span> <span class='kw'>NULL</span>)</pre>
+<span class='fu'>concept</span>(<span class='no'>name</span>, <span class='no'>...</span>, <span class='kw'>unit</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>min_val</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>max_val</span> <span class='kw'>=</span> <span class='kw'>NULL</span>)</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -155,6 +155,10 @@
       <th>unit</th>
       <td><p>A string, specifying the measurement unit of the concept (can
 be <code>NULL</code>)</p></td>
+    </tr>
+    <tr>
+      <th>min_val, max_val</th>
+      <td><p>Scalar valued; defines a range of plausible values</p></td>
     </tr>
     <tr>
       <th>x</th>
