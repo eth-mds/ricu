@@ -5,11 +5,13 @@
 \alias{load_item}
 \title{Load data items}
 \usage{
-load_items(items, units = NULL, ...)
+load_items(items, units = NULL, min = NULL, max = NULL, ...)
 
 load_item(
   item,
   unit = NULL,
+  min = NULL,
+  max = NULL,
   id_type = "icustay",
   patient_ids = NULL,
   interval = hours(1L),
@@ -20,6 +22,8 @@ load_item(
 \item{items}{Vector of data \code{item} objects}
 
 \item{units}{Character vector of units (one per data item)}
+
+\item{min, max}{Rage of plausible values}
 
 \item{...}{Passed on to \code{\link[=load_item]{load_item()}}}
 

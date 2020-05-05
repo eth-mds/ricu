@@ -31,6 +31,8 @@ cfg <- list(
   ),
   diastolic_bp = list(
     unit = "mmHg",
+    min = 0,
+    max = 200,
     sources = list(
       mimic = list(
         list(ids = c(8368L, 8441L, 8555L, 220051L, 220180L),
@@ -95,6 +97,8 @@ cfg <- list(
   ),
   fi_o2 = list(
     unit = "%",
+    min = 21,
+    max = 100,
     sources = list(
       mimic = list(
         list(ids = c(3420L, 50816L, 223835L), table = "labevents",
@@ -564,6 +568,8 @@ cfg <- list(
   ),
   glucose = list(
     unit = "mg/dL",
+    min = 0,
+    max = 1000,
     sources = list(
       mimic = list(
         list(ids = c(50809L, 50931L), table = "labevents", column = "itemid")
@@ -1144,6 +1150,8 @@ cfg <- list(
   ),
   age = list(
     unit = "years",
+    min = 0,
+    max = 100,
     sources = list(
       mimic = list(
         list(table = "patients", time_col = "dob", callback = "mimic_age")
