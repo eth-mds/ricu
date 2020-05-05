@@ -12,15 +12,15 @@
 #' window
 #' @param sofa_thresh Required SOFA increase to trigger Sepsis 3
 #' 
-#' @details The Sepsis-3 Consensus (Singer et. al. 2016.) defined sepsis as an acute increase in the SOFA score (see \code{\link{sofa}}) of &gt; 2 points within the suspected infection (SI) window (see \code{\link{si_windows}}):
+#' @details The Sepsis-3 Consensus ([Singer et. al. 2016.](https://jamanetwork.com/journals/jama/fullarticle/2492881)) defined sepsis as an acute increase in the SOFA score (see [sofa()]) of &gt; 2 points within the suspected infection (SI) window (see [si_windows()]):
 #' 
 #' \figure{sep-3.png}
 #' 
-#' A patient can potentially have multiple SI windows. The argument \code{si_window} is used to control which SI window we focus on (options are \code{"first", "last", "any"}). 
+#' A patient can potentially have multiple SI windows. The argument `si_window` is used to control which SI window we focus on (options are `"first", "last", "any"`). 
 #' 
-#' Further, although a 2 or more point increase in the SOFA score is defined, it is not perfectly clear to which value the increase refers. For this the \code{delta_fun} argument is used. If the increase is required to happen with respect to the minimal SOFA value up to the current time, the \code{delta_cummin} function should be used. If, however, we are looking for an increase with respect to the start of the SI window, then the \code{delta_start} function should be used.
+#' Further, although a 2 or more point increase in the SOFA score is defined, it is not perfectly clear to which value the increase refers. For this the `delta_fun` argument is used. If the increase is required to happen with respect to the minimal SOFA value (within the SI window) up to the current time, the `delta_cummin` function should be used. If, however, we are looking for an increase with respect to the start of the SI window, then the `delta_start` function should be used. Lastly, the increase might be defined with respect to values of the previous 24 hours, in which case the `delta_min` function is used.
 #' 
-#' @seealso Sepsis-3 Consensus, Singer et. al. \url{https://jamanetwork.com/journals/jama/fullarticle/2492881}. 
+#' @seealso [Sepsis-3 Consensus, Singer et. al.](https://jamanetwork.com/journals/jama/fullarticle/2492881). 
 #' 
 #' @rdname sepsis_3
 #' @export
