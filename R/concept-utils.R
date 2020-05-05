@@ -25,9 +25,8 @@ new_item <- function(concept, source, table, column = NULL, ids = NULL,
                      regex = FALSE, callback = NULL, ...) {
 
   assert_that(is.string(concept), is.string(source), is.string(table),
-              is.null(column) || is.string(column),
-              is.atomic(ids), is.flag(regex),
-              is.null(callback) || is.string(callback))
+              null_or(column, is.string), null_or(callback, is.string),
+              is.atomic(ids), is.flag(regex))
 
   if (!is.null(callback)) {
     assert_that(exists(callback, mode = "function"))
@@ -135,17 +134,21 @@ as_item.list <- function(x) try_new(x, new_item)
 #' @param items One or more `item` objects
 #' @param unit A string, specifying the measurement unit of the concept (can
 #' be `NULL`)
+#' @param min_val,max_val Scalar valued; defines a range of plausible values
 #'
 #' @rdname data_concepts
 #'
 #' @export
-new_concept <- function(name, items, unit = NULL) {
+new_concept <- function(name, items, unit = NULL, min_val = NULL,
+                        max_val = NULL) {
 
   assert_that(is.string(name), is_item(items),
               all(lgl_ply(names(items), identical, name)),
-              is.null(unit) || is.string(unit))
+              null_or(unit, is.string), null_or(min_val, is.number),
+              null_or(max_val, is.number))
 
-  concept <- list(name = name, unit = unit, items = items)
+  concept <- list(name = name, unit = unit, min = min_val, max = max_val,
+                  items = items)
 
   structure(list(concept), class = "concept")
 }
@@ -189,7 +192,7 @@ c.concept <- function(...) {
 #'
 #' @export
 #'
-concept <- function(name, ..., unit = NULL) {
+concept <- function(name, ..., unit = NULL, min_val = NULL, max_val = NULL) {
 
   args <- list(...)
   lens <- lengths(args)
@@ -200,7 +203,7 @@ concept <- function(name, ..., unit = NULL) {
     do.call(map, c(new_item, list(concept = name), args))
   )
 
-  new_concept(name, items, unit)
+  new_concept(name, items, unit, min_val, max_val)
 }
 
 #' @export
@@ -232,6 +235,17 @@ concept <- function(name, ..., unit = NULL) {
   res <- lapply(.subset(x, i), do_one, source)
 
   do.call(c, Filter(Negate(is.null), res))
+}
+
+concept_meta <- function(x, what = c("unit", "min", "max")) {
+
+  assert_that(is_concept((x)))
+
+  if (length(x) == 1L) {
+    .subset(x[[1L]], what)
+  } else {
+    lapply(x, .subset, what)
+  }
 }
 
 #' @export

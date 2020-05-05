@@ -14,7 +14,11 @@
 \alias{eicu_demo}
 \alias{hirid}
 \title{Data attach utilities}
-\format{An object of class \code{environment} of length 5.}
+\format{
+An object of class \code{environment} of length 5.
+
+An object of class \code{environment} of length 5.
+}
 \usage{
 data
 

@@ -90,7 +90,8 @@ load_concept <- function(concept, aggregate = NA_character_, na_rm = TRUE,
 
   assert_that(length(concept) == 1L, is.flag(na_rm))
 
-  res <- load_items(as_item(concept), units = concept[["unit"]], ...)
+  arg <- c(list(as_item(concept)), concept_meta(concept), list(...))
+  res <- do.call(load_items, arg)
   res <- rbind_lst(res)
 
   if (na_rm) {
@@ -110,19 +111,20 @@ load_concept <- function(concept, aggregate = NA_character_, na_rm = TRUE,
 #'
 #' @param items Vector of data `item` objects
 #' @param units Character vector of units (one per data item)
+#' @param min,max Rage of plausible values
 #' @param ... Passed on to [load_item()]
 #'
 #' @rdname load_item
 #'
 #' @export
 #'
-load_items <- function(items, units = NULL, ...) {
+load_items <- function(items, units = NULL, min = NULL, max = NULL, ...) {
 
   items <- as_item(items)
+  names <- names(items)
 
-  units <- rep_arg(units, names(items))
-
-  Map(load_item, item = items, unit = units[names(items)],
+  Map(load_item, item = items, unit = rep_arg(units, names),
+      min = rep_arg(min, names), max = rep_arg(max, names),
       MoreArgs = list(...))
 }
 
@@ -138,9 +140,9 @@ load_items <- function(items, units = NULL, ...) {
 #'
 #' @export
 #'
-load_item <- function(item, unit = NULL, id_type = "icustay",
-                      patient_ids = NULL, interval = hours(1L),
-                      cfg = get_src_config(item)) {
+load_item <- function(item, unit = NULL, min = NULL, max = NULL,
+                      id_type = "icustay", patient_ids = NULL,
+                      interval = hours(1L), cfg = get_src_config(item)) {
 
   item <- as_item(item)
 
@@ -188,6 +190,7 @@ load_item <- function(item, unit = NULL, id_type = "icustay",
   res <- do.call(do_callback, cb_args[!duplicated(names(cb_args))])
   res <- rename_cols(res, item[["concept"]], data_cols(res))
   res <- add_unit(res, unit)
+  res <- do_range(res, min, max)
 
   res
 }
@@ -289,6 +292,48 @@ add_unit <- function(x, unit) {
   x
 }
 
+do_range <- function(x, min, max) {
+
+  if (is.null(min) && is.null(max)) {
+    return(x)
+  }
+
+  old_nrow <- nrow(x)
+
+  if (is.null(min)) {
+
+    min_ind <- TRUE
+
+  } else {
+
+    assert_that(is.number(min))
+
+    min_ind <- x[[data_cols(x)]] >= min
+  }
+
+  if (is.null(max)) {
+
+    max_ind <- TRUE
+
+  } else {
+
+    assert_that(is.number(max))
+
+    max_ind <- x[[data_cols(x)]] <= max
+  }
+
+  x <- x[min_ind & max_ind, ]
+
+  new_nrow <- nrow(x)
+
+  if (new_nrow != old_nrow) {
+    message("removed ", old_nrow - new_nrow,
+            " rows based on range specification")
+  }
+
+  x
+}
+
 rep_arg <- function(arg, names) {
 
   if (length(arg) <= 1L) {
@@ -297,9 +342,11 @@ rep_arg <- function(arg, names) {
 
   if (is.null(names(arg))) {
     names(arg) <- names
+  } else {
+    arg <- arg[names]
   }
 
-  assert_that(has_name(arg, names))
+  assert_that(identical(names(arg), names))
 
   arg
 }

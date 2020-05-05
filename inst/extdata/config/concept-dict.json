@@ -1,6 +1,8 @@
 {
   "age": {
     "unit": "years",
+    "min": 0,
+    "max": 100,
     "sources": {
       "eicu": [
         {
@@ -852,6 +854,8 @@
   },
   "diastolic_bp": {
     "unit": "mmHg",
+    "min": 0,
+    "max": 200,
     "sources": {
       "eicu": [
         {
@@ -1096,6 +1100,8 @@
   },
   "fi_o2": {
     "unit": "%",
+    "min": 21,
+    "max": 100,
     "sources": {
       "eicu": [
         {
@@ -1380,6 +1386,8 @@
   },
   "glucose": {
     "unit": "mg/dL",
+    "min": 0,
+    "max": 1000,
     "sources": {
       "eicu": [
         {

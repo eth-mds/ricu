@@ -7,13 +7,13 @@
 \alias{concept}
 \title{Data concept}
 \usage{
-new_concept(name, items, unit = NULL)
+new_concept(name, items, unit = NULL, min_val = NULL, max_val = NULL)
 
 is_concept(x)
 
 as_concept(x, ...)
 
-concept(name, ..., unit = NULL)
+concept(name, ..., unit = NULL, min_val = NULL, max_val = NULL)
 }
 \arguments{
 \item{name}{The name of the concept}
@@ -22,6 +22,8 @@ concept(name, ..., unit = NULL)
 
 \item{unit}{A string, specifying the measurement unit of the concept (can
 be \code{NULL})}
+
+\item{min_val, max_val}{Scalar valued; defines a range of plausible values}
 
 \item{x}{A concept object}
 
