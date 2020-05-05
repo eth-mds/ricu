@@ -5,13 +5,13 @@
 <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>demo • ICU data with R</title>
+<title>Units of measurement • ICU data with R</title>
 <!-- jquery --><script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script><!-- Bootstrap --><link href="https://cdnjs.cloudflare.com/ajax/libs/bootswatch/3.4.0/flatly/bootstrap.min.css" rel="stylesheet" crossorigin="anonymous">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.4.1/js/bootstrap.min.js" integrity="sha256-nuL8/2cJ5NDSSwnKD8VqreErSWHtnEP9E7AySL+1ev4=" crossorigin="anonymous"></script><!-- bootstrap-toc --><link rel="stylesheet" href="../bootstrap-toc.css">
 <script src="../bootstrap-toc.js"></script><!-- Font Awesome icons --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css" integrity="sha256-mmgLkCYLUQbXn0B1SRqzHar6dCnv9oZFPEC1g1cwlkk=" crossorigin="anonymous">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/v4-shims.min.css" integrity="sha256-wZjR52fzng1pJHwx4aV2AO3yyTOXrcDW7jBpJtTwVxw=" crossorigin="anonymous">
 <!-- clipboard.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script><!-- headroom.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/headroom.min.js" integrity="sha256-AsUX4SJE1+yuDu5+mAVzJbuYNPHj/WroHuZ8Ir/CkE0=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script><!-- pkgdown --><link href="../pkgdown.css" rel="stylesheet">
-<script src="../pkgdown.js"></script><meta property="og:title" content="demo">
+<script src="../pkgdown.js"></script><meta property="og:title" content="Units of measurement">
 <meta property="og:description" content="ricu">
 <meta name="robots" content="noindex">
 <!-- mathjax --><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js" integrity="sha256-nvJJv9wWKEm88qvoQl9ekL2J+k/RWIsaSScxxlsrv8k=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/config/TeX-AMS-MML_HTMLorMML.js" integrity="sha256-84DKXVJXs0/F8OTMzX4UR909+jtl4G7SPypPavF+GfA=" crossorigin="anonymous"></script><!--[if lt IE 9]>
@@ -83,17 +83,36 @@
       </header><div class="row">
   <div class="col-md-9 contents">
     <div class="page-header toc-ignore">
-      <h1 data-toc-skip>demo</h1>
+      <h1 data-toc-skip>Units of measurement</h1>
             
       
       
-      <div class="hidden name"><code>demo.Rmd</code></div>
+      <div class="hidden name"><code>uom.Rmd</code></div>
 
     </div>
 
     
     
-<div class="sourceCode" id="cb1"><html><body><pre class="r"><span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="no">ricu</span>)</pre></body></html></div>
+<div id="possible-mismatch-in-units" class="section level3">
+<h3 class="hasAnchor">
+<a href="#possible-mismatch-in-units" class="anchor"></a>Possible mismatch in units</h3>
+<p>Working with different ICU datasets can be challenging in terms of units of measurement. In particular, combining data from different countries can cause a mismatch in the units, as the practices vary substantially. In particular, we note that the commonly used unit of measurement for laboratory values in the US datasets is mg/dL, as opposed to mmol/L used in European datasets. Note that the conversion between the two requires the molecular weight of the substance and therefore must be handled on case-to-case basis. When loading data, care needs to be taken in light of this possible problem.</p>
+</div>
+<div id="ricu-approach" class="section level3">
+<h3 class="hasAnchor">
+<a href="#ricu-approach" class="anchor"></a><code>ricu</code> approach</h3>
+<p>All concepts that can be loaded with <code><a href="../reference/load_dictionary.html">load_dictionary()</a></code> within <code>ricu</code> have been checked for units, and the units were converted where necessary.</p>
+<p>For example, we take 5 different concepts:</p>
+<div class="sourceCode" id="cb1"><html><body><pre class="r"><span class="no">concept_range</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">"mean_bp"</span>, <span class="st">"lactate"</span> , <span class="st">"creatinine"</span>, <span class="st">"bilirubin_total"</span>, <span class="st">"platelet_count"</span>)</pre></body></html></div>
+<p>We plot the density of the features and report their median values:</p>
+<p><img src="uom_files/figure-html/anus-1.png" width="576"><img src="uom_files/figure-html/anus-2.png" width="576"><img src="uom_files/figure-html/anus-3.png" width="576"><img src="uom_files/figure-html/anus-4.png" width="576"><img src="uom_files/figure-html/anus-5.png" width="576"></p>
+<p>Note that the matching between datasets is not perfect, but the median values should align closely (the above are done using the demo datasets which are rather small in size; in general the matching should be even better).</p>
+</div>
+<div id="concepts-outside-ricu-dictionary" class="section level3">
+<h3 class="hasAnchor">
+<a href="#concepts-outside-ricu-dictionary" class="anchor"></a>Concepts outside <code>ricu</code> dictionary</h3>
+<p>Not all relevant concepts are included in the <code>ricu</code> dictionary. When loading concepts outside the dictionary, we recommend checking whether the units match across datasets using the density plots and median values as shown above. In particular, if there is a clear difference in the median values, or if the density plots look “multimodal”, there is reason to believe some unit conversion is required.</p>
+</div>
   </div>
 
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">

@@ -95,10 +95,10 @@
   </a>
   <ul class="dropdown-menu" role="menu">
     <li>
-      <a href="../articles/anus.html">Analysis of Units (An-Us)</a>
+      <a href="../articles/demo.html">demo</a>
     </li>
     <li>
-      <a href="../articles/demo.html">demo</a>
+      <a href="../articles/uom.html">Units of measurement</a>
     </li>
   </ul>
 </li>
@@ -219,16 +219,13 @@ occur</p></td>
 sampling                                       ABX (last possible)     
 </pre>
 
-<p>The default values of <code>samp_win</code> and <code>abx_win</code> are 24 and 72 hours respectively, as per Singer et.al. <a href='https://jamanetwork.com/journals/jama/fullarticle/2492881'>https://jamanetwork.com/journals/jama/fullarticle/2492881</a>.</p>
-<p>The ealier of the two times (fluid sampling, antibiotic treatment) is taken as the time of suspected infection (SI time). The suspected infection window (SI window) is defined to start <code>si_lwr</code> hours before the SI time and end <code>si_upr</code> hours after the SI time. The default values of 48 and 24 hours (respectively) are chosen as used by Seymour et.al. <a href='https://jamanetwork.com/journals/jama/fullarticle/2492875'>https://jamanetwork.com/journals/jama/fullarticle/2492875</a> (see Supplemental Material).</p><pre>               48h                       24h
+<p>The default values of <code>samp_win</code> and <code>abx_win</code> are 24 and 72 hours respectively, as per <a href='https://jamanetwork.com/journals/jama/fullarticle/2492881'>Singer et.al.</a>.</p>
+<p>The ealier of the two times (fluid sampling, antibiotic treatment) is taken as the time of suspected infection (SI time). The suspected infection window (SI window) is defined to start <code>si_lwr</code> hours before the SI time and end <code>si_upr</code> hours after the SI time. The default values of 48 and 24 hours (respectively) are chosen as used by <a href='https://jamanetwork.com/journals/jama/fullarticle/2492875'>Seymour et.al.</a> (see Supplemental Material).</p><pre>               48h                       24h
  |------------------------------(|)---------------|   
                                SI time
 </pre>
 
 <p>For some datasets, however, information on body fluid sampling is not available for majority of the patients (eICU data). Therefore, an alternative definition of suspected infection is required. For this, we use administration of multiple antibiotics (argument <code>abx_min_count</code> determines the required number) within <code>abx_count_win</code> hours. The first time of antibiotic administration is taken as the SI time in this case.</p>
-    <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
-
-    <div class='dont-index'><p><a href='http://www.r-project.org'>http://www.r-project.org</a>.</p></div>
 
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
