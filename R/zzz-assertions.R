@@ -189,6 +189,18 @@ on_failure(all_na) <- function(call, env) {
   paste0("`", deparse(call$x), "` contains at least 1 non NA value")
 }
 
+not_null <- function(x) !is.null(x)
+
+on_failure(not_null) <- function(call, env) {
+  paste0("`", deparse(call$x), "` is NULL")
+}
+
+null_or_na <- function(x) is.null(x) || is.na(x)
+
+on_failure(null_or_na) <- function(call, env) {
+  paste0("`", deparse(call$x), "` is neither NULL nor NA")
+}
+
 same_ts <- function(x, y) {
   identical(id(x), id(y)) && identical(index(x), index(y)) &&
     all.equal(interval(x), interval(y))

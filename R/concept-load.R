@@ -182,7 +182,7 @@ load_item <- function(item, unit = NULL, min = NULL, max = NULL,
   }
 
   cb_args <- c(
-    list(x = res, unit = unit),
+    list(x = res, unit = unit, min = min, max = max),
     item[setdiff(names(item), c("concept", "table", "regex"))],
     list(id_col = id_col), ex_col
   )
@@ -190,7 +190,6 @@ load_item <- function(item, unit = NULL, min = NULL, max = NULL,
   res <- do.call(do_callback, cb_args[!duplicated(names(cb_args))])
   res <- rename_cols(res, item[["concept"]], data_cols(res))
   res <- add_unit(res, unit)
-  res <- do_range(res, min, max)
 
   res
 }
@@ -236,8 +235,8 @@ do_load <- function(source, table, column, ids, regex, ..., id_col, time_col,
   }
 }
 
-do_callback <- function(x, unit, source, column, ids, callback, ..., id_col,
-                        time_col, val_col, unit_col) {
+do_callback <- function(x, unit, min, max, source, column, ids, callback, ...,
+                        id_col, time_col, val_col, unit_col) {
 
   extra_cols <- list(...)
 
@@ -245,10 +244,12 @@ do_callback <- function(x, unit, source, column, ids, callback, ..., id_col,
     warning("`extra_cols` is only effective is `callback` is specified.")
   }
 
-  if (length(ids) == 0L) {
-    val <- column
-  } else {
+  if (length(ids) > 0L) {
     val <- val_col
+  } else if (is.null(column)) {
+    val <- time_col
+  } else {
+    val <- column
   }
 
   if (is.string(callback)) {
@@ -274,12 +275,39 @@ do_callback <- function(x, unit, source, column, ids, callback, ..., id_col,
     stop("expecting an `id_tbl` or `ts_tbl` object")
   }
 
+  x <- do_range(x, val, min, max)
+
+  if (not_null(unit_col)) {
+
+    unt <- unique(x[[unit_col]])
+    unt <- unt[!is.na(unt)]
+    unt <- unique(tolower(unt))
+
+    if (null_or_na(unit)) {
+      if (length(unt) > 1L) {
+        ct <- table(x[[unit_col]], useNA = "ifany")
+        msg <- paste0(names(ct), " (", formatC(ct / sum(ct) * 100, digits = 3),
+                      "%)", collapse = ", ")
+        msg <- paste0("multiple units detected: ", msg)
+        message(paste(strwrap(msg, indent = 4L, exdent = 6L), collapse = "\n"))
+      }
+    } else {
+      if (!identical(tolower(unit), unt)) {
+        ct <- table(x[[unit_col]], useNA = "ifany")
+        msg <- paste0(names(ct), " (", formatC(ct / sum(ct) * 100, digits = 3),
+                      "%)", collapse = ", ")
+        msg <- paste0("not all units are in ", unit, ": ", msg)
+        message(paste(strwrap(msg, indent = 4L, exdent = 6L), collapse = "\n"))
+      }
+    }
+  }
+
   rm_cols(x, setdiff(colnames(x), c(id_col, time_col, val)))
 }
 
 add_unit <- function(x, unit) {
 
-  if (is.null(unit) || is.na(unit)) {
+  if (null_or_na(unit)) {
     return(x)
   }
 
@@ -292,7 +320,7 @@ add_unit <- function(x, unit) {
   x
 }
 
-do_range <- function(x, min, max) {
+do_range <- function(x, val_col, min, max) {
 
   if (is.null(min) && is.null(max)) {
     return(x)
@@ -308,7 +336,7 @@ do_range <- function(x, min, max) {
 
     assert_that(is.number(min))
 
-    min_ind <- x[[data_cols(x)]] >= min
+    min_ind <- x[[val_col]] >= min
   }
 
   if (is.null(max)) {
@@ -319,7 +347,7 @@ do_range <- function(x, min, max) {
 
     assert_that(is.number(max))
 
-    max_ind <- x[[data_cols(x)]] <= max
+    max_ind <- x[[val_col]] <= max
   }
 
   x <- x[min_ind & max_ind, ]
@@ -327,7 +355,7 @@ do_range <- function(x, min, max) {
   new_nrow <- nrow(x)
 
   if (new_nrow != old_nrow) {
-    message("removed ", old_nrow - new_nrow,
+    message("   removed ", old_nrow - new_nrow,
             " rows based on range specification")
   }
 
