@@ -142,23 +142,67 @@ id. This function allows for converting from one ID to another.</p>
 
 <span class='fu'>prev_id</span>(<span class='no'>x</span>, <span class='kw'>n</span> <span class='kw'>=</span> <span class='fl'>1L</span>)
 
-<span class='fu'>change_id</span>(<span class='no'>x</span>, <span class='no'>source</span>, <span class='no'>to</span>, <span class='kw'>from</span> <span class='kw'>=</span> <span class='fu'>id_name</span>(<span class='no'>x</span>))
+<span class='fu'>change_id</span>(<span class='no'>x</span>, <span class='no'>source</span>, <span class='no'>to</span>, <span class='kw'>from</span> <span class='kw'>=</span> <span class='fu'>id_name</span>(<span class='no'>x</span>), <span class='no'>...</span>)
 
-<span class='fu'>upgrade_id</span>(<span class='no'>x</span>, <span class='no'>source</span>, <span class='kw'>to</span> <span class='kw'>=</span> <span class='fu'>next_id</span>(<span class='no'>x</span>), <span class='kw'>from</span> <span class='kw'>=</span> <span class='fu'>id_name</span>(<span class='no'>x</span>))
+<span class='fu'>upgrade_id</span>(
+  <span class='no'>x</span>,
+  <span class='no'>source</span>,
+  <span class='kw'>to</span> <span class='kw'>=</span> <span class='fu'>next_id</span>(<span class='no'>x</span>),
+  <span class='kw'>from</span> <span class='kw'>=</span> <span class='fu'>id_name</span>(<span class='no'>x</span>),
+  <span class='kw'>cols</span> <span class='kw'>=</span> <span class='fu'>time_cols</span>(<span class='no'>x</span>),
+  <span class='no'>...</span>
+)
 
-<span class='fu'>downgrade_id</span>(<span class='no'>x</span>, <span class='no'>source</span>, <span class='kw'>to</span> <span class='kw'>=</span> <span class='fu'>prev_id</span>(<span class='no'>x</span>), <span class='kw'>from</span> <span class='kw'>=</span> <span class='fu'>id_name</span>(<span class='no'>x</span>))
+<span class='fu'>downgrade_id</span>(
+  <span class='no'>x</span>,
+  <span class='no'>source</span>,
+  <span class='kw'>to</span> <span class='kw'>=</span> <span class='fu'>prev_id</span>(<span class='no'>x</span>),
+  <span class='kw'>from</span> <span class='kw'>=</span> <span class='fu'>id_name</span>(<span class='no'>x</span>),
+  <span class='kw'>cols</span> <span class='kw'>=</span> <span class='fu'>time_cols</span>(<span class='no'>x</span>),
+  <span class='no'>...</span>
+)
 
 <span class='co'># S3 method for ts_tbl</span>
-<span class='fu'>upgrade_id</span>(<span class='no'>x</span>, <span class='no'>source</span>, <span class='no'>to</span>, <span class='no'>from</span>)
+<span class='fu'>upgrade_id</span>(
+  <span class='no'>x</span>,
+  <span class='no'>source</span>,
+  <span class='kw'>to</span> <span class='kw'>=</span> <span class='fu'>next_id</span>(<span class='no'>x</span>),
+  <span class='kw'>from</span> <span class='kw'>=</span> <span class='fu'>id_name</span>(<span class='no'>x</span>),
+  <span class='kw'>cols</span> <span class='kw'>=</span> <span class='fu'>time_cols</span>(<span class='no'>x</span>),
+  <span class='no'>...</span>
+)
 
 <span class='co'># S3 method for id_tbl</span>
-<span class='fu'>upgrade_id</span>(<span class='no'>x</span>, <span class='no'>source</span>, <span class='no'>to</span>, <span class='no'>from</span>)
+<span class='fu'>upgrade_id</span>(
+  <span class='no'>x</span>,
+  <span class='no'>source</span>,
+  <span class='kw'>to</span> <span class='kw'>=</span> <span class='fu'>next_id</span>(<span class='no'>x</span>),
+  <span class='kw'>from</span> <span class='kw'>=</span> <span class='fu'>id_name</span>(<span class='no'>x</span>),
+  <span class='kw'>cols</span> <span class='kw'>=</span> <span class='fu'>time_cols</span>(<span class='no'>x</span>),
+  <span class='kw'>interval</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
+  <span class='no'>...</span>
+)
 
 <span class='co'># S3 method for ts_tbl</span>
-<span class='fu'>downgrade_id</span>(<span class='no'>x</span>, <span class='no'>source</span>, <span class='no'>to</span>, <span class='no'>from</span>)
+<span class='fu'>downgrade_id</span>(
+  <span class='no'>x</span>,
+  <span class='no'>source</span>,
+  <span class='kw'>to</span> <span class='kw'>=</span> <span class='fu'>next_id</span>(<span class='no'>x</span>),
+  <span class='kw'>from</span> <span class='kw'>=</span> <span class='fu'>id_name</span>(<span class='no'>x</span>),
+  <span class='kw'>cols</span> <span class='kw'>=</span> <span class='fu'>time_cols</span>(<span class='no'>x</span>),
+  <span class='no'>...</span>
+)
 
 <span class='co'># S3 method for id_tbl</span>
-<span class='fu'>downgrade_id</span>(<span class='no'>x</span>, <span class='no'>source</span>, <span class='no'>to</span>, <span class='no'>from</span>)</pre>
+<span class='fu'>downgrade_id</span>(
+  <span class='no'>x</span>,
+  <span class='no'>source</span>,
+  <span class='kw'>to</span> <span class='kw'>=</span> <span class='fu'>next_id</span>(<span class='no'>x</span>),
+  <span class='kw'>from</span> <span class='kw'>=</span> <span class='fu'>id_name</span>(<span class='no'>x</span>),
+  <span class='kw'>cols</span> <span class='kw'>=</span> <span class='fu'>time_cols</span>(<span class='no'>x</span>),
+  <span class='kw'>interval</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
+  <span class='no'>...</span>
+)</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -186,6 +230,19 @@ id. This function allows for converting from one ID to another.</p>
     <tr>
       <th>from</th>
       <td><p>The current id type</p></td>
+    </tr>
+    <tr>
+      <th>...</th>
+      <td><p>Generic consistency</p></td>
+    </tr>
+    <tr>
+      <th>cols</th>
+      <td><p>Column names that require time-adjustment</p></td>
+    </tr>
+    <tr>
+      <th>interval</th>
+      <td><p>If <code>cols</code> is a non-zero length vector, a time interval has
+to be supplied as scalar positive <code>difftime</code> object</p></td>
     </tr>
     </table>
 
