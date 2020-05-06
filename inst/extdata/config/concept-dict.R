@@ -117,7 +117,8 @@ cfg <- list(
       eicu = list(
         list(ids = "FiO2", table = "respiratorycharting",
              column = "respchartvaluelabel", callback = "percent_as_numeric"),
-        list(ids = "FiO2", table = "lab", column = "labname")
+        list(ids = "FiO2", table = "lab", column = "labname",
+             callback = "eicu_fio2")
       ),
       hirid = list(
         list(ids = 2010L, table = "observations", column = "variableid")
@@ -133,7 +134,8 @@ cfg <- list(
         list(ids = 50804L, table = "labevents", column = "itemid")
       ),
       eicu = list(
-        list(ids = "Total CO2", table = "lab", column = "labname")
+        list(ids = "Total CO2", table = "lab", column = "labname",
+             callback = "eicu_total_co2")
       )
   )
   ),
@@ -515,7 +517,8 @@ cfg <- list(
         list(ids = 50893L, table = "labevents", column = "itemid")
       ),
       eicu = list(
-        list(ids = "calcium", table = "lab", column = "labname")
+        list(ids = "calcium", table = "lab", column = "labname",
+             callback = "eicu_calcium")
       ),
       hirid = list(
         list(ids = 20005100L, table = "observations", column = "variableid",
@@ -549,7 +552,8 @@ cfg <- list(
         list(ids = 50960L, table = "labevents", column = "itemid")
       ),
       eicu = list(
-        list(ids = "magnesium", table = "lab", column = "labname")
+        list(ids = "magnesium", table = "lab", column = "labname",
+             callback = "eicu_magnesium")
       ),
       hirid = list(
         list(ids = 24000230L, table = "observations", column = "variableid",
@@ -672,11 +676,12 @@ cfg <- list(
     min = 0,
     sources = list(
       mimic = list(
-        list(ids = 50889L, table = "labevents", column = "itemid")
+        list(ids = 50889L, table = "labevents", column = "itemid",
+             callback = "crp_dl_to_l")
       ),
       eicu = list(
         list(ids = "CRP", table = "lab", column = "labname",
-             callback = "multiply_eicu_cprot")
+             callback = "crp_dl_to_l")
       ),
       hirid = list(
         list(ids = 20002200L, table = "observations", column = "variableid")

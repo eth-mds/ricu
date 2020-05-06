@@ -1214,7 +1214,7 @@
         "defaults": {
           "time_col": "labresultoffset",
           "val_col": "labresult",
-          "unit_col": "labmeasurenamesystem"
+          "unit_col": "labmeasurenameinterface"
         },
         "num_rows": 39132531,
         "cols": [
@@ -3504,7 +3504,7 @@
         "defaults": {
           "time_col": "labresultoffset",
           "val_col": "labresult",
-          "unit_col": "labmeasurenamesystem"
+          "unit_col": "labmeasurenameinterface"
         },
         "cols": [
           {

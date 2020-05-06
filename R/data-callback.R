@@ -87,8 +87,6 @@ multiply_hirid_phos <- multiply_by(9.497)
 multiply_hirid_urea <- multiply_by(2.8)
 multiply_hirid_bili <- multiply_by(0.058467)
 
-multiply_eicu_cprot <- multiply_by(10)
-
 fahrenheit_to_celsius <- function(x, val_col, ...) {
   x[, c(val_col) := (get(val_col) - 32) * 5 / 9]
 }
@@ -123,6 +121,7 @@ mimic_age <- function(x, time_col, ...) {
   x <- as_id_tbl(x, id(x), id_opts(x))
   x <- set(x, j = time_col,
     value = as.double(`units<-`(x[[time_col]], "days") / -365))
+  x <- set(x, i = which(x[[time_col]] > 90), j = time_col, value = 90)
   x
 }
 
@@ -175,4 +174,27 @@ mf_sex <- function(x, val_col, ...) {
   x <- x[get(val_col) == "M", c(val_col) := "Male"]
   x <- x[get(val_col) == "F", c(val_col) := "Female"]
   x
+}
+
+crp_dl_to_l <- function(x, val_col, unit_col, ...) {
+  x[grepl("mg/dl", get(unit_col), ignore.case = TRUE),
+    c(val_col, unit_col) := list(get(val_col) * 10, "mg/L")]
+}
+
+eicu_total_co2 <- function(x, val_col, unit_col, ...) {
+  x[get(unit_col) != "mm(hg)", ]
+}
+
+eicu_calcium <- function(x, val_col, unit_col, ...) {
+  x[grepl("mmol/l", get(unit_col), ignore.case = TRUE),
+    c(val_col, unit_col) := list(get(val_col) * 4, "mg/dL")]
+}
+
+eicu_fio2 <- function(x, val_col, unit_col, ...) {
+  x[get(unit_col) != "lpm", ]
+}
+
+eicu_magnesium <- function(x, val_col, unit_col, ...) {
+  x[grepl("meq/l", get(unit_col), ignore.case = TRUE),
+    c(val_col, unit_col) := list(get(val_col) / 1.215, "mEq/L")]
 }

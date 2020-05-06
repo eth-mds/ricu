@@ -494,7 +494,7 @@
           "ids": "CRP",
           "table": "lab",
           "column": "labname",
-          "callback": "multiply_eicu_cprot"
+          "callback": "crp_dl_to_l"
         }
       ],
       "eicu_demo": [
@@ -502,7 +502,7 @@
           "ids": "CRP",
           "table": "lab",
           "column": "labname",
-          "callback": "multiply_eicu_cprot"
+          "callback": "crp_dl_to_l"
         }
       ],
       "hirid": [
@@ -516,14 +516,16 @@
         {
           "ids": 50889,
           "table": "labevents",
-          "column": "itemid"
+          "column": "itemid",
+          "callback": "crp_dl_to_l"
         }
       ],
       "mimic_demo": [
         {
           "ids": 50889,
           "table": "labevents",
-          "column": "itemid"
+          "column": "itemid",
+          "callback": "crp_dl_to_l"
         }
       ]
     }
@@ -537,14 +539,16 @@
         {
           "ids": "calcium",
           "table": "lab",
-          "column": "labname"
+          "column": "labname",
+          "callback": "eicu_calcium"
         }
       ],
       "eicu_demo": [
         {
           "ids": "calcium",
           "table": "lab",
-          "column": "labname"
+          "column": "labname",
+          "callback": "eicu_calcium"
         }
       ],
       "hirid": [
@@ -622,14 +626,16 @@
         {
           "ids": "Total CO2",
           "table": "lab",
-          "column": "labname"
+          "column": "labname",
+          "callback": "eicu_total_co2"
         }
       ],
       "eicu_demo": [
         {
           "ids": "Total CO2",
           "table": "lab",
-          "column": "labname"
+          "column": "labname",
+          "callback": "eicu_total_co2"
         }
       ],
       "mimic": [
@@ -1151,7 +1157,8 @@
         {
           "ids": "FiO2",
           "table": "lab",
-          "column": "labname"
+          "column": "labname",
+          "callback": "eicu_fio2"
         }
       ],
       "eicu_demo": [
@@ -1164,7 +1171,8 @@
         {
           "ids": "FiO2",
           "table": "lab",
-          "column": "labname"
+          "column": "labname",
+          "callback": "eicu_fio2"
         }
       ],
       "hirid": [
@@ -1786,14 +1794,16 @@
         {
           "ids": "magnesium",
           "table": "lab",
-          "column": "labname"
+          "column": "labname",
+          "callback": "eicu_magnesium"
         }
       ],
       "eicu_demo": [
         {
           "ids": "magnesium",
           "table": "lab",
-          "column": "labname"
+          "column": "labname",
+          "callback": "eicu_magnesium"
         }
       ],
       "hirid": [

@@ -182,7 +182,7 @@ eicu_tbl_cfg <- function(is_demo = FALSE) {
     lab = list(
       time_col = "labresultoffset",
       val_col = "labresult",
-      unit_col = "labmeasurenamesystem"
+      unit_col = "labmeasurenameinterface"
     ),
     medication = list(
       time_col = "drugstartoffset",
