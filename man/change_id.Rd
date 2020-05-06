@@ -19,19 +19,63 @@ next_id(x, n = 1L)
 
 prev_id(x, n = 1L)
 
-change_id(x, source, to, from = id_name(x))
+change_id(x, source, to, from = id_name(x), ...)
 
-upgrade_id(x, source, to = next_id(x), from = id_name(x))
+upgrade_id(
+  x,
+  source,
+  to = next_id(x),
+  from = id_name(x),
+  cols = time_cols(x),
+  ...
+)
 
-downgrade_id(x, source, to = prev_id(x), from = id_name(x))
+downgrade_id(
+  x,
+  source,
+  to = prev_id(x),
+  from = id_name(x),
+  cols = time_cols(x),
+  ...
+)
 
-\method{upgrade_id}{ts_tbl}(x, source, to, from)
+\method{upgrade_id}{ts_tbl}(
+  x,
+  source,
+  to = next_id(x),
+  from = id_name(x),
+  cols = time_cols(x),
+  ...
+)
 
-\method{upgrade_id}{id_tbl}(x, source, to, from)
+\method{upgrade_id}{id_tbl}(
+  x,
+  source,
+  to = next_id(x),
+  from = id_name(x),
+  cols = time_cols(x),
+  interval = NULL,
+  ...
+)
 
-\method{downgrade_id}{ts_tbl}(x, source, to, from)
+\method{downgrade_id}{ts_tbl}(
+  x,
+  source,
+  to = next_id(x),
+  from = id_name(x),
+  cols = time_cols(x),
+  ...
+)
 
-\method{downgrade_id}{id_tbl}(x, source, to, from)
+\method{downgrade_id}{id_tbl}(
+  x,
+  source,
+  to = next_id(x),
+  from = id_name(x),
+  cols = time_cols(x),
+  interval = NULL,
+  ...
+)
 }
 \arguments{
 \item{x}{\code{icu_tbl} object for which to make the id change}
@@ -45,6 +89,10 @@ downgrade_id(x, source, to = prev_id(x), from = id_name(x))
 \item{to}{The destination id type}
 
 \item{from}{The current id type}
+
+\item{...}{Generic consistency}
+
+\item{cols}{Column names that require time-adjustment}
 }
 \description{
 In ICU settings, multiple ID types may be in use which present an ordering

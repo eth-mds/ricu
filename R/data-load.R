@@ -11,7 +11,7 @@
 #' @param row_expr Expression to be quoted and used to define a row subsetting;
 #' `NULL` corresponds to no row subsetting
 #' @param ... Forwarded to the corresponding function that takes a quoted
-#' expression and further to `change_id()`
+#' expression
 #'
 #' @rdname load_data
 #'
@@ -42,7 +42,7 @@ data_ts_quo <- function(source, table, row_quo = NULL, cols = NULL,
                         id_col = default_id_col(table, cfg),
                         time_col = default_time_col(table, cfg),
                         interval = hours(1L),
-                        cfg = get_src_config(source), ...) {
+                        cfg = get_src_config(source)) {
 
   tbl <- get_tbl(table, source)
   ids <- get_id_cols(cfg)
@@ -63,7 +63,7 @@ data_ts_quo <- function(source, table, row_quo = NULL, cols = NULL,
                       get_data_fun(cfg))
   res <- as_ts_tbl(res, aux_id, ids, time_col, interval)
 
-  change_id(res, source, to = names(id_col), ...)
+  change_id(res, source, to = names(id_col), interval = interval)
 }
 
 #' @rdname load_data
@@ -81,7 +81,7 @@ data_id <- function(source, table, row_expr, ...) {
 data_id_quo <- function(source, table, row_quo = NULL, cols = NULL,
                         id_col = default_id_col(table, cfg),
                         interval = hours(1L),
-                        cfg = get_src_config(source), ...) {
+                        cfg = get_src_config(source)) {
 
   tbl <- get_tbl(table, source)
   ids <- get_id_cols(cfg)
@@ -102,7 +102,7 @@ data_id_quo <- function(source, table, row_quo = NULL, cols = NULL,
                       get_data_fun(cfg))
   res <- as_id_tbl(res, aux_id, ids)
 
-  change_id(res, source, to = names(id_col), ...)
+  change_id(res, source, to = names(id_col), interval = interval)
 }
 
 #' @rdname load_data

@@ -1261,7 +1261,7 @@ cfg <- list(
     max = 100,
     sources = list(
       mimic = list(
-        list(table = "patients", time_col = "dob", callback = "mimic_age")
+        list(table = "patients", column = "dob", callback = "mimic_age")
       ),
       eicu = list(
         list(table = "patient", column = "age", callback = "eicu_age")

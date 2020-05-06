@@ -19,8 +19,7 @@ data_ts_quo(
   id_col = default_id_col(table, cfg),
   time_col = default_time_col(table, cfg),
   interval = hours(1L),
-  cfg = get_src_config(source),
-  ...
+  cfg = get_src_config(source)
 )
 
 data_id(source, table, row_expr, ...)
@@ -32,8 +31,7 @@ data_id_quo(
   cols = NULL,
   id_col = default_id_col(table, cfg),
   interval = hours(1L),
-  cfg = get_src_config(source),
-  ...
+  cfg = get_src_config(source)
 )
 
 data_tbl(source, table, row_expr, ...)
@@ -56,7 +54,7 @@ data_tbl_quo(
 \code{NULL} corresponds to no row subsetting}
 
 \item{...}{Forwarded to the corresponding function that takes a quoted
-expression and further to \code{change_id()}}
+expression}
 
 \item{row_quo}{Quoted expression used for defining a row subsetting; \code{NULL}
 corresponds to no row subsetting}

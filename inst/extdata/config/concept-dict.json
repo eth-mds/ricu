@@ -27,14 +27,14 @@
       "mimic": [
         {
           "table": "patients",
-          "time_col": "dob",
+          "column": "dob",
           "callback": "mimic_age"
         }
       ],
       "mimic_demo": [
         {
           "table": "patients",
-          "time_col": "dob",
+          "column": "dob",
           "callback": "mimic_age"
         }
       ]

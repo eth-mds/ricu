@@ -59,9 +59,9 @@ reclass_tbl <- function(x, meta) {
 
   if (has_attr(x, "tbl_meta")) {
     set_class(x, meta)
-  } else {
-    x
   }
+
+  x
 }
 
 #' @rdname tbl_utils

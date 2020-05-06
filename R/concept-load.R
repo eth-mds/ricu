@@ -246,8 +246,6 @@ do_callback <- function(x, unit, min, max, source, column, ids, callback, ...,
 
   if (length(ids) > 0L) {
     val <- val_col
-  } else if (is.null(column)) {
-    val <- time_col
   } else {
     val <- column
   }

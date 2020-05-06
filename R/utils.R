@@ -259,25 +259,29 @@ days <- function(x) as.difftime(x, units = "days")
 #'
 weeks <- function(x) as.difftime(x, units = "weeks")
 
+is_difftime <- function(x) inherits(x, "difftime")
+
 #' @param allow_neg Logical flag indicating whether to allow negative values
 #'
 #' @rdname difftime
 #' @export
 #'
 is_time <- function(x, allow_neg = TRUE) {
-  inherits(x, "difftime") && length(x) == 1L && (allow_neg || all(x >= 0))
+  is_difftime(x) && length(x) == 1L && (allow_neg || all(x >= 0))
 }
 
 #' @rdname difftime
 #' @export
 #'
 is_time_vec <- function(x, allow_neg = TRUE) {
-  inherits(x, "difftime") && (allow_neg || all(x >= 0))
+  is_difftime(x) && (allow_neg || all(x >= 0))
 }
 
 re_time <- function(x, interval) {
   round_to(`units<-`(x, units(interval)), as.double(interval))
 }
+
+time_cols <- function(x) colnames(x)[lgl_ply(x, is_difftime)]
 
 reduce <- function(f, x, ...) Reduce(function(x, y) f(x, y, ...), x)
 

@@ -118,7 +118,6 @@ distribute_amount <- function(x, val_col, id_col, time_col, amount_col,
 }
 
 mimic_age <- function(x, val_col, ...) {
-  x <- as_id_tbl(x)
   x <- set(x, j = val_col,
     value = as.double(`units<-`(x[[val_col]], "days") / -365))
   x <- set(x, i = which(x[[val_col]] > 90), j = val_col, value = 90)
