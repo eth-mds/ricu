@@ -62,12 +62,21 @@ load_concepts <- function(concepts, aggregate = NA_character_,
              MoreArgs = c(list(progress_bar = pb), list(...)))
 
   if (!merge_data) {
-    res
-  } else if (length(res) > 1L) {
-    reduce(merge, res, all = TRUE)
-  } else {
-    res[[1L]]
+    return(res)
   }
+
+  if (length(res) > 1L) {
+
+    ind <- c(which(lgl_ply(res, is_ts_tbl)), which(lgl_ply(res, is_id_tbl)))
+    res <- reduce(merge, res[ind], all = TRUE)
+    res <- setcolorder(res, c(meta_cols(res), names(concepts)))
+
+  } else if (length(res) == 1L) {
+
+    res <- res[[1L]]
+  }
+
+  res
 }
 
 #' @param concept Single `concept` object to be loaded

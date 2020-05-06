@@ -93,6 +93,9 @@ downgrade_id(
 \item{...}{Generic consistency}
 
 \item{cols}{Column names that require time-adjustment}
+
+\item{interval}{If \code{cols} is a non-zero length vector, a time interval has
+to be supplied as scalar positive \code{difftime} object}
 }
 \description{
 In ICU settings, multiple ID types may be in use which present an ordering
