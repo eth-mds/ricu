@@ -73,11 +73,7 @@ as.data.frame.icu_tbl <- function(x, row.names = NULL, optional = FALSE, ...) {
                 key = key, stringsAsFactors = stringsAsFactors))
   )
 
-  if (!is.null(meta)) {
-    reclass_tbl(res, meta)
-  } else {
-    res
-  }
+  reclass_tbl(res, meta)
 }
 
 #' @export
@@ -158,9 +154,5 @@ merge.icu_tbl <- function(x, y, by = NULL, by.x = NULL, by.y = NULL, ...) {
     res <- data.table::merge.data.table(x, y, by, ...)
   }
 
-  if (is.null(targ)) {
-    res
-  } else {
-    reclass_tbl(res, targ)
-  }
+  reclass_tbl(res, targ)
 }

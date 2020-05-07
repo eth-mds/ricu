@@ -20,16 +20,20 @@ set_meta <- function(x, meta, stop_on_fail = TRUE) {
 
   x <- na.omit(x, cols)
 
-  setkeyv(x, cols)
-  setcolorder(x, c(cols, setdiff(colnames(x), cols)))
+  x <- setkeyv(x, cols)
+  x <- setcolorder(x, c(cols, setdiff(colnames(x), cols)))
 
-  setattr(x, "tbl_meta", meta)
+  x <- setattr(x, "tbl_meta", meta)
 
   x
 }
 
 set_class <- function(x, meta) {
-  setattr(x, "class", unique(c(tbl_class(meta), "icu_tbl", strip_class(x))))
+
+  class <- unique(c(tbl_class(meta), "icu_tbl", strip_class(x)))
+
+  x <- setattr(x, "class", class)
+  x
 }
 
 strip_class <- function(x) {
@@ -38,13 +42,17 @@ strip_class <- function(x) {
 
 unclass_tbl <- function(x) {
 
-  setattr(x, "tbl_meta", NULL)
-  setattr(x, "class", strip_class(x))
+  x <- setattr(x, "tbl_meta", NULL)
+  x <- setattr(x, "class", strip_class(x))
 
   x
 }
 
 reclass_tbl <- function(x, meta) {
+
+  if (is.null(meta)) {
+    return(x)
+  }
 
   x <- set_meta(x, meta, stop_on_fail = FALSE)
 
@@ -59,9 +67,9 @@ reclass_tbl <- function(x, meta) {
 
   if (has_attr(x, "tbl_meta")) {
     set_class(x, meta)
+  } else {
+    x
   }
-
-  x
 }
 
 #' @rdname tbl_utils
@@ -119,14 +127,7 @@ rbind_lst <- function(x, ...) {
     on.exit(Map(rename, x[icu_tbl], old_met))
   }
 
-  res <- dt_rbl(x, ...)
-
-  if (is.null(meta)) {
-    res
-  } else {
-    reclass_tbl(res, meta)
-  }
-
+  reclass_tbl(dt_rbl(x, ...), meta)
 }
 
 #' @param cols Column names of columns to consider
