@@ -137,11 +137,12 @@ are used.</p>
     <pre class="usage"><span class='fu'>new_item</span>(
   <span class='no'>concept</span>,
   <span class='no'>source</span>,
-  <span class='no'>table</span>,
+  <span class='kw'>table</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
   <span class='kw'>column</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
   <span class='kw'>ids</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
   <span class='kw'>regex</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
   <span class='kw'>callback</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
+  <span class='kw'>load_fun</span> <span class='kw'>=</span> <span class='st'>"load_default"</span>,
   <span class='no'>...</span>
 )
 
@@ -186,6 +187,10 @@ interpreted as regular expressions</p></td>
       <th>callback</th>
       <td><p>Name of a function to be called on the returned data used
 for data cleanup operations</p></td>
+    </tr>
+    <tr>
+      <th>load_fun</th>
+      <td><p>Custom function used for overriding default loading of data</p></td>
     </tr>
     <tr>
       <th>...</th>
