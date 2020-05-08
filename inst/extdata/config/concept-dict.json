@@ -1,4 +1,36 @@
 {
+  "admission_type": {
+    "sources": {
+      "eicu": [
+        {
+          "table": "admissiondx",
+          "column": "admitdxpath",
+          "callback": "eicu_adx"
+        }
+      ],
+      "eicu_demo": [
+        {
+          "table": "admissiondx",
+          "column": "admitdxpath",
+          "callback": "eicu_adx"
+        }
+      ],
+      "mimic": [
+        {
+          "table": "services",
+          "column": "curr_service",
+          "callback": "mimic_adx"
+        }
+      ],
+      "mimic_demo": [
+        {
+          "table": "services",
+          "column": "curr_service",
+          "callback": "mimic_adx"
+        }
+      ]
+    }
+  },
   "age": {
     "unit": "years",
     "min": 0,

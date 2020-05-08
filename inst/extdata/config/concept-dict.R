@@ -1312,6 +1312,18 @@ cfg <- list(
              column = "variableid", callback = "hirid_death")
       )
     )
+  ),
+  admission_type = list(
+    sources = list(
+      mimic = list(
+        list(table = "services", column = "curr_service",
+             callback = "mimic_adx")
+      ),
+      eicu = list(
+        list(table = "admissiondx", column = "admitdxpath",
+             callback = "eicu_adx")
+      )
+    )
   )
 )
 

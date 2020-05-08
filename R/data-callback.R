@@ -197,3 +197,31 @@ eicu_magnesium <- function(x, val_col, unit_col, ...) {
   x[grepl("meq/l", get(unit_col), ignore.case = TRUE),
     c(val_col, unit_col) := list(get(val_col) / 1.215, "mEq/L")]
 }
+
+mimic_adx <- function(x, val_col, ...) {
+
+  map <- c(MED   = "med",   SURG  = "surg", CMED = "med",  CSURG  = "surg",
+           VSURG = "surg",  NSURG = "surg", NB   = "other", NMED  = "med",
+           ORTHO = "surg",  TRAUM = "surg", OMED = "med",   GU    = "other",
+           NBB   = "other", TSURG = "surg", GYN  = "other", PSURG = "surg",
+           OBS   = "other", ENT   = "surg", DENT = "surg",  PSYCH = "other")
+
+  set(x, j = val_col, value = map[x[[val_col]]])
+}
+
+eicu_adx <- function(x, val_col, ...) {
+
+  path <- strsplit(x[[val_col]], split = "|", fixed = TRUE)
+  keep <- chr_ply(path, `[[`, 2L) == "All Diagnosis"
+
+  x <- x[keep, ]
+  path <- path[keep]
+
+  cats <- fifelse(
+    chr_ply(path, `[[`, 5L) %chin% c("Genitourinary", "Transplant"),
+    "other",
+    fifelse(chr_ply(path, `[[`, 3L) == "Operative", "surg", "med")
+  )
+
+  set(x, j = val_col, value = cats)
+}
