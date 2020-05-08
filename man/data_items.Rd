@@ -11,11 +11,12 @@
 new_item(
   concept,
   source,
-  table,
+  table = NULL,
   column = NULL,
   ids = NULL,
   regex = FALSE,
   callback = NULL,
+  load_fun = "load_default",
   ...
 )
 
@@ -44,6 +45,8 @@ interpreted as regular expressions}
 
 \item{callback}{Name of a function to be called on the returned data used
 for data cleanup operations}
+
+\item{load_fun}{Custom function used for overriding default loading of data}
 
 \item{...}{Further name/string pairs specifying additional columns needed to
 define the data item}

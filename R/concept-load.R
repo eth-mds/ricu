@@ -163,44 +163,70 @@ load_item <- function(item, unit = NULL, min = NULL, max = NULL,
 
   assert_that(length(item) == 1L, is_src_config(cfg))
 
-  item <- item[[1L]]
+  idc <- get_id_cols(cfg, id_type = id_type)
 
-  id_col <- get_id_cols(cfg, id_type = id_type)
-  ex_col <- get_col_defaults(cfg, table = item[["table"]])
-
-  if (!is.null(patient_ids)) {
+  if (not_null(patient_ids)) {
 
     if (inherits(patient_ids, "data.frame")) {
-      assert_that(has_name(patient_ids, id_col))
-      patient_ids <- patient_ids[[id_col]]
+      assert_that(has_name(patient_ids, idc))
+      patient_ids <- patient_ids[[idc]]
     }
 
     assert_that(is.atomic(patient_ids), length(patient_ids) > 0L)
-    patient_ids <- setnames(setDT(list(unique(patient_ids))), id_col)
+    patient_ids <- setnames(setDT(list(unique(patient_ids))), idc)
   }
 
+  itm <- item[[1L]]
+  fun <- get(itm[["load_fun"]], mode = "function")
+
+  res <- fun(item, id_type, patient_ids, interval, cfg)
+
+  assert_that(is_icu_tbl((res)))
+
+  unt <- itm[["unit_col"]]
+  tbl <- itm[["table"]]
+
+  if (is.null(unt) && not_null(tbl)) {
+    unt <- get_col_defaults(cfg, table = tbl)[["unit_col"]]
+  }
+
+  res <- range_check(res, setdiff(data_cols(res), unt), min, max)
+  res <- unit_check(res, unt, unit)
+
+  res <- rename_cols(res, itm[["concept"]], data_cols(res))
+  res <- add_unit(res, unit)
+
+  res
+}
+
+load_default <- function(item, id_type, patient_ids, interval, cfg) {
+
+  item <- item[[1L]]
+  tble <- item[["table"]]
+
+  assert_that(is.string(tble))
+
+  id_col <- get_id_cols(cfg, id_type = id_type)
+  ex_col <- get_col_defaults(cfg, table = tble)
+
   load_args <- c(
-    item[setdiff(names(item), c("concept", "callback"))],
+    item[setdiff(names(item), c("concept", "callback", "load_fun"))],
     list(id_col = id_col), ex_col, list(cfg = cfg, interval = interval)
   )
 
   res <- do.call(do_load, load_args[!duplicated(names(load_args))])
 
-  if (!is.null(patient_ids)) {
-    res  <- merge(res, patient_ids, by = id_col, all = FALSE)
+  if (not_null(patient_ids)) {
+    res <- merge(res, patient_ids, by = id_col, all = FALSE)
   }
 
   cb_args <- c(
-    list(x = res, unit = unit, min = min, max = max),
-    item[setdiff(names(item), c("concept", "table", "regex"))],
+    list(x = res),
+    item[setdiff(names(item), c("concept", "table", "regex", "load_fun"))],
     list(id_col = id_col), ex_col
   )
 
-  res <- do.call(do_callback, cb_args[!duplicated(names(cb_args))])
-  res <- rename_cols(res, item[["concept"]], data_cols(res))
-  res <- add_unit(res, unit)
-
-  res
+  do.call(do_callback, cb_args[!duplicated(names(cb_args))])
 }
 
 do_load <- function(source, table, column, ids, regex, ..., id_col, time_col,
@@ -244,8 +270,8 @@ do_load <- function(source, table, column, ids, regex, ..., id_col, time_col,
   }
 }
 
-do_callback <- function(x, unit, min, max, source, column, ids, callback, ...,
-                        id_col, time_col, val_col, unit_col) {
+do_callback <- function(x, source, column, ids, callback, ..., id_col,
+                        time_col, val_col, unit_col) {
 
   extra_cols <- list(...)
 
@@ -269,7 +295,7 @@ do_callback <- function(x, unit, min, max, source, column, ids, callback, ...,
               list(id_col = id_col, time_col = time_col, val_col = val,
                    item_col = column, unit_col = unit_col),
               extra_cols,
-              list(source = source, unit = unit))
+              list(source = source))
 
     x <- do.call(callback, args)
   }
@@ -282,7 +308,12 @@ do_callback <- function(x, unit, min, max, source, column, ids, callback, ...,
     stop("expecting an `id_tbl` or `ts_tbl` object")
   }
 
-  x <- do_range(x, val, min, max)
+  x <- rm_cols(x, setdiff(colnames(x), c(id_col, time_col, val, unit_col)))
+
+  x
+}
+
+unit_check <- function(x, unit_col, unit) {
 
   if (not_null(unit_col)) {
 
@@ -307,9 +338,11 @@ do_callback <- function(x, unit, min, max, source, column, ids, callback, ...,
         message(paste(strwrap(msg, indent = 4L, exdent = 6L), collapse = "\n"))
       }
     }
+
+    x <- rm_cols(x, unit_col)
   }
 
-  rm_cols(x, setdiff(colnames(x), c(id_col, time_col, val)))
+  x
 }
 
 add_unit <- function(x, unit) {
@@ -327,7 +360,7 @@ add_unit <- function(x, unit) {
   x
 }
 
-do_range <- function(x, val_col, min, max) {
+range_check <- function(x, val_col, min, max) {
 
   if (is.null(min) && is.null(max)) {
     return(x)

@@ -1775,6 +1775,64 @@
       ]
     }
   },
+  "los_hosp": {
+    "unit": "hours",
+    "sources": {
+      "eicu": [
+        {
+          "load_fun": "los_windows",
+          "win_type": "hadm"
+        }
+      ],
+      "eicu_demo": [
+        {
+          "load_fun": "los_windows",
+          "win_type": "hadm"
+        }
+      ],
+      "mimic": [
+        {
+          "load_fun": "los_windows",
+          "win_type": "hadm"
+        }
+      ],
+      "mimic_demo": [
+        {
+          "load_fun": "los_windows",
+          "win_type": "hadm"
+        }
+      ]
+    }
+  },
+  "los_icu": {
+    "unit": "hours",
+    "sources": {
+      "eicu": [
+        {
+          "load_fun": "los_windows",
+          "win_type": "icustay"
+        }
+      ],
+      "eicu_demo": [
+        {
+          "load_fun": "los_windows",
+          "win_type": "icustay"
+        }
+      ],
+      "mimic": [
+        {
+          "load_fun": "los_windows",
+          "win_type": "icustay"
+        }
+      ],
+      "mimic_demo": [
+        {
+          "load_fun": "los_windows",
+          "win_type": "icustay"
+        }
+      ]
+    }
+  },
   "lymphocytes": {
     "unit": "%",
     "min": 0,

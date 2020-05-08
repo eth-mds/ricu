@@ -128,8 +128,18 @@ stay_windows <- function(source, id_type = "icustay", win_type = "icustay",
   }
 
   orig <- map_in_cols(id_type)
-  inn  <- map_in_cols(win_type)
-  out  <- map_out_cols(win_type)
+
+  if (is.null(in_time)) {
+    inn  <- NULL
+  } else {
+    inn  <- map_in_cols(win_type)
+  }
+
+  if (is.null(out_time)) {
+    inn  <- NULL
+  } else {
+    out  <- map_out_cols(win_type)
+  }
 
   cols <- unique(c(id_type, win_type, inn, out, orig))
 

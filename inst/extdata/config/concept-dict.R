@@ -1324,6 +1324,28 @@ cfg <- list(
              callback = "eicu_adx")
       )
     )
+  ),
+  los_icu = list(
+    unit = "hours",
+    sources = list(
+      mimic = list(
+        list(load_fun = "los_windows", win_type = "icustay")
+      ),
+      eicu = list(
+        list(load_fun = "los_windows", win_type = "icustay")
+      )
+    )
+  ),
+  los_hosp = list(
+    unit = "hours",
+    sources = list(
+      mimic = list(
+        list(load_fun = "los_windows", win_type = "hadm")
+      ),
+      eicu = list(
+        list(load_fun = "los_windows", win_type = "hadm")
+      )
+    )
   )
 )
 

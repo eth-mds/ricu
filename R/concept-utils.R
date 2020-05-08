@@ -14,6 +14,7 @@
 #' interpreted as regular expressions
 #' @param callback Name of a function to be called on the returned data used
 #' for data cleanup operations
+#' @param load_fun Custom function used for overriding default loading of data
 #' @param ... Further name/string pairs specifying additional columns needed to
 #' define the data item
 #'
@@ -21,19 +22,22 @@
 #'
 #' @export
 #'
-new_item <- function(concept, source, table, column = NULL, ids = NULL,
-                     regex = FALSE, callback = NULL, ...) {
+new_item <- function(concept, source, table = NULL, column = NULL, ids = NULL,
+                     regex = FALSE, callback = NULL, load_fun = "load_default",
+                     ...) {
 
-  assert_that(is.string(concept), is.string(source), is.string(table),
+  assert_that(is.string(concept), is.string(source), null_or(table, is.string),
               null_or(column, is.string), null_or(callback, is.string),
-              is.atomic(ids), is.flag(regex))
+              is.atomic(ids), is.flag(regex), is.string(load_fun),
+              exists(load_fun, mode = "function"))
 
   if (!is.null(callback)) {
     assert_that(exists(callback, mode = "function"))
   }
 
   item <- list(concept = concept, source = source, table = table,
-               column = column, ids = ids, regex = regex, callback = callback)
+               column = column, ids = ids, regex = regex, callback = callback,
+               load_fun = load_fun)
 
   extra <- list(...)
 
