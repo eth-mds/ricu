@@ -1326,7 +1326,7 @@ cfg <- list(
     )
   ),
   los_icu = list(
-    unit = "hours",
+    unit = "days",
     sources = list(
       mimic = list(
         list(load_fun = "los_windows", win_type = "icustay")
@@ -1337,7 +1337,7 @@ cfg <- list(
     )
   ),
   los_hosp = list(
-    unit = "hours",
+    unit = "days",
     sources = list(
       mimic = list(
         list(load_fun = "los_windows", win_type = "hadm")

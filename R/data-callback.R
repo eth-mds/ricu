@@ -228,9 +228,13 @@ eicu_adx <- function(x, val_col, ...) {
 
 los_windows <- function(item, id_type, patient_ids, interval, cfg, ...) {
 
-  res <- stay_windows(get_source(item), id_type = id_type,
-                      win_type = item[[1L]][["win_type"]], in_time = NULL,
-                      interval = hours(1L))
+  win <- item[[1L]][["win_type"]]
+  res <- stay_windows(get_source(item), id_type = id_type, win_type = win,
+                      in_time = NULL, interval = mins(1L))
+
+  if (!identical(win, id_type)) {
+    res <- rm_cols(res, win)
+  }
 
   idc <- get_id_cols(cfg, id_type = id_type)
   res <- rename_cols(res, idc, id(res))
@@ -238,6 +242,9 @@ los_windows <- function(item, id_type, patient_ids, interval, cfg, ...) {
   if (not_null(patient_ids)) {
     res <- merge(res, patient_ids, by = idc, all = FALSE)
   }
+
+  val <- data_cols(res)
+  res <- set(res, j = val, value = as.double(res[[val]], units = "days"))
 
   res
 }
