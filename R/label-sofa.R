@@ -21,20 +21,20 @@
 #' @param icu_limits ICU stay durations used for calculating urine output
 #'
 #' @inheritParams si_data
-#' @inheritParams load_item
-#' 
+#' @inheritParams load_concepts
+#'
 #' @details The SOFA score ([Vincent et. al.](https://www.researchgate.net/profile/Rui_Moreno/publication/14361654_The_SOFA_Sepsis-related_Organ_Failure_Assessment_score_to_describe_organ_dysfunctionfailure_On_behalf_of_the_Working_Group_on_Sepsis-Related_Problems_of_the_European_Society_of_Intensive_Care_Medicine/links/0c960536cf4f20aef4000000.pdf)) is evaluated as follows:
-#' 
+#'
 #' \figure{SOFA_table.png}
-#' 
+#'
 #' For each component, the worst value over a window of length `worst_win_length` (default `hours(24L)`) is taken.
 #'
 #' The respiratory component of the SOFA score requires the evaluation of the PaO2/FiO2 ratio. Often, however, both measures are not available at the same time point. Therefore, PaO2 and FiO2 measurements are matched within a window of size `pafi_win_length` (default `hours(2L)`).
-#' 
+#'
 #' The renal component of the SOFA score assigns scores of 3 and 4 in case of a very low urine output. Since the information on urine output is not very reliable at the start of the ICU stay, we do not evaluate urine outputs before a time window of `urine_min_win` (default `hours(12L)`).
-#' 
+#'
 #' Mechanical ventilation is also part of the SOFA score. In some datasets, ventilation start events are given, which cannot be matched to ventilation end events specifically. In these cases, the duration of the ventilation window is taken to be `vent_win_length` (default `hours(6L)`).
-#' 
+#'
 #' @rdname label_sofa
 #' @export
 #'
@@ -75,13 +75,16 @@ sofa_data <- function(source, pafi_win_length = hours(2L),
     creatinine = "max", urine_cumulative = "max", urine_events = "sum"
   )
 
-  dat_dict  <- dictionary[setdiff(names(agg_funs), vent_conc), source = source]
-  vent_dict <- dictionary[vent_conc, source = source]
+  dat_dict  <- as_concept(
+    dictionary[setdiff(names(agg_funs), vent_conc), source = source]
+  )
+
+  vent_dict <- as_concept(dictionary[vent_conc, source = source])
 
   dat <- c(
-    load_concepts(dat_dict, agg_funs, FALSE, id_type = id_type,
+    load_concepts(dat_dict, agg_funs, merge_data = FALSE, id_type = id_type,
                   interval = interval, ...),
-    load_concepts(vent_dict, agg_funs, FALSE, id_type = id_type,
+    load_concepts(vent_dict, agg_funs, merge_data = FALSE, id_type = id_type,
                   interval = mins(1L), ...)
   )
 

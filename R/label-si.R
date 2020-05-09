@@ -13,30 +13,30 @@
 #' @param ... Passed to [load_concepts()]
 #'
 #' @details Suspected infection can occur in one of the two following ways:
-#' - administration of antibiotics followed by a culture sampling within `samp_win` hours  
+#' - administration of antibiotics followed by a culture sampling within `samp_win` hours
 #'```
 #'       samp_win
-#'   |---------------|  
-#'  ABX           sampling (last possible)                
+#'   |---------------|
+#'  ABX           sampling (last possible)
 #'```
 #' - culture sampling followed by an antibiotic administration within `abx_win` hours
 #'```
 #'                      abx_win
-#'   |---------------------------------------------|  
-#' sampling                                       ABX (last possible)     
+#'   |---------------------------------------------|
+#' sampling                                       ABX (last possible)
 #' ```
 #' The default values of `samp_win` and `abx_win` are 24 and 72 hours respectively, as per [Singer et.al.](https://jamanetwork.com/journals/jama/fullarticle/2492881).
-#' 
-#' The ealier of the two times (fluid sampling, antibiotic treatment) is taken as the time of suspected infection (SI time). The suspected infection window (SI window) is defined to start `si_lwr` hours before the SI time and end `si_upr` hours after the SI time. The default values of 48 and 24 hours (respectively) are chosen as used by [Seymour et.al.](https://jamanetwork.com/journals/jama/fullarticle/2492875) (see Supplemental Material). 
+#'
+#' The ealier of the two times (fluid sampling, antibiotic treatment) is taken as the time of suspected infection (SI time). The suspected infection window (SI window) is defined to start `si_lwr` hours before the SI time and end `si_upr` hours after the SI time. The default values of 48 and 24 hours (respectively) are chosen as used by [Seymour et.al.](https://jamanetwork.com/journals/jama/fullarticle/2492875) (see Supplemental Material).
 #' ```
 #'                48h                       24h
-#'  |------------------------------(|)---------------|   
+#'  |------------------------------(|)---------------|
 #'                                SI time
 #'```
 #'
 #'For some datasets, however, information on body fluid sampling is not available for majority of the patients (eICU data). Therefore, an alternative definition of suspected infection is required. For this, we use administration of multiple antibiotics (argument `abx_min_count` determines the required number) within `abx_count_win` hours. The first time of antibiotic administration is taken as the SI time in this case.
-#' 
-#' 
+#'
+#'
 #' @rdname label_si
 #' @export
 #'
@@ -53,7 +53,7 @@ si_data <- function(source, abx_count_win = hours(24L), abx_min_count = 1L,
   }
 
   funs <- c(antibiotics = "sum", fluid_sampling = samp_fun)
-  dict <- dictionary[names(funs), source = source]
+  dict <- as_concept(dictionary[names(funs), source = source])
 
   dat <- load_concepts(dict, aggregate = funs, merge_data = FALSE, ...)
 

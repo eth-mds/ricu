@@ -470,6 +470,8 @@ get_src_config.src_config <- function(x, ...) x
 get_src_config.character <- function(x, name = "data-sources",
                                      file = NULL, ...) {
 
+  x <- unique(x)
+
   assert_that(is.string(x))
 
   if (is.null(file)) {

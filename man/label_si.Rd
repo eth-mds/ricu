@@ -60,20 +60,20 @@ Suspected infection can occur in one of the two following ways:
 \itemize{
 \item administration of antibiotics followed by a culture sampling within \code{samp_win} hours
 }\preformatted{      samp_win
-  |---------------|  
- ABX           sampling (last possible)                
+  |---------------|
+ ABX           sampling (last possible)
 }
 \itemize{
 \item culture sampling followed by an antibiotic administration within \code{abx_win} hours
 }\preformatted{                     abx_win
-  |---------------------------------------------|  
-sampling                                       ABX (last possible)     
+  |---------------------------------------------|
+sampling                                       ABX (last possible)
 }
 
 The default values of \code{samp_win} and \code{abx_win} are 24 and 72 hours respectively, as per \href{https://jamanetwork.com/journals/jama/fullarticle/2492881}{Singer et.al.}.
 
 The ealier of the two times (fluid sampling, antibiotic treatment) is taken as the time of suspected infection (SI time). The suspected infection window (SI window) is defined to start \code{si_lwr} hours before the SI time and end \code{si_upr} hours after the SI time. The default values of 48 and 24 hours (respectively) are chosen as used by \href{https://jamanetwork.com/journals/jama/fullarticle/2492875}{Seymour et.al.} (see Supplemental Material).\preformatted{               48h                       24h
- |------------------------------(|)---------------|   
+ |------------------------------(|)---------------|
                                SI time
 }
 
