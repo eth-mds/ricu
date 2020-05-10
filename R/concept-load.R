@@ -102,6 +102,8 @@ load_concepts.concept <- function(x, aggregate = NA_character_,
 #' @param id_type String specifying the patient id type to return
 #' @param patient_ids Optional vector of patient ids to subset the fetched data
 #' with
+#' @param verbose Logical flag for turning off reporting of unit/out of range
+#' messages
 #'
 #' @inheritParams data_ts_quo
 #'
@@ -111,7 +113,7 @@ load_concepts.concept <- function(x, aggregate = NA_character_,
 load_concepts.item <- function(x, unit = NULL, min = NULL, max = NULL,
                                id_type = "icustay", patient_ids = NULL,
                                interval = hours(1L), cfg = get_src_config(x),
-                               ...) {
+                               verbose = TRUE, ...) {
 
   do_one <- function(x, unt, mi, ma) {
 
@@ -127,14 +129,16 @@ load_concepts.item <- function(x, unit = NULL, min = NULL, max = NULL,
       uco <- get_col_defaults(cfg, table = tbl)[["unit_col"]]
     }
 
-    res <- range_check(res, setdiff(data_cols(res), uco), mi, ma)
-    res <- unit_check(res, uco, unt)
+    res <- range_check(res, setdiff(data_cols(res), uco), mi, ma, verbose)
+    res <- unit_check(res, uco, unt, verbose)
 
     res <- rename_cols(res, x[["concept"]], data_cols(res))
     res <- add_unit(res, unt)
 
     res
   }
+
+  assert_that(is.flag(verbose))
 
   if (not_null(patient_ids)) {
 
@@ -284,9 +288,9 @@ do_callback <- function(x, source, column, ids, callback, ..., id_col,
   x
 }
 
-unit_check <- function(x, unit_col, unit) {
+unit_check <- function(x, unit_col, unit, verb) {
 
-  if (not_null(unit_col)) {
+  if (verb && not_null(unit_col)) {
 
     unt <- unique(x[[unit_col]])
     unt <- unt[!is.na(unt)]
@@ -309,9 +313,9 @@ unit_check <- function(x, unit_col, unit) {
         message(paste(strwrap(msg, indent = 4L, exdent = 6L), collapse = "\n"))
       }
     }
-
-    x <- rm_cols(x, unit_col)
   }
+
+  x <- rm_cols(x, unit_col)
 
   x
 }
@@ -331,7 +335,7 @@ add_unit <- function(x, unit) {
   x
 }
 
-range_check <- function(x, val_col, min, max) {
+range_check <- function(x, val_col, min, max, verb) {
 
   if (is.null(min) && is.null(max)) {
     return(x)
@@ -365,7 +369,7 @@ range_check <- function(x, val_col, min, max) {
 
   new_nrow <- nrow(x)
 
-  if (new_nrow != old_nrow) {
+  if (verb && new_nrow != old_nrow) {
     message("   removed ", old_nrow - new_nrow,
             " rows based on range specification")
   }

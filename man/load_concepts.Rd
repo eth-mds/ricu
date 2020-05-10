@@ -32,6 +32,7 @@ load_concepts(x, ...)
   patient_ids = NULL,
   interval = hours(1L),
   cfg = get_src_config(x),
+  verbose = TRUE,
   ...
 )
 
@@ -75,6 +76,9 @@ specified as \code{\link[base:difftime]{base::difftime()}} object}
 \item{cfg}{Configuration list used for determining default options for
 \code{id_col} and \code{time_col} arguments, id options as well as the \code{data_fun}
 argument}
+
+\item{verbose}{Logical flag for turning off reporting of unit/out of range
+messages}
 
 \item{concepts}{Character vector (or NULL, meaning everything) of concept
 names}
