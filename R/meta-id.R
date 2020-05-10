@@ -57,6 +57,13 @@ set_id.id_meta <- function(x, value) {
   new_id_meta(set_id(tbl_id(x), value))
 }
 
+#' @rdname meta_utils
+#' @export
+#'
+set_id_opts.id_meta <- function(x, value) {
+  new_id_meta(set_id_opts(tbl_id(x), value))
+}
+
 #' @rdname tbl_meta
 #' @keywords internal
 #' @export

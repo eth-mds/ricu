@@ -3,6 +3,7 @@
 %   R/meta-utils.R, R/tbl-icu.R, R/tbl-ts.R
 \name{set_id.id_meta}
 \alias{set_id.id_meta}
+\alias{set_id_opts.id_meta}
 \alias{index.tbl_index}
 \alias{interval.tbl_index}
 \alias{time_unit.tbl_index}
@@ -18,6 +19,7 @@
 \alias{time_unit.ts_meta}
 \alias{meta_cols.ts_meta}
 \alias{set_id.ts_meta}
+\alias{set_id_opts.ts_meta}
 \alias{set_index.ts_meta}
 \alias{set_interval.ts_meta}
 \alias{set_time_unit.ts_meta}
@@ -49,6 +51,8 @@
 \usage{
 \method{set_id}{id_meta}(x, value)
 
+\method{set_id_opts}{id_meta}(x, value)
+
 \method{index}{tbl_index}(x)
 
 \method{interval}{tbl_index}(x)
@@ -78,6 +82,8 @@
 \method{meta_cols}{ts_meta}(x)
 
 \method{set_id}{ts_meta}(x, value)
+
+\method{set_id_opts}{ts_meta}(x, value)
 
 \method{set_index}{ts_meta}(x, value)
 

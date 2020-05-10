@@ -1,29 +1,38 @@
 
 all_flag <- function(x, val_col, ...) {
-  set(x, j = val_col, value = rep(TRUE, nrow(x)))
+  x <- set(x, j = val_col, value = rep(TRUE, nrow(x)))
+  x
 }
 
 vent_flag <- function(x, val_col, time_col, ...) {
   x <- x[as.logical(get(val_col)), ]
-  set(x, j = c(time_col, val_col),
-      value = list(x[[val_col]], rep(TRUE, nrow(x))))
+  x <- set(x, j = c(time_col, val_col),
+           value = list(x[[val_col]], rep(TRUE, nrow(x))))
+  x
 }
 
 percent_as_numeric <- function(x, val_col, ...) {
-  set(x, j = val_col, value = as.numeric(sub("%", "", x[[val_col]])))
+  x <- set(x, j = val_col, value = as.numeric(sub("%", "", x[[val_col]])))
+  x
 }
 
 force_numeric_col <- function(x, col) {
-  set(x, j = col, value = force_numeric(x[[col]]))
+  x <- set(x, j = col, value = force_numeric(x[[col]]))
+  x
 }
 
 force_numeric_cols <- function(x, cols) {
-  for (col in cols) force_numeric_col(x, col)
+
+  for (col in cols) {
+    x <- force_numeric_col(x, col)
+  }
+
   x
 }
 
 force_numeric_val_col <- function(x, val_col, ...) {
-  force_numeric_col(x, val_col)
+  x <- force_numeric_col(x, val_col)
+  x
 }
 
 eicu_body_weight <- function(x, id_col, val_col, weight_col, source, ...) {
@@ -66,13 +75,15 @@ mimic_sampling <- function(x, val_col, time_col, aux_time, ...) {
 }
 
 eicu_sampling <- function(x, val_col, ...) {
-  set(x, j = val_col, value = not_val(x[[val_col]], "no growth"))
+  x <- set(x, j = val_col, value = not_val(x[[val_col]], "no growth"))
+  x
 }
 
 multiply_by <- function(factor) {
   factor <- force(factor)
   function(x, val_col, ...) {
-    x[, c(val_col) := get(val_col) * factor]
+    x <- x[, c(val_col) := get(val_col) * factor]
+    x
   }
 }
 
@@ -88,7 +99,8 @@ multiply_hirid_urea <- multiply_by(2.8)
 multiply_hirid_bili <- multiply_by(0.058467)
 
 fahrenheit_to_celsius <- function(x, val_col, ...) {
-  x[, c(val_col) := (get(val_col) - 32) * 5 / 9]
+  x <- x[, c(val_col) := (get(val_col) - 32) * 5 / 9]
+  x
 }
 
 distribute_amount <- function(x, val_col, id_col, time_col, amount_col,
@@ -131,23 +143,28 @@ eicu_age <- function(x, val_col, ...) {
 }
 
 hirid_vent_start <- function(x, val_col, ...) {
-  all_flag(x[get(val_col) == 1, ], val_col)
+  x <- all_flag(x[get(val_col) == 1, ], val_col)
+  x
 }
 
 hirid_vent_end <- function(x, val_col, ...) {
-  all_flag(x[get(val_col) > 2, ], val_col)
+  x <- all_flag(x[get(val_col) > 2, ], val_col)
+  x
 }
 
 hirid_trach <- function(x, val_col, ...) {
-  all_flag(x[get(val_col) == 2, ], val_col)
+  x <- all_flag(x[get(val_col) == 2, ], val_col)
+  x
 }
 
 mimic_death <- function(x, val_col, ...) {
-  set(x, j = val_col, value = x[[val_col]] == 1L)
+  x <- set(x, j = val_col, value = x[[val_col]] == 1L)
+  x
 }
 
 eicu_death <- function(x, val_col, ...) {
-  set(x, j = val_col, value = x[[val_col]] == "Expired")
+  x <- set(x, j = val_col, value = x[[val_col]] == "Expired")
+  x
 }
 
 hirid_death <- function(x, id_col, val_col, item_col, ...) {
@@ -166,7 +183,8 @@ hirid_death <- function(x, id_col, val_col, item_col, ...) {
   tmp <- tmp[, c(val_col, "V1.x", "V1.y") := list(get("V1.x") | get("V1.y"),
                                                   NULL, NULL)]
 
-  as_id_tbl(tmp, id(x), id_opts(x))
+  tmp <- as_id_tbl(tmp, id(x), id_opts(x))
+  tmp
 }
 
 mf_sex <- function(x, val_col, ...) {
@@ -176,26 +194,31 @@ mf_sex <- function(x, val_col, ...) {
 }
 
 crp_dl_to_l <- function(x, val_col, unit_col, ...) {
-  x[grepl("mg/dl", get(unit_col), ignore.case = TRUE),
-    c(val_col, unit_col) := list(get(val_col) * 10, "mg/L")]
+  x <- x[grepl("mg/dl", get(unit_col), ignore.case = TRUE),
+         c(val_col, unit_col) := list(get(val_col) * 10, "mg/L")]
+  x
 }
 
 eicu_total_co2 <- function(x, val_col, unit_col, ...) {
-  x[get(unit_col) != "mm(hg)", ]
+  x <- x[get(unit_col) != "mm(hg)", ]
+  x
 }
 
 eicu_calcium <- function(x, val_col, unit_col, ...) {
-  x[grepl("mmol/l", get(unit_col), ignore.case = TRUE),
-    c(val_col, unit_col) := list(get(val_col) * 4, "mg/dL")]
+  x <- x[grepl("mmol/l", get(unit_col), ignore.case = TRUE),
+         c(val_col, unit_col) := list(get(val_col) * 4, "mg/dL")]
+  x
 }
 
 eicu_fio2 <- function(x, val_col, unit_col, ...) {
-  x[get(unit_col) != "lpm", ]
+  x <- x[get(unit_col) != "lpm", ]
+  x
 }
 
 eicu_magnesium <- function(x, val_col, unit_col, ...) {
-  x[grepl("meq/l", get(unit_col), ignore.case = TRUE),
-    c(val_col, unit_col) := list(get(val_col) / 1.215, "mEq/L")]
+  x <- x[grepl("meq/l", get(unit_col), ignore.case = TRUE),
+         c(val_col, unit_col) := list(get(val_col) / 1.215, "mEq/L")]
+  x
 }
 
 mimic_adx <- function(x, val_col, ...) {
@@ -206,7 +229,8 @@ mimic_adx <- function(x, val_col, ...) {
            NBB   = "other", TSURG = "surg", GYN  = "other", PSURG = "surg",
            OBS   = "other", ENT   = "surg", DENT = "surg",  PSYCH = "other")
 
-  set(x, j = val_col, value = map[x[[val_col]]])
+  x <- set(x, j = val_col, value = map[x[[val_col]]])
+  x
 }
 
 eicu_adx <- function(x, val_col, ...) {
@@ -223,7 +247,8 @@ eicu_adx <- function(x, val_col, ...) {
     fifelse(chr_ply(path, `[[`, 3L) == "Operative", "surg", "med")
   )
 
-  set(x, j = val_col, value = cats)
+  x <- set(x, j = val_col, value = cats)
+  x
 }
 
 los_windows <- function(item, id_type, patient_ids, interval, cfg, ...) {
@@ -236,11 +261,12 @@ los_windows <- function(item, id_type, patient_ids, interval, cfg, ...) {
     res <- rm_cols(res, win)
   }
 
-  idc <- get_id_cols(cfg, id_type = id_type)
-  res <- rename_cols(res, idc, id(res))
+  ido <- get_id_cols(cfg)
+  res <- rename_cols(res, ido[id_type], id(res))
+  res <- set_id_opts(res, ido)
 
   if (not_null(patient_ids)) {
-    res <- merge(res, patient_ids, by = idc, all = FALSE)
+    res <- merge(res, patient_ids, by = ido, all = FALSE)
   }
 
   val <- data_cols(res)

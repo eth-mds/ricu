@@ -60,6 +60,13 @@ set_id.ts_meta <- function(x, value) {
 #' @rdname meta_utils
 #' @export
 #'
+set_id_opts.ts_meta <- function(x, value) {
+  new_ts_meta(set_id_opts(tbl_id(x), value), tbl_index(x))
+}
+
+#' @rdname meta_utils
+#' @export
+#'
 set_index.ts_meta <- function(x, value) {
   new_ts_meta(tbl_id(x), set_index(tbl_index(x), value))
 }
