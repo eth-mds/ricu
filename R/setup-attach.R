@@ -62,8 +62,13 @@ attach_source.src_config <- function(x, dir = NULL, assign_env = .GlobalEnv,
     dir <- source_data_dir(src)
   }
 
-  delayedAssign(src, attach_data_env(x, dir), assign.env = get_env("data"))
-  delayedAssign(src, attach_aux_env(x),       assign.env = get_env("aux"))
+  data <- new.env(parent = get_env("data"))
+  aux  <- new.env(parent = get_env("aux"))
+
+  delayedAssign(src, attach_data_env(x, dir, data, aux),
+                assign.env = get_env("data"))
+  delayedAssign(src, attach_aux_env(x, aux),
+                assign.env = get_env("aux"))
 
   makeActiveBinding(src, get_from_data_env(src), assign_env)
 
@@ -100,7 +105,7 @@ NULL
 #'
 NULL
 
-attach_data_env <- function(x, dir) {
+attach_data_env <- function(x, dir, data, aux) {
 
   assert_that(is_src_config(x), is.string(dir))
 
@@ -134,12 +139,13 @@ attach_data_env <- function(x, dir) {
   }
 
   dat_tbls <- Map(new_tbl_src, files, list(as_id_cols(x)), as_col_defaults(x),
-                  list(get_data_fun(x)))
+                  list(get_data_fun(x)),
+                  MoreArgs = list(data_env = data, aux_env = aux))
 
-  list2env(dat_tbls, envir = NULL, parent = get_env("data"))
+  list2env(dat_tbls, envir = data)
 }
 
-attach_aux_env <- function(x) {
+attach_aux_env <- function(x, aux) {
 
   assert_that(is_src_config(x))
 
@@ -151,12 +157,10 @@ attach_aux_env <- function(x) {
 
     assert_that(is.list(aux_tbls), !is.null(names(aux_tbls)))
 
-    list2env(aux_tbls, envir = NULL, parent = get_env("aux"))
-
-  } else {
-
-    new.env(parent = get_env("aux"))
+    list2env(aux_tbls, envir = aux)
   }
+
+  aux
 }
 
 get_from_data_env <- function(source) {

@@ -597,10 +597,12 @@ default_unit_col <- function(table, ...) {
   get_col_defaults(..., table = table)[["unit_col"]]
 }
 
-new_tbl_src <- function(files, id_cols, defaults, load_fun) {
+new_tbl_src <- function(files, id_cols, defaults, load_fun, data_env,
+                        aux_env) {
 
   assert_that(is_id_cols(id_cols), is_col_defaults(defaults),
-              is.function(load_fun))
+              is.function(load_fun), is.environment(data_env),
+              is.environment(aux_env))
 
   res <- prt::new_prt(files)
   class(res) <- c("tbl_src", class(res))
@@ -608,6 +610,8 @@ new_tbl_src <- function(files, id_cols, defaults, load_fun) {
   attr(res, "id_cols")  <- id_cols
   attr(res, "defaults") <- defaults
   attr(res, "load_fun") <- load_fun
+  attr(res, "data_env") <- data_env
+  attr(res, "aux_env")  <- aux_env
 
   res
 }
