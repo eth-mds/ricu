@@ -254,7 +254,7 @@ eicu_adx <- function(x, val_col, ...) {
 los_windows <- function(item, id_type, patient_ids, interval, cfg, ...) {
 
   win <- item[[1L]][["win_type"]]
-  res <- stay_windows(get_source(item), id_type = id_type, win_type = win,
+  res <- stay_windows(get_src_name(item), id_type = id_type, win_type = win,
                       in_time = NULL, interval = mins(1L))
 
   if (!identical(win, id_type)) {

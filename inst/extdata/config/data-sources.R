@@ -123,16 +123,16 @@ eicu_tbl_cfg <- function(is_demo = FALSE) {
 
   defaults <- list(
     admissiondrug = list(
-      time_col = "drugoffset",
+      index_col = "drugoffset",
       val_col = "drugdosage",
       unit_col = "drugunit"
     ),
     admissiondx = list(
-      time_col = "admitdxenteredoffset",
+      index_col = "admitdxenteredoffset",
       val_col = "admitdxtext"
     ),
     allergy = list(
-      time_col = "allergyoffset",
+      index_col = "allergyoffset",
       val_col = "allergyname"
     ),
     apacheapsvar = list(),
@@ -141,30 +141,30 @@ eicu_tbl_cfg <- function(is_demo = FALSE) {
     ),
     apachepredvar = list(),
     careplancareprovider = list(
-      time_col = "careprovidersaveoffset",
+      index_col = "careprovidersaveoffset",
       val_col = "specialty"
     ),
     careplaneol = list(
-      time_col = "cpleoldiscussionoffset"
+      index_col = "cpleoldiscussionoffset"
     ),
     careplangeneral = list(
-      time_col = "cplitemoffset",
+      index_col = "cplitemoffset",
       val_col = "cplitemvalue"
     ),
     careplangoal = list(
-      time_col = "cplgoaloffset",
+      index_col = "cplgoaloffset",
       val_col = "cplgoalvalue"
     ),
     careplaninfectiousdisease = list(
-      time_col = "cplinfectdiseaseoffset",
+      index_col = "cplinfectdiseaseoffset",
       val_col = "infectdiseasesite"
     ),
     customlab = list(
-      time_col = "labotheroffset",
+      index_col = "labotheroffset",
       val_col = "labotherresult"
     ),
     diagnosis = list(
-      time_col = "diagnosisoffset",
+      index_col = "diagnosisoffset",
       val_col = "icd9code"
     ),
     hospital = list(
@@ -172,69 +172,69 @@ eicu_tbl_cfg <- function(is_demo = FALSE) {
       val_col = "numbedscategory"
     ),
     infusiondrug = list(
-      time_col = "infusionoffset",
+      index_col = "infusionoffset",
       val_col = "drugrate"
     ),
     intakeoutput = list(
-      time_col = "intakeoutputoffset",
+      index_col = "intakeoutputoffset",
       val_col = "cellvaluenumeric"
     ),
     lab = list(
-      time_col = "labresultoffset",
+      index_col = "labresultoffset",
       val_col = "labresult",
       unit_col = "labmeasurenameinterface"
     ),
     medication = list(
-      time_col = "drugstartoffset",
+      index_col = "drugstartoffset",
       val_col = "dosage"
     ),
     microlab = list(
-      time_col = "culturetakenoffset",
+      index_col = "culturetakenoffset",
       val_col = "organism"
     ),
     note = list(
-      time_col = "noteoffset",
+      index_col = "noteoffset",
       val_col = "notetext"
     ),
     nurseassessment = list(
-      time_col = "nurseassessoffset",
+      index_col = "nurseassessoffset",
       val_col = "cellattributevalue"
     ),
     nursecare = list(
-      time_col = "nursecareoffset",
+      index_col = "nursecareoffset",
       val_col = "cellattributevalue"
     ),
     nursecharting = list(
-      time_col = "nursingchartoffset",
+      index_col = "nursingchartoffset",
       val_col = "nursingchartvalue"
     ),
     pasthistory = list(
-      time_col = "pasthistoryoffset",
+      index_col = "pasthistoryoffset",
       val_col = "pasthistoryvalue"
     ),
     patient = list(
       val_col = "unitdischargestatus"
     ),
     physicalexam = list(
-      time_col = "physicalexamoffset",
+      index_col = "physicalexamoffset",
       val_col = "physicalexamvalue"
     ),
     respiratorycare = list(
-      time_col = "respcarestatusoffset"
+      index_col = "respcarestatusoffset"
     ),
     respiratorycharting = list(
-      time_col = "respchartoffset",
+      index_col = "respchartoffset",
       val_col = "respchartvalue"
     ),
     treatment = list(
-      time_col = "treatmentoffset",
+      index_col = "treatmentoffset",
       val_col = "treatmentstring"
     ),
     vitalaperiodic = list(
-      time_col = "observationoffset"
+      index_col = "observationoffset"
     ),
     vitalperiodic = list(
-      time_col = "observationoffset"
+      index_col = "observationoffset"
     )
   )
 
@@ -320,7 +320,7 @@ mimic_tbl_cfg <- function(is_demo = FALSE) {
       val_col = "admission_type"
     ),
     callout = list(
-      time_col = "callout_outcome",
+      index_col = "callout_outcome",
       val_col = "outcometime"
     ),
     caregivers = list(
@@ -328,12 +328,12 @@ mimic_tbl_cfg <- function(is_demo = FALSE) {
       val_col = "label"
     ),
     chartevents = list(
-      time_col = "charttime",
+      index_col = "charttime",
       val_col = "valuenum",
       unit_col = "valueuom"
     ),
     cptevents = list(
-      time_col = "chartdate",
+      index_col = "chartdate",
       val_col = "cpt_cd"
     ),
     d_cpt = list(
@@ -357,7 +357,7 @@ mimic_tbl_cfg <- function(is_demo = FALSE) {
       val_col = "label"
     ),
     datetimeevents = list(
-      time_col = "charttime",
+      index_col = "charttime",
       val_col = "itemid"
     ),
     diagnoses_icd = list(
@@ -367,34 +367,34 @@ mimic_tbl_cfg <- function(is_demo = FALSE) {
       val_col = "drg_code"
     ),
     icustays = list(
-      time_col = "intime",
+      index_col = "intime",
       val_col = "last_careunit"
     ),
     inputevents_cv = list(
-      time_col = "charttime",
+      index_col = "charttime",
       val_col = "rate",
       unit_col = "rateuom"
     ),
     inputevents_mv = list(
-      time_col = "starttime",
+      index_col = "starttime",
       val_col = "rate",
       unit_col = "rateuom"
     ),
     labevents = list(
-      time_col = "charttime",
+      index_col = "charttime",
       val_col = "valuenum",
       unit_col = "valueuom"
     ),
     microbiologyevents = list(
-      time_col = "chartdate",
+      index_col = "chartdate",
       val_col = "isolate_num"
     ),
     noteevents = list(
-      time_col = "chartdate",
+      index_col = "chartdate",
       val_col = "text"
     ),
     outputevents = list(
-      time_col = "charttime",
+      index_col = "charttime",
       val_col = "value",
       unit_col = "valueuom"
     ),
@@ -402,12 +402,12 @@ mimic_tbl_cfg <- function(is_demo = FALSE) {
       val_col = "expire_flag"
     ),
     prescriptions = list(
-      time_col = "startdate",
+      index_col = "startdate",
       val_col = "dose_val_rx",
       unit_col = "dose_unit_rx"
     ),
     procedureevents_mv = list(
-      time_col = "starttime",
+      index_col = "starttime",
       val_col = "value",
       unit_col = "valueuom"
     ),
@@ -415,11 +415,11 @@ mimic_tbl_cfg <- function(is_demo = FALSE) {
       val_col = "icd9_code"
     ),
     services = list(
-      time_col = "transfertime",
+      index_col = "transfertime",
       val_col = "curr_service"
     ),
     transfers = list(
-      time_col = "intime",
+      index_col = "intime",
       val_col = "curr_careunit"
     )
   )
@@ -520,12 +520,12 @@ hirid_tbl_cfg <- function() {
   defaults <- list(
     general = list(),
     observations = list(
-      time_col = "datetime",
+      index_col = "datetime",
       val_col = "value"
     ),
     ordinal = list(),
     pharma = list(
-      time_col = "givenat",
+      index_col = "givenat",
       val_col = "givendose"
     )
   )
@@ -547,56 +547,59 @@ cfg <- list(
   list(
     name = "eicu",
     url = "https://physionet.org/files/eicu-crd/2.0",
-    attach_hook = "setup_eicu_aux_tables",
-    data_fun = "eicu_tbl_quo",
     id_cols = list(
-      icustay = "patientunitstayid",
-      hadm = "patienthealthsystemstayid"
+      hadm = list(id = "patienthealthsystemstayid", position = 1L,
+                  start = "hospitaladmitoffset",
+                  end = "hospitaldischargeoffset", table = "patient"),
+      icustay = list(id = "patientunitstayid", position = 2L,
+                     end = "unitdischargeoffset", table = "patient")
     ),
     tables = eicu_tbl_cfg(is_demo = FALSE)
   ),
   list(
     name = "eicu_demo",
     url = "https://physionet.org/files/eicu-crd-demo/2.0",
-    attach_hook = "setup_eicu_aux_tables",
-    data_fun = "eicu_tbl_quo",
     id_cols = list(
-      icustay = "patientunitstayid",
-      hadm = "patienthealthsystemstayid"
+      hadm = list(id = "patienthealthsystemstayid", position = 1L,
+                  start = "hospitaladmitoffset",
+                  end = "hospitaldischargeoffset", table = "patient"),
+      icustay = list(id = "patientunitstayid", end = "unitdischargeoffset",
+                     table = "patient", position = 2L)
     ),
     tables = eicu_tbl_cfg(is_demo = TRUE)
   ),
   list(
     name = "mimic",
     url = "https://physionet.org/files/mimiciii/1.4",
-    attach_hook = "setup_mimic_aux_tables",
-    data_fun = "mimic_tbl_quo",
     id_cols = list(
-      icustay = "icustay_id",
-      hadm = "hadm_id",
-      patient = "subject_id"
+      patient = list(id = "subject_id", position = 1L, start = "dob",
+                     end = "dod", table = "patients"),
+      hadm = list(id = "hadm_id", position = 2L, start = "admittime",
+                  end = "dischtime", table = "admissions"),
+      icustay = list(id = "icustay_id", position = 3L, start = "intime",
+                     end = "outtime", table = "icustays")
     ),
     tables = mimic_tbl_cfg(is_demo = FALSE)
   ),
   list(
     name = "mimic_demo",
     url = "https://physionet.org/files/mimiciii-demo/1.4",
-    attach_hook = "setup_mimic_aux_tables",
-    data_fun = "mimic_tbl_quo",
     id_cols = list(
-      icustay = "icustay_id",
-      hadm = "hadm_id",
-      patient = "subject_id"
+      patient = list(id = "subject_id", position = 1L, start = "dob",
+                     end = "dod", table = "patients"),
+      hadm = list(id = "hadm_id", position = 2L, start = "admittime",
+                  end = "dischtime", table = "admissions"),
+      icustay = list(id = "icustay_id", position = 3L, start = "intime",
+                     end = "outtime", table = "icustays")
     ),
     tables = mimic_tbl_cfg(is_demo = TRUE)
   ),
   list(
     name = "hirid",
     url = "https://physionet.org/files/hirid/0.1",
-    attach_hook = "setup_hirid_aux_tables",
-    data_fun = "hirid_tbl_quo",
     id_cols = list(
-      icustay = "patientid"
+      icustay = list(id = "patientid", position = 1L, start = "admissiontime",
+                     table = "general")
     ),
     tables = hirid_tbl_cfg()
   )

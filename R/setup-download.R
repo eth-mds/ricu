@@ -80,7 +80,7 @@ download_source <- function(x, dir = NULL, tables = NULL, ...) {
 
   assert_that(is.dir(dir), is.character(tables), length(tables) > 0L)
 
-  message("downloading `", get_source(x), "`")
+  message("downloading `", get_src_name(x), "`")
 
   download_check_data(dir, tables, get_url(x), ...)
 }

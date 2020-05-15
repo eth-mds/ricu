@@ -5,6 +5,8 @@
 \alias{get_src_config.src_config}
 \alias{get_src_config.character}
 \alias{get_src_config.default}
+\alias{get_aux_env}
+\alias{get_aux_env.data_src}
 \title{Load configuration for a data source}
 \usage{
 get_src_config(x, ...)
@@ -14,6 +16,10 @@ get_src_config(x, ...)
 \method{get_src_config}{character}(x, name = "data-sources", file = NULL, ...)
 
 \method{get_src_config}{default}(x, ...)
+
+get_aux_env(x)
+
+\method{get_aux_env}{data_src}(x)
 }
 \arguments{
 \item{x}{Object used to determine the data source}

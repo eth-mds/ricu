@@ -326,10 +326,6 @@ cat_line <- function(...) {
 
 str_in_vec_once <- function(str, vec) identical(sum(vec %in% str), 1L)
 
-substitute_q <- function(expr, env) {
-  substitute(substitute(x, env), list(x = expr))
-}
-
 null_or_subs <- function(x, where = parent.frame(1L)) {
   if (missing(x)) NULL else do.call("substitute", list(substitute(x), where))
 }

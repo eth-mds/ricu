@@ -5,7 +5,7 @@
 \alias{item}
 \alias{is_item}
 \alias{as_item}
-\alias{get_source}
+\alias{get_src_name}
 \title{Data item}
 \usage{
 new_item(
@@ -26,7 +26,7 @@ is_item(x)
 
 as_item(x)
 
-get_source(x)
+get_src_name(x)
 }
 \arguments{
 \item{concept}{The name of the associated clinical concept}

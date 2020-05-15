@@ -56,56 +56,35 @@ attach_source.src_config <- function(x, dir = NULL, assign_env = .GlobalEnv,
 
   assert_that(...length() == 0L, is.environment(assign_env))
 
-  src <- get_source(x)
+  src <- get_src_name(x)
+  dat <- data_env()
 
-  if (is.null(dir)) {
-    dir <- source_data_dir(src)
-  }
-
-  data <- new.env(parent = get_env("data"))
-  aux  <- new.env(parent = get_env("aux"))
-
-  delayedAssign(src, attach_data_env(x, dir, data, aux),
-                assign.env = get_env("data"))
-  delayedAssign(src, attach_aux_env(x, aux),
-                assign.env = get_env("aux"))
+  delayedAssign(src, setup_src_env(x, new.env(parent = dat), dir),
+                assign.env = dat)
 
   makeActiveBinding(src, get_from_data_env(src), assign_env)
 
   invisible(NULL)
 }
 
-#' @name mimic
-#' @rdname attach_source
-#' @export mimic
+#' @param data_env,aux_env Environments where data tables and auxiliary tables
+#' are assigned
 #'
-NULL
-
-#' @name mimic_demo
 #' @rdname attach_source
-#' @export mimic_demo
 #'
-NULL
+#' @export
+#'
+setup_src_env <- function(x, env, dir = NULL) {
+  UseMethod("setup_src_env", x)
+}
 
-#' @name eicu
 #' @rdname attach_source
-#' @export eicu
-#'
-NULL
+#' @export
+setup_src_env.src_config <- function(x, env, dir = NULL) {
 
-#' @name eicu_demo
-#' @rdname attach_source
-#' @export eicu_demo
-#'
-NULL
-
-#' @name hirid
-#' @rdname attach_source
-#' @export hirid
-#'
-NULL
-
-attach_data_env <- function(x, dir, data, aux) {
+  if (is.null(dir)) {
+    dir <- source_data_dir(x)
+  }
 
   assert_that(is_src_config(x), is.string(dir))
 
@@ -138,30 +117,51 @@ attach_data_env <- function(x, dir, data, aux) {
     import_source(x, dir, cleanup = TRUE)
   }
 
-  dat_tbls <- Map(new_tbl_src, files, list(as_id_cols(x)), as_col_defaults(x),
-                  list(get_data_fun(x)),
-                  MoreArgs = list(data_env = data, aux_env = aux))
+  more_arg <- list(id_cols = get_id_cols(x), src_name = get_src_name(x),
+                   src_env = env)
+  dat_tbls <- Map(new_data_src, files, as_col_defaults(x),
+                  MoreArgs = more_arg)
 
-  list2env(dat_tbls, envir = data)
+  list2env(dat_tbls, envir = env)
 }
 
-attach_aux_env <- function(x, aux) {
+#' @rdname attach_source
+#' @export
+data <- new.env()
 
-  assert_that(is_src_config(x))
+#' @name mimic
+#' @rdname attach_source
+#' @export mimic
+#'
+NULL
 
-  hook <- x[["attach_hook"]]
+#' @name mimic_demo
+#' @rdname attach_source
+#' @export mimic_demo
+#'
+NULL
 
-  if (is.function(hook)) {
+#' @name eicu
+#' @rdname attach_source
+#' @export eicu
+#'
+NULL
 
-    aux_tbls <- hook(x)
+#' @name eicu_demo
+#' @rdname attach_source
+#' @export eicu_demo
+#'
+NULL
 
-    assert_that(is.list(aux_tbls), !is.null(names(aux_tbls)))
+#' @name hirid
+#' @rdname attach_source
+#' @export hirid
+#'
+NULL
 
-    list2env(aux_tbls, envir = aux)
-  }
+pkg_env <- function() asNamespace(methods::getPackageName())
 
-  aux
-}
+data_env <- function() get("data", envir = pkg_env(), mode = "environment")
 
 get_from_data_env <- function(source) {
 
@@ -173,17 +173,14 @@ get_from_data_env <- function(source) {
       msg = paste0("Cannot update read-only data source `", source, "`")
     )
 
-    tryCatch(
-      get_src(source, envir = "data"),
-      error = function(e) invisible(NULL)
-    )
+    tryCatch(get_src_env(source), error = function(e) invisible(NULL))
   }
 }
 
 source_data_dir <- function(source) {
 
   if (is_src_config(source)) {
-    source <- get_source(source)
+    source <- get_src_name(source)
   }
 
   assert_that(is.string(source))
@@ -202,3 +199,54 @@ source_data_dir <- function(source) {
     data_dir(source, create = FALSE)
   }
 }
+
+new_data_src <- function(files, defaults, id_cols, src_name, src_env) {
+
+  assert_that(is_col_defaults(defaults), is_id_cols(id_cols),
+              is.string(src_name), is.environment(src_env))
+
+  res <- prt::new_prt(files)
+  class(res) <- c(paste0(c(src_name, "data"), "_src"), class(res))
+
+  attr(res, "defaults") <- defaults
+  attr(res, "id_cols")  <- id_cols
+  attr(res, "src_env") <- src_env
+
+  res
+}
+
+is_data_src <- function(x) inherits(x, "data_src")
+
+#' @export
+get_src_name.data_src <- function(x) {
+  sub("_src$", "", class(x)[1L])
+}
+
+#' @rdname attach_source
+#' @export
+get_src_env <- function(x) UseMethod("get_src_env", x)
+
+#' @rdname attach_source
+#' @export
+get_src_env.character <- function(x) {
+
+  assert_that(length(x) == 1L)
+
+  res <- get0(x, envir = data_env(), mode = "environment", ifnotfound = NULL)
+
+  if (is.null(res)) {
+    stop("Source `", x, "` not found in ", envir, " environment. For ",
+         "further information on how to set up a data source, refer to ",
+         "`?attach_datasource`.")
+  }
+
+  res
+}
+
+#' @rdname attach_source
+#' @export
+get_src_env.default <- function(x) get_src_env(get_src_name(x))
+
+#' @rdname attach_source
+#' @export
+get_src_env.data_src <- function(x) attr(x, "src_env")

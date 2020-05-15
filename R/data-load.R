@@ -1,4 +1,151 @@
 
+#' @export
+load_src <- function(x, rows = NULL, cols = NULL) UseMethod("load_src", x)
+
+#' @export
+load_src.data_src <- function(x, rows = NULL, cols = NULL) {
+  subset(x, {{ rows }}, cols)
+}
+
+#' @export
+load_difftime <- function(x, rows = NULL, cols = NULL,
+                          id_hint = default_col(x, "id")) {
+
+  UseMethod("load_difftime", x)
+}
+
+#' @export
+load_difftime.mimic_src <- function(x, rows = NULL, cols = NULL,
+                                    id_hint = default_col(x, "id")) {
+
+  load_mihi(x, {{ rows }}, cols, id_hint)
+}
+
+#' @export
+load_difftime.mimic_demo_src <- function(x, rows = NULL, cols = NULL,
+                                         id_hint = default_col(x, "id")) {
+
+  load_mihi(x, {{ rows }}, cols, id_hint)
+}
+
+#' @export
+load_difftime.eicu_src <- function(x, rows = NULL, cols = NULL,
+                                   id_hint = default_col(x, "id")) {
+
+  load_eicu(x, {{ rows }}, cols)
+}
+
+#' @export
+load_difftime.eicu_demo_src <- function(x, rows = NULL, cols = NULL,
+                                        id_hint = default_col(x, "id")) {
+
+  load_eicu(x, {{ rows }}, cols)
+}
+
+#' @export
+load_difftime.hirid_src <- function(x, rows = NULL, cols = NULL,
+                                    id_hint = default_col(x, "id")) {
+
+  load_mihi(x, {{ rows }}, cols, id_hint)
+}
+
+load_mihi <- function(x, rows, cols, id_hint) {
+
+  assert_that(is.string(id_hint))
+
+  opts <- id_opts(x)
+
+  if (id_hint %in% colnames(x)) {
+    id_col <- id_hint
+  } else {
+    id_col <- tail(intersect(opts, colnames(x)), n = 1L)
+  }
+
+  assert_that(is.string(id_col))
+
+  if (not_null(cols) && !id_col %in% cols) {
+    cols <- c(id_col, cols)
+  }
+
+  dat <- load_src(x, {{ rows }}, cols)
+
+  date_cols <- colnames(dat)[vapply(dat, inherits, logical(1L), "POSIXt")]
+
+  if (length(date_cols)) {
+
+    dat <- merge(dat, id_origin(x, id_col), by = id_col)
+    dat <- dat[,
+      c(date_cols) := lapply(.SD, difftime, get("origin"), units = "mins"),
+      .SDcols = date_cols
+    ]
+    dat <- dat[, c("origin") := NULL]
+  }
+
+  as_id_tbl(dat, id = id_col)
+}
+
+load_eicu <- function(x, rows, cols) {
+
+  id_col <- "patientunitstayid"
+
+  if (not_null(cols) && !id_col %in% cols) {
+    cols <- c(id_col, cols)
+  }
+
+  dat <- load_src(x, {{ rows }}, cols)
+
+  date_cols <- colnames(dat)[
+    lgl_ply(dat, is.integer) & grepl("offset$", colnames(dat))
+  ]
+
+  if (length(date_cols)) {
+
+    assert_that(id_col %in% colnames(dat),
+      msg = paste("In order to return relative times, a single ID column",
+                  paste0("`", id_col, "`"), "is required.")
+    )
+
+    dat <- dat[, c(date_cols) := lapply(.SD, as.difftime, units = "mins"),
+               .SDcols = date_cols]
+  }
+
+  as_id_tbl(dat, id = id_col)
+}
+
+#' @export
+load_id <- function(x, rows = NULL, cols = NULL,
+                    id_col = default_col(x, "id"),
+                    interval = hours(1L)) {
+
+  UseMethod("load_id", x)
+}
+
+#' @export
+load_id.data_src <- function(x, rows = NULL, cols = NULL,
+                             id_col = default_col(x, "id"),
+                             interval = hours(1L)) {
+
+  res <- load_difftime(x, {{ rows }}, cols, id_col)
+
+  if (!identical(id_col, id(x))) {
+
+  }
+
+  res
+}
+
+#' @export
+load_ts <- function(x, ...) UseMethod("load_ts", x)
+
+#' @export
+load_ts.data_src <- function(x, rows = NULL, cols = NULL,
+                             id_col = default_col(x, "id"),
+                             index_col = default_col(x, "index"),
+                             interval = hours(1L)) {
+
+  NULL
+}
+
 #' Low level functions for loading data
 #'
 #' Depending on the desired return type (`ts_tbl`, `id_tbl` or plain

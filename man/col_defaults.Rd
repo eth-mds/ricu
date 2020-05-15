@@ -35,8 +35,8 @@ following concepts:
 \details{
 \itemize{
 \item \code{id_col}: column will be used for as id for \code{icu_tbl} objects
-\item \code{time_col}: column represents a timestamp variable and will be use as such
-for \code{ts_tbl} objects
+\item \code{index_col}: column represents a timestamp variable and will be use as
+such for \code{ts_tbl} objects
 \item \code{val_col}: column contains the measured variable of interest
 \item \code{unit_col}: column specifies the unit of measurement in the corresponding
 \code{val_col}

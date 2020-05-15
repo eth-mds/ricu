@@ -98,7 +98,7 @@ import_source <- function(x, dir = NULL, cleanup = TRUE) {
 
   assert_that(is.dir(dir), is.flag(cleanup))
 
-  message("importing `", get_source(x), "`")
+  message("importing `", get_src_name(x), "`")
 
   files <- file.path(dir, file_names(x))
   avail <- lgl_ply(files, all_is, file.exists)

@@ -28,7 +28,8 @@ Imports:
     methods,
     prt,
     tibble,
-    backports
+    backports,
+    memoise
 Suggests:
     getPass,
     keyring,

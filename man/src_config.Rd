@@ -6,14 +6,7 @@
 \alias{get_url}
 \title{Data source configuration}
 \usage{
-new_src_config(
-  name,
-  id_cols,
-  tables,
-  attach_hook = NULL,
-  data_fun = NULL,
-  url = NULL
-)
+new_src_config(name, id_cols, tables, url = NULL)
 
 is_src_config(x)
 
@@ -22,14 +15,10 @@ get_url(x)
 \arguments{
 \item{name}{Name of the data source}
 
-\item{id_cols}{List passed to \code{\link[=as_id_cols]{as_id_cols()}}}
+\item{id_cols}{List passed to \code{\link[=new_id_cols]{new_id_cols()}}}
 
 \item{tables}{List passed to \code{\link[=as_col_defaults]{as_col_defaults()}} and potentially to
 \code{\link[=as_table_spec]{as_table_spec()}}}
-
-\item{attach_hook, data_fun}{Function names (passed as strings), specifying
-a function to be run upon data set attaching (see \code{\link[=attach_source]{attach_source()}}) and a
-function resposible for data loading (see \code{\link[=data_tbl]{data_tbl()}})}
 
 \item{url}{String valued url used for data downloading (see
 \code{\link[=download_source]{download_source()}})}

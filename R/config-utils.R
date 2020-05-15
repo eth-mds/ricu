@@ -5,25 +5,26 @@
 #' created.
 #'
 #' @param name Name of the data source
-#' @param id_cols List passed to [as_id_cols()]
+#' @param id_cols List passed to [new_id_cols()]
 #' @param tables List passed to [as_col_defaults()] and potentially to
 #' [as_table_spec()]
-#' @param attach_hook,data_fun Function names (passed as strings), specifying
-#' a function to be run upon data set attaching (see [attach_source()]) and a
-#' function resposible for data loading (see [data_tbl()])
 #' @param url String valued url used for data downloading (see
 #' [download_source()])
 #'
 #' @rdname src_config
 #' @keywords internal
 #'
-new_src_config <- function(name, id_cols, tables, attach_hook = NULL,
-                           data_fun = NULL, url = NULL) {
+new_src_config <- function(name, id_cols, tables, url = NULL) {
 
-  assert_that(is.list(id_cols), all_is(id_cols, is.string),
+  assert_that(is.string(name), is.list(id_cols),
               all(lgl_ply(tables, has_name, c("name", "defaults"))))
 
-  id_cols <- as_id_cols(id_cols)
+  if (!is_id_cols(id_cols)) {
+    id_cols <- new_id_cols(id_cols, name)
+  } else {
+    assert_that(identical(get_src_name(id_cols), name))
+  }
+
   col_defaults <- as_col_defaults(tables)
 
   if (all(lgl_ply(tables, has_name, c("files", "cols")))) {
@@ -32,26 +33,14 @@ new_src_config <- function(name, id_cols, tables, attach_hook = NULL,
     table_specs <- NULL
   }
 
-  if (is.null(data_fun)) {
-    data_fun <- default_data_fun
-  } else {
-    data_fun <- get(data_fun, mode = "function")
-  }
-
-  if (!is.null(attach_hook)) {
-    attach_hook <- get(attach_hook, mode = "function")
-  }
-
-  assert_that(is.string(name), is_id_cols(id_cols),
+  assert_that(is_id_cols(id_cols),
               all_is(col_defaults, is_col_defaults),
               null_or(table_specs, all_is, is_table_spec),
-              is.function(data_fun), null_or(url, is.string),
-              null_or(attach_hook, is.function))
+              null_or(url, is.string))
 
   structure(list(name = name, id_cols = id_cols, col_defaults = col_defaults,
-                 data_fun = data_fun, attach_hook = attach_hook, url = url,
-                 table_specs = table_specs),
-            class = "src_config")
+                 url = url, table_specs = table_specs),
+            class = c(paste0(name, "_cfg"), "src_config"))
 }
 
 #' @param x Object to test/coerce
@@ -70,10 +59,8 @@ get_url <- function(x) {
 }
 
 #' @keywords internal
-#'
 #' @export
-#'
-get_source.src_config <- function(x) x[["name"]]
+get_src_name.src_config <- function(x) x[["name"]]
 
 #' ID columns
 #'
@@ -85,16 +72,30 @@ get_source.src_config <- function(x) x[["name"]]
 #' @rdname id_cols
 #' @keywords internal
 #'
-new_id_cols <- function(cfg) {
+new_id_cols <- function(cfg, src) {
 
   cfg <- as.list(cfg)
 
-  assert_that(is.list(cfg), length(cfg) > 0L, has_name(cfg, "icustay"),
-              all_is(cfg, is.string), is_unique(c(unlist(cfg), names(cfg))))
+  assert_that(is_unique(names(cfg)))
+
+  start <- lapply(cfg, `[[`, "start")
+  end   <- lapply(cfg, `[[`, "end")
+  table <- lapply(cfg, `[[`, "table")
+
+  check <- ifelse(lgl_ply(start, not_null) | lgl_ply(end, not_null),
+                  lgl_ply(table, not_null),  lgl_ply(table, is.null))
+
+  assert_that(all(check))
+
+  if (not_null(src)) {
+    src <- paste0(src, "_ids")
+  }
 
   structure(
-    cfg[intersect(c("patient", "hadm", "icustay"), names(cfg))],
-    class = "id_cols"
+    Map(list, name = names(cfg), id = chr_ply(cfg, `[[`, "id"),
+        pos = int_ply(cfg, `[[`, "position"), start = start, end = end,
+        table = table),
+    class = c(src, "id_cols")
   )
 }
 
@@ -105,29 +106,70 @@ new_id_cols <- function(cfg) {
 #'
 is_id_cols <- function(x) inherits(x, "id_cols")
 
-#' @rdname id_cols
-#' @keywords internal
 #' @export
-#'
-as_id_cols <- function(x) UseMethod("as_id_cols", x)
+get_src_name.id_cols <- function(x) {
+  sub("_ids$", "", class(x)[1L])
+}
 
 #' @rdname id_cols
 #' @keywords internal
 #' @export
 #'
-as_id_cols.id_cols <- function(x) x
+get_id_cols <- function(x, ...) UseMethod("get_id_cols", x)
 
 #' @rdname id_cols
 #' @keywords internal
 #' @export
 #'
-as_id_cols.list <- function(x) new_id_cols(x)
+get_id_cols.id_cols <- function(x, id_name = NULL, id_type = NULL, ...) {
+
+  assert_that(...length() == 0L, is.null(id_name) || is.null(id_type))
+
+  if (is.null(id_name) && is.null(id_type)) {
+    return(x)
+  }
+
+  if (is.null(id_name)) {
+    assert_that(is.string(id_type))
+    sel <- id_type
+    opt <- chr_ply(x, `[[`, "name")
+  } else {
+    assert_that(is.string(id_name))
+    sel <- id_name
+    opt <- chr_ply(x, `[[`, "id")
+  }
+
+  ind <- sel == opt
+
+  assert_that(sum(ind) == 1L, msg = paste0("Cannot find exactly one of `",
+    sel, "` among options ", paste0("`", opt, "`", collapse = ", "),
+    " for subsetting `id_cols`"))
+
+  res <- x[which(ind)]
+  class(res) <- class(x)
+
+  res
+}
 
 #' @rdname id_cols
 #' @keywords internal
 #' @export
 #'
-as_id_cols.src_config <- function(x) x[["id_cols"]]
+get_id_cols.src_config <- function(x, ...) get_id_cols(x[["id_cols"]], ...)
+
+#' @rdname id_cols
+#' @keywords internal
+#' @export
+#'
+get_id_cols.data_src <- function(x, ...) get_id_cols(attr(x, "id_cols"), ...)
+
+#' @rdname id_cols
+#' @keywords internal
+#' @export
+#'
+get_id_cols.default <- function(x, id_name = NULL, id_type = NULL, ...) {
+  get_id_cols(get_src_config(x, ...), id_name = id_name, id_type = id_type)
+}
 
 #' Default columns
 #'
@@ -135,8 +177,8 @@ as_id_cols.src_config <- function(x) x[["id_cols"]]
 #' following concepts:
 #'
 #' * `id_col`: column will be used for as id for `icu_tbl` objects
-#' * `time_col`: column represents a timestamp variable and will be use as such
-#'   for `ts_tbl` objects
+#' * `index_col`: column represents a timestamp variable and will be use as
+#'   such for `ts_tbl` objects
 #' * `val_col`: column contains the measured variable of interest
 #' * `unit_col`: column specifies the unit of measurement in the corresponding
 #'   `val_col`
@@ -149,7 +191,7 @@ as_id_cols.src_config <- function(x) x[["id_cols"]]
 #'
 new_col_defaults <- function(table, cfg) {
 
-  opts <- c("id_col", "time_col", "val_col", "unit_col")
+  opts <- c("id_col", "index_col", "val_col", "unit_col")
 
   cfg <- as.list(cfg)
 
@@ -491,33 +533,14 @@ get_src_config.character <- function(x, name = "data-sources",
 
   cfg <- cfg[[hit]]
 
-  do.call(new_src_config, cfg[c("name", "id_cols", "tables", "attach_hook",
-                                "data_fun", "url")])
+  do.call(new_src_config, cfg[c("name", "id_cols", "tables", "url")])
 }
 
 #' @rdname get_src_config
 #'
 #' @export
 #'
-get_src_config.default <- function(x, ...) get_src_config(get_source(x), ...)
-
-get_id_cols <- function(x, id_type = NULL, ...) {
-
-  if (is_id_cols(x)) {
-    cfg <- x
-  } else {
-    cfg <- get_src_config(x, ...)[["id_cols"]]
-    assert_that(is_id_cols(cfg))
-  }
-
-  if (is.null(id_type)) {
-    return(unlist(cfg))
-  }
-
-  assert_that(is.string(id_type), has_name(cfg, id_type))
-
-  cfg[[id_type]]
-}
+get_src_config.default <- function(x, ...) get_src_config(get_src_name(x), ...)
 
 get_col_defaults <- function(x, table = NULL, ...) {
 
@@ -579,8 +602,8 @@ default_id_col <- function(table, ...) {
 #' @rdname get_col_defaults
 #' @export
 #'
-default_time_col <- function(table, ...) {
-  get_col_defaults(..., table = table)[["time_col"]]
+default_index_col <- function(table, ...) {
+  get_col_defaults(..., table = table)[["index_col"]]
 }
 
 #' @rdname get_col_defaults
@@ -597,23 +620,39 @@ default_unit_col <- function(table, ...) {
   get_col_defaults(..., table = table)[["unit_col"]]
 }
 
-new_tbl_src <- function(files, id_cols, defaults, load_fun, data_env,
-                        aux_env) {
 
-  assert_that(is_id_cols(id_cols), is_col_defaults(defaults),
-              is.function(load_fun), is.environment(data_env),
-              is.environment(aux_env))
+#' @export
+default_col <- function(x, type) UseMethod("default_col", x)
 
-  res <- prt::new_prt(files)
-  class(res) <- c("tbl_src", class(res))
+#' @export
+default_col.data_src <- function(x, type = "id") {
 
-  attr(res, "id_cols")  <- id_cols
-  attr(res, "defaults") <- defaults
-  attr(res, "load_fun") <- load_fun
-  attr(res, "data_env") <- data_env
-  attr(res, "aux_env")  <- aux_env
+  assert_that(is.string(type))
+
+  def <- attr(x, "defaults")
+  res <- def[[paste0(type, "_col")]]
+
+  if (identical(type, "id") && is.null(res)) {
+    opt <- get_id_cols(x)
+    res <- opt[[which.max(int_ply(opt, `[[`, "pos"))]][["id"]]
+  }
 
   res
 }
 
-is_tbl_src <- function(x) inherits(x, "tbl_src")
+#' @rdname meta_utils
+#' @export
+id_opts.data_src <- function(x) {
+  res <- get_id_cols(x)
+  res <- res[order(int_ply(res, `[[`, "pos"))]
+  setNames(chr_ply(res, `[[`, "id"), chr_ply(res, `[[`, "name"))
+}
+
+#' @rdname get_src_config
+#' @export
+get_aux_env <- function(x) UseMethod("get_aux_env", x)
+
+#' @rdname get_src_config
+#' @export
+get_aux_env.data_src <- function(x) attr(x, "aux_env")
+

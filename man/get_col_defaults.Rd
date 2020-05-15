@@ -2,14 +2,14 @@
 % Please edit documentation in R/config-utils.R
 \name{default_id_col}
 \alias{default_id_col}
-\alias{default_time_col}
+\alias{default_index_col}
 \alias{default_val_col}
 \alias{default_unit_col}
 \title{Get default columns}
 \usage{
 default_id_col(table, ...)
 
-default_time_col(table, ...)
+default_index_col(table, ...)
 
 default_val_col(table, ...)
 

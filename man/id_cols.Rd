@@ -3,23 +3,26 @@
 \name{new_id_cols}
 \alias{new_id_cols}
 \alias{is_id_cols}
-\alias{as_id_cols}
-\alias{as_id_cols.id_cols}
-\alias{as_id_cols.list}
-\alias{as_id_cols.src_config}
+\alias{get_id_cols}
+\alias{get_id_cols.id_cols}
+\alias{get_id_cols.src_config}
+\alias{get_id_cols.data_src}
+\alias{get_id_cols.default}
 \title{ID columns}
 \usage{
-new_id_cols(cfg)
+new_id_cols(cfg, src)
 
 is_id_cols(x)
 
-as_id_cols(x)
+get_id_cols(x, ...)
 
-\method{as_id_cols}{id_cols}(x)
+\method{get_id_cols}{id_cols}(x, id_name = NULL, id_type = NULL, ...)
 
-\method{as_id_cols}{list}(x)
+\method{get_id_cols}{src_config}(x, ...)
 
-\method{as_id_cols}{src_config}(x)
+\method{get_id_cols}{data_src}(x, ...)
+
+\method{get_id_cols}{default}(x, id_name = NULL, id_type = NULL, ...)
 }
 \arguments{
 \item{cfg}{List containing string valued column names}

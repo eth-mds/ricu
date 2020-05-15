@@ -140,6 +140,10 @@ load_concepts.item <- function(x, unit = NULL, min = NULL, max = NULL,
 
   assert_that(is.flag(verbose))
 
+  if (...length()) {
+    warning("not expecting any arguments passed as `...`")
+  }
+
   if (not_null(patient_ids)) {
 
     idc <- get_id_cols(cfg, id_type = id_type)
