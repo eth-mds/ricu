@@ -261,6 +261,8 @@ weeks <- function(x) as.difftime(x, units = "weeks")
 
 is_difftime <- function(x) inherits(x, "difftime")
 
+is_one_min <- function(x) isTRUE(all.equal(x, mins(1L)))
+
 #' @param allow_neg Logical flag indicating whether to allow negative values
 #'
 #' @rdname difftime
@@ -285,7 +287,9 @@ time_cols <- function(x) colnames(x)[lgl_ply(x, is_difftime)]
 
 reduce <- function(f, x, ...) Reduce(function(x, y) f(x, y, ...), x)
 
-round_to <- function(x, to = 1) if (to == 1) trunc(x) else to * trunc(x / to)
+round_to <- function(x, to = 1) {
+  if (isTRUE(all.equal(to, 1))) trunc(x) else to * trunc(x / to)
+}
 
 #' Utility functions
 #'

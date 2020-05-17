@@ -74,14 +74,16 @@ set_index.ts_meta <- function(x, value) {
 #' @rdname meta_utils
 #' @export
 #'
-set_interval.ts_meta <- function(x, value) {
+set_interval.ts_meta <- function(x, value, ...) {
+  assert_that(...length() == 0L)
   new_ts_meta(tbl_id(x), set_interval(tbl_index(x), value))
 }
 
 #' @rdname meta_utils
 #' @export
 #'
-set_time_unit.ts_meta <- function(x, value) {
+set_time_unit.ts_meta <- function(x, value, ...) {
+  assert_that(...length() == 0L)
   new_ts_meta(tbl_id(x), set_time_unit(tbl_index(x), value))
 }
 

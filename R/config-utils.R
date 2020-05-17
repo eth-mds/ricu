@@ -121,28 +121,19 @@ get_id_cols <- function(x, ...) UseMethod("get_id_cols", x)
 #' @keywords internal
 #' @export
 #'
-get_id_cols.id_cols <- function(x, id_name = NULL, id_type = NULL, ...) {
+get_id_cols.id_cols <- function(x, id_name = NULL, ...) {
 
-  assert_that(...length() == 0L, is.null(id_name) || is.null(id_type))
+  assert_that(...length() == 0L, null_or(id_name, is.string))
 
-  if (is.null(id_name) && is.null(id_type)) {
+  if (is.null(id_name)) {
     return(x)
   }
 
-  if (is.null(id_name)) {
-    assert_that(is.string(id_type))
-    sel <- id_type
-    opt <- chr_ply(x, `[[`, "name")
-  } else {
-    assert_that(is.string(id_name))
-    sel <- id_name
-    opt <- chr_ply(x, `[[`, "id")
-  }
-
-  ind <- sel == opt
+  opt <- chr_ply(x, `[[`, "id")
+  ind <- id_name == opt
 
   assert_that(sum(ind) == 1L, msg = paste0("Cannot find exactly one of `",
-    sel, "` among options ", paste0("`", opt, "`", collapse = ", "),
+    id_name, "` among options ", paste0("`", opt, "`", collapse = ", "),
     " for subsetting `id_cols`"))
 
   res <- x[which(ind)]
@@ -167,8 +158,30 @@ get_id_cols.data_src <- function(x, ...) get_id_cols(attr(x, "id_cols"), ...)
 #' @keywords internal
 #' @export
 #'
-get_id_cols.default <- function(x, id_name = NULL, id_type = NULL, ...) {
-  get_id_cols(get_src_config(x, ...), id_name = id_name, id_type = id_type)
+get_id_cols.default <- function(x, id_name = NULL, ...) {
+  get_id_cols(get_src_config(x, ...), id_name = id_name)
+}
+
+id_positions <- function(x, id = NULL, ...) {
+
+  x <- get_id_cols(x, ...)
+
+  res <- setNames(int_ply(x, `[[`, "pos"), chr_ply(x, `[[`, "id"))
+
+  if (is.null(id)) {
+    return(res)
+  }
+
+  assert_that(all(id %in% names(res)))
+
+  res[id]
+}
+
+id_types <- function(x, ...) {
+
+  x <- get_id_cols(x, ...)
+
+  setNames(chr_ply(x, `[[`, "id"), chr_ply(x, `[[`, "name"))
 }
 
 #' Default columns
@@ -238,7 +251,40 @@ as_col_defaults.list <- function(x) {
 #' @keywords internal
 #' @export
 #'
-as_col_defaults.src_config <- function(x) x[["col_defaults"]]
+get_col_defaults <- function(x, ...) UseMethod("get_col_defaults", x)
+
+#' @rdname col_defaults
+#' @keywords internal
+#' @export
+#'
+get_col_defaults.list <- function(x, table = NULL, ...) {
+
+  assert_that(...length() == 0L, all_fun(x, is_col_defaults))
+
+  if (is.null(table)) {
+    return(x)
+  }
+
+  is.string(table)
+
+  opt <- chr_ply(x, `[[`, "table")
+  ind <- table == opt
+
+  assert_that(sum(ind) == 1L, msg = paste0("Cannot find exactly one of `",
+    table, "` among options ", paste0("`", opt, "`", collapse = ", "),
+    " for subsetting `col_defaults`")
+  )
+
+  x[[which(ind)]]
+}
+
+#' @rdname col_defaults
+#' @keywords internal
+#' @export
+#'
+get_col_defaults.src_config <- function(x, ...) {
+  get_col_defaults(x[["col_defaults"]], ...)
+}
 
 #' Table specification
 #'
@@ -482,7 +528,6 @@ get_part_fun <- function(x, orig_names = FALSE) {
   }
 }
 
-
 #' Load configuration for a data source
 #'
 #' For a data source to become available to ricu, a JSON base configuration
@@ -542,46 +587,6 @@ get_src_config.character <- function(x, name = "data-sources",
 #'
 get_src_config.default <- function(x, ...) get_src_config(get_src_name(x), ...)
 
-get_col_defaults <- function(x, table = NULL, ...) {
-
-  assert_that(null_or(table, is.string))
-
-  if (is_col_defaults(x)) {
-
-    res <- x[["cols"]]
-
-    if (is.string(table)) {
-      assert_that(identical(table, x[["table"]]))
-    }
-
-    return(res)
-  }
-
-  if (all_is(x, is_col_defaults)) {
-    cfg <- x
-  } else {
-    cfg <- get_src_config(x, ...)[["col_defaults"]]
-    assert_that(all_is(cfg, is_col_defaults))
-  }
-
-  res <- lapply(cfg, `[[`, "cols")
-
-  null_id <- lgl_ply(lapply(res, `[[`, "id_col"), is.null)
-  def_id  <- get_id_cols(x, "icustay", ...)
-
-  res[null_id] <- Map(`[[<-`, res[null_id], "id_col", def_id)
-
-  if (is.null(table)) {
-    return(res)
-  }
-
-  hit <- table == chr_ply(cfg, `[[`, "table")
-
-  assert_that(sum(hit) == 1L)
-
-  res[[which(hit)]]
-}
-
 get_data_fun <- function(...) get_src_config(...)[["data_fun"]]
 
 #' Get default columns
@@ -589,39 +594,12 @@ get_data_fun <- function(...) get_src_config(...)[["data_fun"]]
 #' For a table, query the default columns as specified by an `id_cols`
 #' ([new_id_cols()]) or `col_defaults` ([new_col_defaults()]) object.
 #'
-#' @param table String valued table name
-#' @param ... Passed to further methods
+#' @param x Object used for dispatch
+#' @param type The column type, e.g. `id`, `index`, `unit`, `value`
 #'
-#' @rdname get_col_defaults
+#' @rdname default_col
 #' @export
 #'
-default_id_col <- function(table, ...) {
-  get_col_defaults(..., table = table)[["id_col"]]
-}
-
-#' @rdname get_col_defaults
-#' @export
-#'
-default_index_col <- function(table, ...) {
-  get_col_defaults(..., table = table)[["index_col"]]
-}
-
-#' @rdname get_col_defaults
-#' @export
-#'
-default_val_col <- function(table, ...) {
-  get_col_defaults(..., table = table)[["val_col"]]
-}
-
-#' @rdname get_col_defaults
-#' @export
-#'
-default_unit_col <- function(table, ...) {
-  get_col_defaults(..., table = table)[["unit_col"]]
-}
-
-
-#' @export
 default_col <- function(x, type) UseMethod("default_col", x)
 
 #' @export
@@ -629,7 +607,7 @@ default_col.data_src <- function(x, type = "id") {
 
   assert_that(is.string(type))
 
-  def <- attr(x, "defaults")
+  def <- attr(x, "defaults")[["cols"]]
   res <- def[[paste0(type, "_col")]]
 
   if (identical(type, "id") && is.null(res)) {
@@ -637,15 +615,9 @@ default_col.data_src <- function(x, type = "id") {
     res <- opt[[which.max(int_ply(opt, `[[`, "pos"))]][["id"]]
   }
 
-  res
-}
+  assert_that(is.string(res))
 
-#' @rdname meta_utils
-#' @export
-id_opts.data_src <- function(x) {
-  res <- get_id_cols(x)
-  res <- res[order(int_ply(res, `[[`, "pos"))]
-  setNames(chr_ply(res, `[[`, "id"), chr_ply(res, `[[`, "name"))
+  res
 }
 
 #' @rdname get_src_config

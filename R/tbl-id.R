@@ -26,11 +26,6 @@ as_id_tbl <- function(x, ...) UseMethod("as_id_tbl", x)
 #' @rdname icu_tbl
 #' @export
 #'
-as_id_tbl.id_tbl <- function(x, ...) x
-
-#' @rdname icu_tbl
-#' @export
-#'
 as_id_tbl.default <- function(x, id, id_opts = NULL, ...) {
 
   if (!is_dt(x)) data.table::setDT(x)
@@ -42,24 +37,24 @@ as_id_tbl.default <- function(x, id, id_opts = NULL, ...) {
   new_icu_tbl(x, new_id_meta(new_tbl_id(id, id_opts)))
 }
 
-#' @param index String valued column name used as index
-#' @param interval Scalar `difftime` object representing the minimal time
-#' difference between rows
-#'
-#' @rdname icu_tbl
-#' @export
-#'
-as_ts_tbl.id_tbl <- function(x, index = NULL, interval = hours(1L), ...) {
-
-  new_icu_tbl(x,
-    new_ts_meta(tbl_id(x), new_tbl_index(auto_index(x, index), interval))
-  )
-}
-
 #' @rdname icu_tbl
 #' @export
 #'
 is_id_tbl <- function(x) inherits(x, "id_tbl")
+
+#' @export
+set_interval.id_tbl <- function(x, value, cols = time_cols(x), ...) {
+
+  change_time <- function(x) re_time(x, value)
+
+  assert_that(...length() == 0L)
+
+  if (length(cols)) {
+    x <- x[, c(cols) := lapply(.SD, change_time), .SDcols = cols]
+  }
+
+  x
+}
 
 #' @importFrom tibble tbl_sum
 #' @export

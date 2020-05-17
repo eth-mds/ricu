@@ -29,7 +29,8 @@ Imports:
     prt,
     tibble,
     backports,
-    memoise
+    memoise,
+    rlang
 Suggests:
     getPass,
     keyring,
@@ -41,7 +42,6 @@ Suggests:
     pkgload,
     mimic.demo,
     eicu.demo,
-    rlang,
     progress,
     knitr,
     rmarkdown,

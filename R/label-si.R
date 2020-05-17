@@ -151,7 +151,7 @@ si_windows <- function(tbl, si_mode = c("and", "or"), abx_win = hours(24L),
     res <- unique(rbind(abx_samp[, c(id, "si_time"), with = FALSE],
                         samp_abx[, c(id, "si_time"), with = FALSE]))
 
-    res <- as_ts_tbl(res, index = "si_time", interval = interval(tbl))
+    res <- as_ts_tbl(res, id = id, index = "si_time", interval = interval(tbl))
 
   } else {
 

@@ -166,15 +166,21 @@ set_id_opts.tbl_id <- function(x, value) new_tbl_id(id(x), value)
 #'
 set_index.tbl_index <- function(x, value) new_tbl_index(value, interval(x))
 
+#' @param ... Generic consistency
+#'
 #' @rdname meta_utils
 #' @export
 #'
-set_interval.tbl_index <- function(x, value) new_tbl_index(index(x), value)
+set_interval.tbl_index <- function(x, value, ...) {
+  assert_that(...length() == 0L)
+  new_tbl_index(index(x), value)
+}
 
 #' @rdname meta_utils
 #' @export
 #'
-set_time_unit.tbl_index <- function(x, value) {
+set_time_unit.tbl_index <- function(x, value, ...) {
+  assert_that(...length() == 0L)
   new_tbl_index(index(x), `units<-`(interval(x), value))
 }
 

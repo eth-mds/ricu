@@ -4,4 +4,5 @@
 #' @importFrom data.table := .SD .EACHI .I %chin%
 #' @importFrom stats setNames na.omit median sd var
 #' @importFrom utils str head tail
+#' @importFrom rlang !!
 NULL

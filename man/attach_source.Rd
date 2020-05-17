@@ -58,8 +58,7 @@ file}
 
 \item{assign_env}{Environment in which the data source will become available}
 
-\item{data_env, aux_env}{Environments where data tables and auxiliary tables
-are assigned}
+\item{env}{Environment where data proxy objects are created}
 }
 \description{
 Attaching a data source sets up an environment containing \code{\link[prt:new_prt]{prt::new_prt()}}

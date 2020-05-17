@@ -16,13 +16,13 @@ is_id_cols(x)
 
 get_id_cols(x, ...)
 
-\method{get_id_cols}{id_cols}(x, id_name = NULL, id_type = NULL, ...)
+\method{get_id_cols}{id_cols}(x, id_name = NULL, ...)
 
 \method{get_id_cols}{src_config}(x, ...)
 
 \method{get_id_cols}{data_src}(x, ...)
 
-\method{get_id_cols}{default}(x, id_name = NULL, id_type = NULL, ...)
+\method{get_id_cols}{default}(x, id_name = NULL, ...)
 }
 \arguments{
 \item{cfg}{List containing string valued column names}

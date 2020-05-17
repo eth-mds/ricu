@@ -104,8 +104,9 @@ load_concepts.concept <- function(x, aggregate = NA_character_,
 #' with
 #' @param verbose Logical flag for turning off reporting of unit/out of range
 #' messages
-#'
-#' @inheritParams data_ts_quo
+#' @param cfg Deprecated
+#' @param interval The time interval used to discretize time stamps with,
+#' specified as [base::difftime()] object
 #'
 #' @rdname load_concepts
 #' @export
@@ -126,7 +127,7 @@ load_concepts.item <- function(x, unit = NULL, min = NULL, max = NULL,
     tbl <- x[["table"]]
 
     if (is.null(uco) && not_null(tbl)) {
-      uco <- get_col_defaults(cfg, table = tbl)[["unit_col"]]
+      uco <- get_col_defaults(cfg, table = tbl)[["cols"]][["unit_col"]]
     }
 
     res <- range_check(res, setdiff(data_cols(res), uco), mi, ma, verbose)
@@ -185,8 +186,8 @@ load_default <- function(item, id_type, patient_ids, interval, cfg) {
 
   assert_that(is.string(tble))
 
-  id_col <- get_id_cols(cfg, id_type = id_type)
-  ex_col <- get_col_defaults(cfg, table = tble)
+  id_col <- unname(id_types(cfg)[id_type])
+  ex_col <- get_col_defaults(cfg, table = tble)[["cols"]]
 
   load_args <- c(
     item[setdiff(names(item), c("concept", "callback", "load_fun"))],
@@ -208,7 +209,7 @@ load_default <- function(item, id_type, patient_ids, interval, cfg) {
   do.call(do_callback, cb_args[!duplicated(names(cb_args))])
 }
 
-do_load <- function(source, table, column, ids, regex, ..., id_col, time_col,
+do_load <- function(source, table, column, ids, regex, ..., id_col, index_col,
                     val_col, unit_col, interval, cfg) {
 
   extra_cols <- list(...)
@@ -237,20 +238,38 @@ do_load <- function(source, table, column, ids, regex, ..., id_col, time_col,
       query <- substitute(is_fun(col, id),
         list(col = col, id = ids, is_fun = is_val)
       )
+    } else if (is.character(ids)) {
+      query <- substitute(col %chin% id, list(col = col, id = ids))
     } else {
       query <- substitute(col %in% id, list(col = col, id = ids))
     }
   }
 
-  if (is.null(time_col)) {
-    data_id_quo(source, table, query, cols, id_col, interval, cfg)
+  load_auto(source, table, query, cols, id_col, index_col, interval)
+}
+
+load_auto <- function(source, table, query, cols, id, index, ival) {
+
+  tbl <- get(table, envir = get_src_env(source))
+
+  if (is.null(query)) {
+    if (is.null(index)) {
+      load_id(tbl, cols = cols, id_col = id, interval = ival)
+    } else {
+      load_ts(tbl, cols = cols, id_col = id, index_col = index,
+              interval = ival)
+    }
   } else {
-    data_ts_quo(source, table, query, cols, id_col, time_col, interval, cfg)
+    if (is.null(index)) {
+      load_id(tbl, !!query, cols, id, ival)
+    } else {
+      load_ts(tbl, !!query, cols, id, index, ival)
+    }
   }
 }
 
 do_callback <- function(x, source, column, ids, callback, ..., id_col,
-                        time_col, val_col, unit_col) {
+                        index_col, val_col, unit_col) {
 
   extra_cols <- list(...)
 
@@ -271,7 +290,7 @@ do_callback <- function(x, source, column, ids, callback, ..., id_col,
   if (is.function(callback)) {
 
     args <- c(list(x),
-              list(id_col = id_col, time_col = time_col, val_col = val,
+              list(id_col = id_col, index_col = index_col, val_col = val,
                    item_col = column, unit_col = unit_col),
               extra_cols,
               list(source = source))
@@ -282,12 +301,12 @@ do_callback <- function(x, source, column, ids, callback, ..., id_col,
   if (is_id_tbl(x)) {
     assert_that(identical(id(x), id_col))
   } else if (is_ts_tbl(x)) {
-    assert_that(identical(meta_cols(x), c(id_col, time_col)))
+    assert_that(identical(meta_cols(x), c(id_col, index_col)))
   } else {
     stop("expecting an `id_tbl` or `ts_tbl` object")
   }
 
-  x <- rm_cols(x, setdiff(colnames(x), c(id_col, time_col, val, unit_col)))
+  x <- rm_cols(x, setdiff(colnames(x), c(id_col, index_col, val, unit_col)))
 
   x
 }

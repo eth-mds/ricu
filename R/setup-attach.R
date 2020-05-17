@@ -67,8 +67,7 @@ attach_source.src_config <- function(x, dir = NULL, assign_env = .GlobalEnv,
   invisible(NULL)
 }
 
-#' @param data_env,aux_env Environments where data tables and auxiliary tables
-#' are assigned
+#' @param env Environment where data proxy objects are created
 #'
 #' @rdname attach_source
 #'
@@ -119,7 +118,7 @@ setup_src_env.src_config <- function(x, env, dir = NULL) {
 
   more_arg <- list(id_cols = get_id_cols(x), src_name = get_src_name(x),
                    src_env = env)
-  dat_tbls <- Map(new_data_src, files, as_col_defaults(x),
+  dat_tbls <- Map(new_data_src, files, get_col_defaults(x),
                   MoreArgs = more_arg)
 
   list2env(dat_tbls, envir = env)
@@ -232,10 +231,12 @@ get_src_env.character <- function(x) {
 
   assert_that(length(x) == 1L)
 
-  res <- get0(x, envir = data_env(), mode = "environment", ifnotfound = NULL)
+  env <- data_env()
+
+  res <- get0(x, envir = env, mode = "environment", ifnotfound = NULL)
 
   if (is.null(res)) {
-    stop("Source `", x, "` not found in ", envir, " environment. For ",
+    stop("Source `", x, "` not found in ", env, " environment. For ",
          "further information on how to set up a data source, refer to ",
          "`?attach_datasource`.")
   }

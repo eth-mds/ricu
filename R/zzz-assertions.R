@@ -137,14 +137,14 @@ on_failure(has_unit) <- function(call, env) {
          " does not have unit `", eval(call$unit, env), "`")
 }
 
-all_fun <- function(x, fun, ...) all(vapply(x, fun, logical(1L), ...))
+all_fun <- function(x, fun, ...) all(lgl_ply(x, fun, ...))
 
 on_failure(all_fun) <- function(call, env) {
   paste0("some of ", deparse(call$x), " do not satisfy `",
          deparse(call$fun), "`")
 }
 
-all_null <- function(x) all(vapply(x, is.null, logical(1L)))
+all_null <- function(x) all_fun(x, is.null)
 
 on_failure(all_null) <- function(call, env) {
   paste0("some of ", deparse(call$x), " are not NULL")

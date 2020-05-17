@@ -6,7 +6,9 @@
 \alias{as_col_defaults}
 \alias{as_col_defaults.col_defaults}
 \alias{as_col_defaults.list}
-\alias{as_col_defaults.src_config}
+\alias{get_col_defaults}
+\alias{get_col_defaults.list}
+\alias{get_col_defaults.src_config}
 \title{Default columns}
 \usage{
 new_col_defaults(table, cfg)
@@ -19,7 +21,11 @@ as_col_defaults(x)
 
 \method{as_col_defaults}{list}(x)
 
-\method{as_col_defaults}{src_config}(x)
+get_col_defaults(x, ...)
+
+\method{get_col_defaults}{list}(x, table = NULL, ...)
+
+\method{get_col_defaults}{src_config}(x, ...)
 }
 \arguments{
 \item{table}{Table name (string)}

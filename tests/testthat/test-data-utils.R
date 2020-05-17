@@ -1,17 +1,20 @@
 
 test_that("id up/downgrades", {
 
-  alb <- data_ts("mimic_demo", "labevents", is_val(itemid, 50862L), "value",
+  tbl  <- get("labevents", envir = get_src_env("mimic_demo"))
+  alb <- load_ts(tbl, is_val(itemid, 50862L), "value",
                  "icustay_id", "charttime")
 
   expect_is(alb, "ts_tbl")
 
-  alb <- data_ts("eicu_demo", "lab", is_val(labname, "albumin"), "labresult",
+  tbl  <- get("lab", envir = get_src_env("eicu_demo"))
+  alb <- load_ts(tbl, is_val(labname, "albumin"), "labresult",
                  "patienthealthsystemstayid", "labresultoffset")
 
   expect_is(alb, "ts_tbl")
 
-  sex <- data_id("mimic_demo", "patients", NULL, "gender", "hadm_id")
+  tbl  <- get("patients", envir = get_src_env("mimic_demo"))
+  sex <- load_id(tbl, cols = "gender", id_col = "hadm_id")
 
   expect_is(sex, "id_tbl")
 })

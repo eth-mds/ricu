@@ -4,13 +4,10 @@
 \alias{is_icu_tbl}
 \alias{id_tbl}
 \alias{as_id_tbl}
-\alias{as_id_tbl.id_tbl}
 \alias{as_id_tbl.default}
-\alias{as_ts_tbl.id_tbl}
 \alias{is_id_tbl}
 \alias{ts_tbl}
 \alias{as_ts_tbl}
-\alias{as_ts_tbl.ts_tbl}
 \alias{as_ts_tbl.default}
 \alias{is_ts_tbl}
 \alias{as_id_tbl.ts_tbl}
@@ -22,19 +19,13 @@ id_tbl(..., id, id_opts = NULL)
 
 as_id_tbl(x, ...)
 
-\method{as_id_tbl}{id_tbl}(x, ...)
-
 \method{as_id_tbl}{default}(x, id, id_opts = NULL, ...)
-
-\method{as_ts_tbl}{id_tbl}(x, index = NULL, interval = hours(1L), ...)
 
 is_id_tbl(x)
 
 ts_tbl(..., id, id_opts = NULL, index = NULL, interval = hours(1L))
 
 as_ts_tbl(x, ...)
-
-\method{as_ts_tbl}{ts_tbl}(x, ...)
 
 \method{as_ts_tbl}{default}(x, id, id_opts = NULL, index = NULL, interval = hours(1L), ...)
 
@@ -52,10 +43,9 @@ is_ts_tbl(x)
 \item{id_opts}{\code{NULL} or a named character vector indicating options to
 which ids may be converted see \code{\link[=change_id]{change_id()}}}
 
-\item{index}{String valued column name used as index}
+\item{index}{Name of index column}
 
-\item{interval}{Scalar \code{difftime} object representing the minimal time
-difference between rows}
+\item{interval}{Time spacing between rows}
 }
 \description{
 Two objects central to \code{ricu}, \code{id_tbl} and \code{ts_tbl} (both inheriting

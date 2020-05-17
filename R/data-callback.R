@@ -4,9 +4,9 @@ all_flag <- function(x, val_col, ...) {
   x
 }
 
-vent_flag <- function(x, val_col, time_col, ...) {
+vent_flag <- function(x, val_col, index_col, ...) {
   x <- x[as.logical(get(val_col)), ]
-  x <- set(x, j = c(time_col, val_col),
+  x <- set(x, j = c(index_col, val_col),
            value = list(x[[val_col]], rep(TRUE, nrow(x))))
   x
 }
@@ -39,8 +39,8 @@ eicu_body_weight <- function(x, id_col, val_col, weight_col, source, ...) {
 
   do_calc <- function(rate, w1, w2) rate / fifelse(is.na(w1), w2, w1)
 
-  weight <- data_id_quo(source, "patient", cols = "admissionweight",
-                        id_col = id_col)
+  weight <- load_id(get("patient", envir = get_src_env(source)),
+                    cols = "admissionweight", id_col = id_col)
 
   x <- merge(x, weight, all.x = TRUE, by = id_col)
   x <- force_numeric_cols(x, c(val_col, weight_col))
@@ -50,26 +50,26 @@ eicu_body_weight <- function(x, id_col, val_col, weight_col, source, ...) {
   x
 }
 
-combine_date_time <- function(x, time_col, date_col, date_shift = hours(12L),
+combine_date_time <- function(x, index_col, date_col, date_shift = hours(12L),
                               ...) {
-  x <- x[, c(time_col) := fifelse(is.na(get(time_col)),
-                                  get(date_col) + date_shift, get(time_col))]
+  x <- x[, c(index_col) := fifelse(is.na(get(index_col)),
+                                  get(date_col) + date_shift, get(index_col))]
   x
 }
 
-shift_all_date <- function(x, time_col, shift = hours(12L), ...) {
-  x <- x[, c(time_col) := get(time_col) + shift]
+shift_all_date <- function(x, index_col, shift = hours(12L), ...) {
+  x <- x[, c(index_col) := get(index_col) + shift]
   x
 }
 
-mimic_abx_shift_flag <- function(x, val_col, time_col, ...) {
-  x <- shift_all_date(x, time_col, hours(12L))
+mimic_abx_shift_flag <- function(x, val_col, index_col, ...) {
+  x <- shift_all_date(x, index_col, hours(12L))
   x <- all_flag(x, val_col)
   x
 }
 
-mimic_sampling <- function(x, val_col, time_col, aux_time, ...) {
-  x <- combine_date_time(x, aux_time, time_col, hours(12L))
+mimic_sampling <- function(x, val_col, index_col, aux_time, ...) {
+  x <- combine_date_time(x, aux_time, index_col, hours(12L))
   x <- set(x, j = val_col, value = !is.na(x[[val_col]]))
   x
 }
@@ -103,7 +103,7 @@ fahrenheit_to_celsius <- function(x, val_col, ...) {
   x
 }
 
-distribute_amount <- function(x, val_col, id_col, time_col, amount_col,
+distribute_amount <- function(x, val_col, id_col, index_col, amount_col,
                               end_col, ...) {
 
   unit <- time_unit(x)
@@ -116,12 +116,12 @@ distribute_amount <- function(x, val_col, id_col, time_col, amount_col,
     seq <- seq(as.numeric(start), as.numeric(end), inte)
     tim <- as.difftime(round_to(seq, step), units = unit)
     res <- list(id, tim, amount / length(seq))
-    names(res) <- c(id_col, time_col, val_col)
+    names(res) <- c(id_col, index_col, val_col)
     res
   }
 
-  x <- x[get(end_col) - get(time_col) >= 0, ]
-  x <- x[, expand(get(time_col), get(end_col), get(id_col), get(amount_col),
+  x <- x[get(end_col) - get(index_col) >= 0, ]
+  x <- x[, expand(get(index_col), get(end_col), get(id_col), get(amount_col),
                   get(val_col)),
          by = seq_len(nrow(x))]
   x <- x[, c(setdiff(colnames(x), orig_cols)) := NULL]

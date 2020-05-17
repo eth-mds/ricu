@@ -13,11 +13,9 @@ ts_tbl <- function(..., id, id_opts = NULL, index = NULL,
 #'
 as_ts_tbl <- function(x, ...) UseMethod("as_ts_tbl", x)
 
-#' @rdname icu_tbl
-#' @export
+#' @param index Name of index column
+#' @param interval Time spacing between rows
 #'
-as_ts_tbl.ts_tbl <- function(x, ...) x
-
 #' @rdname icu_tbl
 #' @export
 #'
@@ -83,33 +81,42 @@ interval.ts_tbl <- function(x) {
 }
 
 #' @export
-set_interval.ts_tbl <- function(x, value) {
+set_interval.ts_tbl <- function(x, value, cols = time_cols(x), ...) {
+
+  change_time <- function(x) re_time(x, value)
+
+  assert_that(...length() == 0L)
 
   if (interval(x) > value) {
     warning("Higher time resolution does not add missing time steps")
   }
 
-  set(x, j = index(x),
-      value = round_to(time_col(x), as.double(value, time_unit(x))))
+  assert_that(index(x) %in% cols)
 
-  set_meta(x, set_interval(tbl_meta(x), value))
+  meta <- set_interval(tbl_meta(x), value)
 
-  if (!identical(units(value), time_unit(x))) {
-    set_time_unit(x, units(value))
-  }
+  x <- x[, c(cols) := lapply(.SD, change_time), .SDcols = cols]
 
-  x
+  reclass_tbl(x, meta)
 }
 
 #' @export
 time_unit.ts_tbl <- function(x) units(time_col(x))
 
 #' @export
-set_time_unit.ts_tbl <- function(x, value) {
+set_time_unit.ts_tbl <- function(x, value, cols = time_cols(x), ...) {
 
-  set(x, j = index(x), value = `units<-`(time_col(x), value))
+  change_units <- function(x) `units<-`(x, value)
 
-  set_meta(x, set_time_unit(tbl_meta(x), value))
+  assert_that(...length() == 0L)
+
+  assert_that(index(x) %in% cols)
+
+  meta <- set_time_unit(tbl_meta(x), value)
+
+  x <- x[, c(cols) := lapply(.SD, change_units), .SDcols = cols]
+
+  reclass_tbl(x, meta)
 }
 
 #' @rdname meta_utils

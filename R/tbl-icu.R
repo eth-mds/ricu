@@ -170,7 +170,7 @@ set_index <- function(x, value) UseMethod("set_index", x)
 #' @rdname meta_utils
 #' @export
 #'
-set_interval <- function(x, value) {
+set_interval <- function(x, value, ...) {
 
   assert_that(is_time(value, allow_neg = FALSE))
 
@@ -190,7 +190,7 @@ set_id_opts <- function(x, value) UseMethod("set_id_opts", x)
 #' @rdname meta_utils
 #' @export
 #'
-set_time_unit <- function(x, value) UseMethod("set_time_unit", x)
+set_time_unit <- function(x, value, ...) UseMethod("set_time_unit", x)
 
 #' @rdname meta_utils
 #' @export

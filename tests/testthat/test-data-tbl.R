@@ -1,89 +1,107 @@
 
-test_that("mimic data_tbl", {
+test_that("load_src()", {
 
+  tbl  <- get("d_labitems", envir = get_src_env("mimic_demo"))
+  expect_fsetequal(load_src(tbl), tbl[])
+
+  tbl  <- get("hospital", envir = get_src_env("eicu_demo"))
+  expect_fsetequal(load_src(tbl), tbl[])
+})
+
+test_that("mimic load_difftime()", {
+
+  tbl  <- get("labevents", envir = get_src_env("mimic_demo"))
   cols <- c("hadm_id", "charttime", "value")
-  alb1 <- data_tbl("mimic_demo", "labevents", is_val(itemid, 50862L), cols)
 
-  expect_is(alb1, "data.table")
+  alb1 <- load_difftime(tbl, is_val(itemid, 50862L), cols)
+
+  expect_is(alb1, "id_tbl")
   expect_named(alb1, cols)
   expect_is(alb1[["charttime"]], "difftime")
+  expect_identical(units(alb1[["charttime"]]), "mins")
+
+  alb2 <- load_difftime(tbl, is_val(itemid, 50862L), cols[-2L])
+  expect_fsetequal(alb1[, cols[-2L], with = FALSE], alb2)
+
+  alb2 <- load_difftime(tbl, is_val(itemid, 50862L), cols[-1L])
+  expect_fsetequal(alb1, alb2)
+
+  expect_is(alb2, "id_tbl")
+  expect_named(alb2, cols)
+  expect_identical(units(alb1[["charttime"]]), "mins")
+
+  expect_error(
+    load_difftime(tbl, is_val(itemid, 50862L),
+                  c("icustay_id", "charttime", "value")),
+    class = "vctrs_error_subscript_oob"
+  )
+})
+
+test_that("eicu load_difftime()", {
+
+  tbl  <- get("lab", envir = get_src_env("eicu_demo"))
+  cols <- c("patientunitstayid", "labresultoffset", "labresult")
+
+  alb1 <- load_difftime(tbl, is_val(labname, "albumin"), cols)
+
+  expect_is(alb1, "id_tbl")
+  expect_named(alb1, cols)
+  expect_is(alb1[["labresultoffset"]], "difftime")
+  expect_identical(units(alb1[["labresultoffset"]]), "mins")
+
+  alb2 <- load_difftime(tbl, is_val(labname, "albumin"), cols[-2L])
+  expect_fsetequal(alb1[, c("patientunitstayid", "labresult"), with = FALSE],
+                   alb2)
+
+  alb2 <- load_difftime(tbl, is_val(labname, "albumin"), cols[-1L])
+  expect_fsetequal(alb1, alb2)
+
+  expect_is(alb2, "id_tbl")
+  expect_named(alb2, cols)
+  expect_identical(units(alb1[["labresultoffset"]]), "mins")
+
+  expect_error(
+    load_difftime(tbl, is_val(labname, "albumin"),
+      c("patienthealthsystemstayid", "labresultoffset", "labresult")
+    ),
+    class = "vctrs_error_subscript_oob"
+  )
+})
+
+test_that("mimic load_id()", {
+
+  tbl  <- get("labevents", envir = get_src_env("mimic_demo"))
+  cols <- c("charttime", "value")
+
+  alb1 <- load_id(tbl, is_val(itemid, 50862L), cols)
+
+  expect_is(alb1, "id_tbl")
   expect_identical(units(alb1[["charttime"]]), "hours")
 
-  alb2 <- data_tbl("mimic_demo", "labevents", is_val(itemid, 50862L), cols,
-                   mins(60L))
+  alb2 <- load_id(tbl, is_val(itemid, 50862L), cols, interval = mins(60L))
 
   expect_identical(units(alb2[["charttime"]]), "mins")
 
   units(alb2[["charttime"]]) <- "hours"
 
   expect_fsetequal(alb1, alb2)
-
-  alb2 <- data_tbl("mimic_demo", "labevents", is_val(itemid, 50862L),
-                   cols[-2L])
-
-  expect_fsetequal(alb1[, c("hadm_id", "value"), with = FALSE], alb2)
-
-  expect_warning(
-    alb2 <- data_tbl("mimic_demo", "labevents", is_val(itemid, 50862L),
-                     cols[-1L]),
-    "an ID column is required"
-  )
-
-  expect_is(alb2, "data.table")
-  expect_named(alb2, cols[-1L])
-  expect_is(alb2[["charttime"]], "POSIXt")
-
-  expect_error(
-    data_tbl("mimic_demo", "labevents", is_val(itemid, 50862L),
-             c("icustay_id", "charttime", "value")),
-    class = "vctrs_error_subscript_oob"
-  )
-
-  expect_fsetequal(data_tbl("mimic_demo", "d_labitems"),
-                   get_tbl("d_labitems", "mimic_demo")[])
 })
 
-test_that("eicu data_tbl", {
+test_that("eicu load_id()", {
 
-  cols <- c("patientunitstayid", "labresultoffset", "labresult")
-  alb1 <- data_tbl("eicu_demo", "lab", is_val(labname, "albumin"), cols)
+  tbl  <- get("lab", envir = get_src_env("eicu_demo"))
+  cols <- c("labresultoffset", "labresult")
 
-  expect_is(alb1, "data.table")
-  expect_named(alb1, cols)
-  expect_is(alb1[["labresultoffset"]], "difftime")
+  alb1 <- load_id(tbl, is_val(labname, "albumin"), cols)
+
+  expect_is(alb1, "id_tbl")
   expect_identical(units(alb1[["labresultoffset"]]), "hours")
 
-  alb2 <- data_tbl("eicu_demo", "lab", is_val(labname, "albumin"), cols,
-                   mins(60L))
+  alb2 <- load_id(tbl, is_val(labname, "albumin"), cols, interval = mins(60L))
 
   expect_identical(units(alb2[["labresultoffset"]]), "mins")
 
   units(alb2[["labresultoffset"]]) <- "hours"
 
   expect_fsetequal(alb1, alb2)
-
-  alb2 <- data_tbl("eicu_demo", "lab", is_val(labname, "albumin"),
-                   cols[-2L])
-
-  expect_fsetequal(alb1[, c("patientunitstayid", "labresult"), with = FALSE],
-                   alb2)
-
-  expect_warning(
-    alb2 <- data_tbl("eicu_demo", "lab", is_val(labname, "albumin"),
-                     cols[-1L]),
-    "an ID column is required"
-  )
-
-  expect_is(alb2, "data.table")
-  expect_named(alb2, cols[-1L])
-  expect_is(alb2[["labresultoffset"]], "integer")
-
-  expect_error(
-    data_tbl("eicu_demo", "lab", is_val(labname, "albumin"),
-             c("patienthealthsystemstayid", "labresultoffset", "labresult")),
-    class = "vctrs_error_subscript_oob"
-  )
-
-  expect_fsetequal(data_tbl("eicu_demo", "hospital"),
-                   get_tbl("hospital", "eicu_demo")[])
 })

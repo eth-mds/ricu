@@ -73,9 +73,7 @@ with}
 \item{interval}{The time interval used to discretize time stamps with,
 specified as \code{\link[base:difftime]{base::difftime()}} object}
 
-\item{cfg}{Configuration list used for determining default options for
-\code{id_col} and \code{time_col} arguments, id options as well as the \code{data_fun}
-argument}
+\item{cfg}{Deprecated}
 
 \item{verbose}{Logical flag for turning off reporting of unit/out of range
 messages}

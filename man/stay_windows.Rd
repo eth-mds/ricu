@@ -5,16 +5,17 @@
 \title{Stays}
 \usage{
 stay_windows(
-  source,
+  x,
   id_type = "icustay",
   win_type = "icustay",
-  in_time = "intime",
-  out_time = "outtime",
-  interval = hours(1L)
+  in_time = "start",
+  out_time = "end",
+  interval = hours(1L),
+  ...
 )
 }
 \arguments{
-\item{source}{String specifying the data source}
+\item{x}{Object to dispatch on}
 
 \item{id_type}{Type of ID all returned times are relative to}
 
@@ -24,6 +25,8 @@ stay_windows(
 
 \item{interval}{The time interval used to discretize time stamps with,
 specified as \code{\link[base:difftime]{base::difftime()}} object}
+
+\item{...}{Passed on to \code{\link[=get_id_cols]{get_id_cols()}}}
 }
 \description{
 For a given ID type, get all stays with corresponding start and end times.

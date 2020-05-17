@@ -345,17 +345,16 @@ sofa_urine <- function(urine, limits, min_win, interval) {
 
   if (is.null(limits)) {
 
-    limits <- urine[, list(intime = min(get(index(urine))),
-                          outtime = max(get(index(urine)))), by = idx]
+    limits <- urine[, list(start = min(get(index(urine))),
+                           end = max(get(index(urine)))), by = idx]
   }
 
-  assert_that(has_name(limits, c("intime", "outtime")))
+  assert_that(has_name(limits, c("start", "end")))
 
   limits <- merge(limits, unique(urine[, idx, with = FALSE]), all.y = TRUE,
                   by.x = id(limits), by.y = idx)
 
-  res <- fill_gaps(urine, limits = limits, min_col = "intime",
-                   max_col = "outtime")
+  res <- fill_gaps(urine, limits = limits, min_col = "start", max_col = "end")
 
   expr <- substitute(list(urine_24 = win_agg_fun(urine_events)),
                      list(win_agg_fun = urine_sum))
