@@ -3,60 +3,58 @@
 \name{load_src}
 \alias{load_src}
 \alias{load_src.data_src}
+\alias{load_src.character}
 \alias{load_difftime}
 \alias{load_difftime.mimic_src}
 \alias{load_difftime.mimic_demo_src}
 \alias{load_difftime.eicu_src}
 \alias{load_difftime.eicu_demo_src}
 \alias{load_difftime.hirid_src}
+\alias{load_difftime.character}
 \alias{load_id}
 \alias{load_id.data_src}
+\alias{load_id.character}
 \alias{load_ts}
 \alias{load_ts.data_src}
-\alias{data_ts}
+\alias{load_ts.character}
 \alias{data_id}
+\alias{data_ts}
 \title{Low level functions for loading data}
 \usage{
-load_src(x, rows, cols = colnames(x))
+load_src(x, ...)
 
-\method{load_src}{data_src}(x, rows, cols = colnames(x))
+\method{load_src}{data_src}(x, rows, cols = colnames(x), ...)
 
-load_difftime(x, rows, cols = colnames(x), id_hint = default_col(x, "id"))
+\method{load_src}{character}(x, src, ...)
 
-\method{load_difftime}{mimic_src}(x, rows, cols = colnames(x), id_hint = default_col(x, "id"))
+load_difftime(x, ...)
 
-\method{load_difftime}{mimic_demo_src}(x, rows, cols = colnames(x), id_hint = default_col(x, "id"))
+\method{load_difftime}{mimic_src}(x, rows, cols = colnames(x), id_hint = default_col(x, "id"), ...)
 
-\method{load_difftime}{eicu_src}(x, rows, cols = colnames(x), id_hint = default_col(x, "id"))
+\method{load_difftime}{mimic_demo_src}(x, rows, cols = colnames(x), id_hint = default_col(x, "id"), ...)
 
-\method{load_difftime}{eicu_demo_src}(x, rows, cols = colnames(x), id_hint = default_col(x, "id"))
+\method{load_difftime}{eicu_src}(x, rows, cols = colnames(x), ...)
 
-\method{load_difftime}{hirid_src}(x, rows, cols = colnames(x), id_hint = default_col(x, "id"))
+\method{load_difftime}{eicu_demo_src}(x, rows, cols = colnames(x), ...)
 
-load_id(
-  x,
-  rows,
-  cols = colnames(x),
-  id_col = default_col(x, "id"),
-  interval = hours(1L)
-)
+\method{load_difftime}{hirid_src}(x, rows, cols = colnames(x), id_hint = default_col(x, "id"), ...)
+
+\method{load_difftime}{character}(x, src, ...)
+
+load_id(x, ...)
 
 \method{load_id}{data_src}(
   x,
   rows,
   cols = colnames(x),
   id_col = default_col(x, "id"),
-  interval = hours(1L)
+  interval = hours(1L),
+  ...
 )
 
-load_ts(
-  x,
-  rows,
-  cols = colnames(x),
-  id_col = default_col(x, "id"),
-  index_col = default_col(x, "index"),
-  interval = hours(1L)
-)
+\method{load_id}{character}(x, src, ...)
+
+load_ts(x, ...)
 
 \method{load_ts}{data_src}(
   x,
@@ -64,19 +62,26 @@ load_ts(
   cols = colnames(x),
   id_col = default_col(x, "id"),
   index_col = default_col(x, "index"),
-  interval = hours(1L)
+  interval = hours(1L),
+  ...
 )
 
-data_ts(source, table, row_expr, ...)
+\method{load_ts}{character}(x, src, ...)
 
-data_id(source, table, row_expr, ...)
+data_id(source, table, ...)
+
+data_ts(source, table, ...)
 }
 \arguments{
 \item{x}{Object for which to load data}
 
+\item{...}{Generic consistency}
+
 \item{rows}{Expression used for row subsetting (NSE)}
 
 \item{cols}{Character vector of column names}
+
+\item{src}{Passed to \code{\link[=get_data_src]{get_data_src()}} in order to determine the data source}
 
 \item{id_hint}{String valued id column selection (not necessarily honored)}
 
@@ -90,12 +95,6 @@ specified as \code{\link[base:difftime]{base::difftime()}} object}
 \item{source}{String specifying the data source}
 
 \item{table}{String specifying the table from which to load data}
-
-\item{row_expr}{Expression to be quoted and used to define a row subsetting;
-\code{NULL} corresponds to no row subsetting}
-
-\item{...}{Forwarded to the corresponding function (\code{load_id()} or
-\code{load_ts()})}
 }
 \description{
 Depending on the desired return type (\code{ts_tbl}, \code{id_tbl} or plain

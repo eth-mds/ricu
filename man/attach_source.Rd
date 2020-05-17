@@ -14,6 +14,7 @@
 \alias{eicu}
 \alias{eicu_demo}
 \alias{hirid}
+\alias{get_data_src}
 \alias{get_src_env}
 \alias{get_src_env.character}
 \alias{get_src_env.default}
@@ -37,6 +38,8 @@ setup_src_env(x, env, dir = NULL)
 
 data
 
+get_data_src(tbl, src)
+
 get_src_env(x)
 
 \method{get_src_env}{character}(x)
@@ -59,6 +62,10 @@ file}
 \item{assign_env}{Environment in which the data source will become available}
 
 \item{env}{Environment where data proxy objects are created}
+
+\item{tbl}{String valued table name}
+
+\item{src}{Object passed to \code{get_src_env()}}
 }
 \description{
 Attaching a data source sets up an environment containing \code{\link[prt:new_prt]{prt::new_prt()}}

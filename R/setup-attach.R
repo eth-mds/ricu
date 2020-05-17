@@ -221,6 +221,29 @@ get_src_name.data_src <- function(x) {
   sub("_src$", "", class(x)[1L])
 }
 
+#' @param tbl String valued table name
+#' @param src Object passed to `get_src_env()`
+#'
+#' @rdname attach_source
+#' @export
+get_data_src <- function(tbl, src) {
+
+  assert_that(is.string(tbl))
+
+  env <- get_src_env(src)
+  res <- get0(tbl, envir = env, ifnotfound = NULL)
+
+  if (is.null(res)) {
+    stop("Table `", tbl, "` not found in <", src, "> environment. Available ",
+      "are:\n    * ", paste0("`", ls(envir = env), "`", collapse = "\n    * "),
+      "\n  For further information on how to set up a data source, refer to ",
+      "`?attach_source`."
+    )
+  }
+
+  res
+}
+
 #' @rdname attach_source
 #' @export
 get_src_env <- function(x) UseMethod("get_src_env", x)
@@ -229,7 +252,7 @@ get_src_env <- function(x) UseMethod("get_src_env", x)
 #' @export
 get_src_env.character <- function(x) {
 
-  assert_that(length(x) == 1L)
+  assert_that(is.string(x))
 
   env <- data_env()
 
@@ -238,7 +261,7 @@ get_src_env.character <- function(x) {
   if (is.null(res)) {
     stop("Source `", x, "` not found in ", env, " environment. For ",
          "further information on how to set up a data source, refer to ",
-         "`?attach_datasource`.")
+         "`?attach_source`.")
   }
 
   res
