@@ -74,15 +74,27 @@ download_source <- function(x, dir = NULL, tables = NULL, ...) {
     dir <- source_data_dir(x)
   }
 
-  if (is.null(tables)) {
-    tables <- table_names(x)
+  assert_that(is.dir(dir))
+
+  tbl_files <- unlist(file_names(x))
+
+  if (not_null(tables)) {
+
+    assert_that(is.character(tables), length(tables) > 0L)
+
+    tbl_files <- tbl_files[table_names(x) %in% tables]
   }
 
-  assert_that(is.dir(dir), is.character(tables), length(tables) > 0L)
+  tbl_files <- setdiff(tbl_files, list.files(dir))
 
-  message("downloading `", get_source(x), "`")
+  if (length(tbl_files) == 0L) {
+    message("All required files are already available")
+    return(invisible(NULL))
+  }
 
-  download_check_data(dir, tables, get_url(x), ...)
+  message("downloading `", get_src_name(x), "`")
+
+  download_check_data(dir, tbl_files, get_url(x), ...)
 }
 
 read_line <- function(prompt = "", mask_input = FALSE) {
