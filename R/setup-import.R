@@ -229,7 +229,7 @@ csv_to_fst <- function(cfg, dir, cleanup = TRUE) {
 
   cols <- get_col_names(cfg)
   dat  <- data.table::setnames(dat, names(cols), cols)
-  res  <- fst_names(cfg)
+  res  <- file.path(dir, fst_names(cfg))
 
   fst::write_fst(dat, res, compress = 100L)
 
