@@ -4,7 +4,7 @@ pkgdown_sha: 3b74d8860686ed6d63e536d7ec4971fbbde5faff
 articles:
   demo: demo.html
   uom: uom.html
-last_built: 2020-05-18T17:36Z
+last_built: 2020-05-18T17:39Z
 urls:
   reference: https://septic-tank.github.io/ricu/reference
   article: https://septic-tank.github.io/ricu/articles
