@@ -6563,7 +6563,7 @@
     },
     "tables": [
       {
-        "files": "admissions.csv",
+        "files": "ADMISSIONS.csv",
         "name": "admissions",
         "defaults": {
           "val_col": "admission_type"
@@ -6672,7 +6672,7 @@
         ]
       },
       {
-        "files": "callout.csv",
+        "files": "CALLOUT.csv",
         "name": "callout",
         "defaults": {
           "time_col": "callout_outcome",
@@ -6808,7 +6808,7 @@
         ]
       },
       {
-        "files": "caregivers.csv",
+        "files": "CAREGIVERS.csv",
         "name": "caregivers",
         "defaults": {
           "id_col": "cgid",
@@ -6838,7 +6838,7 @@
         ]
       },
       {
-        "files": "chartevents.csv",
+        "files": "CHARTEVENTS.csv",
         "name": "chartevents",
         "defaults": {
           "time_col": "charttime",
@@ -6930,7 +6930,7 @@
         }
       },
       {
-        "files": "cptevents.csv",
+        "files": "CPTEVENTS.csv",
         "name": "cptevents",
         "defaults": {
           "time_col": "chartdate",
@@ -7001,7 +7001,7 @@
         ]
       },
       {
-        "files": "d_cpt.csv",
+        "files": "D_CPT.csv",
         "name": "d_cpt",
         "defaults": {
           "id_col": "subsectionrange",
@@ -7056,7 +7056,7 @@
         ]
       },
       {
-        "files": "d_icd_diagnoses.csv",
+        "files": "D_ICD_DIAGNOSES.csv",
         "name": "d_icd_diagnoses",
         "defaults": {
           "id_col": "icd9_code",
@@ -7086,7 +7086,7 @@
         ]
       },
       {
-        "files": "d_icd_procedures.csv",
+        "files": "D_ICD_PROCEDURES.csv",
         "name": "d_icd_procedures",
         "defaults": {
           "id_col": "icd9_code",
@@ -7116,7 +7116,7 @@
         ]
       },
       {
-        "files": "d_items.csv",
+        "files": "D_ITEMS.csv",
         "name": "d_items",
         "defaults": {
           "id_col": "itemid",
@@ -7176,7 +7176,7 @@
         ]
       },
       {
-        "files": "d_labitems.csv",
+        "files": "D_LABITEMS.csv",
         "name": "d_labitems",
         "defaults": {
           "id_col": "itemid",
@@ -7216,7 +7216,7 @@
         ]
       },
       {
-        "files": "datetimeevents.csv",
+        "files": "DATETIMEEVENTS.csv",
         "name": "datetimeevents",
         "defaults": {
           "time_col": "charttime",
@@ -7299,7 +7299,7 @@
         ]
       },
       {
-        "files": "diagnoses_icd.csv",
+        "files": "DIAGNOSES_ICD.csv",
         "name": "diagnoses_icd",
         "defaults": {
           "val_col": "icd9_code"
@@ -7333,7 +7333,7 @@
         ]
       },
       {
-        "files": "drgcodes.csv",
+        "files": "DRGCODES.csv",
         "name": "drgcodes",
         "defaults": {
           "val_col": "drg_code"
@@ -7382,7 +7382,7 @@
         ]
       },
       {
-        "files": "icustays.csv",
+        "files": "ICUSTAYS.csv",
         "name": "icustays",
         "defaults": {
           "time_col": "intime",
@@ -7454,7 +7454,7 @@
         ]
       },
       {
-        "files": "inputevents_cv.csv",
+        "files": "INPUTEVENTS_CV.csv",
         "name": "inputevents_cv",
         "defaults": {
           "time_col": "charttime",
@@ -7577,7 +7577,7 @@
         ]
       },
       {
-        "files": "inputevents_mv.csv",
+        "files": "INPUTEVENTS_MV.csv",
         "name": "inputevents_mv",
         "defaults": {
           "time_col": "starttime",
@@ -7747,7 +7747,7 @@
         ]
       },
       {
-        "files": "labevents.csv",
+        "files": "LABEVENTS.csv",
         "name": "labevents",
         "defaults": {
           "time_col": "charttime",
@@ -7804,7 +7804,7 @@
         ]
       },
       {
-        "files": "microbiologyevents.csv",
+        "files": "MICROBIOLOGYEVENTS.csv",
         "name": "microbiologyevents",
         "defaults": {
           "time_col": "chartdate",
@@ -7896,7 +7896,7 @@
         ]
       },
       {
-        "files": "outputevents.csv",
+        "files": "OUTPUTEVENTS.csv",
         "name": "outputevents",
         "defaults": {
           "time_col": "charttime",
@@ -7974,7 +7974,7 @@
         ]
       },
       {
-        "files": "patients.csv",
+        "files": "PATIENTS.csv",
         "name": "patients",
         "defaults": {
           "val_col": "expire_flag"
@@ -8027,7 +8027,7 @@
         ]
       },
       {
-        "files": "prescriptions.csv",
+        "files": "PRESCRIPTIONS.csv",
         "name": "prescriptions",
         "defaults": {
           "time_col": "startdate",
@@ -8135,7 +8135,7 @@
         ]
       },
       {
-        "files": "procedureevents_mv.csv",
+        "files": "PROCEDUREEVENTS_MV.csv",
         "name": "procedureevents_mv",
         "defaults": {
           "time_col": "starttime",
@@ -8275,7 +8275,7 @@
         ]
       },
       {
-        "files": "procedures_icd.csv",
+        "files": "PROCEDURES_ICD.csv",
         "name": "procedures_icd",
         "defaults": {
           "val_col": "icd9_code"
@@ -8309,7 +8309,7 @@
         ]
       },
       {
-        "files": "services.csv",
+        "files": "SERVICES.csv",
         "name": "services",
         "defaults": {
           "time_col": "transfertime",
@@ -8350,7 +8350,7 @@
         ]
       },
       {
-        "files": "transfers.csv",
+        "files": "TRANSFERS.csv",
         "name": "transfers",
         "defaults": {
           "time_col": "intime",
