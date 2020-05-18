@@ -92,7 +92,7 @@ download_source <- function(x, dir = NULL, tables = NULL, ...) {
     return(invisible(NULL))
   }
 
-  message("downloading `", get_src_name(x), "`")
+  message("downloading `", get_source(x), "`")
 
   download_check_data(dir, tbl_files, get_url(x), ...)
 }
