@@ -35,12 +35,11 @@ force_numeric_val_col <- function(x, val_col, ...) {
   x
 }
 
-eicu_body_weight <- function(x, id_col, val_col, weight_col, source, ...) {
+eicu_body_weight <- function(x, id_col, val_col, weight_col, env, ...) {
 
   do_calc <- function(rate, w1, w2) rate / fifelse(is.na(w1), w2, w1)
 
-  weight <- load_id(get("patient", envir = get_src_env(source)),
-                    cols = "admissionweight", id_col = id_col)
+  weight <- load_id("patient", env, cols = "admissionweight", id_col = id_col)
 
   x <- merge(x, weight, all.x = TRUE, by = id_col)
   x <- force_numeric_cols(x, c(val_col, weight_col))
@@ -251,22 +250,18 @@ eicu_adx <- function(x, val_col, ...) {
   x
 }
 
-los_windows <- function(item, id_type, patient_ids, interval, cfg, ...) {
+los_windows <- function(item, id_type, patient_ids, interval) {
 
   win <- item[[1L]][["win_type"]]
-  res <- stay_windows(get_src_name(item), id_type = id_type, win_type = win,
+  res <- stay_windows(src_name(item), id_type = id_type, win_type = win,
                       in_time = NULL, interval = mins(1L))
 
   if (!identical(win, id_type)) {
     res <- rm_cols(res, win)
   }
 
-  ido <- get_id_cols(cfg)
-  res <- rename_cols(res, ido[id_type], id(res))
-  res <- set_id_opts(res, ido)
-
   if (not_null(patient_ids)) {
-    res <- merge(res, patient_ids, by = ido, all = FALSE)
+    res <- merge(res, patient_ids, by = id(res), all = FALSE)
   }
 
   val <- data_cols(res)

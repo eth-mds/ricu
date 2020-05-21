@@ -29,7 +29,7 @@ downgrade_id(x, target_id, id_cfg, cols = time_cols(x), ...)
 
 \item{target_id}{The destination id name}
 
-\item{id_cfg}{An \code{id_cols} object, specifying the id options}
+\item{id_cfg}{An \code{id_cfg} object, specifying the id options}
 
 \item{...}{Passed to \code{upgrade_id()}/\code{downgrade_id()}}
 

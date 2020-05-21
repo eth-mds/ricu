@@ -96,7 +96,7 @@ load_mihi <- function(x, rows, cols, id_hint) {
 
   assert_that(is.string(id_hint))
 
-  opts <- id_types(x)
+  opts <- get_id_col(x)
 
   if (id_hint %in% colnames(x)) {
     id_col <- id_hint
@@ -176,7 +176,7 @@ load_id.data_src <- function(x, rows, cols = colnames(x),
   res <- load_difftime(x, {{ rows }}, cols, id_col)
 
   tim <- time_cols(res)
-  res <- change_id(res, id_col, get_id_cols(x), cols = tim)
+  res <- change_id(res, id_col, as_id_cfg(x), cols = tim)
 
   if (length(tim) && !is_one_min(interval)) {
     res <- set_interval(res, interval, tim)
@@ -214,7 +214,7 @@ load_ts.data_src <- function(x, rows, cols = colnames(x),
   res <- as_ts_tbl(res, id(res), index = index_col, interval = mins(1L))
 
   tim <- time_cols(res)
-  res <- change_id(res, id_col, get_id_cols(x), cols = tim)
+  res <- change_id(res, id_col, as_id_cfg(x), cols = tim)
 
   if (!is_one_min(interval)) {
     res <- set_interval(res, interval, tim)

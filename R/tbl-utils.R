@@ -171,7 +171,8 @@ unmerge <- function(x, col_groups = as.list(data_cols(x)), by = meta_cols(x),
 
   name_has <- function(name, x) has_name(x, name)
 
-  assert_that(has_name(x, by), all_is(col_groups, name_has, x), is.flag(na_rm))
+  assert_that(has_name(x, by), all_fun(col_groups, name_has, x),
+              is.flag(na_rm))
 
   extract_col <- function(col, x) {
 

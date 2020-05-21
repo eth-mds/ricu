@@ -29,9 +29,9 @@
 #' information, please refer to the [eICU documentation
 #' ](https://eicu-crd.mit.edu/about/eicu).
 #'
-#' In case the keyring package is available, credentials used to log onto
-#' PhysioNet are stored using [keyring::key_set()], therefore allowing for non-
-#' interactive querying of the PhysioNet service. Furthermore, if the openssl
+#' Physionet credentials can either be entered in an interactive session,
+#' passed as function arguments `user`/`pass` or as environment
+#' variables `RICU_PHYSIONET_USER`/`RICU_PHYSIONET_PASS`. If the openssl
 #' package is available, SHA256 hashes of downloaded files are verified using
 #' [openssl::sha256()].
 #'
@@ -45,11 +45,8 @@
 #' Celi LA, Mark RG and Badawi O. Scientific Data (2018). DOI:
 #' http://dx.doi.org/10.1038/sdata.2018.178.
 #'
-#' @param x Object of which a [get_src_config()] method is defined
-#' @param dir Destination directory where the downloaded data is written to.
-#' @param tables Character vector specifying the tables to download. If
-#' `NULL`, all available tables are downloaded.
-#' @param ... Passed onto keyring, for example [keyring::key_set_with_value()].
+#' @param x Object specifying the source configuration
+#' @param ... Generic consistency
 #'
 #' @examples
 #' \dontrun{
@@ -64,30 +61,84 @@
 #'
 #' }
 #'
+#' @rdname download
 #' @export
 #'
-download_source <- function(x, dir = NULL, tables = NULL, ...) {
+download_src <- function(x, ...) UseMethod("download_src", x)
 
-  x <- get_src_config(x)
 
-  if (is.null(dir)) {
-    dir <- source_data_dir(x)
-  }
+#' @param dir Destination directory where the downloaded data is written to.
+#' @param tables Character vector specifying the tables to download. If
+#' `NULL`, all available tables are downloaded.
+#' @param force Logical flag; if `TRUE`, existing data will be re-downloaded
+#' @param user,pass Physionet credentials; if `NULL` and environment
+#' variables `RICU_PHYSIONET_USER`/`RICU_PHYSIONET_PASS` are not set, user
+#' input is required
+#'
+#' @rdname download
+#' @export
+download_src.src_cfg <- function(x, dir = src_data_dir(x), tables = NULL,
+                                 force = FALSE, user = NULL, pass = NULL,
+                                 ...) {
+
+  all_avail <- function(y) all(file.exists(file.path(dir, y)))
+
+  assert_that(is.dir(dir), is.flag(force), ...length() == 0L)
+
+  tbl <- as_tbl_spec(x)
 
   if (is.null(tables)) {
-    tables <- table_names(x)
+    tables <- names(tbl)
   }
 
-  assert_that(is.dir(dir), is.character(tables), length(tables) > 0L)
+  assert_that(is.character(tables), all(tables %in% names(tbl)))
 
-  message("downloading `", get_src_name(x), "`")
+  if (!force) {
 
-  download_check_data(dir, tables, get_url(x), ...)
+    avail <- names(tbl)[
+      lgl_ply(fst_names(tbl), all_avail) | lgl_ply(file_names(tbl), all_avail)
+    ]
+
+    tables <- setdiff(tables, avail)
+  }
+
+  if (length(tables) == 0L) {
+    message("The requested tables have already been downloaded")
+    return(invisible(NULL))
+  }
+
+  tbl <- tbl[tables]
+
+  pba <- progr_init(sum(n_rows(tbl)),
+    paste0("Downloading ", length(tbl), " tables for ", quote_bt(src_name(x)))
+  )
+
+  download_check_data(dir, file_names(tbl), src_url(x), user, pass, pba)
+
+  if (!(is.null(pba) || pba$finished)) {
+    pba$update(1)
+    pba$terminate()
+  }
+
+  invisible(NULL)
+}
+
+#' @inheritParams read_src_cfg
+#' @rdname download
+#' @export
+download_src.character <- function(x, name = "data-sources", file = NULL,
+                                   ...) {
+
+  for (cfg in read_src_cfg(x, name, file)) {
+    download_src(cfg, ...)
+  }
+
+  invisible(NULL)
 }
 
 read_line <- function(prompt = "", mask_input = FALSE) {
 
-  if (!interactive()) return(NULL)
+  assert_that(interactive(), msg = "User input is required")
 
   if (mask_input && is_pkg_available("getPass")) {
     getPass::getPass(prompt)
@@ -96,75 +147,20 @@ read_line <- function(prompt = "", mask_input = FALSE) {
   }
 }
 
-get_set_physionet_creds <- function(username = NULL, password = NULL,
-                                    service = "physionet", keyring = NULL) {
-
-  if (is.null(username) || is.null(password)) {
-
-    if (is_pkg_available("keyring")) {
-
-      hits <- keyring::key_list(service, keyring)
-
-      if (nrow(hits) > 0L && (is.null(username) ||
-          isTRUE(username %in% hits[["username"]]))) {
-
-        if (is.null(username)) {
-          username <- hits[1L, "username"]
-        }
-
-        password <- keyring::key_get(service, username, keyring)
-
-      } else {
-
-        message("set up credentials for physionet access")
-
-        if (is.null(username)) {
-
-          username <- read_line("username: ")
-          if (is.null(password)) password <- read_line("password: ", TRUE)
-
-        } else if (is.null(password)) {
-
-          password <- read_line(paste0("password for user ", username, ": "),
-                                TRUE)
-        }
-
-        keyring::key_set_with_value(service, username, password, keyring)
-      }
-
-    } else {
-
-      if (is.null(username)) {
-        username <- read_line("username: ")
-        password <- read_line("password: ", TRUE)
-      } else {
-        password <- read_line(paste0("password for user ", username, ": "),
-                              TRUE)
-      }
-    }
-  }
-
-  assert_that(is.string(username), is.string(password))
-
-  list(username = username, password = password)
-}
-
-download_pysionet_file <- function(url, dest = NULL, username = NULL,
-                                   password = NULL) {
+download_pysionet_file <- function(url, dest = NULL, user = NULL,
+                                   pass = NULL) {
 
   assert_that(is.string(url))
 
   handle <- curl::new_handle(useragent = "Wget/")
 
-  if (is.null(username) || is.null(password)) {
+  if (is.null(user) || is.null(pass)) {
 
-    assert_that(is.null(username), is.null(password))
+    assert_that(is.null(user), is.null(pass))
 
   } else {
 
-    handle <- curl::handle_setopt(handle,
-      username = username, password = password
-    )
+    handle <- curl::handle_setopt(handle, username = user, password = pass)
   }
 
   if (is.null(dest)) {
@@ -202,8 +198,6 @@ download_pysionet_file <- function(url, dest = NULL, username = NULL,
     stop(rawToChar(res[["content"]]))
   }
 
-  message("successfully downloaded ", basename(url))
-
   if (is.null(dest)) {
 
     res[["content"]]
@@ -215,11 +209,11 @@ download_pysionet_file <- function(url, dest = NULL, username = NULL,
   }
 }
 
-get_sha256 <- function(url, username = NULL, password = NULL) {
+get_sha256 <- function(url, user = NULL, pass = NULL) {
 
   res <- download_pysionet_file(
     file.path(url, "SHA256SUMS.txt", fsep = "/"), dest = NULL,
-    username = username, password = password
+    user = user, pass = pass
   )
 
   con <- rawConnection(res)
@@ -233,49 +227,72 @@ check_file_sha256 <- function(file, val) {
   isTRUE(as.character(openssl::sha256(file(file, raw = TRUE))) == val)
 }
 
-download_check_data <- function(dest_folder, tables, url, username,
-                                password, ...) {
+get_cred <- function(x, env, msg, hide = FALSE) {
 
-  if (missing(username) || missing(password)) {
+  assert_that(is.string(env), is.string(msg), is.flag(hide))
 
-    if (missing(username)) username <- NULL
-
-    cred <- get_set_physionet_creds(username, ...)
-    username <- cred[["username"]]
-    password <- cred[["password"]]
-
-  } else {
-
-    username <- NULL
-    password <- NULL
+  if (is.null(x)) {
+    x <- Sys.getenv(env, unset = NA_character_)
+    if (is.na(x)) {
+      x <- read_line(msg, hide)
+    }
   }
 
-  chksums <- get_sha256(url, username, password)
+  assert_that(is.string(x))
+
+  x
+}
+
+download_check_data <- function(dest_folder, tables, url, user, pass,
+                                prog = NULL) {
+
+  check_cred <- function(e) {
+    if (grepl("^Access.+access\\.$", conditionMessage(e))) NULL else stop(e)
+  }
+
+  dl_one <- function(file, path) {
+
+    progr_iter(file, prog)
+
+    download_pysionet_file(file.path(url, file, fsep = "/"), path,
+                           user = user, pass = pass)
+
+    invisible(NULL)
+  }
+
+  chksums <- tryCatch(get_sha256(url, user, pass), error = check_cred)
+
+  if (is.null(chksums)) {
+
+    user <- get_cred(user, "RICU_PHYSIONET_USER", "username: ")
+    pass <- get_cred(pass, "RICU_PHYSIONET_PASS", "password: ", TRUE)
+
+    chksums <- get_sha256(url, user, pass)
+  }
+
   avail_tbls <- vapply(chksums, `[[`, character(1L), 2L)
 
   assert_that(all(tables %in% avail_tbls))
 
   todo <- chksums[avail_tbls %in% tables]
 
-  files <- vapply(todo, `[[`, character(1L), 2L)
+  files   <- vapply(todo, `[[`, character(1L), 2L)
   chksums <- vapply(todo, `[[`, character(1L), 1L)
+  paths   <- file.path(dest_folder, files)
 
-  Map(download_pysionet_file,
-    file.path(url, files, fsep = "/"),
-    file.path(dest_folder, files),
-    MoreArgs = list(username = username, password = password)
-  )
+  Map(dl_one, files, paths)
 
   if (is_pkg_available("openssl")) {
-    checks <- unlist(
-      Map(check_file_sha256, file.path(dest_folder, files), chksums)
-    )
+
+    checks <- mapply(check_file_sha256, paths, chksums)
+
     if (!all(checks)) {
       warning("The following files have the wrong checksum:\n  ",
-        paste(basename(names(checks))[!checks], collapse = "\n  ")
-      )
+              paste(files[!checks], collapse = "\n  "))
     }
+
   } else {
+
     message("The package openssl is required for checking file hashes.")
   }
 

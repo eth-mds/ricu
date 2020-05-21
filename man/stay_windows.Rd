@@ -26,7 +26,7 @@ stay_windows(
 \item{interval}{The time interval used to discretize time stamps with,
 specified as \code{\link[base:difftime]{base::difftime()}} object}
 
-\item{...}{Passed on to \code{\link[=get_id_cols]{get_id_cols()}}}
+\item{...}{Potentially passed on to \code{\link[=as_id_cfg]{as_id_cfg()}} or \code{\link[=read_src_cfg]{read_src_cfg()}}}
 }
 \description{
 For a given ID type, get all stays with corresponding start and end times.

@@ -150,6 +150,12 @@ on_failure(all_null) <- function(call, env) {
   paste0("some of ", deparse(call$x), " are not NULL")
 }
 
+all_null_or <- function(x, what, ...) all_fun(x, null_or, what, ...)
+
+on_failure(all_null_or) <- function(call, env) {
+  paste0("some of ", deparse(call$x), " are not NULL or ", deparse(call$what))
+}
+
 same_length <- function(x, y) identical(length(x), length(y))
 
 on_failure(same_length) <- function(call, env) {
@@ -237,10 +243,4 @@ null_or <- function(x, what, ...) {
 
 on_failure(null_or) <- function(call, env) {
   paste0(deparse(call$x), " is neither NULL, nor ", deparse(call$what))
-}
-
-all_is <- function(x, what, ...) all(lgl_ply(x, what, ...))
-
-on_failure(null_or) <- function(call, env) {
-  paste0("not all of ", deparse(call$x), " satisfy ", deparse(call$what))
 }

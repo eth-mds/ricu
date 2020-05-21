@@ -5,58 +5,26 @@
 #' files using [base::delayedAssign()].
 #'
 #' @param x Data source to attach
-#' @param ... Forwarded to further calls to `attach_source()`
+#' @param ... Forwarded to further calls to `attach_src()`
 #'
 #' @export
 #'
-attach_source <- function(x, ...) UseMethod("attach_source", x)
-
-#' @param file File name string pointing to a non-default source configuration
-#' file
-#'
-#' @rdname attach_source
-#'
-#' @export
-#'
-attach_source.character <- function(x, file = NULL, ...) {
-
-  for (src in x) {
-    attach_source(get_src_config(src, file = file), ...)
-  }
-
-  invisible(NULL)
-}
-
-#' @rdname attach_source
-#'
-#' @export
-#'
-attach_source.list <- function(x, ...) {
-
-  assert_that(all_is(x, is_src_config))
-
-  for (src in x) {
-    attach_source(src, ...)
-  }
-
-  invisible(NULL)
-}
+attach_src <- function(x, ...) UseMethod("attach_src", x)
 
 #' @param dir Directory used to look for [fst::fst()] files; `NULL` calls
 #' [data_dir()] using the source name as `subdir` argument
 #' @param assign_env Environment in which the data source will become available
 #'
-#' @rdname attach_source
+#' @rdname attach_src
 #'
 #' @export
 #'
-attach_source.src_config <- function(x, dir = NULL, assign_env = .GlobalEnv,
-                                     ...) {
+attach_src.src_cfg <- function(x, dir = src_data_dir(x),
+                               assign_env = .GlobalEnv, ...) {
 
+  assert_that(is.string(dir), is.environment(assign_env), ...length() == 0L)
 
-  assert_that(...length() == 0L, is.environment(assign_env))
-
-  src <- get_src_name(x)
+  src <- src_name(x)
   dat <- data_env()
 
   delayedAssign(src, setup_src_env(x, new.env(parent = dat), dir),
@@ -67,9 +35,21 @@ attach_source.src_config <- function(x, dir = NULL, assign_env = .GlobalEnv,
   invisible(NULL)
 }
 
+#' @inheritParams read_src_cfg
+#' @rdname attach_src
+#' @export
+attach_src.character <- function(x, name = "data-sources", file = NULL, ...) {
+
+  for (cfg in read_src_cfg(x, name, file)) {
+    attach_src(cfg, ...)
+  }
+
+  invisible(NULL)
+}
+
 #' @param env Environment where data proxy objects are created
 #'
-#' @rdname attach_source
+#' @rdname attach_src
 #'
 #' @export
 #'
@@ -77,23 +57,22 @@ setup_src_env <- function(x, env, dir = NULL) {
   UseMethod("setup_src_env", x)
 }
 
-#' @rdname attach_source
+#' @rdname attach_src
 #' @export
-setup_src_env.src_config <- function(x, env, dir = NULL) {
+setup_src_env.src_cfg <- function(x, env, dir = src_data_dir(x)) {
 
-  if (is.null(dir)) {
-    dir <- source_data_dir(x)
-  }
+  assert_that(is.string(dir))
 
-  assert_that(is_src_config(x), is.string(dir))
+  tbl <- as_tbl_spec(x)
 
-  files <- Map(file.path, dir, fst_names(x))
-  names(files) <- table_names(x)
-  missing <- lgl_ply(files, all_is, Negate(file.exists))
+  files <- Map(file.path, dir, fst_names(tbl))
+  names(files) <- names(tbl)
+
+  missing <- lgl_ply(files, all_fun, Negate(file.exists))
 
   if (any(missing)) {
 
-    todo <- table_names(x)[missing]
+    todo <- names(files[missing])
 
     msg <- paste("The following tables are missing from", dir,
                  paste(todo, collapse = "\n  "), sep = "\n  ")
@@ -112,48 +91,55 @@ setup_src_env.src_config <- function(x, env, dir = NULL) {
       stop(msg)
     }
 
-    download_source(x, dir, table_sel = todo)
-    import_source(x, dir, cleanup = TRUE)
+    download_src(x, dir, tables = todo)
+    import_src(x, dir, cleanup = TRUE)
+
+    done <- lgl_ply(files, all_fun, file.exists)
+
+    assert_that(all(done), msg = paste0("Not all required tables were ",
+      "successfully downloaded and imported: ", concat(names(files[!done])),
+      " are still missing")
+    )
   }
 
-  more_arg <- list(id_cols = get_id_cols(x), src_name = get_src_name(x),
+  more_arg <- list(id_cfg = as_id_cfg(x), src_name = src_name(x),
                    src_env = env)
-  dat_tbls <- Map(new_data_src, files, get_col_defaults(x),
+  dat_tbls <- Map(new_data_src, files, as_col_cfg(x),
                   MoreArgs = more_arg)
 
   list2env(dat_tbls, envir = env)
 }
 
-#' @rdname attach_source
+#' @rdname attach_src
 #' @export
 data <- new.env()
 
 #' @name mimic
-#' @rdname attach_source
+#' @rdname attach_src
 #' @export mimic
 #'
 NULL
 
 #' @name mimic_demo
-#' @rdname attach_source
+#' @rdname attach_src
 #' @export mimic_demo
 #'
 NULL
 
 #' @name eicu
-#' @rdname attach_source
+#' @rdname attach_src
 #' @export eicu
 #'
 NULL
 
 #' @name eicu_demo
-#' @rdname attach_source
+#' @rdname attach_src
 #' @export eicu_demo
 #'
 NULL
 
 #' @name hirid
-#' @rdname attach_source
+#' @rdname attach_src
 #' @export hirid
 #'
 NULL
@@ -176,10 +162,10 @@ get_from_data_env <- function(source) {
   }
 }
 
-source_data_dir <- function(source) {
+src_data_dir <- function(source) {
 
-  if (is_src_config(source)) {
-    source <- get_src_name(source)
+  if (!is.string(source)) {
+    source <- src_name(source)
   }
 
   assert_that(is.string(source))
@@ -199,16 +185,15 @@ source_data_dir <- function(source) {
   }
 }
 
-new_data_src <- function(files, defaults, id_cols, src_name, src_env) {
+new_data_src <- function(files, col_cfg, id_cfg, src_name, src_env) {
 
-  assert_that(is_col_defaults(defaults), is_id_cols(id_cols),
-              is.string(src_name), is.environment(src_env))
+  assert_that(is.string(src_name), is.environment(src_env))
 
   res <- prt::new_prt(files)
   class(res) <- c(paste0(c(src_name, "data"), "_src"), class(res))
 
-  attr(res, "defaults") <- defaults
-  attr(res, "id_cols")  <- id_cols
+  attr(res, "col_cfg") <- as_col_cfg(col_cfg)
+  attr(res, "id_cfg")  <- as_id_cfg(id_cfg)
   attr(res, "src_env") <- src_env
 
   res
@@ -217,38 +202,50 @@ new_data_src <- function(files, defaults, id_cols, src_name, src_env) {
 is_data_src <- function(x) inherits(x, "data_src")
 
 #' @export
-get_src_name.data_src <- function(x) {
+src_name.data_src <- function(x) {
   sub("_src$", "", class(x)[1L])
 }
 
 #' @param tbl String valued table name
-#' @param src Object passed to `get_src_env()`
+#' @param src Object passed to `get_src_env()` or an environment
 #'
-#' @rdname attach_source
+#' @rdname attach_src
 #' @export
 get_data_src <- function(tbl, src) {
 
   assert_that(is.string(tbl))
 
-  env <- get_src_env(src)
+  if (is.environment(src)) {
+    env <- src
+  } else {
+    env <- get_src_env(src)
+  }
+
   res <- get0(tbl, envir = env, ifnotfound = NULL)
 
   if (is.null(res)) {
-    stop("Table `", tbl, "` not found in <", src, "> environment. Available ",
+
+    if (is.environment(src)) {
+      src <- sub("environment:", "", format(src))
+    } else {
+      src <- paste0("<", src, ">")
+    }
+
+    stop("Table `", tbl, "` not found in environment ", src, ". Available ",
       "are:\n    * ", paste0("`", ls(envir = env), "`", collapse = "\n    * "),
       "\n  For further information on how to set up a data source, refer to ",
-      "`?attach_source`."
+      "`?attach_src`."
     )
   }
 
   res
 }
 
-#' @rdname attach_source
+#' @rdname attach_src
 #' @export
 get_src_env <- function(x) UseMethod("get_src_env", x)
 
-#' @rdname attach_source
+#' @rdname attach_src
 #' @export
 get_src_env.character <- function(x) {
 
@@ -261,16 +258,16 @@ get_src_env.character <- function(x) {
   if (is.null(res)) {
     stop("Source `", x, "` not found in ", env, " environment. For ",
          "further information on how to set up a data source, refer to ",
-         "`?attach_source`.")
+         "`?attach_src`.")
   }
 
   res
 }
 
-#' @rdname attach_source
+#' @rdname attach_src
 #' @export
-get_src_env.default <- function(x) get_src_env(get_src_name(x))
+get_src_env.default <- function(x) get_src_env(src_name(x))
 
-#' @rdname attach_source
+#' @rdname attach_src
 #' @export
 get_src_env.data_src <- function(x) attr(x, "src_env")

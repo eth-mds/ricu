@@ -5,183 +5,251 @@
 #' created.
 #'
 #' @param name Name of the data source
-#' @param id_cols List passed to [new_id_cols()]
-#' @param tables List passed to [as_col_defaults()] and potentially to
-#' [as_table_spec()]
+#' @param id_cfg List passed to [new_id_cfg()]
+#' @param tables List passed to [as_col_cfg()] and potentially to
+#' [as_tbl_spec()]
 #' @param url String valued url used for data downloading (see
-#' [download_source()])
+#' [download_src()])
 #'
-#' @rdname src_config
+#' @rdname src_cfg
 #' @keywords internal
 #'
-new_src_config <- function(name, id_cols, tables, url = NULL) {
+#' @import vctrs
+#'
+new_src_cfg <- function(name, id_cfg, tables, url = NULL) {
 
-  assert_that(is.string(name), is.list(id_cols),
-              all(lgl_ply(tables, has_name, c("name", "defaults"))))
+  assert_that(is.string(name), null_or(url, is.string),
+              all_fun(id_cfg, has_name, c("id", "position")),
+              all_fun(tables, has_name, c("name", "defaults")))
 
-  if (!is_id_cols(id_cols)) {
-    id_cols <- new_id_cols(id_cols, name)
+  if (all_fun(tables, has_name, c("files", "cols"))) {
+    tbl_specs <- as_tbl_spec(tables, name)
   } else {
-    assert_that(identical(get_src_name(id_cols), name))
-  }
-
-  col_defaults <- as_col_defaults(tables)
-
-  if (all(lgl_ply(tables, has_name, c("files", "cols")))) {
-    table_specs <- as_table_spec(tables)
-  } else {
-    table_specs <- NULL
-  }
-
-  assert_that(is_id_cols(id_cols),
-              all_is(col_defaults, is_col_defaults),
-              null_or(table_specs, all_is, is_table_spec),
-              null_or(url, is.string))
-
-  structure(list(name = name, id_cols = id_cols, col_defaults = col_defaults,
-                 url = url, table_specs = table_specs),
-            class = c(paste0(name, "_cfg"), "src_config"))
-}
-
-#' @param x Object to test/coerce
-#'
-#' @rdname src_config
-#' @keywords internal
-#'
-is_src_config <- function(x) inherits(x, "src_config")
-
-#' @rdname src_config
-#' @keywords internal
-#'
-get_url <- function(x) {
-  assert_that(is_src_config(x))
-  x[["url"]]
-}
-
-#' @keywords internal
-#' @export
-get_src_name.src_config <- function(x) x[["name"]]
-
-#' ID columns
-#'
-#' A set of id columns corresponding to `patient`, `hadm` (hospital stay) and
-#' `icustay` (ICU stay) can be represented by an `id_cols` object.
-#'
-#' @param cfg List containing string valued column names
-#'
-#' @rdname id_cols
-#' @keywords internal
-#'
-new_id_cols <- function(cfg, src) {
-
-  cfg <- as.list(cfg)
-
-  assert_that(is_unique(names(cfg)))
-
-  start <- lapply(cfg, `[[`, "start")
-  end   <- lapply(cfg, `[[`, "end")
-  table <- lapply(cfg, `[[`, "table")
-
-  check <- ifelse(lgl_ply(start, not_null) | lgl_ply(end, not_null),
-                  lgl_ply(table, not_null),  lgl_ply(table, is.null))
-
-  assert_that(all(check))
-
-  if (not_null(src)) {
-    src <- paste0(src, "_ids")
+    tbl_specs <- NULL
   }
 
   structure(
-    Map(list, name = names(cfg), id = chr_ply(cfg, `[[`, "id"),
-        pos = int_ply(cfg, `[[`, "position"), start = start, end = end,
-        table = table),
-    class = c(src, "id_cols")
+    list(name = name, id_cfg = as_id_cfg(id_cfg, name),
+         col_cfg = as_col_cfg(tables, name), url = url, tbl_specs = tbl_specs),
+    class = c(paste0(name, "_cfg"), "src_cfg")
   )
 }
 
 #' @param x Object to test/coerce
 #'
-#' @rdname id_cols
+#' @rdname src_cfg
 #' @keywords internal
 #'
-is_id_cols <- function(x) inherits(x, "id_cols")
+is_src_cfg <- function(x) inherits(x, "src_cfg")
 
+#' @rdname src_cfg
+#' @keywords internal
 #' @export
-get_src_name.id_cols <- function(x) {
-  sub("_ids$", "", class(x)[1L])
+as_src_cfg <- function(x, ...) UseMethod("as_src_cfg", x)
+
+#' @rdname src_cfg
+#' @keywords internal
+#' @export
+as_src_cfg.src_cfg <- function(x, ...) {
+  warn_dots(...)
+  x
 }
 
-#' @rdname id_cols
+#' @rdname src_cfg
 #' @keywords internal
 #' @export
-#'
-get_id_cols <- function(x, ...) UseMethod("get_id_cols", x)
+as_src_cfg.list <- function(x, ...) {
+  assert_that(...length() == 0L, has_name(x, c("id_cfg", "tables")))
+  do.call(new_src_cfg, x[c("name", "id_cfg", "tables", "url")])
+}
 
-#' @rdname id_cols
-#' @keywords internal
+#' @export
+src_name.src_cfg <- function(x) x[["name"]]
+
+#' Load configuration for a data source
+#'
+#' For a data source to become available to ricu, a JSON base configuration
+#' file is required which is parsed into a `src_cfg` object (see
+#' [new_src_cfg()]).
+#'
+#' @param src (Optional) name(s) of data sources used for subsetting
+#' @param name String valued name of a config file which will be looked up in
+#' the default config directors
+#' @param file Full file name to load
+#'
 #' @export
 #'
-get_id_cols.id_cols <- function(x, id_name = NULL, ...) {
+read_src_cfg <- function(src = NULL, name = "data-sources", file = NULL) {
 
-  assert_that(...length() == 0L, null_or(id_name, is.string))
+  if (is.null(file)) {
 
-  if (is.null(id_name)) {
-    return(x)
+    cfg <- get_config(name)
+
+  } else {
+
+    assert_that(missing(name), file.exists(file))
+
+    cfg <- read_json(file)
   }
 
-  opt <- chr_ply(x, `[[`, "id")
-  ind <- id_name == opt
+  cfg_nme <- chr_xtr(cfg, "name")
 
-  assert_that(sum(ind) == 1L, msg = paste0("Cannot find exactly one of `",
-    id_name, "` among options ", paste0("`", opt, "`", collapse = ", "),
-    " for subsetting `id_cols`"))
+  if (is.null(src)) {
+    src <- cfg_nme
+  }
 
-  res <- x[which(ind)]
-  class(res) <- class(x)
+  assert_that(is.character(src), all(src %in% cfg_nme))
 
+  cfg <- cfg[cfg_nme %in% src]
+
+  lapply(cfg, as_src_cfg)
+}
+
+#' @rdname src_cfg
+#' @keywords internal
+#'
+src_url <- function(x) {
+  assert_that(is_src_cfg(x))
+  res <- x[["url"]]
+  assert_that(is.string(res), not_na(res))
   res
 }
 
-#' @rdname id_cols
-#' @keywords internal
-#' @export
+#' ID columns
 #'
-get_id_cols.src_config <- function(x, ...) get_id_cols(x[["id_cols"]], ...)
+#' A set of id columns corresponding to `patient`, `hadm` (hospital stay) and
+#' `icustay` (ICU stay) can be represented by an `id_cfg` object.
+#'
+#' @param cfg List containing string valued column names
+#'
+#' @rdname id_cfg
+#' @keywords internal
+#'
+new_id_cfg <- function(name, id, pos, start, end, table, src) {
 
-#' @rdname id_cols
-#' @keywords internal
-#' @export
-#'
-get_id_cols.data_src <- function(x, ...) get_id_cols(attr(x, "id_cols"), ...)
+  assert_that(is.character(name), is_unique(name), is.character(id),
+              is.integer(pos), is.character(start), is.character(end),
+              is.character(table), is.string(src))
 
-#' @rdname id_cols
-#' @keywords internal
-#' @export
-#'
-get_id_cols.default <- function(x, id_name = NULL, ...) {
-  get_id_cols(get_src_config(x, ...), id_name = id_name)
+  check <- ifelse(is.na(start) & is.na(end), is.na(table), !is.na(table))
+
+  assert_that(all(check), msg = paste0("Invalid ID config for IDs ",
+    concat(quote_bt(id[!check])), ": table name needed due to start/end args")
+  )
+
+  new_rcrd(list(name = name, id = id, pos = pos, start = start, end = end,
+                table = table), class = c(paste0(src, "_ids"), "id_cfg"))
 }
 
-id_positions <- function(x, id = NULL, ...) {
+#' @param x Object to test/coerce
+#'
+#' @rdname id_cfg
+#' @keywords internal
+#'
+is_id_cfg <- function(x) inherits(x, "id_cfg")
 
-  x <- get_id_cols(x, ...)
+#' @export
+vec_ptype_full.id_cfg <- function(x, ...) {
+  x <- sort(x)
+  op <- setNames(c(" <", " =", " >"), c("-1", "0", "1"))[
+    as.character(vec_compare(x[-length(x)], x[-1L]))
+  ]
+  paste0(class(x)[2L], "{", src_name(x), ": ",
+         paste0(names(x), c(op, ""), collapse = " "), "}")
+}
 
-  res <- setNames(int_ply(x, `[[`, "pos"), chr_ply(x, `[[`, "id"))
+#' @export
+vec_ptype_abbr.id_cfg <- function(x, ...) class(x)[2L]
 
-  if (is.null(id)) {
-    return(res)
+#' @export
+format.id_cfg <- function(x, ...) paste0("`", field(x, "id"), "`")
+
+#' @export
+vec_proxy_compare.id_cfg <- function(x, ...) field(x, "pos")
+
+#' @export
+names.id_cfg <- function(x) field(x, "name")
+
+#' @export
+as.list.id_cfg <- function(x, ...) {
+  warn_dots(...)
+  vec_chop(x)
+}
+
+#' @rdname id_cfg
+#' @keywords internal
+#' @export
+as_id_cfg <- function(x, ...) UseMethod("as_id_cfg", x)
+
+#' @rdname id_cfg
+#' @keywords internal
+#' @export
+as_id_cfg.list <- function(x, src, ...) {
+
+  warn_dots(...)
+
+  new_id_cfg(
+    name = names(x), id = chr_xtr(x, "id"), pos = int_xtr(x, "position"),
+    start = chr_xtr_null(x, "start"), end = chr_xtr_null(x, "end"),
+    table = chr_xtr_null(x, "table"), src = src
+  )
+}
+
+#' @rdname id_cfg
+#' @keywords internal
+#' @export
+as_id_cfg.id_cfg <- function(x, ...) {
+  warn_dots(...)
+  x
+}
+
+#' @rdname id_cfg
+#' @keywords internal
+#' @export
+#'
+as_id_cfg.src_cfg <- function(x, ...) {
+  warn_dots(...)
+  x[["id_cfg"]]
+}
+
+#' @rdname id_cfg
+#' @keywords internal
+#' @export
+#'
+as_id_cfg.data_src <- function(x, ...) {
+  warn_dots(...)
+  attr(x, "id_cfg")
+}
+
+#' @export
+src_name.id_cfg <- function(x) sub("_ids$", "", class(x)[1L])
+
+get_id_col <- function(x, id_type = NULL) {
+
+  x <- as_id_cfg(x)
+
+  if (is.null(id_type)) {
+    return(field(x, "id"))
   }
 
-  assert_that(all(id %in% names(res)))
+  assert_that(is.string(id_type), has_name(x, id_type))
 
-  res[id]
+  field(x[id_type], "id")
 }
 
-id_types <- function(x, ...) {
+select_ids <- function(x, ids = NULL) {
 
-  x <- get_id_cols(x, ...)
+  x <- as_id_cfg(x)
 
-  setNames(chr_ply(x, `[[`, "id"), chr_ply(x, `[[`, "name"))
+  if (is.null(ids)) {
+    return(x)
+  }
+
+  all_ids <- field(x, "id")
+
+  assert_that(is.character(ids), all(ids %in% all_ids))
+
+  x[all_ids %in% ids]
 }
 
 #' Default columns
@@ -197,93 +265,136 @@ id_types <- function(x, ...) {
 #'   `val_col`
 #'
 #' @param table Table name (string)
-#' @param cfg Named list containing column names
+#' @param defaults Named list containing column names
+#' @param times Character vector enumerating columns that contain time
+#' information
 #'
-#' @rdname col_defaults
+#' @rdname col_cfg
 #' @keywords internal
 #'
-new_col_defaults <- function(table, cfg) {
+new_col_cfg <- function(table, id, index, val, unit, time, src) {
 
-  opts <- c("id_col", "index_col", "val_col", "unit_col")
+  assert_that(is.character(table), is_unique(table), is.character(id),
+              is.character(index), is.character(val), is.character(unit),
+              all_null_or(time, is.character), is.string(src))
 
-  cfg <- as.list(cfg)
+  time[lgl_ply(time, is.null)] <- list(character(0L))
 
-  assert_that(is.list(cfg), all_is(cfg, is.string))
+  check <- is.na(index) | lgl_ply(Map(`%in%`, index, time), isTRUE)
 
-  if (length(cfg)) {
-    assert_that(!is.null(names(cfg)), all(names(cfg) %in% opts))
-  }
+  assert_that(all(check), msg = paste0("Index column(s) ",
+    paste0("`", index[!check], "`", collapse = ", "), " are not listed in ",
+    "the respective time column entries")
+  )
 
-  cfg <- cfg[opts]
-  names(cfg) <- opts
-
-  structure(list(table = table, cols = cfg), class = "col_defaults")
+  new_rcrd(list(table = table, id = id, index = index, val = val, unit = unit,
+                time = time), class = c(paste0(src, "_cols"), "col_cfg"))
 }
 
 #' @param x Object to test/coerce
 #'
-#' @rdname col_defaults
+#' @rdname col_cfg
 #' @keywords internal
 #'
-is_col_defaults <- function(x) inherits(x, "col_defaults")
+is_col_cfg <- function(x) inherits(x, "col_cfg")
 
-#' @rdname col_defaults
-#' @keywords internal
 #' @export
-#'
-as_col_defaults <- function(x) UseMethod("as_col_defaults", x)
-
-#' @rdname col_defaults
-#' @keywords internal
-#' @export
-#'
-as_col_defaults.col_defaults <- function(x) x
-
-#' @rdname col_defaults
-#' @keywords internal
-#' @export
-#'
-as_col_defaults.list <- function(x) {
-  lapply(x, do_call, new_col_defaults, c("name", "defaults"))
+vec_ptype_full.col_cfg <- function(x, ...) {
+  paste0(class(x)[2L], "{", src_name(x), ": ",
+         paste0(c("id", "index", "val", "unit", "time"), collapse = ", "), "}")
 }
 
-#' @rdname col_defaults
+#' @export
+vec_ptype_abbr.col_cfg <- function(x, ...) class(x)[2L]
+
+#' @export
+format.col_cfg <- function(x, ...) {
+
+  cnt <- function(y) int_ply(field(x, y), length)
+
+  apply(
+    cbind(cnt("id"), cnt("index"), cnt("val"), cnt("unit"), cnt("time")), 1L,
+    function(row) paste0("[", paste0(row, collapse = ", "), "]")
+  )
+}
+
+#' @export
+names.col_cfg <- function(x) field(x, "table")
+
+#' @export
+as.list.col_cfg <- function(x, ...) {
+  warn_dots(...)
+  vec_chop(x)
+}
+
+#' @export
+src_name.col_cfg <- function(x) sub("_cols$", "", class(x)[1L])
+
+#' @rdname col_cfg
 #' @keywords internal
 #' @export
 #'
-get_col_defaults <- function(x, ...) UseMethod("get_col_defaults", x)
+as_col_cfg <- function(x, ...) UseMethod("as_col_cfg", x)
 
-#' @rdname col_defaults
+#' @rdname col_cfg
 #' @keywords internal
 #' @export
 #'
-get_col_defaults.list <- function(x, table = NULL, ...) {
+as_col_cfg.col_cfg <- function(x, ...) {
+  warn_dots(...)
+  x
+}
 
-  assert_that(...length() == 0L, all_fun(x, is_col_defaults))
+#' @rdname col_cfg
+#' @keywords internal
+#' @export
+#'
+as_col_cfg.list <- function(x, src, ...) {
 
-  if (is.null(table)) {
-    return(x)
+  assert_that(all_fun(x, has_name, "defaults"), ...length() == 0L)
+
+  def <- lapply(x, `[[`, "defaults")
+
+  new_col_cfg(
+    table = chr_xtr(x, "name"), id = chr_xtr_null(def, "id_col"),
+    index = chr_xtr_null(def, "index_col"), val = chr_xtr_null(def, "val_col"),
+    unit = chr_xtr_null(def, "unit_col"), time = lst_xtr(x, "time_cols"),
+    src = src
+  )
+}
+
+#' @rdname col_cfg
+#' @keywords internal
+#' @export
+#'
+as_col_cfg.src_cfg <- function(x, ...) {
+  warn_dots(...)
+  x[["col_cfg"]]
+}
+
+#' @rdname col_cfg
+#' @keywords internal
+#' @export
+#'
+as_col_cfg.data_src <- function(x, ...) {
+  warn_dots(...)
+  attr(x, "col_cfg")
+}
+
+get_default_cols <- function(x, fields = c("id", "index", "val", "unit",
+                                           "time")) {
+
+  do_one <- function(i) {
+    res <- field(x, i)
+    if (is.na(res)) NULL else res
   }
 
-  is.string(table)
+  x <- as_col_cfg(x)
 
-  opt <- chr_ply(x, `[[`, "table")
-  ind <- table == opt
+  assert_that(length(x) == 1L, is.character(fields), length(fields) > 0L,
+              all(fields %in% fields(x)))
 
-  assert_that(sum(ind) == 1L, msg = paste0("Cannot find exactly one of `",
-    table, "` among options ", paste0("`", opt, "`", collapse = ", "),
-    " for subsetting `col_defaults`")
-  )
-
-  x[[which(ind)]]
-}
-
-#' @rdname col_defaults
-#' @keywords internal
-#' @export
-#'
-get_col_defaults.src_config <- function(x, ...) {
-  get_col_defaults(x[["col_defaults"]], ...)
+  setNames(lapply(fields, do_one), paste0(fields, "_col"))
 }
 
 #' Table specification
@@ -304,149 +415,132 @@ get_col_defaults.src_config <- function(x, ...) {
 #' vector of numeric values that are passed as `vec` argument to
 #' `base::findInterval()`
 #'
-#' @rdname table_spec
+#' @rdname tbl_spec
 #' @keywords internal
 #'
-new_table_spec <- function(table, files, cols, nrow = NULL,
-                           partitioning = NULL) {
+new_tbl_spec <- function(table, files, cols, nrow, partitioning, src) {
 
-  col_spec <- function(name, col, spec, ...) {
+  col_spc <- function(name, col, spec, ...) {
     do.call(call, c(list(spec), list(...)))
   }
 
-  tbl_spec <- function(...) substitute(cols(...))
+  tbl_spc <- function(...) substitute(cols(...))
 
-  assert_that(is.string(table), is.character(files), length(files) > 0L,
-              null_or(nrow, is.count), is.list(cols),
-              null_or(partitioning, is.list),
-              null_or(partitioning, has_name, c("col", "breaks")))
+  assert_that(is.character(table), all_fun(files, is.character),
+              is.integer(nrow), all_fun(cols, is.list),
+              all_fun(cols, all_fun, has_name, c("name", "col", "spec")),
+              all_fun(partitioning, null_or, is.list),
+              all_fun(partitioning, null_or, has_name, c("col", "breaks")))
 
-  spec <- lapply(cols, do_call, col_spec)
-  names(spec) <- chr_ply(cols, `[[`, "col")
+  spec <- lapply(cols, lapply, do_call, col_spc)
+  spec <- Map(`names<-`, spec, lapply(cols, chr_xtr, "col"))
 
-  spec <- do.call(tbl_spec, as.list(spec))
-  spec <- eval(spec, envir = asNamespace("readr"))
+  spec <- lapply(spec, do_call, tbl_spc)
+  spec <- lapply(spec, eval, envir = asNamespace("readr"))
 
-  cols <- chr_ply(cols, `[[`, "name")
+  cols <- lapply(cols, chr_xtr, "name")
 
-  structure(list(table = table, files = files, cols = cols, spec = spec,
+  new_rcrd(list(table = table, files = files, cols = cols, spec = spec,
                  nrow = nrow, partitioning = partitioning),
-            class = "table_spec")
+            class = c(paste0(src, "_spec"), "tbl_spec"))
 }
 
 #' @param x Object to test/coerce
 #'
-#' @rdname table_spec
+#' @rdname tbl_spec
 #' @keywords internal
 #'
-is_table_spec <- function(x) inherits(x, "table_spec")
+is_tbl_spec <- function(x) inherits(x, "tbl_spec")
 
-#' @rdname table_spec
-#' @keywords internal
 #' @export
-#'
-as_table_spec <- function(x) UseMethod("as_table_spec", x)
-
-#' @rdname table_spec
-#' @keywords internal
-#' @export
-#'
-as_table_spec.table_spec <- function(x) x
-
-#' @rdname table_spec
-#' @keywords internal
-#' @export
-#'
-as_table_spec.list <- function(x) {
-  lapply(x, do_call, new_table_spec, c("name", "files", "cols", "num_rows",
-                                       "partitioning"))
+vec_ptype_full.tbl_spec <- function(x, ...) {
+  paste0(class(x)[2L], "{", src_name(x), ": ",
+         paste("rows", times(), "cols"), "}")
 }
 
-#' @rdname table_spec
-#' @keywords internal
-#'
-get_table_specs <- function(x) {
-  assert_that(is_src_config(x))
-  x[["table_specs"]]
+#' @export
+vec_ptype_abbr.tbl_spec <- function(x, ...) class(x)[2L]
+
+#' @export
+format.tbl_spec <- function(x, ...) {
+
+  n_col <- big_mark(int_ply(field(x, "cols"), length))
+  n_row <- big_mark(n_rows(x))
+
+  paste0("[", n_row, " ", times(), " ", n_col, "]")
 }
 
-#' @rdname table_spec
-#' @keywords internal
 #' @export
-#'
-table_names <- function(x) UseMethod("table_names", x)
+names.tbl_spec <- function(x) field(x, "table")
 
-#' @rdname table_spec
-#' @keywords internal
 #' @export
-#'
-table_names.src_config <- function(x) table_names(get_table_specs(x))
-
-#' @rdname table_spec
-#' @keywords internal
-#' @export
-#'
-table_names.list <- function(x) chr_ply(x, table_names)
-
-#' @rdname table_spec
-#' @keywords internal
-#' @export
-#'
-table_names.table_spec <- function(x) x[["table"]]
-
-#' @rdname table_spec
-#' @keywords internal
-#' @export
-#'
-file_names <- function(x) UseMethod("file_names", x)
-
-#' @rdname table_spec
-#' @keywords internal
-#' @export
-#'
-file_names.src_config <- function(x) file_names(get_table_specs(x))
-
-#' @rdname table_spec
-#' @keywords internal
-#' @export
-#'
-file_names.list <- function(x) lapply(x, file_names)
-
-#' @rdname table_spec
-#' @keywords internal
-#' @export
-#'
-file_names.table_spec <- function(x) x[["files"]]
-
-#' @rdname table_spec
-#' @keywords internal
-#' @export
-#'
-n_partitions <- function(x) UseMethod("n_partitions", x)
-
-#' @rdname table_spec
-#' @keywords internal
-#' @export
-#'
-n_partitions.src_config <- function(x) n_partitions(get_table_specs(x))
-
-#' @rdname table_spec
-#' @keywords internal
-#' @export
-#'
-n_partitions.list <- function(x) int_ply(x, n_partitions)
-
-#' @rdname table_spec
-#' @keywords internal
-#' @export
-#'
-n_partitions.table_spec <- function(x) {
-  abs(length(x[["partitioning"]][["breaks"]]) - 1L)
+as.list.tbl_spec <- function(x, ...) {
+  warn_dots(...)
+  vec_chop(x)
 }
 
-#' @rdname table_spec
+#' @export
+src_name.tbl_spec <- function(x) sub("_spec$", "", class(x)[1L])
+
+#' @rdname tbl_spec
 #' @keywords internal
+#' @export
 #'
+as_tbl_spec <- function(x, ...) UseMethod("as_tbl_spec", x)
+
+#' @rdname tbl_spec
+#' @keywords internal
+#' @export
+#'
+as_tbl_spec.tbl_spec <- function(x, ...) {
+  warn_dots(...)
+  x
+}
+
+#' @rdname tbl_spec
+#' @keywords internal
+#' @export
+#'
+as_tbl_spec.list <- function(x, src, ...) {
+
+  assert_that(all_fun(x, has_name, c("files", "cols")), ...length() == 0L)
+
+  new_tbl_spec(
+    table = chr_xtr(x, "name"), files = lst_xtr(x, "files"),
+    cols = lst_xtr(x, "cols"), nrow = int_xtr(x, "num_rows"),
+    partitioning = lst_xtr(x, "partitioning"), src = src
+  )
+}
+
+#' @rdname tbl_spec
+#' @keywords internal
+#' @export
+#'
+as_tbl_spec.src_cfg <- function(x, ...) {
+  warn_dots(...)
+  field(x, "tbl_specs")
+}
+
+n_rows <- function(x) {
+  assert_that(is_tbl_spec(x))
+  field(x, "nrow")
+}
+
+file_names <- function(x) {
+  assert_that(is_tbl_spec(x))
+  field(x, "files")
+}
+
+file_name <- function(x) {
+  assert_that(length(x) == 1L)
+  file_names(x)[[1L]]
+}
+
+n_partitions <- function(x) {
+  assert_that(is_tbl_spec(x))
+  abs(lengths(lapply(field(x, "partitioning"), `[[`, "breaks")) - 1L)
+}
+
 fst_names <- function(x) {
 
   to_filenames <- function(tbl_name, n_part) {
@@ -458,66 +552,49 @@ fst_names <- function(x) {
     paste0(tbl_name, ".fst")
   }
 
-  if (is_table_spec(x)) {
-    to_filenames(table_names(x), n_partitions(x))
-  } else {
-    Map(to_filenames, table_names(x), n_partitions(x))
-  }
+  Map(to_filenames, names(x), n_partitions(x))
 }
 
-#' @rdname table_spec
-#' @keywords internal
-#'
-get_col_spec <- function(x) {
-
-  assert_that(is_table_spec(x))
-
-  x[["spec"]]
+fst_name <- function(x) {
+  assert_that(length(x) == 1L)
+  fst_names(x)[[1L]]
 }
 
-#' @rdname table_spec
-#' @keywords internal
-#'
-check_n_rows <- function(x, comparison) {
-
-  assert_that(is_table_spec(x), is.count(comparison))
-
-  nrow <- x[["nrow"]]
-
-  if (!is.null(nrow)) {
-    assert_that(are_equal(nrow, comparison))
-  }
-
-  comparison
+col_spec <- function(x) {
+  assert_that(is_tbl_spec(x), length(x) == 1L)
+  field(x, "spec")[[1L]]
 }
 
-#' @rdname table_spec
-#' @keywords internal
-#'
-get_col_names <- function(x) {
+check_n_row <- function(x, n_row) {
 
-  assert_that(is_table_spec(x))
+  assert_that(is_tbl_spec(x), length(x) == 1L, is.count(n_row))
 
-  res <- x[["cols"]]
-  names(res) <- names(get_col_spec(x)[["cols"]])
+  expec <- n_rows(x)
 
-  res
+  assert_that(isTRUE(all.equal(expec, n_row)), msg = paste0("Table ",
+    quote_bt(names(x)), " has ", big_mark(n_row), " instead of ",
+    big_mark(expec), " rows")
+  )
+
+  TRUE
 }
 
-#' @rdname table_spec
-#' @keywords internal
-#'
-get_part_fun <- function(x, orig_names = FALSE) {
+col_name <- function(x) {
+  setNames(field(x, "cols")[[1L]], names(col_spec(x)[["cols"]]))
+}
 
-  assert_that(is_table_spec(x), is.flag(orig_names))
+partition_fun <- function(x, orig_names = FALSE) {
 
-  part <- x[["partitioning"]]
+  assert_that(is_tbl_spec(x), length(x) == 1L, is.flag(orig_names),
+              n_partitions(x) > 1L)
+
+  part <- field(x, "partitioning")[[1L]]
 
   col <- part[["col"]]
   breaks <- force(part[["breaks"]])
 
   if (orig_names) {
-    nms <- get_col_names(x)
+    nms <- col_name(x)
     col <- names(nms[nms == col])
   }
 
@@ -528,103 +605,47 @@ get_part_fun <- function(x, orig_names = FALSE) {
   }
 }
 
-#' Load configuration for a data source
-#'
-#' For a data source to become available to ricu, a JSON base configuration
-#' file is required which is parsed into a `src_config` object (see
-#' [new_src_config()]).
-#'
-#' @param x Object used to determine the data source
-#' @param ... Generic consistency/passed on to further `get_src_config()` calls
-#'
-#' @export
-#'
-get_src_config <- function(x, ...) UseMethod("get_src_config", x)
-
-#' @rdname get_src_config
-#'
-#' @export
-#'
-get_src_config.src_config <- function(x, ...) x
-
-#' @param name String valued name of a config file which will be looked up in
-#' the default config directors
-#' @param file Full file name to load
-#'
-#' @rdname get_src_config
-#'
-#' @export
-get_src_config.character <- function(x, name = "data-sources",
-                                     file = NULL, ...) {
-
-  x <- unique(x)
-
-  assert_that(is.string(x))
-
-  if (is.null(file)) {
-
-    cfg <- get_config(name)
-
-  } else {
-
-    assert_that(missing(name), file.exists(file))
-
-    cfg <- read_json(file)
-  }
-
-  hit <- which(x == chr_ply(cfg, `[[`, "name"))
-
-  assert_that(is.count(hit))
-
-  cfg <- cfg[[hit]]
-
-  do.call(new_src_config, cfg[c("name", "id_cols", "tables", "url")])
-}
-
-#' @rdname get_src_config
-#'
-#' @export
-#'
-get_src_config.default <- function(x, ...) get_src_config(get_src_name(x), ...)
-
-get_data_fun <- function(...) get_src_config(...)[["data_fun"]]
-
 #' Get default columns
 #'
-#' For a table, query the default columns as specified by an `id_cols`
-#' ([new_id_cols()]) or `col_defaults` ([new_col_defaults()]) object.
+#' For a table, query the default columns as specified by an `id_cfg`
+#' ([new_id_cfg()]) or `col_cfg` ([new_col_cfg()]) object.
 #'
 #' @param x Object used for dispatch
-#' @param type The column type, e.g. `id`, `index`, `unit`, `value`
+#' @param ... Generic consistency
 #'
 #' @rdname default_col
 #' @export
 #'
-default_col <- function(x, type) UseMethod("default_col", x)
+default_col <- function(x, ...) UseMethod("default_col", x)
 
+#' @param type The column type, e.g. `id`, `index`, `unit`, `value`
+#' @rdname default_col
 #' @export
-default_col.data_src <- function(x, type = "id") {
+default_col.col_cfg <- function(x, type = "id", ...) {
+  warn_dots(...)
+  field(x, type)
+}
+
+#' @rdname default_col
+#' @export
+default_col.id_cfg <- function(x, ...) {
+  warn_dots(...)
+  field(max(x), "id")
+}
+
+#' @rdname default_col
+#' @export
+default_col.data_src <- function(x, type = "id", ...) {
+
+  warn_dots(...)
 
   assert_that(is.string(type))
 
-  def <- attr(x, "defaults")[["cols"]]
-  res <- def[[paste0(type, "_col")]]
+  res <- default_col(as_col_cfg(x), type)
 
-  if (identical(type, "id") && is.null(res)) {
-    opt <- get_id_cols(x)
-    res <- opt[[which.max(int_ply(opt, `[[`, "pos"))]][["id"]]
+  if (identical(type, "id") && anyNA(res)) {
+    res[is.na(res)] <- default_col(as_id_cfg(x))
   }
-
-  assert_that(is.string(res))
 
   res
 }
-
-#' @rdname get_src_config
-#' @export
-get_aux_env <- function(x) UseMethod("get_aux_env", x)
-
-#' @rdname get_src_config
-#' @export
-get_aux_env.data_src <- function(x) attr(x, "aux_env")
-

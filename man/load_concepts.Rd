@@ -31,7 +31,6 @@ load_concepts(x, ...)
   id_type = "icustay",
   patient_ids = NULL,
   interval = hours(1L),
-  cfg = get_src_config(x),
   verbose = TRUE,
   ...
 )
@@ -72,8 +71,6 @@ with}
 
 \item{interval}{The time interval used to discretize time stamps with,
 specified as \code{\link[base:difftime]{base::difftime()}} object}
-
-\item{cfg}{Deprecated}
 
 \item{verbose}{Logical flag for turning off reporting of unit/out of range
 messages}

@@ -2,7 +2,7 @@
 % Please edit documentation in R/data-utils.R
 \name{id_origin}
 \alias{id_origin}
-\alias{id_origin.id_cols}
+\alias{id_origin.id_cfg}
 \alias{id_origin.eicu_ids}
 \alias{id_origin.eicu_demo_ids}
 \alias{id_origin.default}
@@ -17,7 +17,7 @@
 \usage{
 id_origin(x, ...)
 
-\method{id_origin}{id_cols}(x, id, env = get_src_env(x), ...)
+\method{id_origin}{id_cfg}(x, id, env = get_src_env(x), ...)
 
 \method{id_origin}{eicu_ids}(x, ...)
 

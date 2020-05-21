@@ -328,6 +328,21 @@ cat_line <- function(...) {
   cat(paste0(line, "\n"), sep = "")
 }
 
+big_mark <- function(x, ...) {
+  mark <- if (identical(getOption("OutDec"), ",")) "." else ","
+  formatC(x, big.mark = mark, format = "d", ...)
+}
+
+times <- function(fancy = l10n_info()$`UTF-8`) if (fancy) "\u00d7" else "x"
+
+ellipsis <- function(fancy = l10n_info()$`UTF-8`) {
+  if (fancy) "\u2026" else "..."
+}
+
+quote_bt <- function(x) encodeString(x, quote = "`")
+
+concat <- function(x) paste(x, collapse = ", ")
+
 str_in_vec_once <- function(str, vec) identical(sum(vec %in% str), 1L)
 
 null_or_subs <- function(x, where = parent.frame(1L)) {
@@ -418,9 +433,89 @@ dbl_ply <- function(x, fun, ..., length = 1L, use_names = FALSE) {
   vapply(x, fun, double(length), ..., USE.NAMES = use_names)
 }
 
+lst_xtr <- function(x, i) lapply(x, `[[`, i)
+
+chr_xtr <- function(x, i, length = 1L) chr_ply(x, `[[`, i, length = length)
+
+chr_xtr_null <- function(x, i, length = 1L) {
+  chr_ply(x, xtr_null, i, rep(NA_character_, length), length = length)
+}
+
+lgl_xtr <- function(x, i, length = 1L) lgl_ply(x, `[[`, i, length = length)
+
+lgl_xtr_null <- function(x, i, length = 1L) {
+  lgl_ply(x, xtr_null, i, rep(NA, length), length = length)
+}
+
+int_xtr <- function(x, i, length = 1L) int_ply(x, `[[`, i, length = length)
+
+int_xtr_null <- function(x, i, length = 1L) {
+  int_ply(x, xtr_null, i, rep(NA_integer_, length), length = length)
+}
+
+dbl_xtr <- function(x, i, length = 1L) dbl_ply(x, `[[`, i, length = length)
+
+dbl_xtr_null <- function(x, i, length = 1L) {
+  dbl_ply(x, xtr_null, i, rep(NA_real_, length), length = length)
+}
+
+xtr_null <- function(x, i, null_val) {
+  res <- x[[i]]
+  if (is.null(res)) null_val else res
+}
+
 map <- function(f, ...) Map(f, ..., USE.NAMES = FALSE)
 
 do_call <- function(x, fun, args = NULL) {
   if (is.null(args)) do.call(fun, x)
   else do.call(fun, unname(x[args]))
+}
+
+progr_init <- function(len = NULL, msg = "loading", ...) {
+
+  if (interactive() && is_pkg_available("progress") && length(len) > 1L) {
+
+    res <- progress::progress_bar$new(format = ":what [:bar] :percent",
+                                      total = len, ...)
+
+    if (not_null(msg)) {
+      res$message(msg)
+    }
+
+  } else {
+
+    message(msg)
+    res <- NULL
+  }
+
+  res
+}
+
+progr_iter <- function(name, pb = NULL, len = 1L) {
+
+  assert_that(is.string(name))
+
+  if (is.null(pb)) {
+
+    message("  * `", name, "`")
+
+  } else {
+
+    if (nchar(name) > 15L) {
+      name <- paste0(substr(name, 1L, 15L - nchar(ellipsis())), ellipsis())
+    } else {
+      name <- sprintf("%-15s", name)
+    }
+
+    pb$tick(len = len, tokens = list(what = name))
+  }
+}
+
+warn_dots <- function(...) {
+
+  if (...length() > 0L) {
+    warning("Not expecting any arguments passed as `...`")
+  }
+
+  invisible(NULL)
 }

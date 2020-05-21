@@ -64,11 +64,10 @@
 #' Configurations for the MIMIC-III and eICU databases are available in
 #' `extdata/config` as JSON files and can be read in using [get_config()].
 #'
-#' @param x Object of which a [get_src_config()] method is defined
+#' @param x Object specifying the source configuration
 #' @param dir The directory where the data was downloaded to (see
-#' [download_source()]).
-#' @param cleanup Logical flag, if `TRUE` the original CSV data is deleted
-#' after successful import.
+#' [download_src()]).
+#' @param ... Passed to downstream methods/generic consistency
 #'
 #' @examples
 #' \dontrun{
@@ -76,61 +75,112 @@
 #' dir <- tempdir()
 #' list.files(dir)
 #'
-#' download_source("mimic_demo", dir)
+#' download_src("mimic_demo", dir)
 #' list.files(dir)
 #'
-#' import_source("mimic_demo", dir)
+#' import_src("mimic_demo", dir)
 #' list.files(dir)
 #'
 #' unlink(dir, recursive = TRUE)
 #'
 #' }
 #'
+#' @rdname import
 #' @export
 #'
-import_source <- function(x, dir = NULL, cleanup = TRUE) {
+import_src <- function(x, ...) UseMethod("import_src", x)
 
-  x <- get_src_config(x)
+#' @param dir The directory where the data was downloaded to (see
+#' [download_src()]).
+#' @param force Logical flag indicating whether to overwrite already imported
+#' tables
+#'
+#' @rdname import
+#' @export
+import_src.src_cfg <- function(x, dir = src_data_dir(x), force = FALSE, ...) {
 
-  if (is.null(dir)) {
-    dir <- source_data_dir(x)
+  all_avail <- function(y) all(file.exists(file.path(dir, y)))
+
+  assert_that(is.dir(dir), is.flag(force))
+
+  tbl <- as_tbl_spec(x)
+
+  todo <- lgl_ply(file_names(tbl), all_avail)
+  done <- lgl_ply(fst_names(tbl), all_avail)
+  miss <- !done & !todo
+  skip <- done & todo
+
+  if (any(miss)) {
+    warning("Tables ", concat(quote_bt(names(tbl)[miss])), " are required ",
+            "but unavailable")
   }
 
-  assert_that(is.dir(dir), is.flag(cleanup))
-
-  message("importing `", get_src_name(x), "`")
-
-  files <- file.path(dir, file_names(x))
-  avail <- lgl_ply(files, all_is, file.exists)
-
-  if (any(!avail)) {
-
-    imported <- Map(file.path, dir, fst_names(x))
-    imported <- lgl_ply(imported, all_is, file.exists)
-
-    missing <- !avail & !imported
-
-    if (any(missing)) {
-      message("skipping unavailable files for tables:\n  ",
-              paste("`", table_names(x)[missing], "`", collapse = "\n  "))
-    }
+  if (!force && any(skip)) {
+    message("Tables ", concat(quote_bt(names(tbl)[skip])), " have already ",
+            "been imported and will be skipped")
+    todo <- todo & !skip
   }
 
-  assert_that(sum(avail) > 0L)
+  if (!any(todo)) {
+    message("All required tables have already been imported")
+    return(invisible(NULL))
+  }
 
-  for (tbl in get_table_specs(x)) {
+  tbl <- tbl[todo]
+  pba <- progr_init(sum(n_rows(tbl)),
+    paste0("Importing ", length(tbl), " tables for ", quote_bt(src_name(x)))
+  )
 
-    if (n_partitions(tbl) > 1L) {
-      partition_table(tbl, dir, cleanup = cleanup)
-    } else {
-      csv_to_fst(tbl, dir, cleanup = cleanup)
-    }
+  for(table in as.list(tbl)) {
+    import_tbl(table, dir = dir, progress = pba, ...)
+  }
+
+  if (!(is.null(pba) || pba$finished)) {
+    pba$update(1)
+    pba$terminate()
   }
 
   invisible(NULL)
 }
 
-merge_fst_chunks <- function(src_dir, targ_dir, cols) {
+#' @inheritParams read_src_cfg
+#' @rdname import
+#' @export
+import_src.character <- function(x, name = "data-sources", file = NULL,
+                                 ...) {
+
+  for (cfg in read_src_cfg(x, name, file)) {
+    import_src(cfg, ...)
+  }
+
+  invisible(NULL)
+}
+
+#' @param progress Either `NULL` or a progress bar as created by
+#' [progress::progress_bar()]
+#' @param cleanup Logical flag, if `TRUE` the original CSV data is deleted
+#' after successful import.
+#'
+#' @rdname import
+#' @export
+import_tbl <- function(x, ...) UseMethod("import_tbl", x)
+
+#' @rdname import
+#' @export
+import_tbl.tbl_spec <- function(x, dir = src_data_dir(x), progress = NULL,
+                                cleanup = TRUE, ...) {
+
+  assert_that(is.dir(dir), is.flag(cleanup), ...length() == 0L,
+              length(x) == 1L)
+
+  if (n_partitions(x) > 1L) {
+    partition_table(x, dir, progress, cleanup)
+  } else {
+    csv_to_fst(x, dir, progress, cleanup)
+  }
+}
+
+merge_fst_chunks <- function(src_dir, targ_dir, cols, prog, nme) {
 
   files <- list.files(src_dir, full.names = TRUE)
 
@@ -139,19 +189,22 @@ merge_fst_chunks <- function(src_dir, targ_dir, cols) {
   )
 
   dat <- lapply(files[sort_ind], fst::read_fst, as.data.table = TRUE)
-  dat <- data.table::rbindlist(dat)
-  dat <- data.table::setnames(dat, names(cols), cols)
+  dat <- rbindlist(dat)
+  dat <- setnames(dat, names(cols), cols)
 
-  new_file <- file.path(ensure_dirs(targ_dir),
-    paste0(sub("part_", "", basename(src_dir)), ".fst")
-  )
+  part_no  <- sub("part_", "", basename(src_dir))
+  new_file <- file.path(ensure_dirs(targ_dir), paste0(part_no, ".fst"))
 
   fst::write_fst(dat, new_file, compress = 100L)
+
+  progr_iter(paste(nme, "part", part_no), prog, floor(nrow(dat) / 2))
 
   invisible(NULL)
 }
 
-split_write <- function(x, part_fun, dir, chunk_no) {
+split_write <- function(x, part_fun, dir, chunk_no, prog, nme) {
+
+  n_row <- nrow(x)
 
   x <- split(x, part_fun(x))
 
@@ -162,83 +215,84 @@ split_write <- function(x, part_fun, dir, chunk_no) {
 
   Map(fst::write_fst, x, tmp_nme)
 
+  progr_iter(paste(nme, "chunk", chunk_no), prog, floor(n_row / 2))
+
   invisible(NULL)
 }
 
-partition_table <- function(cfg, dir, cleanup = TRUE, chunk_length = 10 ^ 7) {
+partition_table <- function(x, dir, progress = NULL, cleanup = TRUE,
+                            chunk_length = 10 ^ 7) {
 
-  assert_that(is_table_spec(cfg), n_partitions(cfg) > 1L)
-
-  message("splitting `", table_names(cfg), "` into ", n_partitions(cfg),
-          " partitions")
+  assert_that(length(x) == 1L, n_partitions(x) > 1L)
 
   tempdir <- ensure_dirs(tempfile())
   on.exit(unlink(tempdir, recursive = TRUE))
 
-  spec <- get_col_spec(cfg)
-  pfun <- get_part_fun(cfg, orig_names = TRUE)
-  file <- file.path(dir, file_names(cfg))
+  spec <- col_spec(x)
+  pfun <- partition_fun(x, orig_names = TRUE)
+  file <- file.path(dir, file_name(x))
+  name <- names(x)
 
   if (length(file) == 1L) {
 
     callback <- function(x, pos, ...) {
-      split_write(x, pfun, tempdir, ((pos - 1L) / chunk_length) + 1L)
+      split_write(x, pfun, tempdir, ((pos - 1L) / chunk_length) + 1L,
+                  progress, name)
     }
 
-    readr::read_csv_chunked(file, callback, chunk_length, col_types = spec)
+    readr::read_csv_chunked(file, callback, chunk_length, col_types = spec,
+                            progress = FALSE)
 
   } else {
 
     for (i in seq_along(file)) {
 
-      dat <- readr::read_csv(file[i], col_types = spec)
+      dat <- readr::read_csv(file[i], col_types = spec, progress = FALSE)
       readr::stop_for_problems(dat)
 
-      split_write(dat, pfun, tempdir, i)
+      split_write(dat, pfun, tempdir, i, progress, name)
     }
   }
 
-  col_names <- get_col_names(cfg)
-  targ_dir  <- file.path(dir, table_names(cfg))
+  col_names <- col_name(x)
+  targ_dir  <- file.path(dir, names(x))
 
   for (src_dir in list.files(tempdir, full.names = TRUE)) {
-    merge_fst_chunks(src_dir, targ_dir, col_names)
+    merge_fst_chunks(src_dir, targ_dir, col_names, progress, name)
   }
 
-  fst_tables <- lapply(file.path(dir, fst_names(cfg)), fst::fst)
+  fst_tables <- lapply(file.path(dir, fst_name(x)), fst::fst)
   total_rows <- sum(dbl_ply(fst_tables, nrow))
 
-  message("successfully imported ", check_n_rows(cfg, total_rows),
-          " rows for table `", table_names(cfg), "`")
-
-  if (cleanup) {
+  if (check_n_row(x, total_rows) && cleanup) {
     unlink(file)
   }
 
   invisible(NULL)
 }
 
-csv_to_fst <- function(cfg, dir, cleanup = TRUE) {
+csv_to_fst <- function(x, dir, progress = NULL, cleanup = TRUE) {
 
-  assert_that(is_table_spec(cfg), n_partitions(cfg) == 1L)
+  assert_that(length(x) == 1L, n_partitions(x) == 1L)
 
-  file <- file.path(dir, file_names(cfg))
-  dat  <- readr::read_csv(file, col_types = get_col_spec(cfg))
+  file <- file.path(dir, file_name(x))
+  dat  <- readr::read_csv(file, col_types = col_spec(x), progress = FALSE)
 
   readr::stop_for_problems(dat)
 
-  cols <- get_col_names(cfg)
-  dat  <- data.table::setnames(dat, names(cols), cols)
-  res  <- fst_names(cfg)
+  cols <- col_name(x)
+  dat  <- setnames(dat, names(cols), cols)
+  res  <- file.path(dir, fst_name(x))
 
   fst::write_fst(dat, res, compress = 100L)
 
-  message("successfully imported ", check_n_rows(cfg, nrow(fst::fst(res))),
-          " rows for table `", table_names(cfg), "`")
+  n_row <- nrow(fst::fst(res))
 
-  if (cleanup) {
+  if (check_n_row(x, n_row) && cleanup) {
     unlink(file)
   }
+
+  progr_iter(names(x), pb = progress, len = n_row)
 
   invisible(NULL)
 }

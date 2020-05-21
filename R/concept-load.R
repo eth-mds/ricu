@@ -74,10 +74,11 @@ load_concepts.concept <- function(x, aggregate = NA_character_,
 
   aggregate <- rep_arg(aggregate, names(x))
 
-  pb <- progr_init(length(x))
+  len <- length(x)
+  pba <- progr_init(len, paste("Loading ", len, " concepts"))
 
   res <- Map(do_one, x, aggregate[names(x)],
-             MoreArgs = c(list(progress_bar = pb, narm = na_rm), list(...)))
+             MoreArgs = c(list(progress_bar = pba, narm = na_rm), list(...)))
 
   if (!merge_data) {
     return(res)
@@ -104,7 +105,6 @@ load_concepts.concept <- function(x, aggregate = NA_character_,
 #' with
 #' @param verbose Logical flag for turning off reporting of unit/out of range
 #' messages
-#' @param cfg Deprecated
 #' @param interval The time interval used to discretize time stamps with,
 #' specified as [base::difftime()] object
 #'
@@ -113,13 +113,12 @@ load_concepts.concept <- function(x, aggregate = NA_character_,
 #'
 load_concepts.item <- function(x, unit = NULL, min = NULL, max = NULL,
                                id_type = "icustay", patient_ids = NULL,
-                               interval = hours(1L), cfg = get_src_config(x),
-                               verbose = TRUE, ...) {
+                               interval = hours(1L), verbose = TRUE, ...) {
 
   do_one <- function(x, unt, mi, ma) {
 
     fun <- get(x[["load_fun"]], mode = "function")
-    res <- fun(as_item(x), id_type, patient_ids, interval, cfg)
+    res <- fun(as_item(x), id_type, patient_ids, interval)
 
     assert_that(is_icu_tbl(res))
 
@@ -127,7 +126,7 @@ load_concepts.item <- function(x, unit = NULL, min = NULL, max = NULL,
     tbl <- x[["table"]]
 
     if (is.null(uco) && not_null(tbl)) {
-      uco <- get_col_defaults(cfg, table = tbl)[["cols"]][["unit_col"]]
+      uco <- default_col(get_data_src(tbl, x[["source"]]), "unit")
     }
 
     res <- range_check(res, setdiff(data_cols(res), uco), mi, ma, verbose)
@@ -141,13 +140,17 @@ load_concepts.item <- function(x, unit = NULL, min = NULL, max = NULL,
 
   assert_that(is.flag(verbose))
 
-  if (...length()) {
-    warning("not expecting any arguments passed as `...`")
-  }
+  warn_dots(...)
 
   if (not_null(patient_ids)) {
 
-    idc <- get_id_cols(cfg, id_type = id_type)
+    src <- unique(chr_xtr(x, "source"))
+
+    assert_that(length(src) == 1L, msg = paste0(
+      "Cannot subset patient IDs for multiple data sources at the same time")
+    )
+
+    idc <- get_id_col(get_data_src(x[[1L]][["table"]], src), "id_type")
 
     if (inherits(patient_ids, "data.frame")) {
       assert_that(has_name(patient_ids, idc))
@@ -179,19 +182,24 @@ load_dictionary <- function(source = NULL, concepts = NULL,
   load_concepts(concepts, source, dictionary, ...)
 }
 
-load_default <- function(item, id_type, patient_ids, interval, cfg) {
+load_default <- function(item, id_type, patient_ids, interval) {
 
   item <- item[[1L]]
   tble <- item[["table"]]
 
   assert_that(is.string(tble))
 
-  id_col <- unname(id_types(cfg)[id_type])
-  ex_col <- get_col_defaults(cfg, table = tble)[["cols"]]
+  tbl <- get_data_src(tble, item[["source"]])
+
+  id_col <- get_id_col(tbl, id_type)
+  ex_col <- get_default_cols(tbl, c("index", "val", "unit"))
+
+  item <- item[setdiff(names(item),
+                       c("concept", "source", "table", "load_fun"))]
 
   load_args <- c(
-    item[setdiff(names(item), c("concept", "callback", "load_fun"))],
-    list(id_col = id_col), ex_col, list(cfg = cfg, interval = interval)
+    list(tbl = tbl), item[setdiff(names(item), "callback")],
+    list(id_col = id_col), ex_col, list(interval = interval)
   )
 
   res <- do.call(do_load, load_args[!duplicated(names(load_args))])
@@ -201,16 +209,15 @@ load_default <- function(item, id_type, patient_ids, interval, cfg) {
   }
 
   cb_args <- c(
-    list(x = res),
-    item[setdiff(names(item), c("concept", "table", "regex", "load_fun"))],
-    list(id_col = id_col), ex_col
+    list(x = res), item[setdiff(names(item), "regex")],
+    list(id_col = id_col), ex_col, list(env = get_src_env(tbl))
   )
 
   do.call(do_callback, cb_args[!duplicated(names(cb_args))])
 }
 
-do_load <- function(source, table, column, ids, regex, ..., id_col, index_col,
-                    val_col, unit_col, interval, cfg) {
+do_load <- function(tbl, column, ids, regex, ..., id_col, index_col,
+                    val_col, unit_col, interval) {
 
   extra_cols <- list(...)
 
@@ -245,12 +252,10 @@ do_load <- function(source, table, column, ids, regex, ..., id_col, index_col,
     }
   }
 
-  load_auto(source, table, query, cols, id_col, index_col, interval)
+  load_auto(tbl, query, cols, id_col, index_col, interval)
 }
 
-load_auto <- function(source, table, query, cols, id, index, ival) {
-
-  tbl <- get(table, envir = get_src_env(source))
+load_auto <- function(tbl, query, cols, id, index, ival) {
 
   if (is.null(query)) {
     if (is.null(index)) {
@@ -268,13 +273,13 @@ load_auto <- function(source, table, query, cols, id, index, ival) {
   }
 }
 
-do_callback <- function(x, source, column, ids, callback, ..., id_col,
-                        index_col, val_col, unit_col) {
+do_callback <- function(x, column, ids, callback, ..., id_col,
+                        index_col, val_col, unit_col, env) {
 
   extra_cols <- list(...)
 
   if (length(extra_cols) && is.null(callback)) {
-    warning("`extra_cols` is only effective is `callback` is specified.")
+    warning("`extra_cols` is only effective if `callback` is specified.")
   }
 
   if (length(ids) > 0L) {
@@ -289,11 +294,11 @@ do_callback <- function(x, source, column, ids, callback, ..., id_col,
 
   if (is.function(callback)) {
 
-    args <- c(list(x),
-              list(id_col = id_col, index_col = index_col, val_col = val,
-                   item_col = column, unit_col = unit_col),
-              extra_cols,
-              list(source = source))
+    args <- c(
+      list(x), list(id_col = id_col, index_col = index_col, val_col = val,
+                    item_col = column, unit_col = unit_col),
+      extra_cols, list(env = env)
+    )
 
     x <- do.call(callback, args)
   }
@@ -313,7 +318,7 @@ do_callback <- function(x, source, column, ids, callback, ..., id_col,
 
 unit_check <- function(x, unit_col, unit, verb) {
 
-  if (verb && not_null(unit_col)) {
+  if (verb && !(is.null(unit_col) || is.na(unit_col))) {
 
     unt <- unique(x[[unit_col]])
     unt <- unt[!is.na(unt)]
@@ -338,7 +343,9 @@ unit_check <- function(x, unit_col, unit, verb) {
     }
   }
 
-  x <- rm_cols(x, unit_col)
+  if (!(is.null(unit_col) || is.na(unit_col))) {
+    x <- rm_cols(x, unit_col)
+  }
 
   x
 }
@@ -415,24 +422,4 @@ rep_arg <- function(arg, names) {
   assert_that(identical(names(arg), names))
 
   arg
-}
-
-progr_init <- function(len = NULL) {
-  if (is_pkg_available("progress") && length(len) > 1L) {
-    progress::progress_bar$new(
-      format = "loading :what [:bar] :percent",
-      total = len
-    )
-  } else {
-    message("loading")
-    NULL
-  }
-}
-
-progr_iter <- function(name, pb = NULL) {
-  if (is.null(pb)) {
-    message("  * `", name, "`")
-  } else {
-    pb$tick(tokens = list(what = name))
-  }
 }

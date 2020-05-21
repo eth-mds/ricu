@@ -109,7 +109,7 @@ c.item <- function(...) {
 
   if (!is.null(source)) {
     assert_that(is.character(source), length(source) > 0L)
-    x <- .subset(x, get_src_name(x) %in% source)
+    x <- .subset(x, src_name(x) %in% source)
   }
 
   do.call(c, lapply(x, recreate))
@@ -117,10 +117,10 @@ c.item <- function(...) {
 
 #' @rdname data_items
 #' @export
-get_src_name <- function(x) UseMethod("get_src_name", x)
+src_name <- function(x) UseMethod("src_name", x)
 
 #' @export
-get_src_name.item <- function(x) chr_ply(x, .subset2, "source")
+src_name.item <- function(x) chr_ply(x, .subset2, "source")
 
 #' @export
 as_item.item <- function(x) x
@@ -251,9 +251,9 @@ concept_meta <- function(x, what = c("unit", "min", "max")) {
 }
 
 #' @export
-get_src_name.concept <- function(x) {
+src_name.concept <- function(x) {
   res <- lapply(x, `[[`, "items")
-  res <- lapply(res, get_src_name)
+  res <- lapply(res, src_name)
   chr_ply(res, unique)
 }
 
@@ -335,8 +335,8 @@ length.dictionary <- function(x) length(as_concept(x))
 }
 
 #' @export
-get_src_name.dictionary <- function(x) {
-  res <- unique(get_src_name(as_concept(x)))
+src_name.dictionary <- function(x) {
+  res <- unique(src_name(as_concept(x)))
   assert_that(length(res) == 1L)
   res
 }

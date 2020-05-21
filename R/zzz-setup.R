@@ -29,8 +29,8 @@
 
   backports::import(pkgname)
 
-  attach_source(c("mimic", "mimic_demo", "eicu", "eicu_demo", "hirid"),
-                assign_env = pkg_env())
+  attach_src(c("mimic", "mimic_demo", "eicu", "eicu_demo", "hirid"),
+             assign_env = pkg_env())
 
   if (base::getRversion() < "4.0.0") {
 

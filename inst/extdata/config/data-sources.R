@@ -2,8 +2,10 @@
 download_pysionet_schema <- function(url) {
 
   dat <- ricu:::download_pysionet_file(
-    url, dest = NULL, username = NULL, password = NULL
+    url, dest = NULL, user = NULL, pass = NULL
   )
+
+  message("downloading schema at ", url)
 
   xml2::as_list(xml2::read_xml(rawToChar(dat)))
 }
@@ -48,9 +50,9 @@ as_col_spec <- function(names, types) {
          lapply(types, col_spec_map))
 }
 
-as_tbl_spec <- function(files, defaults, tbl_info, partitioning) {
+as_tbl_spec <- function(files, defaults, time_cols, tbl_info, partitioning) {
 
-  do_as <- function(file, default, tbl, part) {
+  do_as <- function(file, default, time, tbl, part) {
 
     all_cols <- vapply(tbl[["cols"]], `[[`, character(1L), "name")
     name <- tolower(tbl[["table_name"]])
@@ -59,10 +61,17 @@ as_tbl_spec <- function(files, defaults, tbl_info, partitioning) {
     stopifnot(identical(common, name),
               all(vapply(default, `%in%`, logical(1L), all_cols)))
 
-    res <- list(files = file, name = name, defaults = default)
+    if (length(time)) {
+      res <- list(files = file, name = name, defaults = default,
+                  time_cols = unname(time))
+    } else {
+      res <- list(files = file, name = name, defaults = default)
+    }
 
     if ("num_rows" %in% names(tbl)) {
       res[["num_rows"]] <- tbl[["num_rows"]]
+    } else {
+      res[["num_rows"]] <- 0
     }
 
     res[["cols"]] <- unname(tbl[["cols"]])
@@ -78,8 +87,8 @@ as_tbl_spec <- function(files, defaults, tbl_info, partitioning) {
 
   tbls <- vapply(tbl_info, `[[`, character(1L), "table_name")
 
-  Map(do_as, files[tbls], defaults[tbls], tbl_info, partitioning[tbls],
-      USE.NAMES = FALSE)
+  Map(do_as, files[tbls], defaults[tbls], time_cols[tbls], tbl_info,
+      partitioning[tbls], USE.NAMES = FALSE)
 }
 
 eicu_tbl_cfg <- function(is_demo = FALSE) {
@@ -278,7 +287,15 @@ eicu_tbl_cfg <- function(is_demo = FALSE) {
     info[[which(tbl)]][["cols"]] <- new
   }
 
-  as_tbl_spec(files, defaults, info, part)
+  time_cols <- lapply(info, function(x) {
+    nme <- vapply(x[["cols"]], `[[`, character(1L), "name")
+    typ <- vapply(x[["cols"]], `[[`, character(1L), "spec")
+    nme[typ == "col_integer" & grepl("offset$", nme)]
+  })
+
+  names(time_cols) <- vapply(info, `[[`, character(1L), "table_name")
+
+  as_tbl_spec(files, defaults, time_cols, info, part)
 }
 
 mimic_tbl_cfg <- function(is_demo = FALSE) {
@@ -312,7 +329,7 @@ mimic_tbl_cfg <- function(is_demo = FALSE) {
   names(files) <- sub("\\.csv\\.gz", "", tolower(files))
 
   if (is_demo) {
-    files <- sub("\\.gz$", "", tolower(files))
+    files <- sub("\\.gz$", "", files)
   }
 
   defaults <- list(
@@ -320,8 +337,8 @@ mimic_tbl_cfg <- function(is_demo = FALSE) {
       val_col = "admission_type"
     ),
     callout = list(
-      index_col = "callout_outcome",
-      val_col = "outcometime"
+      index_col = "outcometime",
+      val_col = "callout_outcome"
     ),
     caregivers = list(
       id_col = "cgid",
@@ -462,7 +479,15 @@ mimic_tbl_cfg <- function(is_demo = FALSE) {
     })
   }
 
-  as_tbl_spec(files, defaults, info, part)
+  time_cols <- lapply(info, function(x) {
+    nme <- vapply(x[["cols"]], `[[`, character(1L), "name")
+    typ <- vapply(x[["cols"]], `[[`, character(1L), "spec")
+    nme[typ == "col_datetime"]
+  })
+
+  names(time_cols) <- vapply(info, `[[`, character(1L), "table_name")
+
+  as_tbl_spec(files, defaults, time_cols, info, part)
 }
 
 hirid_tbl_cfg <- function() {
@@ -537,7 +562,15 @@ hirid_tbl_cfg <- function() {
          cols = Map(c, Map(list, name = names(x), col = names(x)), x))
   }, info, names(info))
 
-  as_tbl_spec(files, defaults, info, part)
+  time_cols <- lapply(info, function(x) {
+    nme <- vapply(x[["cols"]], `[[`, character(1L), "name")
+    typ <- vapply(x[["cols"]], `[[`, character(1L), "spec")
+    nme[typ == "col_datetime"]
+  })
+
+  names(time_cols) <- vapply(info, `[[`, character(1L), "table_name")
+
+  as_tbl_spec(files, defaults, time_cols, info, part)
 }
 
 pkg_dir <- rprojroot::find_root(rprojroot::is_r_package)
@@ -547,7 +580,7 @@ cfg <- list(
   list(
     name = "eicu",
     url = "https://physionet.org/files/eicu-crd/2.0",
-    id_cols = list(
+    id_cfg = list(
       hadm = list(id = "patienthealthsystemstayid", position = 1L,
                   start = "hospitaladmitoffset",
                   end = "hospitaldischargeoffset", table = "patient"),
@@ -559,7 +592,7 @@ cfg <- list(
   list(
     name = "eicu_demo",
     url = "https://physionet.org/files/eicu-crd-demo/2.0",
-    id_cols = list(
+    id_cfg = list(
       hadm = list(id = "patienthealthsystemstayid", position = 1L,
                   start = "hospitaladmitoffset",
                   end = "hospitaldischargeoffset", table = "patient"),
@@ -571,7 +604,7 @@ cfg <- list(
   list(
     name = "mimic",
     url = "https://physionet.org/files/mimiciii/1.4",
-    id_cols = list(
+    id_cfg = list(
       patient = list(id = "subject_id", position = 1L, start = "dob",
                      end = "dod", table = "patients"),
       hadm = list(id = "hadm_id", position = 2L, start = "admittime",
@@ -584,7 +617,7 @@ cfg <- list(
   list(
     name = "mimic_demo",
     url = "https://physionet.org/files/mimiciii-demo/1.4",
-    id_cols = list(
+    id_cfg = list(
       patient = list(id = "subject_id", position = 1L, start = "dob",
                      end = "dod", table = "patients"),
       hadm = list(id = "hadm_id", position = 2L, start = "admittime",
@@ -597,7 +630,7 @@ cfg <- list(
   list(
     name = "hirid",
     url = "https://physionet.org/files/hirid/0.1",
-    id_cols = list(
+    id_cfg = list(
       icustay = list(id = "patientid", position = 1L, start = "admissiontime",
                      table = "general")
     ),

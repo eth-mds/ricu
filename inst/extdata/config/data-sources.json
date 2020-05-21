@@ -2,7 +2,7 @@
   {
     "name": "eicu",
     "url": "https://physionet.org/files/eicu-crd/2.0",
-    "id_cols": {
+    "id_cfg": {
       "hadm": {
         "id": "patienthealthsystemstayid",
         "position": 1,
@@ -26,6 +26,7 @@
           "val_col": "drugdosage",
           "unit_col": "drugunit"
         },
+        "time_cols": ["drugoffset", "drugenteredoffset"],
         "num_rows": 874920,
         "cols": [
           {
@@ -107,6 +108,7 @@
           "index_col": "admitdxenteredoffset",
           "val_col": "admitdxtext"
         },
+        "time_cols": "admitdxenteredoffset",
         "num_rows": 626858,
         "cols": [
           {
@@ -148,6 +150,7 @@
           "index_col": "allergyoffset",
           "val_col": "allergyname"
         },
+        "time_cols": ["allergyoffset", "allergyenteredoffset"],
         "num_rows": 251949,
         "cols": [
           {
@@ -750,6 +753,7 @@
           "index_col": "careprovidersaveoffset",
           "val_col": "specialty"
         },
+        "time_cols": "careprovidersaveoffset",
         "num_rows": 502765,
         "cols": [
           {
@@ -800,6 +804,7 @@
         "defaults": {
           "index_col": "cpleoldiscussionoffset"
         },
+        "time_cols": ["cpleolsaveoffset", "cpleoldiscussionoffset"],
         "num_rows": 1433,
         "cols": [
           {
@@ -836,6 +841,7 @@
           "index_col": "cplitemoffset",
           "val_col": "cplitemvalue"
         },
+        "time_cols": "cplitemoffset",
         "num_rows": 3115018,
         "cols": [
           {
@@ -877,6 +883,7 @@
           "index_col": "cplgoaloffset",
           "val_col": "cplgoalvalue"
         },
+        "time_cols": "cplgoaloffset",
         "num_rows": 504139,
         "cols": [
           {
@@ -923,6 +930,7 @@
           "index_col": "cplinfectdiseaseoffset",
           "val_col": "infectdiseasesite"
         },
+        "time_cols": "cplinfectdiseaseoffset",
         "num_rows": 8056,
         "cols": [
           {
@@ -974,6 +982,7 @@
           "index_col": "labotheroffset",
           "val_col": "labotherresult"
         },
+        "time_cols": "labotheroffset",
         "num_rows": 1082,
         "cols": [
           {
@@ -1020,6 +1029,7 @@
           "index_col": "diagnosisoffset",
           "val_col": "icd9code"
         },
+        "time_cols": "diagnosisoffset",
         "num_rows": 2710672,
         "cols": [
           {
@@ -1097,6 +1107,7 @@
           "index_col": "infusionoffset",
           "val_col": "drugrate"
         },
+        "time_cols": "infusionoffset",
         "num_rows": 4803719,
         "cols": [
           {
@@ -1153,6 +1164,7 @@
           "index_col": "intakeoutputoffset",
           "val_col": "cellvaluenumeric"
         },
+        "time_cols": ["intakeoutputoffset", "intakeoutputentryoffset"],
         "num_rows": 12030289,
         "cols": [
           {
@@ -1225,6 +1237,7 @@
           "val_col": "labresult",
           "unit_col": "labmeasurenameinterface"
         },
+        "time_cols": ["labresultoffset", "labresultrevisedoffset"],
         "num_rows": 39132531,
         "cols": [
           {
@@ -1286,6 +1299,7 @@
           "index_col": "drugstartoffset",
           "val_col": "dosage"
         },
+        "time_cols": ["drugorderoffset", "drugstartoffset", "drugstopoffset"],
         "num_rows": 7301853,
         "cols": [
           {
@@ -1372,6 +1386,7 @@
           "index_col": "culturetakenoffset",
           "val_col": "organism"
         },
+        "time_cols": "culturetakenoffset",
         "num_rows": 16996,
         "cols": [
           {
@@ -1418,6 +1433,7 @@
           "index_col": "noteoffset",
           "val_col": "notetext"
         },
+        "time_cols": ["noteoffset", "noteenteredoffset"],
         "num_rows": 2254179,
         "cols": [
           {
@@ -1469,6 +1485,7 @@
           "index_col": "nurseassessoffset",
           "val_col": "cellattributevalue"
         },
+        "time_cols": ["nurseassessoffset", "nurseassessentryoffset"],
         "num_rows": 15602498,
         "cols": [
           {
@@ -1520,6 +1537,7 @@
           "index_col": "nursecareoffset",
           "val_col": "cellattributevalue"
         },
+        "time_cols": ["nursecareoffset", "nursecareentryoffset"],
         "num_rows": 8311132,
         "cols": [
           {
@@ -1571,6 +1589,7 @@
           "index_col": "nursingchartoffset",
           "val_col": "nursingchartvalue"
         },
+        "time_cols": ["nursingchartoffset", "nursingchartentryoffset"],
         "num_rows": 151604232,
         "cols": [
           {
@@ -1626,6 +1645,7 @@
           "index_col": "pasthistoryoffset",
           "val_col": "pasthistoryvalue"
         },
+        "time_cols": ["pasthistoryoffset", "pasthistoryenteredoffset"],
         "num_rows": 1149180,
         "cols": [
           {
@@ -1676,6 +1696,7 @@
         "defaults": {
           "val_col": "unitdischargestatus"
         },
+        "time_cols": ["hospitaladmitoffset", "hospitaldischargeoffset", "unitdischargeoffset"],
         "num_rows": 200859,
         "cols": [
           {
@@ -1832,6 +1853,7 @@
           "index_col": "physicalexamoffset",
           "val_col": "physicalexamvalue"
         },
+        "time_cols": "physicalexamoffset",
         "num_rows": 9212316,
         "cols": [
           {
@@ -1872,6 +1894,7 @@
         "defaults": {
           "index_col": "respcarestatusoffset"
         },
+        "time_cols": ["respcarestatusoffset", "ventstartoffset", "ventendoffset", "priorventstartoffset", "priorventendoffset"],
         "num_rows": 865381,
         "cols": [
           {
@@ -2053,6 +2076,7 @@
           "index_col": "respchartoffset",
           "val_col": "respchartvalue"
         },
+        "time_cols": ["respchartoffset", "respchartentryoffset"],
         "num_rows": 20168176,
         "cols": [
           {
@@ -2099,6 +2123,7 @@
           "index_col": "treatmentoffset",
           "val_col": "treatmentstring"
         },
+        "time_cols": "treatmentoffset",
         "num_rows": 3688745,
         "cols": [
           {
@@ -2134,6 +2159,7 @@
         "defaults": {
           "index_col": "observationoffset"
         },
+        "time_cols": "observationoffset",
         "num_rows": 25075074,
         "cols": [
           {
@@ -2209,6 +2235,7 @@
         "defaults": {
           "index_col": "observationoffset"
         },
+        "time_cols": "observationoffset",
         "num_rows": 146671642,
         "cols": [
           {
@@ -2317,7 +2344,7 @@
   {
     "name": "eicu_demo",
     "url": "https://physionet.org/files/eicu-crd-demo/2.0",
-    "id_cols": {
+    "id_cfg": {
       "hadm": {
         "id": "patienthealthsystemstayid",
         "position": 1,
@@ -2341,6 +2368,8 @@
           "val_col": "drugdosage",
           "unit_col": "drugunit"
         },
+        "time_cols": ["drugoffset", "drugenteredoffset"],
+        "num_rows": 0,
         "cols": [
           {
             "name": "admissiondrugid",
@@ -2421,6 +2450,8 @@
           "index_col": "admitdxenteredoffset",
           "val_col": "admitdxtext"
         },
+        "time_cols": "admitdxenteredoffset",
+        "num_rows": 0,
         "cols": [
           {
             "name": "admissiondxid",
@@ -2461,6 +2492,8 @@
           "index_col": "allergyoffset",
           "val_col": "allergyname"
         },
+        "time_cols": ["allergyoffset", "allergyenteredoffset"],
+        "num_rows": 0,
         "cols": [
           {
             "name": "allergyid",
@@ -2533,6 +2566,7 @@
         "files": "apacheApsVar.csv.gz",
         "name": "apacheapsvar",
         "defaults": [],
+        "num_rows": 0,
         "cols": [
           {
             "name": "apacheapsvarid",
@@ -2672,6 +2706,7 @@
         "defaults": {
           "val_col": "apachescore"
         },
+        "num_rows": 0,
         "cols": [
           {
             "name": "apachepatientresultsid",
@@ -2794,6 +2829,7 @@
         "files": "apachePredVar.csv.gz",
         "name": "apachepredvar",
         "defaults": [],
+        "num_rows": 0,
         "cols": [
           {
             "name": "apachepredvarid",
@@ -3059,6 +3095,8 @@
           "index_col": "careprovidersaveoffset",
           "val_col": "specialty"
         },
+        "time_cols": "careprovidersaveoffset",
+        "num_rows": 0,
         "cols": [
           {
             "name": "cplcareprovderid",
@@ -3108,6 +3146,8 @@
         "defaults": {
           "index_col": "cpleoldiscussionoffset"
         },
+        "time_cols": ["cpleolsaveoffset", "cpleoldiscussionoffset"],
+        "num_rows": 0,
         "cols": [
           {
             "name": "cpleolid",
@@ -3143,6 +3183,8 @@
           "index_col": "cplitemoffset",
           "val_col": "cplitemvalue"
         },
+        "time_cols": "cplitemoffset",
+        "num_rows": 0,
         "cols": [
           {
             "name": "cplgeneralid",
@@ -3183,6 +3225,8 @@
           "index_col": "cplgoaloffset",
           "val_col": "cplgoalvalue"
         },
+        "time_cols": "cplgoaloffset",
+        "num_rows": 0,
         "cols": [
           {
             "name": "cplgoalid",
@@ -3228,6 +3272,8 @@
           "index_col": "cplinfectdiseaseoffset",
           "val_col": "infectdiseasesite"
         },
+        "time_cols": "cplinfectdiseaseoffset",
+        "num_rows": 0,
         "cols": [
           {
             "name": "cplinfectid",
@@ -3278,6 +3324,8 @@
           "index_col": "labotheroffset",
           "val_col": "labotherresult"
         },
+        "time_cols": "labotheroffset",
+        "num_rows": 0,
         "cols": [
           {
             "name": "customlabid",
@@ -3323,6 +3371,8 @@
           "index_col": "diagnosisoffset",
           "val_col": "icd9code"
         },
+        "time_cols": "diagnosisoffset",
+        "num_rows": 0,
         "cols": [
           {
             "name": "diagnosisid",
@@ -3368,6 +3418,7 @@
           "id_col": "hospitalid",
           "val_col": "numbedscategory"
         },
+        "num_rows": 0,
         "cols": [
           {
             "name": "hospitalid",
@@ -3398,6 +3449,8 @@
           "index_col": "infusionoffset",
           "val_col": "drugrate"
         },
+        "time_cols": "infusionoffset",
+        "num_rows": 0,
         "cols": [
           {
             "name": "infusiondrugid",
@@ -3453,6 +3506,8 @@
           "index_col": "intakeoutputoffset",
           "val_col": "cellvaluenumeric"
         },
+        "time_cols": ["intakeoutputoffset", "intakeoutputentryoffset"],
+        "num_rows": 0,
         "cols": [
           {
             "name": "intakeoutputid",
@@ -3524,6 +3579,8 @@
           "val_col": "labresult",
           "unit_col": "labmeasurenameinterface"
         },
+        "time_cols": ["labresultoffset", "labresultrevisedoffset"],
+        "num_rows": 0,
         "cols": [
           {
             "name": "labid",
@@ -3584,6 +3641,8 @@
           "index_col": "drugstartoffset",
           "val_col": "dosage"
         },
+        "time_cols": ["drugorderoffset", "drugstartoffset", "drugstopoffset"],
+        "num_rows": 0,
         "cols": [
           {
             "name": "medicationid",
@@ -3669,6 +3728,8 @@
           "index_col": "culturetakenoffset",
           "val_col": "organism"
         },
+        "time_cols": "culturetakenoffset",
+        "num_rows": 0,
         "cols": [
           {
             "name": "microlabid",
@@ -3714,6 +3775,8 @@
           "index_col": "noteoffset",
           "val_col": "notetext"
         },
+        "time_cols": ["noteoffset", "noteenteredoffset"],
+        "num_rows": 0,
         "cols": [
           {
             "name": "noteid",
@@ -3764,6 +3827,8 @@
           "index_col": "nurseassessoffset",
           "val_col": "cellattributevalue"
         },
+        "time_cols": ["nurseassessoffset", "nurseassessentryoffset"],
+        "num_rows": 0,
         "cols": [
           {
             "name": "nurseassessid",
@@ -3814,6 +3879,8 @@
           "index_col": "nursecareoffset",
           "val_col": "cellattributevalue"
         },
+        "time_cols": ["nursecareoffset", "nursecareentryoffset"],
+        "num_rows": 0,
         "cols": [
           {
             "name": "nursecareid",
@@ -3864,6 +3931,8 @@
           "index_col": "nursingchartoffset",
           "val_col": "nursingchartvalue"
         },
+        "time_cols": ["nursingchartoffset", "nursingchartentryoffset"],
+        "num_rows": 0,
         "cols": [
           {
             "name": "nursingchartid",
@@ -3918,6 +3987,8 @@
           "index_col": "pasthistoryoffset",
           "val_col": "pasthistoryvalue"
         },
+        "time_cols": ["pasthistoryoffset", "pasthistoryenteredoffset"],
+        "num_rows": 0,
         "cols": [
           {
             "name": "pasthistoryid",
@@ -3967,6 +4038,8 @@
         "defaults": {
           "val_col": "unitdischargestatus"
         },
+        "time_cols": ["hospitaladmitoffset", "hospitaldischargeoffset", "unitdischargeoffset"],
+        "num_rows": 0,
         "cols": [
           {
             "name": "patientunitstayid",
@@ -4122,6 +4195,8 @@
           "index_col": "physicalexamoffset",
           "val_col": "physicalexamvalue"
         },
+        "time_cols": "physicalexamoffset",
+        "num_rows": 0,
         "cols": [
           {
             "name": "physicalexamid",
@@ -4161,6 +4236,8 @@
         "defaults": {
           "index_col": "respcarestatusoffset"
         },
+        "time_cols": ["respcarestatusoffset", "ventstartoffset", "ventendoffset", "priorventstartoffset", "priorventendoffset"],
+        "num_rows": 0,
         "cols": [
           {
             "name": "respcareid",
@@ -4341,6 +4418,8 @@
           "index_col": "respchartoffset",
           "val_col": "respchartvalue"
         },
+        "time_cols": ["respchartoffset", "respchartentryoffset"],
+        "num_rows": 0,
         "cols": [
           {
             "name": "respchartid",
@@ -4386,6 +4465,8 @@
           "index_col": "treatmentoffset",
           "val_col": "treatmentstring"
         },
+        "time_cols": "treatmentoffset",
+        "num_rows": 0,
         "cols": [
           {
             "name": "treatmentid",
@@ -4420,6 +4501,8 @@
         "defaults": {
           "index_col": "observationoffset"
         },
+        "time_cols": "observationoffset",
+        "num_rows": 0,
         "cols": [
           {
             "name": "vitalaperiodicid",
@@ -4494,6 +4577,8 @@
         "defaults": {
           "index_col": "observationoffset"
         },
+        "time_cols": "observationoffset",
+        "num_rows": 0,
         "cols": [
           {
             "name": "vitalperiodicid",
@@ -4601,7 +4686,7 @@
   {
     "name": "mimic",
     "url": "https://physionet.org/files/mimiciii/1.4",
-    "id_cols": {
+    "id_cfg": {
       "patient": {
         "id": "subject_id",
         "position": 1,
@@ -4631,6 +4716,7 @@
         "defaults": {
           "val_col": "admission_type"
         },
+        "time_cols": ["admittime", "dischtime", "deathtime", "edregtime", "edouttime"],
         "num_rows": 58976,
         "cols": [
           {
@@ -4739,9 +4825,10 @@
         "files": "CALLOUT.csv.gz",
         "name": "callout",
         "defaults": {
-          "index_col": "callout_outcome",
-          "val_col": "outcometime"
+          "index_col": "outcometime",
+          "val_col": "callout_outcome"
         },
+        "time_cols": ["createtime", "updatetime", "acknowledgetime", "outcometime", "firstreservationtime", "currentreservationtime"],
         "num_rows": 34499,
         "cols": [
           {
@@ -4911,6 +4998,7 @@
           "val_col": "valuenum",
           "unit_col": "valueuom"
         },
+        "time_cols": ["charttime", "storetime"],
         "num_rows": 330712483,
         "cols": [
           {
@@ -5003,6 +5091,7 @@
           "index_col": "chartdate",
           "val_col": "cpt_cd"
         },
+        "time_cols": "chartdate",
         "num_rows": 573146,
         "cols": [
           {
@@ -5295,6 +5384,7 @@
           "index_col": "charttime",
           "val_col": "itemid"
         },
+        "time_cols": ["charttime", "storetime", "value"],
         "num_rows": 4485937,
         "cols": [
           {
@@ -5464,6 +5554,7 @@
           "index_col": "intime",
           "val_col": "last_careunit"
         },
+        "time_cols": ["intime", "outtime"],
         "num_rows": 61532,
         "cols": [
           {
@@ -5538,6 +5629,7 @@
           "val_col": "rate",
           "unit_col": "rateuom"
         },
+        "time_cols": ["charttime", "storetime"],
         "num_rows": 17527935,
         "cols": [
           {
@@ -5662,6 +5754,7 @@
           "val_col": "rate",
           "unit_col": "rateuom"
         },
+        "time_cols": ["starttime", "endtime", "storetime", "comments_date"],
         "num_rows": 3618991,
         "cols": [
           {
@@ -5833,6 +5926,7 @@
           "val_col": "valuenum",
           "unit_col": "valueuom"
         },
+        "time_cols": "charttime",
         "num_rows": 27854055,
         "cols": [
           {
@@ -5890,6 +5984,7 @@
           "index_col": "chartdate",
           "val_col": "isolate_num"
         },
+        "time_cols": ["chartdate", "charttime"],
         "num_rows": 631726,
         "cols": [
           {
@@ -5983,6 +6078,7 @@
           "index_col": "chartdate",
           "val_col": "text"
         },
+        "time_cols": ["chartdate", "charttime", "storetime"],
         "num_rows": 2083180,
         "cols": [
           {
@@ -6053,6 +6149,7 @@
           "val_col": "value",
           "unit_col": "valueuom"
         },
+        "time_cols": ["charttime", "storetime"],
         "num_rows": 4349218,
         "cols": [
           {
@@ -6130,6 +6227,7 @@
         "defaults": {
           "val_col": "expire_flag"
         },
+        "time_cols": ["dob", "dod", "dod_hosp", "dod_ssn"],
         "num_rows": 46520,
         "cols": [
           {
@@ -6186,6 +6284,7 @@
           "val_col": "dose_val_rx",
           "unit_col": "dose_unit_rx"
         },
+        "time_cols": ["startdate", "enddate"],
         "num_rows": 4156450,
         "cols": [
           {
@@ -6295,6 +6394,7 @@
           "val_col": "value",
           "unit_col": "valueuom"
         },
+        "time_cols": ["starttime", "endtime", "storetime", "comments_date"],
         "num_rows": 258066,
         "cols": [
           {
@@ -6470,6 +6570,7 @@
           "index_col": "transfertime",
           "val_col": "curr_service"
         },
+        "time_cols": "transfertime",
         "num_rows": 73343,
         "cols": [
           {
@@ -6512,6 +6613,7 @@
           "index_col": "intime",
           "val_col": "curr_careunit"
         },
+        "time_cols": ["intime", "outtime"],
         "num_rows": 261897,
         "cols": [
           {
@@ -6588,7 +6690,7 @@
   {
     "name": "mimic_demo",
     "url": "https://physionet.org/files/mimiciii-demo/1.4",
-    "id_cols": {
+    "id_cfg": {
       "patient": {
         "id": "subject_id",
         "position": 1,
@@ -6613,11 +6715,13 @@
     },
     "tables": [
       {
-        "files": "admissions.csv",
+        "files": "ADMISSIONS.csv",
         "name": "admissions",
         "defaults": {
           "val_col": "admission_type"
         },
+        "time_cols": ["admittime", "dischtime", "deathtime", "edregtime", "edouttime"],
+        "num_rows": 0,
         "cols": [
           {
             "name": "row_id",
@@ -6722,12 +6826,14 @@
         ]
       },
       {
-        "files": "callout.csv",
+        "files": "CALLOUT.csv",
         "name": "callout",
         "defaults": {
-          "index_col": "callout_outcome",
-          "val_col": "outcometime"
+          "index_col": "outcometime",
+          "val_col": "callout_outcome"
         },
+        "time_cols": ["createtime", "updatetime", "acknowledgetime", "outcometime", "firstreservationtime", "currentreservationtime"],
+        "num_rows": 0,
         "cols": [
           {
             "name": "row_id",
@@ -6858,12 +6964,13 @@
         ]
       },
       {
-        "files": "caregivers.csv",
+        "files": "CAREGIVERS.csv",
         "name": "caregivers",
         "defaults": {
           "id_col": "cgid",
           "val_col": "label"
         },
+        "num_rows": 0,
         "cols": [
           {
             "name": "row_id",
@@ -6888,13 +6995,15 @@
         ]
       },
       {
-        "files": "chartevents.csv",
+        "files": "CHARTEVENTS.csv",
         "name": "chartevents",
         "defaults": {
           "index_col": "charttime",
           "val_col": "valuenum",
           "unit_col": "valueuom"
         },
+        "time_cols": ["charttime", "storetime"],
+        "num_rows": 0,
         "cols": [
           {
             "name": "row_id",
@@ -6980,12 +7089,14 @@
         }
       },
       {
-        "files": "cptevents.csv",
+        "files": "CPTEVENTS.csv",
         "name": "cptevents",
         "defaults": {
           "index_col": "chartdate",
           "val_col": "cpt_cd"
         },
+        "time_cols": "chartdate",
+        "num_rows": 0,
         "cols": [
           {
             "name": "row_id",
@@ -7051,12 +7162,13 @@
         ]
       },
       {
-        "files": "d_cpt.csv",
+        "files": "D_CPT.csv",
         "name": "d_cpt",
         "defaults": {
           "id_col": "subsectionrange",
           "val_col": "subsectionheader"
         },
+        "num_rows": 0,
         "cols": [
           {
             "name": "row_id",
@@ -7106,12 +7218,13 @@
         ]
       },
       {
-        "files": "d_icd_diagnoses.csv",
+        "files": "D_ICD_DIAGNOSES.csv",
         "name": "d_icd_diagnoses",
         "defaults": {
           "id_col": "icd9_code",
           "val_col": "short_title"
         },
+        "num_rows": 0,
         "cols": [
           {
             "name": "row_id",
@@ -7136,12 +7249,13 @@
         ]
       },
       {
-        "files": "d_icd_procedures.csv",
+        "files": "D_ICD_PROCEDURES.csv",
         "name": "d_icd_procedures",
         "defaults": {
           "id_col": "icd9_code",
           "val_col": "short_title"
         },
+        "num_rows": 0,
         "cols": [
           {
             "name": "row_id",
@@ -7166,12 +7280,13 @@
         ]
       },
       {
-        "files": "d_items.csv",
+        "files": "D_ITEMS.csv",
         "name": "d_items",
         "defaults": {
           "id_col": "itemid",
           "val_col": "label"
         },
+        "num_rows": 0,
         "cols": [
           {
             "name": "row_id",
@@ -7226,12 +7341,13 @@
         ]
       },
       {
-        "files": "d_labitems.csv",
+        "files": "D_LABITEMS.csv",
         "name": "d_labitems",
         "defaults": {
           "id_col": "itemid",
           "val_col": "label"
         },
+        "num_rows": 0,
         "cols": [
           {
             "name": "row_id",
@@ -7266,12 +7382,14 @@
         ]
       },
       {
-        "files": "datetimeevents.csv",
+        "files": "DATETIMEEVENTS.csv",
         "name": "datetimeevents",
         "defaults": {
           "index_col": "charttime",
           "val_col": "itemid"
         },
+        "time_cols": ["charttime", "storetime", "value"],
+        "num_rows": 0,
         "cols": [
           {
             "name": "row_id",
@@ -7349,11 +7467,12 @@
         ]
       },
       {
-        "files": "diagnoses_icd.csv",
+        "files": "DIAGNOSES_ICD.csv",
         "name": "diagnoses_icd",
         "defaults": {
           "val_col": "icd9_code"
         },
+        "num_rows": 0,
         "cols": [
           {
             "name": "row_id",
@@ -7383,11 +7502,12 @@
         ]
       },
       {
-        "files": "drgcodes.csv",
+        "files": "DRGCODES.csv",
         "name": "drgcodes",
         "defaults": {
           "val_col": "drg_code"
         },
+        "num_rows": 0,
         "cols": [
           {
             "name": "row_id",
@@ -7432,12 +7552,14 @@
         ]
       },
       {
-        "files": "icustays.csv",
+        "files": "ICUSTAYS.csv",
         "name": "icustays",
         "defaults": {
           "index_col": "intime",
           "val_col": "last_careunit"
         },
+        "time_cols": ["intime", "outtime"],
+        "num_rows": 0,
         "cols": [
           {
             "name": "row_id",
@@ -7504,13 +7626,15 @@
         ]
       },
       {
-        "files": "inputevents_cv.csv",
+        "files": "INPUTEVENTS_CV.csv",
         "name": "inputevents_cv",
         "defaults": {
           "index_col": "charttime",
           "val_col": "rate",
           "unit_col": "rateuom"
         },
+        "time_cols": ["charttime", "storetime"],
+        "num_rows": 0,
         "cols": [
           {
             "name": "row_id",
@@ -7627,13 +7751,15 @@
         ]
       },
       {
-        "files": "inputevents_mv.csv",
+        "files": "INPUTEVENTS_MV.csv",
         "name": "inputevents_mv",
         "defaults": {
           "index_col": "starttime",
           "val_col": "rate",
           "unit_col": "rateuom"
         },
+        "time_cols": ["starttime", "endtime", "storetime", "comments_date"],
+        "num_rows": 0,
         "cols": [
           {
             "name": "row_id",
@@ -7797,13 +7923,15 @@
         ]
       },
       {
-        "files": "labevents.csv",
+        "files": "LABEVENTS.csv",
         "name": "labevents",
         "defaults": {
           "index_col": "charttime",
           "val_col": "valuenum",
           "unit_col": "valueuom"
         },
+        "time_cols": "charttime",
+        "num_rows": 0,
         "cols": [
           {
             "name": "row_id",
@@ -7854,12 +7982,14 @@
         ]
       },
       {
-        "files": "microbiologyevents.csv",
+        "files": "MICROBIOLOGYEVENTS.csv",
         "name": "microbiologyevents",
         "defaults": {
           "index_col": "chartdate",
           "val_col": "isolate_num"
         },
+        "time_cols": ["chartdate", "charttime"],
+        "num_rows": 0,
         "cols": [
           {
             "name": "row_id",
@@ -7946,13 +8076,15 @@
         ]
       },
       {
-        "files": "outputevents.csv",
+        "files": "OUTPUTEVENTS.csv",
         "name": "outputevents",
         "defaults": {
           "index_col": "charttime",
           "val_col": "value",
           "unit_col": "valueuom"
         },
+        "time_cols": ["charttime", "storetime"],
+        "num_rows": 0,
         "cols": [
           {
             "name": "row_id",
@@ -8024,11 +8156,13 @@
         ]
       },
       {
-        "files": "patients.csv",
+        "files": "PATIENTS.csv",
         "name": "patients",
         "defaults": {
           "val_col": "expire_flag"
         },
+        "time_cols": ["dob", "dod", "dod_hosp", "dod_ssn"],
+        "num_rows": 0,
         "cols": [
           {
             "name": "row_id",
@@ -8077,13 +8211,15 @@
         ]
       },
       {
-        "files": "prescriptions.csv",
+        "files": "PRESCRIPTIONS.csv",
         "name": "prescriptions",
         "defaults": {
           "index_col": "startdate",
           "val_col": "dose_val_rx",
           "unit_col": "dose_unit_rx"
         },
+        "time_cols": ["startdate", "enddate"],
+        "num_rows": 0,
         "cols": [
           {
             "name": "row_id",
@@ -8185,13 +8321,15 @@
         ]
       },
       {
-        "files": "procedureevents_mv.csv",
+        "files": "PROCEDUREEVENTS_MV.csv",
         "name": "procedureevents_mv",
         "defaults": {
           "index_col": "starttime",
           "val_col": "value",
           "unit_col": "valueuom"
         },
+        "time_cols": ["starttime", "endtime", "storetime", "comments_date"],
+        "num_rows": 0,
         "cols": [
           {
             "name": "row_id",
@@ -8325,11 +8463,12 @@
         ]
       },
       {
-        "files": "procedures_icd.csv",
+        "files": "PROCEDURES_ICD.csv",
         "name": "procedures_icd",
         "defaults": {
           "val_col": "icd9_code"
         },
+        "num_rows": 0,
         "cols": [
           {
             "name": "row_id",
@@ -8359,12 +8498,14 @@
         ]
       },
       {
-        "files": "services.csv",
+        "files": "SERVICES.csv",
         "name": "services",
         "defaults": {
           "index_col": "transfertime",
           "val_col": "curr_service"
         },
+        "time_cols": "transfertime",
+        "num_rows": 0,
         "cols": [
           {
             "name": "row_id",
@@ -8400,12 +8541,14 @@
         ]
       },
       {
-        "files": "transfers.csv",
+        "files": "TRANSFERS.csv",
         "name": "transfers",
         "defaults": {
           "index_col": "intime",
           "val_col": "curr_careunit"
         },
+        "time_cols": ["intime", "outtime"],
+        "num_rows": 0,
         "cols": [
           {
             "name": "row_id",
@@ -8481,7 +8624,7 @@
   {
     "name": "hirid",
     "url": "https://physionet.org/files/hirid/0.1",
-    "id_cols": {
+    "id_cfg": {
       "icustay": {
         "id": "patientid",
         "position": 1,
@@ -8494,6 +8637,8 @@
         "files": "general.csv.gz",
         "name": "general",
         "defaults": [],
+        "time_cols": "admissiontime",
+        "num_rows": 0,
         "cols": [
           {
             "name": "patientid",
@@ -8525,6 +8670,8 @@
           "index_col": "datetime",
           "val_col": "value"
         },
+        "time_cols": ["datetime", "entertime"],
+        "num_rows": 0,
         "cols": [
           {
             "name": "patientid",
@@ -8578,6 +8725,7 @@
         "files": "ordinal.csv.gz",
         "name": "ordinal",
         "defaults": [],
+        "num_rows": 0,
         "cols": [
           {
             "name": "variableid",
@@ -8603,6 +8751,8 @@
           "index_col": "givenat",
           "val_col": "givendose"
         },
+        "time_cols": ["givenat", "enteredentryat"],
+        "num_rows": 0,
         "cols": [
           {
             "name": "patientid",

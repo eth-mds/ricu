@@ -18,11 +18,11 @@ id_origin <- function(x, ...) UseMethod("id_origin", x)
 #'
 #' @rdname data_utils
 #' @export
-id_origin.id_cols <- function(x, id, env = get_src_env(x), ...) {
+id_origin.id_cfg <- function(x, id, env = get_src_env(x), ...) {
 
-  assert_that(...length() == 0L)
+  assert_that(is.string(id), ...length() == 0L)
 
-  sel <- get_id_cols(x, id_name = id)
+  sel <- select_ids(x, id)
 
   if (!identical(sel, x)) {
     return(id_origin(sel, id, env))
@@ -30,9 +30,7 @@ id_origin.id_cols <- function(x, id, env = get_src_env(x), ...) {
 
   assert_that(length(x) == 1L)
 
-  x <- x[[1L]]
-
-  id_orig_all(x[["table"]], x[["id"]], x[["start"]], env)
+  id_orig_all(field(x, "table"), field(x, "id"), field(x, "start"), env)
 }
 
 #' @rdname data_utils
@@ -52,7 +50,7 @@ id_origin.eicu_demo_ids <- function(x, ...) {
 #' @rdname data_utils
 #' @export
 id_origin.default <- function(x, id, env = get_src_env(x), ...) {
-  id_origin(get_id_cols(x, id_name = id, ...), id = id, env = env)
+  id_origin(as_id_cfg(x), id = id, env = env, ...)
 }
 
 id_orig_all <- memoise::memoise(
@@ -116,7 +114,7 @@ id_windows.hirid_ids <- function(x, env = get_src_env(x), ...) {
 #' @rdname data_utils
 #' @export
 id_windows.default <- function(x, env = get_src_env(x), ...) {
-  id_windows(get_id_cols(x, ...), env = env)
+  id_windows(as_id_cfg(x, ...), env = env)
 }
 
 order_rename <- function(x, id_nms, id_col, st_col, ed_col) {
@@ -139,13 +137,13 @@ id_wins_mimic <- memoise::memoise(
       get(tbl, envir = env)[, c(id, start, end, aux)]
     }
 
-    x <- x[order(int_ply(x, `[[`, "pos"), decreasing = TRUE)]
+    x <- sort(x, decreasing = TRUE)
 
-    ids  <- chr_ply(x, `[[`, "id")
-    sta <- chr_ply(x, `[[`, "start")
-    end  <- chr_ply(x, `[[`, "end")
+    ids  <- field(x, "id")
+    sta <- field(x, "start")
+    end  <- field(x, "end")
 
-    res <- Map(get_id_tbl, chr_ply(x, `[[`, "table"), ids, sta,
+    res <- Map(get_id_tbl, field(x, "table"), ids, sta,
                end, c(as.list(ids[-1L]), list(NULL)))
     res <- Reduce(merge_inter, res)
 
@@ -159,11 +157,15 @@ id_wins_mimic <- memoise::memoise(
 id_wins_eicu <- memoise::memoise(
   function(x, env) {
 
-    x <- x[order(int_ply(x, `[[`, "pos"), decreasing = TRUE)]
+    x <- sort(x, decreasing = TRUE)
 
-    ids <- chr_ply(x, `[[`, "id")
-    sta <- unlist(lapply(x, `[[`, "start"))
-    end <- unlist(lapply(x, `[[`, "end"))
+    ids <- field(x, "id")
+    sta <- field(x, "start")
+    end <- field(x, "end")
+
+    if (anyNA(sta)) {
+      sta <- sta[!is.na(sta)]
+    }
 
     res <- get("patient", env)[, c(ids, sta, end)]
 
@@ -193,13 +195,13 @@ id_wins_hirid <- memoise::memoise(
       res
     }
 
-    ids <- chr_ply(x, `[[`, "id")
-    sta <- chr_ply(x, `[[`, "start")
+    ids <- field(x, "id")
+    sta <- field(x, "start")
 
     obs <- get("observations", env)
     obs <- subset(obs, .env$ind_fun(.data$patientid, .data$datetime),
                   c("patientid", "datetime"), part_safe = TRUE)
-    tbl <- get(chr_ply(x, `[[`, "table"), env)[, c(ids, sta)]
+    tbl <- get(field(x, "table"), env)[, c(ids, sta)]
 
     res <- merge(tbl, obs, by = ids)
     res <- res[, c(sta, "datetime") := lapply(.SD, as_dt_min, get(sta)),
@@ -211,7 +213,7 @@ id_wins_hirid <- memoise::memoise(
 
 id_map_min <- function(x, id_name, win_id, in_time, out_time, ...) {
 
-  x <- get_id_cols(x, ...)
+  x <- as_id_cfg(x, ...)
 
   map    <- id_windows(x)
   map_id <- id(map)
@@ -237,7 +239,7 @@ id_map_min <- function(x, id_name, win_id, in_time, out_time, ...) {
   map <- rm_cols(map, setdiff(colnames(map),
                               c(id_name, win_id, in_time, out_time)))
 
-  if (max(id_positions(x, c(id_name, win_id))) < max(id_positions(x))) {
+  if (max(select_ids(x, c(id_name, win_id))) < max(x)) {
     map <- unique(map)
   }
 
@@ -254,7 +256,7 @@ id_map_min <- function(x, id_name, win_id, in_time, out_time, ...) {
 #' @param in_time,out_time column names of the returned in/out times
 #' @param interval The time interval used to discretize time stamps with,
 #' specified as [base::difftime()] object
-#' @param ... Passed on to [get_id_cols()]
+#' @param ... Potentially passed on to [as_id_cfg()] or [read_src_cfg()]
 #'
 #' @export
 #'
@@ -264,10 +266,14 @@ stay_windows <- function(x, id_type = "icustay", win_type = "icustay",
 
   assert_that(is_time(interval, allow_neg = FALSE))
 
-  cfg <- get_id_cols(x, ...)
-  opt <- id_types(cfg)
+  if (is.string(x)) {
+    cfg <- as_id_cfg(read_src_cfg(x, ...)[[1L]])
+  } else {
+    cfg <- as_id_cfg(x, ...)
+  }
 
-  res <- id_map_min(cfg, opt[id_type], opt[win_type], in_time, out_time)
+  res <- id_map_min(cfg, get_id_col(cfg, id_type), get_id_col(cfg, win_type),
+                    in_time, out_time)
 
   if (!is_one_min(interval) && (not_null(in_time) || not_null(out_time))) {
 
@@ -286,7 +292,7 @@ stay_windows <- function(x, id_type = "icustay", win_type = "icustay",
 #'
 #' @param x `icu_tbl` object for which to make the id change
 #' @param target_id The destination id name
-#' @param id_cfg An `id_cols` object, specifying the id options
+#' @param id_cfg An `id_cfg` object, specifying the id options
 #' @param ... Passed to `upgrade_id()`/`downgrade_id()`
 #'
 #' @rdname change_id
@@ -302,9 +308,9 @@ change_id <- function(x, target_id, id_cfg, ...) {
     return(x)
   }
 
-  if (id_positions(id_cfg, orig_id) < id_positions(id_cfg, target_id)) {
+  if (select_ids(id_cfg, orig_id) < select_ids(id_cfg, target_id)) {
     upgrade_id(x, target_id, id_cfg, ...)
-  } else if (id_positions(id_cfg, orig_id) > id_positions(id_cfg, target_id)) {
+  } else if (select_ids(id_cfg, orig_id) > select_ids(id_cfg, target_id)) {
     downgrade_id(x, target_id, id_cfg, ...)
   } else {
     stop("Cannot handle conversion of IDs with identical positions")
@@ -318,7 +324,7 @@ change_id <- function(x, target_id, id_cfg, ...) {
 #'
 upgrade_id <- function(x, target_id, id_cfg, cols = time_cols(x), ...) {
 
-  assert_that(id_positions(id_cfg, id(x)) < id_positions(id_cfg, target_id))
+  assert_that(select_ids(id_cfg, id(x)) < select_ids(id_cfg, target_id))
 
   UseMethod("upgrade_id", x)
 }
@@ -328,7 +334,7 @@ upgrade_id <- function(x, target_id, id_cfg, cols = time_cols(x), ...) {
 #'
 downgrade_id <- function(x, target_id, id_cfg, cols = time_cols(x), ...) {
 
-  assert_that(id_positions(id_cfg, id(x)) > id_positions(id_cfg, target_id))
+  assert_that(select_ids(id_cfg, id(x)) > select_ids(id_cfg, target_id))
 
   UseMethod("downgrade_id", x)
 }

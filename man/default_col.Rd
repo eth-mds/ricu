@@ -2,16 +2,27 @@
 % Please edit documentation in R/config-utils.R
 \name{default_col}
 \alias{default_col}
+\alias{default_col.col_cfg}
+\alias{default_col.id_cfg}
+\alias{default_col.data_src}
 \title{Get default columns}
 \usage{
-default_col(x, type)
+default_col(x, ...)
+
+\method{default_col}{col_cfg}(x, type = "id", ...)
+
+\method{default_col}{id_cfg}(x, ...)
+
+\method{default_col}{data_src}(x, type = "id", ...)
 }
 \arguments{
 \item{x}{Object used for dispatch}
 
+\item{...}{Generic consistency}
+
 \item{type}{The column type, e.g. \code{id}, \code{index}, \code{unit}, \code{value}}
 }
 \description{
-For a table, query the default columns as specified by an \code{id_cols}
-(\code{\link[=new_id_cols]{new_id_cols()}}) or \code{col_defaults} (\code{\link[=new_col_defaults]{new_col_defaults()}}) object.
+For a table, query the default columns as specified by an \code{id_cfg}
+(\code{\link[=new_id_cfg]{new_id_cfg()}}) or \code{col_cfg} (\code{\link[=new_col_cfg]{new_col_cfg()}}) object.
 }

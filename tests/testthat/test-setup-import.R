@@ -33,20 +33,21 @@ spec <- list(
 
 test_that("import csv", {
 
-  cfg <- new_table_spec("cars", "mtcars.csv", spec, 32L)
+  cfg <- new_tbl_spec("cars", "mtcars.csv", list(spec), 32L, list(NULL), "foo")
 
-  expect_null(csv_to_fst(cfg, tmp, FALSE))
+  expect_null(csv_to_fst(cfg, tmp, cleanup = FALSE))
 })
 
 test_that("import partitioned", {
 
   part <- list(col = "carbu", breaks = c(0, 4, 8))
 
-  cfg <- new_table_spec("cars", "mtcars.csv", spec, 32L, part)
+  cfg <- new_tbl_spec("cars", "mtcars.csv", list(spec), 32L, list(part), "foo")
 
-  expect_null(partition_table(cfg, tmp, FALSE, 5))
+  expect_null(partition_table(cfg, tmp, cleanup = FALSE, chunk_length = 5))
 
-  cfg <- new_table_spec("cars", c("cars_0.csv", "cars_1.csv"), spec, 32L, part)
+  cfg <- new_tbl_spec("cars", list(c("cars_0.csv", "cars_1.csv")),
+                      list(spec), 32L, list(part), "foo")
 
-  expect_null(partition_table(cfg, tmp, FALSE, 5))
+  expect_null(partition_table(cfg, tmp, cleanup = FALSE, chunk_length = 5))
 })
