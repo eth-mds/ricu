@@ -17,27 +17,27 @@
 \usage{
 id_origin(x, ...)
 
-\method{id_origin}{id_cfg}(x, id, env = get_src_env(x), ...)
+\method{id_origin}{id_cfg}(x, id, env = as_src_env(x), ...)
 
 \method{id_origin}{eicu_ids}(x, ...)
 
 \method{id_origin}{eicu_demo_ids}(x, ...)
 
-\method{id_origin}{default}(x, id, env = get_src_env(x), ...)
+\method{id_origin}{default}(x, id, env = as_src_env(x), ...)
 
 id_windows(x, ...)
 
-\method{id_windows}{mimic_ids}(x, env = get_src_env(x), ...)
+\method{id_windows}{mimic_ids}(x, env = as_src_env(x), ...)
 
-\method{id_windows}{mimic_demo_ids}(x, env = get_src_env(x), ...)
+\method{id_windows}{mimic_demo_ids}(x, env = as_src_env(x), ...)
 
-\method{id_windows}{eicu_ids}(x, env = get_src_env(x), ...)
+\method{id_windows}{eicu_ids}(x, env = as_src_env(x), ...)
 
-\method{id_windows}{eicu_demo_ids}(x, env = get_src_env(x), ...)
+\method{id_windows}{eicu_demo_ids}(x, env = as_src_env(x), ...)
 
-\method{id_windows}{hirid_ids}(x, env = get_src_env(x), ...)
+\method{id_windows}{hirid_ids}(x, env = as_src_env(x), ...)
 
-\method{id_windows}{default}(x, env = get_src_env(x), ...)
+\method{id_windows}{default}(x, env = as_src_env(x), ...)
 }
 \arguments{
 \item{x}{Object to dispatch on}

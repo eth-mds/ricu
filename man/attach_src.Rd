@@ -13,11 +13,15 @@
 \alias{eicu}
 \alias{eicu_demo}
 \alias{hirid}
-\alias{get_data_src}
-\alias{get_src_env}
-\alias{get_src_env.character}
-\alias{get_src_env.default}
-\alias{get_src_env.data_src}
+\alias{as_src_tbl}
+\alias{as_src_tbl.src_tbl}
+\alias{as_src_tbl.src_env}
+\alias{as_src_tbl.character}
+\alias{as_src_env}
+\alias{as_src_env.src_env}
+\alias{as_src_env.character}
+\alias{as_src_env.default}
+\alias{as_src_env.src_tbl}
 \title{Data attach utilities}
 \format{
 An object of class \code{environment} of length 5.
@@ -35,15 +39,23 @@ setup_src_env(x, env, dir = NULL)
 
 data
 
-get_data_src(tbl, src)
+as_src_tbl(x, ...)
 
-get_src_env(x)
+\method{as_src_tbl}{src_tbl}(x, ...)
 
-\method{get_src_env}{character}(x)
+\method{as_src_tbl}{src_env}(x, tbl, ...)
 
-\method{get_src_env}{default}(x)
+\method{as_src_tbl}{character}(x, env, ...)
 
-\method{get_src_env}{data_src}(x)
+as_src_env(x)
+
+\method{as_src_env}{src_env}(x)
+
+\method{as_src_env}{character}(x)
+
+\method{as_src_env}{default}(x)
+
+\method{as_src_env}{src_tbl}(x)
 }
 \arguments{
 \item{x}{Data source to attach}
@@ -60,11 +72,9 @@ the default config directors}
 
 \item{file}{Full file name to load}
 
-\item{env}{Environment where data proxy objects are created}
+\item{env}{Object passed to \code{as_src_env()} or an environment}
 
 \item{tbl}{String valued table name}
-
-\item{src}{Object passed to \code{get_src_env()} or an environment}
 }
 \description{
 Attaching a data source sets up an environment containing \code{\link[prt:new_prt]{prt::new_prt()}}

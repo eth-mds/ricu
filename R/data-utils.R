@@ -18,7 +18,7 @@ id_origin <- function(x, ...) UseMethod("id_origin", x)
 #'
 #' @rdname data_utils
 #' @export
-id_origin.id_cfg <- function(x, id, env = get_src_env(x), ...) {
+id_origin.id_cfg <- function(x, id, env = as_src_env(x), ...) {
 
   assert_that(is.string(id), ...length() == 0L)
 
@@ -49,7 +49,7 @@ id_origin.eicu_demo_ids <- function(x, ...) {
 
 #' @rdname data_utils
 #' @export
-id_origin.default <- function(x, id, env = get_src_env(x), ...) {
+id_origin.default <- function(x, id, env = as_src_env(x), ...) {
   id_origin(as_id_cfg(x), id = id, env = env, ...)
 }
 
@@ -68,52 +68,42 @@ id_windows <- function(x, ...) UseMethod("id_windows", x)
 
 #' @rdname data_utils
 #' @export
-id_windows.mimic_ids <- function(x, env = get_src_env(x), ...) {
-
-  assert_that(...length() == 0L)
-
+id_windows.mimic_ids <- function(x, env = as_src_env(x), ...) {
+  warn_dots(...)
   id_wins_mimic(x, env)
 }
 
 #' @rdname data_utils
 #' @export
-id_windows.mimic_demo_ids <- function(x, env = get_src_env(x), ...) {
-
-  assert_that(...length() == 0L)
-
+id_windows.mimic_demo_ids <- function(x, env = as_src_env(x), ...) {
+  warn_dots(...)
   id_wins_mimic(x, env)
 }
 
 #' @rdname data_utils
 #' @export
-id_windows.eicu_ids <- function(x, env = get_src_env(x), ...) {
-
-  assert_that(...length() == 0L)
-
+id_windows.eicu_ids <- function(x, env = as_src_env(x), ...) {
+  warn_dots(...)
   id_wins_eicu(x, env)
 }
 
 #' @rdname data_utils
 #' @export
-id_windows.eicu_demo_ids <- function(x, env = get_src_env(x), ...) {
-
-  assert_that(...length() == 0L)
-
+id_windows.eicu_demo_ids <- function(x, env = as_src_env(x), ...) {
+  warn_dots(...)
   id_wins_eicu(x, env)
 }
 
 #' @rdname data_utils
 #' @export
-id_windows.hirid_ids <- function(x, env = get_src_env(x), ...) {
-
-  assert_that(...length() == 0L)
-
+id_windows.hirid_ids <- function(x, env = as_src_env(x), ...) {
+  warn_dots(...)
   id_wins_hirid(x, env)
 }
 
 #' @rdname data_utils
 #' @export
-id_windows.default <- function(x, env = get_src_env(x), ...) {
+id_windows.default <- function(x, env = as_src_env(x), ...) {
   id_windows(as_id_cfg(x, ...), env = env)
 }
 

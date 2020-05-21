@@ -4,7 +4,7 @@
 \alias{default_col}
 \alias{default_col.col_cfg}
 \alias{default_col.id_cfg}
-\alias{default_col.data_src}
+\alias{default_col.src_tbl}
 \title{Get default columns}
 \usage{
 default_col(x, ...)
@@ -13,7 +13,7 @@ default_col(x, ...)
 
 \method{default_col}{id_cfg}(x, ...)
 
-\method{default_col}{data_src}(x, type = "id", ...)
+\method{default_col}{src_tbl}(x, type = "id", ...)
 }
 \arguments{
 \item{x}{Object used for dispatch}

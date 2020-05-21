@@ -3,12 +3,12 @@ test_that("load_src()", {
 
   expect_fsetequal(
     load_src("d_labitems", "mimic_demo"),
-    get("d_labitems", envir = get_src_env("mimic_demo"))[]
+    as_src_tbl("d_labitems", "mimic_demo")[]
   )
 
   expect_fsetequal(
     load_src("hospital", "eicu_demo"),
-    get("hospital", envir = get_src_env("eicu_demo"))[]
+    as_src_tbl("hospital", "eicu_demo")[]
   )
 })
 

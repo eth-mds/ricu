@@ -7,7 +7,7 @@
 \alias{as_col_cfg.col_cfg}
 \alias{as_col_cfg.list}
 \alias{as_col_cfg.src_cfg}
-\alias{as_col_cfg.data_src}
+\alias{as_col_cfg.src_tbl}
 \title{Default columns}
 \usage{
 new_col_cfg(table, id, index, val, unit, time, src)
@@ -22,7 +22,7 @@ as_col_cfg(x, ...)
 
 \method{as_col_cfg}{src_cfg}(x, ...)
 
-\method{as_col_cfg}{data_src}(x, ...)
+\method{as_col_cfg}{src_tbl}(x, ...)
 }
 \arguments{
 \item{table}{Table name (string)}

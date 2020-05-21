@@ -216,7 +216,13 @@ as_id_cfg.src_cfg <- function(x, ...) {
 #' @keywords internal
 #' @export
 #'
-as_id_cfg.data_src <- function(x, ...) {
+as_id_cfg.src_tbl <- function(x, ...) as_id_cfg(as_src_env(x), ...)
+
+#' @rdname id_cfg
+#' @keywords internal
+#' @export
+#'
+as_id_cfg.src_env <- function(x, ...) {
   warn_dots(...)
   attr(x, "id_cfg")
 }
@@ -376,7 +382,7 @@ as_col_cfg.src_cfg <- function(x, ...) {
 #' @keywords internal
 #' @export
 #'
-as_col_cfg.data_src <- function(x, ...) {
+as_col_cfg.src_tbl <- function(x, ...) {
   warn_dots(...)
   attr(x, "col_cfg")
 }
@@ -635,7 +641,7 @@ default_col.id_cfg <- function(x, ...) {
 
 #' @rdname default_col
 #' @export
-default_col.data_src <- function(x, type = "id", ...) {
+default_col.src_tbl <- function(x, type = "id", ...) {
 
   warn_dots(...)
 

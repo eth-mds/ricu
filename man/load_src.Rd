@@ -2,20 +2,20 @@
 % Please edit documentation in R/data-load.R
 \name{load_src}
 \alias{load_src}
-\alias{load_src.data_src}
+\alias{load_src.src_tbl}
 \alias{load_src.character}
 \alias{load_difftime}
-\alias{load_difftime.mimic_src}
-\alias{load_difftime.mimic_demo_src}
-\alias{load_difftime.eicu_src}
-\alias{load_difftime.eicu_demo_src}
-\alias{load_difftime.hirid_src}
+\alias{load_difftime.mimic_tbl}
+\alias{load_difftime.mimic_demo_tbl}
+\alias{load_difftime.eicu_tbl}
+\alias{load_difftime.eicu_demo_tbl}
+\alias{load_difftime.hirid_tbl}
 \alias{load_difftime.character}
 \alias{load_id}
-\alias{load_id.data_src}
+\alias{load_id.src_tbl}
 \alias{load_id.character}
 \alias{load_ts}
-\alias{load_ts.data_src}
+\alias{load_ts.src_tbl}
 \alias{load_ts.character}
 \alias{data_id}
 \alias{data_ts}
@@ -23,27 +23,27 @@
 \usage{
 load_src(x, ...)
 
-\method{load_src}{data_src}(x, rows, cols = colnames(x), ...)
+\method{load_src}{src_tbl}(x, rows, cols = colnames(x), ...)
 
 \method{load_src}{character}(x, src, ...)
 
 load_difftime(x, ...)
 
-\method{load_difftime}{mimic_src}(x, rows, cols = colnames(x), id_hint = default_col(x, "id"), ...)
+\method{load_difftime}{mimic_tbl}(x, rows, cols = colnames(x), id_hint = default_col(x, "id"), ...)
 
-\method{load_difftime}{mimic_demo_src}(x, rows, cols = colnames(x), id_hint = default_col(x, "id"), ...)
+\method{load_difftime}{mimic_demo_tbl}(x, rows, cols = colnames(x), id_hint = default_col(x, "id"), ...)
 
-\method{load_difftime}{eicu_src}(x, rows, cols = colnames(x), ...)
+\method{load_difftime}{eicu_tbl}(x, rows, cols = colnames(x), ...)
 
-\method{load_difftime}{eicu_demo_src}(x, rows, cols = colnames(x), ...)
+\method{load_difftime}{eicu_demo_tbl}(x, rows, cols = colnames(x), ...)
 
-\method{load_difftime}{hirid_src}(x, rows, cols = colnames(x), id_hint = default_col(x, "id"), ...)
+\method{load_difftime}{hirid_tbl}(x, rows, cols = colnames(x), id_hint = default_col(x, "id"), ...)
 
 \method{load_difftime}{character}(x, src, ...)
 
 load_id(x, ...)
 
-\method{load_id}{data_src}(
+\method{load_id}{src_tbl}(
   x,
   rows,
   cols = colnames(x),
@@ -56,7 +56,7 @@ load_id(x, ...)
 
 load_ts(x, ...)
 
-\method{load_ts}{data_src}(
+\method{load_ts}{src_tbl}(
   x,
   rows,
   cols = colnames(x),
@@ -81,7 +81,7 @@ data_ts(source, table, ...)
 
 \item{cols}{Character vector of column names}
 
-\item{src}{Passed to \code{\link[=get_data_src]{get_data_src()}} in order to determine the data source}
+\item{src}{Passed to \code{\link[=as_src_tbl]{as_src_tbl()}} in order to determine the data source}
 
 \item{id_hint}{String valued id column selection (not necessarily honored)}
 

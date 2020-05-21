@@ -7,7 +7,8 @@
 \alias{as_id_cfg.list}
 \alias{as_id_cfg.id_cfg}
 \alias{as_id_cfg.src_cfg}
-\alias{as_id_cfg.data_src}
+\alias{as_id_cfg.src_tbl}
+\alias{as_id_cfg.src_env}
 \title{ID columns}
 \usage{
 new_id_cfg(name, id, pos, start, end, table, src)
@@ -22,7 +23,9 @@ as_id_cfg(x, ...)
 
 \method{as_id_cfg}{src_cfg}(x, ...)
 
-\method{as_id_cfg}{data_src}(x, ...)
+\method{as_id_cfg}{src_tbl}(x, ...)
+
+\method{as_id_cfg}{src_env}(x, ...)
 }
 \arguments{
 \item{x}{Object to test/coerce}

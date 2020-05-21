@@ -126,7 +126,7 @@ load_concepts.item <- function(x, unit = NULL, min = NULL, max = NULL,
     tbl <- x[["table"]]
 
     if (is.null(uco) && not_null(tbl)) {
-      uco <- default_col(get_data_src(tbl, x[["source"]]), "unit")
+      uco <- default_col(as_src_tbl(tbl, x[["source"]]), "unit")
     }
 
     res <- range_check(res, setdiff(data_cols(res), uco), mi, ma, verbose)
@@ -150,7 +150,7 @@ load_concepts.item <- function(x, unit = NULL, min = NULL, max = NULL,
       "Cannot subset patient IDs for multiple data sources at the same time")
     )
 
-    idc <- get_id_col(get_data_src(x[[1L]][["table"]], src), "id_type")
+    idc <- get_id_col(as_src_tbl(x[[1L]][["table"]], src), "id_type")
 
     if (inherits(patient_ids, "data.frame")) {
       assert_that(has_name(patient_ids, idc))
@@ -189,7 +189,7 @@ load_default <- function(item, id_type, patient_ids, interval) {
 
   assert_that(is.string(tble))
 
-  tbl <- get_data_src(tble, item[["source"]])
+  tbl <- as_src_tbl(tble, item[["source"]])
 
   id_col <- get_id_col(tbl, id_type)
   ex_col <- get_default_cols(tbl, c("index", "val", "unit"))
@@ -210,7 +210,7 @@ load_default <- function(item, id_type, patient_ids, interval) {
 
   cb_args <- c(
     list(x = res), item[setdiff(names(item), "regex")],
-    list(id_col = id_col), ex_col, list(env = get_src_env(tbl))
+    list(id_col = id_col), ex_col, list(env = as_src_env(tbl))
   )
 
   do.call(do_callback, cb_args[!duplicated(names(cb_args))])

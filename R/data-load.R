@@ -19,19 +19,19 @@ load_src <- function(x, ...) UseMethod("load_src", x)
 #'
 #' @rdname load_src
 #' @export
-load_src.data_src <- function(x, rows, cols = colnames(x), ...) {
+load_src.src_tbl <- function(x, rows, cols = colnames(x), ...) {
 
   assert_that(is.character(cols), length(cols) > 0L, ...length() == 0L)
 
   subset(x, {{ rows }}, cols)
 }
 
-#' @param src Passed to [get_data_src()] in order to determine the data source
+#' @param src Passed to [as_src_tbl()] in order to determine the data source
 #'
 #' @rdname load_src
 #' @export
 load_src.character <- function(x, src, ...) {
-  load_src(get_data_src(x, src), ...)
+  load_src(as_src_tbl(x, src), ...)
 }
 
 #' @rdname load_src
@@ -42,7 +42,7 @@ load_difftime <- function(x, ...) UseMethod("load_difftime", x)
 #'
 #' @rdname load_src
 #' @export
-load_difftime.mimic_src <- function(x, rows, cols = colnames(x),
+load_difftime.mimic_tbl <- function(x, rows, cols = colnames(x),
                                     id_hint = default_col(x, "id"), ...) {
 
   assert_that(...length() == 0L)
@@ -52,7 +52,7 @@ load_difftime.mimic_src <- function(x, rows, cols = colnames(x),
 
 #' @rdname load_src
 #' @export
-load_difftime.mimic_demo_src <- function(x, rows, cols = colnames(x),
+load_difftime.mimic_demo_tbl <- function(x, rows, cols = colnames(x),
                                          id_hint = default_col(x, "id"), ...) {
 
   assert_that(...length() == 0L)
@@ -62,21 +62,21 @@ load_difftime.mimic_demo_src <- function(x, rows, cols = colnames(x),
 
 #' @rdname load_src
 #' @export
-load_difftime.eicu_src <- function(x, rows, cols = colnames(x), ...) {
+load_difftime.eicu_tbl <- function(x, rows, cols = colnames(x), ...) {
 
   load_eicu(x, {{ rows }}, cols)
 }
 
 #' @rdname load_src
 #' @export
-load_difftime.eicu_demo_src <- function(x, rows, cols = colnames(x), ...) {
+load_difftime.eicu_demo_tbl <- function(x, rows, cols = colnames(x), ...) {
 
   load_eicu(x, {{ rows }}, cols)
 }
 
 #' @rdname load_src
 #' @export
-load_difftime.hirid_src <- function(x, rows, cols = colnames(x),
+load_difftime.hirid_tbl <- function(x, rows, cols = colnames(x),
                                     id_hint = default_col(x, "id"), ...) {
 
   assert_that(...length() == 0L)
@@ -87,7 +87,7 @@ load_difftime.hirid_src <- function(x, rows, cols = colnames(x),
 #' @rdname load_src
 #' @export
 load_difftime.character <- function(x, src, ...) {
-  load_difftime(get_data_src(x, src), ...)
+  load_difftime(as_src_tbl(x, src), ...)
 }
 
 load_mihi <- function(x, rows, cols, id_hint) {
@@ -167,7 +167,7 @@ load_id <- function(x, ...) UseMethod("load_id", x)
 
 #' @rdname load_src
 #' @export
-load_id.data_src <- function(x, rows, cols = colnames(x),
+load_id.src_tbl <- function(x, rows, cols = colnames(x),
                              id_col = default_col(x, "id"),
                              interval = hours(1L), ...) {
 
@@ -188,7 +188,7 @@ load_id.data_src <- function(x, rows, cols = colnames(x),
 #' @rdname load_src
 #' @export
 load_id.character <- function(x, src, ...) {
-  load_id(get_data_src(x, src), ...)
+  load_id(as_src_tbl(x, src), ...)
 }
 
 #' @param index_col The column defining the index of `ts_tbl` objects
@@ -199,7 +199,7 @@ load_ts <- function(x, ...) UseMethod("load_ts", x)
 
 #' @rdname load_src
 #' @export
-load_ts.data_src <- function(x, rows, cols = colnames(x),
+load_ts.src_tbl <- function(x, rows, cols = colnames(x),
                              id_col = default_col(x, "id"),
                              index_col = default_col(x, "index"),
                              interval = hours(1L), ...) {
@@ -226,7 +226,7 @@ load_ts.data_src <- function(x, rows, cols = colnames(x),
 #' @rdname load_src
 #' @export
 load_ts.character <- function(x, src, ...) {
-  load_ts(get_data_src(x, src), ...)
+  load_ts(as_src_tbl(x, src), ...)
 }
 
 #' @param source String specifying the data source
