@@ -133,20 +133,21 @@
     </div>
 
     <pre class="usage"><span class='fu'>stay_windows</span>(
-  <span class='no'>source</span>,
+  <span class='no'>x</span>,
   <span class='kw'>id_type</span> <span class='kw'>=</span> <span class='st'>"icustay"</span>,
   <span class='kw'>win_type</span> <span class='kw'>=</span> <span class='st'>"icustay"</span>,
-  <span class='kw'>in_time</span> <span class='kw'>=</span> <span class='st'>"intime"</span>,
-  <span class='kw'>out_time</span> <span class='kw'>=</span> <span class='st'>"outtime"</span>,
-  <span class='kw'>interval</span> <span class='kw'>=</span> <span class='fu'><a href='difftime.html'>hours</a></span>(<span class='fl'>1L</span>)
+  <span class='kw'>in_time</span> <span class='kw'>=</span> <span class='st'>"start"</span>,
+  <span class='kw'>out_time</span> <span class='kw'>=</span> <span class='st'>"end"</span>,
+  <span class='kw'>interval</span> <span class='kw'>=</span> <span class='fu'><a href='difftime.html'>hours</a></span>(<span class='fl'>1L</span>),
+  <span class='no'>...</span>
 )</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
-      <th>source</th>
-      <td><p>String specifying the data source</p></td>
+      <th>x</th>
+      <td><p>Object to dispatch on</p></td>
     </tr>
     <tr>
       <th>id_type</th>
@@ -164,6 +165,10 @@
       <th>interval</th>
       <td><p>The time interval used to discretize time stamps with,
 specified as <code><a href='https://rdrr.io/r/base/difftime.html'>base::difftime()</a></code> object</p></td>
+    </tr>
+    <tr>
+      <th>...</th>
+      <td><p>Potentially passed on to <code><a href='id_cfg.html'>as_id_cfg()</a></code> or <code><a href='read_src_cfg.html'>read_src_cfg()</a></code></p></td>
     </tr>
     </table>
 

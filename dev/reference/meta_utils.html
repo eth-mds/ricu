@@ -135,6 +135,9 @@
     <pre class="usage"><span class='co'># S3 method for id_meta</span>
 <span class='fu'>set_id</span>(<span class='no'>x</span>, <span class='no'>value</span>)
 
+<span class='co'># S3 method for id_meta</span>
+<span class='fu'>set_id_opts</span>(<span class='no'>x</span>, <span class='no'>value</span>)
+
 <span class='co'># S3 method for tbl_index</span>
 <span class='fu'>index</span>(<span class='no'>x</span>)
 
@@ -160,10 +163,10 @@
 <span class='fu'>set_index</span>(<span class='no'>x</span>, <span class='no'>value</span>)
 
 <span class='co'># S3 method for tbl_index</span>
-<span class='fu'>set_interval</span>(<span class='no'>x</span>, <span class='no'>value</span>)
+<span class='fu'>set_interval</span>(<span class='no'>x</span>, <span class='no'>value</span>, <span class='no'>...</span>)
 
 <span class='co'># S3 method for tbl_index</span>
-<span class='fu'>set_time_unit</span>(<span class='no'>x</span>, <span class='no'>value</span>)
+<span class='fu'>set_time_unit</span>(<span class='no'>x</span>, <span class='no'>value</span>, <span class='no'>...</span>)
 
 <span class='co'># S3 method for ts_meta</span>
 <span class='fu'>index</span>(<span class='no'>x</span>)
@@ -181,13 +184,16 @@
 <span class='fu'>set_id</span>(<span class='no'>x</span>, <span class='no'>value</span>)
 
 <span class='co'># S3 method for ts_meta</span>
+<span class='fu'>set_id_opts</span>(<span class='no'>x</span>, <span class='no'>value</span>)
+
+<span class='co'># S3 method for ts_meta</span>
 <span class='fu'>set_index</span>(<span class='no'>x</span>, <span class='no'>value</span>)
 
 <span class='co'># S3 method for ts_meta</span>
-<span class='fu'>set_interval</span>(<span class='no'>x</span>, <span class='no'>value</span>)
+<span class='fu'>set_interval</span>(<span class='no'>x</span>, <span class='no'>value</span>, <span class='no'>...</span>)
 
 <span class='co'># S3 method for ts_meta</span>
-<span class='fu'>set_time_unit</span>(<span class='no'>x</span>, <span class='no'>value</span>)
+<span class='fu'>set_time_unit</span>(<span class='no'>x</span>, <span class='no'>value</span>, <span class='no'>...</span>)
 
 <span class='co'># S3 method for tbl_meta</span>
 <span class='fu'>id</span>(<span class='no'>x</span>)
@@ -209,13 +215,13 @@
 
 <span class='fu'>set_index</span>(<span class='no'>x</span>, <span class='no'>value</span>)
 
-<span class='fu'>set_interval</span>(<span class='no'>x</span>, <span class='no'>value</span>)
+<span class='fu'>set_interval</span>(<span class='no'>x</span>, <span class='no'>value</span>, <span class='no'>...</span>)
 
 <span class='fu'>set_id</span>(<span class='no'>x</span>, <span class='no'>value</span>)
 
 <span class='fu'>set_id_opts</span>(<span class='no'>x</span>, <span class='no'>value</span>)
 
-<span class='fu'>set_time_unit</span>(<span class='no'>x</span>, <span class='no'>value</span>)
+<span class='fu'>set_time_unit</span>(<span class='no'>x</span>, <span class='no'>value</span>, <span class='no'>...</span>)
 
 <span class='co'># S3 method for icu_tbl</span>
 <span class='fu'>id</span>(<span class='no'>x</span>)
@@ -256,6 +262,10 @@
     <tr>
       <th>value</th>
       <td><p>New value to set</p></td>
+    </tr>
+    <tr>
+      <th>...</th>
+      <td><p>Generic consistency</p></td>
     </tr>
     </table>
 

@@ -140,22 +140,13 @@ from <code>icu_tbl</code>) are used to represent tabular data.</p>
 
 <span class='fu'>as_id_tbl</span>(<span class='no'>x</span>, <span class='no'>...</span>)
 
-<span class='co'># S3 method for id_tbl</span>
-<span class='fu'>as_id_tbl</span>(<span class='no'>x</span>, <span class='no'>...</span>)
-
 <span class='co'># S3 method for default</span>
 <span class='fu'>as_id_tbl</span>(<span class='no'>x</span>, <span class='no'>id</span>, <span class='kw'>id_opts</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='no'>...</span>)
-
-<span class='co'># S3 method for id_tbl</span>
-<span class='fu'>as_ts_tbl</span>(<span class='no'>x</span>, <span class='kw'>index</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>interval</span> <span class='kw'>=</span> <span class='fu'><a href='difftime.html'>hours</a></span>(<span class='fl'>1L</span>), <span class='no'>...</span>)
 
 <span class='fu'>is_id_tbl</span>(<span class='no'>x</span>)
 
 <span class='fu'>ts_tbl</span>(<span class='no'>...</span>, <span class='no'>id</span>, <span class='kw'>id_opts</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>index</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>interval</span> <span class='kw'>=</span> <span class='fu'><a href='difftime.html'>hours</a></span>(<span class='fl'>1L</span>))
 
-<span class='fu'>as_ts_tbl</span>(<span class='no'>x</span>, <span class='no'>...</span>)
-
-<span class='co'># S3 method for ts_tbl</span>
 <span class='fu'>as_ts_tbl</span>(<span class='no'>x</span>, <span class='no'>...</span>)
 
 <span class='co'># S3 method for default</span>
@@ -188,12 +179,11 @@ which ids may be converted see <code><a href='change_id.html'>change_id()</a></c
     </tr>
     <tr>
       <th>index</th>
-      <td><p>String valued column name used as index</p></td>
+      <td><p>Name of index column</p></td>
     </tr>
     <tr>
       <th>interval</th>
-      <td><p>Scalar <code>difftime</code> object representing the minimal time
-difference between rows</p></td>
+      <td><p>Time spacing between rows</p></td>
     </tr>
     </table>
 

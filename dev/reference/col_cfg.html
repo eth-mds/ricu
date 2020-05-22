@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Suspicion of infection label — si_data • ICU data with R</title>
+<title>Default columns — new_col_cfg • ICU data with R</title>
 
 
 <!-- jquery -->
@@ -39,8 +39,9 @@
 
 
 
-<meta property="og:title" content="Suspicion of infection label — si_data" />
-<meta property="og:description" content="Suspected infection is defined as co-occurrence of of antibiotic treatment and body-fluid sampling." />
+<meta property="og:title" content="Default columns — new_col_cfg" />
+<meta property="og:description" content="A table can have some of its columns marked as default columns for the
+following concepts:" />
 
 
 <meta name="robots" content="noindex">
@@ -123,109 +124,68 @@
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Suspicion of infection label</h1>
+    <h1>Default columns</h1>
     
-    <div class="hidden name"><code>label_si.Rd</code></div>
+    <div class="hidden name"><code>col_cfg.Rd</code></div>
     </div>
 
     <div class="ref-description">
-    <p>Suspected infection is defined as co-occurrence of of antibiotic treatment and body-fluid sampling.</p>
+    <p>A table can have some of its columns marked as default columns for the
+following concepts:</p>
     </div>
 
-    <pre class="usage"><span class='fu'>si_data</span>(
-  <span class='no'>source</span>,
-  <span class='kw'>abx_count_win</span> <span class='kw'>=</span> <span class='fu'><a href='difftime.html'>hours</a></span>(<span class='fl'>24L</span>),
-  <span class='kw'>abx_min_count</span> <span class='kw'>=</span> <span class='fl'>1L</span>,
-  <span class='kw'>positive_cultures</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
-  <span class='kw'>dictionary</span> <span class='kw'>=</span> <span class='fu'><a href='data_dictionary.html'>read_dictionary</a></span>(<span class='st'>"concept-dict"</span>),
-  <span class='no'>...</span>
-)
+    <pre class="usage"><span class='fu'>new_col_cfg</span>(<span class='no'>table</span>, <span class='no'>id</span>, <span class='no'>index</span>, <span class='no'>val</span>, <span class='no'>unit</span>, <span class='no'>time</span>, <span class='no'>src</span>)
 
-<span class='fu'>si_windows</span>(
-  <span class='no'>tbl</span>,
-  <span class='kw'>si_mode</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"and"</span>, <span class='st'>"or"</span>),
-  <span class='kw'>abx_win</span> <span class='kw'>=</span> <span class='fu'><a href='difftime.html'>hours</a></span>(<span class='fl'>24L</span>),
-  <span class='kw'>samp_win</span> <span class='kw'>=</span> <span class='fu'><a href='difftime.html'>hours</a></span>(<span class='fl'>72L</span>),
-  <span class='kw'>si_lwr</span> <span class='kw'>=</span> <span class='fu'><a href='difftime.html'>hours</a></span>(<span class='fl'>48L</span>),
-  <span class='kw'>si_upr</span> <span class='kw'>=</span> <span class='fu'><a href='difftime.html'>hours</a></span>(<span class='fl'>24L</span>)
-)
+<span class='fu'>is_col_cfg</span>(<span class='no'>x</span>)
 
-<span class='fu'>si</span>(<span class='no'>source</span>, <span class='no'>...</span>)</pre>
+<span class='fu'>as_col_cfg</span>(<span class='no'>x</span>, <span class='no'>...</span>)
+
+<span class='co'># S3 method for col_cfg</span>
+<span class='fu'>as_col_cfg</span>(<span class='no'>x</span>, <span class='no'>...</span>)
+
+<span class='co'># S3 method for list</span>
+<span class='fu'>as_col_cfg</span>(<span class='no'>x</span>, <span class='no'>src</span>, <span class='no'>...</span>)
+
+<span class='co'># S3 method for src_cfg</span>
+<span class='fu'>as_col_cfg</span>(<span class='no'>x</span>, <span class='no'>...</span>)
+
+<span class='co'># S3 method for src_tbl</span>
+<span class='fu'>as_col_cfg</span>(<span class='no'>x</span>, <span class='no'>...</span>)</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
-      <th>source</th>
-      <td><p>String valued name of data source</p></td>
+      <th>table</th>
+      <td><p>Table name (string)</p></td>
     </tr>
     <tr>
-      <th>abx_count_win</th>
-      <td><p>Time span during which to apply the <code>abx_min_count</code>
-criterion</p></td>
+      <th>x</th>
+      <td><p>Object to test/coerce</p></td>
     </tr>
     <tr>
-      <th>abx_min_count</th>
-      <td><p>Minimal number of antibiotic administrations</p></td>
+      <th>defaults</th>
+      <td><p>Named list containing column names</p></td>
     </tr>
     <tr>
-      <th>positive_cultures</th>
-      <td><p>Logical flag indicating whether to require
-cultures to be positive</p></td>
-    </tr>
-    <tr>
-      <th>dictionary</th>
-      <td><p><code>dictionary</code> object to use for concept lookup</p></td>
-    </tr>
-    <tr>
-      <th>...</th>
-      <td><p>Passed to <code><a href='load_concepts.html'>load_concepts()</a></code></p></td>
-    </tr>
-    <tr>
-      <th>tbl</th>
-      <td><p><code>ts_tbl</code> object to use for label computations</p></td>
-    </tr>
-    <tr>
-      <th>si_mode</th>
-      <td><p>Switch between <code>and</code>/<code>or</code> modes</p></td>
-    </tr>
-    <tr>
-      <th>abx_win</th>
-      <td><p>Time-span within which sampling has to occur</p></td>
-    </tr>
-    <tr>
-      <th>samp_win</th>
-      <td><p>Time-span within which antibiotic administration has to
-occur</p></td>
-    </tr>
-    <tr>
-      <th>si_lwr, si_upr</th>
-      <td><p>Lower/upper extent of SI windows</p></td>
+      <th>times</th>
+      <td><p>Character vector enumerating columns that contain time
+information</p></td>
     </tr>
     </table>
 
     <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
 
-    <p>Suspected infection can occur in one of the two following ways:</p><ul>
-<li><p>administration of antibiotics followed by a culture sampling within <code>samp_win</code> hours</p></li>
-</ul><pre>      samp_win
-  |---------------|
- ABX           sampling (last possible)
-</pre>
+    
 <ul>
-<li><p>culture sampling followed by an antibiotic administration within <code>abx_win</code> hours</p></li>
-</ul><pre>                     abx_win
-  |---------------------------------------------|
-sampling                                       ABX (last possible)
-</pre>
+<li><p><code>id_col</code>: column will be used for as id for <code>icu_tbl</code> objects</p></li>
+<li><p><code>index_col</code>: column represents a timestamp variable and will be use as
+such for <code>ts_tbl</code> objects</p></li>
+<li><p><code>val_col</code>: column contains the measured variable of interest</p></li>
+<li><p><code>unit_col</code>: column specifies the unit of measurement in the corresponding
+<code>val_col</code></p></li>
+</ul>
 
-<p>The default values of <code>samp_win</code> and <code>abx_win</code> are 24 and 72 hours respectively, as per <a href='https://jamanetwork.com/journals/jama/fullarticle/2492881'>Singer et.al.</a>.</p>
-<p>The ealier of the two times (fluid sampling, antibiotic treatment) is taken as the time of suspected infection (SI time). The suspected infection window (SI window) is defined to start <code>si_lwr</code> hours before the SI time and end <code>si_upr</code> hours after the SI time. The default values of 48 and 24 hours (respectively) are chosen as used by <a href='https://jamanetwork.com/journals/jama/fullarticle/2492875'>Seymour et.al.</a> (see Supplemental Material).</p><pre>               48h                       24h
- |------------------------------(|)---------------|
-                               SI time
-</pre>
-
-<p>For some datasets, however, information on body fluid sampling is not available for majority of the patients (eICU data). Therefore, an alternative definition of suspected infection is required. For this, we use administration of multiple antibiotics (argument <code>abx_min_count</code> determines the required number) within <code>abx_count_win</code> hours. The first time of antibiotic administration is taken as the SI time in this case.</p>
 
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
