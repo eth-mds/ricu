@@ -47,7 +47,9 @@ Suggests:
     rmarkdown,
     fansi,
     ggplot2,
-    rticles
+    rticles,
+    survival,
+    survminer
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.1.0
 Additional_repositories: https://septic-tank.github.io/physionet-demo
