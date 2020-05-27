@@ -46,7 +46,8 @@ Suggests:
     knitr,
     rmarkdown,
     fansi,
-    ggplot2
+    ggplot2,
+    rticles
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.1.0
 Additional_repositories: https://septic-tank.github.io/physionet-demo

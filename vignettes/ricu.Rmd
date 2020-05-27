@@ -26,6 +26,10 @@ keywords:
   plain:     [keywords, not capitalized, Java]
 preamble: >
   \usepackage{amsmath}
+vignette: >
+  %\VignetteIndexEntry{Automatic Time Series Forecasting: the forecast Package for R (Hyndman & Khandakar, JSS 2008)}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
 output: rticles::jss_article
 ---
 
