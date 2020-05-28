@@ -2,36 +2,44 @@
 % Please edit documentation in R/concept-utils.R
 \name{new_item}
 \alias{new_item}
-\alias{item}
 \alias{is_item}
+\alias{validate_itm}
+\alias{validate_itm.sel_itm}
+\alias{validate_itm.col_itm}
+\alias{validate_itm.rgx_itm}
+\alias{validate_itm.los_itm}
+\alias{validate_itm.itm}
 \alias{as_item}
-\alias{src_name}
+\alias{as_item.item}
 \title{Data item}
 \usage{
-new_item(
-  concept,
-  source,
-  table = NULL,
-  column = NULL,
-  ids = NULL,
-  regex = FALSE,
-  callback = NULL,
-  load_fun = "load_default",
-  ...
-)
-
-item(...)
+new_item(src, itm, class = "sel_itm")
 
 is_item(x)
 
-as_item(x)
+validate_itm(x, src)
 
-src_name(x)
+\method{validate_itm}{sel_itm}(x, src)
+
+\method{validate_itm}{col_itm}(x, src)
+
+\method{validate_itm}{rgx_itm}(x, src)
+
+\method{validate_itm}{los_itm}(x, src)
+
+\method{validate_itm}{itm}(x, src)
+
+as_item(x, ...)
+
+\method{as_item}{item}(x, ...)
 }
 \arguments{
-\item{concept}{The name of the associated clinical concept}
+\item{src}{The data source name}
 
-\item{source}{The data source name}
+\item{x}{A data item object}
+
+\item{...}{Further name/string pairs specifying additional columns needed to
+define the data item}
 
 \item{table}{Name of the table containing the data}
 
@@ -47,11 +55,6 @@ interpreted as regular expressions}
 for data cleanup operations}
 
 \item{load_fun}{Custom function used for overriding default loading of data}
-
-\item{...}{Further name/string pairs specifying additional columns needed to
-define the data item}
-
-\item{x}{A data item object}
 }
 \description{
 In order to specify the location of data items in data sets, \code{item} objects

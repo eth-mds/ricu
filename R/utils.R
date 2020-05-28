@@ -519,3 +519,14 @@ warn_dots <- function(...) {
 
   invisible(NULL)
 }
+
+wrap_null <- function(...) {
+
+  objs <- setNames(list(...), as.character(substitute(...)))
+
+  objs[lgl_ply(objs, is.null)] <- list(list(NULL))
+
+  list2env(objs, parent.frame())
+
+  invisible(NULL)
+}

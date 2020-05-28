@@ -5,8 +5,6 @@
 #' of id and time-step and merged into wide format.
 #'
 #' @param x Object specifying the data to be loaded
-#' @param source Character vector specifying data sources or NULL meaning
-#' everything
 #' @param ... Passed to downstream methods
 #'
 #' @rdname load_concepts
@@ -14,27 +12,28 @@
 #'
 load_concepts <- function(x, ...) UseMethod("load_concepts", x)
 
-#' @param source A character vector, used to subset the `dictionary`; `NULL`
+#' @param src A character vector, used to subset the `concepts`; `NULL`
 #' means no subsetting
-#' @param dictionary The dictionary to be used
+#' @param concepts The concepts to be used
 #'
 #' @rdname load_concepts
 #' @export
 #'
-load_concepts.character <- function(x, source = NULL,
-                                    dictionary = read_dictionary(), ...) {
+load_concepts.character <- function(x, src = NULL,
+                                    concepts = read_dictionary(src), ...) {
 
-  dict <- as_dictionary(dictionary)
-  dict <- dict[x, source = source]
+  get_src <- function(x) x[names(x) == src]
 
-  load_concepts(dict, ...)
-}
+  assert_that(is_concept(concepts), length(x) > 0L)
 
-#' @rdname load_concepts
-#' @export
-#'
-load_concepts.dictionary <- function(x, source = NULL, ...) {
-  load_concepts(as_concept(x[source = source]), ...)
+  x <- concepts[x]
+
+  if (not_null(src)) {
+    assert_that(is.string(src))
+    field(x, "items") <- lapply(field(x, "items"), get_src)
+  }
+
+  load_concepts(x, ...)
 }
 
 #' @param aggregate Controls how data within concepts is aggregated
@@ -46,10 +45,18 @@ load_concepts.dictionary <- function(x, source = NULL, ...) {
 #' @rdname load_concepts
 #' @export
 #'
-load_concepts.concept <- function(x, aggregate = NA_character_,
-                                  na_rm = TRUE, merge_data = TRUE, ...) {
+load_concepts.concept <- function(x, aggregate = NA_character_, na_rm = TRUE,
+                                  merge_data = TRUE, verbose = TRUE,
+                                  patient_ids = NULL, ...) {
+
+  load_one <- function(x, pb, ...) {
+    if (verbose) progr_iter(names(x), pb)
+    load_concepts(as_item(x), target_class = field(x, "class"), ...)
+  }
 
   do_one <- function(x, agg, progress_bar, narm, ...) {
+
+    browser()
 
     progr_iter(x[["name"]], progress_bar)
 
@@ -70,7 +77,17 @@ load_concepts.concept <- function(x, aggregate = NA_character_,
     }
   }
 
-  assert_that(is.flag(merge_data), is.flag(na_rm))
+  assert_that(is.flag(merge_data), is.flag(na_rm), same_src(x))
+
+  len <- length(x)
+
+  if (verbose) {
+    pba <- progr_init(len, paste("Loading", len, "concepts"))
+  } else {
+    pba <- NULL
+  }
+
+  dat <- lapply(x, load_one, pba, ...)
 
   aggregate <- rep_arg(aggregate, names(x))
 
@@ -98,6 +115,74 @@ load_concepts.concept <- function(x, aggregate = NA_character_,
   res
 }
 
+#' @rdname load_concepts
+#' @export
+load_concepts.item <- function(x, target_class = c("ts_tbl", "id_tbl"),
+                               id_type = "icustay", interval = hours(1L),
+                               ...) {
+
+  warn_dots(...)
+
+  ma <- list(target = match.arg(target_class), id_type = id_type,
+             interval = interval)
+
+  rbind_lst(
+    Map(load_itm, field(x, "itm"), src = field(x, "src"), MoreArgs = ma)
+  )
+}
+
+#' @export
+load_itm <- function(x, src, target, id_type, interval) {
+
+  assert_that(is.string(src), is.string(target),
+              target %in% c("ts_tbl", "id_tbl"))
+
+  UseMethod("load_itm", x)
+}
+
+#' @export
+load_itm.sel_itm <- function(x, src, target, id_type, interval) {
+
+  qry <- prepare_query(x)
+  tbl <- as_src_tbl(x[["table"]], src)
+  col <- col_args(x, tbl, id_type)
+
+  xtr <- unlist(col[setdiff(names(col), c("id_col", "index_col"))])
+  id  <- col[["id_col"]]
+  ind <- col[["index_col"]]
+
+  if (identical(target, "id_tbl")) {
+    res <- load_id(tbl, !!qry, xtr, id, interval)
+  } else {
+    res <- load_ts(tbl, !!qry, xtr, id, ind, interval)
+  }
+
+  cb_fun <- x[["callback"]]
+
+  if (not_null(cb_fun)) {
+    assert_that(is_fun_name(cb_fun))
+    res <- do.call(cb_fun, c(list(res), col, list(env = as_src_env(tbl))))
+  }
+
+  dtc <- col[c("val_col", "unit_col")]
+
+  res <- rm_cols(res, setdiff(data_cols(res), dtc))
+  res <- rename_cols(res, )
+
+  browser()
+}
+
+col_args <- function(x, tbl, id_type) {
+
+  id_col <- get_id_col(tbl, id_type)
+  df_col <- get_default_cols(tbl, c("index", "val", "unit"))
+  xt_col <- get_extra_cols(x)
+
+  res <- c(list(id_col = id_col), xt_col, df_col)
+
+  res[!duplicated(names(res))]
+}
+
 #' @param unit Character vector of units (one per data item)
 #' @param min,max Rage of plausible values
 #' @param id_type String specifying the patient id type to return
@@ -111,7 +196,7 @@ load_concepts.concept <- function(x, aggregate = NA_character_,
 #' @rdname load_concepts
 #' @export
 #'
-load_concepts.item <- function(x, unit = NULL, min = NULL, max = NULL,
+load_concepts_item <- function(x, unit = NULL, min = NULL, max = NULL,
                                id_type = "icustay", patient_ids = NULL,
                                interval = hours(1L), verbose = TRUE, ...) {
 

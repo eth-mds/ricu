@@ -244,3 +244,47 @@ null_or <- function(x, what, ...) {
 on_failure(null_or) <- function(call, env) {
   paste0(deparse(call$x), " is neither NULL, nor ", deparse(call$what))
 }
+
+chr_or_int <- function(x) is.character(x) || is.integer(x)
+
+on_failure(chr_or_int) <- function(call, env) {
+  paste0(deparse(call$x), " is neither integer nor character")
+}
+
+has_length <- function(x) length(x) > 0L
+
+on_failure(has_length) <- function(call, env) {
+  paste0(deparse(call$x), " is has zero extent")
+}
+
+both <- function(x, fun_a, fun_b) fun_a(x) && fun_b(x)
+
+on_failure(both) <- function(call, env) {
+  paste0(deparse(call$x), " does not satisfy both ", deparse(call$fun_a),
+         " and ", deparse(call$fun_b))
+}
+
+is_fun_name <- function(x) is.string(x) && exists(x, mode = "function")
+
+on_failure(is_fun_name) <- function(call, env) {
+  paste0(deparse(call$x), " is not the name of a discoverable function")
+}
+
+all_null_or <- function(x, what, ...) all_fun(x, null_or, what, ...)
+
+on_failure(all_null_or) <- function(call, env) {
+  paste0(deparse(call$x), " is not all NULL or ", deparse(call$fun))
+}
+
+is_colname <- function(x, tbl) is.string(x) && x %in% colnames(tbl)
+
+on_failure(is_colname) <- function(call, env) {
+  paste0(deparse(call$x), " is not a column name in ", deparse(call$tbl))
+}
+
+same_src <- function(x) length(unique(unlist(src_name(x)))) == 1L
+
+on_failure(same_src) <- function(call, env) {
+  paste0(deparse(call$x), " cannot represent data from multiple sources")
+}
+

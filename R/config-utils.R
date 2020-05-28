@@ -390,10 +390,7 @@ as_col_cfg.src_tbl <- function(x, ...) {
 get_default_cols <- function(x, fields = c("id", "index", "val", "unit",
                                            "time")) {
 
-  do_one <- function(i) {
-    res <- field(x, i)
-    if (is.na(res)) NULL else res
-  }
+  do_one <- function(i) if (is.na(res <- field(x, i))) NULL else res
 
   x <- as_col_cfg(x)
 

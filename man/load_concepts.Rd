@@ -3,27 +3,35 @@
 \name{load_concepts}
 \alias{load_concepts}
 \alias{load_concepts.character}
-\alias{load_concepts.dictionary}
 \alias{load_concepts.concept}
 \alias{load_concepts.item}
+\alias{load_concepts_item}
 \alias{load_dictionary}
 \title{Load concept data}
 \usage{
 load_concepts(x, ...)
 
-\method{load_concepts}{character}(x, source = NULL, dictionary = read_dictionary(), ...)
-
-\method{load_concepts}{dictionary}(x, source = NULL, ...)
+\method{load_concepts}{character}(x, src = NULL, concepts = read_dictionary(src), ...)
 
 \method{load_concepts}{concept}(
   x,
   aggregate = NA_character_,
   na_rm = TRUE,
   merge_data = TRUE,
+  verbose = TRUE,
+  patient_ids = NULL,
   ...
 )
 
 \method{load_concepts}{item}(
+  x,
+  target_class = c("ts_tbl", "id_tbl"),
+  id_type = "icustay",
+  interval = hours(1L),
+  ...
+)
+
+load_concepts_item(
   x,
   unit = NULL,
   min = NULL,
@@ -47,10 +55,11 @@ load_dictionary(
 
 \item{...}{Passed to downstream methods}
 
-\item{source}{A character vector, used to subset the \code{dictionary}; \code{NULL}
+\item{src}{A character vector, used to subset the \code{concepts}; \code{NULL}
 means no subsetting}
 
-\item{dictionary}{The dictionary to be used}
+\item{concepts}{Character vector (or NULL, meaning everything) of concept
+names}
 
 \item{aggregate}{Controls how data within concepts is aggregated}
 
@@ -60,23 +69,20 @@ individual concepts}
 \item{merge_data}{Logical flag, specifying whether to merge concepts into
 wide format or return a list, each entry corresponding to a concept}
 
-\item{unit}{Character vector of units (one per data item)}
-
-\item{min, max}{Rage of plausible values}
-
-\item{id_type}{String specifying the patient id type to return}
+\item{verbose}{Logical flag for turning off reporting of unit/out of range
+messages}
 
 \item{patient_ids}{Optional vector of patient ids to subset the fetched data
 with}
 
+\item{id_type}{String specifying the patient id type to return}
+
 \item{interval}{The time interval used to discretize time stamps with,
 specified as \code{\link[base:difftime]{base::difftime()}} object}
 
-\item{verbose}{Logical flag for turning off reporting of unit/out of range
-messages}
+\item{unit}{Character vector of units (one per data item)}
 
-\item{concepts}{Character vector (or NULL, meaning everything) of concept
-names}
+\item{min, max}{Rage of plausible values}
 }
 \description{
 Data specified as \code{concept} objects is loaded, aggregated per combination

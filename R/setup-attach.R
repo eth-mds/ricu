@@ -200,6 +200,12 @@ new_src_tbl <- function(files, col_cfg, src_env) {
 
 is_src_tbl <- function(x) inherits(x, "src_tbl")
 
+#' @rdname data_concepts
+#'
+#' @export
+#'
+src_name <- function(x) UseMethod("src_name", x)
+
 #' @export
 src_name.src_tbl <- function(x) {
   sub("_tbl$", "", class(x)[1L])

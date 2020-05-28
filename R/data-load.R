@@ -200,9 +200,9 @@ load_ts <- function(x, ...) UseMethod("load_ts", x)
 #' @rdname load_src
 #' @export
 load_ts.src_tbl <- function(x, rows, cols = colnames(x),
-                             id_col = default_col(x, "id"),
-                             index_col = default_col(x, "index"),
-                             interval = hours(1L), ...) {
+                            id_col = default_col(x, "id"),
+                            index_col = default_col(x, "index"),
+                            interval = hours(1L), ...) {
 
   assert_that(is.string(index_col), ...length() == 0L)
 
