@@ -150,7 +150,7 @@ load_concepts.item <- function(x, unit = NULL, min = NULL, max = NULL,
       "Cannot subset patient IDs for multiple data sources at the same time")
     )
 
-    idc <- get_id_col(as_src_tbl(x[[1L]][["table"]], src), "id_type")
+    idc <- get_id_col(as_src_tbl(x[[1L]][["table"]], src), id_type)
 
     if (inherits(patient_ids, "data.frame")) {
       assert_that(has_name(patient_ids, idc))
