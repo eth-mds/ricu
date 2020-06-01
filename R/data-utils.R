@@ -349,7 +349,7 @@ upgrade_id.ts_tbl <- function(x, target_id, id_cfg, cols = time_cols(x), ...) {
   map <- id_map_min(id_cfg, id(x), target_id, sft, idx)
 
   res <- map[x, on = meta_cols(x), roll = -Inf, rollends = TRUE]
-  res <- res[, c(cols) := lapply(.SD, `+`, get(sft)), .SDcols = cols]
+  res <- res[, c(cols) := lapply(.SD, `-`, get(sft)), .SDcols = cols]
 
   res <- as_ts_tbl(res, target_id, index = idx, interval = mins(1L))
   res <- rm_cols(res, sft)
@@ -418,7 +418,7 @@ change_id_helper <- function(x, targ, cfg, cols, dir = c("down", "up"), ...) {
   res <- merge(x, map, by = idx, ...)
 
   if (length(cols)) {
-    res <- res[, c(cols) := lapply(.SD, `+`, get(sft)), .SDcols = cols]
+    res <- res[, c(cols) := lapply(.SD, `-`, get(sft)), .SDcols = cols]
   }
 
   res <- set_id(res, targ)
