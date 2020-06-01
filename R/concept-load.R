@@ -150,15 +150,11 @@ load_concepts.item <- function(x, unit = NULL, min = NULL, max = NULL,
       "Cannot subset patient IDs for multiple data sources at the same time")
     )
 
-    idc <- get_id_col(as_src_tbl(x[[1L]][["table"]], src), id_type)
-
-    if (inherits(patient_ids, "data.frame")) {
-      assert_that(has_name(patient_ids, idc))
-      patient_ids <- patient_ids[[idc]]
+    if (!inherits(patient_ids, "data.frame")) {
+      idc <- get_id_col(as_src_tbl(x[[1L]][["table"]], src), "id_type")
+      assert_that(is.atomic(patient_ids), length(patient_ids) > 0L)
+      patient_ids <- setnames(setDT(list(unique(patient_ids))), idc)
     }
-
-    assert_that(is.atomic(patient_ids), length(patient_ids) > 0L)
-    patient_ids <- setnames(setDT(list(unique(patient_ids))), idc)
   }
 
   names <- names(x)
