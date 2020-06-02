@@ -459,14 +459,16 @@ as.list.concept <- function(x, ...) vec_data(x)
 src_name.concept <- function(x) lapply(x, src_name)
 
 #' @param src `NULL` or the name of a data source
+#' @param concepts A character vector used to subset the concept dictionary or
+#' `NULL` indicating no subsetting
 #' @param name Name of the dictionary to be read
 #' @param file File name of the dictionary
 #'
 #' @rdname data_concepts
 #'
 #' @export
-read_dictionary <- function(src = NULL, name = "concept-dict", file = NULL,
-                            ...) {
+read_dictionary <- function(src = NULL, concepts = NULL,
+                            name = "concept-dict", file = NULL, ...) {
 
   do_itm <- function(sr, tr, x) {
     lapply(lapply(x, c, src = sr, target = tr), do_call, new_itm)
@@ -503,6 +505,11 @@ read_dictionary <- function(src = NULL, name = "concept-dict", file = NULL,
   }
 
   assert_that(null_or(src, is.string))
+
+  if (not_null(concepts)) {
+    assert_that(has_name(x, concepts))
+    x <- x[concepts]
+  }
 
   new_concept(lapply(Map(c, name = names(x), x), do_call, do_cncpt))
 }

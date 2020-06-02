@@ -41,7 +41,13 @@ concept(...)
 
 is_concept(x)
 
-read_dictionary(src = NULL, name = "concept-dict", file = NULL, ...)
+read_dictionary(
+  src = NULL,
+  concepts = NULL,
+  name = "concept-dict",
+  file = NULL,
+  ...
+)
 
 src_name(x)
 }
@@ -67,6 +73,9 @@ numeric concept}
 \item{levels}{A vector of possible values a categorical concept may take on}
 
 \item{src}{\code{NULL} or the name of a data source}
+
+\item{concepts}{A character vector used to subset the concept dictionary or
+\code{NULL} indicating no subsetting}
 
 \item{file}{File name of the dictionary}
 }

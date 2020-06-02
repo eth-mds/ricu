@@ -2,7 +2,7 @@
 title: "Units of measurement"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{anus}
+  %\VignetteIndexEntry{uom}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
@@ -12,15 +12,10 @@ knitr::opts_chunk$set(
   collapse = TRUE,
   comment = "#>"
 )
+
 library(ricu)
 library(ggplot2)
-take_quants <- function(x, probs) {
-  qq <- quantile(x, probs = probs)
-  return(x[x >= qq[1] & x <= qq[2]])
-}
-data_src <- c("mimic_demo", "eicu_demo")
 ```
-
 
 ### Possible mismatch in units
 
@@ -28,55 +23,51 @@ Working with different ICU datasets can be challenging in terms of units of meas
 
 ### `ricu` approach
 
-All concepts that can be loaded with `load_dictionary()` within `ricu` have been checked for units, and the units were converted where necessary. 
-
+All concepts that can be loaded with `load_concepts()` within `ricu` have been checked for units, and the units were converted where necessary.
 
 For example, we take 5 different concepts:
 
 ```{r concept-range}
-concept_range <- c("mean_bp", "lactate" , "creatinine", "bilirubin_total", "platelet_count")
+data_src <- c("mimic_demo", "eicu_demo")
+
+concepts <- c(
+  "mean_bp", "lactate" , "creatinine", "bilirubin_total", "platelet_count"
+)
+
+dat <- lapply(data_src,
+  function(src) load_concepts(concepts, src, verbose = FALSE)
+)
+
+names(dat) <- data_src
+
+dat
 ```
 
 We plot the density of the features and report their median values:
 
-```{r anus, echo=FALSE, fig.width=6, message=FALSE}
-dict <- get_config("concept-dict")
+```{r uom, echo = FALSE, fig.width = 6}
+take_quants <- function(x, lwr, upr) {
+  qq <- quantile(x, probs = c(lwr, upr), na.rm = TRUE)
+  x[!is.na(x) & x >= qq[1L] & x <= qq[2L]]
+}
 
-for (conc in concept_range) {
-  med <- rep(NA, 2)
-  df <- NULL
-  for(src in 1:2) {
-    
-    if(is.null(dict[[conc]][["sources"]][[data_src[src]]])) next
-    
-    tbl <- load_dictionary(source = data_src[src], concepts = conc, id_type = "icustay")
-    
-    x <- tbl[, get(conc)]
-    med[src] <- median(x, na.rm = TRUE)
-    
-    x <- take_quants(x, c(0.05, 0.95))
-    
-    if(is.null(x)) next
-    if(length(x) == 0) next
-    df <- rbind(
-      df,
-      data.frame(
-        value = x,
-        source = data_src[src]
-      )
-    )
-  }
-  vals <- paste0(round(med, 2), collapse = ", ")
-  vals <- paste0("(", vals, ")")
-  tit <- paste0(conc, ": median values ", vals)
-  p <- ggplot(df, aes(x = value, fill = source)) +
-  geom_density(alpha=0.5) + xlab(conc) + theme_minimal(15) + ggtitle(tit)
-  print(p)
-  #if(min(med, na.rm = T)/max(med, na.rm = T) < 0.9) print(p)
+for (conc in concepts) {
+
+  feat <- lapply(dat, `[[`, conc)
+  meds <- vapply(feat, median, numeric(1L) na.rm = TRUE)
+  feat <- Map(data.frame, src = names(feat),
+              dat = lapply(feat, take_quants, lwr = 0.05, upr = 0.95))
+
+  title <- paste0(conc, ": median values ",
+    paste0(round(meds, 2), " (", names(meds), ")", collapse = ", ")
+  )
+
+  ggplot(Reduce(rbind, feat), aes(x = dat, fill = src)) +
+    geom_density(alpha=0.5) + xlab(conc) + theme_minimal(15) + ggtitle(title)
 }
 ```
 
-Note that the matching between datasets is not perfect, but the median values should align closely (the above are done using the demo datasets which are rather small in size; in general the matching should be even better). 
+Note that the matching between datasets is not perfect, but the median values should align closely (the above are done using the demo datasets which are rather small in size; in general the matching should be even better).
 
 ### Concepts outside `ricu` dictionary
 

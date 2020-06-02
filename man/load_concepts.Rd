@@ -10,7 +10,7 @@
 \usage{
 load_concepts(x, ...)
 
-\method{load_concepts}{character}(x, src = NULL, concepts = read_dictionary(src), ...)
+\method{load_concepts}{character}(x, src = NULL, concepts = NULL, ...)
 
 \method{load_concepts}{concept}(
   x,
@@ -31,7 +31,7 @@ load_concepts(x, ...)
 load_dictionary(
   source = NULL,
   concepts = NULL,
-  dictionary = read_dictionary(),
+  dictionary = read_dictionary(source),
   ...
 )
 }

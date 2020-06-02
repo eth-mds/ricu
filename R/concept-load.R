@@ -14,27 +14,36 @@ load_concepts <- function(x, ...) UseMethod("load_concepts", x)
 
 #' @param src A character vector, used to subset the `concepts`; `NULL`
 #' means no subsetting
-#' @param concepts The concepts to be used
+#' @param concepts The concepts to be used or `NULL` in which case
+#' [read_dictionary()] is called
 #'
 #' @rdname load_concepts
 #' @export
 #'
-load_concepts.character <- function(x, src = NULL,
-                                    concepts = read_dictionary(src), ...) {
+load_concepts.character <- function(x, src = NULL, concepts = NULL, ...) {
 
   get_src <- function(x) x[names(x) == src]
 
-  assert_that(is_concept(concepts), length(x) > 0L)
+  if (is.null(concepts)) {
 
-  x <- concepts[x]
+    assert_that(not_null(src))
 
-  if (not_null(src)) {
+    x <- read_dictionary(src, x)
 
-    assert_that(is.string(src))
+  } else {
 
-    x <- new_concept(
-      Map(`[[<-`, x, "items", lapply(lst_xtr(x, "items"), get_src))
-    )
+    assert_that(is_concept(concepts), length(x) > 0L)
+
+    x <- concepts[x]
+
+    if (not_null(src)) {
+
+      assert_that(is.string(src))
+
+      x <- new_concept(
+        Map(`[[<-`, x, "items", lapply(lst_xtr(x, "items"), get_src))
+      )
+    }
   }
 
   load_concepts(x, ...)
@@ -336,7 +345,7 @@ merge_patid <- function(x, patid) {
 #' @export
 #'
 load_dictionary <- function(source = NULL, concepts = NULL,
-                            dictionary = read_dictionary(), ...) {
+                            dictionary = read_dictionary(source), ...) {
 
   message("`load_dictionary()` is deprecated, please use `load_concepts()` ",
           "instead.")
