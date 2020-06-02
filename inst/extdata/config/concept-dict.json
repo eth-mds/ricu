@@ -1,10 +1,13 @@
 {
   "admission_type": {
+    "target": "id_tbl",
+    "levels": ["med", "surg", "other"],
+    "class": "fct_cncpt",
     "sources": {
       "eicu": [
         {
           "table": "admissiondx",
-          "val_col": "admitdxpath",
+          "itm_cols": "admitdxpath",
           "callback": "eicu_adx",
           "class": "col_itm"
         }
@@ -12,7 +15,7 @@
       "eicu_demo": [
         {
           "table": "admissiondx",
-          "val_col": "admitdxpath",
+          "itm_cols": "admitdxpath",
           "callback": "eicu_adx",
           "class": "col_itm"
         }
@@ -20,7 +23,7 @@
       "mimic": [
         {
           "table": "services",
-          "val_col": "curr_service",
+          "itm_cols": "curr_service",
           "callback": "mimic_adx",
           "class": "col_itm"
         }
@@ -28,7 +31,7 @@
       "mimic_demo": [
         {
           "table": "services",
-          "val_col": "curr_service",
+          "itm_cols": "curr_service",
           "callback": "mimic_adx",
           "class": "col_itm"
         }
@@ -39,11 +42,12 @@
     "unit": "years",
     "min": 0,
     "max": 100,
+    "target": "id_tbl",
     "sources": {
       "eicu": [
         {
           "table": "patient",
-          "val_col": "age",
+          "itm_cols": "age",
           "callback": "eicu_age",
           "class": "col_itm"
         }
@@ -51,7 +55,7 @@
       "eicu_demo": [
         {
           "table": "patient",
-          "val_col": "age",
+          "itm_cols": "age",
           "callback": "eicu_age",
           "class": "col_itm"
         }
@@ -59,14 +63,14 @@
       "hirid": [
         {
           "table": "general",
-          "val_col": "age",
+          "itm_cols": "age",
           "class": "col_itm"
         }
       ],
       "mimic": [
         {
           "table": "patients",
-          "val_col": "dob",
+          "itm_cols": "dob",
           "callback": "mimic_age",
           "class": "col_itm"
         }
@@ -74,7 +78,7 @@
       "mimic_demo": [
         {
           "table": "patients",
-          "val_col": "dob",
+          "itm_cols": "dob",
           "callback": "mimic_age",
           "class": "col_itm"
         }
@@ -888,11 +892,12 @@
     }
   },
   "death": {
+    "target": "id_tbl",
     "sources": {
       "eicu": [
         {
           "table": "patient",
-          "val_col": "hospitaldischargestatus",
+          "itm_cols": "hospitaldischargestatus",
           "callback": "eicu_death",
           "class": "col_itm"
         }
@@ -900,7 +905,7 @@
       "eicu_demo": [
         {
           "table": "patient",
-          "val_col": "hospitaldischargestatus",
+          "itm_cols": "hospitaldischargestatus",
           "callback": "eicu_death",
           "class": "col_itm"
         }
@@ -910,13 +915,14 @@
           "ids": [110, 200],
           "table": "observations",
           "sub_col": "variableid",
+          "item_col": "variableid",
           "callback": "hirid_death"
         }
       ],
       "mimic": [
         {
           "table": "admissions",
-          "val_col": "hospital_expire_flag",
+          "itm_cols": "hospital_expire_flag",
           "callback": "mimic_death",
           "class": "col_itm"
         }
@@ -924,7 +930,7 @@
       "mimic_demo": [
         {
           "table": "admissions",
-          "val_col": "hospital_expire_flag",
+          "itm_cols": "hospital_expire_flag",
           "callback": "mimic_death",
           "class": "col_itm"
         }
@@ -939,14 +945,14 @@
       "eicu": [
         {
           "table": "vitalperiodic",
-          "val_col": "systemicdiastolic",
+          "itm_cols": "systemicdiastolic",
           "class": "col_itm"
         }
       ],
       "eicu_demo": [
         {
           "table": "vitalperiodic",
-          "val_col": "systemicdiastolic",
+          "itm_cols": "systemicdiastolic",
           "class": "col_itm"
         }
       ],
@@ -1293,7 +1299,7 @@
       "eicu": [
         {
           "table": "microlab",
-          "val_col": "organism",
+          "itm_cols": "organism",
           "callback": "eicu_sampling",
           "class": "col_itm"
         }
@@ -1301,7 +1307,7 @@
       "eicu_demo": [
         {
           "table": "microlab",
-          "val_col": "organism",
+          "itm_cols": "organism",
           "callback": "eicu_sampling",
           "class": "col_itm"
         }
@@ -1309,7 +1315,7 @@
       "mimic": [
         {
           "table": "microbiologyevents",
-          "val_col": "org_itemid",
+          "itm_cols": "org_itemid",
           "callback": "mimic_sampling",
           "aux_time": "charttime",
           "class": "col_itm"
@@ -1318,7 +1324,7 @@
       "mimic_demo": [
         {
           "table": "microbiologyevents",
-          "val_col": "org_itemid",
+          "itm_cols": "org_itemid",
           "callback": "mimic_sampling",
           "aux_time": "charttime",
           "class": "col_itm"
@@ -1544,14 +1550,14 @@
       "eicu": [
         {
           "table": "vitalperiodic",
-          "val_col": "heartrate",
+          "itm_cols": "heartrate",
           "class": "col_itm"
         }
       ],
       "eicu_demo": [
         {
           "table": "vitalperiodic",
-          "val_col": "heartrate",
+          "itm_cols": "heartrate",
           "class": "col_itm"
         }
       ],
@@ -1798,6 +1804,8 @@
   },
   "los_hosp": {
     "unit": "days",
+    "min": 0,
+    "target": "id_tbl",
     "sources": {
       "eicu": [
         {
@@ -1827,6 +1835,8 @@
   },
   "los_icu": {
     "unit": "days",
+    "min": 0,
+    "target": "id_tbl",
     "sources": {
       "eicu": [
         {
@@ -2074,24 +2084,24 @@
       "eicu": [
         {
           "table": "vitalperiodic",
-          "val_col": "systemicmean",
+          "itm_cols": "systemicmean",
           "class": "col_itm"
         },
         {
           "table": "vitalaperiodic",
-          "val_col": "noninvasivemean",
+          "itm_cols": "noninvasivemean",
           "class": "col_itm"
         }
       ],
       "eicu_demo": [
         {
           "table": "vitalperiodic",
-          "val_col": "systemicmean",
+          "itm_cols": "systemicmean",
           "class": "col_itm"
         },
         {
           "table": "vitalaperiodic",
-          "val_col": "noninvasivemean",
+          "itm_cols": "noninvasivemean",
           "class": "col_itm"
         }
       ],
@@ -2268,7 +2278,7 @@
       "eicu": [
         {
           "table": "vitalperiodic",
-          "val_col": "sao2",
+          "itm_cols": "sao2",
           "class": "col_itm"
         },
         {
@@ -2280,7 +2290,7 @@
       "eicu_demo": [
         {
           "table": "vitalperiodic",
-          "val_col": "sao2",
+          "itm_cols": "sao2",
           "class": "col_itm"
         },
         {
@@ -2744,14 +2754,14 @@
       "eicu": [
         {
           "table": "vitalperiodic",
-          "val_col": "respiration",
+          "itm_cols": "respiration",
           "class": "col_itm"
         }
       ],
       "eicu_demo": [
         {
           "table": "vitalperiodic",
-          "val_col": "respiration",
+          "itm_cols": "respiration",
           "class": "col_itm"
         }
       ],
@@ -2807,25 +2817,28 @@
     }
   },
   "sex": {
+    "target": "id_tbl",
+    "levels": ["Female", "Male"],
+    "class": "fct_cncpt",
     "sources": {
       "eicu": [
         {
           "table": "patient",
-          "val_col": "gender",
+          "itm_cols": "gender",
           "class": "col_itm"
         }
       ],
       "eicu_demo": [
         {
           "table": "patient",
-          "val_col": "gender",
+          "itm_cols": "gender",
           "class": "col_itm"
         }
       ],
       "hirid": [
         {
           "table": "general",
-          "val_col": "sex",
+          "itm_cols": "sex",
           "callback": "mf_sex",
           "class": "col_itm"
         }
@@ -2833,7 +2846,7 @@
       "mimic": [
         {
           "table": "patients",
-          "val_col": "gender",
+          "itm_cols": "gender",
           "callback": "mf_sex",
           "class": "col_itm"
         }
@@ -2841,7 +2854,7 @@
       "mimic_demo": [
         {
           "table": "patients",
-          "val_col": "gender",
+          "itm_cols": "gender",
           "callback": "mf_sex",
           "class": "col_itm"
         }
@@ -2898,14 +2911,14 @@
       "eicu": [
         {
           "table": "vitalperiodic",
-          "val_col": "systemicsystolic",
+          "itm_cols": "systemicsystolic",
           "class": "col_itm"
         }
       ],
       "eicu_demo": [
         {
           "table": "vitalperiodic",
-          "val_col": "systemicsystolic",
+          "itm_cols": "systemicsystolic",
           "class": "col_itm"
         }
       ],
@@ -2940,14 +2953,14 @@
       "eicu": [
         {
           "table": "vitalperiodic",
-          "val_col": "temperature",
+          "itm_cols": "temperature",
           "class": "col_itm"
         }
       ],
       "eicu_demo": [
         {
           "table": "vitalperiodic",
-          "val_col": "temperature",
+          "itm_cols": "temperature",
           "class": "col_itm"
         }
       ],
@@ -3252,13 +3265,13 @@
       "eicu": [
         {
           "table": "respiratorycare",
-          "val_col": "ventendoffset",
+          "itm_cols": "ventendoffset",
           "callback": "vent_flag",
           "class": "col_itm"
         },
         {
           "table": "respiratorycare",
-          "val_col": "priorventendoffset",
+          "itm_cols": "priorventendoffset",
           "callback": "vent_flag",
           "class": "col_itm"
         },
@@ -3272,13 +3285,13 @@
       "eicu_demo": [
         {
           "table": "respiratorycare",
-          "val_col": "ventendoffset",
+          "itm_cols": "ventendoffset",
           "callback": "vent_flag",
           "class": "col_itm"
         },
         {
           "table": "respiratorycare",
-          "val_col": "priorventendoffset",
+          "itm_cols": "priorventendoffset",
           "callback": "vent_flag",
           "class": "col_itm"
         },
@@ -3332,13 +3345,13 @@
       "eicu": [
         {
           "table": "respiratorycare",
-          "val_col": "ventstartoffset",
+          "itm_cols": "ventstartoffset",
           "callback": "vent_flag",
           "class": "col_itm"
         },
         {
           "table": "respiratorycare",
-          "val_col": "priorventstartoffset",
+          "itm_cols": "priorventstartoffset",
           "callback": "vent_flag",
           "class": "col_itm"
         },
@@ -3352,13 +3365,13 @@
       "eicu_demo": [
         {
           "table": "respiratorycare",
-          "val_col": "ventstartoffset",
+          "itm_cols": "ventstartoffset",
           "callback": "vent_flag",
           "class": "col_itm"
         },
         {
           "table": "respiratorycare",
-          "val_col": "priorventstartoffset",
+          "itm_cols": "priorventstartoffset",
           "callback": "vent_flag",
           "class": "col_itm"
         },
@@ -3397,18 +3410,21 @@
   },
   "weight": {
     "unit": "kg",
+    "min": 0,
+    "max": 500,
+    "target": "id_tbl",
     "sources": {
       "eicu": [
         {
           "table": "patient",
-          "val_col": "admissionweight",
+          "itm_cols": "admissionweight",
           "class": "col_itm"
         }
       ],
       "eicu_demo": [
         {
           "table": "patient",
-          "val_col": "admissionweight",
+          "itm_cols": "admissionweight",
           "class": "col_itm"
         }
       ]

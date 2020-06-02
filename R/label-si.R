@@ -1,7 +1,8 @@
 
 #' Suspicion of infection label
 #'
-#' Suspected infection is defined as co-occurrence of of antibiotic treatment and body-fluid sampling.
+#' Suspected infection is defined as co-occurrence of of antibiotic treatment
+#' and body-fluid sampling.
 #'
 #' @param source String valued name of data source
 #' @param abx_count_win Time span during which to apply the `abx_min_count`
@@ -13,36 +14,65 @@
 #' @param ... Passed to [load_concepts()]
 #'
 #' @details Suspected infection can occur in one of the two following ways:
-#' - administration of antibiotics followed by a culture sampling within `samp_win` hours
-#'```
-#'       samp_win
-#'   |---------------|
-#'  ABX           sampling (last possible)
-#'```
-#' - culture sampling followed by an antibiotic administration within `abx_win` hours
-#'```
-#'                      abx_win
-#'   |---------------------------------------------|
-#' sampling                                       ABX (last possible)
+#' - administration of antibiotics followed by a culture sampling within
+#'   `samp_win` hours
+#'
+#'    ```
+#'           samp_win
+#'       |---------------|
+#'      ABX           sampling (last possible)
+#'    ```
+#'
+#' - culture sampling followed by an antibiotic administration within
+#'   `abx_win` hours
+#'
+#'    ```
+#'                          abx_win
+#'       |---------------------------------------------|
+#'    sampling                                        ABX (last possible)
+#'    ```
+#'
+#' The default values of `samp_win` and `abx_win` are 24 and 72 hours
+#' respectively, as per [Singer et.al.
+#' ](https://jamanetwork.com/journals/jama/fullarticle/2492881).
+#'
+#' The ealier of the two times (fluid sampling, antibiotic treatment) is taken
+#' as the time of suspected infection (SI time). The suspected infection
+#' window (SI window) is defined to start `si_lwr` hours before the SI time
+#' and end `si_upr` hours after the SI time. The default values of 48 and 24
+#' hours (respectively) are chosen as used by [Seymour et.al.
+#' ](https://jamanetwork.com/journals/jama/fullarticle/2492875) (see
+#' Supplemental Material).
+#'
 #' ```
-#' The default values of `samp_win` and `abx_win` are 24 and 72 hours respectively, as per [Singer et.al.](https://jamanetwork.com/journals/jama/fullarticle/2492881).
-#'
-#' The ealier of the two times (fluid sampling, antibiotic treatment) is taken as the time of suspected infection (SI time). The suspected infection window (SI window) is defined to start `si_lwr` hours before the SI time and end `si_upr` hours after the SI time. The default values of 48 and 24 hours (respectively) are chosen as used by [Seymour et.al.](https://jamanetwork.com/journals/jama/fullarticle/2492875) (see Supplemental Material).
+#'                 48h                       24h
+#'   |------------------------------(|)---------------|
+#'                                 SI time
 #' ```
-#'                48h                       24h
-#'  |------------------------------(|)---------------|
-#'                                SI time
-#'```
 #'
-#'For some datasets, however, information on body fluid sampling is not available for majority of the patients (eICU data). Therefore, an alternative definition of suspected infection is required. For this, we use administration of multiple antibiotics (argument `abx_min_count` determines the required number) within `abx_count_win` hours. The first time of antibiotic administration is taken as the SI time in this case.
+#' For some datasets, however, information on body fluid sampling is not
+#' available for majority of the patients (eICU data). Therefore, an
+#' alternative definition of suspected infection is required. For this, we use
+#' administration of multiple antibiotics (argument `abx_min_count` determines
+#' the required number) within `abx_count_win` hours. The first time of
+#' antibiotic administration is taken as the SI time in this case.
 #'
+#' @references
+#' Singer M, Deutschman CS, Seymour CW, et al. The Third International
+#' Consensus Definitions for Sepsis and Septic Shock (Sepsis-3). JAMA.
+#' 2016;315(8):801–810. doi:10.1001/jama.2016.0287
+#'
+#' Seymour CW, Liu VX, Iwashyna TJ, et al. Assessment of Clinical Criteria for
+#' Sepsis: For the Third International Consensus Definitions for Sepsis and
+#' Septic Shock (Sepsis-3). JAMA. 2016;315(8):762–774.
+#' doi:10.1001/jama.2016.0288
 #'
 #' @rdname label_si
 #' @export
 #'
 si_data <- function(source, abx_count_win = hours(24L), abx_min_count = 1L,
                     positive_cultures = FALSE,
-                    dictionary = read_dictionary("concept-dict"), ...) {
+                    dictionary = read_dictionary(source), ...) {
 
   assert_that(is.count(abx_min_count), is.flag(positive_cultures))
 
@@ -53,9 +83,9 @@ si_data <- function(source, abx_count_win = hours(24L), abx_min_count = 1L,
   }
 
   funs <- c(antibiotics = "sum", fluid_sampling = samp_fun)
-  dict <- as_concept(dictionary[names(funs), source = source])
+  dictionary <- dictionary[names(funs)]
 
-  dat <- load_concepts(dict, aggregate = funs, merge_data = FALSE, ...)
+  dat <- load_concepts(dictionary, aggregate = funs, merge_data = FALSE, ...)
 
   if (has_name(dat, "antibiotics")) {
     dat[["antibiotics"]] <- si_abx(dat[["antibiotics"]], abx_count_win,

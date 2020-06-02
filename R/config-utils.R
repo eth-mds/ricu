@@ -216,16 +216,16 @@ as_id_cfg.src_cfg <- function(x, ...) {
 #' @keywords internal
 #' @export
 #'
-as_id_cfg.src_tbl <- function(x, ...) as_id_cfg(as_src_env(x), ...)
+as_id_cfg.src_env <- function(x, ...) {
+  warn_dots(...)
+  attr(x, "id_cfg")
+}
 
 #' @rdname id_cfg
 #' @keywords internal
 #' @export
 #'
-as_id_cfg.src_env <- function(x, ...) {
-  warn_dots(...)
-  attr(x, "id_cfg")
-}
+as_id_cfg.default <- function(x, ...) as_id_cfg(as_src_env(x), ...)
 
 #' @export
 src_name.id_cfg <- function(x) sub("_ids$", "", class(x)[1L])

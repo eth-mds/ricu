@@ -46,7 +46,7 @@ sofa_data <- function(source, pafi_win_length = hours(2L),
                       icu_limits = stay_windows(source, id_type,
                                                 interval = interval),
                       id_type = "icustay", interval = hours(1L),
-                      dictionary = read_dictionary("concept-dict"), ...) {
+                      dictionary = read_dictionary(source), ...) {
 
   assert_that(
     is_time(pafi_win_length, allow_neg = FALSE), pafi_win_length > interval,
@@ -75,11 +75,8 @@ sofa_data <- function(source, pafi_win_length = hours(2L),
     creatinine = "max", urine_cumulative = "max", urine_events = "sum"
   )
 
-  dat_dict  <- as_concept(
-    dictionary[setdiff(names(agg_funs), vent_conc), source = source]
-  )
-
-  vent_dict <- as_concept(dictionary[vent_conc, source = source])
+  dat_dict  <- dictionary[setdiff(names(agg_funs), vent_conc)]
+  vent_dict <- dictionary[vent_conc]
 
   dat <- c(
     load_concepts(dat_dict, agg_funs, merge_data = FALSE, id_type = id_type,
@@ -335,9 +332,9 @@ sofa_urine <- function(urine, limits, min_win, interval) {
 
   idx <- id(urine)
 
-  if (has_name(urine, "urine_cumulative")) {
+  if (!all(is.na(urine[["urine_cumulative"]]))) {
 
-    assert_that(!has_name(urine, "urine_events"))
+    assert_that(all(is.na(urine[["urine_events"]])))
 
     urine <- urine[, c("urine_events") := do_diff(get("urine_cumulative")),
                    by = idx]

@@ -1,8 +1,11 @@
 
 test_that("load concepts", {
 
-  gluc <- concept("gluc", "mimic_demo", "labevents", "itemid",
-                  c(50809L, 50931L))
+
+
+  gluc <- concept("gluc",
+    item("mimic_demo", "labevents", "itemid", list(c(50809L, 50931L)))
+  )
 
   dat1 <- load_concepts(gluc)
 
@@ -11,7 +14,7 @@ test_that("load concepts", {
   expect_identical(colnames(dat1), c("icustay_id", "charttime", "gluc"))
   expect_equal(interval(dat1), hours(1L))
 
-  albu <- concept("albu", "mimic_demo", "labevents", "itemid", 50862L)
+  albu <- concept("albu", item("mimic_demo", "labevents", "itemid", 50862L))
 
   dat2 <- load_concepts(c(albu, gluc))
 
@@ -53,7 +56,7 @@ test_that("load concepts", {
     load_concepts(gluc, aggregate = "identity")
   )
 
-  static <- load_dictionary("mimic_demo", c("sex", "age"))
+  static <- load_concepts(c("sex", "age"), "mimic_demo")
 
   expect_is(static, "id_tbl")
   expect_true(is_id_tbl(static))
@@ -61,14 +64,17 @@ test_that("load concepts", {
   expect_type(static[["age"]], "double")
   expect_type(static[["sex"]], "character")
 
-  gluc <- as_concept(
-    new_item("gluc", "mimic_demo", "labevents", "itemid", c(50809L, 50931L))
-  )
-  albu <- as_concept(
-    new_item("albu", "mimic_demo", "labevents", "itemid", 50862L)
+  expect_error(
+    concept("gluc",
+      item("mimic_demo", "labevents", "itemid", c(50809L, 50931L))
+    )
   )
 
-  dat6 <- load_concepts(c(albu, gluc))
+  gluc2 <- concept("gluc",
+    list(item("mimic_demo", "labevents", "itemid", c(50809L, 50931L)))
+  )
 
-  expect_identical(dat2, dat6)
+  dat6 <- load_concepts(gluc2)
+
+  expect_identical(dat1, dat6)
 })

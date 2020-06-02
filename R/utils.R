@@ -343,6 +343,10 @@ quote_bt <- function(x) encodeString(x, quote = "`")
 
 concat <- function(x) paste(x, collapse = ", ")
 
+prcnt <- function(x, tot = sum(x)) {
+  paste0(round(x / tot * 100, digits = 2), "%")
+}
+
 str_in_vec_once <- function(str, vec) identical(sum(vec %in% str), 1L)
 
 null_or_subs <- function(x, where = parent.frame(1L)) {

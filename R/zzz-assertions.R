@@ -245,7 +245,7 @@ on_failure(null_or) <- function(call, env) {
   paste0(deparse(call$x), " is neither NULL, nor ", deparse(call$what))
 }
 
-chr_or_int <- function(x) is.character(x) || is.integer(x)
+chr_or_int <- function(x) is.character(x) || is.integer(x)
 
 on_failure(chr_or_int) <- function(call, env) {
   paste0(deparse(call$x), " is neither integer nor character")

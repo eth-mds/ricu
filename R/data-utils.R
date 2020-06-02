@@ -246,22 +246,16 @@ id_map_min <- function(x, id_name, win_id, in_time, out_time, ...) {
 #' @param in_time,out_time column names of the returned in/out times
 #' @param interval The time interval used to discretize time stamps with,
 #' specified as [base::difftime()] object
-#' @param ... Potentially passed on to [as_id_cfg()] or [read_src_cfg()]
 #'
 #' @export
 #'
 stay_windows <- function(x, id_type = "icustay", win_type = "icustay",
                          in_time = "start", out_time = "end",
-                         interval = hours(1L), ...) {
+                         interval = hours(1L)) {
 
   assert_that(is_time(interval, allow_neg = FALSE))
 
-  if (is.string(x)) {
-    cfg <- as_id_cfg(read_src_cfg(x, ...)[[1L]])
-  } else {
-    cfg <- as_id_cfg(x, ...)
-  }
-
+  cfg <- as_id_cfg(x)
   res <- id_map_min(cfg, get_id_col(cfg, id_type), get_id_col(cfg, win_type),
                     in_time, out_time)
 

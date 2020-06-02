@@ -9,7 +9,8 @@ cfg <- list(
         list(ids = c(211L, 220045L), table = "chartevents", sub_col = "itemid")
       ),
       eicu = list(
-        list(table = "vitalperiodic", val_col = "heartrate", class = "col_itm")
+        list(table = "vitalperiodic", itm_cols = "heartrate",
+             class = "col_itm")
       ),
       hirid = list(
         list(ids = 200L, table = "observations", sub_col = "variableid")
@@ -26,7 +27,7 @@ cfg <- list(
              table = "chartevents", sub_col = "itemid")
       ),
       eicu = list(
-        list(table = "vitalperiodic", val_col = "systemicsystolic",
+        list(table = "vitalperiodic", itm_cols = "systemicsystolic",
              class = "col_itm")
       ),
       hirid = list(
@@ -44,7 +45,7 @@ cfg <- list(
              table = "chartevents", sub_col = "itemid")
       ),
       eicu = list(
-        list(table = "vitalperiodic", val_col = "systemicdiastolic",
+        list(table = "vitalperiodic", itm_cols = "systemicdiastolic",
              class = "col_itm")
       ),
       hirid = list(
@@ -62,9 +63,9 @@ cfg <- list(
              table = "chartevents", sub_col = "itemid")
       ),
       eicu = list(
-        list(table = "vitalperiodic", val_col = "systemicmean",
+        list(table = "vitalperiodic", itm_cols = "systemicmean",
              class = "col_itm"),
-        list(table = "vitalaperiodic", val_col = "noninvasivemean",
+        list(table = "vitalaperiodic", itm_cols = "noninvasivemean",
              class = "col_itm")
       ),
       hirid = list(
@@ -82,7 +83,7 @@ cfg <- list(
              table = "chartevents", sub_col = "itemid")
       ),
       eicu = list(
-        list(table = "vitalperiodic", val_col = "respiration",
+        list(table = "vitalperiodic", itm_cols = "respiration",
              class = "col_itm")
       ),
       hirid = list(
@@ -101,7 +102,7 @@ cfg <- list(
              sub_col = "itemid")
       ),
       eicu = list(
-        list(table = "vitalperiodic", val_col = "sao2", class = "col_itm"),
+        list(table = "vitalperiodic", itm_cols = "sao2", class = "col_itm"),
         list(ids = "O2 Sat (%)", table = "lab", sub_col = "labname")
       ),
       hirid = list(
@@ -1032,9 +1033,9 @@ cfg <- list(
         )
       ),
       eicu = list(
-        list(table = "respiratorycare", val_col = "ventstartoffset",
+        list(table = "respiratorycare", itm_cols = "ventstartoffset",
              callback = "vent_flag", class = "col_itm"),
-        list(table = "respiratorycare", val_col = "priorventstartoffset",
+        list(table = "respiratorycare", itm_cols = "priorventstartoffset",
              callback = "vent_flag", class = "col_itm"),
         list(ids = c("Start", "Continued", "respFlowPtVentData"),
              table = "respiratorycharting", sub_col = "respcharttypecat",
@@ -1055,9 +1056,9 @@ cfg <- list(
              sub_col = "itemid", callback = "all_flag")
       ),
       eicu = list(
-        list(table = "respiratorycare", val_col = "ventendoffset",
+        list(table = "respiratorycare", itm_cols = "ventendoffset",
              callback = "vent_flag", class = "col_itm"),
-        list(table = "respiratorycare", val_col = "priorventendoffset",
+        list(table = "respiratorycare", itm_cols = "priorventendoffset",
              callback = "vent_flag", class = "col_itm"),
         list(ids = c("off", "Off", "Suspended"), table = "respiratorycharting",
              sub_col = "respchartvalue", callback = "all_flag")
@@ -1157,12 +1158,12 @@ cfg <- list(
   fluid_sampling = list(
     sources = list(
       mimic = list(
-        list(table = "microbiologyevents", val_col = "org_itemid",
+        list(table = "microbiologyevents", itm_cols = "org_itemid",
              callback = "mimic_sampling", aux_time = "charttime",
              class = "col_itm")
       ),
       eicu = list(
-        list(table = "microlab", val_col = "organism",
+        list(table = "microlab", itm_cols = "organism",
              callback = "eicu_sampling", class = "col_itm")
       )
     )
@@ -1208,7 +1209,7 @@ cfg <- list(
              sub_col = "itemid", callback = "fahrenheit_to_celsius")
       ),
       eicu = list(
-        list(table = "vitalperiodic", val_col = "temperature",
+        list(table = "vitalperiodic", itm_cols = "temperature",
              class = "col_itm")
       ),
       hirid = list(
@@ -1223,7 +1224,8 @@ cfg <- list(
     max = 60,
     sources = list(
       mimic = list(
-        list(ids = c(1817L, 228640L), table = "chartevents", sub_col = "itemid")
+        list(ids = c(1817L, 228640L), table = "chartevents",
+             sub_col = "itemid")
       ),
       hirid = list(
         list(ids = c(2200L, 8290L, 30010009L), table = "observations",
@@ -1251,18 +1253,19 @@ cfg <- list(
     )
   ),
   sex = list(
-    class = "id_tbl",
+    target = "id_tbl",
     levels = c("Female", "Male"),
+    class = "fct_cncpt",
     sources = list(
       mimic = list(
-        list(table = "patients", val_col = "gender", callback = "mf_sex",
+        list(table = "patients", itm_cols = "gender", callback = "mf_sex",
              class = "col_itm")
       ),
       eicu = list(
-        list(table = "patient", val_col = "gender", class = "col_itm")
+        list(table = "patient", itm_cols = "gender", class = "col_itm")
       ),
       hirid = list(
-        list(table = "general", val_col = "sex", callback = "mf_sex",
+        list(table = "general", itm_cols = "sex", callback = "mf_sex",
              class = "col_itm")
       )
     )
@@ -1271,18 +1274,18 @@ cfg <- list(
     unit = "years",
     min = 0,
     max = 100,
-    class = "id_tbl",
+    target = "id_tbl",
     sources = list(
       mimic = list(
-        list(table = "patients", val_col = "dob", callback = "mimic_age",
+        list(table = "patients", itm_cols = "dob", callback = "mimic_age",
              class = "col_itm")
       ),
       eicu = list(
-        list(table = "patient", val_col = "age", callback = "eicu_age",
+        list(table = "patient", itm_cols = "age", callback = "eicu_age",
              class = "col_itm")
       ),
       hirid = list(
-        list(table = "general", val_col = "age", class = "col_itm")
+        list(table = "general", itm_cols = "age", class = "col_itm")
       )
     )
   ),
@@ -1290,10 +1293,11 @@ cfg <- list(
     unit = "kg",
     min = 0,
     max = 500,
-    class = "id_tbl",
+    target = "id_tbl",
     sources = list(
       eicu = list(
-        list(table = "patient", val_col = "admissionweight", class = "col_itm")
+        list(table = "patient", itm_cols = "admissionweight",
+             class = "col_itm")
       )
     )
   ),
@@ -1316,38 +1320,42 @@ cfg <- list(
     )
   ),
   death = list(
-    class = "id_tbl",
+    target = "id_tbl",
     sources = list(
       mimic = list(
-        list(table = "admissions", val_col = "hospital_expire_flag",
+        list(table = "admissions", itm_cols = "hospital_expire_flag",
              callback = "mimic_death", class = "col_itm")
       ),
       eicu = list(
-        list(table = "patient", val_col = "hospitaldischargestatus",
+        list(table = "patient", itm_cols = "hospitaldischargestatus",
              callback = "eicu_death", class = "col_itm")
       ),
       hirid = list(
         list(ids = c(110L, 200L), table = "observations",
-             sub_col = "variableid", callback = "hirid_death")
+             sub_col = "variableid", item_col = "variableid",
+             callback = "hirid_death")
       )
     )
   ),
   admission_type = list(
-    class = "id_tbl",
+    target = "id_tbl",
+    levels = c("med", "surg", "other"),
+    class = "fct_cncpt",
     sources = list(
       mimic = list(
-        list(table = "services", val_col = "curr_service",
+        list(table = "services", itm_cols = "curr_service",
              callback = "mimic_adx", class = "col_itm")
       ),
       eicu = list(
-        list(table = "admissiondx", val_col = "admitdxpath",
+        list(table = "admissiondx", itm_cols = "admitdxpath",
              callback = "eicu_adx", class = "col_itm")
       )
     )
   ),
   los_icu = list(
     unit = "days",
-    class = "id_tbl",
+    min = 0,
+    target = "id_tbl",
     sources = list(
       mimic = list(
         list(win_type = "icustay", class = "los_itm")
@@ -1359,7 +1367,8 @@ cfg <- list(
   ),
   los_hosp = list(
     unit = "days",
-    class = "id_tbl",
+    min = 0,
+    target = "id_tbl",
     sources = list(
       mimic = list(
         list(win_type = "hadm", class = "los_itm")

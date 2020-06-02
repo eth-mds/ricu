@@ -10,8 +10,7 @@ stay_windows(
   win_type = "icustay",
   in_time = "start",
   out_time = "end",
-  interval = hours(1L),
-  ...
+  interval = hours(1L)
 )
 }
 \arguments{
@@ -25,8 +24,6 @@ stay_windows(
 
 \item{interval}{The time interval used to discretize time stamps with,
 specified as \code{\link[base:difftime]{base::difftime()}} object}
-
-\item{...}{Potentially passed on to \code{\link[=as_id_cfg]{as_id_cfg()}} or \code{\link[=read_src_cfg]{read_src_cfg()}}}
 }
 \description{
 For a given ID type, get all stays with corresponding start and end times.

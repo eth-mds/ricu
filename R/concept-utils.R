@@ -5,157 +5,197 @@
 #' are used.
 #'
 #' @param src The data source name
+#' @param ... Further specification of the `itm` object (passed to
+#' [init_itm()])
+#' @param target The target object yielded by loading
+#' @param class Sub class for customizing `itm` behavior
+#'
+#' @rdname data_items
+#'
+#' @export
+#'
+new_itm <- function(src, ..., target = c("ts_tbl", "id_tbl"),
+                    class = "sel_itm") {
+
+  assert_that(is.string(src), is.string(class))
+
+  target <- match.arg(target)
+
+  init_itm(
+    structure(list(src = src, targ = target), class = c(class, "itm")), ...
+  )
+}
+
+#' @param x Object to query/dispatch on
+#'
+#' @rdname data_items
+#' @export
+is_itm <- function(x) inherits(x, "itm")
+
+#' @export
+src_name.itm <- function(x) x[["src"]]
+
+#' @export
+as_src_tbl.sel_itm <- function(x, ...) {
+  as_src_tbl(x[["table"]], src_name(x), ...)
+}
+
+#' @export
+as_src_tbl.col_itm <- function(x, ...) {
+  as_src_tbl(x[["table"]], src_name(x), ...)
+}
+
+#' @export
+as_src_tbl.rgx_itm <- function(x, ...) {
+  as_src_tbl(x[["table"]], src_name(x), ...)
+}
+
+itm_col_helper <- function(x, col) {
+  res <- if (is.null(col)) default_col(as_src_tbl(x), "val") else col
+  if (is.string(res)) c(val_col = res) else {
+    assert_that(has_name(res, "val_col"))
+    res
+  }
+}
+
+need_idx <- function(x) identical(x[["targ"]], "ts_tbl")
+
+idx_col_helper <- function(x, col) {
+  if (need_idx(x))
+    if (is.null(col)) default_col(as_src_tbl(x), "index") else col
+  else NULL
+}
+
+cbk_col_helper <- function(...) {
+  if (...length()) as.character(list(...)) else NULL
+}
+
+#' @rdname data_items
+#' @export
+init_itm <- function(x, ...) UseMethod("init_itm", x)
+
 #' @param table Name of the table containing the data
-#' @param column Column name
+#' @param sub_col Column name used for subsetting
 #' @param ids Vector of ids used to subset table rows. If `NULL`, all rows are
 #' considered corresponding to the data item
-#' @param regex Logical flag indicating whether the vector of id should be
-#' interpreted as regular expressions
+#' @param itm_cols Columns returned as [data_cols()]
+#' @param index_col Column used as index
 #' @param callback Name of a function to be called on the returned data used
 #' for data cleanup operations
-#' @param load_fun Custom function used for overriding default loading of data
-#' @param ... Further name/string pairs specifying additional columns needed to
-#' define the data item
 #'
 #' @rdname data_items
-#'
 #' @export
-#'
-new_item <- function(src, itm, class = "sel_itm") {
+init_itm.sel_itm <- function(x, table, sub_col, ids, itm_cols = NULL,
+                             index_col = NULL,
+                             callback = "identity_callback", ...) {
 
-  if (!all_fun(itm, is.list)) {
-    itm <- list(itm)
-  }
+  x[["table"]] <- table
 
-  assert_that(is.character(src), all_fun(itm, is.list), is.character(class))
+  itm_cols  <- itm_col_helper(x, itm_cols)
+  index_col <- idx_col_helper(x, index_col)
+  cb_cols   <- cbk_col_helper(...)
 
-  if (length(itm) == 0L || length(itm[[1L]]) == 0L) {
-    return(new_rcrd(list(src = character(0L), itm = list()), class = "item"))
-  }
-
-  itm <- Map(structure, itm, class = lapply(class, c, "itm"))
-  itm <- Map(validate_itm, itm, src)
-
-  res <- vec_recycle_common(src = src, itm = itm)
-
-  new_rcrd(res, class = "item")
-}
-
-#' @export
-format.item <- function(x, ...) {
-  paste0("<", chr_xtr(lapply(field(x, "itm"), class), 1L), ">")
-}
-
-#' @export
-names.item <- function(x) field(x, "src")
-
-#' @export
-`names<-.item` <- function(x, value) {
-
-  if (length(value)) {
-    assert_that(identical(names(x), value))
-  }
-
-  x
-}
-
-#' @export
-as.list.item <- function(x, ...) {
-  warn_dots(...)
-  vec_chop(x)
-}
-
-#' @param x A data item object
-#'
-#' @rdname data_items
-#'
-#' @export
-#'
-is_item <- function(x) inherits(x, "item")
-
-#' @rdname data_items
-#' @export
-validate_itm <- function(x, src) {
-  assert_that(is.string(src))
-  UseMethod("validate_itm", x)
-}
-
-#' @rdname data_items
-#' @export
-validate_itm.sel_itm <- function(x, src) {
-
-  tbl <- x[["table"]]
-  xtr <- c(x["sub_col"], get_extra_cols(x))
+  tbl <- as_src_tbl(x)
 
   assert_that(
-    is.string(tbl), both(x[["ids"]], has_length, chr_or_int),
-    null_or(x[["callback"]], is_fun_name),
-    all_fun(xtr, is_colname, as_src_tbl(tbl, src))
+    is.string(table), is_fun_name(callback), both(ids, has_length, chr_or_int),
+    all_fun(c(list(sub_col, itm_cols), index_col, cb_cols), is_colname, tbl)
   )
 
-  x
-}
-
-#' @rdname data_items
-#' @export
-validate_itm.col_itm <- function(x, src) {
-
-  tbl <- x[["table"]]
-
-  assert_that(is.string(tbl), null_or(x[["callback"]], is_fun_name),
-              all_fun(get_extra_cols(x), is_colname, as_src_tbl(tbl, src)))
+  todo <- c("ids", "sub_col", "itm_cols", "index_col", "cb_cols", "callback")
+  x[todo] <- mget(todo)
 
   x
 }
 
 #' @rdname data_items
 #' @export
-validate_itm.rgx_itm <- function(x, src) {
+init_itm.col_itm <- function(x, table, itm_cols = NULL, index_col = NULL,
+                             callback = "identity_callback", ...) {
 
-  tbl <- x[["table"]]
-  xtr <- c(x["sub_col"], get_extra_cols(x))
+  x[["table"]] <- table
 
-  assert_that(is.string(tbl), is.string(x[["regex"]]),
-              null_or(x[["callback"]], is_fun_name),
-              all_fun(xtr, is_colname, as_src_tbl(tbl, src)))
+  itm_cols  <- itm_col_helper(x, itm_cols)
+  index_col <- idx_col_helper(x, index_col)
+  cb_cols   <- cbk_col_helper(...)
+
+  assert_that(
+    is.string(table), is_fun_name(callback),
+    all_fun(c(list(itm_cols), index_col, cb_cols), is_colname, as_src_tbl(x))
+  )
+
+  todo <- c("itm_cols", "index_col", "cb_cols", "callback")
+  x[todo] <- mget(todo)
+
+  x
+}
+
+#' @param regex String-valued regular expression which will be evaluated by
+#' [base::grepl()] with `ignore.case = TRUE`
+#'
+#' @rdname data_items
+#' @export
+init_itm.rgx_itm <- function(x, table, sub_col, regex, itm_cols = NULL,
+                             index_col = NULL,
+                             callback = "identity_callback", ...) {
+
+  x[["table"]] <- table
+
+  itm_cols  <- itm_col_helper(x, itm_cols)
+  index_col <- idx_col_helper(x, index_col)
+  cb_cols   <- cbk_col_helper(...)
+
+  tbl <- as_src_tbl(x)
+
+  assert_that(
+    all_fun(list(table, regex), is.string), is_fun_name(callback),
+    all_fun(c(list(sub_col, itm_cols), index_col, cb_cols), is_colname, tbl)
+  )
+
+  todo <- c("regex", "sub_col", "itm_cols", "index_col", "cb_cols", "callback")
+  x[todo] <- mget(todo)
+
+  x
+}
+
+#' @param win_type Passed to [stay_windows()]
+#'
+#' @rdname data_items
+#' @export
+init_itm.los_itm <- function(x, win_type, ...) {
+
+  warn_dots(...)
+
+  assert_that(is.string(win_type))
+
+  x[["win_type"]] <- win_type
 
   x
 }
 
 #' @rdname data_items
 #' @export
-validate_itm.los_itm <- function(x, src) {
+init_itm.itm <- function(x, ...) {
 
-  assert_that(is.string(x[["win_type"]]), length(x) == 1L)
+  dots <- list(...)
+
+  assert_that(is_disjoint(names(x), names(dots)))
+
+  x[names(dots)] <- dots
 
   x
 }
 
-#' @rdname data_items
-#' @export
-validate_itm.itm <- function(x, src) x
-
-#' @export
-get_extra_cols <- function(x) UseMethod("get_extra_cols", x)
-
-#' @export
-get_extra_cols.sel_itm <- function(x) {
-  x[setdiff(names(x), c("ids", "table", "sub_col", "callback"))]
-}
-
-#' @export
-get_extra_cols.col_itm <- function(x) {
-  x[setdiff(names(x), c("table", "callback"))]
-}
-
-#' @export
-get_extra_cols.rgx_itm <- function(x) {
-  x[setdiff(names(x), c("regex", "table", "sub_col", "callback"))]
-}
-
+#' Internal utilities for `item`/`concept` objects
+#'
+#' @param x Object defining the row-subsetting
+#'
+#' @rdname item_utils
+#' @keywords internal
 #' @export
 prepare_query <- function(x) UseMethod("prepare_query", x)
 
+#' @keywords internal
 #' @export
 prepare_query.sel_itm <- function(x) {
 
@@ -171,6 +211,7 @@ prepare_query.sel_itm <- function(x) {
   }
 }
 
+#' @keywords internal
 #' @export
 prepare_query.rgx_itm <- function(x) {
   substitute(grepl(rgx, col, ignore.case = TRUE),
@@ -178,89 +219,227 @@ prepare_query.rgx_itm <- function(x) {
   )
 }
 
+unt_col_helper <- function(x) {
+
+  itm <- x[["itm_cols"]]
+  cbc <- x[["cb_cols"]]
+
+  assert_that(is.string(itm))
+
+  if (has_name(cbc, "unit_col")) {
+
+    unt <- cbc[["unit_col"]]
+
+    if (length(cbc) == 1L) {
+      x["cb_cols"] <- list(NULL)
+    } else {
+      x[["cb_cols"]] <- cbc[setdiff(names(cbc), "unit_col")]
+    }
+
+  } else {
+
+    unt <- default_col(as_src_tbl(x), "unit")
+
+    if (is.na(unt)) {
+      unt <- NULL
+    }
+  }
+
+  x[["itm_cols"]] <- c(val_col = unname(itm), unit_col = unname(unt))
+
+  x
+}
+
+#' @rdname item_utils
+#' @keywords internal
+#' @export
+add_unit_col <- function(x) UseMethod("add_unit_col", x)
+
+#' @export
+add_unit_col.sel_itm <- function(x) unt_col_helper(x)
+
+#' @export
+add_unit_col.col_itm <- function(x) unt_col_helper(x)
+
+#' @export
+add_unit_col.rgx_itm <- function(x) unt_col_helper(x)
+
+#' @export
+add_unit_col.itm <- function(x) x
+
+#' @rdname data_items
+#' @export
+new_item <- function(x) {
+
+  assert_that(is.list(x), all_fun(x, is_itm))
+
+  new_vctr(x, class = "item")
+}
+
+#' @rdname data_concepts
+#' @export
+item <- function(...) {
+  new_item(do.call(Map, c(list(new_itm), vec_recycle_common(...))))
+}
+
+#' @rdname data_concepts
+#' @export
+as_item <- function(x) UseMethod("as_item", x)
+
+#' @export
+as_item.item <- function(x) x
+
+#' @export
+as_item.list <- function(x) new_item(x)
+
+#' @export
+as_item.itm <- function(x) as_item(list(x))
+
+#' @export
+format.item <- function(x, ...) {
+  paste0("<", chr_xtr(lapply(x, class), 1L), ">")
+}
+
+#' @export
+names.item <- function(x) chr_xtr(x, "src")
+
+#' @export
+as.list.item <- function(x, ...) vec_data(x)
+
+#' @rdname data_items
+#' @export
+is_item <- function(x) inherits(x, "item")
+
 #' @export
 src_name.item <- function(x) names(x)
-
-#' @rdname data_items
-#' @export
-as_item <- function(x, ...) UseMethod("as_item", x)
-
-#' @rdname data_items
-#' @export
-as_item.item <- function(x, ...) x
-
-#' @export
-as_item.concept <- function(x) do.call(vec_c, unname(field(x, "items")))
 
 #' Data concept
 #'
 #' Clinical concepts are represented by `concept` objects.
 #'
 #' @param name The name of the concept
-#' @param items One or more `item` objects
-#' @param unit A string, specifying the measurement unit of the concept (can
-#' be `NULL`)
-#' @param min,max Scalar valued; defines a range of plausible values
+#' @param items Zero or more `itm` objects
+#' @param ... Further specification of the `cncpt` object (passed to
+#' [init_cncpt()])
+#' @param class `NULL` or a string-valued sub-class name used for customizing
+#' concept behavior
 #'
 #' @rdname data_concepts
 #'
 #' @export
-new_concept <- function(name, items, unit = NULL, min = NULL,
-                        max = NULL, levels = NULL, target_class = "ts_tbl") {
+new_cncpt <- function(name, items, ..., class = "num_cncpt") {
 
-  wrap_null(unit, min, max, levels)
+  assert_that(is.string(name), null_or(class, is.string))
 
-  if (is_item(items)) {
-    items <- list(items)
-  }
+  res <- structure(list(name = name, items = as_item(items)),
+                   class = c(class, "cncpt"))
 
-  items <- lapply(items, as_item)
-
-  assert_that(is.character(name), all_null_or(unit, is.string),
-              all_null_or(min, is.number), all_null_or(max, is.number),
-              all_null_or(levels, both, is.atomic, has_length),
-              is.character(target_class))
-
-  list2env(
-    res <- vec_recycle_common(name = name, items = items, unit = unit,
-                              min = min, max = max, levels = levels,
-                              class = target_class)
-  )
-
-  check <- lgl_ply(levels, is.null) | (lgl_ply(min, is.null) &
-                                       lgl_ply(max, is.null))
-
-  assert_that(all(check), msg = paste0("specifying both `levels` and ",
-    "`min`/`max` is not possible for concepts ", concat(name[!check])))
-
-  new_rcrd(res, class = "concept")
+  init_cncpt(res, ...)
 }
 
-#' @param x A concept object
+#' @param x Object to query/dispatch on
 #'
 #' @rdname data_concepts
-#'
 #' @export
+is_cncpt <- function(x, ...) inherits(x, "cncpt")
+
+#' @rdname data_concepts
+#' @export
+init_cncpt <- function(x, ...) UseMethod("init_cncpt", x)
+
+#' @param unit A string, specifying the measurement unit of the concept (can
+#' be `NULL`)
+#' @param min,max Scalar valued; defines a range of plausible values for a
+#' numeric concept
 #'
+#' @rdname data_concepts
+#' @export
+init_cncpt.num_cncpt <- function(x, unit = NULL, min = NULL, max = NULL, ...) {
+
+  warn_dots(...)
+
+  assert_that(null_or(unit, is.string), null_or(min, is.number),
+              null_or(max, is.number))
+
+  todo <- c("unit", "min", "max")
+  x[todo] <- mget(todo)
+
+  x[["items"]] <- new_item(lapply(x[["items"]], add_unit_col))
+
+  x
+}
+
+#' @param levels A vector of possible values a categorical concept may take on
+#'
+#' @rdname data_concepts
+#' @export
+init_cncpt.fct_cncpt <- function(x, levels, ...) {
+
+  warn_dots(...)
+
+  assert_that(is.atomic(levels), has_length(levels))
+
+  x[["levels"]] <- levels
+
+  x
+}
+
+#' @rdname data_concepts
+#' @export
+init_cncpt.cncpt <- function(x, ...) {
+
+  dots <- list(...)
+
+  assert_that(is_disjoint(names(x), names(dots)))
+
+  x[names(dots)] <- dots
+
+  x
+}
+
+#' @rdname data_concepts
+#' @export
+src_name.cncpt <- function(x) src_name(x[["items"]])
+
+#' @rdname data_concepts
+#' @export
+new_concept <- function(x) {
+
+  assert_that(is.list(x), all_fun(x, is_cncpt))
+
+  res <- new_vctr(x, class = "concept")
+
+  assert_that(is_unique(names(res)))
+
+  res
+}
+
+#' @rdname data_concepts
+#' @export
+concept <- function(...) {
+  new_concept(do.call(Map, c(list(new_cncpt), vec_recycle_common(...))))
+}
+
+#' @rdname data_concepts
+#' @export
 is_concept <- function(x) inherits(x, "concept")
 
 #' @export
 vec_ptype_full.concept <- function(x, ...) {
+
   srcs <- sort(
-    unique(unlist(lapply(field(x, "items"), names), use.names = FALSE))
+    unique(unlist(lapply(lst_xtr(x, "items"), names), use.names = FALSE))
   )
+
   paste0(class(x)[1L], "{", concat(srcs), "}")
 }
-
-#' @export
-vec_ptype_abbr.concept <- function(x, ...) class(x)[1L]
 
 #' @export
 format.concept <- function(x, ...) {
 
   cnt  <- function(i, nm) int_ply(nm, function(x) sum(x == i))
 
-  nms  <- lapply(field(x, "items"), names)
+  nms  <- lapply(lst_xtr(x, "items"), names)
   srcs <- sort(unique(unlist(nms, use.names = FALSE)))
   cnts <- int_ply(srcs, cnt, nms, length = length(nms))
 
@@ -271,20 +450,15 @@ format.concept <- function(x, ...) {
 }
 
 #' @export
-names.concept <- function(x) field(x, "name")
+names.concept <- function(x) chr_xtr(x, "name")
 
 #' @export
-units.concept <- function(x) field(x, "unit")
+as.list.concept <- function(x, ...) vec_data(x)
 
 #' @export
-as.list.concept <- function(x, ...) {
-  warn_dots(...)
-  vec_chop(x)
-}
+src_name.concept <- function(x) lapply(x, src_name)
 
-#' @export
-src_name.concept <- function(x) lapply(field(x, "items"), src_name)
-
+#' @param src `NULL` or the name of a data source
 #' @param name Name of the dictionary to be read
 #' @param file File name of the dictionary
 #'
@@ -294,22 +468,27 @@ src_name.concept <- function(x) lapply(field(x, "items"), src_name)
 read_dictionary <- function(src = NULL, name = "concept-dict", file = NULL,
                             ...) {
 
-  get_src <- function(x) {
-    if (length(y <- x[names(x) == src])) y else setNames(list(list()), src)
+  do_itm <- function(sr, tr, x) {
+    lapply(lapply(x, c, src = sr, target = tr), do_call, new_itm)
   }
 
-  get_class <- function(x, default) {
-    if (is.null(y <- x[["class"]])) default else y
-  }
+  do_cncpt <- function(name, sources, target = "ts_tbl", ...) {
 
-  get_rest <- function(x) x[setdiff(names(x), "class")]
+    if (not_null(src)) {
+      sources <- sources[src]
+    }
 
-  do_itm <- function(itms, nme) {
-    new_item(nme, lapply(itms, get_rest), chr_ply(itms, get_class, "sel_itm"))
-  }
+    itms <- new_item(
+      do.call(c, Map(do_itm, names(sources), target, sources))
+    )
 
-  do_src <- function(x) {
-    do.call(vec_c, Map(do_itm, x, names(x), USE.NAMES = FALSE))
+    lst <- list(...)
+
+    if (has_length(lst)) {
+      do.call(new_cncpt, c(list(name = name, items = itms), lst))
+    } else {
+      do.call(new_cncpt, c(list(name = name, items = itms, class = NULL)))
+    }
   }
 
   if (is.null(file)) {
@@ -323,16 +502,9 @@ read_dictionary <- function(src = NULL, name = "concept-dict", file = NULL,
     x <- read_json(file, ...)
   }
 
-  if (not_null(src)) {
+  assert_that(null_or(src, is.string))
 
-    assert_that(is.string(src))
-
-    x <- Map(`[[<-`, x, "sources",
-               lapply(lst_xtr(x, "sources"), get_src))
-  }
-
-  new_concept(name = names(x), items = lapply(lst_xtr(x, "sources"), do_src),
-              unit = lst_xtr(x, "unit"), min = lst_xtr(x, "min"),
-              max = lst_xtr(x, "max"), levels = lst_xtr(x, "levels"),
-              target_class = chr_ply(x, get_class, "ts_tbl"))
+  new_concept(lapply(Map(c, name = names(x), x), do_call, do_cncpt))
 }
+
+identity_callback <- function(x, ...) x

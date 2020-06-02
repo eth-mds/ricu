@@ -285,7 +285,7 @@ as_src_env.character <- function(x) {
   res <- get0(x, envir = env, mode = "environment", ifnotfound = NULL)
 
   if (is.null(res)) {
-    stop("Source `", x, "` not found in data environment (", env, "). For ",
+    stop("Source `", x, "` not found in ", format(env), ". For ",
          "further information on how to set up a data source, refer to ",
          "`?attach_src`.")
   }

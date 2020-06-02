@@ -20,7 +20,7 @@ sofa_data(
   icu_limits = stay_windows(source, id_type, interval = interval),
   id_type = "icustay",
   interval = hours(1L),
-  dictionary = read_dictionary("concept-dict"),
+  dictionary = read_dictionary(source),
   ...
 )
 

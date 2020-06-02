@@ -5,7 +5,6 @@
 \alias{load_concepts.character}
 \alias{load_concepts.concept}
 \alias{load_concepts.item}
-\alias{load_concepts_item}
 \alias{load_dictionary}
 \title{Load concept data}
 \usage{
@@ -16,30 +15,16 @@ load_concepts(x, ...)
 \method{load_concepts}{concept}(
   x,
   aggregate = NA_character_,
-  na_rm = TRUE,
   merge_data = TRUE,
   verbose = TRUE,
-  patient_ids = NULL,
   ...
 )
 
 \method{load_concepts}{item}(
   x,
-  target_class = c("ts_tbl", "id_tbl"),
-  id_type = "icustay",
-  interval = hours(1L),
-  ...
-)
-
-load_concepts_item(
-  x,
-  unit = NULL,
-  min = NULL,
-  max = NULL,
-  id_type = "icustay",
   patient_ids = NULL,
+  id_type = "icustay",
   interval = hours(1L),
-  verbose = TRUE,
   ...
 )
 
@@ -63,14 +48,10 @@ names}
 
 \item{aggregate}{Controls how data within concepts is aggregated}
 
-\item{na_rm}{Logical flag, indicating whether to remove rows \code{NA} data in
-individual concepts}
-
 \item{merge_data}{Logical flag, specifying whether to merge concepts into
 wide format or return a list, each entry corresponding to a concept}
 
-\item{verbose}{Logical flag for turning off reporting of unit/out of range
-messages}
+\item{verbose}{Logical flag for muting informational output}
 
 \item{patient_ids}{Optional vector of patient ids to subset the fetched data
 with}
@@ -80,9 +61,9 @@ with}
 \item{interval}{The time interval used to discretize time stamps with,
 specified as \code{\link[base:difftime]{base::difftime()}} object}
 
-\item{unit}{Character vector of units (one per data item)}
+\item{source}{Corresponds to \code{src}}
 
-\item{min, max}{Rage of plausible values}
+\item{dictionary}{Corresponds to \code{concepts}}
 }
 \description{
 Data specified as \code{concept} objects is loaded, aggregated per combination
