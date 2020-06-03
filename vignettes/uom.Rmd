@@ -62,8 +62,11 @@ for (conc in concepts) {
     paste0(round(meds, 2), " (", names(meds), ")", collapse = ", ")
   )
 
-  ggplot(Reduce(rbind, feat), aes(x = dat, fill = src)) +
-    geom_density(alpha=0.5) + xlab(conc) + theme_minimal(15) + ggtitle(title)
+  print(
+    ggplot(Reduce(rbind, feat), aes(x = dat, fill = src)) +
+      geom_density(alpha=0.5) +
+      xlab(conc) + theme_bw() + ggtitle(title)
+  )
 }
 ```
 
