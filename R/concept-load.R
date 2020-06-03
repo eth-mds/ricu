@@ -198,7 +198,9 @@ load_cncpt.num_cncpt <- function(x, verbose, ...) {
 
   res <- rm_cols(res, "unit_col")
 
-  setattr(res[["val_col"]], "units", unit)
+  if (not_null(unit)) {
+    setattr(res[["val_col"]], "units", unit)
+  }
 
   rename_cols(res, x[["name"]], "val_col")
 }
@@ -313,11 +315,9 @@ load_itm.los_itm <- function(x, patient_ids, id_type, interval) {
   }
 
   res <- merge_patid(res, patient_ids)
+  res <- rename_cols(res, "val_col", data_cols(res))
 
-  val <- data_cols(res)
-  res <- set(res, j = val, value = as.double(res[[val]], units = "days"))
-
-  res
+  set(res, j = "val_col", value = as.double(res[["val_col"]], units = "days"))
 }
 
 merge_patid <- function(x, patid) {
