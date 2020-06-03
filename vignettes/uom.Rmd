@@ -2,7 +2,7 @@
 title: "Units of measurement"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{uom}
+  %\VignetteIndexEntry{Units of measurement}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
@@ -54,7 +54,7 @@ take_quants <- function(x, lwr, upr) {
 for (conc in concepts) {
 
   feat <- lapply(dat, `[[`, conc)
-  meds <- vapply(feat, median, numeric(1L) na.rm = TRUE)
+  meds <- vapply(feat, median, numeric(1L), na.rm = TRUE)
   feat <- Map(data.frame, src = names(feat),
               dat = lapply(feat, take_quants, lwr = 0.05, upr = 0.95))
 
