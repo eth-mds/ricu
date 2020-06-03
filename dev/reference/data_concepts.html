@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Data concept — new_concept • ICU data with R</title>
+<title>Data concept — item • ICU data with R</title>
 
 
 <!-- jquery -->
@@ -39,7 +39,7 @@
 
 
 
-<meta property="og:title" content="Data concept — new_concept" />
+<meta property="og:title" content="Data concept — item" />
 <meta property="og:description" content="Clinical concepts are represented by concept objects." />
 
 
@@ -98,9 +98,6 @@
   </a>
   <ul class="dropdown-menu" role="menu">
     <li>
-      <a href="../articles/demo.html">demo</a>
-    </li>
-    <li>
       <a href="../articles/uom.html">Units of measurement</a>
     </li>
   </ul>
@@ -135,24 +132,68 @@
     <p>Clinical concepts are represented by <code>concept</code> objects.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>new_concept</span>(<span class='no'>name</span>, <span class='no'>items</span>, <span class='kw'>unit</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>min_val</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>max_val</span> <span class='kw'>=</span> <span class='kw'>NULL</span>)
+    <pre class="usage"><span class='fu'>item</span>(<span class='no'>...</span>)
+
+<span class='fu'>as_item</span>(<span class='no'>x</span>)
+
+<span class='fu'>new_cncpt</span>(<span class='no'>name</span>, <span class='no'>items</span>, <span class='no'>...</span>, <span class='kw'>class</span> <span class='kw'>=</span> <span class='st'>"num_cncpt"</span>)
+
+<span class='fu'>is_cncpt</span>(<span class='no'>x</span>, <span class='no'>...</span>)
+
+<span class='fu'>init_cncpt</span>(<span class='no'>x</span>, <span class='no'>...</span>)
+
+<span class='co'># S3 method for num_cncpt</span>
+<span class='fu'>init_cncpt</span>(<span class='no'>x</span>, <span class='kw'>unit</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>min</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>max</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='no'>...</span>)
+
+<span class='co'># S3 method for fct_cncpt</span>
+<span class='fu'>init_cncpt</span>(<span class='no'>x</span>, <span class='no'>levels</span>, <span class='no'>...</span>)
+
+<span class='co'># S3 method for cncpt</span>
+<span class='fu'>init_cncpt</span>(<span class='no'>x</span>, <span class='no'>...</span>)
+
+<span class='co'># S3 method for cncpt</span>
+<span class='fu'>src_name</span>(<span class='no'>x</span>)
+
+<span class='fu'>new_concept</span>(<span class='no'>x</span>)
+
+<span class='fu'>concept</span>(<span class='no'>...</span>)
 
 <span class='fu'>is_concept</span>(<span class='no'>x</span>)
 
-<span class='fu'>as_concept</span>(<span class='no'>x</span>, <span class='no'>...</span>)
+<span class='fu'>read_dictionary</span>(
+  <span class='kw'>src</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
+  <span class='kw'>concepts</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
+  <span class='kw'>name</span> <span class='kw'>=</span> <span class='st'>"concept-dict"</span>,
+  <span class='kw'>file</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
+  <span class='no'>...</span>
+)
 
-<span class='fu'>concept</span>(<span class='no'>name</span>, <span class='no'>...</span>, <span class='kw'>unit</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>min_val</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>max_val</span> <span class='kw'>=</span> <span class='kw'>NULL</span>)</pre>
+<span class='fu'>src_name</span>(<span class='no'>x</span>)</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
+      <th>...</th>
+      <td><p>Further specification of the <code>cncpt</code> object (passed to
+<code>init_cncpt()</code>)</p></td>
+    </tr>
+    <tr>
+      <th>x</th>
+      <td><p>Object to query/dispatch on</p></td>
+    </tr>
+    <tr>
       <th>name</th>
-      <td><p>The name of the concept</p></td>
+      <td><p>Name of the dictionary to be read</p></td>
     </tr>
     <tr>
       <th>items</th>
-      <td><p>One or more <code>item</code> objects</p></td>
+      <td><p>Zero or more <code>itm</code> objects</p></td>
+    </tr>
+    <tr>
+      <th>class</th>
+      <td><p><code>NULL</code> or a string-valued sub-class name used for customizing
+concept behavior</p></td>
     </tr>
     <tr>
       <th>unit</th>
@@ -160,16 +201,26 @@
 be <code>NULL</code>)</p></td>
     </tr>
     <tr>
-      <th>min_val, max_val</th>
-      <td><p>Scalar valued; defines a range of plausible values</p></td>
+      <th>min, max</th>
+      <td><p>Scalar valued; defines a range of plausible values for a
+numeric concept</p></td>
     </tr>
     <tr>
-      <th>x</th>
-      <td><p>A concept object</p></td>
+      <th>levels</th>
+      <td><p>A vector of possible values a categorical concept may take on</p></td>
     </tr>
     <tr>
-      <th>...</th>
-      <td><p>Forwarded to <code><a href='data_items.html'>new_item()</a></code></p></td>
+      <th>src</th>
+      <td><p><code>NULL</code> or the name of a data source</p></td>
+    </tr>
+    <tr>
+      <th>concepts</th>
+      <td><p>A character vector used to subset the concept dictionary or
+<code>NULL</code> indicating no subsetting</p></td>
+    </tr>
+    <tr>
+      <th>file</th>
+      <td><p>File name of the dictionary</p></td>
     </tr>
     </table>
 

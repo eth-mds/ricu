@@ -99,9 +99,6 @@ assessment tool used to track a patient's well-being in an ICU." />
   </a>
   <ul class="dropdown-menu" role="menu">
     <li>
-      <a href="../articles/demo.html">demo</a>
-    </li>
-    <li>
       <a href="../articles/uom.html">Units of measurement</a>
     </li>
   </ul>
@@ -150,7 +147,7 @@ assessment tool used to track a patient's well-being in an ICU.</p>
   <span class='kw'>icu_limits</span> <span class='kw'>=</span> <span class='fu'><a href='stay_windows.html'>stay_windows</a></span>(<span class='no'>source</span>, <span class='no'>id_type</span>, <span class='kw'>interval</span> <span class='kw'>=</span> <span class='no'>interval</span>),
   <span class='kw'>id_type</span> <span class='kw'>=</span> <span class='st'>"icustay"</span>,
   <span class='kw'>interval</span> <span class='kw'>=</span> <span class='fu'><a href='difftime.html'>hours</a></span>(<span class='fl'>1L</span>),
-  <span class='kw'>dictionary</span> <span class='kw'>=</span> <span class='fu'><a href='data_dictionary.html'>read_dictionary</a></span>(<span class='st'>"concept-dict"</span>),
+  <span class='kw'>dictionary</span> <span class='kw'>=</span> <span class='fu'><a href='data_concepts.html'>read_dictionary</a></span>(<span class='no'>source</span>),
   <span class='no'>...</span>
 )
 

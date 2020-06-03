@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Data item — new_item • ICU data with R</title>
+<title>Data item — new_itm • ICU data with R</title>
 
 
 <!-- jquery -->
@@ -39,7 +39,7 @@
 
 
 
-<meta property="og:title" content="Data item — new_item" />
+<meta property="og:title" content="Data item — new_itm" />
 <meta property="og:description" content="In order to specify the location of data items in data sets, item objects
 are used." />
 
@@ -99,9 +99,6 @@ are used." />
   </a>
   <ul class="dropdown-menu" role="menu">
     <li>
-      <a href="../articles/demo.html">demo</a>
-    </li>
-    <li>
       <a href="../articles/uom.html">Units of measurement</a>
     </li>
   </ul>
@@ -137,44 +134,87 @@ are used." />
 are used.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>new_item</span>(
-  <span class='no'>concept</span>,
-  <span class='no'>source</span>,
-  <span class='kw'>table</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>column</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>ids</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>regex</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
-  <span class='kw'>callback</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>load_fun</span> <span class='kw'>=</span> <span class='st'>"load_default"</span>,
+    <pre class="usage"><span class='fu'>new_itm</span>(<span class='no'>src</span>, <span class='no'>...</span>, <span class='kw'>target</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"ts_tbl"</span>, <span class='st'>"id_tbl"</span>), <span class='kw'>class</span> <span class='kw'>=</span> <span class='st'>"sel_itm"</span>)
+
+<span class='fu'>is_itm</span>(<span class='no'>x</span>)
+
+<span class='fu'>init_itm</span>(<span class='no'>x</span>, <span class='no'>...</span>)
+
+<span class='co'># S3 method for sel_itm</span>
+<span class='fu'>init_itm</span>(
+  <span class='no'>x</span>,
+  <span class='no'>table</span>,
+  <span class='no'>sub_col</span>,
+  <span class='no'>ids</span>,
+  <span class='kw'>itm_cols</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
+  <span class='kw'>index_col</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
+  <span class='kw'>callback</span> <span class='kw'>=</span> <span class='st'>"identity_callback"</span>,
   <span class='no'>...</span>
 )
 
-<span class='fu'>item</span>(<span class='no'>...</span>)
+<span class='co'># S3 method for col_itm</span>
+<span class='fu'>init_itm</span>(
+  <span class='no'>x</span>,
+  <span class='no'>table</span>,
+  <span class='kw'>itm_cols</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
+  <span class='kw'>index_col</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
+  <span class='kw'>callback</span> <span class='kw'>=</span> <span class='st'>"identity_callback"</span>,
+  <span class='no'>...</span>
+)
 
-<span class='fu'>is_item</span>(<span class='no'>x</span>)
+<span class='co'># S3 method for rgx_itm</span>
+<span class='fu'>init_itm</span>(
+  <span class='no'>x</span>,
+  <span class='no'>table</span>,
+  <span class='no'>sub_col</span>,
+  <span class='no'>regex</span>,
+  <span class='kw'>itm_cols</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
+  <span class='kw'>index_col</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
+  <span class='kw'>callback</span> <span class='kw'>=</span> <span class='st'>"identity_callback"</span>,
+  <span class='no'>...</span>
+)
 
-<span class='fu'>as_item</span>(<span class='no'>x</span>)
+<span class='co'># S3 method for los_itm</span>
+<span class='fu'>init_itm</span>(<span class='no'>x</span>, <span class='no'>win_type</span>, <span class='no'>...</span>)
 
-<span class='fu'>src_name</span>(<span class='no'>x</span>)</pre>
+<span class='co'># S3 method for itm</span>
+<span class='fu'>init_itm</span>(<span class='no'>x</span>, <span class='no'>...</span>)
+
+<span class='fu'>new_item</span>(<span class='no'>x</span>)
+
+<span class='fu'>is_item</span>(<span class='no'>x</span>)</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
-      <th>concept</th>
-      <td><p>The name of the associated clinical concept</p></td>
+      <th>src</th>
+      <td><p>The data source name</p></td>
     </tr>
     <tr>
-      <th>source</th>
-      <td><p>The data source name</p></td>
+      <th>...</th>
+      <td><p>Further specification of the <code>itm</code> object (passed to
+<code>init_itm()</code>)</p></td>
+    </tr>
+    <tr>
+      <th>target</th>
+      <td><p>The target object yielded by loading</p></td>
+    </tr>
+    <tr>
+      <th>class</th>
+      <td><p>Sub class for customizing <code>itm</code> behavior</p></td>
+    </tr>
+    <tr>
+      <th>x</th>
+      <td><p>Object to query/dispatch on</p></td>
     </tr>
     <tr>
       <th>table</th>
       <td><p>Name of the table containing the data</p></td>
     </tr>
     <tr>
-      <th>column</th>
-      <td><p>Column name</p></td>
+      <th>sub_col</th>
+      <td><p>Column name used for subsetting</p></td>
     </tr>
     <tr>
       <th>ids</th>
@@ -182,9 +222,12 @@ are used.</p>
 considered corresponding to the data item</p></td>
     </tr>
     <tr>
-      <th>regex</th>
-      <td><p>Logical flag indicating whether the vector of id should be
-interpreted as regular expressions</p></td>
+      <th>itm_cols</th>
+      <td><p>Columns returned as <code><a href='meta_utils.html'>data_cols()</a></code></p></td>
+    </tr>
+    <tr>
+      <th>index_col</th>
+      <td><p>Column used as index</p></td>
     </tr>
     <tr>
       <th>callback</th>
@@ -192,17 +235,13 @@ interpreted as regular expressions</p></td>
 for data cleanup operations</p></td>
     </tr>
     <tr>
-      <th>load_fun</th>
-      <td><p>Custom function used for overriding default loading of data</p></td>
+      <th>regex</th>
+      <td><p>String-valued regular expression which will be evaluated by
+<code><a href='https://rdrr.io/r/base/grep.html'>base::grepl()</a></code> with <code>ignore.case = TRUE</code></p></td>
     </tr>
     <tr>
-      <th>...</th>
-      <td><p>Further name/string pairs specifying additional columns needed to
-define the data item</p></td>
-    </tr>
-    <tr>
-      <th>x</th>
-      <td><p>A data item object</p></td>
+      <th>win_type</th>
+      <td><p>Passed to <code><a href='stay_windows.html'>stay_windows()</a></code></p></td>
     </tr>
     </table>
 

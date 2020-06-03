@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Difftime utilities — secs • ICU data with R</title>
+<title>Internal utilities for <code>item</code>/<code>concept</code> objects — load_cncpt • ICU data with R</title>
 
 
 <!-- jquery -->
@@ -39,8 +39,8 @@
 
 
 
-<meta property="og:title" content="Difftime utilities — secs" />
-<meta property="og:description" content="Utility functions for working with base::difftime() objects." />
+<meta property="og:title" content="Internal utilities for <code>item</code>/<code>concept</code> objects — load_cncpt" />
+<meta property="og:description" content="Internal utilities for item/concept objects" />
 
 
 <meta name="robots" content="noindex">
@@ -123,39 +123,51 @@
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Difftime utilities</h1>
+    <h1>Internal utilities for <code>item</code>/<code>concept</code> objects</h1>
     
-    <div class="hidden name"><code>difftime.Rd</code></div>
+    <div class="hidden name"><code>item_utils.Rd</code></div>
     </div>
 
     <div class="ref-description">
-    <p>Utility functions for working with <code><a href='https://rdrr.io/r/base/difftime.html'>base::difftime()</a></code> objects.</p>
+    <p>Internal utilities for <code>item</code>/<code>concept</code> objects</p>
     </div>
 
-    <pre class="usage"><span class='fu'>secs</span>(<span class='no'>x</span>)
+    <pre class="usage"><span class='fu'>load_cncpt</span>(<span class='no'>x</span>, <span class='no'>verbose</span>, <span class='no'>...</span>)
 
-<span class='fu'>mins</span>(<span class='no'>x</span>)
+<span class='fu'>load_itm</span>(<span class='no'>x</span>, <span class='no'>patient_ids</span>, <span class='no'>id_type</span>, <span class='no'>interval</span>)
 
-<span class='fu'>hours</span>(<span class='no'>x</span>)
+<span class='fu'>prepare_query</span>(<span class='no'>x</span>)
 
-<span class='fu'>days</span>(<span class='no'>x</span>)
-
-<span class='fu'>weeks</span>(<span class='no'>x</span>)
-
-<span class='fu'>is_time</span>(<span class='no'>x</span>, <span class='kw'>allow_neg</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>)
-
-<span class='fu'>is_time_vec</span>(<span class='no'>x</span>, <span class='kw'>allow_neg</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>)</pre>
+<span class='fu'>add_unit_col</span>(<span class='no'>x</span>)</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
       <th>x</th>
-      <td><p>Object to test/coerce</p></td>
+      <td><p>Object defining the row-subsetting</p></td>
     </tr>
     <tr>
-      <th>allow_neg</th>
-      <td><p>Logical flag indicating whether to allow negative values</p></td>
+      <th>verbose</th>
+      <td><p>Logical flag for muting informational output</p></td>
+    </tr>
+    <tr>
+      <th>...</th>
+      <td><p>Passed to downstream methods</p></td>
+    </tr>
+    <tr>
+      <th>patient_ids</th>
+      <td><p>Optional vector of patient ids to subset the fetched data
+with</p></td>
+    </tr>
+    <tr>
+      <th>id_type</th>
+      <td><p>String specifying the patient id type to return</p></td>
+    </tr>
+    <tr>
+      <th>interval</th>
+      <td><p>The time interval used to discretize time stamps with,
+specified as <code><a href='https://rdrr.io/r/base/difftime.html'>base::difftime()</a></code> object</p></td>
     </tr>
     </table>
 

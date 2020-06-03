@@ -99,9 +99,6 @@ of id and time-step and merged into wide format." />
   </a>
   <ul class="dropdown-menu" role="menu">
     <li>
-      <a href="../articles/demo.html">demo</a>
-    </li>
-    <li>
       <a href="../articles/uom.html">Units of measurement</a>
     </li>
   </ul>
@@ -140,37 +137,30 @@ of id and time-step and merged into wide format.</p>
     <pre class="usage"><span class='fu'>load_concepts</span>(<span class='no'>x</span>, <span class='no'>...</span>)
 
 <span class='co'># S3 method for character</span>
-<span class='fu'>load_concepts</span>(<span class='no'>x</span>, <span class='kw'>source</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>dictionary</span> <span class='kw'>=</span> <span class='fu'><a href='data_dictionary.html'>read_dictionary</a></span>(), <span class='no'>...</span>)
-
-<span class='co'># S3 method for dictionary</span>
-<span class='fu'>load_concepts</span>(<span class='no'>x</span>, <span class='kw'>source</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='no'>...</span>)
+<span class='fu'>load_concepts</span>(<span class='no'>x</span>, <span class='kw'>src</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>concepts</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='no'>...</span>)
 
 <span class='co'># S3 method for concept</span>
 <span class='fu'>load_concepts</span>(
   <span class='no'>x</span>,
   <span class='kw'>aggregate</span> <span class='kw'>=</span> <span class='fl'>NA_character_</span>,
-  <span class='kw'>na_rm</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
   <span class='kw'>merge_data</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
+  <span class='kw'>verbose</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
   <span class='no'>...</span>
 )
 
 <span class='co'># S3 method for item</span>
 <span class='fu'>load_concepts</span>(
   <span class='no'>x</span>,
-  <span class='kw'>unit</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>min</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>max</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>id_type</span> <span class='kw'>=</span> <span class='st'>"icustay"</span>,
   <span class='kw'>patient_ids</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
+  <span class='kw'>id_type</span> <span class='kw'>=</span> <span class='st'>"icustay"</span>,
   <span class='kw'>interval</span> <span class='kw'>=</span> <span class='fu'><a href='difftime.html'>hours</a></span>(<span class='fl'>1L</span>),
-  <span class='kw'>verbose</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
   <span class='no'>...</span>
 )
 
 <span class='fu'>load_dictionary</span>(
   <span class='kw'>source</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
   <span class='kw'>concepts</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>dictionary</span> <span class='kw'>=</span> <span class='fu'><a href='data_dictionary.html'>read_dictionary</a></span>(),
+  <span class='kw'>dictionary</span> <span class='kw'>=</span> <span class='fu'><a href='data_concepts.html'>read_dictionary</a></span>(<span class='no'>source</span>),
   <span class='no'>...</span>
 )</pre>
 
@@ -186,22 +176,18 @@ of id and time-step and merged into wide format.</p>
       <td><p>Passed to downstream methods</p></td>
     </tr>
     <tr>
-      <th>source</th>
-      <td><p>A character vector, used to subset the <code>dictionary</code>; <code>NULL</code>
+      <th>src</th>
+      <td><p>A character vector, used to subset the <code>concepts</code>; <code>NULL</code>
 means no subsetting</p></td>
     </tr>
     <tr>
-      <th>dictionary</th>
-      <td><p>The dictionary to be used</p></td>
+      <th>concepts</th>
+      <td><p>Character vector (or NULL, meaning everything) of concept
+names</p></td>
     </tr>
     <tr>
       <th>aggregate</th>
       <td><p>Controls how data within concepts is aggregated</p></td>
-    </tr>
-    <tr>
-      <th>na_rm</th>
-      <td><p>Logical flag, indicating whether to remove rows <code>NA</code> data in
-individual concepts</p></td>
     </tr>
     <tr>
       <th>merge_data</th>
@@ -209,16 +195,8 @@ individual concepts</p></td>
 wide format or return a list, each entry corresponding to a concept</p></td>
     </tr>
     <tr>
-      <th>unit</th>
-      <td><p>Character vector of units (one per data item)</p></td>
-    </tr>
-    <tr>
-      <th>min, max</th>
-      <td><p>Rage of plausible values</p></td>
-    </tr>
-    <tr>
-      <th>id_type</th>
-      <td><p>String specifying the patient id type to return</p></td>
+      <th>verbose</th>
+      <td><p>Logical flag for muting informational output</p></td>
     </tr>
     <tr>
       <th>patient_ids</th>
@@ -226,19 +204,21 @@ wide format or return a list, each entry corresponding to a concept</p></td>
 with</p></td>
     </tr>
     <tr>
+      <th>id_type</th>
+      <td><p>String specifying the patient id type to return</p></td>
+    </tr>
+    <tr>
       <th>interval</th>
       <td><p>The time interval used to discretize time stamps with,
 specified as <code><a href='https://rdrr.io/r/base/difftime.html'>base::difftime()</a></code> object</p></td>
     </tr>
     <tr>
-      <th>verbose</th>
-      <td><p>Logical flag for turning off reporting of unit/out of range
-messages</p></td>
+      <th>source</th>
+      <td><p>Corresponds to <code>src</code></p></td>
     </tr>
     <tr>
-      <th>concepts</th>
-      <td><p>Character vector (or NULL, meaning everything) of concept
-names</p></td>
+      <th>dictionary</th>
+      <td><p>Corresponds to <code>concepts</code></p></td>
     </tr>
     </table>
 

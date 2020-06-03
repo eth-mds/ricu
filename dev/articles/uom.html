@@ -58,9 +58,6 @@
   </a>
   <ul class="dropdown-menu" role="menu">
 <li>
-      <a href="../articles/demo.html">demo</a>
-    </li>
-    <li>
       <a href="../articles/uom.html">Units of measurement</a>
     </li>
   </ul>
@@ -104,11 +101,60 @@
 <div id="ricu-approach" class="section level3">
 <h3 class="hasAnchor">
 <a href="#ricu-approach" class="anchor"></a><code>ricu</code> approach</h3>
-<p>All concepts that can be loaded with <code><a href="../reference/load_concepts.html">load_dictionary()</a></code> within <code>ricu</code> have been checked for units, and the units were converted where necessary.</p>
+<p>All concepts that can be loaded with <code><a href="../reference/load_concepts.html">load_concepts()</a></code> within <code>ricu</code> have been checked for units, and the units were converted where necessary.</p>
 <p>For example, we take 5 different concepts:</p>
-<div class="sourceCode" id="cb1"><html><body><pre class="r"><span class="no">concept_range</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">"mean_bp"</span>, <span class="st">"lactate"</span> , <span class="st">"creatinine"</span>, <span class="st">"bilirubin_total"</span>, <span class="st">"platelet_count"</span>)</pre></body></html></div>
+<div class="sourceCode" id="cb1"><html><body><pre class="r"><span class="no">data_src</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">"mimic_demo"</span>, <span class="st">"eicu_demo"</span>)
+
+<span class="no">concepts</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(
+  <span class="st">"mean_bp"</span>, <span class="st">"lactate"</span> , <span class="st">"creatinine"</span>, <span class="st">"bilirubin_total"</span>, <span class="st">"platelet_count"</span>
+)
+
+<span class="no">dat</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/lapply.html">lapply</a></span>(<span class="no">data_src</span>,
+  <span class="kw">function</span>(<span class="no">src</span>) <span class="fu"><a href="../reference/load_concepts.html">load_concepts</a></span>(<span class="no">concepts</span>, <span class="no">src</span>, <span class="kw">verbose</span> <span class="kw">=</span> <span class="fl">FALSE</span>)
+)
+
+<span class="fu"><a href="https://rdrr.io/r/base/names.html">names</a></span>(<span class="no">dat</span>) <span class="kw">&lt;-</span> <span class="no">data_src</span>
+
+<span class="no">dat</span>
+<span class="co">#&gt; $mimic_demo</span>
+<span class="co">#&gt; # A `ts_tbl`: 13,877 × 7</span>
+<span class="co">#&gt; # Id:         `icustay_id`</span>
+<span class="co">#&gt; # Index:      `charttime` (1 hours)</span>
+<span class="co">#&gt;        icustay_id charttime mean_bp lactate creatinine bilirubin_total</span>
+<span class="co">#&gt;             &lt;int&gt; &lt;drtn&gt;      &lt;dbl&gt;   &lt;dbl&gt;      &lt;dbl&gt;           &lt;dbl&gt;</span>
+<span class="co">#&gt; 1          201006 -58 hours      NA     1.7        0.9            NA</span>
+<span class="co">#&gt; 2          201006 -45 hours      NA    NA          0.8             0.9</span>
+<span class="co">#&gt; 3          201006 -21 hours      NA    NA          0.8            NA</span>
+<span class="co">#&gt; 4          201006 -10 hours      NA     1.8       NA              NA</span>
+<span class="co">#&gt; 5          201006   0 hours      82     2.2        0.8            NA</span>
+<span class="co">#&gt; …</span>
+<span class="co">#&gt; 13,873     298685 314 hours      76    NA         NA              NA</span>
+<span class="co">#&gt; 13,874     298685 315 hours      58    NA         NA              NA</span>
+<span class="co">#&gt; 13,875     298685 316 hours      47    NA         NA              NA</span>
+<span class="co">#&gt; 13,876     298685 317 hours      35    NA         NA              NA</span>
+<span class="co">#&gt; 13,877     298685 318 hours      12    NA         NA              NA</span>
+<span class="co">#&gt; # … with 13,867 more rows, and 1 more variable: platelet_count &lt;dbl&gt;</span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt; $eicu_demo</span>
+<span class="co">#&gt; # A `ts_tbl`: 134,319 × 7</span>
+<span class="co">#&gt; # Id:         `patientunitstayid`</span>
+<span class="co">#&gt; # Index:      `observationoffset` (1 hours)</span>
+<span class="co">#&gt;         patientunitstay… observationoffs… mean_bp lactate creatinine</span>
+<span class="co">#&gt;                    &lt;int&gt; &lt;drtn&gt;             &lt;dbl&gt;   &lt;dbl&gt;      &lt;dbl&gt;</span>
+<span class="co">#&gt; 1                 141764  1 hours            112.      NA         NA</span>
+<span class="co">#&gt; 2                 141764  2 hours            128       NA         NA</span>
+<span class="co">#&gt; 3                 141764  3 hours            143       NA         NA</span>
+<span class="co">#&gt; 4                 141764  4 hours            133       NA         NA</span>
+<span class="co">#&gt; 5                 141764  5 hours            103       NA         NA</span>
+<span class="co">#&gt; …</span>
+<span class="co">#&gt; 134,315          3353113 37 hours            111       NA         NA</span>
+<span class="co">#&gt; 134,316          3353113 39 hours             97       NA         NA</span>
+<span class="co">#&gt; 134,317          3353113 40 hours            105       NA         NA</span>
+<span class="co">#&gt; 134,318          3353113 41 hours             70       NA         NA</span>
+<span class="co">#&gt; 134,319          3353113 44 hours             93       NA         NA</span>
+<span class="co">#&gt; # … with 134,309 more rows, and 2 more variables: bilirubin_total &lt;dbl&gt;,</span>
+<span class="co">#&gt; #   platelet_count &lt;dbl&gt;</span></pre></body></html></div>
 <p>We plot the density of the features and report their median values:</p>
-<p><img src="uom_files/figure-html/anus-1.png" width="576"><img src="uom_files/figure-html/anus-2.png" width="576"><img src="uom_files/figure-html/anus-3.png" width="576"><img src="uom_files/figure-html/anus-4.png" width="576"><img src="uom_files/figure-html/anus-5.png" width="576"></p>
 <p>Note that the matching between datasets is not perfect, but the median values should align closely (the above are done using the demo datasets which are rather small in size; in general the matching should be even better).</p>
 </div>
 <div id="concepts-outside-ricu-dictionary" class="section level3">

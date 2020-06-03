@@ -40,7 +40,8 @@
 
 
 <meta property="og:title" content="Suspicion of infection label — si_data" />
-<meta property="og:description" content="Suspected infection is defined as co-occurrence of of antibiotic treatment and body-fluid sampling." />
+<meta property="og:description" content="Suspected infection is defined as co-occurrence of of antibiotic treatment
+and body-fluid sampling." />
 
 
 <meta name="robots" content="noindex">
@@ -98,9 +99,6 @@
   </a>
   <ul class="dropdown-menu" role="menu">
     <li>
-      <a href="../articles/demo.html">demo</a>
-    </li>
-    <li>
       <a href="../articles/uom.html">Units of measurement</a>
     </li>
   </ul>
@@ -132,7 +130,8 @@
     </div>
 
     <div class="ref-description">
-    <p>Suspected infection is defined as co-occurrence of of antibiotic treatment and body-fluid sampling.</p>
+    <p>Suspected infection is defined as co-occurrence of of antibiotic treatment
+and body-fluid sampling.</p>
     </div>
 
     <pre class="usage"><span class='fu'>si_data</span>(
@@ -140,7 +139,7 @@
   <span class='kw'>abx_count_win</span> <span class='kw'>=</span> <span class='fu'><a href='difftime.html'>hours</a></span>(<span class='fl'>24L</span>),
   <span class='kw'>abx_min_count</span> <span class='kw'>=</span> <span class='fl'>1L</span>,
   <span class='kw'>positive_cultures</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
-  <span class='kw'>dictionary</span> <span class='kw'>=</span> <span class='fu'><a href='data_dictionary.html'>read_dictionary</a></span>(<span class='st'>"concept-dict"</span>),
+  <span class='kw'>dictionary</span> <span class='kw'>=</span> <span class='fu'><a href='data_concepts.html'>read_dictionary</a></span>(<span class='no'>source</span>),
   <span class='no'>...</span>
 )
 
@@ -210,25 +209,45 @@ occur</p></td>
     <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
 
     <p>Suspected infection can occur in one of the two following ways:</p><ul>
-<li><p>administration of antibiotics followed by a culture sampling within <code>samp_win</code> hours</p></li>
-</ul><pre>      samp_win
-  |---------------|
- ABX           sampling (last possible)
-</pre>
-<ul>
-<li><p>culture sampling followed by an antibiotic administration within <code>abx_win</code> hours</p></li>
-</ul><pre>                     abx_win
-  |---------------------------------------------|
-sampling                                       ABX (last possible)
+<li><p>administration of antibiotics followed by a culture sampling within
+<code>samp_win</code> hours</p><pre>       samp_win
+   |---------------|
+  ABX           sampling (last possible)
+</pre></li>
+<li><p>culture sampling followed by an antibiotic administration within
+<code>abx_win</code> hours</p><pre>                      abx_win
+   |---------------------------------------------|
+sampling                                        ABX (last possible)
+</pre></li>
+</ul>
+
+<p>The default values of <code>samp_win</code> and <code>abx_win</code> are 24 and 72 hours
+respectively, as per <a href='https://jamanetwork.com/journals/jama/fullarticle/2492881'>Singer et.al. </a>.</p>
+<p>The ealier of the two times (fluid sampling, antibiotic treatment) is taken
+as the time of suspected infection (SI time). The suspected infection
+window (SI window) is defined to start <code>si_lwr</code> hours before the SI time
+and end <code>si_upr</code> hours after the SI time. The default values of 48 and 24
+hours (respectively) are chosen as used by <a href='https://jamanetwork.com/journals/jama/fullarticle/2492875'>Seymour et.al. </a> (see
+Supplemental Material).</p><pre>                48h                       24h
+  |------------------------------(|)---------------|
+                                SI time
 </pre>
 
-<p>The default values of <code>samp_win</code> and <code>abx_win</code> are 24 and 72 hours respectively, as per <a href='https://jamanetwork.com/journals/jama/fullarticle/2492881'>Singer et.al.</a>.</p>
-<p>The ealier of the two times (fluid sampling, antibiotic treatment) is taken as the time of suspected infection (SI time). The suspected infection window (SI window) is defined to start <code>si_lwr</code> hours before the SI time and end <code>si_upr</code> hours after the SI time. The default values of 48 and 24 hours (respectively) are chosen as used by <a href='https://jamanetwork.com/journals/jama/fullarticle/2492875'>Seymour et.al.</a> (see Supplemental Material).</p><pre>               48h                       24h
- |------------------------------(|)---------------|
-                               SI time
-</pre>
+<p>For some datasets, however, information on body fluid sampling is not
+available for majority of the patients (eICU data). Therefore, an
+alternative definition of suspected infection is required. For this, we use
+administration of multiple antibiotics (argument <code>abx_min_count</code> determines
+the required number) within <code>abx_count_win</code> hours. The first time of
+antibiotic administration is taken as the SI time in this case.</p>
+    <h2 class="hasAnchor" id="references"><a class="anchor" href="#references"></a>References</h2>
 
-<p>For some datasets, however, information on body fluid sampling is not available for majority of the patients (eICU data). Therefore, an alternative definition of suspected infection is required. For this, we use administration of multiple antibiotics (argument <code>abx_min_count</code> determines the required number) within <code>abx_count_win</code> hours. The first time of antibiotic administration is taken as the SI time in this case.</p>
+    <p>Singer M, Deutschman CS, Seymour CW, et al. The Third International
+Consensus Definitions for Sepsis and Septic Shock (Sepsis-3). JAMA.
+2016;315(8):801–810. doi:10.1001/jama.2016.0287</p>
+<p>Seymour CW, Liu VX, Iwashyna TJ, et al. Assessment of Clinical Criteria for
+Sepsis: For the Third International Consensus Definitions for Sepsis and
+Septic Shock (Sepsis-3). JAMA. 2016;315(8):762–774.
+doi:10.1001/jama.2016.0288</p>
 
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
