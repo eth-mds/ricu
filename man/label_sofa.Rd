@@ -50,7 +50,8 @@ sofa_compute(
   na_val_cardio = na_val,
   na_val_cns = na_val,
   na_val_renal = na_val,
-  impute_fun = NULL
+  impute_fun = NULL,
+  by_ref = FALSE
 )
 
 sofa(source, ...)
@@ -106,6 +107,9 @@ iterate over these explicit time points}
 \item{na_val_resp, na_val_coag, na_val_liver, na_val_cardio, na_val_cns, na_val_renal}{Feature-specific values to use in case of missing data; default is \code{na_val}}
 
 \item{impute_fun}{Function used to impute missing data; default is NULL}
+
+\item{by_ref}{Logical flag indicating whether to perform the operation by
+reference}
 }
 \description{
 The SOFA (Sequential Organ Failure Assessment) score is a commonly used

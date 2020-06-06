@@ -12,17 +12,17 @@
 \usage{
 change_id(x, target_id, id_cfg, ...)
 
-upgrade_id(x, target_id, id_cfg, cols = time_cols(x), ...)
+upgrade_id(x, target_id, id_cfg, cols = time_vars(x), ...)
 
-downgrade_id(x, target_id, id_cfg, cols = time_cols(x), ...)
+downgrade_id(x, target_id, id_cfg, cols = time_vars(x), ...)
 
-\method{upgrade_id}{ts_tbl}(x, target_id, id_cfg, cols = time_cols(x), ...)
+\method{upgrade_id}{ts_tbl}(x, target_id, id_cfg, cols = time_vars(x), ...)
 
-\method{upgrade_id}{id_tbl}(x, target_id, id_cfg, cols = time_cols(x), ...)
+\method{upgrade_id}{id_tbl}(x, target_id, id_cfg, cols = time_vars(x), ...)
 
-\method{downgrade_id}{ts_tbl}(x, target_id, id_cfg, cols = time_cols(x), ...)
+\method{downgrade_id}{ts_tbl}(x, target_id, id_cfg, cols = time_vars(x), ...)
 
-\method{downgrade_id}{id_tbl}(x, target_id, id_cfg, cols = time_cols(x), ...)
+\method{downgrade_id}{id_tbl}(x, target_id, id_cfg, cols = time_vars(x), ...)
 }
 \arguments{
 \item{x}{\code{icu_tbl} object for which to make the id change}

@@ -57,8 +57,8 @@ id_orig_all <- memoise::memoise(
   function(tbl, id, start, env) {
     res <- get(tbl, envir = env)
     res <- res[, c(id, start)]
-    res <- rename_cols(res, "origin", start)
-    as_id_tbl(res, id = id)
+    res <- rename_cols(res, "origin", start, by_ref = TRUE)
+    as_id_tbl(res, id, by_ref = TRUE)
   }
 )
 
@@ -107,11 +107,11 @@ id_windows.default <- function(x, env = as_src_env(x), ...) {
   id_windows(as_id_cfg(x, ...), env = env)
 }
 
-order_rename <- function(x, id_nms, id_col, st_col, ed_col) {
+order_rename <- function(x, id_col, st_col, ed_col) {
   x <- setcolorder(x, c(id_col, st_col, ed_col))
   x <- rename_cols(x, c(id_col, paste0(id_col, "_start"),
-                                paste0(id_col, "_end")))
-  as_id_tbl(x, id = id_col[1L], id_opts = setNames(rev(id_col), rev(id_nms)))
+                                paste0(id_col, "_end")), by_ref = TRUE)
+  as_id_tbl(x, id_col[1L], by_ref = TRUE)
 }
 
 as_dt_min <- function(x, y) round(difftime(x, y, units = "mins"))
@@ -140,7 +140,7 @@ id_wins_mimic <- memoise::memoise(
     res <- res[, c(sta, end) := lapply(.SD, as_dt_min, get(sta[1L])),
                .SDcols = c(sta, end)]
 
-    order_rename(res, names(x), ids, sta, end)
+    order_rename(res, ids, sta, end)
   }
 )
 
@@ -166,7 +166,7 @@ id_wins_eicu <- memoise::memoise(
     res <- res[, c(sta, end) := lapply(.SD, as.difftime, units = "mins"),
                .SDcols = c(sta, end)]
 
-    order_rename(res, names(x), ids, sta, end)
+    order_rename(res, ids, sta, end)
   }
 )
 
@@ -197,7 +197,7 @@ id_wins_hirid <- memoise::memoise(
     res <- res[, c(sta, "datetime") := lapply(.SD, as_dt_min, get(sta)),
                .SDcols = c(sta, "datetime")]
 
-    order_rename(res, names(x), ids, sta, "datetime")
+    order_rename(res, ids, sta, "datetime")
   }
 )
 
@@ -206,7 +206,7 @@ id_map_min <- function(x, id_name, win_id, in_time, out_time, ...) {
   x <- as_id_cfg(x, ...)
 
   map    <- id_windows(x)
-  map_id <- id(map)
+  map_id <- id_vars(map)
 
   if (identical(id_name, map_id) || (is.null(in_time) && is.null(out_time))) {
     ori <- NULL
@@ -216,24 +216,25 @@ id_map_min <- function(x, id_name, win_id, in_time, out_time, ...) {
 
   inn <- if (is.null(in_time))  NULL else paste0(win_id, "_start")
   out <- if (is.null(out_time)) NULL else paste0(win_id, "_end")
+  iot <- c(in_time, out_time)
 
   map <- map[, unique(c(id_name, win_id, inn, out, ori)), with = FALSE]
 
   if (not_null(ori)) {
-    map <- map[, c(in_time, out_time) := lapply(.SD, `-`, get(ori)),
+    map <- map[, c(iot) := lapply(.SD, `-`, get(ori)),
                .SDcols = c(inn, out)]
   } else if (not_null(in_time) || not_null(out_time)) {
-    map <- rename_cols(map, c(in_time, out_time), c(inn, out))
+    map <- rename_cols(map, iot, c(inn, out), by_ref = TRUE)
   }
 
-  map <- rm_cols(map, setdiff(colnames(map),
-                              c(id_name, win_id, in_time, out_time)))
+  map <- rm_cols(map, setdiff(colnames(map), c(id_name, win_id, iot)),
+                 by_ref = TRUE)
 
   if (max(select_ids(x, c(id_name, win_id))) < max(x)) {
     map <- unique(map)
   }
 
-  as_id_tbl(map, id_name)
+  as_id_tbl(map, id_name, by_ref = TRUE)
 }
 
 #' Stays
@@ -286,7 +287,7 @@ change_id <- function(x, target_id, id_cfg, ...) {
 
   assert_that(is.string(target_id))
 
-  orig_id <- id(x)
+  orig_id <- id_vars(x)
 
   if (identical(orig_id, target_id)) {
     return(x)
@@ -306,9 +307,9 @@ change_id <- function(x, target_id, id_cfg, ...) {
 #' @rdname change_id
 #' @export
 #'
-upgrade_id <- function(x, target_id, id_cfg, cols = time_cols(x), ...) {
+upgrade_id <- function(x, target_id, id_cfg, cols = time_vars(x), ...) {
 
-  assert_that(select_ids(id_cfg, id(x)) < select_ids(id_cfg, target_id))
+  assert_that(select_ids(id_cfg, id_vars(x)) < select_ids(id_cfg, target_id))
 
   UseMethod("upgrade_id", x)
 }
@@ -316,9 +317,9 @@ upgrade_id <- function(x, target_id, id_cfg, cols = time_cols(x), ...) {
 #' @rdname change_id
 #' @export
 #'
-downgrade_id <- function(x, target_id, id_cfg, cols = time_cols(x), ...) {
+downgrade_id <- function(x, target_id, id_cfg, cols = time_vars(x), ...) {
 
-  assert_that(select_ids(id_cfg, id(x)) > select_ids(id_cfg, target_id))
+  assert_that(select_ids(id_cfg, id_vars(x)) > select_ids(id_cfg, target_id))
 
   UseMethod("downgrade_id", x)
 }
@@ -326,27 +327,25 @@ downgrade_id <- function(x, target_id, id_cfg, cols = time_cols(x), ...) {
 #' @rdname change_id
 #' @export
 #'
-upgrade_id.ts_tbl <- function(x, target_id, id_cfg, cols = time_cols(x), ...) {
+upgrade_id.ts_tbl <- function(x, target_id, id_cfg, cols = time_vars(x), ...) {
 
-  assert_that(index(x) %in% cols)
+  assert_that(index_var(x) %in% cols)
 
-  non_min <- !is_one_min(interval(x))
-
-  if (non_min) {
+  if (!is_one_min(interval(x))) {
     warning("Changing the ID of non-minute resolution data will change the ",
             "interval to 1 minute")
   }
 
   sft <- new_names(x)
-  idx <- index(x)
+  idx <- index_var(x)
 
-  map <- id_map_min(id_cfg, id(x), target_id, sft, idx)
+  map <- id_map_min(id_cfg, id_vars(x), target_id, sft, idx)
 
-  res <- map[x, on = meta_cols(x), roll = -Inf, rollends = TRUE]
+  res <- map[x, on = meta_vars(x), roll = -Inf, rollends = TRUE]
   res <- res[, c(cols) := lapply(.SD, `-`, get(sft)), .SDcols = cols]
 
-  res <- as_ts_tbl(res, target_id, index = idx, interval = mins(1L))
-  res <- rm_cols(res, sft)
+  res <- as_ts_tbl(res, target_id, idx, mins(1L), by_ref = TRUE)
+  res <- rm_cols(res, sft, by_ref = TRUE)
 
   res
 }
@@ -354,7 +353,7 @@ upgrade_id.ts_tbl <- function(x, target_id, id_cfg, cols = time_cols(x), ...) {
 #' @rdname change_id
 #' @export
 #'
-upgrade_id.id_tbl <- function(x, target_id, id_cfg, cols = time_cols(x), ...) {
+upgrade_id.id_tbl <- function(x, target_id, id_cfg, cols = time_vars(x), ...) {
 
   change_id_helper(x, target_id, id_cfg, cols, "up", ...)
 }
@@ -362,31 +361,25 @@ upgrade_id.id_tbl <- function(x, target_id, id_cfg, cols = time_cols(x), ...) {
 #' @rdname change_id
 #' @export
 #'
-downgrade_id.ts_tbl <- function(x, target_id, id_cfg, cols = time_cols(x),
+downgrade_id.ts_tbl <- function(x, target_id, id_cfg, cols = time_vars(x),
                                 ...) {
 
-  assert_that(index(x) %in% cols)
+  assert_that(index_var(x) %in% cols)
 
-  non_min <- !is_one_min(interval(x))
-
-  if (non_min) {
+  if (!is_one_min(interval(x))) {
     warning("Changing the ID of non-minute resolution data will change the ",
             "interval to 1 minute")
   }
 
   res <- change_id_helper(x, target_id, id_cfg, cols, "down", ...)
 
-  if (non_min) {
-    res <- set_interval(res, mins(1L), cols)
-  }
-
-  res
+  change_interval(res, mins(1L), cols, by_ref = TRUE)
 }
 
 #' @rdname change_id
 #' @export
 #'
-downgrade_id.id_tbl <- function(x, target_id, id_cfg, cols = time_cols(x),
+downgrade_id.id_tbl <- function(x, target_id, id_cfg, cols = time_vars(x),
                                 ...) {
 
   change_id_helper(x, target_id, id_cfg, cols, "down", ...)
@@ -395,7 +388,7 @@ downgrade_id.id_tbl <- function(x, target_id, id_cfg, cols = time_cols(x),
 change_id_helper <- function(x, targ, cfg, cols, dir = c("down", "up"), ...) {
 
   dir <- match.arg(dir)
-  idx <- id(x)
+  idx <- id_vars(x)
 
   if (length(cols)) {
     sft <- new_names(x)
@@ -415,8 +408,8 @@ change_id_helper <- function(x, targ, cfg, cols, dir = c("down", "up"), ...) {
     res <- res[, c(cols) := lapply(.SD, `-`, get(sft)), .SDcols = cols]
   }
 
-  res <- set_id(res, targ)
-  res <- rm_cols(res, sft)
+  res <- set_id_vars(res, targ)
+  res <- rm_cols(res, sft, by_ref = TRUE)
 
   res
 }

@@ -261,7 +261,7 @@ weeks <- function(x) as.difftime(x, units = "weeks")
 
 is_difftime <- function(x) inherits(x, "difftime")
 
-is_one_min <- function(x) isTRUE(all.equal(x, mins(1L)))
+is_one_min <- function(x) all_equal(x, mins(1L))
 
 #' @param allow_neg Logical flag indicating whether to allow negative values
 #'
@@ -283,12 +283,10 @@ re_time <- function(x, interval) {
   round_to(`units<-`(x, units(interval)), as.double(interval))
 }
 
-time_cols <- function(x) colnames(x)[lgl_ply(x, is_difftime)]
-
 reduce <- function(f, x, ...) Reduce(function(x, y) f(x, y, ...), x)
 
 round_to <- function(x, to = 1) {
-  if (isTRUE(all.equal(to, 1))) trunc(x) else to * trunc(x / to)
+  if (all_equal(to, 1)) trunc(x) else to * trunc(x / to)
 }
 
 #' Utility functions
@@ -307,6 +305,8 @@ is_val <- function(x, val) !is.na(x) & x == val
 #' @export
 #'
 not_val <- function(x, val) !is.na(x) & x != val
+
+val_or_na <- function(x, val) is.na(x) | x == val
 
 #' @rdname utils
 #' @export
@@ -524,6 +524,13 @@ warn_dots <- function(...) {
   invisible(NULL)
 }
 
+warn_dot_ident <- function(x, ...)  {
+
+  warn_dots(...)
+
+  x
+}
+
 wrap_null <- function(...) {
 
   objs <- setNames(list(...), as.character(substitute(...)))
@@ -534,3 +541,5 @@ wrap_null <- function(...) {
 
   invisible(NULL)
 }
+
+all_equal <- function(x, y, ...) isTRUE(all.equal(x, y, ...))

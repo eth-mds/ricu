@@ -18,7 +18,7 @@ test_that("load concepts", {
 
   dat2 <- load_concepts(c(albu, gluc))
 
-  expect_setequal(data_cols(dat2), c("gluc", "albu"))
+  expect_setequal(data_vars(dat2), c("gluc", "albu"))
 
   dat3 <- load_concepts(gluc, merge_data = FALSE)
 
@@ -43,7 +43,7 @@ test_that("load concepts", {
   expect_gt(nrow(dat4), nrow(dat3))
 
   expect_identical(dat3,
-    dat4[, list(gluc = median(gluc)), by = c(meta_cols(dat4))]
+    dat4[, list(gluc = median(gluc)), by = c(meta_vars(dat4))]
   )
 
   dat5 <- load_concepts(gluc, aggregate = identity, merge_data = FALSE)

@@ -124,7 +124,7 @@ load_mihi <- function(x, rows, cols, id_hint) {
     dat <- dat[, c("origin") := NULL]
   }
 
-  as_id_tbl(dat, id = id_col)
+  as_id_tbl(dat, id_vars = id_col, by_ref = TRUE)
 }
 
 load_eicu <- function(x, rows, cols) {
@@ -154,7 +154,7 @@ load_eicu <- function(x, rows, cols) {
                .SDcols = date_cols]
   }
 
-  as_id_tbl(dat, id = id_col)
+  as_id_tbl(dat, id_vars = id_col, by_ref = TRUE)
 }
 
 #' @param id_col The column defining the id of `ts_tbl` and `id_tbl` objects
@@ -168,18 +168,18 @@ load_id <- function(x, ...) UseMethod("load_id", x)
 #' @rdname load_src
 #' @export
 load_id.src_tbl <- function(x, rows, cols = colnames(x),
-                             id_col = default_col(x, "id"),
-                             interval = hours(1L), ...) {
+                            id_col = default_col(x, "id"),
+                            interval = hours(1L), ...) {
 
   assert_that(...length() == 0L)
 
   res <- load_difftime(x, {{ rows }}, cols, id_col)
 
-  tim <- time_cols(res)
+  tim <- time_vars(res)
   res <- change_id(res, id_col, as_id_cfg(x), cols = tim)
 
-  if (length(tim) && !is_one_min(interval)) {
-    res <- set_interval(res, interval, tim)
+  if (!is_one_min(interval)) {
+    res <- change_interval(res, interval, tim, by_ref = TRUE)
   }
 
   res
@@ -211,16 +211,12 @@ load_ts.src_tbl <- function(x, rows, cols = colnames(x),
   }
 
   res <- load_difftime(x, {{ rows }}, cols, id_col)
-  res <- as_ts_tbl(res, id(res), index = index_col, interval = mins(1L))
+  res <- as_ts_tbl(res, id_vars(res), index_col, mins(1L), by_ref = TRUE)
 
-  tim <- time_cols(res)
+  tim <- time_vars(res)
   res <- change_id(res, id_col, as_id_cfg(x), cols = tim)
 
-  if (!is_one_min(interval)) {
-    res <- set_interval(res, interval, tim)
-  }
-
-  res
+  change_interval(res, interval, tim, by_ref = TRUE)
 }
 
 #' @rdname load_src

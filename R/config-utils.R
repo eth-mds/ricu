@@ -50,10 +50,7 @@ as_src_cfg <- function(x, ...) UseMethod("as_src_cfg", x)
 #' @rdname src_cfg
 #' @keywords internal
 #' @export
-as_src_cfg.src_cfg <- function(x, ...) {
-  warn_dots(...)
-  x
-}
+as_src_cfg.src_cfg <- function(x, ...) warn_dot_ident(x, ...)
 
 #' @rdname src_cfg
 #' @keywords internal
@@ -198,10 +195,7 @@ as_id_cfg.list <- function(x, src, ...) {
 #' @rdname id_cfg
 #' @keywords internal
 #' @export
-as_id_cfg.id_cfg <- function(x, ...) {
-  warn_dots(...)
-  x
-}
+as_id_cfg.id_cfg <- function(x, ...) warn_dot_ident(x, ...)
 
 #' @rdname id_cfg
 #' @keywords internal
@@ -346,10 +340,7 @@ as_col_cfg <- function(x, ...) UseMethod("as_col_cfg", x)
 #' @keywords internal
 #' @export
 #'
-as_col_cfg.col_cfg <- function(x, ...) {
-  warn_dots(...)
-  x
-}
+as_col_cfg.col_cfg <- function(x, ...) warn_dot_ident(x, ...)
 
 #' @rdname col_cfg
 #' @keywords internal
@@ -495,10 +486,7 @@ as_tbl_spec <- function(x, ...) UseMethod("as_tbl_spec", x)
 #' @keywords internal
 #' @export
 #'
-as_tbl_spec.tbl_spec <- function(x, ...) {
-  warn_dots(...)
-  x
-}
+as_tbl_spec.tbl_spec <- function(x, ...) warn_dot_ident(x, ...)
 
 #' @rdname tbl_spec
 #' @keywords internal

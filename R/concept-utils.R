@@ -78,7 +78,7 @@ init_itm <- function(x, ...) UseMethod("init_itm", x)
 #' @param sub_col Column name used for subsetting
 #' @param ids Vector of ids used to subset table rows. If `NULL`, all rows are
 #' considered corresponding to the data item
-#' @param itm_cols Columns returned as [data_cols()]
+#' @param itm_cols Columns returned as [data_vars()]
 #' @param index_col Column used as index
 #' @param callback Name of a function to be called on the returned data used
 #' for data cleanup operations

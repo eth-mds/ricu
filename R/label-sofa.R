@@ -113,7 +113,7 @@ sofa_data <- function(source, pafi_win_length = hours(2L),
   res <- res[is_true(get("pafi") < 200) & !is_true(get("vent")),
              c("pafi") := 200]
 
-  res <- rm_cols(res, "vent")
+  res <- rm_cols(res, "vent", by_ref = TRUE)
 
   rename <- c(
     platelet_count = "coag", bilirubin_total = "bili", mean_bp = "map",
@@ -124,10 +124,10 @@ sofa_data <- function(source, pafi_win_length = hours(2L),
   need_cols <- c("pafi", rename, "gcs")
   rename    <- rename[intersect(names(rename), colnames(res))]
 
-  res <- rename_cols(res, rename, names(rename))
+  res <- rename_cols(res, rename, names(rename), by_ref = TRUE)
 
   if (!has_cols(res, need_cols)) {
-    res <- res[, c(setdiff(need_cols, data_cols(res))) := NA_real_]
+    res <- res[, c(setdiff(need_cols, data_vars(res))) := NA_real_]
   }
 
   res
@@ -141,9 +141,9 @@ sofa_pafi <- function(pao2, fio2, win_length, mode, fix_na_fio2) {
   if (identical(mode, "match_vals")) {
 
     res <- rbind(
-      fio2[pao2, on = paste(meta_cols(fio2), "==", meta_cols(pao2)),
+      fio2[pao2, on = paste(meta_vars(fio2), "==", meta_vars(pao2)),
            roll = win_length],
-      pao2[fio2, on = paste(meta_cols(pao2), "==", meta_cols(fio2)),
+      pao2[fio2, on = paste(meta_vars(pao2), "==", meta_vars(fio2)),
            roll = win_length]
     )
     res <- unique(res)
@@ -162,7 +162,7 @@ sofa_pafi <- function(pao2, fio2, win_length, mode, fix_na_fio2) {
     )
     res <- slide_quo(res, win_expr, before = win_length, full_window = FALSE)
 
-    rename_cols(res, c("pa_o2", "fi_o2"), c("min_pa", "max_fi"))
+    rename_cols(res, c("pa_o2", "fi_o2"), c("min_pa", "max_fi"), by_ref = TRUE)
   }
 
   if (fix_na_fio2) {
@@ -190,9 +190,9 @@ sofa_vent <- function(start, stop, win_length, min_length, interval) {
 
   if (is.null(stop)) {
 
-    ind <- index(start)
+    ind <- index_var(start)
 
-    merged <- data.table::copy(start)
+    merged <- copy(start)
     merged <- merged[,
       c("start_time", "stop_time") := list(get(ind), get(ind) + win_length)
     ]
@@ -201,15 +201,15 @@ sofa_vent <- function(start, stop, win_length, min_length, interval) {
 
     assert_that(same_interval(start, stop))
 
-    start[, c("start_time") := get(index(start))]
-    stop[ , c("stop_time")  := get(index(stop))]
+    start[, c("start_time") := get(index_var(start))]
+    stop[ , c("stop_time")  := get(index_var(stop))]
 
     on.exit({
-      start[, c("start_time") := NULL]
-      stop[,  c("stop_time")  := NULL]
+      rm_cols(start, "start_time")
+      rm_cols(stop,  "stop_time")
     })
 
-    join   <- paste(meta_cols(stop), "==", meta_cols(start))
+    join   <- paste(meta_vars(stop), "==", meta_vars(start))
     merged <- stop[start, roll = -win_length, on = join]
     merged <- merged[is.na(get("stop_time")),
                      c("stop_time") := get("start_time") + win_length]
@@ -223,7 +223,7 @@ sofa_vent <- function(start, stop, win_length, min_length, interval) {
 
   res <- unique(
     expand_limits(merged, min_col = "start_time", max_col = "stop_time",
-                  step_size = as.double(interval), id_cols = id(merged))
+                  step_size = as.double(interval), id_cols = id_vars(merged))
   )
   res <- res[, c("vent") := TRUE]
 
@@ -234,7 +234,7 @@ sofa_gcs <- function(gcs, sed, win_length, set_na_max) {
 
   determine_sed <- function(fun, col, tbl) {
 
-    if (col %in% data_cols(tbl)) {
+    if (col %in% data_vars(tbl)) {
       set(tbl, j = col, value = is_true(fun(tbl[[col]])))
     }
 
@@ -244,12 +244,12 @@ sofa_gcs <- function(gcs, sed, win_length, set_na_max) {
   sed_feats <- c("tracheostomy", "rass_scale", "vent")
   sed_funs <- list(function(x) x > 0, function(x) x <= -2, identity)
 
-  assert_that(same_interval(gcs, sed), all(data_cols(sed) %in% sed_feats))
+  assert_that(same_interval(gcs, sed), all(data_vars(sed) %in% sed_feats))
 
   Map(determine_sed, sed_funs, sed_feats, list(sed))
 
-  sed <- sed[, c("is_sed") := Reduce(`|`, .SD), .SDcols = data_cols(sed)]
-  sed <- sed[, c(intersect(data_cols(sed), sed_feats)) := NULL]
+  sed <- sed[, c("is_sed") := Reduce(`|`, .SD), .SDcols = data_vars(sed)]
+  sed <- sed[, c(intersect(data_vars(sed), sed_feats)) := NULL]
 
   dat <- merge(gcs, sed, all = TRUE)
 
@@ -305,9 +305,7 @@ sofa_gcs <- function(gcs, sed, win_length, set_na_max) {
     dat <- dat[, c("gcs") := get("eye_imp") + get("verb_imp") + get("mot_imp")]
   }
 
-  dat <- rm_cols(dat, c("eye_imp", "verb_imp", "mot_imp", "tot_imp"))
-
-  dat
+  rm_cols(dat, c("eye_imp", "verb_imp", "mot_imp", "tot_imp"), by_ref = TRUE)
 }
 
 sofa_urine <- function(urine, limits, min_win, interval) {
@@ -330,7 +328,7 @@ sofa_urine <- function(urine, limits, min_win, interval) {
     }
   })
 
-  idx <- id(urine)
+  idx <- id_vars(urine)
 
   if (!all(is.na(urine[["urine_cumulative"]]))) {
 
@@ -342,14 +340,14 @@ sofa_urine <- function(urine, limits, min_win, interval) {
 
   if (is.null(limits)) {
 
-    limits <- urine[, list(start = min(get(index(urine))),
-                           end = max(get(index(urine)))), by = idx]
+    limits <- urine[, list(start = min(get(index_var(urine))),
+                           end = max(get(index_var(urine)))), by = idx]
   }
 
   assert_that(has_name(limits, c("start", "end")))
 
   limits <- merge(limits, unique(urine[, idx, with = FALSE]), all.y = TRUE,
-                  by.x = id(limits), by.y = idx)
+                  by.x = id_vars(limits), by.y = idx)
 
   res <- fill_gaps(urine, limits = limits, min_col = "start", max_col = "end")
 
@@ -411,9 +409,9 @@ sofa_window <- function(tbl,
 
     if (isTRUE(explicit_wins)) {
 
-      ind <- index(tbl)
+      ind <- index_var(tbl)
 
-      win <- tbl[, list(max_time = max(get(ind))), by = c(id(tbl))]
+      win <- tbl[, list(max_time = max(get(ind))), by = c(id_vars(tbl))]
       win <- win[, c("min_time") := get("max_time") - worst_win_length]
 
       res <- hop_quo(tbl, expr, win)
@@ -427,12 +425,14 @@ sofa_window <- function(tbl,
     }
   }
 
-  rename_cols(res, need_cols, paste0(need_cols, "_win"))
+  rename_cols(res, need_cols, paste0(need_cols, "_win"), by_ref = TRUE)
 }
 
 #' @param na_val Value to use for missing data
 #' @param na_val_resp,na_val_coag,na_val_liver,na_val_cardio,na_val_cns,na_val_renal Feature-specific values to use in case of missing data; default is `na_val`
 #' @param impute_fun Function used to impute missing data; default is NULL
+#' @param by_ref Logical flag indicating whether to perform the operation by
+#' reference
 #'
 #' @rdname label_sofa
 #' @export
@@ -440,12 +440,17 @@ sofa_window <- function(tbl,
 sofa_compute <- function(tbl, na_val = 0L, na_val_resp = na_val,
                          na_val_coag = na_val, na_val_liver = na_val,
                          na_val_cardio = na_val, na_val_cns = na_val,
-                         na_val_renal = na_val, impute_fun = NULL) {
+                         na_val_renal = na_val, impute_fun = NULL,
+                         by_ref = FALSE) {
 
   need_cols <- c("pafi", "coag", "bili", "map", "dopa", "norepi", "dobu",
                  "epi", "gcs", "crea", "urine")
 
-  assert_that(is_icu_tbl(tbl), has_cols(tbl, need_cols))
+  assert_that(is_id_tbl(tbl), has_cols(tbl, need_cols), is.flag(by_ref))
+
+  if (!by_ref) {
+    tbl <- copy(tbl)
+  }
 
   sofa_cols <- c(
     "sofa_resp", "sofa_coag", "sofa_liver", "sofa_cardio", "sofa_cns",
@@ -464,11 +469,11 @@ sofa_compute <- function(tbl, na_val = 0L, na_val_resp = na_val,
     )
   ]
 
-  tbl <- rm_cols(tbl, need_cols)
+  tbl <- rm_cols(tbl, need_cols, by_ref = TRUE)
 
   if (!is.null(impute_fun)) {
     tbl <- tbl[, c("sofa_cols") := lapply(.SD, impute_fun),
-               .SDcols = sofa_cols, by = c(id(tbl))]
+               .SDcols = sofa_cols, by = c(id_vars(tbl))]
   }
 
   tbl <- tbl[, c("sofa_score") := sofa_resp + sofa_coag + sofa_liver +
@@ -532,7 +537,7 @@ sofa <- function(source, ...) {
 
   args <- list(...)
 
-  assert_that(!has_name(args, "tbl"))
+  assert_that(!has_name(args, c("tbl", "by_ref")))
 
   com_args <- names(args)[names(args) %in% names(formals(sofa_compute))]
   win_args <- names(args)[names(args) %in% names(formals(sofa_window))]
@@ -540,7 +545,8 @@ sofa <- function(source, ...) {
 
   dat <- do.call(sofa_data, c(list(source), args[dat_args]))
   dat <- do.call(sofa_window, c(list(dat), args[win_args]))
-  dat <- do.call(sofa_compute, c(list(dat), args[com_args]))
+  dat <- do.call(sofa_compute, c(list(dat), args[com_args],
+                                 list(by_ref = TRUE)))
 
   dat
 }

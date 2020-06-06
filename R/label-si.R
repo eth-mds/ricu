@@ -98,13 +98,13 @@ si_data <- function(source, abx_count_win = hours(24L), abx_min_count = 1L,
 
   res <- reduce(merge, dat, all = TRUE)
 
-  if ("antibiotics" %in% data_cols(res)) {
+  if ("antibiotics" %in% data_vars(res)) {
     res <- rename_cols(res, "abx", "antibiotics")
   } else {
     res <- res[, c("abx") := NA]
   }
 
-  if ("fluid_sampling" %in% data_cols(res)) {
+  if ("fluid_sampling" %in% data_vars(res)) {
     res <- rename_cols(res, "samp", "fluid_sampling")
   } else {
     res <- res[, c("samp") := NA]
@@ -163,8 +163,8 @@ si_windows <- function(tbl, si_mode = c("and", "or"), abx_win = hours(24L),
   win_args <- lapply(win_args, `units<-`, time_unit(tbl))
   list2env(win_args, environment())
 
-  id  <- id(tbl)
-  ind <- index(tbl)
+  id  <- id_vars(tbl)
+  ind <- index_var(tbl)
 
   if (identical(si_mode, "and")) {
 
@@ -181,12 +181,12 @@ si_windows <- function(tbl, si_mode = c("and", "or"), abx_win = hours(24L),
     res <- unique(rbind(abx_samp[, c(id, "si_time"), with = FALSE],
                         samp_abx[, c(id, "si_time"), with = FALSE]))
 
-    res <- as_ts_tbl(res, id = id, index = "si_time", interval = interval(tbl))
+    res <- as_ts_tbl(res, id, "si_time", interval(tbl))
 
   } else {
 
     res <- tbl[get("abx") | get("samp"), ]
-    res <- rm_cols(res, data_cols(res))
+    res <- rm_cols(res, data_vars(res))
     res <- rename_cols(res, "si_time", ind)
   }
 

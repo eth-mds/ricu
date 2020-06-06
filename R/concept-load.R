@@ -94,9 +94,12 @@ load_concepts.concept <- function(x, aggregate = NA_character_,
 
   if (length(res) > 1L) {
 
-    ind <- c(which(lgl_ply(res, is_ts_tbl)), which(lgl_ply(res, is_id_tbl)))
+    ts <- lgl_ply(res, is_ts_tbl)
+    id <- lgl_ply(res, is_id_tbl) & ! ts
+
+    ind <- c(which(ts), which(id))
     res <- reduce(merge, res[ind], all = TRUE)
-    res <- setcolorder(res, c(meta_cols(res), names(x)))
+    res <- setcolorder(res, c(meta_vars(res), names(x)))
 
   } else if (length(res) == 1L) {
 
@@ -121,7 +124,7 @@ load_concepts.item <- function(x, patient_ids = NULL, id_type = "icustay",
 
   if (length(x) == 0L) {
     res <- setNames(list(integer(), numeric()), c(id_type, "val_col"))
-    return(as_id_tbl(res, id = id_type))
+    return(as_id_tbl(res, id_vars = id_type, by_ref = TRUE))
   }
 
   res <- lapply(x, load_itm, patient_ids, id_type, interval)
@@ -143,7 +146,7 @@ load_cncpt.cncpt <- function(x, verbose, ...) {
   res <- load_concepts(x[["items"]], ...)
   res <- rm_na(res)
 
-  rename_cols(res, x[["name"]], data_cols(res))
+  rename_cols(res, x[["name"]], data_vars(res), by_ref = TRUE)
 }
 
 #' @export
@@ -196,13 +199,13 @@ load_cncpt.num_cncpt <- function(x, verbose, ...) {
     report_unit(res, unit)
   }
 
-  res <- rm_cols(res, "unit_col")
+  res <- rm_cols(res, "unit_col", skip_absent = TRUE, by_ref = TRUE)
 
   if (not_null(unit)) {
     setattr(res[["val_col"]], "units", unit)
   }
 
-  rename_cols(res, x[["name"]], "val_col")
+  rename_cols(res, x[["name"]], "val_col", by_ref = TRUE)
 }
 
 #' @export
@@ -231,7 +234,7 @@ load_cncpt.fct_cncpt <- function(x, verbose, ...) {
     }
   }
 
-  rename_cols(res, x[["name"]], "val_col")
+  rename_cols(res, x[["name"]], "val_col", by_ref = TRUE)
 }
 
 #' @rdname item_utils
@@ -261,8 +264,8 @@ load_itm.col_itm <- function(x, patient_ids, id_type, interval) {
   res <- do.call(x[["callback"]], c(list(res), as.list(c(itm, cbc)),
                                     list(env = as_src_env(tbl))))
 
-  res <- rm_cols(res, setdiff(data_cols(res), itm))
-  res <- rename_cols(res, names(itm), itm)
+  res <- rm_cols(res, setdiff(data_vars(res), itm), by_ref = TRUE)
+  res <- rename_cols(res, names(itm), itm, by_ref = TRUE)
 
   res
 }
@@ -296,8 +299,8 @@ load_sub_itm <- function(x, patient_ids, id_type, interval) {
   res <- do.call(x[["callback"]], c(list(res), as.list(c(itm, cbc)),
                                     list(env = as_src_env(tbl))))
 
-  res <- rm_cols(res, setdiff(data_cols(res), itm))
-  res <- rename_cols(res, names(itm), itm)
+  res <- rm_cols(res, setdiff(data_vars(res), itm), by_ref = TRUE)
+  res <- rename_cols(res, names(itm), itm, by_ref = TRUE)
 
   res
 }
@@ -311,11 +314,11 @@ load_itm.los_itm <- function(x, patient_ids, id_type, interval) {
                       in_time = NULL, interval = mins(1L))
 
   if (!identical(win, id_type)) {
-    res <- rm_cols(res, get_id_col(cfg, win))
+    res <- rm_cols(res, get_id_col(cfg, win), by_ref = TRUE)
   }
 
   res <- merge_patid(res, patient_ids)
-  res <- rename_cols(res, "val_col", data_cols(res))
+  res <- rename_cols(res, "val_col", data_vars(res), by_ref = TRUE)
 
   set(res, j = "val_col", value = as.double(res[["val_col"]], units = "days"))
 }
@@ -326,7 +329,7 @@ merge_patid <- function(x, patid) {
     return(x)
   }
 
-  id_col <- id(x)
+  id_col <- id_vars(x)
 
   if (!inherits(patid, "data.frame")) {
     assert_that(is.atomic(patid), length(patid) > 0L)

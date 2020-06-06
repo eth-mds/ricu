@@ -77,7 +77,7 @@ is_item(x)
 \item{ids}{Vector of ids used to subset table rows. If \code{NULL}, all rows are
 considered corresponding to the data item}
 
-\item{itm_cols}{Columns returned as \code{\link[=data_cols]{data_cols()}}}
+\item{itm_cols}{Columns returned as \code{\link[=data_vars]{data_vars()}}}
 
 \item{index_col}{Column used as index}
 

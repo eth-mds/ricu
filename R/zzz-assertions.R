@@ -4,21 +4,12 @@
 #' @importFrom assertthat has_name has_attr are_equal is.number
 NULL
 
-
-on_failure(is_tbl_index) <- function(call, env) {
-  paste0(deparse(call$x), " is not a `tbl_index` object")
-}
-
-on_failure(is_tbl_id) <- function(call, env) {
-  paste0(deparse(call$x), " is not a `tbl_id` object")
-}
-
-on_failure(is_ts_meta) <- function(call, env) {
-  paste0(deparse(call$x), " is not a `ts_meta` object")
-}
-
 on_failure(is_ts_tbl) <- function(call, env) {
   paste0(deparse(call$x), " is not a `ts_tbl` object")
+}
+
+on_failure(is_id_tbl) <- function(call, env) {
+  paste0(deparse(call$x), " is not a `id_tbl` object")
 }
 
 on_failure(is_unique) <- function(call, env) {
@@ -41,7 +32,7 @@ on_failure(has_cols) <- function(call, env) {
   cols <- eval(call$cols, env)
   all <- colnames(eval(call$x, env))
   paste0(deparse(call$x), " does not contain the following columns: ",
-         paste0("`", paste0(cols[!cols %in% all], collapse = "`, `"), "`"))
+         concat(quote_bt(cols[!cols %in% all])))
 }
 
 has_col <- function(x, col) {
@@ -93,32 +84,31 @@ on_failure(same_time_unit) <- function(call, env) {
          "` are not on the same time scale")
 }
 
-same_interval <- function(x, y)
- isTRUE(all.equal(interval(x), interval(y)))
+same_interval <- function(x, y) all_equal(interval(x), interval(y))
 
 on_failure(same_interval) <- function(call, env) {
   paste0("`", deparse(call$x), "` and `", deparse(call$y),
          "` are not on the same time scale")
 }
 
-same_id <- function(x, y) identical(id(x), id(y))
+same_id <- function(x, y) identical(id_vars(x), id_vars(y))
 
 on_failure(same_id) <- function(call, env) {
   paste0(deparse(call$x), " and ", deparse(call$y),
          " do not share the same `id`columns")
 }
 
-same_meta_cols <- function(x, y) setequal(meta_cols(x), meta_cols(y))
+same_meta_vars <- function(x, y) setequal(meta_vars(x), meta_vars(y))
 
-on_failure(same_meta_cols) <- function(call, env) {
+on_failure(same_meta_vars) <- function(call, env) {
   paste0(deparse(call$x), " and ", deparse(call$y),
          " do not share the same `id` and `index` columns")
 }
 
 same_time_cols <- function(x, y) {
-  identical(index(x), index(y)) &&
+  identical(index_var(x), index_var(y)) &&
     identical(time_unit(x), time_unit(y)) &&
-    all.equal(time_step(x), time_step(y))
+    all_equal(time_step(x), time_step(y))
 }
 
 on_failure(same_time_cols) <- function(call, env) {
@@ -208,8 +198,8 @@ on_failure(null_or_na) <- function(call, env) {
 }
 
 same_ts <- function(x, y) {
-  identical(id(x), id(y)) && identical(index(x), index(y)) &&
-    all.equal(interval(x), interval(y))
+  identical(id_vars(x), id_vars(y)) && identical(index_var(x), index_var(y)) &&
+    same_interval(x, y)
 }
 
 on_failure(same_ts) <- function(call, env) {
@@ -217,14 +207,14 @@ on_failure(same_ts) <- function(call, env) {
          "` differ in id, index and/or interval")
 }
 
-has_interval <- function(x, col, interval) {
-  all(is.na(x[[col]]) |
-    as.double(x[[col]]) %% as.double(interval, units = units(x[[col]])) == 0)
+has_interval <- function(x, interval) {
+  same_time_unit(x, interval) && all(
+    val_or_na(as.double(x) %% as.double(interval), 0)
+  )
 }
 
 on_failure(has_interval) <- function(call, env) {
-  paste0("column `", eval(call$col, env), "` of ", deparse(call$x),
-         " does not conform to an interval of ",
+  paste0(deparse(call$x), " does not conform to an interval of ",
          format(eval(call$interval, env)))
 }
 

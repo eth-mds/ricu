@@ -5,7 +5,7 @@ all_flag <- function(x, val_col, ...) {
 
 vent_flag <- function(x, val_col, ...) {
   x <- x[as.logical(get(val_col)), ]
-  set(x, j = c(index(x), val_col),
+  set(x, j = c(index_var(x), val_col),
       value = list(x[[val_col]], rep(TRUE, nrow(x))))
 }
 
@@ -34,7 +34,7 @@ eicu_body_weight <- function(x, val_col, weight_col, env, ...) {
 
   do_calc <- function(rate, w1, w2) rate / fifelse(is.na(w1), w2, w1)
 
-  idc <- id(x)
+  idc <- id_vars(x)
 
   weight <- load_id("patient", env, cols = "admissionweight", id_col = idc)
 
@@ -47,13 +47,13 @@ eicu_body_weight <- function(x, val_col, weight_col, env, ...) {
 }
 
 combine_date_time <- function(x, date_col, date_shift = hours(12L), ...) {
-  idx <- index(x)
+  idx <- index_var(x)
   x[, c(idx) := fifelse(is.na(get(idx)),
                         get(date_col) + date_shift, get(idx))]
 }
 
 shift_all_date <- function(x, shift = hours(12L), ...) {
-  idx <- index(x)
+  idx <- index_var(x)
   x[, c(idx) := get(idx) + shift]
 }
 
@@ -103,8 +103,8 @@ distribute_amount <- function(x, val_col, amount_col, end_col, ...) {
 
   orig_cols <- colnames(x)
 
-  idc <- id(x)
-  idx <- index(x)
+  idc <- id_vars(x)
+  idx <- index_var(x)
 
   expand <- function(start, end, id, amount, rate) {
     seq <- seq(as.numeric(start), as.numeric(end), inte)
@@ -164,7 +164,7 @@ hirid_death <- function(x, val_col, item_col, ...) {
 
   score <- function(x, id, val) x[, data.table::last(get(val)), by = c(id)]
 
-  idc <- id(x)
+  idc <- id_vars(x)
 
   tmp <- split(x, by = item_col, keep.by = FALSE)
   tmp <- lapply(tmp, threshold, val_col, 40)
@@ -174,8 +174,7 @@ hirid_death <- function(x, val_col, item_col, ...) {
   tmp <- tmp[, c(val_col, "V1.x", "V1.y") := list(get("V1.x") | get("V1.y"),
                                                   NULL, NULL)]
 
-  tmp <- as_id_tbl(tmp, id(x), id_opts(x))
-  tmp
+  as_id_tbl(tmp, id_vars(x))
 }
 
 mf_sex <- function(x, val_col, ...) {

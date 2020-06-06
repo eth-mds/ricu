@@ -1,75 +1,246 @@
 
-set_meta <- function(x, meta, stop_on_fail = TRUE) {
+#' Utilities for working with id_tbl and ts_tbl objects
+#'
+#' @param x Object to query/operate on
+#'
+#' @rdname tbl_utils
+#' @export
+id_vars <- function(x) {
+  assert_that(is_id_tbl(x))
+  attr(x, "id_vars")
+}
 
-  assert_that(is.flag(stop_on_fail))
+#' @rdname tbl_utils
+#' @export
+id_col <- function(x) {
+  col <- id_vars(x)
+  assert_that(length(col) == 1L)
+  x[[col]]
+}
 
-  if (!stop_on_fail && is.null(meta)) return(x)
+#' @rdname tbl_utils
+#' @export
+index_var <- function(x) {
+  assert_that(is_ts_tbl(x))
+  attr(x, "index_var")
+}
 
-  assert_that(is_tbl_meta(meta))
+#' @rdname tbl_utils
+#' @export
+index_col <- function(x) x[[index_var(x)]]
 
-  check_meta <- validate_meta(x, meta)
-  check_data <- validate_that(is_dt(x), is_unique(colnames(x)))
+#' @rdname tbl_utils
+#' @export
+meta_vars <- function(x) UseMethod("meta_vars", x)
 
-  if (!isTRUE(check_data) || !isTRUE(check_meta)) {
-    if (stop_on_fail && !isTRUE(check_data)) stop(check_data)
-    if (stop_on_fail && !isTRUE(check_meta)) stop(check_meta)
-    return(unclass_tbl(x))
+#' @rdname tbl_utils
+#' @export
+meta_vars.id_tbl <- function(x) id_vars(x)
+
+#' @rdname tbl_utils
+#' @export
+meta_vars.ts_tbl <- function(x) c(id_vars(x), index_var(x))
+
+#' @rdname tbl_utils
+#' @export
+data_vars <- function(x) setdiff(colnames(x), meta_vars(x))
+
+#' @rdname tbl_utils
+#' @export
+data_col <- function(x) {
+  col <- data_vars(x)
+  assert_that(length(col) == 1L)
+  x[[col]]
+}
+
+#' @rdname tbl_utils
+#' @export
+interval <- function(x) UseMethod("interval", x)
+
+#' @rdname tbl_utils
+#' @export
+interval.ts_tbl <- function(x) attr(x, "interval")
+
+#' @rdname tbl_utils
+#' @export
+interval.difftime <- function(x) {
+
+  dif <- diff(x)
+  res <- min(dif[dif > 0], na.rm = TRUE)
+
+  assert_that(has_interval(x, res), msg = paste(
+    "failed to determine interval from data: not all time steps are a",
+    "multiple of the minimal time step", format(res))
+  )
+
+  res
+}
+
+#' @rdname tbl_utils
+#' @export
+time_unit <- function(x) units(interval(x))
+
+#' @rdname tbl_utils
+#' @export
+time_step <- function(x) as.double(interval(x))
+
+time_vars <- function(x) colnames(x)[lgl_ply(x, is_difftime)]
+
+rename <- function(x, new, old) {
+  hits <- match(old, x)
+  replace(x, hits[!is.na(hits)], new[!is.na(hits)])
+}
+
+#' @param new,old Replacement names and existing column names for renaming
+#' columns
+#' @param skip_absent Logical flag for ignoring non-existent column names
+#' @param by_ref Logical flag indicating whether to perform the operation by
+#' reference
+#'
+#' @rdname tbl_utils
+#' @export
+rename_cols <- function(x, new, old = colnames(x), skip_absent = FALSE,
+                        by_ref = FALSE) {
+
+  assert_that(is_unique(new), is_unique(old), same_length(new, old),
+              is.flag(skip_absent), is.flag(by_ref),
+              is_unique(rename(colnames(x), new, old)))
+
+  UseMethod("rename_cols", x)
+}
+
+#' @rdname tbl_utils
+#' @export
+rename_cols.ts_tbl <- function(x, new, old = colnames(x),
+                               skip_absent = FALSE, ...) {
+
+  new_ind <- index_var(x)
+  intval  <- interval(x)
+
+  if (new_ind %in% old) {
+    new_ind <- new[old %in% new_ind]
   }
 
-  cols <- meta_cols(meta)
+  res <- NextMethod()
 
-  x <- na.omit(x, cols)
+  new_ts_tbl(res, id_vars(res), new_ind, intval)
+}
 
-  x <- setkeyv(x, cols)
-  x <- setcolorder(x, c(cols, setdiff(colnames(x), cols)))
+#' @rdname tbl_utils
+#' @export
+rename_cols.id_tbl <- function(x, new, old = colnames(x),
+                               skip_absent = FALSE, ...) {
 
-  x <- setattr(x, "tbl_meta", meta)
+  assert_that(is.flag(skip_absent))
+
+  if (skip_absent) {
+
+    hits <- old %in% colnames(x)
+
+    if (sum(hits) == 0L) return(x)
+
+    new <- new[hits]
+    old <- old[hits]
+  }
+
+  new_id_tbl(NextMethod(), rename(id_vars(x), new, old))
+}
+
+#' @method rename_cols data.table
+#' @rdname tbl_utils
+#' @export
+rename_cols.data.table <- function(x, new, old = colnames(x),
+                                   skip_absent = FALSE, by_ref = FALSE) {
+
+  assert_that(has_cols(x, old))
+
+  if (!by_ref) {
+    x <- copy(x)
+  }
+
+  x <- setnames(x, old, new, skip_absent)
 
   x
 }
 
-set_class <- function(x, meta) {
+#' @rdname tbl_utils
+#' @export
+rm_cols <- function(x, cols, skip_absent = FALSE, by_ref = FALSE) {
 
-  class <- unique(c(tbl_class(meta), "icu_tbl", strip_class(x)))
+  assert_that(is.flag(skip_absent), is.flag(by_ref))
 
-  x <- setattr(x, "class", class)
-  x
-}
-
-strip_class <- function(x) {
-  setdiff(class(x), c("id_tbl", "ts_tbl", "icu_tbl"))
-}
-
-unclass_tbl <- function(x) {
-
-  x <- setattr(x, "tbl_meta", NULL)
-  x <- setattr(x, "class", strip_class(x))
-
-  x
-}
-
-reclass_tbl <- function(x, meta) {
-
-  if (is.null(meta)) {
+  if (!length(cols)) {
     return(x)
   }
 
-  x <- set_meta(x, meta, stop_on_fail = FALSE)
-
-  if (has_attr(x, "tbl_meta")) {
-    return(set_class(x, meta))
-  }
-
-  if (is_ts_meta(meta)) {
-    meta <- as_id_meta(meta)
-    x <- set_meta(x, meta, stop_on_fail = FALSE)
-  }
-
-  if (has_attr(x, "tbl_meta")) {
-    set_class(x, meta)
+  if (skip_absent) {
+    cols <- intersect(cols, colnames(x))
   } else {
-    x
+    assert_that(has_length(cols), has_cols(x, cols))
   }
+
+  if (!by_ref) {
+    x <- copy(x)
+  }
+
+  if (any(cols %in% meta_vars(x))) {
+    ptyp <- as_ptype(x)
+  } else {
+    ptyp <- NULL
+  }
+
+  if (length(cols)) {
+    x <- set(x, j = unique(cols), value = NULL)
+  }
+
+  reclass_tbl(x, ptyp, FALSE)
+}
+
+#' @param new_interval Replacement interval length specified as scalar-valued
+#' `difftime` object
+#' @param ... Ignored
+#'
+#' @rdname tbl_utils
+#' @export
+change_interval <- function(x, new_interval, cols = time_vars(x),
+                            by_ref = FALSE) {
+
+  assert_that(is_time(new_interval, allow_neg = FALSE))
+
+  if (!length(cols)) {
+    return(x)
+  }
+
+  UseMethod("change_interval", x)
+}
+
+#' @rdname tbl_utils
+#' @export
+change_interval.ts_tbl <- function(x, new_interval, cols = time_vars(x), ...) {
+
+  if (all_equal(interval(x), new_interval)) {
+    return(x)
+  }
+
+  id_nms <- id_vars(x)
+  idx_nm <- index_var(x)
+
+  new_ts_tbl(NextMethod(), id_nms, idx_nm, new_interval, by_ref = TRUE)
+}
+
+#' @method change_interval data.table
+#' @rdname tbl_utils
+#' @export
+change_interval.data.table <- function(x, new_interval, cols = time_vars(x),
+                                       by_ref = FALSE) {
+
+  change_time <- function(x) re_time(x, new_interval)
+
+  if (!by_ref) {
+    x <- copy(x)
+  }
+
+  x[, c(cols) := lapply(.SD, change_time), .SDcols = cols]
 }
 
 #' @rdname tbl_utils
@@ -77,57 +248,48 @@ reclass_tbl <- function(x, meta) {
 #'
 rbind_lst <- function(x, ...) {
 
-  cond_as <- function(x) {
-    if (is.list(x)) x else data.table::as.data.table(x)
-  }
+  cond_as <- function(x) if (is.list(x)) x else as.data.table(x)
 
-  dt_rbl <- function(x, ...) {
-    data.table::rbindlist(lapply(x, cond_as), ...)
-  }
+  dt_rbl <- function(x, ...) rbindlist(lapply(x, cond_as), ...)
 
-  rename <- function(x, new) {
-
-    if (is_ts_tbl(x) && is_ts_meta(new)) {
-      fun <- function(y) c(id(y), index(y))
-    } else {
-      fun <- function(y) id(y)
-    }
-
+  do_rename <- function(x, new) {
+    fun <- if (is_ts_tbl(x) && is_ts_tbl(new)) meta_vars else id_vars
     rename_cols(x, fun(new), fun(x))
   }
 
   id_tbl <- lgl_ply(x, is_id_tbl)
   ts_tbl <- lgl_ply(x, is_ts_tbl)
+  id_tbl <- id_tbl & !ts_tbl
 
   if (any(id_tbl)) {
 
-    meta <- tbl_meta(x[[which(id_tbl)[1L]]])
+    ptyp <- as_ptype(x[[which(id_tbl)[1L]]])
 
   } else if (any(ts_tbl)) {
 
-    meta <- tbl_meta(x[[which(ts_tbl)[1L]]])
+    ptyp <- as_ptype(x[[which(ts_tbl)[1L]]])
 
     assert_that(
-      all(lgl_ply(lapply(x[ts_tbl], interval), all.equal, interval(meta))),
-      msg = "cannot mix interval types when row-binding"
+      all_fun(lapply(x[ts_tbl], interval), lgl_ply, all.equal, interval(ptyp)),
+      msg = "cannot mix interval lengths when row-binding"
     )
 
   } else {
 
-    meta <- NULL
+    ptyp <- NULL
   }
 
-  if (!is.null(meta)) {
+  if (not_null(ptyp)) {
 
-    icu_tbl <- lgl_ply(x, is_icu_tbl)
-    old_met <- lapply(x[icu_tbl], tbl_meta)
+    id_tbls <- lgl_ply(x, is_id_tbl)
+    old_ptp <- lapply(x[id_tbls], as_ptype)
 
-    x[icu_tbl] <- lapply(x[icu_tbl], rename, meta)
+    x[id_tbls] <- lapply(x[id_tbls], do_rename, ptyp)
 
-    on.exit(Map(rename, x[icu_tbl], old_met))
+    on.exit(Map(do_rename, x[id_tbls], old_ptp))
   }
 
-  reclass_tbl(dt_rbl(x, ...), meta)
+  reclass_tbl(dt_rbl(x, ...), ptyp)
 }
 
 #' @param cols Column names of columns to consider
@@ -138,7 +300,7 @@ rbind_lst <- function(x, ...) {
 #' @rdname tbl_utils
 #' @export
 #'
-rm_na <- function(x, cols = data_cols(x), mode = c("all", "any")) {
+rm_na <- function(x, cols = data_vars(x), mode = c("all", "any")) {
 
   mode <- match.arg(mode)
 
@@ -166,7 +328,7 @@ rm_na <- function(x, cols = data_cols(x), mode = c("all", "any")) {
 #' @rdname tbl_utils
 #' @export
 #'
-unmerge <- function(x, col_groups = as.list(data_cols(x)), by = meta_cols(x),
+unmerge <- function(x, col_groups = as.list(data_vars(x)), by = meta_vars(x),
                     na_rm = TRUE) {
 
   name_has <- function(name, x) has_name(x, name)
@@ -196,7 +358,7 @@ unmerge <- function(x, col_groups = as.list(data_cols(x)), by = meta_cols(x),
 dt_gforce <- function(x,
                       fun = c("mean", "median", "min", "max", "sum", "prod",
                               "var", "sd", "first", "last"),
-                      by = meta_cols(x), cols = data_cols(x),
+                      by = meta_vars(x), cols = data_vars(x),
                       na_rm = !fun %in% c("first", "last")) {
 
   fun <- match.arg(fun)
@@ -232,7 +394,7 @@ is_unique <- function(x, ...) UseMethod("is_unique", x)
 is_unique.default <- function(x, ...) identical(anyDuplicated(x, ...), 0L)
 
 #' @export
-is_unique.icu_tbl <- function(x, by = meta_cols(x), ...) {
+is_unique.id_tbl <- function(x, by = meta_vars(x), ...) {
   identical(anyDuplicated(x, by = by, ...), 0L)
 }
 
@@ -256,17 +418,17 @@ make_unique <- function(x, expr, fun, ...) {
 #' @rdname tbl_utils
 #' @export
 #'
-make_unique_quo <- function(x, expr, by = meta_cols(x), cols = data_cols(x),
+make_unique_quo <- function(x, expr, by = meta_vars(x), cols = data_vars(x),
                             ...) {
 
-  assert_that(is_icu_tbl(x))
+  assert_that(is_id_tbl(x))
 
   if (nrow(x) == 0) return(x)
   if (length(cols) == 0L) return(unique(x))
 
   if (is.function(expr)) {
 
-    x[, lapply(.SD, expr, ...), .SDcols = cols, by = by]
+    x[, lapply(.SD, expr, ...), .SDcols = cols, by = c(by)]
 
   } else if (!is.language(expr) && is.null(expr)) {
 
@@ -278,7 +440,7 @@ make_unique_quo <- function(x, expr, by = meta_cols(x), cols = data_cols(x),
     assert_that(is.string(expr))
 
     if (is.na(expr)) {
-      if (is.numeric(x[[data_cols(x)]])) {
+      if (is.numeric(data_col(x))) {
         expr <- "median"
       } else {
         expr <- "first"
