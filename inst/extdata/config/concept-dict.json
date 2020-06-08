@@ -7,7 +7,7 @@
       "eicu": [
         {
           "table": "admissiondx",
-          "itm_cols": "admitdxpath",
+          "itm_vars": "admitdxpath",
           "callback": "eicu_adx",
           "class": "col_itm"
         }
@@ -15,7 +15,7 @@
       "eicu_demo": [
         {
           "table": "admissiondx",
-          "itm_cols": "admitdxpath",
+          "itm_vars": "admitdxpath",
           "callback": "eicu_adx",
           "class": "col_itm"
         }
@@ -23,7 +23,7 @@
       "mimic": [
         {
           "table": "services",
-          "itm_cols": "curr_service",
+          "itm_vars": "curr_service",
           "callback": "mimic_adx",
           "class": "col_itm"
         }
@@ -31,7 +31,7 @@
       "mimic_demo": [
         {
           "table": "services",
-          "itm_cols": "curr_service",
+          "itm_vars": "curr_service",
           "callback": "mimic_adx",
           "class": "col_itm"
         }
@@ -47,7 +47,7 @@
       "eicu": [
         {
           "table": "patient",
-          "itm_cols": "age",
+          "itm_vars": "age",
           "callback": "eicu_age",
           "class": "col_itm"
         }
@@ -55,7 +55,7 @@
       "eicu_demo": [
         {
           "table": "patient",
-          "itm_cols": "age",
+          "itm_vars": "age",
           "callback": "eicu_age",
           "class": "col_itm"
         }
@@ -63,14 +63,14 @@
       "hirid": [
         {
           "table": "general",
-          "itm_cols": "age",
+          "itm_vars": "age",
           "class": "col_itm"
         }
       ],
       "mimic": [
         {
           "table": "patients",
-          "itm_cols": "dob",
+          "itm_vars": "dob",
           "callback": "mimic_age",
           "class": "col_itm"
         }
@@ -78,7 +78,7 @@
       "mimic_demo": [
         {
           "table": "patients",
-          "itm_cols": "dob",
+          "itm_vars": "dob",
           "callback": "mimic_age",
           "class": "col_itm"
         }
@@ -93,35 +93,35 @@
         {
           "ids": "ALT (SGPT)",
           "table": "lab",
-          "sub_col": "labname"
+          "sub_var": "labname"
         }
       ],
       "eicu_demo": [
         {
           "ids": "ALT (SGPT)",
           "table": "lab",
-          "sub_col": "labname"
+          "sub_var": "labname"
         }
       ],
       "hirid": [
         {
           "ids": 20002600,
           "table": "observations",
-          "sub_col": "variableid"
+          "sub_var": "variableid"
         }
       ],
       "mimic": [
         {
           "ids": 50861,
           "table": "labevents",
-          "sub_col": "itemid"
+          "sub_var": "itemid"
         }
       ],
       "mimic_demo": [
         {
           "ids": 50861,
           "table": "labevents",
-          "sub_col": "itemid"
+          "sub_var": "itemid"
         }
       ]
     }
@@ -135,21 +135,21 @@
         {
           "ids": "albumin",
           "table": "lab",
-          "sub_col": "labname"
+          "sub_var": "labname"
         }
       ],
       "eicu_demo": [
         {
           "ids": "albumin",
           "table": "lab",
-          "sub_col": "labname"
+          "sub_var": "labname"
         }
       ],
       "hirid": [
         {
           "ids": 24000605,
           "table": "observations",
-          "sub_col": "variableid",
+          "sub_var": "variableid",
           "callback": "multiply_hirid_albu"
         }
       ],
@@ -157,14 +157,14 @@
         {
           "ids": 50862,
           "table": "labevents",
-          "sub_col": "itemid"
+          "sub_var": "itemid"
         }
       ],
       "mimic_demo": [
         {
           "ids": 50862,
           "table": "labevents",
-          "sub_col": "itemid"
+          "sub_var": "itemid"
         }
       ]
     }
@@ -177,35 +177,35 @@
         {
           "ids": "alkaline phos.",
           "table": "lab",
-          "sub_col": "labname"
+          "sub_var": "labname"
         }
       ],
       "eicu_demo": [
         {
           "ids": "alkaline phos.",
           "table": "lab",
-          "sub_col": "labname"
+          "sub_var": "labname"
         }
       ],
       "hirid": [
         {
           "ids": 20002700,
           "table": "observations",
-          "sub_col": "variableid"
+          "sub_var": "variableid"
         }
       ],
       "mimic": [
         {
           "ids": 50863,
           "table": "labevents",
-          "sub_col": "itemid"
+          "sub_var": "itemid"
         }
       ],
       "mimic_demo": [
         {
           "ids": 50863,
           "table": "labevents",
-          "sub_col": "itemid"
+          "sub_var": "itemid"
         }
       ]
     }
@@ -216,14 +216,14 @@
         {
           "regex": "bactrim|cipro|flagyl|metronidazole|zithromax|zosyn|(((amika|cleo|ofloxa)|(azithro|clinda|tobra|vanco)my)c|(ampi|oxa|peni|pipera)cill|cefazol|levaqu|rifamp)in",
           "table": "infusiondrug",
-          "sub_col": "drugname",
+          "sub_var": "drugname",
           "callback": "all_flag",
           "class": "rgx_itm"
         },
         {
           "regex": "cipro|flagyl|maxipime|metronidazole|tazobactam|zosyn|cef(azolin|epime)|(((azithro|clinda|vanco)my|ofloxa|vanco)c|levaqu|piperacill|roceph)in",
           "table": "medication",
-          "sub_col": "drugname",
+          "sub_var": "drugname",
           "callback": "all_flag",
           "class": "rgx_itm"
         }
@@ -232,14 +232,14 @@
         {
           "regex": "bactrim|cipro|flagyl|metronidazole|zithromax|zosyn|(((amika|cleo|ofloxa)|(azithro|clinda|tobra|vanco)my)c|(ampi|oxa|peni|pipera)cill|cefazol|levaqu|rifamp)in",
           "table": "infusiondrug",
-          "sub_col": "drugname",
+          "sub_var": "drugname",
           "callback": "all_flag",
           "class": "rgx_itm"
         },
         {
           "regex": "cipro|flagyl|maxipime|metronidazole|tazobactam|zosyn|cef(azolin|epime)|(((azithro|clinda|vanco)my|ofloxa|vanco)c|levaqu|piperacill|roceph)in",
           "table": "medication",
-          "sub_col": "drugname",
+          "sub_var": "drugname",
           "callback": "all_flag",
           "class": "rgx_itm"
         }
@@ -248,7 +248,7 @@
         {
           "ids": [163, 176, 181, 186, 189, 300, 326, 331, 351, 405, 1000234, 1000272, 1000273, 1000274, 1000284, 1000299, 1000300, 1000302, 1000304, 1000305, 1000306, 1000315, 1000317, 1000318, 1000320, 1000321, 1000322, 1000335, 1000348, 1000352, 1000363, 1000365, 1000390, 1000407, 1000408, 1000424, 1000425, 1000426, 1000437, 1000483, 1000507, 1000508, 1000518, 1000519, 1000549, 1000601, 1000648, 1000666, 1000670, 1000671, 1000760, 1000781, 1000791, 1000797, 1000812, 1000825, 1000829, 1000830, 1000837, 1000838, 1000854, 1000855, 1000893, 1000894, 1001005, 1001068, 1001075, 1001079, 1001084, 1001086, 1001095, 1001096, 1001097, 1001098, 1001168, 1001169, 1001170, 1001171, 1001173, 1001193, 1001198],
           "table": "pharma",
-          "sub_col": "pharmaid",
+          "sub_var": "pharmaid",
           "callback": "all_flag"
         }
       ],
@@ -256,14 +256,14 @@
         {
           "regex": "aztreonam|bactrim|cephalexin|chloramphenicol|cipro|flagyl|metronidazole|nitrofurantoin|tazobactam|rifampin|sulfadiazine|timentin|trimethoprim|(amika|gentami|vanco)cin|(amoxi|ampi|dicloxa|naf|oxa|peni|pipera)cillin|(azithro|clarithro|erythro|clinda|strepto|tobra|vanco)mycin|cef(azolin|tazidime|adroxil|epime|otetan|otaxime|podoxime|uroxime)|(doxy|mino|tetra)cycline|(levofl|moxifl|ofl)oxacin|macro(bid|dantin)|(una|zo)syn",
           "table": "prescriptions",
-          "sub_col": "drug",
+          "sub_var": "drug",
           "callback": "mimic_abx_shift_flag",
           "class": "rgx_itm"
         },
         {
           "ids": [225798, 225837, 225838, 225840, 225842, 225843, 225844, 225845, 225847, 225848, 225850, 225851, 225853, 225855, 225857, 225859, 225860, 225862, 225863, 225865, 225866, 225868, 225869, 225871, 225873, 225875, 225876, 225877, 225879, 225881, 225882, 225883, 225884, 225885, 225886, 225888, 225889, 225890, 225892, 225893, 225895, 225896, 225897, 225898, 225899, 225900, 225902, 225903, 225905, 227691, 228003],
           "table": "inputevents_mv",
-          "sub_col": "itemid",
+          "sub_var": "itemid",
           "callback": "all_flag"
         }
       ],
@@ -271,14 +271,14 @@
         {
           "regex": "aztreonam|bactrim|cephalexin|chloramphenicol|cipro|flagyl|metronidazole|nitrofurantoin|tazobactam|rifampin|sulfadiazine|timentin|trimethoprim|(amika|gentami|vanco)cin|(amoxi|ampi|dicloxa|naf|oxa|peni|pipera)cillin|(azithro|clarithro|erythro|clinda|strepto|tobra|vanco)mycin|cef(azolin|tazidime|adroxil|epime|otetan|otaxime|podoxime|uroxime)|(doxy|mino|tetra)cycline|(levofl|moxifl|ofl)oxacin|macro(bid|dantin)|(una|zo)syn",
           "table": "prescriptions",
-          "sub_col": "drug",
+          "sub_var": "drug",
           "callback": "mimic_abx_shift_flag",
           "class": "rgx_itm"
         },
         {
           "ids": [225798, 225837, 225838, 225840, 225842, 225843, 225844, 225845, 225847, 225848, 225850, 225851, 225853, 225855, 225857, 225859, 225860, 225862, 225863, 225865, 225866, 225868, 225869, 225871, 225873, 225875, 225876, 225877, 225879, 225881, 225882, 225883, 225884, 225885, 225886, 225888, 225889, 225890, 225892, 225893, 225895, 225896, 225897, 225898, 225899, 225900, 225902, 225903, 225905, 227691, 228003],
           "table": "inputevents_mv",
-          "sub_col": "itemid",
+          "sub_var": "itemid",
           "callback": "all_flag"
         }
       ]
@@ -292,35 +292,35 @@
         {
           "ids": "AST (SGOT)",
           "table": "lab",
-          "sub_col": "labname"
+          "sub_var": "labname"
         }
       ],
       "eicu_demo": [
         {
           "ids": "AST (SGOT)",
           "table": "lab",
-          "sub_col": "labname"
+          "sub_var": "labname"
         }
       ],
       "hirid": [
         {
           "ids": 24000330,
           "table": "observations",
-          "sub_col": "variableid"
+          "sub_var": "variableid"
         }
       ],
       "mimic": [
         {
           "ids": 50878,
           "table": "labevents",
-          "sub_col": "itemid"
+          "sub_var": "itemid"
         }
       ],
       "mimic_demo": [
         {
           "ids": 50878,
           "table": "labevents",
-          "sub_col": "itemid"
+          "sub_var": "itemid"
         }
       ]
     }
@@ -334,35 +334,35 @@
         {
           "ids": "Base Excess",
           "table": "lab",
-          "sub_col": "labname"
+          "sub_var": "labname"
         }
       ],
       "eicu_demo": [
         {
           "ids": "Base Excess",
           "table": "lab",
-          "sub_col": "labname"
+          "sub_var": "labname"
         }
       ],
       "hirid": [
         {
           "ids": 20001300,
           "table": "observations",
-          "sub_col": "variableid"
+          "sub_var": "variableid"
         }
       ],
       "mimic": [
         {
           "ids": 50802,
           "table": "labevents",
-          "sub_col": "itemid"
+          "sub_var": "itemid"
         }
       ],
       "mimic_demo": [
         {
           "ids": 50802,
           "table": "labevents",
-          "sub_col": "itemid"
+          "sub_var": "itemid"
         }
       ]
     }
@@ -376,28 +376,28 @@
         {
           "ids": "-basos",
           "table": "lab",
-          "sub_col": "labname"
+          "sub_var": "labname"
         }
       ],
       "eicu_demo": [
         {
           "ids": "-basos",
           "table": "lab",
-          "sub_col": "labname"
+          "sub_var": "labname"
         }
       ],
       "mimic": [
         {
           "ids": 51146,
           "table": "labevents",
-          "sub_col": "itemid"
+          "sub_var": "itemid"
         }
       ],
       "mimic_demo": [
         {
           "ids": 51146,
           "table": "labevents",
-          "sub_col": "itemid"
+          "sub_var": "itemid"
         }
       ]
     }
@@ -411,35 +411,35 @@
         {
           "ids": "bicarbonate",
           "table": "lab",
-          "sub_col": "labname"
+          "sub_var": "labname"
         }
       ],
       "eicu_demo": [
         {
           "ids": "bicarbonate",
           "table": "lab",
-          "sub_col": "labname"
+          "sub_var": "labname"
         }
       ],
       "hirid": [
         {
           "ids": 20004200,
           "table": "observations",
-          "sub_col": "variableid"
+          "sub_var": "variableid"
         }
       ],
       "mimic": [
         {
           "ids": 50882,
           "table": "labevents",
-          "sub_col": "itemid"
+          "sub_var": "itemid"
         }
       ],
       "mimic_demo": [
         {
           "ids": 50882,
           "table": "labevents",
-          "sub_col": "itemid"
+          "sub_var": "itemid"
         }
       ]
     }
@@ -453,21 +453,21 @@
         {
           "ids": "direct bilirubin",
           "table": "lab",
-          "sub_col": "labname"
+          "sub_var": "labname"
         }
       ],
       "eicu_demo": [
         {
           "ids": "direct bilirubin",
           "table": "lab",
-          "sub_col": "labname"
+          "sub_var": "labname"
         }
       ],
       "hirid": [
         {
           "ids": 24000560,
           "table": "observations",
-          "sub_col": "variableid",
+          "sub_var": "variableid",
           "callback": "multiply_hirid_bili"
         }
       ],
@@ -475,14 +475,14 @@
         {
           "ids": 50883,
           "table": "labevents",
-          "sub_col": "itemid"
+          "sub_var": "itemid"
         }
       ],
       "mimic_demo": [
         {
           "ids": 50883,
           "table": "labevents",
-          "sub_col": "itemid"
+          "sub_var": "itemid"
         }
       ]
     }
@@ -496,21 +496,21 @@
         {
           "ids": "total bilirubin",
           "table": "lab",
-          "sub_col": "labname"
+          "sub_var": "labname"
         }
       ],
       "eicu_demo": [
         {
           "ids": "total bilirubin",
           "table": "lab",
-          "sub_col": "labname"
+          "sub_var": "labname"
         }
       ],
       "hirid": [
         {
           "ids": 20004300,
           "table": "observations",
-          "sub_col": "variableid",
+          "sub_var": "variableid",
           "callback": "multiply_hirid_bili"
         }
       ],
@@ -518,14 +518,14 @@
         {
           "ids": 50885,
           "table": "labevents",
-          "sub_col": "itemid"
+          "sub_var": "itemid"
         }
       ],
       "mimic_demo": [
         {
           "ids": 50885,
           "table": "labevents",
-          "sub_col": "itemid"
+          "sub_var": "itemid"
         }
       ]
     }
@@ -538,7 +538,7 @@
         {
           "ids": "CRP",
           "table": "lab",
-          "sub_col": "labname",
+          "sub_var": "labname",
           "callback": "crp_dl_to_l"
         }
       ],
@@ -546,7 +546,7 @@
         {
           "ids": "CRP",
           "table": "lab",
-          "sub_col": "labname",
+          "sub_var": "labname",
           "callback": "crp_dl_to_l"
         }
       ],
@@ -554,14 +554,14 @@
         {
           "ids": 20002200,
           "table": "observations",
-          "sub_col": "variableid"
+          "sub_var": "variableid"
         }
       ],
       "mimic": [
         {
           "ids": 50889,
           "table": "labevents",
-          "sub_col": "itemid",
+          "sub_var": "itemid",
           "callback": "crp_dl_to_l"
         }
       ],
@@ -569,7 +569,7 @@
         {
           "ids": 50889,
           "table": "labevents",
-          "sub_col": "itemid",
+          "sub_var": "itemid",
           "callback": "crp_dl_to_l"
         }
       ]
@@ -584,7 +584,7 @@
         {
           "ids": "calcium",
           "table": "lab",
-          "sub_col": "labname",
+          "sub_var": "labname",
           "callback": "eicu_calcium"
         }
       ],
@@ -592,7 +592,7 @@
         {
           "ids": "calcium",
           "table": "lab",
-          "sub_col": "labname",
+          "sub_var": "labname",
           "callback": "eicu_calcium"
         }
       ],
@@ -600,7 +600,7 @@
         {
           "ids": 20005100,
           "table": "observations",
-          "sub_col": "variableid",
+          "sub_var": "variableid",
           "callback": "multiply_hirid_calc"
         }
       ],
@@ -608,14 +608,14 @@
         {
           "ids": 50893,
           "table": "labevents",
-          "sub_col": "itemid"
+          "sub_var": "itemid"
         }
       ],
       "mimic_demo": [
         {
           "ids": 50893,
           "table": "labevents",
-          "sub_col": "itemid"
+          "sub_var": "itemid"
         }
       ]
     }
@@ -629,35 +629,35 @@
         {
           "ids": "ionized calcium",
           "table": "lab",
-          "sub_col": "labname"
+          "sub_var": "labname"
         }
       ],
       "eicu_demo": [
         {
           "ids": "ionized calcium",
           "table": "lab",
-          "sub_col": "labname"
+          "sub_var": "labname"
         }
       ],
       "hirid": [
         {
           "ids": 24000522,
           "table": "observations",
-          "sub_col": "variableid"
+          "sub_var": "variableid"
         }
       ],
       "mimic": [
         {
           "ids": 50808,
           "table": "labevents",
-          "sub_col": "itemid"
+          "sub_var": "itemid"
         }
       ],
       "mimic_demo": [
         {
           "ids": 50808,
           "table": "labevents",
-          "sub_col": "itemid"
+          "sub_var": "itemid"
         }
       ]
     }
@@ -671,7 +671,7 @@
         {
           "ids": "Total CO2",
           "table": "lab",
-          "sub_col": "labname",
+          "sub_var": "labname",
           "callback": "eicu_total_co2"
         }
       ],
@@ -679,7 +679,7 @@
         {
           "ids": "Total CO2",
           "table": "lab",
-          "sub_col": "labname",
+          "sub_var": "labname",
           "callback": "eicu_total_co2"
         }
       ],
@@ -687,14 +687,14 @@
         {
           "ids": 50804,
           "table": "labevents",
-          "sub_col": "itemid"
+          "sub_var": "itemid"
         }
       ],
       "mimic_demo": [
         {
           "ids": 50804,
           "table": "labevents",
-          "sub_col": "itemid"
+          "sub_var": "itemid"
         }
       ]
     }
@@ -705,21 +705,21 @@
         {
           "ids": "Carboxyhemoglobin",
           "table": "lab",
-          "sub_col": "labname"
+          "sub_var": "labname"
         }
       ],
       "eicu_demo": [
         {
           "ids": "Carboxyhemoglobin",
           "table": "lab",
-          "sub_col": "labname"
+          "sub_var": "labname"
         }
       ],
       "hirid": [
         {
           "ids": 24000526,
           "table": "observations",
-          "sub_col": "variableid"
+          "sub_var": "variableid"
         }
       ]
     }
@@ -733,35 +733,35 @@
         {
           "ids": "chloride",
           "table": "lab",
-          "sub_col": "labname"
+          "sub_var": "labname"
         }
       ],
       "eicu_demo": [
         {
           "ids": "chloride",
           "table": "lab",
-          "sub_col": "labname"
+          "sub_var": "labname"
         }
       ],
       "hirid": [
         {
           "ids": [24000439, 24000521],
           "table": "observations",
-          "sub_col": "variableid"
+          "sub_var": "variableid"
         }
       ],
       "mimic": [
         {
           "ids": 50902,
           "table": "labevents",
-          "sub_col": "itemid"
+          "sub_var": "itemid"
         }
       ],
       "mimic_demo": [
         {
           "ids": 50902,
           "table": "labevents",
-          "sub_col": "itemid"
+          "sub_var": "itemid"
         }
       ]
     }
@@ -774,35 +774,35 @@
         {
           "ids": "CPK",
           "table": "lab",
-          "sub_col": "labname"
+          "sub_var": "labname"
         }
       ],
       "eicu_demo": [
         {
           "ids": "CPK",
           "table": "lab",
-          "sub_col": "labname"
+          "sub_var": "labname"
         }
       ],
       "hirid": [
         {
           "ids": 24000210,
           "table": "observations",
-          "sub_col": "variableid"
+          "sub_var": "variableid"
         }
       ],
       "mimic": [
         {
           "ids": 50910,
           "table": "labevents",
-          "sub_col": "itemid"
+          "sub_var": "itemid"
         }
       ],
       "mimic_demo": [
         {
           "ids": 50910,
           "table": "labevents",
-          "sub_col": "itemid"
+          "sub_var": "itemid"
         }
       ]
     }
@@ -815,35 +815,35 @@
         {
           "ids": "CPK-MB",
           "table": "lab",
-          "sub_col": "labname"
+          "sub_var": "labname"
         }
       ],
       "eicu_demo": [
         {
           "ids": "CPK-MB",
           "table": "lab",
-          "sub_col": "labname"
+          "sub_var": "labname"
         }
       ],
       "hirid": [
         {
           "ids": 24000220,
           "table": "observations",
-          "sub_col": "variableid"
+          "sub_var": "variableid"
         }
       ],
       "mimic": [
         {
           "ids": 50911,
           "table": "labevents",
-          "sub_col": "itemid"
+          "sub_var": "itemid"
         }
       ],
       "mimic_demo": [
         {
           "ids": 50911,
           "table": "labevents",
-          "sub_col": "itemid"
+          "sub_var": "itemid"
         }
       ]
     }
@@ -857,21 +857,21 @@
         {
           "ids": "creatinine",
           "table": "lab",
-          "sub_col": "labname"
+          "sub_var": "labname"
         }
       ],
       "eicu_demo": [
         {
           "ids": "creatinine",
           "table": "lab",
-          "sub_col": "labname"
+          "sub_var": "labname"
         }
       ],
       "hirid": [
         {
           "ids": 20000600,
           "table": "observations",
-          "sub_col": "variableid",
+          "sub_var": "variableid",
           "callback": "multiply_hirid_crea"
         }
       ],
@@ -879,14 +879,14 @@
         {
           "ids": 50912,
           "table": "labevents",
-          "sub_col": "itemid"
+          "sub_var": "itemid"
         }
       ],
       "mimic_demo": [
         {
           "ids": 50912,
           "table": "labevents",
-          "sub_col": "itemid"
+          "sub_var": "itemid"
         }
       ]
     }
@@ -897,7 +897,7 @@
       "eicu": [
         {
           "table": "patient",
-          "itm_cols": "hospitaldischargestatus",
+          "itm_vars": "hospitaldischargestatus",
           "callback": "eicu_death",
           "class": "col_itm"
         }
@@ -905,7 +905,7 @@
       "eicu_demo": [
         {
           "table": "patient",
-          "itm_cols": "hospitaldischargestatus",
+          "itm_vars": "hospitaldischargestatus",
           "callback": "eicu_death",
           "class": "col_itm"
         }
@@ -914,15 +914,15 @@
         {
           "ids": [110, 200],
           "table": "observations",
-          "sub_col": "variableid",
-          "item_col": "variableid",
+          "sub_var": "variableid",
+          "item_var": "variableid",
           "callback": "hirid_death"
         }
       ],
       "mimic": [
         {
           "table": "admissions",
-          "itm_cols": "hospital_expire_flag",
+          "itm_vars": "hospital_expire_flag",
           "callback": "mimic_death",
           "class": "col_itm"
         }
@@ -930,7 +930,7 @@
       "mimic_demo": [
         {
           "table": "admissions",
-          "itm_cols": "hospital_expire_flag",
+          "itm_vars": "hospital_expire_flag",
           "callback": "mimic_death",
           "class": "col_itm"
         }
@@ -945,14 +945,14 @@
       "eicu": [
         {
           "table": "vitalperiodic",
-          "itm_cols": "systemicdiastolic",
+          "itm_vars": "systemicdiastolic",
           "class": "col_itm"
         }
       ],
       "eicu_demo": [
         {
           "table": "vitalperiodic",
-          "itm_cols": "systemicdiastolic",
+          "itm_vars": "systemicdiastolic",
           "class": "col_itm"
         }
       ],
@@ -960,21 +960,21 @@
         {
           "ids": 120,
           "table": "observations",
-          "sub_col": "variableid"
+          "sub_var": "variableid"
         }
       ],
       "mimic": [
         {
           "ids": [8368, 8441, 8555, 220051, 220180],
           "table": "chartevents",
-          "sub_col": "itemid"
+          "sub_var": "itemid"
         }
       ],
       "mimic_demo": [
         {
           "ids": [8368, 8441, 8555, 220051, 220180],
           "table": "chartevents",
-          "sub_col": "itemid"
+          "sub_var": "itemid"
         }
       ]
     }
@@ -988,51 +988,51 @@
         {
           "ids": "Dobutamine (mcg/kg/min)",
           "table": "infusiondrug",
-          "sub_col": "drugname",
-          "callback": "force_numeric_val_col"
+          "sub_var": "drugname",
+          "callback": "force_numeric_val_var"
         },
         {
           "ids": ["Dobutamine ()", "Dobutamine (ml/hr)"],
           "table": "infusiondrug",
-          "sub_col": "drugname",
+          "sub_var": "drugname",
           "callback": "eicu_body_weight",
-          "weight_col": "patientweight"
+          "weight_var": "patientweight"
         }
       ],
       "eicu_demo": [
         {
           "ids": "Dobutamine (mcg/kg/min)",
           "table": "infusiondrug",
-          "sub_col": "drugname",
-          "callback": "force_numeric_val_col"
+          "sub_var": "drugname",
+          "callback": "force_numeric_val_var"
         },
         {
           "ids": ["Dobutamine ()", "Dobutamine (ml/hr)"],
           "table": "infusiondrug",
-          "sub_col": "drugname",
+          "sub_var": "drugname",
           "callback": "eicu_body_weight",
-          "weight_col": "patientweight"
+          "weight_var": "patientweight"
         }
       ],
       "hirid": [
         {
           "ids": 426,
           "table": "pharma",
-          "sub_col": "pharmaid"
+          "sub_var": "pharmaid"
         }
       ],
       "mimic": [
         {
           "ids": [30042, 30306, 221653],
           "table": "inputevents_mv",
-          "sub_col": "itemid"
+          "sub_var": "itemid"
         }
       ],
       "mimic_demo": [
         {
           "ids": [30042, 30306, 221653],
           "table": "inputevents_mv",
-          "sub_col": "itemid"
+          "sub_var": "itemid"
         }
       ]
     }
@@ -1046,30 +1046,30 @@
         {
           "ids": "Dopamine (mcg/kg/min)",
           "table": "infusiondrug",
-          "sub_col": "drugname",
-          "callback": "force_numeric_val_col"
+          "sub_var": "drugname",
+          "callback": "force_numeric_val_var"
         }
       ],
       "eicu_demo": [
         {
           "ids": "Dopamine (mcg/kg/min)",
           "table": "infusiondrug",
-          "sub_col": "drugname",
-          "callback": "force_numeric_val_col"
+          "sub_var": "drugname",
+          "callback": "force_numeric_val_var"
         }
       ],
       "mimic": [
         {
           "ids": [30043, 30125, 30307, 221662],
           "table": "inputevents_mv",
-          "sub_col": "itemid"
+          "sub_var": "itemid"
         }
       ],
       "mimic_demo": [
         {
           "ids": [30043, 30125, 30307, 221662],
           "table": "inputevents_mv",
-          "sub_col": "itemid"
+          "sub_var": "itemid"
         }
       ]
     }
@@ -1083,28 +1083,28 @@
         {
           "ids": "-eos",
           "table": "lab",
-          "sub_col": "labname"
+          "sub_var": "labname"
         }
       ],
       "eicu_demo": [
         {
           "ids": "-eos",
           "table": "lab",
-          "sub_col": "labname"
+          "sub_var": "labname"
         }
       ],
       "mimic": [
         {
           "ids": 51200,
           "table": "labevents",
-          "sub_col": "itemid"
+          "sub_var": "itemid"
         }
       ],
       "mimic_demo": [
         {
           "ids": 51200,
           "table": "labevents",
-          "sub_col": "itemid"
+          "sub_var": "itemid"
         }
       ]
     }
@@ -1118,51 +1118,51 @@
         {
           "ids": "Epinephrine (mcg/kg/min)",
           "table": "infusiondrug",
-          "sub_col": "drugname",
-          "callback": "force_numeric_val_col"
+          "sub_var": "drugname",
+          "callback": "force_numeric_val_var"
         },
         {
           "ids": ["Epinephrine (ml/hr)", "Epinephrine (mcg/min)"],
           "table": "infusiondrug",
-          "sub_col": "drugname",
+          "sub_var": "drugname",
           "callback": "eicu_body_weight",
-          "weight_col": "patientweight"
+          "weight_var": "patientweight"
         }
       ],
       "eicu_demo": [
         {
           "ids": "Epinephrine (mcg/kg/min)",
           "table": "infusiondrug",
-          "sub_col": "drugname",
-          "callback": "force_numeric_val_col"
+          "sub_var": "drugname",
+          "callback": "force_numeric_val_var"
         },
         {
           "ids": ["Epinephrine (ml/hr)", "Epinephrine (mcg/min)"],
           "table": "infusiondrug",
-          "sub_col": "drugname",
+          "sub_var": "drugname",
           "callback": "eicu_body_weight",
-          "weight_col": "patientweight"
+          "weight_var": "patientweight"
         }
       ],
       "hirid": [
         {
           "ids": [71, 1000649, 1000650, 1000655, 1000750],
           "table": "pharma",
-          "sub_col": "pharmaid"
+          "sub_var": "pharmaid"
         }
       ],
       "mimic": [
         {
           "ids": [30044, 30119, 30309, 221289],
           "table": "inputevents_mv",
-          "sub_col": "itemid"
+          "sub_var": "itemid"
         }
       ],
       "mimic_demo": [
         {
           "ids": [30044, 30119, 30309, 221289],
           "table": "inputevents_mv",
-          "sub_col": "itemid"
+          "sub_var": "itemid"
         }
       ]
     }
@@ -1176,21 +1176,21 @@
         {
           "ids": [2200, 8290, 30010009],
           "table": "observations",
-          "sub_col": "variableid"
+          "sub_var": "variableid"
         }
       ],
       "mimic": [
         {
           "ids": [1817, 228640],
           "table": "chartevents",
-          "sub_col": "itemid"
+          "sub_var": "itemid"
         }
       ],
       "mimic_demo": [
         {
           "ids": [1817, 228640],
           "table": "chartevents",
-          "sub_col": "itemid"
+          "sub_var": "itemid"
         }
       ]
     }
@@ -1204,13 +1204,13 @@
         {
           "ids": "FiO2",
           "table": "respiratorycharting",
-          "sub_col": "respchartvaluelabel",
+          "sub_var": "respchartvaluelabel",
           "callback": "percent_as_numeric"
         },
         {
           "ids": "FiO2",
           "table": "lab",
-          "sub_col": "labname",
+          "sub_var": "labname",
           "callback": "eicu_fio2"
         }
       ],
@@ -1218,13 +1218,13 @@
         {
           "ids": "FiO2",
           "table": "respiratorycharting",
-          "sub_col": "respchartvaluelabel",
+          "sub_var": "respchartvaluelabel",
           "callback": "percent_as_numeric"
         },
         {
           "ids": "FiO2",
           "table": "lab",
-          "sub_col": "labname",
+          "sub_var": "labname",
           "callback": "eicu_fio2"
         }
       ],
@@ -1232,21 +1232,21 @@
         {
           "ids": 2010,
           "table": "observations",
-          "sub_col": "variableid"
+          "sub_var": "variableid"
         }
       ],
       "mimic": [
         {
           "ids": [3420, 50816, 223835],
           "table": "labevents",
-          "sub_col": "itemid"
+          "sub_var": "itemid"
         }
       ],
       "mimic_demo": [
         {
           "ids": [3420, 50816, 223835],
           "table": "labevents",
-          "sub_col": "itemid"
+          "sub_var": "itemid"
         }
       ]
     }
@@ -1260,21 +1260,21 @@
         {
           "ids": "fibrinogen",
           "table": "lab",
-          "sub_col": "labname"
+          "sub_var": "labname"
         }
       ],
       "eicu_demo": [
         {
           "ids": "fibrinogen",
           "table": "lab",
-          "sub_col": "labname"
+          "sub_var": "labname"
         }
       ],
       "hirid": [
         {
           "ids": 24000536,
           "table": "observations",
-          "sub_col": "variableid",
+          "sub_var": "variableid",
           "callback": "multiply_hirid_fibr"
         }
       ],
@@ -1282,14 +1282,14 @@
         {
           "ids": 51214,
           "table": "labevents",
-          "sub_col": "itemid"
+          "sub_var": "itemid"
         }
       ],
       "mimic_demo": [
         {
           "ids": 51214,
           "table": "labevents",
-          "sub_col": "itemid"
+          "sub_var": "itemid"
         }
       ]
     }
@@ -1299,7 +1299,7 @@
       "eicu": [
         {
           "table": "microlab",
-          "itm_cols": "organism",
+          "itm_vars": "organism",
           "callback": "eicu_sampling",
           "class": "col_itm"
         }
@@ -1307,7 +1307,7 @@
       "eicu_demo": [
         {
           "table": "microlab",
-          "itm_cols": "organism",
+          "itm_vars": "organism",
           "callback": "eicu_sampling",
           "class": "col_itm"
         }
@@ -1315,7 +1315,7 @@
       "mimic": [
         {
           "table": "microbiologyevents",
-          "itm_cols": "org_itemid",
+          "itm_vars": "org_itemid",
           "callback": "mimic_sampling",
           "aux_time": "charttime",
           "class": "col_itm"
@@ -1324,7 +1324,7 @@
       "mimic_demo": [
         {
           "table": "microbiologyevents",
-          "itm_cols": "org_itemid",
+          "itm_vars": "org_itemid",
           "callback": "mimic_sampling",
           "aux_time": "charttime",
           "class": "col_itm"
@@ -1338,37 +1338,37 @@
         {
           "ids": "Eyes",
           "table": "nursecharting",
-          "sub_col": "nursingchartcelltypevalname",
-          "callback": "force_numeric_val_col"
+          "sub_var": "nursingchartcelltypevalname",
+          "callback": "force_numeric_val_var"
         }
       ],
       "eicu_demo": [
         {
           "ids": "Eyes",
           "table": "nursecharting",
-          "sub_col": "nursingchartcelltypevalname",
-          "callback": "force_numeric_val_col"
+          "sub_var": "nursingchartcelltypevalname",
+          "callback": "force_numeric_val_var"
         }
       ],
       "hirid": [
         {
           "ids": 10000300,
           "table": "observations",
-          "sub_col": "variableid"
+          "sub_var": "variableid"
         }
       ],
       "mimic": [
         {
           "ids": [184, 220739],
           "table": "chartevents",
-          "sub_col": "itemid"
+          "sub_var": "itemid"
         }
       ],
       "mimic_demo": [
         {
           "ids": [184, 220739],
           "table": "chartevents",
-          "sub_col": "itemid"
+          "sub_var": "itemid"
         }
       ]
     }
@@ -1379,37 +1379,37 @@
         {
           "ids": "Motor",
           "table": "nursecharting",
-          "sub_col": "nursingchartcelltypevalname",
-          "callback": "force_numeric_val_col"
+          "sub_var": "nursingchartcelltypevalname",
+          "callback": "force_numeric_val_var"
         }
       ],
       "eicu_demo": [
         {
           "ids": "Motor",
           "table": "nursecharting",
-          "sub_col": "nursingchartcelltypevalname",
-          "callback": "force_numeric_val_col"
+          "sub_var": "nursingchartcelltypevalname",
+          "callback": "force_numeric_val_var"
         }
       ],
       "hirid": [
         {
           "ids": 10000200,
           "table": "observations",
-          "sub_col": "variableid"
+          "sub_var": "variableid"
         }
       ],
       "mimic": [
         {
           "ids": [454, 223901],
           "table": "chartevents",
-          "sub_col": "itemid"
+          "sub_var": "itemid"
         }
       ],
       "mimic_demo": [
         {
           "ids": [454, 223901],
           "table": "chartevents",
-          "sub_col": "itemid"
+          "sub_var": "itemid"
         }
       ]
     }
@@ -1420,30 +1420,30 @@
         {
           "ids": "GCS Total",
           "table": "nursecharting",
-          "sub_col": "nursingchartcelltypevalname",
-          "callback": "force_numeric_val_col"
+          "sub_var": "nursingchartcelltypevalname",
+          "callback": "force_numeric_val_var"
         }
       ],
       "eicu_demo": [
         {
           "ids": "GCS Total",
           "table": "nursecharting",
-          "sub_col": "nursingchartcelltypevalname",
-          "callback": "force_numeric_val_col"
+          "sub_var": "nursingchartcelltypevalname",
+          "callback": "force_numeric_val_var"
         }
       ],
       "mimic": [
         {
           "ids": 198,
           "table": "chartevents",
-          "sub_col": "itemid"
+          "sub_var": "itemid"
         }
       ],
       "mimic_demo": [
         {
           "ids": 198,
           "table": "chartevents",
-          "sub_col": "itemid"
+          "sub_var": "itemid"
         }
       ]
     }
@@ -1454,37 +1454,37 @@
         {
           "ids": "Verbal",
           "table": "nursecharting",
-          "sub_col": "nursingchartcelltypevalname",
-          "callback": "force_numeric_val_col"
+          "sub_var": "nursingchartcelltypevalname",
+          "callback": "force_numeric_val_var"
         }
       ],
       "eicu_demo": [
         {
           "ids": "Verbal",
           "table": "nursecharting",
-          "sub_col": "nursingchartcelltypevalname",
-          "callback": "force_numeric_val_col"
+          "sub_var": "nursingchartcelltypevalname",
+          "callback": "force_numeric_val_var"
         }
       ],
       "hirid": [
         {
           "ids": 10000100,
           "table": "observations",
-          "sub_col": "variableid"
+          "sub_var": "variableid"
         }
       ],
       "mimic": [
         {
           "ids": [723, 223900],
           "table": "chartevents",
-          "sub_col": "itemid"
+          "sub_var": "itemid"
         }
       ],
       "mimic_demo": [
         {
           "ids": [723, 223900],
           "table": "chartevents",
-          "sub_col": "itemid"
+          "sub_var": "itemid"
         }
       ]
     }
@@ -1498,31 +1498,31 @@
         {
           "ids": "glucose",
           "table": "lab",
-          "sub_col": "labname"
+          "sub_var": "labname"
         },
         {
           "ids": "bedside glucose",
           "table": "lab",
-          "sub_col": "labname"
+          "sub_var": "labname"
         }
       ],
       "eicu_demo": [
         {
           "ids": "glucose",
           "table": "lab",
-          "sub_col": "labname"
+          "sub_var": "labname"
         },
         {
           "ids": "bedside glucose",
           "table": "lab",
-          "sub_col": "labname"
+          "sub_var": "labname"
         }
       ],
       "hirid": [
         {
           "ids": [20005110, 24000523, 24000585],
           "table": "observations",
-          "sub_col": "variableid",
+          "sub_var": "variableid",
           "callback": "multiply_hirid_gluc"
         }
       ],
@@ -1530,14 +1530,14 @@
         {
           "ids": [50809, 50931],
           "table": "labevents",
-          "sub_col": "itemid"
+          "sub_var": "itemid"
         }
       ],
       "mimic_demo": [
         {
           "ids": [50809, 50931],
           "table": "labevents",
-          "sub_col": "itemid"
+          "sub_var": "itemid"
         }
       ]
     }
@@ -1550,14 +1550,14 @@
       "eicu": [
         {
           "table": "vitalperiodic",
-          "itm_cols": "heartrate",
+          "itm_vars": "heartrate",
           "class": "col_itm"
         }
       ],
       "eicu_demo": [
         {
           "table": "vitalperiodic",
-          "itm_cols": "heartrate",
+          "itm_vars": "heartrate",
           "class": "col_itm"
         }
       ],
@@ -1565,21 +1565,21 @@
         {
           "ids": 200,
           "table": "observations",
-          "sub_col": "variableid"
+          "sub_var": "variableid"
         }
       ],
       "mimic": [
         {
           "ids": [211, 220045],
           "table": "chartevents",
-          "sub_col": "itemid"
+          "sub_var": "itemid"
         }
       ],
       "mimic_demo": [
         {
           "ids": [211, 220045],
           "table": "chartevents",
-          "sub_col": "itemid"
+          "sub_var": "itemid"
         }
       ]
     }
@@ -1593,28 +1593,28 @@
         {
           "ids": "Hct",
           "table": "lab",
-          "sub_col": "labname"
+          "sub_var": "labname"
         }
       ],
       "eicu_demo": [
         {
           "ids": "Hct",
           "table": "lab",
-          "sub_col": "labname"
+          "sub_var": "labname"
         }
       ],
       "mimic": [
         {
           "ids": 51221,
           "table": "labevents",
-          "sub_col": "itemid"
+          "sub_var": "itemid"
         }
       ],
       "mimic_demo": [
         {
           "ids": 51221,
           "table": "labevents",
-          "sub_col": "itemid"
+          "sub_var": "itemid"
         }
       ]
     }
@@ -1628,21 +1628,21 @@
         {
           "ids": "Hgb",
           "table": "lab",
-          "sub_col": "labname"
+          "sub_var": "labname"
         }
       ],
       "eicu_demo": [
         {
           "ids": "Hgb",
           "table": "lab",
-          "sub_col": "labname"
+          "sub_var": "labname"
         }
       ],
       "hirid": [
         {
           "ids": [24000548, 24000836, 20000900],
           "table": "observations",
-          "sub_col": "variableid",
+          "sub_var": "variableid",
           "callback": "multiply_hirid_hemo"
         }
       ],
@@ -1650,14 +1650,14 @@
         {
           "ids": 51222,
           "table": "labevents",
-          "sub_col": "itemid"
+          "sub_var": "itemid"
         }
       ],
       "mimic_demo": [
         {
           "ids": 51222,
           "table": "labevents",
-          "sub_col": "itemid"
+          "sub_var": "itemid"
         }
       ]
     }
@@ -1668,35 +1668,35 @@
         {
           "ids": "PT - INR",
           "table": "lab",
-          "sub_col": "labname"
+          "sub_var": "labname"
         }
       ],
       "eicu_demo": [
         {
           "ids": "PT - INR",
           "table": "lab",
-          "sub_col": "labname"
+          "sub_var": "labname"
         }
       ],
       "hirid": [
         {
           "ids": 24000567,
           "table": "observations",
-          "sub_col": "variableid"
+          "sub_var": "variableid"
         }
       ],
       "mimic": [
         {
           "ids": 51237,
           "table": "labevents",
-          "sub_col": "itemid"
+          "sub_var": "itemid"
         }
       ],
       "mimic_demo": [
         {
           "ids": 51237,
           "table": "labevents",
-          "sub_col": "itemid"
+          "sub_var": "itemid"
         }
       ]
     }
@@ -1707,8 +1707,8 @@
         {
           "regex": "^insulin (250.+)?\\(((ml|units)/hr)?\\)$",
           "table": "infusiondrug",
-          "sub_col": "drugname",
-          "callback": "force_numeric_val_col",
+          "sub_var": "drugname",
+          "callback": "force_numeric_val_var",
           "class": "rgx_itm"
         }
       ],
@@ -1716,8 +1716,8 @@
         {
           "regex": "^insulin (250.+)?\\(((ml|units)/hr)?\\)$",
           "table": "infusiondrug",
-          "sub_col": "drugname",
-          "callback": "force_numeric_val_col",
+          "sub_var": "drugname",
+          "callback": "force_numeric_val_var",
           "class": "rgx_itm"
         }
       ],
@@ -1725,21 +1725,21 @@
         {
           "ids": [15, 1000724],
           "table": "pharma",
-          "sub_col": "pharmaid"
+          "sub_var": "pharmaid"
         }
       ],
       "mimic": [
         {
           "ids": [30045, 30100],
           "table": "inputevents_cv",
-          "sub_col": "itemid"
+          "sub_var": "itemid"
         },
         {
           "ids": [223258, 223260],
           "table": "inputevents_mv",
-          "sub_col": "itemid",
-          "amount_col": "amount",
-          "end_col": "endtime",
+          "sub_var": "itemid",
+          "amount_var": "amount",
+          "end_var": "endtime",
           "callback": "distribute_amount"
         }
       ],
@@ -1747,14 +1747,14 @@
         {
           "ids": [30045, 30100],
           "table": "inputevents_cv",
-          "sub_col": "itemid"
+          "sub_var": "itemid"
         },
         {
           "ids": [223258, 223260],
           "table": "inputevents_mv",
-          "sub_col": "itemid",
-          "amount_col": "amount",
-          "end_col": "endtime",
+          "sub_var": "itemid",
+          "amount_var": "amount",
+          "end_var": "endtime",
           "callback": "distribute_amount"
         }
       ]
@@ -1769,35 +1769,35 @@
         {
           "ids": "lactate",
           "table": "lab",
-          "sub_col": "labname"
+          "sub_var": "labname"
         }
       ],
       "eicu_demo": [
         {
           "ids": "lactate",
           "table": "lab",
-          "sub_col": "labname"
+          "sub_var": "labname"
         }
       ],
       "hirid": [
         {
           "ids": 24000524,
           "table": "observations",
-          "sub_col": "variableid"
+          "sub_var": "variableid"
         }
       ],
       "mimic": [
         {
           "ids": 50813,
           "table": "labevents",
-          "sub_col": "itemid"
+          "sub_var": "itemid"
         }
       ],
       "mimic_demo": [
         {
           "ids": 50813,
           "table": "labevents",
-          "sub_col": "itemid"
+          "sub_var": "itemid"
         }
       ]
     }
@@ -1873,35 +1873,35 @@
         {
           "ids": "-lymphs",
           "table": "lab",
-          "sub_col": "labname"
+          "sub_var": "labname"
         }
       ],
       "eicu_demo": [
         {
           "ids": "-lymphs",
           "table": "lab",
-          "sub_col": "labname"
+          "sub_var": "labname"
         }
       ],
       "hirid": [
         {
           "ids": 24000480,
           "table": "observations",
-          "sub_col": "variableid"
+          "sub_var": "variableid"
         }
       ],
       "mimic": [
         {
           "ids": 51244,
           "table": "labevents",
-          "sub_col": "itemid"
+          "sub_var": "itemid"
         }
       ],
       "mimic_demo": [
         {
           "ids": 51244,
           "table": "labevents",
-          "sub_col": "itemid"
+          "sub_var": "itemid"
         }
       ]
     }
@@ -1915,7 +1915,7 @@
         {
           "ids": "magnesium",
           "table": "lab",
-          "sub_col": "labname",
+          "sub_var": "labname",
           "callback": "eicu_magnesium"
         }
       ],
@@ -1923,7 +1923,7 @@
         {
           "ids": "magnesium",
           "table": "lab",
-          "sub_col": "labname",
+          "sub_var": "labname",
           "callback": "eicu_magnesium"
         }
       ],
@@ -1931,7 +1931,7 @@
         {
           "ids": 24000230,
           "table": "observations",
-          "sub_col": "variableid",
+          "sub_var": "variableid",
           "callback": "multiply_hirid_magn"
         }
       ],
@@ -1939,14 +1939,14 @@
         {
           "ids": 50960,
           "table": "labevents",
-          "sub_col": "itemid"
+          "sub_var": "itemid"
         }
       ],
       "mimic_demo": [
         {
           "ids": 50960,
           "table": "labevents",
-          "sub_col": "itemid"
+          "sub_var": "itemid"
         }
       ]
     }
@@ -1959,35 +1959,35 @@
         {
           "ids": "MCH",
           "table": "lab",
-          "sub_col": "labname"
+          "sub_var": "labname"
         }
       ],
       "eicu_demo": [
         {
           "ids": "MCH",
           "table": "lab",
-          "sub_col": "labname"
+          "sub_var": "labname"
         }
       ],
       "hirid": [
         {
           "ids": 24000160,
           "table": "observations",
-          "sub_col": "variableid"
+          "sub_var": "variableid"
         }
       ],
       "mimic": [
         {
           "ids": 51248,
           "table": "labevents",
-          "sub_col": "itemid"
+          "sub_var": "itemid"
         }
       ],
       "mimic_demo": [
         {
           "ids": 51248,
           "table": "labevents",
-          "sub_col": "itemid"
+          "sub_var": "itemid"
         }
       ]
     }
@@ -2001,35 +2001,35 @@
         {
           "ids": "MCHC",
           "table": "lab",
-          "sub_col": "labname"
+          "sub_var": "labname"
         }
       ],
       "eicu_demo": [
         {
           "ids": "MCHC",
           "table": "lab",
-          "sub_col": "labname"
+          "sub_var": "labname"
         }
       ],
       "hirid": [
         {
           "ids": 24000170,
           "table": "observations",
-          "sub_col": "variableid"
+          "sub_var": "variableid"
         }
       ],
       "mimic": [
         {
           "ids": 51249,
           "table": "labevents",
-          "sub_col": "itemid"
+          "sub_var": "itemid"
         }
       ],
       "mimic_demo": [
         {
           "ids": 51249,
           "table": "labevents",
-          "sub_col": "itemid"
+          "sub_var": "itemid"
         }
       ]
     }
@@ -2043,35 +2043,35 @@
         {
           "ids": "MCV",
           "table": "lab",
-          "sub_col": "labname"
+          "sub_var": "labname"
         }
       ],
       "eicu_demo": [
         {
           "ids": "MCV",
           "table": "lab",
-          "sub_col": "labname"
+          "sub_var": "labname"
         }
       ],
       "hirid": [
         {
           "ids": 24000150,
           "table": "observations",
-          "sub_col": "variableid"
+          "sub_var": "variableid"
         }
       ],
       "mimic": [
         {
           "ids": 51250,
           "table": "labevents",
-          "sub_col": "itemid"
+          "sub_var": "itemid"
         }
       ],
       "mimic_demo": [
         {
           "ids": 51250,
           "table": "labevents",
-          "sub_col": "itemid"
+          "sub_var": "itemid"
         }
       ]
     }
@@ -2084,24 +2084,24 @@
       "eicu": [
         {
           "table": "vitalperiodic",
-          "itm_cols": "systemicmean",
+          "itm_vars": "systemicmean",
           "class": "col_itm"
         },
         {
           "table": "vitalaperiodic",
-          "itm_cols": "noninvasivemean",
+          "itm_vars": "noninvasivemean",
           "class": "col_itm"
         }
       ],
       "eicu_demo": [
         {
           "table": "vitalperiodic",
-          "itm_cols": "systemicmean",
+          "itm_vars": "systemicmean",
           "class": "col_itm"
         },
         {
           "table": "vitalaperiodic",
-          "itm_cols": "noninvasivemean",
+          "itm_vars": "noninvasivemean",
           "class": "col_itm"
         }
       ],
@@ -2109,21 +2109,21 @@
         {
           "ids": 110,
           "table": "observations",
-          "sub_col": "variableid"
+          "sub_var": "variableid"
         }
       ],
       "mimic": [
         {
           "ids": [52, 443, 456, 6072, 220052, 220181, 225312],
           "table": "chartevents",
-          "sub_col": "itemid"
+          "sub_var": "itemid"
         }
       ],
       "mimic_demo": [
         {
           "ids": [52, 443, 456, 6072, 220052, 220181, 225312],
           "table": "chartevents",
-          "sub_col": "itemid"
+          "sub_var": "itemid"
         }
       ]
     }
@@ -2137,35 +2137,35 @@
         {
           "ids": "Methemoglobin",
           "table": "lab",
-          "sub_col": "labname"
+          "sub_var": "labname"
         }
       ],
       "eicu_demo": [
         {
           "ids": "Methemoglobin",
           "table": "lab",
-          "sub_col": "labname"
+          "sub_var": "labname"
         }
       ],
       "hirid": [
         {
           "ids": 24000549,
           "table": "observations",
-          "sub_col": "variableid"
+          "sub_var": "variableid"
         }
       ],
       "mimic": [
         {
           "ids": 50814,
           "table": "labevents",
-          "sub_col": "itemid"
+          "sub_var": "itemid"
         }
       ],
       "mimic_demo": [
         {
           "ids": 50814,
           "table": "labevents",
-          "sub_col": "itemid"
+          "sub_var": "itemid"
         }
       ]
     }
@@ -2179,35 +2179,35 @@
         {
           "ids": "-polys",
           "table": "lab",
-          "sub_col": "labname"
+          "sub_var": "labname"
         }
       ],
       "eicu_demo": [
         {
           "ids": "-polys",
           "table": "lab",
-          "sub_col": "labname"
+          "sub_var": "labname"
         }
       ],
       "hirid": [
         {
           "ids": 24000550,
           "table": "observations",
-          "sub_col": "variableid"
+          "sub_var": "variableid"
         }
       ],
       "mimic": [
         {
           "ids": 51256,
           "table": "labevents",
-          "sub_col": "itemid"
+          "sub_var": "itemid"
         }
       ],
       "mimic_demo": [
         {
           "ids": 51256,
           "table": "labevents",
-          "sub_col": "itemid"
+          "sub_var": "itemid"
         }
       ]
     }
@@ -2221,51 +2221,51 @@
         {
           "ids": "Norepinephrine (mcg/kg/min)",
           "table": "infusiondrug",
-          "sub_col": "drugname",
-          "callback": "force_numeric_val_col"
+          "sub_var": "drugname",
+          "callback": "force_numeric_val_var"
         },
         {
           "ids": ["Norepinephrine (ml/hr)", "Norepinephrine (mcg/min)"],
           "table": "infusiondrug",
-          "sub_col": "drugname",
+          "sub_var": "drugname",
           "callback": "eicu_body_weight",
-          "weight_col": "patientweight"
+          "weight_var": "patientweight"
         }
       ],
       "eicu_demo": [
         {
           "ids": "Norepinephrine (mcg/kg/min)",
           "table": "infusiondrug",
-          "sub_col": "drugname",
-          "callback": "force_numeric_val_col"
+          "sub_var": "drugname",
+          "callback": "force_numeric_val_var"
         },
         {
           "ids": ["Norepinephrine (ml/hr)", "Norepinephrine (mcg/min)"],
           "table": "infusiondrug",
-          "sub_col": "drugname",
+          "sub_var": "drugname",
           "callback": "eicu_body_weight",
-          "weight_col": "patientweight"
+          "weight_var": "patientweight"
         }
       ],
       "hirid": [
         {
           "ids": [1000462, 1000656, 1000657, 1000658],
           "table": "pharma",
-          "sub_col": "pharmaid"
+          "sub_var": "pharmaid"
         }
       ],
       "mimic": [
         {
           "ids": [30047, 30120, 221906],
           "table": "inputevents_mv",
-          "sub_col": "itemid"
+          "sub_var": "itemid"
         }
       ],
       "mimic_demo": [
         {
           "ids": [30047, 30120, 221906],
           "table": "inputevents_mv",
-          "sub_col": "itemid"
+          "sub_var": "itemid"
         }
       ]
     }
@@ -2278,46 +2278,46 @@
       "eicu": [
         {
           "table": "vitalperiodic",
-          "itm_cols": "sao2",
+          "itm_vars": "sao2",
           "class": "col_itm"
         },
         {
           "ids": "O2 Sat (%)",
           "table": "lab",
-          "sub_col": "labname"
+          "sub_var": "labname"
         }
       ],
       "eicu_demo": [
         {
           "table": "vitalperiodic",
-          "itm_cols": "sao2",
+          "itm_vars": "sao2",
           "class": "col_itm"
         },
         {
           "ids": "O2 Sat (%)",
           "table": "lab",
-          "sub_col": "labname"
+          "sub_var": "labname"
         }
       ],
       "hirid": [
         {
           "ids": [4000, 8280, 20000800],
           "table": "observations",
-          "sub_col": "variableid"
+          "sub_var": "variableid"
         }
       ],
       "mimic": [
         {
           "ids": [646, 220277, 226253, 50817],
           "table": "chartevents",
-          "sub_col": "itemid"
+          "sub_var": "itemid"
         }
       ],
       "mimic_demo": [
         {
           "ids": [646, 220277, 226253, 50817],
           "table": "chartevents",
-          "sub_col": "itemid"
+          "sub_var": "itemid"
         }
       ]
     }
@@ -2331,35 +2331,35 @@
         {
           "ids": "paCO2",
           "table": "lab",
-          "sub_col": "labname"
+          "sub_var": "labname"
         }
       ],
       "eicu_demo": [
         {
           "ids": "paCO2",
           "table": "lab",
-          "sub_col": "labname"
+          "sub_var": "labname"
         }
       ],
       "hirid": [
         {
           "ids": 20001200,
           "table": "observations",
-          "sub_col": "variableid"
+          "sub_var": "variableid"
         }
       ],
       "mimic": [
         {
           "ids": 50818,
           "table": "labevents",
-          "sub_col": "itemid"
+          "sub_var": "itemid"
         }
       ],
       "mimic_demo": [
         {
           "ids": 50818,
           "table": "labevents",
-          "sub_col": "itemid"
+          "sub_var": "itemid"
         }
       ]
     }
@@ -2373,35 +2373,35 @@
         {
           "ids": "paO2",
           "table": "lab",
-          "sub_col": "labname"
+          "sub_var": "labname"
         }
       ],
       "eicu_demo": [
         {
           "ids": "paO2",
           "table": "lab",
-          "sub_col": "labname"
+          "sub_var": "labname"
         }
       ],
       "hirid": [
         {
           "ids": 20000200,
           "table": "observations",
-          "sub_col": "variableid"
+          "sub_var": "variableid"
         }
       ],
       "mimic": [
         {
           "ids": 50821,
           "table": "labevents",
-          "sub_col": "itemid"
+          "sub_var": "itemid"
         }
       ],
       "mimic_demo": [
         {
           "ids": 50821,
           "table": "labevents",
-          "sub_col": "itemid"
+          "sub_var": "itemid"
         }
       ]
     }
@@ -2414,35 +2414,35 @@
         {
           "ids": "pH",
           "table": "lab",
-          "sub_col": "labname"
+          "sub_var": "labname"
         }
       ],
       "eicu_demo": [
         {
           "ids": "pH",
           "table": "lab",
-          "sub_col": "labname"
+          "sub_var": "labname"
         }
       ],
       "hirid": [
         {
           "ids": 20000300,
           "table": "observations",
-          "sub_col": "variableid"
+          "sub_var": "variableid"
         }
       ],
       "mimic": [
         {
           "ids": 50820,
           "table": "labevents",
-          "sub_col": "itemid"
+          "sub_var": "itemid"
         }
       ],
       "mimic_demo": [
         {
           "ids": 50820,
           "table": "labevents",
-          "sub_col": "itemid"
+          "sub_var": "itemid"
         }
       ]
     }
@@ -2456,21 +2456,21 @@
         {
           "ids": "phosphate",
           "table": "lab",
-          "sub_col": "labname"
+          "sub_var": "labname"
         }
       ],
       "eicu_demo": [
         {
           "ids": "phosphate",
           "table": "lab",
-          "sub_col": "labname"
+          "sub_var": "labname"
         }
       ],
       "hirid": [
         {
           "ids": 20002500,
           "table": "observations",
-          "sub_col": "variableid",
+          "sub_var": "variableid",
           "callback": "multiply_hirid_phos"
         }
       ],
@@ -2478,14 +2478,14 @@
         {
           "ids": 50970,
           "table": "labevents",
-          "sub_col": "itemid"
+          "sub_var": "itemid"
         }
       ],
       "mimic_demo": [
         {
           "ids": 50970,
           "table": "labevents",
-          "sub_col": "itemid"
+          "sub_var": "itemid"
         }
       ]
     }
@@ -2499,35 +2499,35 @@
         {
           "ids": "platelets x 1000",
           "table": "lab",
-          "sub_col": "labname"
+          "sub_var": "labname"
         }
       ],
       "eicu_demo": [
         {
           "ids": "platelets x 1000",
           "table": "lab",
-          "sub_col": "labname"
+          "sub_var": "labname"
         }
       ],
       "hirid": [
         {
           "ids": 20000110,
           "table": "observations",
-          "sub_col": "variableid"
+          "sub_var": "variableid"
         }
       ],
       "mimic": [
         {
           "ids": 51265,
           "table": "labevents",
-          "sub_col": "itemid"
+          "sub_var": "itemid"
         }
       ],
       "mimic_demo": [
         {
           "ids": 51265,
           "table": "labevents",
-          "sub_col": "itemid"
+          "sub_var": "itemid"
         }
       ]
     }
@@ -2541,35 +2541,35 @@
         {
           "ids": "potassium",
           "table": "lab",
-          "sub_col": "labname"
+          "sub_var": "labname"
         }
       ],
       "eicu_demo": [
         {
           "ids": "potassium",
           "table": "lab",
-          "sub_col": "labname"
+          "sub_var": "labname"
         }
       ],
       "hirid": [
         {
           "ids": [20000500, 24000520, 24000833, 24000867],
           "table": "observations",
-          "sub_col": "variableid"
+          "sub_var": "variableid"
         }
       ],
       "mimic": [
         {
           "ids": 50971,
           "table": "labevents",
-          "sub_col": "itemid"
+          "sub_var": "itemid"
         }
       ],
       "mimic_demo": [
         {
           "ids": 50971,
           "table": "labevents",
-          "sub_col": "itemid"
+          "sub_var": "itemid"
         }
       ]
     }
@@ -2582,28 +2582,28 @@
         {
           "ids": "PT",
           "table": "lab",
-          "sub_col": "labname"
+          "sub_var": "labname"
         }
       ],
       "eicu_demo": [
         {
           "ids": "PT",
           "table": "lab",
-          "sub_col": "labname"
+          "sub_var": "labname"
         }
       ],
       "mimic": [
         {
           "ids": 51274,
           "table": "labevents",
-          "sub_col": "itemid"
+          "sub_var": "itemid"
         }
       ],
       "mimic_demo": [
         {
           "ids": 51274,
           "table": "labevents",
-          "sub_col": "itemid"
+          "sub_var": "itemid"
         }
       ]
     }
@@ -2616,35 +2616,35 @@
         {
           "ids": "PTT",
           "table": "lab",
-          "sub_col": "labname"
+          "sub_var": "labname"
         }
       ],
       "eicu_demo": [
         {
           "ids": "PTT",
           "table": "lab",
-          "sub_col": "labname"
+          "sub_var": "labname"
         }
       ],
       "hirid": [
         {
           "ids": 20004410,
           "table": "observations",
-          "sub_col": "variableid"
+          "sub_var": "variableid"
         }
       ],
       "mimic": [
         {
           "ids": 51275,
           "table": "labevents",
-          "sub_col": "itemid"
+          "sub_var": "itemid"
         }
       ],
       "mimic_demo": [
         {
           "ids": 51275,
           "table": "labevents",
-          "sub_col": "itemid"
+          "sub_var": "itemid"
         }
       ]
     }
@@ -2655,23 +2655,23 @@
         {
           "ids": "Sedation Score",
           "table": "nursecharting",
-          "sub_col": "nursingchartcelltypevalname",
-          "callback": "force_numeric_val_col"
+          "sub_var": "nursingchartcelltypevalname",
+          "callback": "force_numeric_val_var"
         }
       ],
       "eicu_demo": [
         {
           "ids": "Sedation Score",
           "table": "nursecharting",
-          "sub_col": "nursingchartcelltypevalname",
-          "callback": "force_numeric_val_col"
+          "sub_var": "nursingchartcelltypevalname",
+          "callback": "force_numeric_val_var"
         }
       ],
       "hirid": [
         {
           "ids": 15001565,
           "table": "observations",
-          "sub_col": "variableid"
+          "sub_var": "variableid"
         }
       ]
     }
@@ -2685,28 +2685,28 @@
         {
           "ids": "RDW",
           "table": "lab",
-          "sub_col": "labname"
+          "sub_var": "labname"
         }
       ],
       "eicu_demo": [
         {
           "ids": "RDW",
           "table": "lab",
-          "sub_col": "labname"
+          "sub_var": "labname"
         }
       ],
       "mimic": [
         {
           "ids": 51277,
           "table": "labevents",
-          "sub_col": "itemid"
+          "sub_var": "itemid"
         }
       ],
       "mimic_demo": [
         {
           "ids": 51277,
           "table": "labevents",
-          "sub_col": "itemid"
+          "sub_var": "itemid"
         }
       ]
     }
@@ -2720,28 +2720,28 @@
         {
           "ids": "RBC",
           "table": "lab",
-          "sub_col": "labname"
+          "sub_var": "labname"
         }
       ],
       "eicu_demo": [
         {
           "ids": "RBC",
           "table": "lab",
-          "sub_col": "labname"
+          "sub_var": "labname"
         }
       ],
       "mimic": [
         {
           "ids": 51279,
           "table": "labevents",
-          "sub_col": "itemid"
+          "sub_var": "itemid"
         }
       ],
       "mimic_demo": [
         {
           "ids": 51279,
           "table": "labevents",
-          "sub_col": "itemid"
+          "sub_var": "itemid"
         }
       ]
     }
@@ -2754,14 +2754,14 @@
       "eicu": [
         {
           "table": "vitalperiodic",
-          "itm_cols": "respiration",
+          "itm_vars": "respiration",
           "class": "col_itm"
         }
       ],
       "eicu_demo": [
         {
           "table": "vitalperiodic",
-          "itm_cols": "respiration",
+          "itm_vars": "respiration",
           "class": "col_itm"
         }
       ],
@@ -2769,21 +2769,21 @@
         {
           "ids": [300, 310],
           "table": "observations",
-          "sub_col": "variableid"
+          "sub_var": "variableid"
         }
       ],
       "mimic": [
         {
           "ids": [618, 619, 220210, 224688, 224689, 224690],
           "table": "chartevents",
-          "sub_col": "itemid"
+          "sub_var": "itemid"
         }
       ],
       "mimic_demo": [
         {
           "ids": [618, 619, 220210, 224688, 224689, 224690],
           "table": "chartevents",
-          "sub_col": "itemid"
+          "sub_var": "itemid"
         }
       ]
     }
@@ -2797,21 +2797,21 @@
         {
           "ids": 24000668,
           "table": "observations",
-          "sub_col": "variableid"
+          "sub_var": "variableid"
         }
       ],
       "mimic": [
         {
           "ids": 51288,
           "table": "labevents",
-          "sub_col": "itemid"
+          "sub_var": "itemid"
         }
       ],
       "mimic_demo": [
         {
           "ids": 51288,
           "table": "labevents",
-          "sub_col": "itemid"
+          "sub_var": "itemid"
         }
       ]
     }
@@ -2824,21 +2824,21 @@
       "eicu": [
         {
           "table": "patient",
-          "itm_cols": "gender",
+          "itm_vars": "gender",
           "class": "col_itm"
         }
       ],
       "eicu_demo": [
         {
           "table": "patient",
-          "itm_cols": "gender",
+          "itm_vars": "gender",
           "class": "col_itm"
         }
       ],
       "hirid": [
         {
           "table": "general",
-          "itm_cols": "sex",
+          "itm_vars": "sex",
           "callback": "mf_sex",
           "class": "col_itm"
         }
@@ -2846,7 +2846,7 @@
       "mimic": [
         {
           "table": "patients",
-          "itm_cols": "gender",
+          "itm_vars": "gender",
           "callback": "mf_sex",
           "class": "col_itm"
         }
@@ -2854,7 +2854,7 @@
       "mimic_demo": [
         {
           "table": "patients",
-          "itm_cols": "gender",
+          "itm_vars": "gender",
           "callback": "mf_sex",
           "class": "col_itm"
         }
@@ -2870,35 +2870,35 @@
         {
           "ids": "sodium",
           "table": "lab",
-          "sub_col": "labname"
+          "sub_var": "labname"
         }
       ],
       "eicu_demo": [
         {
           "ids": "sodium",
           "table": "lab",
-          "sub_col": "labname"
+          "sub_var": "labname"
         }
       ],
       "hirid": [
         {
           "ids": [20000400, 24000519, 24000658, 24000835, 24000866],
           "table": "observations",
-          "sub_col": "variableid"
+          "sub_var": "variableid"
         }
       ],
       "mimic": [
         {
           "ids": 50983,
           "table": "labevents",
-          "sub_col": "itemid"
+          "sub_var": "itemid"
         }
       ],
       "mimic_demo": [
         {
           "ids": 50983,
           "table": "labevents",
-          "sub_col": "itemid"
+          "sub_var": "itemid"
         }
       ]
     }
@@ -2911,14 +2911,14 @@
       "eicu": [
         {
           "table": "vitalperiodic",
-          "itm_cols": "systemicsystolic",
+          "itm_vars": "systemicsystolic",
           "class": "col_itm"
         }
       ],
       "eicu_demo": [
         {
           "table": "vitalperiodic",
-          "itm_cols": "systemicsystolic",
+          "itm_vars": "systemicsystolic",
           "class": "col_itm"
         }
       ],
@@ -2926,21 +2926,21 @@
         {
           "ids": 100,
           "table": "observations",
-          "sub_col": "variableid"
+          "sub_var": "variableid"
         }
       ],
       "mimic": [
         {
           "ids": [51, 455, 6701, 220050, 220179],
           "table": "chartevents",
-          "sub_col": "itemid"
+          "sub_var": "itemid"
         }
       ],
       "mimic_demo": [
         {
           "ids": [51, 455, 6701, 220050, 220179],
           "table": "chartevents",
-          "sub_col": "itemid"
+          "sub_var": "itemid"
         }
       ]
     }
@@ -2953,14 +2953,14 @@
       "eicu": [
         {
           "table": "vitalperiodic",
-          "itm_cols": "temperature",
+          "itm_vars": "temperature",
           "class": "col_itm"
         }
       ],
       "eicu_demo": [
         {
           "table": "vitalperiodic",
-          "itm_cols": "temperature",
+          "itm_vars": "temperature",
           "class": "col_itm"
         }
       ],
@@ -2968,19 +2968,19 @@
         {
           "ids": [410, 400],
           "table": "observations",
-          "sub_col": "variableid"
+          "sub_var": "variableid"
         }
       ],
       "mimic": [
         {
           "ids": [676, 677, 223762],
           "table": "chartevents",
-          "sub_col": "itemid"
+          "sub_var": "itemid"
         },
         {
           "ids": [678, 679, 223761, 224027],
           "table": "chartevents",
-          "sub_col": "itemid",
+          "sub_var": "itemid",
           "callback": "fahrenheit_to_celsius"
         }
       ],
@@ -2988,12 +2988,12 @@
         {
           "ids": [676, 677, 223762],
           "table": "chartevents",
-          "sub_col": "itemid"
+          "sub_var": "itemid"
         },
         {
           "ids": [678, 679, 223761, 224027],
           "table": "chartevents",
-          "sub_col": "itemid",
+          "sub_var": "itemid",
           "callback": "fahrenheit_to_celsius"
         }
       ]
@@ -3005,7 +3005,7 @@
         {
           "ids": 15001552,
           "table": "observations",
-          "sub_col": "variableid",
+          "sub_var": "variableid",
           "callback": "hirid_trach"
         }
       ],
@@ -3013,7 +3013,7 @@
         {
           "ids": ["1.0 ET/Trach", "No Response-ETT"],
           "table": "chartevents",
-          "sub_col": "value",
+          "sub_var": "value",
           "callback": "all_flag"
         }
       ],
@@ -3021,7 +3021,7 @@
         {
           "ids": ["1.0 ET/Trach", "No Response-ETT"],
           "table": "chartevents",
-          "sub_col": "value",
+          "sub_var": "value",
           "callback": "all_flag"
         }
       ]
@@ -3035,28 +3035,28 @@
         {
           "ids": "troponin - I",
           "table": "lab",
-          "sub_col": "labname"
+          "sub_var": "labname"
         }
       ],
       "eicu_demo": [
         {
           "ids": "troponin - I",
           "table": "lab",
-          "sub_col": "labname"
+          "sub_var": "labname"
         }
       ],
       "mimic": [
         {
           "ids": 51002,
           "table": "labevents",
-          "sub_col": "itemid"
+          "sub_var": "itemid"
         }
       ],
       "mimic_demo": [
         {
           "ids": 51002,
           "table": "labevents",
-          "sub_col": "itemid"
+          "sub_var": "itemid"
         }
       ]
     }
@@ -3069,35 +3069,35 @@
         {
           "ids": "troponin - T",
           "table": "lab",
-          "sub_col": "labname"
+          "sub_var": "labname"
         }
       ],
       "eicu_demo": [
         {
           "ids": "troponin - T",
           "table": "lab",
-          "sub_col": "labname"
+          "sub_var": "labname"
         }
       ],
       "hirid": [
         {
           "ids": 24000806,
           "table": "observations",
-          "sub_col": "variableid"
+          "sub_var": "variableid"
         }
       ],
       "mimic": [
         {
           "ids": 51003,
           "table": "labevents",
-          "sub_col": "itemid"
+          "sub_var": "itemid"
         }
       ],
       "mimic_demo": [
         {
           "ids": 51003,
           "table": "labevents",
-          "sub_col": "itemid"
+          "sub_var": "itemid"
         }
       ]
     }
@@ -3111,21 +3111,21 @@
         {
           "ids": "BUN",
           "table": "lab",
-          "sub_col": "labname"
+          "sub_var": "labname"
         }
       ],
       "eicu_demo": [
         {
           "ids": "BUN",
           "table": "lab",
-          "sub_col": "labname"
+          "sub_var": "labname"
         }
       ],
       "hirid": [
         {
           "ids": 20004100,
           "table": "observations",
-          "sub_col": "variableid",
+          "sub_var": "variableid",
           "callback": "multiply_hirid_urea"
         }
       ],
@@ -3133,14 +3133,14 @@
         {
           "ids": 51006,
           "table": "labevents",
-          "sub_col": "itemid"
+          "sub_var": "itemid"
         }
       ],
       "mimic_demo": [
         {
           "ids": 51006,
           "table": "labevents",
-          "sub_col": "itemid"
+          "sub_var": "itemid"
         }
       ]
     }
@@ -3152,7 +3152,7 @@
         {
           "ids": 30005110,
           "table": "observations",
-          "sub_col": "variableid"
+          "sub_var": "variableid"
         }
       ]
     }
@@ -3166,12 +3166,12 @@
         {
           "ids": ["Urine", "URINE CATHETER"],
           "table": "intakeoutput",
-          "sub_col": "celllabel"
+          "sub_var": "celllabel"
         },
         {
           "regex": "catheter.+output|output.+catheter",
           "table": "intakeoutput",
-          "sub_col": "celllabel",
+          "sub_var": "celllabel",
           "class": "rgx_itm"
         }
       ],
@@ -3179,12 +3179,12 @@
         {
           "ids": ["Urine", "URINE CATHETER"],
           "table": "intakeoutput",
-          "sub_col": "celllabel"
+          "sub_var": "celllabel"
         },
         {
           "regex": "catheter.+output|output.+catheter",
           "table": "intakeoutput",
-          "sub_col": "celllabel",
+          "sub_var": "celllabel",
           "class": "rgx_itm"
         }
       ],
@@ -3192,14 +3192,14 @@
         {
           "ids": [40055, 40056, 40057, 40065, 40069, 40085, 40086, 40094, 40096, 40405, 40428, 40473, 40715, 43175, 226557, 226558, 226559, 226560, 226561, 226563, 226564, 226565, 226566, 226567, 226584, 227510],
           "table": "outputevents",
-          "sub_col": "itemid"
+          "sub_var": "itemid"
         }
       ],
       "mimic_demo": [
         {
           "ids": [40055, 40056, 40057, 40065, 40069, 40085, 40086, 40094, 40096, 40405, 40428, 40473, 40715, 43175, 226557, 226558, 226559, 226560, 226561, 226563, 226564, 226565, 226566, 226567, 226584, 227510],
           "table": "outputevents",
-          "sub_col": "itemid"
+          "sub_var": "itemid"
         }
       ]
     }
@@ -3211,7 +3211,7 @@
         {
           "ids": 10020000,
           "table": "observations",
-          "sub_col": "variableid"
+          "sub_var": "variableid"
         }
       ]
     }
@@ -3223,39 +3223,39 @@
         {
           "ids": ["Vasopressin (ml/hr)", "Vasopressin (units/min)", "Vasopressin ()"],
           "table": "infusiondrug",
-          "sub_col": "drugname",
+          "sub_var": "drugname",
           "callback": "eicu_body_weight",
-          "weight_col": "patientweight"
+          "weight_var": "patientweight"
         }
       ],
       "eicu_demo": [
         {
           "ids": ["Vasopressin (ml/hr)", "Vasopressin (units/min)", "Vasopressin ()"],
           "table": "infusiondrug",
-          "sub_col": "drugname",
+          "sub_var": "drugname",
           "callback": "eicu_body_weight",
-          "weight_col": "patientweight"
+          "weight_var": "patientweight"
         }
       ],
       "hirid": [
         {
           "ids": [112, 113],
           "table": "pharma",
-          "sub_col": "pharmaid"
+          "sub_var": "pharmaid"
         }
       ],
       "mimic": [
         {
           "ids": [30051, 222315],
           "table": "inputevents_mv",
-          "sub_col": "itemid"
+          "sub_var": "itemid"
         }
       ],
       "mimic_demo": [
         {
           "ids": [30051, 222315],
           "table": "inputevents_mv",
-          "sub_col": "itemid"
+          "sub_var": "itemid"
         }
       ]
     }
@@ -3265,40 +3265,40 @@
       "eicu": [
         {
           "table": "respiratorycare",
-          "itm_cols": "ventendoffset",
+          "itm_vars": "ventendoffset",
           "callback": "vent_flag",
           "class": "col_itm"
         },
         {
           "table": "respiratorycare",
-          "itm_cols": "priorventendoffset",
+          "itm_vars": "priorventendoffset",
           "callback": "vent_flag",
           "class": "col_itm"
         },
         {
           "ids": ["off", "Off", "Suspended"],
           "table": "respiratorycharting",
-          "sub_col": "respchartvalue",
+          "sub_var": "respchartvalue",
           "callback": "all_flag"
         }
       ],
       "eicu_demo": [
         {
           "table": "respiratorycare",
-          "itm_cols": "ventendoffset",
+          "itm_vars": "ventendoffset",
           "callback": "vent_flag",
           "class": "col_itm"
         },
         {
           "table": "respiratorycare",
-          "itm_cols": "priorventendoffset",
+          "itm_vars": "priorventendoffset",
           "callback": "vent_flag",
           "class": "col_itm"
         },
         {
           "ids": ["off", "Off", "Suspended"],
           "table": "respiratorycharting",
-          "sub_col": "respchartvalue",
+          "sub_var": "respchartvalue",
           "callback": "all_flag"
         }
       ],
@@ -3306,7 +3306,7 @@
         {
           "ids": 15001552,
           "table": "observations",
-          "sub_col": "variableid",
+          "sub_var": "variableid",
           "callback": "hirid_vent_end"
         }
       ],
@@ -3314,13 +3314,13 @@
         {
           "ids": [225468, 225477, 227194],
           "table": "procedureevents_mv",
-          "sub_col": "itemid",
+          "sub_var": "itemid",
           "callback": "all_flag"
         },
         {
           "ids": [467, 469, 226732],
           "table": "chartevents",
-          "sub_col": "itemid",
+          "sub_var": "itemid",
           "callback": "all_flag"
         }
       ],
@@ -3328,13 +3328,13 @@
         {
           "ids": [225468, 225477, 227194],
           "table": "procedureevents_mv",
-          "sub_col": "itemid",
+          "sub_var": "itemid",
           "callback": "all_flag"
         },
         {
           "ids": [467, 469, 226732],
           "table": "chartevents",
-          "sub_col": "itemid",
+          "sub_var": "itemid",
           "callback": "all_flag"
         }
       ]
@@ -3345,40 +3345,40 @@
       "eicu": [
         {
           "table": "respiratorycare",
-          "itm_cols": "ventstartoffset",
+          "itm_vars": "ventstartoffset",
           "callback": "vent_flag",
           "class": "col_itm"
         },
         {
           "table": "respiratorycare",
-          "itm_cols": "priorventstartoffset",
+          "itm_vars": "priorventstartoffset",
           "callback": "vent_flag",
           "class": "col_itm"
         },
         {
           "ids": ["Start", "Continued", "respFlowPtVentData"],
           "table": "respiratorycharting",
-          "sub_col": "respcharttypecat",
+          "sub_var": "respcharttypecat",
           "callback": "all_flag"
         }
       ],
       "eicu_demo": [
         {
           "table": "respiratorycare",
-          "itm_cols": "ventstartoffset",
+          "itm_vars": "ventstartoffset",
           "callback": "vent_flag",
           "class": "col_itm"
         },
         {
           "table": "respiratorycare",
-          "itm_cols": "priorventstartoffset",
+          "itm_vars": "priorventstartoffset",
           "callback": "vent_flag",
           "class": "col_itm"
         },
         {
           "ids": ["Start", "Continued", "respFlowPtVentData"],
           "table": "respiratorycharting",
-          "sub_col": "respcharttypecat",
+          "sub_var": "respcharttypecat",
           "callback": "all_flag"
         }
       ],
@@ -3386,7 +3386,7 @@
         {
           "ids": 15001552,
           "table": "observations",
-          "sub_col": "variableid",
+          "sub_var": "variableid",
           "callback": "hirid_vent_start"
         }
       ],
@@ -3394,7 +3394,7 @@
         {
           "ids": [1, 60, 218, 221, 223, 436, 437, 444, 445, 448, 449, 450, 459, 501, 502, 503, 505, 506, 535, 543, 639, 654, 667, 668, 669, 670, 671, 672, 681, 682, 683, 684, 686, 1211, 1340, 1486, 1600, 1655, 2000, 3459, 5865, 5866, 220339, 223848, 223849, 224419, 224684, 224685, 224686, 224687, 224695, 224696, 224697, 224700, 224701, 224702, 224703, 224704, 224705, 224706, 224707, 224709, 224738, 224746, 224747, 224750, 226873, 227187],
           "table": "chartevents",
-          "sub_col": "itemid",
+          "sub_var": "itemid",
           "callback": "all_flag"
         }
       ],
@@ -3402,7 +3402,7 @@
         {
           "ids": [1, 60, 218, 221, 223, 436, 437, 444, 445, 448, 449, 450, 459, 501, 502, 503, 505, 506, 535, 543, 639, 654, 667, 668, 669, 670, 671, 672, 681, 682, 683, 684, 686, 1211, 1340, 1486, 1600, 1655, 2000, 3459, 5865, 5866, 220339, 223848, 223849, 224419, 224684, 224685, 224686, 224687, 224695, 224696, 224697, 224700, 224701, 224702, 224703, 224704, 224705, 224706, 224707, 224709, 224738, 224746, 224747, 224750, 226873, 227187],
           "table": "chartevents",
-          "sub_col": "itemid",
+          "sub_var": "itemid",
           "callback": "all_flag"
         }
       ]
@@ -3417,14 +3417,14 @@
       "eicu": [
         {
           "table": "patient",
-          "itm_cols": "admissionweight",
+          "itm_vars": "admissionweight",
           "class": "col_itm"
         }
       ],
       "eicu_demo": [
         {
           "table": "patient",
-          "itm_cols": "admissionweight",
+          "itm_vars": "admissionweight",
           "class": "col_itm"
         }
       ]
@@ -3438,35 +3438,35 @@
         {
           "ids": "WBC x 1000",
           "table": "lab",
-          "sub_col": "labname"
+          "sub_var": "labname"
         }
       ],
       "eicu_demo": [
         {
           "ids": "WBC x 1000",
           "table": "lab",
-          "sub_col": "labname"
+          "sub_var": "labname"
         }
       ],
       "hirid": [
         {
           "ids": 20000700,
           "table": "observations",
-          "sub_col": "variableid"
+          "sub_var": "variableid"
         }
       ],
       "mimic": [
         {
           "ids": 51301,
           "table": "labevents",
-          "sub_col": "itemid"
+          "sub_var": "itemid"
         }
       ],
       "mimic_demo": [
         {
           "ids": 51301,
           "table": "labevents",
-          "sub_col": "itemid"
+          "sub_var": "itemid"
         }
       ]
     }

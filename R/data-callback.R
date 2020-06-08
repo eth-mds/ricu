@@ -1,55 +1,55 @@
 
-all_flag <- function(x, val_col, ...) {
-  set(x, j = val_col, value = rep(TRUE, nrow(x)))
+all_flag <- function(x, val_var, ...) {
+  set(x, j = val_var, value = rep(TRUE, nrow(x)))
 }
 
-vent_flag <- function(x, val_col, ...) {
-  x <- x[as.logical(get(val_col)), ]
-  set(x, j = c(index_var(x), val_col),
-      value = list(x[[val_col]], rep(TRUE, nrow(x))))
+vent_flag <- function(x, val_var, ...) {
+  x <- x[as.logical(get(val_var)), ]
+  set(x, j = c(index_var(x), val_var),
+      value = list(x[[val_var]], rep(TRUE, nrow(x))))
 }
 
-percent_as_numeric <- function(x, val_col, ...) {
-  set(x, j = val_col, value = as.numeric(sub("%", "", x[[val_col]])))
+percent_as_numeric <- function(x, val_var, ...) {
+  set(x, j = val_var, value = as.numeric(sub("%", "", x[[val_var]])))
 }
 
-force_numeric_col <- function(x, col) {
+force_numeric_var <- function(x, col) {
   set(x, j = col, value = force_numeric(x[[col]]))
 }
 
-force_numeric_cols <- function(x, cols) {
+force_numeric_vars <- function(x, cols) {
 
   for (col in cols) {
-    x <- force_numeric_col(x, col)
+    x <- force_numeric_var(x, col)
   }
 
   x
 }
 
-force_numeric_val_col <- function(x, val_col, ...) {
-  force_numeric_col(x, val_col)
+force_numeric_val_var <- function(x, val_var, ...) {
+  force_numeric_var(x, val_var)
 }
 
-eicu_body_weight <- function(x, val_col, weight_col, env, ...) {
+eicu_body_weight <- function(x, val_var, weight_var, env, ...) {
 
   do_calc <- function(rate, w1, w2) rate / fifelse(is.na(w1), w2, w1)
 
   idc <- id_vars(x)
 
-  weight <- load_id("patient", env, cols = "admissionweight", id_col = idc)
+  weight <- load_id("patient", env, cols = "admissionweight", id_var = idc)
 
   x <- merge(x, weight, all.x = TRUE, by = idc)
-  x <- force_numeric_cols(x, c(val_col, weight_col))
-  x <- x[, c(val_col) := do_calc(get(val_col), get(weight_col),
+  x <- force_numeric_vars(x, c(val_var, weight_var))
+  x <- x[, c(val_var) := do_calc(get(val_var), get(weight_var),
                                  get("admissionweight"))]
 
   rm_cols(x, "admissionweight")
 }
 
-combine_date_time <- function(x, date_col, date_shift = hours(12L), ...) {
+combine_date_time <- function(x, date_var, date_shift = hours(12L), ...) {
   idx <- index_var(x)
   x[, c(idx) := fifelse(is.na(get(idx)),
-                        get(date_col) + date_shift, get(idx))]
+                        get(date_var) + date_shift, get(idx))]
 }
 
 shift_all_date <- function(x, shift = hours(12L), ...) {
@@ -57,24 +57,24 @@ shift_all_date <- function(x, shift = hours(12L), ...) {
   x[, c(idx) := get(idx) + shift]
 }
 
-mimic_abx_shift_flag <- function(x, val_col, ...) {
-  all_flag(shift_all_date(x, hours(12L)), val_col)
+mimic_abx_shift_flag <- function(x, val_var, ...) {
+  all_flag(shift_all_date(x, hours(12L)), val_var)
 }
 
-mimic_sampling <- function(x, val_col, aux_time, ...) {
+mimic_sampling <- function(x, val_var, aux_time, ...) {
   x <- combine_date_time(x, aux_time, hours(12L))
-  set(x, j = val_col, value = !is.na(x[[val_col]]))
+  set(x, j = val_var, value = !is.na(x[[val_var]]))
 }
 
-eicu_sampling <- function(x, val_col, ...) {
-  x <- set(x, j = val_col, value = not_val(x[[val_col]], "no growth"))
+eicu_sampling <- function(x, val_var, ...) {
+  x <- set(x, j = val_var, value = not_val(x[[val_var]], "no growth"))
   x
 }
 
 multiply_by <- function(factor) {
   factor <- force(factor)
-  function(x, val_col, ...) {
-    x <- x[, c(val_col) := get(val_col) * factor]
+  function(x, val_var, ...) {
+    x <- x[, c(val_var) := get(val_var) * factor]
     x
   }
 }
@@ -90,12 +90,12 @@ multiply_hirid_phos <- multiply_by(9.497)
 multiply_hirid_urea <- multiply_by(2.8)
 multiply_hirid_bili <- multiply_by(0.058467)
 
-fahrenheit_to_celsius <- function(x, val_col, ...) {
-  x <- x[, c(val_col) := (get(val_col) - 32) * 5 / 9]
+fahrenheit_to_celsius <- function(x, val_var, ...) {
+  x <- x[, c(val_var) := (get(val_var) - 32) * 5 / 9]
   x
 }
 
-distribute_amount <- function(x, val_col, amount_col, end_col, ...) {
+distribute_amount <- function(x, val_var, amount_var, end_var, ...) {
 
   unit <- time_unit(x)
   step <- time_step(x)
@@ -110,53 +110,53 @@ distribute_amount <- function(x, val_col, amount_col, end_col, ...) {
     seq <- seq(as.numeric(start), as.numeric(end), inte)
     tim <- as.difftime(round_to(seq, step), units = unit)
     res <- list(id, tim, amount / length(seq))
-    names(res) <- c(idc, idx, val_col)
+    names(res) <- c(idc, idx, val_var)
     res
   }
 
-  x <- x[get(end_col) - get(idx) >= 0, ]
-  x <- x[, expand(get(idx), get(end_col), get(idc), get(amount_col),
-                  get(val_col)),
+  x <- x[get(end_var) - get(idx) >= 0, ]
+  x <- x[, expand(get(idx), get(end_var), get(idc), get(amount_var),
+                  get(val_var)),
          by = seq_len(nrow(x))]
   x <- x[, c(setdiff(colnames(x), orig_cols)) := NULL]
 
   x
 }
 
-mimic_age <- function(x, val_col, ...) {
-  x <- set(x, j = val_col,
-    value = as.double(`units<-`(x[[val_col]], "days") / -365))
-  x <- set(x, i = which(x[[val_col]] > 90), j = val_col, value = 90)
+mimic_age <- function(x, val_var, ...) {
+  x <- set(x, j = val_var,
+    value = as.double(`units<-`(x[[val_var]], "days") / -365))
+  x <- set(x, i = which(x[[val_var]] > 90), j = val_var, value = 90)
   x
 }
 
-eicu_age <- function(x, val_col, ...) {
-  x <- set(x, which(x[[val_col]] == "> 89"), j = val_col, value = 90)
-  x <- set(x, j = val_col, value = as.numeric(x[[val_col]]))
+eicu_age <- function(x, val_var, ...) {
+  x <- set(x, which(x[[val_var]] == "> 89"), j = val_var, value = 90)
+  x <- set(x, j = val_var, value = as.numeric(x[[val_var]]))
   x
 }
 
-hirid_vent_start <- function(x, val_col, ...) {
-  all_flag(x[get(val_col) == 1, ], val_col)
+hirid_vent_start <- function(x, val_var, ...) {
+  all_flag(x[get(val_var) == 1, ], val_var)
 }
 
-hirid_vent_end <- function(x, val_col, ...) {
-  all_flag(x[get(val_col) > 2, ], val_col)
+hirid_vent_end <- function(x, val_var, ...) {
+  all_flag(x[get(val_var) > 2, ], val_var)
 }
 
-hirid_trach <- function(x, val_col, ...) {
-  all_flag(x[get(val_col) == 2, ], val_col)
+hirid_trach <- function(x, val_var, ...) {
+  all_flag(x[get(val_var) == 2, ], val_var)
 }
 
-mimic_death <- function(x, val_col, ...) {
-  set(x, j = val_col, value = x[[val_col]] == 1L)
+mimic_death <- function(x, val_var, ...) {
+  set(x, j = val_var, value = x[[val_var]] == 1L)
 }
 
-eicu_death <- function(x, val_col, ...) {
-  set(x, j = val_col, value = x[[val_col]] == "Expired")
+eicu_death <- function(x, val_var, ...) {
+  set(x, j = val_var, value = x[[val_var]] == "Expired")
 }
 
-hirid_death <- function(x, val_col, item_col, ...) {
+hirid_death <- function(x, val_var, item_var, ...) {
 
   threshold <- function(x, col, thresh) {
     set(x, j = col, value = x[[col]] <= thresh)
@@ -166,47 +166,47 @@ hirid_death <- function(x, val_col, item_col, ...) {
 
   idc <- id_vars(x)
 
-  tmp <- split(x, by = item_col, keep.by = FALSE)
-  tmp <- lapply(tmp, threshold, val_col, 40)
-  tmp <- lapply(tmp, score, idc, val_col)
+  tmp <- split(x, by = item_var, keep.by = FALSE)
+  tmp <- lapply(tmp, threshold, val_var, 40)
+  tmp <- lapply(tmp, score, idc, val_var)
   tmp <- reduce(merge, tmp, all = TRUE)
 
-  tmp <- tmp[, c(val_col, "V1.x", "V1.y") := list(get("V1.x") | get("V1.y"),
+  tmp <- tmp[, c(val_var, "V1.x", "V1.y") := list(get("V1.x") | get("V1.y"),
                                                   NULL, NULL)]
 
   as_id_tbl(tmp, id_vars(x))
 }
 
-mf_sex <- function(x, val_col, ...) {
-  x <- x[get(val_col) == "M", c(val_col) := "Male"]
-  x <- x[get(val_col) == "F", c(val_col) := "Female"]
+mf_sex <- function(x, val_var, ...) {
+  x <- x[get(val_var) == "M", c(val_var) := "Male"]
+  x <- x[get(val_var) == "F", c(val_var) := "Female"]
   x
 }
 
-crp_dl_to_l <- function(x, val_col, unit_col, ...) {
-  x[grepl("mg/dl", get(unit_col), ignore.case = TRUE),
-    c(val_col, unit_col) := list(get(val_col) * 10, "mg/L")]
+crp_dl_to_l <- function(x, val_var, unit_var, ...) {
+  x[grepl("mg/dl", get(unit_var), ignore.case = TRUE),
+    c(val_var, unit_var) := list(get(val_var) * 10, "mg/L")]
 }
 
-eicu_total_co2 <- function(x, val_col, unit_col, ...) {
-  x[get(unit_col) != "mm(hg)", ]
+eicu_total_co2 <- function(x, val_var, unit_var, ...) {
+  x[get(unit_var) != "mm(hg)", ]
 }
 
-eicu_calcium <- function(x, val_col, unit_col, ...) {
-  x[grepl("mmol/l", get(unit_col), ignore.case = TRUE),
-    c(val_col, unit_col) := list(get(val_col) * 4, "mg/dL")]
+eicu_calcium <- function(x, val_var, unit_var, ...) {
+  x[grepl("mmol/l", get(unit_var), ignore.case = TRUE),
+    c(val_var, unit_var) := list(get(val_var) * 4, "mg/dL")]
 }
 
-eicu_fio2 <- function(x, val_col, unit_col, ...) {
-  x[get(unit_col) != "lpm", ]
+eicu_fio2 <- function(x, val_var, unit_var, ...) {
+  x[get(unit_var) != "lpm", ]
 }
 
-eicu_magnesium <- function(x, val_col, unit_col, ...) {
-  x[grepl("meq/l", get(unit_col), ignore.case = TRUE),
-    c(val_col, unit_col) := list(get(val_col) / 1.215, "mEq/L")]
+eicu_magnesium <- function(x, val_var, unit_var, ...) {
+  x[grepl("meq/l", get(unit_var), ignore.case = TRUE),
+    c(val_var, unit_var) := list(get(val_var) / 1.215, "mEq/L")]
 }
 
-mimic_adx <- function(x, val_col, ...) {
+mimic_adx <- function(x, val_var, ...) {
 
   map <- c(MED   = "med",   SURG  = "surg", CMED = "med",  CSURG  = "surg",
            VSURG = "surg",  NSURG = "surg", NB   = "other", NMED  = "med",
@@ -214,12 +214,12 @@ mimic_adx <- function(x, val_col, ...) {
            NBB   = "other", TSURG = "surg", GYN  = "other", PSURG = "surg",
            OBS   = "other", ENT   = "surg", DENT = "surg",  PSYCH = "other")
 
-  set(x, j = val_col, value = map[x[[val_col]]])
+  set(x, j = val_var, value = map[x[[val_var]]])
 }
 
-eicu_adx <- function(x, val_col, ...) {
+eicu_adx <- function(x, val_var, ...) {
 
-  path <- strsplit(x[[val_col]], split = "|", fixed = TRUE)
+  path <- strsplit(x[[val_var]], split = "|", fixed = TRUE)
   keep <- chr_ply(path, `[[`, 2L) == "All Diagnosis"
 
   x <- x[keep, ]
@@ -231,5 +231,5 @@ eicu_adx <- function(x, val_col, ...) {
     fifelse(chr_ply(path, `[[`, 3L) == "Operative", "surg", "med")
   )
 
-  set(x, j = val_col, value = cats)
+  set(x, j = val_var, value = cats)
 }

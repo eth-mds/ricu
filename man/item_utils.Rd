@@ -4,7 +4,7 @@
 \alias{load_cncpt}
 \alias{load_itm}
 \alias{prepare_query}
-\alias{add_unit_col}
+\alias{add_unit_var}
 \title{Internal utilities for \code{item}/\code{concept} objects}
 \usage{
 load_cncpt(x, verbose, ...)
@@ -13,7 +13,7 @@ load_itm(x, patient_ids, id_type, interval)
 
 prepare_query(x)
 
-add_unit_col(x)
+add_unit_var(x)
 }
 \arguments{
 \item{x}{Object defining the row-subsetting}

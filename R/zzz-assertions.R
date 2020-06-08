@@ -197,6 +197,12 @@ on_failure(null_or_na) <- function(call, env) {
   paste0("`", deparse(call$x), "` is neither NULL nor NA")
 }
 
+null_or_str <- function(x) null_or(x, is.string)
+
+on_failure(null_or_str) <- function(call, env) {
+  paste0("`", deparse(call$x), "` is neither NULL nor a string")
+}
+
 same_ts <- function(x, y) {
   identical(id_vars(x), id_vars(y)) && identical(index_var(x), index_var(y)) &&
     same_interval(x, y)

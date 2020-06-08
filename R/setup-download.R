@@ -48,6 +48,10 @@
 #' @param x Object specifying the source configuration
 #' @param ... Generic consistency
 #'
+#' @importFrom utils untar
+#' @importFrom curl new_handle handle_setopt parse_headers
+#' @importFrom curl curl_fetch_disk curl_fetch_stream curl_fetch_memory
+#'
 #' @examples
 #' \dontrun{
 #'
@@ -82,9 +86,16 @@ download_src.src_cfg <- function(x, dir = src_data_dir(x), tables = NULL,
 
   all_avail <- function(y) all(file.exists(file.path(dir, y)))
 
-  assert_that(is.dir(dir), is.flag(force), ...length() == 0L)
+  warn_dots(...)
 
-  tbl <- as_tbl_spec(x)
+  assert_that(is.string(dir), is.flag(force))
+
+  tmp <- tempfile()
+  on.exit(unlink(tmp, recursive = TRUE))
+
+  ensure_dirs(c(tmp, dir))
+
+  tbl <- as_tbl_cfg(x)
 
   if (is.null(tables)) {
     tables <- names(tbl)
@@ -94,9 +105,8 @@ download_src.src_cfg <- function(x, dir = src_data_dir(x), tables = NULL,
 
   if (!force) {
 
-    avail <- names(tbl)[
-      lgl_ply(fst_names(tbl), all_avail) | lgl_ply(file_names(tbl), all_avail)
-    ]
+    avail <- names(tbl)[lgl_ply(lapply(tbl, fst_names), all_avail) |
+                        lgl_ply(lapply(tbl, dst_files), all_avail)]
 
     tables <- setdiff(tables, avail)
   }
@@ -108,16 +118,26 @@ download_src.src_cfg <- function(x, dir = src_data_dir(x), tables = NULL,
 
   tbl <- tbl[tables]
 
-  pba <- progr_init(sum(n_rows(tbl)),
-    paste0("Downloading ", length(tbl), " tables for ", quote_bt(src_name(x)))
+  to_dl <- unique(
+    unlist(lapply(tbl, src_files), recursive = FALSE, use.names = FALSE)
   )
 
-  download_check_data(dir, file_names(tbl), src_url(x), user, pass, pba)
+  download_check_data(tmp, to_dl, src_url(x), user, pass, src_name(x))
 
-  if (!(is.null(pba) || pba$finished)) {
-    pba$update(1)
-    pba$terminate()
+  to_unpck <- grepl("\\.tar(\\.gz)?$", to_dl)
+
+  if (any(to_unpck)) {
+    for (file in file.path(tmp, to_dl[to_unpck])) {
+      untar(file, exdir = tmp)
+    }
   }
+
+  to_mv <- unlist(lapply(tbl, dst_files), recursive = FALSE, use.names = FALSE)
+  targ  <- file.path(dir, to_mv)
+
+  ensure_dirs(unique(dirname(targ)))
+
+  file.rename(file.path(tmp, to_mv), targ)
 
   invisible(NULL)
 }
@@ -147,11 +167,12 @@ read_line <- function(prompt = "", mask_input = FALSE) {
 }
 
 download_pysionet_file <- function(url, dest = NULL, user = NULL,
-                                   pass = NULL) {
+                                   pass = NULL, head_only = FALSE,
+                                   progress = NULL) {
 
-  assert_that(is.string(url))
+  assert_that(is.string(url), is.flag(head_only))
 
-  handle <- curl::new_handle(useragent = "Wget/")
+  handle <- new_handle(useragent = "Wget/")
 
   if (is.null(user) || is.null(pass)) {
 
@@ -159,27 +180,45 @@ download_pysionet_file <- function(url, dest = NULL, user = NULL,
 
   } else {
 
-    handle <- curl::handle_setopt(handle, username = user, password = pass)
+    handle <- handle_setopt(handle, username = user, password = pass)
   }
 
   if (is.null(dest)) {
 
-    res <- curl::curl_fetch_memory(url, handle)
+    assert_that(is.null(progress))
+
+    if (head_only) {
+      return(curl_fetch_memory(url, handle_setopt(handle, nobody = TRUE)))
+    }
+
+    res <- curl_fetch_memory(url, handle)
 
   } else {
 
-    assert_that(is.string(dest))
+    assert_that(is.string(dest), !head_only)
 
     if (file.exists(dest)) {
-      handle <- curl::handle_setopt(handle,
+      handle <- handle_setopt(handle,
         timevalue = file.mtime(dest), timecondition = TRUE
       )
     }
 
-    tmp <- tempfile()
-    on.exit(unlink(tmp))
+    if (is.null(progress)) {
 
-    res <- curl::curl_fetch_disk(url, tmp, handle = handle)
+      res <- curl_fetch_disk(url, dest, handle = handle)
+
+    } else {
+
+      con <- file(dest, "ab", blocking = FALSE)
+      on.exit(close(con))
+
+      prog_fun <- function(x) {
+        progr_iter(basename(url), progress, length(x))
+        writeBin(x, con)
+      }
+
+      res <- curl_fetch_stream(url, prog_fun, handle = handle)
+    }
 
     if (res[["status_code"]] == 304) {
       message("Skipped download of ", basename(url))
@@ -203,7 +242,6 @@ download_pysionet_file <- function(url, dest = NULL, user = NULL,
 
   } else {
 
-    file.rename(res[["content"]], dest)
     invisible(NULL)
   }
 }
@@ -242,19 +280,33 @@ get_cred <- function(x, env, msg, hide = FALSE) {
   x
 }
 
-download_check_data <- function(dest_folder, tables, url, user, pass,
-                                prog = NULL) {
+get_file_size <- function(url, user, pass) {
+
+  resp <- download_pysionet_file(url, NULL, user, pass, TRUE)
+  resp <- parse_headers(resp$headers)
+
+  hit <- grepl("^Content-Length:", resp)
+
+  if (sum(hit) != 1L) {
+    return(NULL)
+  }
+
+  as.numeric(sub("^Content-Length: ", "", resp[hit]))
+}
+
+download_check_data <- function(dest_folder, files, url, user, pass, src) {
 
   check_cred <- function(e) {
     if (grepl("^Access.+access\\.$", conditionMessage(e))) NULL else stop(e)
   }
 
-  dl_one <- function(file, path) {
+  dl_one <- function(url, size, path, prog) {
 
-    progr_iter(file, prog)
+    if (is.null(prog)) {
+      progr_iter(basename(url), NULL, size)
+    }
 
-    download_pysionet_file(file.path(url, file, fsep = "/"), path,
-                           user = user, pass = pass)
+    download_pysionet_file(url, path, user, pass, progress = prog)
 
     invisible(NULL)
   }
@@ -271,15 +323,29 @@ download_check_data <- function(dest_folder, tables, url, user, pass,
 
   avail_tbls <- vapply(chksums, `[[`, character(1L), 2L)
 
-  assert_that(all(tables %in% avail_tbls))
+  assert_that(all(files %in% avail_tbls))
 
-  todo <- chksums[avail_tbls %in% tables]
+  todo <- chksums[match(files, avail_tbls)]
 
   files   <- vapply(todo, `[[`, character(1L), 2L)
   chksums <- vapply(todo, `[[`, character(1L), 1L)
   paths   <- file.path(dest_folder, files)
+  urls    <- file.path(url, files, fsep = "/")
 
-  Map(dl_one, files, paths)
+  ensure_dirs(dirname(paths))
+
+  sizes <- dbl_ply(urls, get_file_size, user, pass)
+
+  pba <- progr_init(sum(sizes),
+    paste0("Downloading ", length(files), " files for ", quote_bt(src))
+  )
+
+  Map(dl_one, urls, sizes, paths, MoreArgs = list(prog = pba))
+
+  if (!(is.null(pba) || pba$finished)) {
+    pba$update(1)
+    pba$terminate()
+  }
 
   if (is_pkg_available("openssl")) {
 

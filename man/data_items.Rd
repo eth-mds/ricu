@@ -22,10 +22,10 @@ init_itm(x, ...)
 \method{init_itm}{sel_itm}(
   x,
   table,
-  sub_col,
+  sub_var,
   ids,
-  itm_cols = NULL,
-  index_col = NULL,
+  itm_vars = NULL,
+  index_var = NULL,
   callback = "identity_callback",
   ...
 )
@@ -33,8 +33,8 @@ init_itm(x, ...)
 \method{init_itm}{col_itm}(
   x,
   table,
-  itm_cols = NULL,
-  index_col = NULL,
+  itm_vars = NULL,
+  index_var = NULL,
   callback = "identity_callback",
   ...
 )
@@ -42,10 +42,10 @@ init_itm(x, ...)
 \method{init_itm}{rgx_itm}(
   x,
   table,
-  sub_col,
+  sub_var,
   regex,
-  itm_cols = NULL,
-  index_col = NULL,
+  itm_vars = NULL,
+  index_var = NULL,
   callback = "identity_callback",
   ...
 )
@@ -72,14 +72,14 @@ is_item(x)
 
 \item{table}{Name of the table containing the data}
 
-\item{sub_col}{Column name used for subsetting}
+\item{sub_var}{Column name used for subsetting}
 
 \item{ids}{Vector of ids used to subset table rows. If \code{NULL}, all rows are
 considered corresponding to the data item}
 
-\item{itm_cols}{Columns returned as \code{\link[=data_vars]{data_vars()}}}
+\item{itm_vars}{Columns returned as \code{\link[=data_vars]{data_vars()}}}
 
-\item{index_col}{Column used as index}
+\item{index_var}{Column used as index}
 
 \item{callback}{Name of a function to be called on the returned data used
 for data cleanup operations}

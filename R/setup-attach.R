@@ -22,7 +22,9 @@ attach_src <- function(x, ...) UseMethod("attach_src", x)
 attach_src.src_cfg <- function(x, dir = src_data_dir(x),
                                assign_env = .GlobalEnv, ...) {
 
-  assert_that(is.string(dir), is.environment(assign_env), ...length() == 0L)
+  warn_dots(...)
+
+  assert_that(is.string(dir), is.environment(assign_env))
 
   src <- src_name(x)
 
@@ -63,9 +65,9 @@ setup_src_env.src_cfg <- function(x, env, dir = src_data_dir(x)) {
 
   assert_that(is_src_env(env), is.string(dir))
 
-  tbl <- as_tbl_spec(x)
+  tbl <- as_tbl_cfg(x)
 
-  files <- Map(file.path, dir, fst_names(tbl))
+  files <- Map(file.path, dir, lapply(tbl, fst_names))
   names(files) <- names(tbl)
 
   missing <- lgl_ply(files, all_fun, Negate(file.exists))
@@ -199,12 +201,6 @@ new_src_tbl <- function(files, col_cfg, src_env) {
 }
 
 is_src_tbl <- function(x) inherits(x, "src_tbl")
-
-#' @rdname data_concepts
-#'
-#' @export
-#'
-src_name <- function(x) UseMethod("src_name", x)
 
 #' @export
 src_name.src_tbl <- function(x) {

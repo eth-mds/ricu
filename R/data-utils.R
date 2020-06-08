@@ -107,11 +107,11 @@ id_windows.default <- function(x, env = as_src_env(x), ...) {
   id_windows(as_id_cfg(x, ...), env = env)
 }
 
-order_rename <- function(x, id_col, st_col, ed_col) {
-  x <- setcolorder(x, c(id_col, st_col, ed_col))
-  x <- rename_cols(x, c(id_col, paste0(id_col, "_start"),
-                                paste0(id_col, "_end")), by_ref = TRUE)
-  as_id_tbl(x, id_col[1L], by_ref = TRUE)
+order_rename <- function(x, id_var, st_var, ed_var) {
+  x <- setcolorder(x, c(id_var, st_var, ed_var))
+  x <- rename_cols(x, c(id_var, paste0(id_var, "_start"),
+                                paste0(id_var, "_end")), by_ref = TRUE)
+  as_id_tbl(x, id_var[1L], by_ref = TRUE)
 }
 
 as_dt_min <- function(x, y) round(difftime(x, y, units = "mins"))
@@ -257,7 +257,7 @@ stay_windows <- function(x, id_type = "icustay", win_type = "icustay",
   assert_that(is_time(interval, allow_neg = FALSE))
 
   cfg <- as_id_cfg(x)
-  res <- id_map_min(cfg, get_id_col(cfg, id_type), get_id_col(cfg, win_type),
+  res <- id_map_min(cfg, get_id_var(cfg, id_type), get_id_var(cfg, win_type),
                     in_time, out_time)
 
   if (!is_one_min(interval) && (not_null(in_time) || not_null(out_time))) {

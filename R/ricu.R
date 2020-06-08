@@ -5,4 +5,5 @@
 #' @importFrom stats setNames na.omit median sd var
 #' @importFrom utils str head tail
 #' @importFrom rlang !!
+#' @import vctrs
 NULL

@@ -6,14 +6,14 @@
 #' windows bounds
 #' @param step_size Controls the step size used to interpolate between
 #' `min_col` and `max_col`
-#' @param id_cols Names of the id columns
+#' @param id_vars Names of the id columns
 #' @param new_col Name of the new index column
 #'
 #' @rdname ts_utils
 #' @export
 #'
 expand_limits <- function(x, min_col = "min", max_col = "max", step_size = 1L,
-                          id_cols = NULL, new_col = "hadm_time") {
+                          id_vars = NULL, new_col = "hadm_time") {
 
   seq_time <- function(min, max, step, unit) {
     do_seq <- function(min, max) seq(min, max, step)
@@ -25,17 +25,17 @@ expand_limits <- function(x, min_col = "min", max_col = "max", step_size = 1L,
 
   unit <- units(x[[min_col]])
 
-  x <- na.omit(x, c(id_cols, min_col, max_col))
+  x <- na.omit(x, c(id_vars, min_col, max_col))
   x <- x[get(min_col) <= get(max_col), ]
 
   res <- x[, lapply(.SD, as.double), .SDcols = c(min_col, max_col),
-           by = id_cols]
+           by = id_vars]
   res <- res[, seq_time(get(min_col), get(max_col), step_size, unit),
-           by = id_cols]
+           by = id_vars]
 
-  res <- rename_cols(res, c(id_cols, new_col), by_ref = TRUE)
+  res <- rename_cols(res, c(id_vars, new_col), by_ref = TRUE)
 
-  as_ts_tbl(res, id_cols, new_col, as.difftime(step_size, units = unit),
+  as_ts_tbl(res, id_vars, new_col, as.difftime(step_size, units = unit),
             by_ref = TRUE)
 }
 
@@ -90,7 +90,7 @@ fill_gaps <- function(x, limits = NULL, ...) {
     id <- if (is_id_tbl(limits)) id_vars(limits) else id_vars(x)
 
     join <- expand_limits(limits, ..., step_size = time_step(x),
-                          id_cols = id, new_col = time_col)
+                          id_vars = id, new_col = time_col)
   }
 
   x[unique(join), on = paste(meta_vars(x), "==", meta_vars(join))]

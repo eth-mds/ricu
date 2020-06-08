@@ -29,15 +29,33 @@ load_src(x, ...)
 
 load_difftime(x, ...)
 
-\method{load_difftime}{mimic_tbl}(x, rows, cols = colnames(x), id_hint = default_col(x, "id"), ...)
+\method{load_difftime}{mimic_tbl}(
+  x,
+  rows,
+  cols = colnames(x),
+  id_hint = default_var(x, "id_var"),
+  ...
+)
 
-\method{load_difftime}{mimic_demo_tbl}(x, rows, cols = colnames(x), id_hint = default_col(x, "id"), ...)
+\method{load_difftime}{mimic_demo_tbl}(
+  x,
+  rows,
+  cols = colnames(x),
+  id_hint = default_var(x, "id_var"),
+  ...
+)
 
 \method{load_difftime}{eicu_tbl}(x, rows, cols = colnames(x), ...)
 
 \method{load_difftime}{eicu_demo_tbl}(x, rows, cols = colnames(x), ...)
 
-\method{load_difftime}{hirid_tbl}(x, rows, cols = colnames(x), id_hint = default_col(x, "id"), ...)
+\method{load_difftime}{hirid_tbl}(
+  x,
+  rows,
+  cols = colnames(x),
+  id_hint = default_var(x, "id_var"),
+  ...
+)
 
 \method{load_difftime}{character}(x, src, ...)
 
@@ -47,7 +65,7 @@ load_id(x, ...)
   x,
   rows,
   cols = colnames(x),
-  id_col = default_col(x, "id"),
+  id_var = default_var(x, "id_var"),
   interval = hours(1L),
   ...
 )
@@ -60,8 +78,8 @@ load_ts(x, ...)
   x,
   rows,
   cols = colnames(x),
-  id_col = default_col(x, "id"),
-  index_col = default_col(x, "index"),
+  id_var = default_var(x, "id_var"),
+  index_var = default_var(x, "index_var"),
   interval = hours(1L),
   ...
 )
@@ -85,12 +103,12 @@ data_ts(source, table, ...)
 
 \item{id_hint}{String valued id column selection (not necessarily honored)}
 
-\item{id_col}{The column defining the id of \code{ts_tbl} and \code{id_tbl} objects}
+\item{id_var}{The column defining the id of \code{ts_tbl} and \code{id_tbl} objects}
 
 \item{interval}{The time interval used to discretize time stamps with,
 specified as \code{\link[base:difftime]{base::difftime()}} object}
 
-\item{index_col}{The column defining the index of \code{ts_tbl} objects}
+\item{index_var}{The column defining the index of \code{ts_tbl} objects}
 
 \item{source}{String specifying the data source}
 

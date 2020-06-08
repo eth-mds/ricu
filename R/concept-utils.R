@@ -50,23 +50,23 @@ as_src_tbl.rgx_itm <- function(x, ...) {
   as_src_tbl(x[["table"]], src_name(x), ...)
 }
 
-itm_col_helper <- function(x, col) {
-  res <- if (is.null(col)) default_col(as_src_tbl(x), "val") else col
-  if (is.string(res)) c(val_col = res) else {
-    assert_that(has_name(res, "val_col"))
+itm_var_helper <- function(x, col) {
+  res <- if (is.null(col)) default_var(as_src_tbl(x), "val_var") else col
+  if (is.string(res)) c(val_var = res) else {
+    assert_that(has_name(res, "val_var"))
     res
   }
 }
 
 need_idx <- function(x) identical(x[["targ"]], "ts_tbl")
 
-idx_col_helper <- function(x, col) {
+idx_var_helper <- function(x, col) {
   if (need_idx(x))
-    if (is.null(col)) default_col(as_src_tbl(x), "index") else col
+    if (is.null(col)) default_var(as_src_tbl(x), "index_var") else col
   else NULL
 }
 
-cbk_col_helper <- function(...) {
+cbk_var_helper <- function(...) {
   if (...length()) as.character(list(...)) else NULL
 }
 
@@ -75,34 +75,34 @@ cbk_col_helper <- function(...) {
 init_itm <- function(x, ...) UseMethod("init_itm", x)
 
 #' @param table Name of the table containing the data
-#' @param sub_col Column name used for subsetting
+#' @param sub_var Column name used for subsetting
 #' @param ids Vector of ids used to subset table rows. If `NULL`, all rows are
 #' considered corresponding to the data item
-#' @param itm_cols Columns returned as [data_vars()]
-#' @param index_col Column used as index
+#' @param itm_vars Columns returned as [data_vars()]
+#' @param index_var Column used as index
 #' @param callback Name of a function to be called on the returned data used
 #' for data cleanup operations
 #'
 #' @rdname data_items
 #' @export
-init_itm.sel_itm <- function(x, table, sub_col, ids, itm_cols = NULL,
-                             index_col = NULL,
+init_itm.sel_itm <- function(x, table, sub_var, ids, itm_vars = NULL,
+                             index_var = NULL,
                              callback = "identity_callback", ...) {
 
   x[["table"]] <- table
 
-  itm_cols  <- itm_col_helper(x, itm_cols)
-  index_col <- idx_col_helper(x, index_col)
-  cb_cols   <- cbk_col_helper(...)
+  itm_vars  <- itm_var_helper(x, itm_vars)
+  index_var <- idx_var_helper(x, index_var)
+  cb_vars   <- cbk_var_helper(...)
 
   tbl <- as_src_tbl(x)
 
   assert_that(
     is.string(table), is_fun_name(callback), both(ids, has_length, chr_or_int),
-    all_fun(c(list(sub_col, itm_cols), index_col, cb_cols), is_colname, tbl)
+    all_fun(c(list(sub_var, itm_vars), index_var, cb_vars), is_colname, tbl)
   )
 
-  todo <- c("ids", "sub_col", "itm_cols", "index_col", "cb_cols", "callback")
+  todo <- c("ids", "sub_var", "itm_vars", "index_var", "cb_vars", "callback")
   x[todo] <- mget(todo)
 
   x
@@ -110,21 +110,21 @@ init_itm.sel_itm <- function(x, table, sub_col, ids, itm_cols = NULL,
 
 #' @rdname data_items
 #' @export
-init_itm.col_itm <- function(x, table, itm_cols = NULL, index_col = NULL,
+init_itm.col_itm <- function(x, table, itm_vars = NULL, index_var = NULL,
                              callback = "identity_callback", ...) {
 
   x[["table"]] <- table
 
-  itm_cols  <- itm_col_helper(x, itm_cols)
-  index_col <- idx_col_helper(x, index_col)
-  cb_cols   <- cbk_col_helper(...)
+  itm_vars  <- itm_var_helper(x, itm_vars)
+  index_var <- idx_var_helper(x, index_var)
+  cb_vars   <- cbk_var_helper(...)
 
   assert_that(
     is.string(table), is_fun_name(callback),
-    all_fun(c(list(itm_cols), index_col, cb_cols), is_colname, as_src_tbl(x))
+    all_fun(c(list(itm_vars), index_var, cb_vars), is_colname, as_src_tbl(x))
   )
 
-  todo <- c("itm_cols", "index_col", "cb_cols", "callback")
+  todo <- c("itm_vars", "index_var", "cb_vars", "callback")
   x[todo] <- mget(todo)
 
   x
@@ -135,24 +135,24 @@ init_itm.col_itm <- function(x, table, itm_cols = NULL, index_col = NULL,
 #'
 #' @rdname data_items
 #' @export
-init_itm.rgx_itm <- function(x, table, sub_col, regex, itm_cols = NULL,
-                             index_col = NULL,
+init_itm.rgx_itm <- function(x, table, sub_var, regex, itm_vars = NULL,
+                             index_var = NULL,
                              callback = "identity_callback", ...) {
 
   x[["table"]] <- table
 
-  itm_cols  <- itm_col_helper(x, itm_cols)
-  index_col <- idx_col_helper(x, index_col)
-  cb_cols   <- cbk_col_helper(...)
+  itm_vars  <- itm_var_helper(x, itm_vars)
+  index_var <- idx_var_helper(x, index_var)
+  cb_vars   <- cbk_var_helper(...)
 
   tbl <- as_src_tbl(x)
 
   assert_that(
     all_fun(list(table, regex), is.string), is_fun_name(callback),
-    all_fun(c(list(sub_col, itm_cols), index_col, cb_cols), is_colname, tbl)
+    all_fun(c(list(sub_var, itm_vars), index_var, cb_vars), is_colname, tbl)
   )
 
-  todo <- c("regex", "sub_col", "itm_cols", "index_col", "cb_cols", "callback")
+  todo <- c("regex", "sub_var", "itm_vars", "index_var", "cb_vars", "callback")
   x[todo] <- mget(todo)
 
   x
@@ -200,7 +200,7 @@ prepare_query <- function(x) UseMethod("prepare_query", x)
 prepare_query.sel_itm <- function(x) {
 
   ids <- x[["ids"]]
-  lst <- list(col = as.name(x[["sub_col"]]), id = ids)
+  lst <- list(col = as.name(x[["sub_var"]]), id = ids)
 
   if (length(ids) == 1L) {
     substitute(is_fun(col, id), c(lst, list(is_fun = is_val)))
@@ -215,37 +215,33 @@ prepare_query.sel_itm <- function(x) {
 #' @export
 prepare_query.rgx_itm <- function(x) {
   substitute(grepl(rgx, col, ignore.case = TRUE),
-    list(col = as.name(x[["sub_col"]]), rgx = x[["regex"]])
+    list(col = as.name(x[["sub_var"]]), rgx = x[["regex"]])
   )
 }
 
 unt_col_helper <- function(x) {
 
-  itm <- x[["itm_cols"]]
-  cbc <- x[["cb_cols"]]
+  itm <- x[["itm_vars"]]
+  cbc <- x[["cb_vars"]]
 
   assert_that(is.string(itm))
 
-  if (has_name(cbc, "unit_col")) {
+  if (has_name(cbc, "unit_var")) {
 
-    unt <- cbc[["unit_col"]]
+    unt <- cbc[["unit_var"]]
 
     if (length(cbc) == 1L) {
-      x["cb_cols"] <- list(NULL)
+      x["cb_vars"] <- list(NULL)
     } else {
-      x[["cb_cols"]] <- cbc[setdiff(names(cbc), "unit_col")]
+      x[["cb_vars"]] <- cbc[setdiff(names(cbc), "unit_var")]
     }
 
   } else {
 
-    unt <- default_col(as_src_tbl(x), "unit")
-
-    if (is.na(unt)) {
-      unt <- NULL
-    }
+    unt <- default_var(as_src_tbl(x), "unit_var")
   }
 
-  x[["itm_cols"]] <- c(val_col = unname(itm), unit_col = unname(unt))
+  x[["itm_vars"]] <- c(val_var = unname(itm), unit_var = unname(unt))
 
   x
 }
@@ -253,19 +249,19 @@ unt_col_helper <- function(x) {
 #' @rdname item_utils
 #' @keywords internal
 #' @export
-add_unit_col <- function(x) UseMethod("add_unit_col", x)
+add_unit_var <- function(x) UseMethod("add_unit_var", x)
 
 #' @export
-add_unit_col.sel_itm <- function(x) unt_col_helper(x)
+add_unit_var.sel_itm <- function(x) unt_col_helper(x)
 
 #' @export
-add_unit_col.col_itm <- function(x) unt_col_helper(x)
+add_unit_var.col_itm <- function(x) unt_col_helper(x)
 
 #' @export
-add_unit_col.rgx_itm <- function(x) unt_col_helper(x)
+add_unit_var.rgx_itm <- function(x) unt_col_helper(x)
 
 #' @export
-add_unit_col.itm <- function(x) x
+add_unit_var.itm <- function(x) x
 
 #' @rdname data_items
 #' @export
@@ -364,7 +360,7 @@ init_cncpt.num_cncpt <- function(x, unit = NULL, min = NULL, max = NULL, ...) {
   todo <- c("unit", "min", "max")
   x[todo] <- mget(todo)
 
-  x[["items"]] <- new_item(lapply(x[["items"]], add_unit_col))
+  x[["items"]] <- new_item(lapply(x[["items"]], add_unit_var))
 
   x
 }

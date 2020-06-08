@@ -40,15 +40,15 @@ write_psv <- function(x, dir, na_rows = NULL) {
 }
 
 #' @param col_spec A column specification as created by [readr::cols()]
-#' @param id_col Name of the id column (IDs are generated from file names)
+#' @param id_var Name of the id column (IDs are generated from file names)
 #'
 #' @rdname tbl_meta
 #' @export
 #'
-read_psv <- function(dir, col_spec = NULL, id_col = "stay_id") {
+read_psv <- function(dir, col_spec = NULL, id_var = "stay_id") {
 
   add_id <- function(x, val) {
-    x[[id_col]] <- val
+    x[[id_var]] <- val
     x
   }
 

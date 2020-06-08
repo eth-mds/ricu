@@ -5,7 +5,7 @@
 \alias{import_src.src_cfg}
 \alias{import_src.character}
 \alias{import_tbl}
-\alias{import_tbl.tbl_spec}
+\alias{import_tbl.tbl_cfg}
 \title{Data import utilities}
 \usage{
 import_src(x, ...)
@@ -16,7 +16,7 @@ import_src(x, ...)
 
 import_tbl(x, ...)
 
-\method{import_tbl}{tbl_spec}(x, dir = src_data_dir(x), progress = NULL, cleanup = TRUE, ...)
+\method{import_tbl}{tbl_cfg}(x, dir = src_data_dir(x), progress = NULL, cleanup = TRUE, ...)
 }
 \arguments{
 \item{x}{Object specifying the source configuration}

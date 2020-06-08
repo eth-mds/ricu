@@ -464,8 +464,12 @@ dbl_xtr_null <- function(x, i, length = 1L) {
 }
 
 xtr_null <- function(x, i, null_val) {
-  res <- x[[i]]
-  if (is.null(res)) null_val else res
+  if (is.null(res <- x[[i]])) null_val else res
+}
+
+mul_xtr <- function(x, i) {
+  res <- lapply(x, `[`, i)
+  if (is.character(i)) lapply(res, setNames, i) else res
 }
 
 map <- function(f, ...) Map(f, ..., USE.NAMES = FALSE)
@@ -477,7 +481,7 @@ do_call <- function(x, fun, args = NULL) {
 
 progr_init <- function(len = NULL, msg = "loading", ...) {
 
-  if (interactive() && is_pkg_available("progress") && length(len) > 1L) {
+  if (interactive() && is_pkg_available("progress") && len > 1L) {
 
     res <- progress::progress_bar$new(format = ":what [:bar] :percent",
                                       total = len, ...)

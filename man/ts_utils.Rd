@@ -18,7 +18,7 @@ expand_limits(
   min_col = "min",
   max_col = "max",
   step_size = 1L,
-  id_cols = NULL,
+  id_vars = NULL,
   new_col = "hadm_time"
 )
 
@@ -56,7 +56,7 @@ windows bounds}
 \item{step_size}{Controls the step size used to interpolate between
 \code{min_col} and \code{max_col}}
 
-\item{id_cols}{Names of the id columns}
+\item{id_vars}{Names of the id columns}
 
 \item{new_col}{Name of the new index column}
 

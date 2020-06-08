@@ -50,20 +50,18 @@ as_col_spec <- function(names, types) {
          lapply(types, col_spec_map))
 }
 
-as_tbl_spec <- function(files, defaults, time_cols, tbl_info, partitioning) {
+as_tbl_spec <- function(files, defaults, time_vars, tbl_info, partitioning) {
 
   do_as <- function(file, default, time, tbl, part) {
 
     all_cols <- vapply(tbl[["cols"]], `[[`, character(1L), "name")
     name <- tolower(tbl[["table_name"]])
-    common <- unique(sub("(_[0-9]+)?\\.csv(\\.gz)?$", "", tolower(file)))
 
-    stopifnot(identical(common, name),
-              all(vapply(default, `%in%`, logical(1L), all_cols)))
+    stopifnot(all(vapply(default, `%in%`, logical(1L), all_cols)))
 
     if (length(time)) {
-      res <- list(files = file, name = name, defaults = default,
-                  time_cols = unname(time))
+      res <- list(files = file, name = name,
+                  defaults = c(default, list(time_vars = unname(time))))
     } else {
       res <- list(files = file, name = name, defaults = default)
     }
@@ -71,7 +69,7 @@ as_tbl_spec <- function(files, defaults, time_cols, tbl_info, partitioning) {
     if ("num_rows" %in% names(tbl)) {
       res[["num_rows"]] <- tbl[["num_rows"]]
     } else {
-      res[["num_rows"]] <- 0
+      res["num_rows"] <- list(NULL)
     }
 
     res[["cols"]] <- unname(tbl[["cols"]])
@@ -87,7 +85,7 @@ as_tbl_spec <- function(files, defaults, time_cols, tbl_info, partitioning) {
 
   tbls <- vapply(tbl_info, `[[`, character(1L), "table_name")
 
-  Map(do_as, files[tbls], defaults[tbls], time_cols[tbls], tbl_info,
+  Map(do_as, files[tbls], defaults[tbls], time_vars[tbls], tbl_info,
       partitioning[tbls], USE.NAMES = FALSE)
 }
 
@@ -132,138 +130,132 @@ eicu_tbl_cfg <- function(is_demo = FALSE) {
 
   defaults <- list(
     admissiondrug = list(
-      index_col = "drugoffset",
-      val_col = "drugdosage",
-      unit_col = "drugunit"
+      index_var = "drugoffset",
+      val_var = "drugdosage",
+      unit_var = "drugunit"
     ),
     admissiondx = list(
-      index_col = "admitdxenteredoffset",
-      val_col = "admitdxtext"
+      index_var = "admitdxenteredoffset",
+      val_var = "admitdxtext"
     ),
     allergy = list(
-      index_col = "allergyoffset",
-      val_col = "allergyname"
+      index_var = "allergyoffset",
+      val_var = "allergyname"
     ),
     apacheapsvar = list(),
     apachepatientresult = list(
-      val_col = "apachescore"
+      val_var = "apachescore"
     ),
     apachepredvar = list(),
     careplancareprovider = list(
-      index_col = "careprovidersaveoffset",
-      val_col = "specialty"
+      index_var = "careprovidersaveoffset",
+      val_var = "specialty"
     ),
     careplaneol = list(
-      index_col = "cpleoldiscussionoffset"
+      index_var = "cpleoldiscussionoffset"
     ),
     careplangeneral = list(
-      index_col = "cplitemoffset",
-      val_col = "cplitemvalue"
+      index_var = "cplitemoffset",
+      val_var = "cplitemvalue"
     ),
     careplangoal = list(
-      index_col = "cplgoaloffset",
-      val_col = "cplgoalvalue"
+      index_var = "cplgoaloffset",
+      val_var = "cplgoalvalue"
     ),
     careplaninfectiousdisease = list(
-      index_col = "cplinfectdiseaseoffset",
-      val_col = "infectdiseasesite"
+      index_var = "cplinfectdiseaseoffset",
+      val_var = "infectdiseasesite"
     ),
     customlab = list(
-      index_col = "labotheroffset",
-      val_col = "labotherresult"
+      index_var = "labotheroffset",
+      val_var = "labotherresult"
     ),
     diagnosis = list(
-      index_col = "diagnosisoffset",
-      val_col = "icd9code"
+      index_var = "diagnosisoffset",
+      val_var = "icd9code"
     ),
     hospital = list(
-      id_col = "hospitalid",
-      val_col = "numbedscategory"
+      id_var = "hospitalid",
+      val_var = "numbedscategory"
     ),
     infusiondrug = list(
-      index_col = "infusionoffset",
-      val_col = "drugrate"
+      index_var = "infusionoffset",
+      val_var = "drugrate"
     ),
     intakeoutput = list(
-      index_col = "intakeoutputoffset",
-      val_col = "cellvaluenumeric"
+      index_var = "intakeoutputoffset",
+      val_var = "cellvaluenumeric"
     ),
     lab = list(
-      index_col = "labresultoffset",
-      val_col = "labresult",
-      unit_col = "labmeasurenameinterface"
+      index_var = "labresultoffset",
+      val_var = "labresult",
+      unit_var = "labmeasurenameinterface"
     ),
     medication = list(
-      index_col = "drugstartoffset",
-      val_col = "dosage"
+      index_var = "drugstartoffset",
+      val_var = "dosage"
     ),
     microlab = list(
-      index_col = "culturetakenoffset",
-      val_col = "organism"
+      index_var = "culturetakenoffset",
+      val_var = "organism"
     ),
     note = list(
-      index_col = "noteoffset",
-      val_col = "notetext"
+      index_var = "noteoffset",
+      val_var = "notetext"
     ),
     nurseassessment = list(
-      index_col = "nurseassessoffset",
-      val_col = "cellattributevalue"
+      index_var = "nurseassessoffset",
+      val_var = "cellattributevalue"
     ),
     nursecare = list(
-      index_col = "nursecareoffset",
-      val_col = "cellattributevalue"
+      index_var = "nursecareoffset",
+      val_var = "cellattributevalue"
     ),
     nursecharting = list(
-      index_col = "nursingchartoffset",
-      val_col = "nursingchartvalue"
+      index_var = "nursingchartoffset",
+      val_var = "nursingchartvalue"
     ),
     pasthistory = list(
-      index_col = "pasthistoryoffset",
-      val_col = "pasthistoryvalue"
+      index_var = "pasthistoryoffset",
+      val_var = "pasthistoryvalue"
     ),
     patient = list(
-      val_col = "unitdischargestatus"
+      val_var = "unitdischargestatus"
     ),
     physicalexam = list(
-      index_col = "physicalexamoffset",
-      val_col = "physicalexamvalue"
+      index_var = "physicalexamoffset",
+      val_var = "physicalexamvalue"
     ),
     respiratorycare = list(
-      index_col = "respcarestatusoffset"
+      index_var = "respcarestatusoffset"
     ),
     respiratorycharting = list(
-      index_col = "respchartoffset",
-      val_col = "respchartvalue"
+      index_var = "respchartoffset",
+      val_var = "respchartvalue"
     ),
     treatment = list(
-      index_col = "treatmentoffset",
-      val_col = "treatmentstring"
+      index_var = "treatmentoffset",
+      val_var = "treatmentstring"
     ),
     vitalaperiodic = list(
-      index_col = "observationoffset"
+      index_var = "observationoffset"
     ),
     vitalperiodic = list(
-      index_col = "observationoffset"
+      index_var = "observationoffset"
     )
   )
 
   part <-  list(
     nursecharting = list(
       patientunitstayid = `if`(is_demo,
-        c(0L, 1775421L, 999999999L),
-        c(
-          0L, 514528L, 1037072L, 1453997L, 1775421L, 2499831L, 2937948L,
-          3213286L, 999999999L
-        )
+         1775421L,
+        c(514528L, 1037072L, 1453997L, 1775421L, 2499831L, 2937948L, 3213286L)
       )
     ),
     vitalperiodic = list(
       patientunitstayid = `if`(is_demo,
-        c(0L, 1775421L, 999999999L),
-        c(
-          0L, 514528L, 1037072L, 1453997L, 1775421L, 2499831L, 2937948L,
-          3213286L, 999999999L
-        )
+         1775421L,
+        c(514528L, 1037072L, 1453997L, 1775421L, 2499831L, 2937948L, 3213286L)
       )
     )
   )
@@ -287,15 +279,15 @@ eicu_tbl_cfg <- function(is_demo = FALSE) {
     info[[which(tbl)]][["cols"]] <- new
   }
 
-  time_cols <- lapply(info, function(x) {
+  time_vars <- lapply(info, function(x) {
     nme <- vapply(x[["cols"]], `[[`, character(1L), "name")
     typ <- vapply(x[["cols"]], `[[`, character(1L), "spec")
     nme[typ == "col_integer" & grepl("offset$", nme)]
   })
 
-  names(time_cols) <- vapply(info, `[[`, character(1L), "table_name")
+  names(time_vars) <- vapply(info, `[[`, character(1L), "table_name")
 
-  as_tbl_spec(files, defaults, time_cols, info, part)
+  as_tbl_spec(files, defaults, time_vars, info, part)
 }
 
 mimic_tbl_cfg <- function(is_demo = FALSE) {
@@ -334,120 +326,120 @@ mimic_tbl_cfg <- function(is_demo = FALSE) {
 
   defaults <- list(
     admissions = list(
-      val_col = "admission_type"
+      val_var = "admission_type"
     ),
     callout = list(
-      index_col = "outcometime",
-      val_col = "callout_outcome"
+      index_var = "outcometime",
+      val_var = "callout_outcome"
     ),
     caregivers = list(
-      id_col = "cgid",
-      val_col = "label"
+      id_var = "cgid",
+      val_var = "label"
     ),
     chartevents = list(
-      index_col = "charttime",
-      val_col = "valuenum",
-      unit_col = "valueuom"
+      index_var = "charttime",
+      val_var = "valuenum",
+      unit_var = "valueuom"
     ),
     cptevents = list(
-      index_col = "chartdate",
-      val_col = "cpt_cd"
+      index_var = "chartdate",
+      val_var = "cpt_cd"
     ),
     d_cpt = list(
-      id_col = "subsectionrange",
-      val_col = "subsectionheader"
+      id_var = "subsectionrange",
+      val_var = "subsectionheader"
     ),
     d_icd_diagnoses = list(
-      id_col = "icd9_code",
-      val_col = "short_title"
+      id_var = "icd9_code",
+      val_var = "short_title"
     ),
     d_icd_procedures = list(
-      id_col = "icd9_code",
-      val_col = "short_title"
+      id_var = "icd9_code",
+      val_var = "short_title"
     ),
     d_items = list(
-      id_col = "itemid",
-      val_col = "label"
+      id_var = "itemid",
+      val_var = "label"
     ),
     d_labitems = list(
-      id_col = "itemid",
-      val_col = "label"
+      id_var = "itemid",
+      val_var = "label"
     ),
     datetimeevents = list(
-      index_col = "charttime",
-      val_col = "itemid"
+      index_var = "charttime",
+      val_var = "itemid"
     ),
     diagnoses_icd = list(
-      val_col = "icd9_code"
+      val_var = "icd9_code"
     ),
     drgcodes = list(
-      val_col = "drg_code"
+      val_var = "drg_code"
     ),
     icustays = list(
-      index_col = "intime",
-      val_col = "last_careunit"
+      index_var = "intime",
+      val_var = "last_careunit"
     ),
     inputevents_cv = list(
-      index_col = "charttime",
-      val_col = "rate",
-      unit_col = "rateuom"
+      index_var = "charttime",
+      val_var = "rate",
+      unit_var = "rateuom"
     ),
     inputevents_mv = list(
-      index_col = "starttime",
-      val_col = "rate",
-      unit_col = "rateuom"
+      index_var = "starttime",
+      val_var = "rate",
+      unit_var = "rateuom"
     ),
     labevents = list(
-      index_col = "charttime",
-      val_col = "valuenum",
-      unit_col = "valueuom"
+      index_var = "charttime",
+      val_var = "valuenum",
+      unit_var = "valueuom"
     ),
     microbiologyevents = list(
-      index_col = "chartdate",
-      val_col = "isolate_num"
+      index_var = "chartdate",
+      val_var = "isolate_num"
     ),
     noteevents = list(
-      index_col = "chartdate",
-      val_col = "text"
+      index_var = "chartdate",
+      val_var = "text"
     ),
     outputevents = list(
-      index_col = "charttime",
-      val_col = "value",
-      unit_col = "valueuom"
+      index_var = "charttime",
+      val_var = "value",
+      unit_var = "valueuom"
     ),
     patients = list(
-      val_col = "expire_flag"
+      val_var = "expire_flag"
     ),
     prescriptions = list(
-      index_col = "startdate",
-      val_col = "dose_val_rx",
-      unit_col = "dose_unit_rx"
+      index_var = "startdate",
+      val_var = "dose_val_rx",
+      unit_var = "dose_unit_rx"
     ),
     procedureevents_mv = list(
-      index_col = "starttime",
-      val_col = "value",
-      unit_col = "valueuom"
+      index_var = "starttime",
+      val_var = "value",
+      unit_var = "valueuom"
     ),
     procedures_icd = list(
-      val_col = "icd9_code"
+      val_var = "icd9_code"
     ),
     services = list(
-      index_col = "transfertime",
-      val_col = "curr_service"
+      index_var = "transfertime",
+      val_var = "curr_service"
     ),
     transfers = list(
-      index_col = "intime",
-      val_col = "curr_careunit"
+      index_var = "intime",
+      val_var = "curr_careunit"
     )
   )
 
   part <- list(
     chartevents = list(
       itemid = `if`(is_demo,
-        c(0L, 100000L, 999999999L),
-        c(
-          0L, 127L, 210L, 425L, 549L, 643L, 741L, 1483L, 3458L, 3695L, 8440L,
-          8553L, 220274L, 223921L, 224085L, 224859L, 227629L, 999999999L
+            100000L,
+        c(     127L,    210L,  425L,  549L,    643L,    741L,   1483L,
+              3458L,   3695L, 8440L, 8553L, 220274L, 223921L, 224085L,
+            224859L, 227629L
         )
       )
     )
@@ -479,15 +471,15 @@ mimic_tbl_cfg <- function(is_demo = FALSE) {
     })
   }
 
-  time_cols <- lapply(info, function(x) {
+  time_vars <- lapply(info, function(x) {
     nme <- vapply(x[["cols"]], `[[`, character(1L), "name")
     typ <- vapply(x[["cols"]], `[[`, character(1L), "spec")
     nme[typ == "col_datetime"]
   })
 
-  names(time_cols) <- vapply(info, `[[`, character(1L), "table_name")
+  names(time_vars) <- vapply(info, `[[`, character(1L), "table_name")
 
-  as_tbl_spec(files, defaults, time_cols, info, part)
+  as_tbl_spec(files, defaults, time_vars, info, part)
 }
 
 hirid_tbl_cfg <- function() {
@@ -531,46 +523,92 @@ hirid_tbl_cfg <- function() {
       typeid = list(spec = "col_integer"),
       subtypeid = list(spec = "col_double"),
       recordstatus = list(spec = "col_integer")
+    ),
+    variables = list(
+      `Source Table` = list(spec = "col_character"),
+      ID = list(spec = "col_integer"),
+      `Variable Name` = list(spec = "col_character"),
+      Unit = list(spec = "col_character"),
+      `Additional information` = list(spec = "col_character")
     )
   )
 
   files <- list(
-    "general.csv.gz",
-    paste0("observations_", 1:3, ".csv.gz"),
-    "ordinal.csv.gz",
-    "pharma.csv.gz"
-  )
-  names(files) <- names(info)
-
-  defaults <- list(
-    general = list(),
-    observations = list(
-      index_col = "datetime",
-      val_col = "value"
+    list(
+      reference_data.tar.gz = "general_table.csv"
     ),
-    ordinal = list(),
-    pharma = list(
-      index_col = "givenat",
-      val_col = "givendose"
+    list(
+      `raw_stage/observation_tables_csv.tar.gz` = file.path(
+        "observation_tables", "csv", paste0("part-", 0L:249L, ".csv")
+      )
+    ),
+    list(
+      reference_data.tar.gz = "ordinal_vars_ref.csv"
+    ),
+    list(
+      `raw_stage/pharma_records_csv.tar.gz` = file.path(
+        "pharma_records", "csv", paste0("part-", 0L:249L, ".csv")
+      )
+    ),
+    list(
+      reference_data.tar.gz = "hirid_variable_reference.csv"
     )
   )
 
-  part <- list(observations = list(patientid = 1L:16L))
+  names(files) <- names(info)
 
-  info <- Map(function(x, name) {
+  defaults <- list(
+    general = list(
+      index_var = "admissiontime"
+    ),
+    observations = list(
+      index_var = "datetime",
+      val_var = "value"
+    ),
+    ordinal = list(
+      id_var = "variableid"
+    ),
+    pharma = list(
+      index_var = "givenat",
+      val_var = "givendose"
+    ),
+    variables = list(
+      id_var = "id"
+    )
+  )
+
+  n_row <- list(
+    general = 33905L,
+    variables = 712L,
+    ordinal = 72L,
+    pharma = 16270399L,
+    observations = 776921131L
+  )
+
+  part <- list(
+    observations = list(variableid = c(
+       100L,  110L,  120L,  200L,  210L,      211L,      300L, 620L,
+      2010L, 2610L, 3110L, 4000L, 5685L, 15001565L, 30005075L)
+    ),
+    pharma = list(pharmaid = 431L)
+  )
+
+  info <- Map(function(x, name, nr) {
     list(table_name = name,
-         cols = Map(c, Map(list, name = names(x), col = names(x)), x))
-  }, info, names(info))
+         cols = Map(c, Map(list, name = sub(" ", "_", tolower(names(x))),
+                    col = names(x)), x),
+         num_rows = nr)
+  }, info, names(info), n_row[names(info)])
 
-  time_cols <- lapply(info, function(x) {
+  time_vars <- lapply(info, function(x) {
     nme <- vapply(x[["cols"]], `[[`, character(1L), "name")
     typ <- vapply(x[["cols"]], `[[`, character(1L), "spec")
     nme[typ == "col_datetime"]
   })
 
-  names(time_cols) <- vapply(info, `[[`, character(1L), "table_name")
+  names(time_vars) <- vapply(info, `[[`, character(1L), "table_name")
 
-  as_tbl_spec(files, defaults, time_cols, info, part)
+  as_tbl_spec(files, defaults, time_vars, info, part)
 }
 
 pkg_dir <- rprojroot::find_root(rprojroot::is_r_package)
@@ -591,6 +629,7 @@ cfg <- list(
   ),
   list(
     name = "eicu_demo",
+    class_prefix = c("eicu_demo", "eicu"),
     url = "https://physionet.org/files/eicu-crd-demo/2.0",
     id_cfg = list(
       hadm = list(id = "patienthealthsystemstayid", position = 1L,
@@ -616,6 +655,7 @@ cfg <- list(
   ),
   list(
     name = "mimic_demo",
+    class_prefix = c("mimic_demo", "mimic"),
     url = "https://physionet.org/files/mimiciii-demo/1.4",
     id_cfg = list(
       patient = list(id = "subject_id", position = 1L, start = "dob",
@@ -629,7 +669,7 @@ cfg <- list(
   ),
   list(
     name = "hirid",
-    url = "https://physionet.org/files/hirid/0.1",
+    url = "https://physionet.org/files/hirid/1.0",
     id_cfg = list(
       icustay = list(id = "patientid", position = 1L, start = "admissiontime",
                      table = "general")

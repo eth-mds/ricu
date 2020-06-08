@@ -14,7 +14,7 @@ test_that("id up/downgrades", {
   expect_is(alb, "ts_tbl")
 
   tbl  <- as_src_tbl("patients", "mimic_demo")
-  sex <- load_id(tbl, cols = "gender", id_col = "hadm_id")
+  sex <- load_id(tbl, cols = "gender", id_var = "hadm_id")
 
   expect_is(sex, "id_tbl")
 })

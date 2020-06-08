@@ -123,7 +123,7 @@ load_concepts.item <- function(x, patient_ids = NULL, id_type = "icustay",
   warn_dots(...)
 
   if (length(x) == 0L) {
-    res <- setNames(list(integer(), numeric()), c(id_type, "val_col"))
+    res <- setNames(list(integer(), numeric()), c(id_type, "val_var"))
     return(as_id_tbl(res, id_vars = id_type, by_ref = TRUE))
   }
 
@@ -153,14 +153,14 @@ load_cncpt.cncpt <- function(x, verbose, ...) {
 load_cncpt.num_cncpt <- function(x, verbose, ...) {
 
   check_bound <- function(x, val, op) {
-    vc  <- x[["val_col"]]
+    vc  <- x[["val_var"]]
     nna <- !is.na(vc)
     if (is.null(val)) nna else nna & op(vc, val)
   }
 
   report_unit <- function(x, unt) {
 
-    ct  <- table(x[["unit_col"]], useNA = "ifany")
+    ct  <- table(x[["unit_var"]], useNA = "ifany")
     nm  <- names(ct)
     rep <- paste0(nm, " (", prcnt(ct), ")", collapse = ", ")
 
@@ -195,17 +195,17 @@ load_cncpt.num_cncpt <- function(x, verbose, ...) {
 
   unit <- x[["unit"]]
 
-  if (verbose && has_name(res, "unit_col")) {
+  if (verbose && has_name(res, "unit_var")) {
     report_unit(res, unit)
   }
 
-  res <- rm_cols(res, "unit_col", skip_absent = TRUE, by_ref = TRUE)
+  res <- rm_cols(res, "unit_var", skip_absent = TRUE, by_ref = TRUE)
 
   if (not_null(unit)) {
-    setattr(res[["val_col"]], "units", unit)
+    setattr(res[["val_var"]], "units", unit)
   }
 
-  rename_cols(res, x[["name"]], "val_col", by_ref = TRUE)
+  rename_cols(res, x[["name"]], "val_var", by_ref = TRUE)
 }
 
 #' @export
@@ -216,9 +216,9 @@ load_cncpt.fct_cncpt <- function(x, verbose, ...) {
   res <- load_concepts(x[["items"]], ...)
 
   if (is.character(lvl)) {
-    keep <- res[["val_col"]] %chin% lvl
+    keep <- res[["val_var"]] %chin% lvl
   } else {
-    keep <- res[["val_col"]] %in% lvl
+    keep <- res[["val_var"]] %in% lvl
   }
 
   if (!all(keep)) {
@@ -234,7 +234,7 @@ load_cncpt.fct_cncpt <- function(x, verbose, ...) {
     }
   }
 
-  rename_cols(res, x[["name"]], "val_col", by_ref = TRUE)
+  rename_cols(res, x[["name"]], "val_var", by_ref = TRUE)
 }
 
 #' @rdname item_utils
@@ -248,16 +248,16 @@ load_itm <- function(x, patient_ids, id_type, interval) {
 load_itm.col_itm <- function(x, patient_ids, id_type, interval) {
 
   tbl <- as_src_tbl(x)
-  id  <- get_id_col(tbl, id_type)
+  id  <- get_id_var(tbl, id_type)
 
-  itm <- x[["itm_cols"]]
-  cbc <- x[["cb_cols"]]
+  itm <- x[["itm_vars"]]
+  cbc <- x[["cb_vars"]]
 
   if (need_idx(x)) {
-    res <- load_ts(tbl, cols = c(itm, cbc), id_col = id,
-                   index_col = x[["index_col"]], interval = interval)
+    res <- load_ts(tbl, cols = c(itm, cbc), id_var = id,
+                   index_var = x[["index_var"]], interval = interval)
   } else {
-    res <- load_id(tbl, cols = c(itm, cbc), id_col = id, interval = interval)
+    res <- load_id(tbl, cols = c(itm, cbc), id_var = id, interval = interval)
   }
 
   res <- merge_patid(res, patient_ids)
@@ -284,13 +284,13 @@ load_sub_itm <- function(x, patient_ids, id_type, interval) {
 
   qry <- prepare_query(x)
   tbl <- as_src_tbl(x)
-  id  <- get_id_col(tbl, id_type)
+  id  <- get_id_var(tbl, id_type)
 
-  itm <- x[["itm_cols"]]
-  cbc <- x[["cb_cols"]]
+  itm <- x[["itm_vars"]]
+  cbc <- x[["cb_vars"]]
 
   if (need_idx(x)) {
-    res <- load_ts(tbl, !!qry, c(itm, cbc), id, x[["index_col"]], interval)
+    res <- load_ts(tbl, !!qry, c(itm, cbc), id, x[["index_var"]], interval)
   } else {
     res <- load_id(tbl, !!qry, c(itm, cbc), id, interval)
   }
@@ -314,13 +314,13 @@ load_itm.los_itm <- function(x, patient_ids, id_type, interval) {
                       in_time = NULL, interval = mins(1L))
 
   if (!identical(win, id_type)) {
-    res <- rm_cols(res, get_id_col(cfg, win), by_ref = TRUE)
+    res <- rm_cols(res, get_id_var(cfg, win), by_ref = TRUE)
   }
 
   res <- merge_patid(res, patient_ids)
-  res <- rename_cols(res, "val_col", data_vars(res), by_ref = TRUE)
+  res <- rename_cols(res, "val_var", data_vars(res), by_ref = TRUE)
 
-  set(res, j = "val_col", value = as.double(res[["val_col"]], units = "days"))
+  set(res, j = "val_var", value = as.double(res[["val_var"]], units = "days"))
 }
 
 merge_patid <- function(x, patid) {

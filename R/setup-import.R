@@ -103,10 +103,10 @@ import_src.src_cfg <- function(x, dir = src_data_dir(x), force = FALSE, ...) {
 
   assert_that(is.dir(dir), is.flag(force))
 
-  tbl <- as_tbl_spec(x)
+  tbl <- as_tbl_cfg(x)
 
-  todo <- lgl_ply(file_names(tbl), all_avail)
-  done <- lgl_ply(fst_names(tbl), all_avail)
+  todo <- lgl_ply(lapply(tbl, dst_files), all_avail)
+  done <- lgl_ply(lapply(tbl, fst_names), all_avail)
   miss <- !done & !todo
   skip <- done & todo
 
@@ -127,11 +127,11 @@ import_src.src_cfg <- function(x, dir = src_data_dir(x), force = FALSE, ...) {
   }
 
   tbl <- tbl[todo]
-  pba <- progr_init(sum(n_rows(tbl)),
+  pba <- progr_init(sum(int_ply(tbl, n_rows)),
     paste0("Importing ", length(tbl), " tables for ", quote_bt(src_name(x)))
   )
 
-  for(table in as.list(tbl)) {
+  for(table in tbl) {
     import_tbl(table, dir = dir, progress = pba, ...)
   }
 
@@ -167,11 +167,12 @@ import_tbl <- function(x, ...) UseMethod("import_tbl", x)
 
 #' @rdname import
 #' @export
-import_tbl.tbl_spec <- function(x, dir = src_data_dir(x), progress = NULL,
+import_tbl.tbl_cfg <- function(x, dir = src_data_dir(x), progress = NULL,
                                 cleanup = TRUE, ...) {
 
-  assert_that(is.dir(dir), is.flag(cleanup), ...length() == 0L,
-              length(x) == 1L)
+  warn_dots(...)
+
+  assert_that(is.dir(dir), is.flag(cleanup))
 
   if (n_partitions(x) > 1L) {
     partition_table(x, dir, progress, cleanup)
@@ -208,10 +209,11 @@ split_write <- function(x, part_fun, dir, chunk_no, prog, nme) {
 
   x <- split(x, part_fun(x))
 
-  tmp_nme <- file.path(dir, paste0("part_", seq_along(x)),
+  tmp_nme <- file.path(dir, paste0("part_", names(x)),
                        paste0("chunk_", chunk_no, ".fst"))
 
-  ensure_dirs(dirname(tmp_nme))
+  ensure_dirs(unique(dirname(tmp_nme)))
+  assert_that(!any(file.exists(tmp_nme)))
 
   Map(fst::write_fst, x, tmp_nme)
 
@@ -223,15 +225,15 @@ split_write <- function(x, part_fun, dir, chunk_no, prog, nme) {
 partition_table <- function(x, dir, progress = NULL, cleanup = TRUE,
                             chunk_length = 10 ^ 7) {
 
-  assert_that(length(x) == 1L, n_partitions(x) > 1L)
+  assert_that(n_partitions(x) > 1L)
 
   tempdir <- ensure_dirs(tempfile())
   on.exit(unlink(tempdir, recursive = TRUE))
 
   spec <- col_spec(x)
   pfun <- partition_fun(x, orig_names = TRUE)
-  file <- file.path(dir, file_name(x))
-  name <- names(x)
+  file <- file.path(dir, dst_files(x))
+  name <- tbl_name(x)
 
   if (length(file) == 1L) {
 
@@ -254,14 +256,14 @@ partition_table <- function(x, dir, progress = NULL, cleanup = TRUE,
     }
   }
 
-  col_names <- col_name(x)
-  targ_dir  <- file.path(dir, names(x))
+  cols <- col_names(x)
+  targ <- file.path(dir, name)
 
   for (src_dir in list.files(tempdir, full.names = TRUE)) {
-    merge_fst_chunks(src_dir, targ_dir, col_names, progress, name)
+    merge_fst_chunks(src_dir, targ, cols, progress, name)
   }
 
-  fst_tables <- lapply(file.path(dir, fst_name(x)), fst::fst)
+  fst_tables <- lapply(file.path(dir, fst_names(x)), fst::fst)
   total_rows <- sum(dbl_ply(fst_tables, nrow))
 
   if (check_n_row(x, total_rows) && cleanup) {
@@ -273,26 +275,26 @@ partition_table <- function(x, dir, progress = NULL, cleanup = TRUE,
 
 csv_to_fst <- function(x, dir, progress = NULL, cleanup = TRUE) {
 
-  assert_that(length(x) == 1L, n_partitions(x) == 1L)
+  src <- file.path(dir, dst_files(x))
+  dst <- file.path(dir, fst_names(x))
 
-  file <- file.path(dir, file_name(x))
-  dat  <- readr::read_csv(file, col_types = col_spec(x), progress = FALSE)
+  assert_that(length(src) == 1L, length(dst) == 1L)
 
+  dat  <- readr::read_csv(src, col_types = col_spec(x), progress = FALSE)
   readr::stop_for_problems(dat)
 
-  cols <- col_name(x)
+  cols <- col_names(x)
   dat  <- setnames(dat, names(cols), cols)
-  res  <- file.path(dir, fst_name(x))
 
-  fst::write_fst(dat, res, compress = 100L)
+  fst::write_fst(dat, dst, compress = 100L)
 
-  n_row <- nrow(fst::fst(res))
+  n_row <- nrow(fst::fst(dst))
 
   if (check_n_row(x, n_row) && cleanup) {
-    unlink(file)
+    unlink(src)
   }
 
-  progr_iter(names(x), pb = progress, len = n_row)
+  progr_iter(tbl_name(x), pb = progress, len = n_row)
 
   invisible(NULL)
 }
