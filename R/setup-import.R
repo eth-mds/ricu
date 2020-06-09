@@ -140,6 +140,8 @@ import_src.src_cfg <- function(x, dir = src_data_dir(x), force = FALSE, ...) {
     pba$terminate()
   }
 
+  message("Successfully imported ", length(tbl), " tables")
+
   invisible(NULL)
 }
 
@@ -158,8 +160,6 @@ import_src.character <- function(x, name = "data-sources", file = NULL,
 
 #' @param progress Either `NULL` or a progress bar as created by
 #' [progress::progress_bar()]
-#' @param cleanup Logical flag, if `TRUE` the original CSV data is deleted
-#' after successful import.
 #'
 #' @rdname import
 #' @export
@@ -168,16 +168,16 @@ import_tbl <- function(x, ...) UseMethod("import_tbl", x)
 #' @rdname import
 #' @export
 import_tbl.tbl_cfg <- function(x, dir = src_data_dir(x), progress = NULL,
-                                cleanup = TRUE, ...) {
+                               ...) {
 
   warn_dots(...)
 
-  assert_that(is.dir(dir), is.flag(cleanup))
+  assert_that(is.dir(dir))
 
   if (n_partitions(x) > 1L) {
-    partition_table(x, dir, progress, cleanup)
+    partition_table(x, dir, progress)
   } else {
-    csv_to_fst(x, dir, progress, cleanup)
+    csv_to_fst(x, dir, progress)
   }
 }
 
@@ -222,8 +222,7 @@ split_write <- function(x, part_fun, dir, chunk_no, prog, nme) {
   invisible(NULL)
 }
 
-partition_table <- function(x, dir, progress = NULL, cleanup = TRUE,
-                            chunk_length = 10 ^ 7) {
+partition_table <- function(x, dir, progress = NULL, chunk_length = 10 ^ 7) {
 
   assert_that(n_partitions(x) > 1L)
 
@@ -264,16 +263,13 @@ partition_table <- function(x, dir, progress = NULL, cleanup = TRUE,
   }
 
   fst_tables <- lapply(file.path(dir, fst_names(x)), fst::fst)
-  total_rows <- sum(dbl_ply(fst_tables, nrow))
 
-  if (check_n_row(x, total_rows) && cleanup) {
-    unlink(file)
-  }
+  check_n_row(x, sum(dbl_ply(fst_tables, nrow)))
 
   invisible(NULL)
 }
 
-csv_to_fst <- function(x, dir, progress = NULL, cleanup = TRUE) {
+csv_to_fst <- function(x, dir, progress = NULL) {
 
   src <- file.path(dir, dst_files(x))
   dst <- file.path(dir, fst_names(x))
@@ -288,13 +284,9 @@ csv_to_fst <- function(x, dir, progress = NULL, cleanup = TRUE) {
 
   fst::write_fst(dat, dst, compress = 100L)
 
-  n_row <- nrow(fst::fst(dst))
+  fst_table <- fst::fst(dst)
 
-  if (check_n_row(x, n_row) && cleanup) {
-    unlink(src)
-  }
-
-  progr_iter(tbl_name(x), pb = progress, len = n_row)
+  progr_iter(tbl_name(x), pb = progress, len = check_n_row(x, nrow(fst_table)))
 
   invisible(NULL)
 }

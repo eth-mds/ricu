@@ -587,7 +587,7 @@ hirid_tbl_cfg <- function() {
 
   part <- list(
     observations = list(variableid = c(
-       100L,  110L,  120L,  200L,  210L,      211L,      300L, 620L,
+       110L,  120L,  200L,  210L,  211L,      300L,      620L,
       2010L, 2610L, 3110L, 4000L, 5685L, 15001565L, 30005075L)
     ),
     pharma = list(pharmaid = 431L)

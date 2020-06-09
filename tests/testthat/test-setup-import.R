@@ -35,7 +35,7 @@ test_that("import csv", {
 
   cfg <- new_tbl_cfg("cars", "foo", "mtcars.csv", spec, 32L)
 
-  expect_null(csv_to_fst(cfg, tmp, cleanup = FALSE))
+  expect_null(csv_to_fst(cfg, tmp))
 })
 
 test_that("import partitioned", {
@@ -44,10 +44,10 @@ test_that("import partitioned", {
 
   cfg <- new_tbl_cfg("cars", "foo", "mtcars.csv", spec, 32L, part)
 
-  expect_null(partition_table(cfg, tmp, cleanup = FALSE, chunk_length = 5))
+  expect_null(partition_table(cfg, tmp, chunk_length = 5))
 
   cfg <- new_tbl_cfg("cars", "foo", c("cars_0.csv", "cars_1.csv"), spec, 32L,
                      part)
 
-  expect_null(partition_table(cfg, tmp, cleanup = FALSE, chunk_length = 5))
+  expect_null(partition_table(cfg, tmp, chunk_length = 5))
 })

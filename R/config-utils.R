@@ -179,7 +179,7 @@ check_n_row <- function(x, n_row) {
   expec <- n_rows(x)
 
   if (is.null(expec)) {
-    return(TRUE)
+    return(invisible(n_row))
   }
 
   assert_that(all_equal(expec, n_row), msg = paste0("Table ",
@@ -187,7 +187,7 @@ check_n_row <- function(x, n_row) {
     big_mark(expec), " rows")
   )
 
-  TRUE
+  invisible(n_row)
 }
 
 col_names <- function(x) {

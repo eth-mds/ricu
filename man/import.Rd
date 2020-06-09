@@ -16,7 +16,7 @@ import_src(x, ...)
 
 import_tbl(x, ...)
 
-\method{import_tbl}{tbl_cfg}(x, dir = src_data_dir(x), progress = NULL, cleanup = TRUE, ...)
+\method{import_tbl}{tbl_cfg}(x, dir = src_data_dir(x), progress = NULL, ...)
 }
 \arguments{
 \item{x}{Object specifying the source configuration}
@@ -36,9 +36,6 @@ the default config directors}
 
 \item{progress}{Either \code{NULL} or a progress bar as created by
 \code{\link[progress:progress_bar]{progress::progress_bar()}}}
-
-\item{cleanup}{Logical flag, if \code{TRUE} the original CSV data is deleted
-after successful import.}
 }
 \description{
 In order to speed up data access operations, \code{ricu} does not directly use

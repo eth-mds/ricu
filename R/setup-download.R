@@ -349,16 +349,18 @@ download_check_data <- function(dest_folder, files, url, user, pass, src) {
 
   if (is_pkg_available("openssl")) {
 
+    message("Comparing checksums")
+
     checks <- mapply(check_file_sha256, paths, chksums)
 
     if (!all(checks)) {
-      warning("The following files have the wrong checksum:\n  ",
+      warning("The following files have wrong checksums:\n  ",
               paste(files[!checks], collapse = "\n  "))
     }
 
   } else {
 
-    message("The package openssl is required for checking file hashes.")
+    message("The package openssl is required for comparing checksums.")
   }
 
   invisible(NULL)

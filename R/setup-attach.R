@@ -67,16 +67,17 @@ setup_src_env.src_cfg <- function(x, env, dir = src_data_dir(x)) {
 
   tbl <- as_tbl_cfg(x)
 
-  files <- Map(file.path, dir, lapply(tbl, fst_names))
-  names(files) <- names(tbl)
+  fst_files <- lapply(tbl, fst_names)
+  fst_paths <- Map(file.path, dir, fst_files)
 
-  missing <- lgl_ply(files, all_fun, Negate(file.exists))
+  tables  <- chr_ply(tbl, tbl_name)
+  missing <- lgl_ply(fst_paths, all_fun, Negate(file.exists))
 
   if (any(missing)) {
 
-    todo <- names(files[missing])
+    todo <- tables[missing]
 
-    msg <- paste("The following tables are missing from", dir,
+    msg <- paste("\nThe following tables are missing from", dir,
                  paste(todo, collapse = "\n  "), sep = "\n  ")
 
     if (interactive()) {
@@ -93,19 +94,26 @@ setup_src_env.src_cfg <- function(x, env, dir = src_data_dir(x)) {
       stop(msg)
     }
 
-    download_src(x, dir, tables = todo)
-    import_src(x, dir, cleanup = TRUE)
+    tmp <- ensure_dirs(tempfile())
+    on.exit(unlink(tmp, recursive = TRUE))
 
-    done <- lgl_ply(files, all_fun, file.exists)
+    download_src(x, tmp, tables = todo)
+    import_src(x, tmp)
+
+    Map(file.rename, Map(file.path, tmp, fst_files[missing]),
+        fst_paths[missing])
+
+    done <- lgl_ply(fst_paths, all_fun, file.exists)
 
     assert_that(all(done), msg = paste0("Not all required tables were ",
-      "successfully downloaded and imported: ", concat(names(files[!done])),
+      "successfully downloaded and imported: ", concat(tables[!done]),
       " are still missing")
     )
   }
 
-  dat_tbls <- Map(new_src_tbl, files, as_col_cfg(x),
+  dat_tbls <- Map(new_src_tbl, fst_paths, as_col_cfg(x),
                   MoreArgs = list(src_env = env))
+  names(dat_tbls) <- tables
 
   list2env(dat_tbls, envir = env)
 }
