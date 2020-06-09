@@ -133,9 +133,9 @@ as_tbl_cfg.tbl_cfg <- function(x) x
 #'
 as_tbl_cfg.src_cfg <- function(x) x[["tbl_cfg"]]
 
-n_rows <- function(x) {
-  assert_that(is_tbl_cfg(x))
-  x[["nrow"]]
+#' @export
+dim.tbl_cfg <- function(x) {
+  c(x[["nrow"]], length(x[["cols"]]))
 }
 
 src_files <- function(x) {
@@ -176,16 +176,16 @@ check_n_row <- function(x, n_row) {
 
   assert_that(is_tbl_cfg(x), is.count(n_row))
 
-  expec <- n_rows(x)
+  expec <- nrow(x)
 
   if (is.null(expec)) {
     return(invisible(n_row))
   }
 
-  assert_that(all_equal(expec, n_row), msg = paste0("Table ",
-    quote_bt(names(x)), " has ", big_mark(n_row), " instead of ",
-    big_mark(expec), " rows")
-  )
+  if (!all_equal(expec, n_row)) {
+    warning("Table ", quote_bt(tbl_name(x)), " has ",
+            big_mark(n_row), " instead of ", big_mark(expec), " rows")
+  }
 
   invisible(n_row)
 }

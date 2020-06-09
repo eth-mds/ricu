@@ -157,17 +157,6 @@ download_src.character <- function(x, name = "data-sources", file = NULL,
   invisible(NULL)
 }
 
-read_line <- function(prompt = "", mask_input = FALSE) {
-
-  assert_that(interactive(), msg = "User input is required")
-
-  if (mask_input && is_pkg_available("getPass")) {
-    getPass::getPass(prompt)
-  } else {
-    readline(prompt)
-  }
-}
-
 download_pysionet_file <- function(url, dest = NULL, user = NULL,
                                    pass = NULL, head_only = FALSE,
                                    progress = NULL) {
@@ -190,7 +179,7 @@ download_pysionet_file <- function(url, dest = NULL, user = NULL,
     assert_that(is.null(progress))
 
     if (head_only) {
-      return(curl_fetch_memory(url, handle_setopt(handle, nobody = TRUE)))
+      handle <- handle_setopt(handle, nobody = TRUE)
     }
 
     res <- curl_fetch_memory(url, handle)
@@ -238,7 +227,11 @@ download_pysionet_file <- function(url, dest = NULL, user = NULL,
     stop(rawToChar(res[["content"]]))
   }
 
-  if (is.null(dest)) {
+  if (head_only) {
+
+    res
+
+  } else if (is.null(dest)) {
 
     res[["content"]]
 
@@ -266,14 +259,19 @@ check_file_sha256 <- function(file, val) {
   isTRUE(as.character(openssl::sha256(file(file, raw = TRUE))) == val)
 }
 
-get_cred <- function(x, env, msg, hide = FALSE) {
+get_cred <- function(x, env, msg) {
 
-  assert_that(is.string(env), is.string(msg), is.flag(hide))
+  assert_that(is.string(env), is.string(msg))
 
   if (is.null(x)) {
+
     x <- Sys.getenv(env, unset = NA_character_)
+
     if (is.na(x)) {
-      x <- read_line(msg, hide)
+
+      assert_that(interactive(), msg = "User input is required")
+
+      x <- readline(msg)
     }
   }
 
@@ -318,7 +316,7 @@ download_check_data <- function(dest_folder, files, url, user, pass, src) {
   if (is.null(chksums)) {
 
     user <- get_cred(user, "RICU_PHYSIONET_USER", "username: ")
-    pass <- get_cred(pass, "RICU_PHYSIONET_PASS", "password: ", TRUE)
+    pass <- get_cred(pass, "RICU_PHYSIONET_PASS", "password: ")
 
     chksums <- get_sha256(url, user, pass)
   }

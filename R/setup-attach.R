@@ -68,7 +68,11 @@ setup_src_env.src_cfg <- function(x, env, dir = src_data_dir(x)) {
   tbl <- as_tbl_cfg(x)
 
   fst_files <- lapply(tbl, fst_names)
-  fst_paths <- Map(file.path, ensure_dirs(dir), fst_files)
+  fst_paths <- Map(file.path, dir, fst_files)
+
+  ensure_dirs(
+    unique(dirname(unlist(fst_paths, recursive = FALSE)))
+  )
 
   tables  <- chr_ply(tbl, tbl_name)
   missing <- lgl_ply(fst_paths, all_fun, Negate(file.exists))
@@ -83,7 +87,7 @@ setup_src_env.src_cfg <- function(x, env, dir = src_data_dir(x)) {
     if (interactive()) {
 
       message(msg)
-      resp <- read_line("Download now (Y/n)? ")
+      resp <- readline("Download now (Y/n)? ")
 
       if (!identical(resp, "Y")) {
         stop("Cannot continue without missing tables for `", src_name(x), "`.")
@@ -167,7 +171,7 @@ get_from_data_env <- function(source) {
 
     msg <- conditionMessage(e)
 
-    if (!grepl("^\nThe following tables are missing from\n", msg)) {
+    if (any(!grepl("^\nThe following tables are missing from\n", msg))) {
       message(msg)
     }
 

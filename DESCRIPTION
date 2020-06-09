@@ -33,7 +33,6 @@ Imports:
     rlang,
     vctrs
 Suggests:
-    getPass,
     openssl,
     xml2,
     covr,

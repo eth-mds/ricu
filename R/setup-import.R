@@ -107,13 +107,7 @@ import_src.src_cfg <- function(x, dir = src_data_dir(x), force = FALSE, ...) {
 
   todo <- lgl_ply(lapply(tbl, dst_files), all_avail)
   done <- lgl_ply(lapply(tbl, fst_names), all_avail)
-  miss <- !done & !todo
   skip <- done & todo
-
-  if (any(miss)) {
-    warning("Tables ", concat(quote_bt(names(tbl)[miss])), " are required ",
-            "but unavailable")
-  }
 
   if (!force && any(skip)) {
     message("Tables ", concat(quote_bt(names(tbl)[skip])), " have already ",
@@ -127,7 +121,7 @@ import_src.src_cfg <- function(x, dir = src_data_dir(x), force = FALSE, ...) {
   }
 
   tbl <- tbl[todo]
-  pba <- progr_init(sum(int_ply(tbl, n_rows)),
+  pba <- progr_init(sum(int_ply(tbl, nrow)),
     paste0("Importing ", length(tbl), " tables for ", quote_bt(src_name(x)))
   )
 
