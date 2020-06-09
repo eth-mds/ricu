@@ -208,8 +208,6 @@ download_pysionet_file <- function(url, dest = NULL, user = NULL,
         writeBin(x, con)
       }
 
-      browser()
-
       res <- curl_fetch_stream(url, prog_fun, handle = handle)
     }
 
@@ -307,8 +305,6 @@ download_check_data <- function(dest_folder, files, url, user, pass, src) {
     if (is.null(prog)) {
       progr_iter(basename(url), NULL, size)
     }
-
-    browser()
 
     download_pysionet_file(url, path, user, pass, progress = prog)
 
