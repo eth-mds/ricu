@@ -270,7 +270,7 @@ rbind_lst <- function(x, ...) {
     ptyp <- as_ptype(x[[which(ts_tbl)[1L]]])
 
     assert_that(
-      all_fun(lapply(x[ts_tbl], interval), lgl_ply, all_equal, interval(ptyp)),
+      all_fun(lapply(x[ts_tbl], interval), all_equal, interval(ptyp)),
       msg = "cannot mix interval lengths when row-binding"
     )
 
