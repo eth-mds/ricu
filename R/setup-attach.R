@@ -68,7 +68,7 @@ setup_src_env.src_cfg <- function(x, env, dir = src_data_dir(x)) {
   tbl <- as_tbl_cfg(x)
 
   fst_files <- lapply(tbl, fst_names)
-  fst_paths <- Map(file.path, dir, fst_files)
+  fst_paths <- Map(file.path, ensure_dirs(dir), fst_files)
 
   tables  <- chr_ply(tbl, tbl_name)
   missing <- lgl_ply(fst_paths, all_fun, Negate(file.exists))
@@ -86,7 +86,7 @@ setup_src_env.src_cfg <- function(x, env, dir = src_data_dir(x)) {
       resp <- read_line("Download now (Y/n)? ")
 
       if (!identical(resp, "Y")) {
-        stop("Cannot continue without the missing data.")
+        stop("Cannot continue without missing tables for `", src_name(x), "`.")
       }
 
     } else {
@@ -100,14 +100,19 @@ setup_src_env.src_cfg <- function(x, env, dir = src_data_dir(x)) {
     download_src(x, tmp, tables = todo)
     import_src(x, tmp)
 
-    Map(file.rename, Map(file.path, tmp, fst_files[missing]),
-        fst_paths[missing])
+    done <- Map(file.rename, Map(file.path, tmp, fst_files[missing]),
+                fst_paths[missing])
+
+    assert_that(all_fun(done, all), msg = paste0(
+      "The following tables could be moved to the required location: ",
+      concat(todo[!done]))
+    )
 
     done <- lgl_ply(fst_paths, all_fun, file.exists)
 
-    assert_that(all(done), msg = paste0("Not all required tables were ",
-      "successfully downloaded and imported: ", concat(tables[!done]),
-      " are still missing")
+    assert_that(all(done), msg = paste0(
+      "Not all required tables were successfully downloaded and imported: ",
+      concat(tables[!done])," are still missing")
     )
   }
 
@@ -158,6 +163,17 @@ data_env <- function() get("data", envir = pkg_env(), mode = "environment")
 
 get_from_data_env <- function(source) {
 
+  err_fun <- function(e) {
+
+    msg <- conditionMessage(e)
+
+    if (!grepl("^\nThe following tables are missing from\n", msg)) {
+      message(msg)
+    }
+
+    invisible(NULL)
+  }
+
   source <- force(source)
 
   function(value) {
@@ -166,7 +182,7 @@ get_from_data_env <- function(source) {
       msg = paste0("Cannot update read-only data source `", source, "`")
     )
 
-    tryCatch(as_src_env(source), error = function(e) invisible(NULL))
+    tryCatch(as_src_env(source), error = err_fun)
   }
 }
 

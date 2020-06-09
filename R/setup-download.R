@@ -137,7 +137,9 @@ download_src.src_cfg <- function(x, dir = src_data_dir(x), tables = NULL,
 
   ensure_dirs(unique(dirname(targ)))
 
-  file.rename(file.path(tmp, to_mv), targ)
+  assert_that(all(file.rename(file.path(tmp, to_mv), targ)), msg = paste0(
+    "Some files could not be moved to the required location")
+  )
 
   invisible(NULL)
 }
