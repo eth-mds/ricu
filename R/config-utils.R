@@ -268,6 +268,10 @@ default_var.src_tbl <- function(x, type = "id_var", ...) {
 
 #' @rdname cfg_utils
 #' @export
+default_var.src_env <- function(x, ...) eapply(x, default_var, ...)
+
+#' @rdname cfg_utils
+#' @export
 src_name <- function(x) UseMethod("src_name", x)
 
 #' @rdname cfg_utils

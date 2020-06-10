@@ -5,6 +5,7 @@
 \alias{default_var.col_cfg}
 \alias{default_var.id_cfg}
 \alias{default_var.src_tbl}
+\alias{default_var.src_env}
 \alias{src_name}
 \alias{src_name.src_cfg}
 \alias{src_name.id_cfg}
@@ -22,6 +23,8 @@ default_var(x, ...)
 \method{default_var}{id_cfg}(x, ...)
 
 \method{default_var}{src_tbl}(x, type = "id_var", ...)
+
+\method{default_var}{src_env}(x, ...)
 
 src_name(x)
 

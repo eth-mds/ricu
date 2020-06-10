@@ -100,7 +100,7 @@ tbl_sum.src_tbl <- function(x) {
 
 tim_desc <- function(x) {
 
-  x <- default_var(x, "time_vars")
+  x <- time_vars(x)
 
   if (has_length(x)) {
     concat(x)
@@ -136,6 +136,9 @@ part_desc <- function(x) {
     NULL
   }
 }
+
+#' @export
+time_vars.src_tbl <- function(x) default_var(x, "time_vars")
 
 #' @export
 src_name.src_tbl <- function(x) {
@@ -210,8 +213,9 @@ dim_desc <- function(x) {
   paste0("[", big_mark(x[1L]), " ", times(), " ", big_mark(x[2L]), "]")
 }
 
+#' @importFrom utils ls.str
 #' @export
-str.src_env <- function(x, ...) ls.str(x, ...)
+str.src_env <- function(object, ...) ls.str(object, ...)
 
 #' @export
 src_name.src_env <- function(x) attr(x, "src_name")

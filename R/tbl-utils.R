@@ -84,7 +84,14 @@ time_unit <- function(x) units(interval(x))
 #' @export
 time_step <- function(x) as.double(interval(x))
 
-time_vars <- function(x) colnames(x)[lgl_ply(x, is_difftime)]
+#' @rdname tbl_utils
+#' @export
+time_vars <- function(x) UseMethod("time_vars", x)
+
+#' @method time_vars data.table
+#' @rdname tbl_utils
+#' @export
+time_vars.data.table <- function(x) colnames(x)[lgl_ply(x, is_difftime)]
 
 rename <- function(x, new, old) {
   hits <- match(old, x)

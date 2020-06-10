@@ -34,6 +34,7 @@ load_difftime(x, ...)
   rows,
   cols = colnames(x),
   id_hint = default_var(x, "id_var"),
+  dftm_vars = time_vars(x),
   ...
 )
 
@@ -42,18 +43,34 @@ load_difftime(x, ...)
   rows,
   cols = colnames(x),
   id_hint = default_var(x, "id_var"),
+  dftm_vars = time_vars(x),
   ...
 )
 
-\method{load_difftime}{eicu_tbl}(x, rows, cols = colnames(x), ...)
+\method{load_difftime}{eicu_tbl}(
+  x,
+  rows,
+  cols = colnames(x),
+  id_hint = default_var(x, "id_var"),
+  dftm_vars = time_vars(x),
+  ...
+)
 
-\method{load_difftime}{eicu_demo_tbl}(x, rows, cols = colnames(x), ...)
+\method{load_difftime}{eicu_demo_tbl}(
+  x,
+  rows,
+  cols = colnames(x),
+  id_hint = default_var(x, "id_var"),
+  dftm_vars = time_vars(x),
+  ...
+)
 
 \method{load_difftime}{hirid_tbl}(
   x,
   rows,
   cols = colnames(x),
   id_hint = default_var(x, "id_var"),
+  dftm_vars = time_vars(x),
   ...
 )
 
@@ -67,6 +84,7 @@ load_id(x, ...)
   cols = colnames(x),
   id_var = default_var(x, "id_var"),
   interval = hours(1L),
+  dftm_vars = time_vars(x),
   ...
 )
 
@@ -81,6 +99,7 @@ load_ts(x, ...)
   id_var = default_var(x, "id_var"),
   index_var = default_var(x, "index_var"),
   interval = hours(1L),
+  dftm_vars = time_vars(x),
   ...
 )
 
@@ -102,6 +121,9 @@ data_ts(source, table, ...)
 \item{src}{Passed to \code{\link[=as_src_tbl]{as_src_tbl()}} in order to determine the data source}
 
 \item{id_hint}{String valued id column selection (not necessarily honored)}
+
+\item{dftm_vars}{Character vector enumerating the columns to be treated as
+timestamps and thus returned as \code{difftime} vectors}
 
 \item{id_var}{The column defining the id of \code{ts_tbl} and \code{id_tbl} objects}
 

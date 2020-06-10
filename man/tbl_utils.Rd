@@ -15,6 +15,8 @@
 \alias{interval.difftime}
 \alias{time_unit}
 \alias{time_step}
+\alias{time_vars}
+\alias{time_vars.data.table}
 \alias{rename_cols}
 \alias{rename_cols.ts_tbl}
 \alias{rename_cols.id_tbl}
@@ -60,6 +62,10 @@ interval(x)
 time_unit(x)
 
 time_step(x)
+
+time_vars(x)
+
+\method{time_vars}{data.table}(x)
 
 rename_cols(x, new, old = colnames(x), skip_absent = FALSE, by_ref = FALSE)
 
