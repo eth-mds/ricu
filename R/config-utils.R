@@ -10,11 +10,13 @@ src_url <- function(x) {
 #' @export
 vec_ptype_full.id_cfg <- function(x, ...) {
   x <- sort(x)
-  op <- setNames(c(" <", " =", " >"), c("-1", "0", "1"))[
-    as.character(vec_compare(x[-length(x)], x[-1L]))
-  ]
   paste0(class(x)[2L], "{", src_name(x), ": ",
-         paste0(names(x), c(op, ""), collapse = " "), "}")
+         paste0(names(x), id_cfg_op(x), collapse = " "), "}")
+}
+
+id_cfg_op <- function(x) {
+  op <- setNames(c(" <", " =", " >"), c("-1", "0", "1"))
+  c(op[as.character(vec_compare(x[-length(x)], x[-1L]))], "")
 }
 
 #' @export
