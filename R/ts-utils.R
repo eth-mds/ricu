@@ -12,7 +12,7 @@
 #' @rdname ts_utils
 #' @export
 #'
-expand_limits <- function(x, min_col = "min", max_col = "max", step_size = 1L,
+extend_ts <- function(x, min_col = "min", max_col = "max", step_size = 1L,
                           id_vars = NULL, new_col = "hadm_time") {
 
   seq_time <- function(min, max, step, unit) {
@@ -82,15 +82,15 @@ fill_gaps <- function(x, limits = NULL, ...) {
     limits <- x[, list(min = min(get(time_col)), max = max(get(time_col))),
                 by = c(id_vars(x))]
 
-    join <- expand_limits(limits, "min", "max", time_step(x), id_vars(x),
-                          time_col)
+    join <- extend_ts(limits, "min", "max", time_step(x), id_vars(x),
+                      time_col)
 
   } else {
 
     id <- if (is_id_tbl(limits)) id_vars(limits) else id_vars(x)
 
-    join <- expand_limits(limits, ..., step_size = time_step(x),
-                          id_vars = id, new_col = time_col)
+    join <- extend_ts(limits, ..., step_size = time_step(x),
+                      id_vars = id, new_col = time_col)
   }
 
   x[unique(join), on = paste(meta_vars(x), "==", meta_vars(join))]
