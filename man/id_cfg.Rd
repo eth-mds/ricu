@@ -8,6 +8,7 @@
 \alias{as_id_cfg.src_cfg}
 \alias{as_id_cfg.src_env}
 \alias{as_id_cfg.default}
+\alias{id_var_opts}
 \title{ID columns}
 \usage{
 new_id_cfg(
@@ -32,6 +33,8 @@ as_id_cfg(x)
 \method{as_id_cfg}{src_env}(x)
 
 \method{as_id_cfg}{default}(x)
+
+id_var_opts(x)
 }
 \arguments{
 \item{x}{Object to test/coerce}

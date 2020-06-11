@@ -248,7 +248,7 @@ load_itm <- function(x, patient_ids, id_type, interval) {
 load_itm.col_itm <- function(x, patient_ids, id_type, interval) {
 
   tbl <- as_src_tbl(x)
-  id  <- get_id_var(tbl, id_type)
+  id  <- id_vars(as_id_cfg(tbl)[id_type])
 
   itm <- x[["itm_vars"]]
   cbc <- x[["cb_vars"]]
@@ -284,7 +284,7 @@ load_sub_itm <- function(x, patient_ids, id_type, interval) {
 
   qry <- prepare_query(x)
   tbl <- as_src_tbl(x)
-  id  <- get_id_var(tbl, id_type)
+  id  <- id_vars(as_id_cfg(tbl)[id_type])
 
   itm <- x[["itm_vars"]]
   cbc <- x[["cb_vars"]]
@@ -314,7 +314,7 @@ load_itm.los_itm <- function(x, patient_ids, id_type, interval) {
                       in_time = NULL, interval = mins(1L))
 
   if (!identical(win, id_type)) {
-    res <- rm_cols(res, get_id_var(cfg, win), by_ref = TRUE)
+    res <- rm_cols(res, id_vars(cfg[id_type]), by_ref = TRUE)
   }
 
   res <- merge_patid(res, patient_ids)

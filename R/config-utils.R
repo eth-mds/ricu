@@ -65,32 +65,11 @@ as_id_cfg.src_env <- function(x) attr(x, "id_cfg")
 #'
 as_id_cfg.default <- function(x) as_id_cfg(as_src_env(x))
 
-get_id_var <- function(x, id_type = NULL) {
-
-  x <- as_id_cfg(x)
-
-  if (is.null(id_type)) {
-    return(field(x, "id"))
-  }
-
-  assert_that(is.string(id_type), has_name(x, id_type))
-
-  field(x[id_type], "id")
-}
-
-select_ids <- function(x, ids = NULL) {
-
-  x <- as_id_cfg(x)
-
-  if (is.null(ids)) {
-    return(x)
-  }
-
-  all_ids <- field(x, "id")
-
-  assert_that(is.character(ids), all(ids %in% all_ids))
-
-  x[all_ids %in% ids]
+#' @rdname id_cfg
+#' @keywords internal
+#' @export
+id_var_opts <- function(x) {
+  field(as_id_cfg(x), "id")
 }
 
 #' @rdname col_cfg
@@ -269,6 +248,23 @@ default_var.src_tbl <- function(x, type = "id_var", ...) {
 #' @rdname cfg_utils
 #' @export
 default_var.src_env <- function(x, ...) eapply(x, default_var, ...)
+
+#' @export
+id_vars.col_cfg <- function(x) x[["id_var"]]
+
+#' @export
+id_vars.id_cfg <- function(x) field(max(x), "id")
+
+#' @export
+id_vars.src_tbl <- function(x) {
+  coalesce(id_vars(as_col_cfg(x)), id_vars(as_id_cfg(x)))
+}
+
+#' @export
+index_var.col_cfg <- function(x) x[["index_var"]]
+
+#' @export
+index_var.src_tbl <- function(x) index_var(as_col_cfg(x))
 
 #' @rdname cfg_utils
 #' @export

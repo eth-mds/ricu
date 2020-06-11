@@ -41,62 +41,62 @@ load_src.character <- function(x, src, ...) {
 load_difftime <- function(x, ...) UseMethod("load_difftime", x)
 
 #' @param id_hint String valued id column selection (not necessarily honored)
-#' @param dftm_vars Character vector enumerating the columns to be treated as
-#' timestamps and thus returned as `difftime` vectors
+#' @param time_vars Character vector enumerating the columns to be treated as
+#' timestamps and thus returned as [base::difftime()] vectors
 #'
 #' @rdname load_src
 #' @export
 load_difftime.mimic_tbl <- function(x, rows, cols = colnames(x),
-                                    id_hint = default_var(x, "id_var"),
-                                    dftm_vars = time_vars(x), ...) {
+                                    id_hint = id_vars(x),
+                                    time_vars = ricu::time_vars(x), ...) {
 
   warn_dots(...)
 
-  load_mihi(x, {{ rows }}, cols, id_hint, dftm_vars)
+  load_mihi(x, {{ rows }}, cols, id_hint, time_vars)
 }
 
 #' @rdname load_src
 #' @export
 load_difftime.mimic_demo_tbl <- function(x, rows, cols = colnames(x),
-                                         id_hint = default_var(x, "id_var"),
-                                         dftm_vars = time_vars(x), ...) {
+                                         id_hint = id_vars(x),
+                                         time_vars = ricu::time_vars(x), ...) {
 
   warn_dots(...)
 
-  load_mihi(x, {{ rows }}, cols, id_hint, dftm_vars)
+  load_mihi(x, {{ rows }}, cols, id_hint, time_vars)
 }
 
 #' @rdname load_src
 #' @export
 load_difftime.eicu_tbl <- function(x, rows, cols = colnames(x),
-                                   id_hint = default_var(x, "id_var"),
-                                   dftm_vars = time_vars(x), ...) {
+                                   id_hint = id_vars(x),
+                                   time_vars = ricu::time_vars(x), ...) {
 
   warn_dots(...)
 
-  load_eicu(x, {{ rows }}, cols, id_hint, dftm_vars)
+  load_eicu(x, {{ rows }}, cols, id_hint, time_vars)
 }
 
 #' @rdname load_src
 #' @export
 load_difftime.eicu_demo_tbl <- function(x, rows, cols = colnames(x),
-                                        id_hint = default_var(x, "id_var"),
-                                        dftm_vars = time_vars(x), ...) {
+                                        id_hint = id_vars(x),
+                                        time_vars = ricu::time_vars(x), ...) {
 
   warn_dots(...)
 
-  load_eicu(x, {{ rows }}, cols, id_hint, dftm_vars)
+  load_eicu(x, {{ rows }}, cols, id_hint, time_vars)
 }
 
 #' @rdname load_src
 #' @export
 load_difftime.hirid_tbl <- function(x, rows, cols = colnames(x),
-                                    id_hint = default_var(x, "id_var"),
-                                    dftm_vars = time_vars(x), ...) {
+                                    id_hint = id_vars(x),
+                                    time_vars = ricu::time_vars(x), ...) {
 
   warn_dots(...)
 
-  load_mihi(x, {{ rows }}, cols, id_hint, dftm_vars)
+  load_mihi(x, {{ rows }}, cols, id_hint, time_vars)
 }
 
 #' @rdname load_src
@@ -105,19 +105,30 @@ load_difftime.character <- function(x, src, ...) {
   load_difftime(as_src_tbl(x, src), ...)
 }
 
-load_mihi <- function(x, rows, cols, id_hint, dftm_vars) {
+resolve_id_hint <- function(tbl, hint) {
+
+  assert_that(is.string(hint))
+
+  if (hint %in% colnames(tbl)) {
+    return(hint)
+  }
+
+  opts <- as_id_cfg(tbl)
+
+  hits <- id_var_opts(opts) %in% colnames(tbl)
+
+  assert_that(sum(hits) > 0L, msg = paste0("No overlap between configured id var options and available columns for table `", tbl_name(tbl), "` in ",
+    src_name(tbl))
+  )
+
+  id_vars(opts[hits])
+}
+
+load_mihi <- function(x, rows, cols, id_hint, time_vars) {
 
   dt_round_min <- function(x, y) round_to(difftime(x, y, units = "mins"))
 
-  assert_that(is.string(id_hint))
-
-  opts <- get_id_var(x)
-
-  if (id_hint %in% colnames(x)) {
-    id_col <- id_hint
-  } else {
-    id_col <- tail(intersect(opts, colnames(x)), n = 1L)
-  }
+  id_col <- resolve_id_hint(x, id_hint)
 
   assert_that(is.string(id_col), id_col %in% colnames(x))
 
@@ -125,16 +136,16 @@ load_mihi <- function(x, rows, cols, id_hint, dftm_vars) {
     cols <- c(cols, id_col)
   }
 
-  dftm_vars <- intersect(dftm_vars, cols)
+  time_vars <- intersect(time_vars, cols)
 
   dat <- load_src(x, {{ rows }}, cols)
 
-  if (length(dftm_vars)) {
+  if (length(time_vars)) {
 
     dat <- merge(dat, id_origin(x, id_col), by = id_col)
     dat <- dat[,
-      c(dftm_vars) := lapply(.SD, dt_round_min, get("origin")),
-      .SDcols = dftm_vars
+      c(time_vars) := lapply(.SD, dt_round_min, get("origin")),
+      .SDcols = time_vars
     ]
     dat <- dat[, c("origin") := NULL]
   }
@@ -142,31 +153,27 @@ load_mihi <- function(x, rows, cols, id_hint, dftm_vars) {
   as_id_tbl(dat, id_vars = id_col, by_ref = TRUE)
 }
 
-load_eicu <- function(x, rows, cols, id_hint, dftm_vars) {
+load_eicu <- function(x, rows, cols, id_hint, time_vars) {
 
-  if (id_hint %in% colnames(x)) {
-    id_col <- id_hint
-  } else {
-    id_col <- "patientunitstayid"
-  }
+  id_col <- resolve_id_hint(x, id_hint)
 
   if (!id_col %in% cols) {
     cols <- c(id_col, cols)
   }
 
-  dftm_vars <- intersect(dftm_vars, cols)
+  time_vars <- intersect(time_vars, cols)
 
   dat <- load_src(x, {{ rows }}, cols)
 
-  if (length(dftm_vars)) {
+  if (length(time_vars)) {
 
     assert_that(id_col %in% colnames(dat),
       msg = paste("In order to return relative times, a single ID var",
                   paste0("`", id_col, "`"), "is required.")
     )
 
-    dat <- dat[, c(dftm_vars) := lapply(.SD, as.difftime, units = "mins"),
-               .SDcols = dftm_vars]
+    dat <- dat[, c(time_vars) := lapply(.SD, as.difftime, units = "mins"),
+               .SDcols = time_vars]
   }
 
   as_id_tbl(dat, id_vars = id_col, by_ref = TRUE)
@@ -183,20 +190,19 @@ load_id <- function(x, ...) UseMethod("load_id", x)
 #' @rdname load_src
 #' @export
 load_id.src_tbl <- function(x, rows, cols = colnames(x),
-                            id_var = default_var(x, "id_var"),
-                            interval = hours(1L), dftm_vars = time_vars(x),
-                            ...) {
+                            id_var = id_vars(x), interval = hours(1L),
+                            time_vars = ricu::time_vars(x), ...) {
 
   warn_dots(...)
 
-  res <- load_difftime(x, {{ rows }}, cols, id_var, dftm_vars)
+  res <- load_difftime(x, {{ rows }}, cols, id_var, time_vars)
 
-  dftm_vars <- intersect(dftm_vars, colnames(res))
+  time_vars <- intersect(time_vars, colnames(res))
 
-  res <- change_id(res, id_var, as_id_cfg(x), cols = dftm_vars)
+  res <- change_id(res, id_var, as_id_cfg(x), cols = time_vars)
 
   if (!is_one_min(interval)) {
-    res <- change_interval(res, interval, dftm_vars, by_ref = TRUE)
+    res <- change_interval(res, interval, time_vars, by_ref = TRUE)
   }
 
   res
@@ -216,11 +222,10 @@ load_ts <- function(x, ...) UseMethod("load_ts", x)
 
 #' @rdname load_src
 #' @export
-load_ts.src_tbl <- function(x, rows, cols = colnames(x),
-                            id_var = default_var(x, "id_var"),
-                            index_var = default_var(x, "index_var"),
-                            interval = hours(1L), dftm_vars = time_vars(x),
-                            ...) {
+load_ts.src_tbl <- function(x, rows, cols = colnames(x), id_var = id_vars(x),
+                            index_var = ricu::index_var(x),
+                            interval = hours(1L),
+                            time_vars = ricu::time_vars(x), ...) {
 
   warn_dots(...)
 
@@ -230,14 +235,14 @@ load_ts.src_tbl <- function(x, rows, cols = colnames(x),
     cols <- c(cols, index_var)
   }
 
-  res <- load_difftime(x, {{ rows }}, cols, id_var, dftm_vars)
+  res <- load_difftime(x, {{ rows }}, cols, id_var, time_vars)
   res <- as_ts_tbl(res, id_vars(res), index_var, mins(1L), by_ref = TRUE)
 
-  dftm_vars <- intersect(dftm_vars, colnames(res))
+  time_vars <- intersect(time_vars, colnames(res))
 
-  res <- change_id(res, id_var, as_id_cfg(x), cols = dftm_vars)
+  res <- change_id(res, id_var, as_id_cfg(x), cols = time_vars)
 
-  change_interval(res, interval, dftm_vars, by_ref = TRUE)
+  change_interval(res, interval, time_vars, by_ref = TRUE)
 }
 
 #' @rdname load_src

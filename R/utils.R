@@ -547,3 +547,7 @@ wrap_null <- function(...) {
 }
 
 all_equal <- function(x, y, ...) isTRUE(all.equal(x, y, ...))
+
+coalesce <- function(...) {
+  for (x in list(...)) if (is.null(x)) next else return(x)
+}

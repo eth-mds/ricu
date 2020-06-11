@@ -5,10 +5,11 @@
 #'
 #' @rdname tbl_utils
 #' @export
-id_vars <- function(x) {
-  assert_that(is_id_tbl(x))
-  attr(x, "id_vars")
-}
+id_vars <- function(x) UseMethod("id_vars", x)
+
+#' @rdname tbl_utils
+#' @export
+id_vars.id_tbl <- function(x) attr(x, "id_vars")
 
 #' @rdname tbl_utils
 #' @export
@@ -20,10 +21,11 @@ id_col <- function(x) {
 
 #' @rdname tbl_utils
 #' @export
-index_var <- function(x) {
-  assert_that(is_ts_tbl(x))
-  attr(x, "index_var")
-}
+index_var <- function(x) UseMethod("index_var", x)
+
+#' @rdname tbl_utils
+#' @export
+index_var.ts_tbl <- function(x) attr(x, "index_var")
 
 #' @rdname tbl_utils
 #' @export

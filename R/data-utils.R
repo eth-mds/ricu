@@ -20,17 +20,22 @@ id_origin <- function(x, ...) UseMethod("id_origin", x)
 #' @export
 id_origin.id_cfg <- function(x, id, env = as_src_env(x), ...) {
 
-  assert_that(is.string(id), ...length() == 0L)
+  warn_dots(...)
 
-  sel <- select_ids(x, id)
+  assert_that(is.string(id))
 
-  if (!identical(sel, x)) {
-    return(id_origin(sel, id, env))
+  opts <- id_var_opts(x)
+
+  if (!identical(opts, id)) {
+
+    assert_that(id %in% opts)
+
+    return(id_origin(x[id == opts], id, env))
   }
 
   assert_that(length(x) == 1L)
 
-  id_orig_all(field(x, "table"), field(x, "id"), field(x, "start"), env)
+  id_orig_all(field(x, "table"), opts, field(x, "start"), env)
 }
 
 #' @rdname data_utils
@@ -230,7 +235,7 @@ id_map_min <- function(x, id_name, win_id, in_time, out_time, ...) {
   map <- rm_cols(map, setdiff(colnames(map), c(id_name, win_id, iot)),
                  by_ref = TRUE)
 
-  if (max(select_ids(x, c(id_name, win_id))) < max(x)) {
+  if (max(x[id_var_opts(x) %in% c(id_name, win_id)]) < max(x)) {
     map <- unique(map)
   }
 
@@ -257,7 +262,7 @@ stay_windows <- function(x, id_type = "icustay", win_type = "icustay",
   assert_that(is_time(interval, allow_neg = FALSE))
 
   cfg <- as_id_cfg(x)
-  res <- id_map_min(cfg, get_id_var(cfg, id_type), get_id_var(cfg, win_type),
+  res <- id_map_min(cfg, id_vars(cfg[id_type]), id_vars(cfg[win_type]),
                     in_time, out_time)
 
   if (!is_one_min(interval) && (not_null(in_time) || not_null(out_time))) {
@@ -293,9 +298,13 @@ change_id <- function(x, target_id, id_cfg, ...) {
     return(x)
   }
 
-  if (select_ids(id_cfg, orig_id) < select_ids(id_cfg, target_id)) {
+  opt <- id_var_opts(id_cfg)
+  src <- id_cfg[orig_id   == opt]
+  dst <- id_cfg[target_id == opt]
+
+  if (isTRUE(src < dst)) {
     upgrade_id(x, target_id, id_cfg, ...)
-  } else if (select_ids(id_cfg, orig_id) > select_ids(id_cfg, target_id)) {
+  } else if (isTRUE(src > dst)) {
     downgrade_id(x, target_id, id_cfg, ...)
   } else {
     stop("Cannot handle conversion of IDs with identical positions")
@@ -309,7 +318,10 @@ change_id <- function(x, target_id, id_cfg, ...) {
 #'
 upgrade_id <- function(x, target_id, id_cfg, cols = time_vars(x), ...) {
 
-  assert_that(select_ids(id_cfg, id_vars(x)) < select_ids(id_cfg, target_id))
+  cfg <- as_id_cfg(id_cfg)
+  opt <- id_var_opts(cfg)
+
+  assert_that(cfg[id_vars(x) == opt] < cfg[target_id == opt])
 
   UseMethod("upgrade_id", x)
 }
@@ -319,7 +331,10 @@ upgrade_id <- function(x, target_id, id_cfg, cols = time_vars(x), ...) {
 #'
 downgrade_id <- function(x, target_id, id_cfg, cols = time_vars(x), ...) {
 
-  assert_that(select_ids(id_cfg, id_vars(x)) > select_ids(id_cfg, target_id))
+  cfg <- as_id_cfg(id_cfg)
+  opt <- id_var_opts(cfg)
+
+  assert_that(cfg[id_vars(x) == opt] > cfg[target_id == opt])
 
   UseMethod("downgrade_id", x)
 }

@@ -2,8 +2,10 @@
 % Please edit documentation in R/tbl-utils.R
 \name{id_vars}
 \alias{id_vars}
+\alias{id_vars.id_tbl}
 \alias{id_col}
 \alias{index_var}
+\alias{index_var.ts_tbl}
 \alias{index_col}
 \alias{meta_vars}
 \alias{meta_vars.id_tbl}
@@ -37,9 +39,13 @@
 \usage{
 id_vars(x)
 
+\method{id_vars}{id_tbl}(x)
+
 id_col(x)
 
 index_var(x)
+
+\method{index_var}{ts_tbl}(x)
 
 index_col(x)
 

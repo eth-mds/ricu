@@ -89,7 +89,7 @@ tbl_sum.src_tbl <- function(x) {
     out <- c(out, Partitions = prt)
   }
 
-  ids <- get_id_var(x)
+  ids <- id_var_opts(x)
 
   if (length(ids) > 1L && any(ids %in% colnames(x))) {
     out <- c(out, "ID options" = id_desc(x))
@@ -111,11 +111,15 @@ tim_desc <- function(x) {
 
 def_desc <- function(x) {
 
-  x <- c(id = default_var(x), index = default_var(x, "index_var"),
-         value = default_var(x, "val_var"), unit = default_var(x, "unit_var"))
+  x <- as_col_cfg(x)
 
-  if (has_length(x)) {
-    paste0(x, " (", names(x), ")", collapse = ", ")
+  res <- c(
+    id = id_vars(x), index = index_var(x), value = default_var(x, "val_var"),
+    unit = default_var(x, "unit_var")
+  )
+
+  if (has_length(res)) {
+    paste0(res, " (", names(res), ")", collapse = ", ")
   } else {
     NULL
   }
@@ -123,7 +127,7 @@ def_desc <- function(x) {
 
 id_desc <- function(x) {
   id <- sort(as_id_cfg(x))
-  paste0(get_id_var(id), " (", names(id), ")", id_cfg_op(id), collapse = " ")
+  paste0(id_var_opts(id), " (", names(id), ")", id_cfg_op(id), collapse = " ")
 }
 
 part_desc <- function(x) {
