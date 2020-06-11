@@ -51,19 +51,22 @@ as_src_tbl.rgx_itm <- function(x, ...) {
 }
 
 itm_var_helper <- function(x, col) {
-  res <- if (is.null(col)) default_var(as_src_tbl(x), "val_var") else col
-  if (is.string(res)) c(val_var = res) else {
-    assert_that(has_name(res, "val_var"))
-    res
+
+  res <- coalesce(col, val_var(as_src_tbl(x)))
+
+  if (is.string(res)) {
+    res <- c(val_var = res)
   }
+
+  assert_that(has_name(res, "val_var"))
+
+  res
 }
 
 need_idx <- function(x) identical(x[["targ"]], "ts_tbl")
 
 idx_var_helper <- function(x, col) {
-  if (need_idx(x))
-    if (is.null(col)) default_var(as_src_tbl(x), "index_var") else col
-  else NULL
+  if (need_idx(x)) coalesce(col, index_var(as_src_tbl(x))) else NULL
 }
 
 cbk_var_helper <- function(...) {
@@ -238,7 +241,7 @@ unt_col_helper <- function(x) {
 
   } else {
 
-    unt <- default_var(as_src_tbl(x), "unit_var")
+    unt <- unit_var(as_src_tbl(x))
   }
 
   x[["itm_vars"]] <- c(val_var = unname(itm), unit_var = unname(unt))

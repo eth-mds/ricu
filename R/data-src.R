@@ -79,6 +79,17 @@ new_src_tbl <- function(files, col_cfg, src_env) {
 
 is_src_tbl <- function(x) inherits(x, "src_tbl")
 
+#' @export
+id_vars.src_tbl <- function(x) {
+  coalesce(id_vars(as_col_cfg(x)), id_vars(as_id_cfg(x)))
+}
+
+#' @export
+index_var.src_tbl <- function(x) index_var(as_col_cfg(x))
+
+#' @export
+time_vars.src_tbl <- function(x) time_vars(as_col_cfg(x))
+
 #' @importFrom tibble tbl_sum
 #' @export
 tbl_sum.src_tbl <- function(x) {
@@ -113,10 +124,8 @@ def_desc <- function(x) {
 
   x <- as_col_cfg(x)
 
-  res <- c(
-    id = id_vars(x), index = index_var(x), value = default_var(x, "val_var"),
-    unit = default_var(x, "unit_var")
-  )
+  res <- c(id = id_vars(x), index = index_var(x), value = val_var(x),
+           unit = unit_var(x))
 
   if (has_length(res)) {
     paste0(res, " (", names(res), ")", collapse = ", ")
@@ -142,12 +151,7 @@ part_desc <- function(x) {
 }
 
 #' @export
-time_vars.src_tbl <- function(x) default_var(x, "time_vars")
-
-#' @export
-src_name.src_tbl <- function(x) {
-  sub("_tbl$", "", class(x)[1L])
-}
+src_name.src_tbl <- function(x) src_name(as_col_cfg(x))
 
 #' @rdname attach_src
 #' @export
@@ -155,10 +159,7 @@ as_src_tbl <- function(x, ...) UseMethod("as_src_tbl", x)
 
 #' @rdname attach_src
 #' @export
-as_src_tbl.src_tbl <- function(x, ...) {
-  warn_dots(...)
-  x
-}
+as_src_tbl.src_tbl <- function(x, ...) warn_dot_ident(x, ...)
 
 #' @param tbl String valued table name
 #'

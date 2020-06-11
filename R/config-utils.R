@@ -96,6 +96,10 @@ as_col_cfg.src_cfg <- function(x) x[["col_cfg"]]
 #'
 as_col_cfg.src_tbl <- function(x) attr(x, "col_cfg")
 
+val_var <- function(x) as_col_cfg(x)[["val_var"]]
+
+unit_var <- function(x) as_col_cfg(x)[["unit_var"]]
+
 #' @rdname tbl_cfg
 #' @keywords internal
 #' @export
@@ -196,59 +200,6 @@ partition_fun <- function(x, orig_names = FALSE) {
   }
 }
 
-#' Get default columns
-#'
-#' For a table, query the default columns as specified by an `id_cfg`
-#' ([new_id_cfg()]) or `col_cfg` ([new_col_cfg()]) object.
-#'
-#' @param x Object used for dispatch
-#' @param ... Generic consistency
-#'
-#' @rdname cfg_utils
-#' @export
-#'
-default_var <- function(x, ...) UseMethod("default_var", x)
-
-#' @param type The column type, e.g. `id`, `index`, `unit`, `value`
-#' @rdname cfg_utils
-#' @export
-default_var.col_cfg <- function(x, type = "id_var", ...) {
-
-  warn_dots(...)
-
-  assert_that(is.string(type), has_name(x, type))
-
-  x[[type]]
-}
-
-#' @rdname cfg_utils
-#' @export
-default_var.id_cfg <- function(x, ...) {
-  warn_dots(...)
-  field(max(x), "id")
-}
-
-#' @rdname cfg_utils
-#' @export
-default_var.src_tbl <- function(x, type = "id_var", ...) {
-
-  warn_dots(...)
-
-  assert_that(is.string(type))
-
-  res <- default_var(as_col_cfg(x), type)
-
-  if (identical(type, "id_var") && is.null(res)) {
-    return(default_var(as_id_cfg(x)))
-  }
-
-  res
-}
-
-#' @rdname cfg_utils
-#' @export
-default_var.src_env <- function(x, ...) eapply(x, default_var, ...)
-
 #' @export
 id_vars.col_cfg <- function(x) x[["id_var"]]
 
@@ -256,16 +207,18 @@ id_vars.col_cfg <- function(x) x[["id_var"]]
 id_vars.id_cfg <- function(x) field(max(x), "id")
 
 #' @export
-id_vars.src_tbl <- function(x) {
-  coalesce(id_vars(as_col_cfg(x)), id_vars(as_id_cfg(x)))
-}
-
-#' @export
 index_var.col_cfg <- function(x) x[["index_var"]]
 
 #' @export
-index_var.src_tbl <- function(x) index_var(as_col_cfg(x))
+time_vars.col_cfg <- function(x) x[["time_vars"]]
 
+#' Get default columns
+#'
+#' For a table, query the default columns as specified by an `id_cfg`
+#' ([new_id_cfg()]) or `col_cfg` ([new_col_cfg()]) object.
+#'
+#' @param x Object used for dispatch
+#'
 #' @rdname cfg_utils
 #' @export
 src_name <- function(x) UseMethod("src_name", x)
