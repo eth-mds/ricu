@@ -119,9 +119,8 @@ si_abx <- function(x, count_win, min_count) {
 
     assert_that(is_time(count_win, allow_neg = FALSE))
 
-    query <- quote(list(antibiotics = sum(antibiotics, na.rm = TRUE)))
-
-    x <- slide_quo(x, query, before = hours(0L), after = count_win)
+    x <- slide(x, list(antibiotics = sum(get("antibiotics"), na.rm = TRUE)),
+               before = hours(0L), after = count_win)
   }
 
   set(x, j = "antibiotics", value = x[["antibiotics"]] >= min_count)

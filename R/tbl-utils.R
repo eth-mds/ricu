@@ -263,7 +263,7 @@ rbind_lst <- function(x, ...) {
 
   do_rename <- function(x, new) {
     fun <- if (is_ts_tbl(x) && is_ts_tbl(new)) meta_vars else id_vars
-    rename_cols(x, fun(new), fun(x))
+    rename_cols(x, fun(new), fun(x), by_ref = TRUE)
   }
 
   id_tbl <- lgl_ply(x, is_id_tbl)

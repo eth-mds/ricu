@@ -160,7 +160,7 @@ sofa_pafi <- function(pao2, fio2, win_length, mode, fix_na_fio2) {
       list(min_pa = min_fun(get("pa_o2")), max_fi = max_fun(get("fi_o2"))),
       list(min_fun = min_or_na, max_fun = max_or_na)
     )
-    res <- slide_quo(res, win_expr, before = win_length, full_window = FALSE)
+    res <- slide(res, !!win_expr, before = win_length, full_window = FALSE)
 
     rename_cols(res, c("pa_o2", "fi_o2"), c("min_pa", "max_fi"), by_ref = TRUE)
   }
@@ -205,8 +205,8 @@ sofa_vent <- function(start, stop, win_length, min_length, interval) {
     stop[ , c("stop_time")  := get(index_var(stop))]
 
     on.exit({
-      rm_cols(start, "start_time")
-      rm_cols(stop,  "stop_time")
+      rm_cols(start, "start_time", by_ref = TRUE)
+      rm_cols(stop,  "stop_time", by_ref = TRUE)
     })
 
     join   <- paste(meta_vars(stop), "==", meta_vars(start))
@@ -272,7 +272,7 @@ sofa_gcs <- function(gcs, sed, win_length, set_na_max) {
   }
 
   dat <- fill_gaps(dat)
-  dat <- slide_quo(dat, expr, before = win_length)
+  dat <- slide(dat, !!expr, before = win_length)
 
   if (set_na_max) {
 
@@ -354,7 +354,7 @@ sofa_urine <- function(urine, limits, min_win, interval) {
   expr <- substitute(list(urine_24 = win_agg_fun(urine_events)),
                      list(win_agg_fun = urine_sum))
 
-  slide_quo(res, expr, hours(24L))
+  slide(res, !!expr, hours(24L))
 }
 
 #' @param pafi_win_fun,coag_win_fun,bili_win_fun,map_win_fun,dopa_win_fun,norepi_win_fun,dobu_win_fun,epi_win_fun,gcs_win_fun,crea_win_fun,urine_win_fun
@@ -403,7 +403,8 @@ sofa_window <- function(tbl,
   if (isFALSE(explicit_wins)) {
 
     res <- fill_gaps(tbl)
-    res <- slide_quo(res, expr, before = worst_win_length, full_window = FALSE)
+    res <- slide(res, !!expr, before = worst_win_length,
+                     full_window = FALSE)
 
   } else {
 
@@ -414,13 +415,13 @@ sofa_window <- function(tbl,
       win <- tbl[, list(max_time = max(get(ind))), by = c(id_vars(tbl))]
       win <- win[, c("min_time") := get("max_time") - worst_win_length]
 
-      res <- hop_quo(tbl, expr, win)
+      res <- hop(tbl, !!expr, win)
 
     } else {
 
       assert_that(is_time_vec(explicit_wins))
 
-      res <- slide_index_quo(tbl, expr, explicit_wins,
+      res <- slide_index(tbl, !!expr, explicit_wins,
                              before = worst_win_length, full_window = FALSE)
     }
   }

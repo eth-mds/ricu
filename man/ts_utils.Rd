@@ -6,11 +6,8 @@
 \alias{has_gaps}
 \alias{fill_gaps}
 \alias{slide}
-\alias{slide_quo}
 \alias{slide_index}
-\alias{slide_index_quo}
 \alias{hop}
-\alias{hop_quo}
 \title{Time series utility functions}
 \usage{
 extend_ts(
@@ -28,23 +25,19 @@ has_gaps(...)
 
 fill_gaps(x, limits = NULL, ...)
 
-slide(x, expr, ...)
+slide(x, expr, before, after = hours(0L), ...)
 
-slide_quo(x, expr, before, after = hours(0L), ...)
+slide_index(x, expr, index, before, after = hours(0L), ...)
 
-slide_index(x, expr, ...)
-
-slide_index_quo(x, expr, index, before, after = hours(0L), ...)
-
-hop(x, expr, ...)
-
-hop_quo(
+hop(
   x,
   expr,
   windows,
   full_window = FALSE,
   lwr_col = "min_time",
-  upr_col = "max_time"
+  upr_col = "max_time",
+  nomatch = NULL,
+  sub_env = NULL
 )
 }
 \arguments{
@@ -60,7 +53,7 @@ windows bounds}
 
 \item{new_col}{Name of the new index column}
 
-\item{...}{Passed to the \verb{*_quo} version and from there to \code{hop_quo()}}
+\item{...}{Passed to \code{hop_quo()}}
 
 \item{limits}{A table with columns for lower and upper window bounds}
 
@@ -79,6 +72,11 @@ where the sliding window extends beyond available data}
 
 \item{lwr_col, upr_col}{Names of columns (in \code{windows}) of lower/upper
 window bounds}
+
+\item{nomatch}{Forwarded to \code{\link[=data.table]{data.table::[()}}}
+
+\item{sub_env}{Environment in which \code{expr} is substituted; \code{NULL} resolves
+to the environment in which \code{expr} was created}
 }
 \description{
 Time series utility functions

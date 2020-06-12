@@ -40,7 +40,7 @@ sepsis_3 <- function(sofa, si, si_window = c("first", "last", "any"),
 
   sofa <- sofa[, c("join_time1", "join_time2") := list(get(ind), get(ind))]
 
-  on.exit(rm_cols(sofa, c("join_time1", "join_time2")))
+  on.exit(rm_cols(sofa, c("join_time1", "join_time2"), by_ref = TRUE))
 
   join_clause <- c(id, "join_time1 >= si_lwr", "join_time2 <= si_upr")
 

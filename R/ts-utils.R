@@ -98,19 +98,13 @@ fill_gaps <- function(x, limits = NULL, ...) {
 
 #' @param expr Expression (quoted for `*_quo` and unquoted otherwise) to be
 #' evaluated over each window
-#'
-#' @rdname ts_utils
-#' @export
-#'
-slide <- function(x, expr, ...) slide_quo(x, substitute(expr), ...)
-
 #' @param before,after Time span to look back/forward
-#' @param ... Passed to the `*_quo` version and from there to `hop_quo()`
+#' @param ... Passed to `hop_quo()`
 #'
 #' @rdname ts_utils
 #' @export
 #'
-slide_quo <- function(x, expr, before, after = hours(0L), ...) {
+slide <- function(x, expr, before, after = hours(0L), ...) {
 
   assert_that(is_time(before, allow_neg = FALSE),
               is_time(after, allow_neg = FALSE))
@@ -123,14 +117,8 @@ slide_quo <- function(x, expr, before, after = hours(0L), ...) {
                           max_time = get(ind_col) + after))
   ]
 
-  hop_quo(x, expr, join, ..., lwr_col = "min_time", upr_col = "max_time")
-}
-
-#' @rdname ts_utils
-#' @export
-#'
-slide_index <- function(x, expr, ...) {
-  slide_index_quo(x, substitute(expr), ...)
+  hop(x, {{ expr }}, join, lwr_col = "min_time", upr_col = "max_time", ...,
+      nomatch = NA)
 }
 
 #' @param index A vector of times around which windows are spanned (relative
@@ -139,7 +127,7 @@ slide_index <- function(x, expr, ...) {
 #' @rdname ts_utils
 #' @export
 #'
-slide_index_quo <- function(x, expr, index, before, after = hours(0L), ...) {
+slide_index <- function(x, expr, index, before, after = hours(0L), ...) {
 
   assert_that(is_time_vec(index), is_time(before, allow_neg = FALSE),
               is_time(after, allow_neg = FALSE))
@@ -147,25 +135,30 @@ slide_index_quo <- function(x, expr, index, before, after = hours(0L), ...) {
   join <- x[, list(min_time = index - before,
                    max_time = index + after), by = c(id_vars(x))]
 
-  hop_quo(x, expr, join, ..., lwr_col = "min_time", upr_col = "max_time")
+  hop(x, {{ expr }}, join, lwr_col = "min_time", upr_col = "max_time", ...)
 }
-
-#' @rdname ts_utils
-#' @export
-#'
-hop <- function(x, expr, ...) hop_quo(x, substitute(expr), ...)
 
 #' @param windows An `icu_tbl` defining the windows to span
 #' @param full_window Logical flag controlling how the situation is handled
 #' where the sliding window extends beyond available data
 #' @param lwr_col,upr_col Names of columns (in `windows`) of lower/upper
 #' window bounds
+#' @param nomatch Forwarded to [`data.table::[()`][data.table]
+#' @param sub_env Environment in which `expr` is substituted; `NULL` resolves
+#' to the environment in which `expr` was created
+#'
+#' @importFrom rlang enexpr quo_get_expr quo_get_env caller_env is_quosure
 #'
 #' @rdname ts_utils
 #' @export
 #'
-hop_quo <- function(x, expr, windows, full_window = FALSE,
-                    lwr_col = "min_time", upr_col = "max_time") {
+hop <- function(x, expr, windows, full_window = FALSE,
+                lwr_col = "min_time", upr_col = "max_time",
+                nomatch = NULL, sub_env = NULL) {
+
+  eval_fun <- function(x, env) {
+    eval(x, envir = env, enclos = sub_env)
+  }
 
   assert_that(is_ts_tbl(x), is_unique(x), is.flag(full_window),
               is_id_tbl(windows), has_name(windows, c(lwr_col, upr_col)))
@@ -191,15 +184,30 @@ hop_quo <- function(x, expr, windows, full_window = FALSE,
 
   tmp_col <- new_names(x)
   x <- x[, c(tmp_col) := get(tbl_ind)]
-  on.exit(rm_cols(x, tmp_col))
+  on.exit(rm_cols(x, tmp_col, by_ref = TRUE))
 
   join <- c(paste(tbl_id, "==", win_id), paste(tbl_ind, "<=", upr_col),
                                          paste(tmp_col, ">=", lwr_col))
 
-  res <- x[windows, eval(expr), on = join, by = .EACHI, nomatch = NULL]
+  quo <- enexpr(expr)
+
+  if (is.null(sub_env)) {
+    if (is_quosure(quo)) {
+      sub_env <- quo_get_env(quo)
+    } else {
+      sub_env <- caller_env()
+    }
+  }
+
+  if (is_quosure(quo)) {
+    res <- x[windows, eval_fun(quo_get_expr(quo), .SD),
+             on = join, by = .EACHI, nomatch = nomatch]
+  } else {
+    res <- x[windows, eval_fun(quo, .SD),
+             on = join, by = .EACHI, nomatch = nomatch]
+  }
 
   assert_that(is_unique(res))
 
-  rm_cols(res, tmp_col)
+  rm_cols(res, tmp_col, by_ref = TRUE)
 }
-
