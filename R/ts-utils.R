@@ -156,10 +156,6 @@ hop <- function(x, expr, windows, full_window = FALSE,
                 lwr_col = "min_time", upr_col = "max_time",
                 nomatch = NULL, sub_env = NULL) {
 
-  eval_fun <- function(x, env) {
-    eval(x, envir = env, enclos = sub_env)
-  }
-
   assert_that(is_ts_tbl(x), is_unique(x), is.flag(full_window),
               is_id_tbl(windows), has_name(windows, c(lwr_col, upr_col)))
 
@@ -191,21 +187,19 @@ hop <- function(x, expr, windows, full_window = FALSE,
 
   quo <- enexpr(expr)
 
-  if (is.null(sub_env)) {
-    if (is_quosure(quo)) {
-      sub_env <- quo_get_env(quo)
-    } else {
-      sub_env <- caller_env()
-    }
+  if (is_quosure(quo)) {
+    sub_arg <- list(quo_get_expr(quo), coalesce(sub_env, quo_get_env(quo)))
+  } else {
+    sub_arg <- list(quo, coalesce(sub_env, caller_env()))
   }
 
-  if (is_quosure(quo)) {
-    res <- x[windows, eval_fun(quo_get_expr(quo), .SD),
-             on = join, by = .EACHI, nomatch = nomatch]
-  } else {
-    res <- x[windows, eval_fun(quo, .SD),
-             on = join, by = .EACHI, nomatch = nomatch]
+  expr <- do.call(substitute, sub_arg)
+
+  if (is.call(expr) && is.function(expr[[1L]])) {
+    expr <- substitute(identity(expr), list(expr = expr))
   }
+
+  res <- x[windows, eval(expr), on = join, by = .EACHI, nomatch = nomatch]
 
   assert_that(is_unique(res))
 

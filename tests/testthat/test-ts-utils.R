@@ -29,4 +29,6 @@ test_that("slide", {
   expect_is(res, "ts_tbl")
 
   expect_identical(res, hop(tbl, fun(z), wins))
+
+  expect_error(hop(tbl, fun(z), wins, sub_env = emptyenv()))
 })
