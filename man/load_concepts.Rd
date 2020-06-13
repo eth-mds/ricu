@@ -12,13 +12,7 @@ load_concepts(x, ...)
 
 \method{load_concepts}{character}(x, src = NULL, concepts = NULL, ...)
 
-\method{load_concepts}{concept}(
-  x,
-  aggregate = NA_character_,
-  merge_data = TRUE,
-  verbose = TRUE,
-  ...
-)
+\method{load_concepts}{concept}(x, aggregate = NULL, merge_data = TRUE, verbose = TRUE, ...)
 
 \method{load_concepts}{item}(
   x,

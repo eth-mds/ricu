@@ -22,7 +22,7 @@ test_that("slide", {
                                     before = hours(3L)))
 
   wins <- id_tbl(x = rep(1:3, each = 2), min_time = hours(rep(c(2, 4), 3)),
-                 max_time = hours(rep(c(6, 5), 3)), id = "x")
+                 max_time = hours(rep(c(6, 5), 3)))
 
   res <- hop(tbl, sum(z), wins)
 

@@ -144,7 +144,7 @@ slide_index <- function(x, expr, index, before, after = hours(0L), ...) {
 #' @param lwr_col,upr_col Names of columns (in `windows`) of lower/upper
 #' window bounds
 #' @param nomatch Forwarded to [`data.table::[()`][data.table]
-#' @param sub_env Environment in which `expr` is substituted; `NULL` resolves
+#' @param eval_env Environment in which `expr` is substituted; `NULL` resolves
 #' to the environment in which `expr` was created
 #'
 #' @importFrom rlang enexpr quo_get_expr quo_get_env caller_env is_quosure
@@ -154,7 +154,7 @@ slide_index <- function(x, expr, index, before, after = hours(0L), ...) {
 #'
 hop <- function(x, expr, windows, full_window = FALSE,
                 lwr_col = "min_time", upr_col = "max_time",
-                nomatch = NULL, sub_env = NULL) {
+                nomatch = NULL, eval_env = NULL) {
 
   assert_that(is_ts_tbl(x), is_unique(x), is.flag(full_window),
               is_id_tbl(windows), has_name(windows, c(lwr_col, upr_col)))
@@ -188,18 +188,22 @@ hop <- function(x, expr, windows, full_window = FALSE,
   quo <- enexpr(expr)
 
   if (is_quosure(quo)) {
-    sub_arg <- list(quo_get_expr(quo), coalesce(sub_env, quo_get_env(quo)))
+    env <- coalesce(eval_env, quo_get_env(quo))
+    exp <- quo_get_expr(quo)
   } else {
-    sub_arg <- list(quo, coalesce(sub_env, caller_env()))
+    env <- coalesce(eval_env, caller_env())
+    exp <- quo
   }
 
-  expr <- do.call(substitute, sub_arg)
+  .x_ <- .win_ <- .expr_ <- .join_ <- .nomatch_ <- NULL
 
-  if (is.call(expr) && is.function(expr[[1L]])) {
-    expr <- substitute(identity(expr), list(expr = expr))
-  }
-
-  res <- x[windows, eval(expr), on = join, by = .EACHI, nomatch = nomatch]
+  res <- local({
+    .x_[.win_, eval(.expr_), on = .join_, by = .EACHI, nomatch = .nomatch_]
+  }, envir = list2env(
+    list(.x_ = x, .win_ = windows, .expr_ = exp, .join_ = join,
+         .nomatch_ = nomatch),
+    parent = env
+  ))
 
   assert_that(is_unique(res))
 

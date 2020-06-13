@@ -34,7 +34,6 @@
 \alias{is_unique}
 \alias{is_unique.default}
 \alias{make_unique}
-\alias{make_unique_quo}
 \title{Utilities for working with id_tbl and ts_tbl objects}
 \usage{
 id_vars(x)
@@ -99,7 +98,7 @@ dt_gforce(
   x,
   fun = c("mean", "median", "min", "max", "sum", "prod", "var", "sd", "first", "last"),
   by = meta_vars(x),
-  cols = data_vars(x),
+  vars = data_vars(x),
   na_rm = !fun \%in\% c("first", "last")
 )
 
@@ -107,9 +106,14 @@ is_unique(x, ...)
 
 \method{is_unique}{default}(x, ...)
 
-make_unique(x, expr, fun, ...)
-
-make_unique_quo(x, expr, by = meta_vars(x), cols = data_vars(x), ...)
+make_unique(
+  x,
+  expr = NULL,
+  by = meta_vars(x),
+  vars = data_vars(x),
+  env = NULL,
+  ...
+)
 }
 \arguments{
 \item{x}{Object to query/operate on}
@@ -143,7 +147,11 @@ missing entries in the respective \code{col_groups} group}
 
 \item{fun}{Function name (as string) to apply over groups}
 
+\item{vars}{Column names to apply the function to}
+
 \item{expr}{Expression to apply over groups}
+
+\item{env}{Environment to look up names in \code{expr}}
 }
 \description{
 Utilities for working with id_tbl and ts_tbl objects

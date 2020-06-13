@@ -131,3 +131,29 @@ test_that("icu_tbl rbinding", {
   expect_setequal(data_vars(res2), c("b", "c"))
   expect_identical(nrow(res2), 30L)
 })
+
+test_that("unique", {
+
+  fun <- function(x) sum(x)
+
+  tbl <- ts_tbl(x = c(rep(1, 9), rep(2, 12), rep(3, 15)),
+                y = hours(c(c(1:8, 8), seq(-2, 20, 2), c(rev(6:18), 6, 7))),
+                z = seq_len(12 * 3))
+
+  expect_false(is_unique(tbl))
+
+  res <- make_unique(tbl, NULL)
+
+  expect_is(res, "ts_tbl")
+  expect_true(is_unique(res))
+
+  res <- make_unique(tbl, "sum")
+
+  expect_is(res, "ts_tbl")
+  expect_true(is_unique(res))
+
+  expect_identical(res, make_unique(tbl, sum))
+  expect_identical(res, make_unique(tbl, fun))
+  expect_identical(res, make_unique(tbl, list(z = sum(z))))
+  expect_identical(res, make_unique(tbl, list(z = fun(z))))
+})

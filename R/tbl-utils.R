@@ -360,6 +360,7 @@ unmerge <- function(x, col_groups = as.list(data_vars(x)), by = meta_vars(x),
 }
 
 #' @param fun Function name (as string) to apply over groups
+#' @param vars Column names to apply the function to
 #'
 #' @rdname tbl_utils
 #' @export
@@ -367,7 +368,7 @@ unmerge <- function(x, col_groups = as.list(data_vars(x)), by = meta_vars(x),
 dt_gforce <- function(x,
                       fun = c("mean", "median", "min", "max", "sum", "prod",
                               "var", "sd", "first", "last"),
-                      by = meta_vars(x), cols = data_vars(x),
+                      by = meta_vars(x), vars = data_vars(x),
                       na_rm = !fun %in% c("first", "last")) {
 
   fun <- match.arg(fun)
@@ -376,19 +377,19 @@ dt_gforce <- function(x,
     warning("The argument `na_rm` is ignored for `first()` and `last()`")
   }
 
-  assert_that(is.flag(na_rm), all(c(cols, by) %in% colnames(x)))
+  assert_that(is.flag(na_rm), all(c(vars, by) %in% colnames(x)))
 
   switch(fun,
-    mean   = x[, lapply(.SD, mean, na.rm = na_rm),   by = by, .SDcols = cols],
-    median = x[, lapply(.SD, median, na.rm = na_rm), by = by, .SDcols = cols],
-    min    = x[, lapply(.SD, min, na.rm = na_rm),    by = by, .SDcols = cols],
-    max    = x[, lapply(.SD, max, na.rm = na_rm),    by = by, .SDcols = cols],
-    sum    = x[, lapply(.SD, sum, na.rm = na_rm),    by = by, .SDcols = cols],
-    prod   = x[, lapply(.SD, prod, na.rm = na_rm),   by = by, .SDcols = cols],
-    var    = x[, lapply(.SD, var, na.rm = na_rm),    by = by, .SDcols = cols],
-    sd     = x[, lapply(.SD, sd, na.rm = na_rm),     by = by, .SDcols = cols],
-    first  = x[, lapply(.SD, data.table::first),     by = by, .SDcols = cols],
-    last   = x[, lapply(.SD, data.table::last),      by = by, .SDcols = cols]
+    mean   = x[, lapply(.SD, mean, na.rm = na_rm),   by = by, .SDcols = vars],
+    median = x[, lapply(.SD, median, na.rm = na_rm), by = by, .SDcols = vars],
+    min    = x[, lapply(.SD, min, na.rm = na_rm),    by = by, .SDcols = vars],
+    max    = x[, lapply(.SD, max, na.rm = na_rm),    by = by, .SDcols = vars],
+    sum    = x[, lapply(.SD, sum, na.rm = na_rm),    by = by, .SDcols = vars],
+    prod   = x[, lapply(.SD, prod, na.rm = na_rm),   by = by, .SDcols = vars],
+    var    = x[, lapply(.SD, var, na.rm = na_rm),    by = by, .SDcols = vars],
+    sd     = x[, lapply(.SD, sd, na.rm = na_rm),     by = by, .SDcols = vars],
+    first  = x[, lapply(.SD, data.table::first),     by = by, .SDcols = vars],
+    last   = x[, lapply(.SD, data.table::last),      by = by, .SDcols = vars]
   )
 }
 
@@ -408,58 +409,75 @@ is_unique.id_tbl <- function(x, by = meta_vars(x), ...) {
 }
 
 #' @param expr Expression to apply over groups
+#' @param env Environment to look up names in `expr`
+#'
+#' @importFrom rlang is_symbol
 #'
 #' @rdname tbl_utils
 #' @export
 #'
-make_unique <- function(x, expr, fun, ...) {
+make_unique <- function(x, expr = NULL, by = meta_vars(x), vars = data_vars(x),
+                        env = NULL, ...) {
 
-  if (missing(fun)) {
+  is_num <- function(col) is.numeric(x[[col]])
 
-    make_unique_quo(x, substitute(expr), ...)
-
-  } else {
-
-    make_unique_quo(x, fun, ...)
+  if (is.null(env)) {
+    env <- caller_env()
   }
-}
 
-#' @rdname tbl_utils
-#' @export
-#'
-make_unique_quo <- function(x, expr, by = meta_vars(x), cols = data_vars(x),
-                            ...) {
+  assert_that(is_id_tbl(x), is.environment(env))
 
-  assert_that(is_id_tbl(x))
+  if (nrow(x) == 0) {
+    return(x)
+  }
 
-  if (nrow(x) == 0) return(x)
-  if (length(cols) == 0L) return(unique(x))
+  if (length(vars) == 0L) {
+    return(unique(x))
+  }
 
-  if (is.function(expr)) {
+  how <- enexpr(expr)
 
-    x[, lapply(.SD, expr, ...), .SDcols = cols, by = c(by)]
+  if (is_symbol(how)) {
+    how <- get(as.character(substitute(expr)), envir = env)
+  }
 
-  } else if (!is.language(expr) && is.null(expr)) {
+  if (is.null(how)) {
 
-    assert_that(is_unique(x, by = by))
-    x
+    is_num_col <- lgl_ply(vars, is_num)
 
-  } else if (is.character(expr)) {
+    if (any(is_num_col)) {
 
-    assert_that(is.string(expr))
+      assert_that(all(is_num_col), msg = paste("For automatically determining",
+        "an aggregation function, either all of or none of vars",
+        concat(quote_bt(vars)), "is expected to be of numeric type")
+      )
 
-    if (is.na(expr)) {
-      if (is.numeric(data_col(x))) {
-        expr <- "median"
-      } else {
-        expr <- "first"
-      }
+      fun <- "median"
+
+    } else {
+
+      fun <- "first"
     }
 
-    dt_gforce(x, expr, by = by, cols = cols, ...)
+    dt_gforce(x, fun, by = by, vars = vars, ...)
+
+  } else if (is.string(how)) {
+
+    dt_gforce(x, how, by = by, vars = vars, ...)
+
+  } else if (is.function(how)) {
+
+    x[, lapply(.SD, how, ...), .SDcols = vars, by = c(by)]
 
   } else {
 
-    x[, eval(expr), by = by]
+    .x_ <- .expr_ <- .by_ <- NULL
+
+    local({
+      .x_[, eval(.expr_), by = .by_]
+    }, envir = list2env(
+      list(.x_ = x, .expr_ = how, .by_ = by, .datatable.aware = TRUE),
+      parent = env
+    ))
   }
 }

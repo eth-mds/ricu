@@ -57,8 +57,8 @@ load_concepts.character <- function(x, src = NULL, concepts = NULL, ...) {
 #' @rdname load_concepts
 #' @export
 #'
-load_concepts.concept <- function(x, aggregate = NA_character_,
-                                  merge_data = TRUE, verbose = TRUE, ...) {
+load_concepts.concept <- function(x, aggregate = NULL, merge_data = TRUE,
+                                  verbose = TRUE, ...) {
 
   load_one <- function(x, agg, pb, ...) {
 
@@ -72,7 +72,7 @@ load_concepts.concept <- function(x, aggregate = NA_character_,
       return(dat)
     }
 
-    make_unique(dat, fun = agg)
+    make_unique(dat, agg)
   }
 
   assert_that(is.flag(merge_data), same_src(x), is.flag(verbose))

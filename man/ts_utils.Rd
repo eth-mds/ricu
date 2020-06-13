@@ -37,7 +37,7 @@ hop(
   lwr_col = "min_time",
   upr_col = "max_time",
   nomatch = NULL,
-  sub_env = NULL
+  eval_env = NULL
 )
 }
 \arguments{
@@ -75,7 +75,7 @@ window bounds}
 
 \item{nomatch}{Forwarded to \code{\link[=data.table]{data.table::[()}}}
 
-\item{sub_env}{Environment in which \code{expr} is substituted; \code{NULL} resolves
+\item{eval_env}{Environment in which \code{expr} is substituted; \code{NULL} resolves
 to the environment in which \code{expr} was created}
 }
 \description{
