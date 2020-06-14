@@ -475,9 +475,8 @@ make_unique <- function(x, expr = NULL, by = meta_vars(x), vars = data_vars(x),
 
     local({
       .x_[, eval(.expr_), by = .by_]
-    }, envir = list2env(
-      list(.x_ = x, .expr_ = how, .by_ = by, .datatable.aware = TRUE),
-      parent = env
-    ))
+    },
+      envir = list2env(list(.x_ = x, .expr_ = how, .by_ = by), parent = env)
+    )
   }
 }

@@ -43,9 +43,8 @@ sofa_data <- function(source, pafi_win_length = hours(2L),
                       fix_na_fio2 = TRUE, vent_win_length = hours(6L),
                       vent_min_win = mins(10L), gcs_win_length = hours(6L),
                       fix_na_gcs = TRUE, urine_min_win = hours(12L),
-                      icu_limits = stay_windows(source, id_type,
-                                                interval = interval),
-                      id_type = "icustay", interval = hours(1L),
+                      icu_limits = NULL, id_type = "icustay",
+                      interval = hours(1L),
                       dictionary = read_dictionary(source), ...) {
 
   assert_that(

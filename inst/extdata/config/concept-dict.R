@@ -952,7 +952,8 @@ cfg <- list(
              callback = "eicu_body_weight", weight_var = "patientweight")
       ),
       hirid = list(
-        list(ids = 426L, table = "pharma", sub_var = "pharmaid")
+        list(ids = 426L, table = "pharma", sub_var = "pharmaid",
+             callback = "hirid_vaso")
       )
     )
   ),
@@ -989,7 +990,7 @@ cfg <- list(
       ),
       hirid = list(
         list(ids = c(1000462L, 1000656L, 1000657L, 1000658L), table = "pharma",
-             sub_var = "pharmaid")
+             sub_var = "pharmaid", callback = "hirid_vaso")
       )
     )
   ),
@@ -1011,7 +1012,7 @@ cfg <- list(
       ),
       hirid = list(
         list(ids = c(71L, 1000649L, 1000650L, 1000655L, 1000750L),
-             table = "pharma", sub_var = "pharmaid")
+             table = "pharma", sub_var = "pharmaid", callback = "hirid_vaso")
       )
     )
   ),

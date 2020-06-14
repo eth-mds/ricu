@@ -70,7 +70,7 @@ idx_var_helper <- function(x, col) {
 }
 
 cbk_var_helper <- function(...) {
-  if (...length()) as.character(list(...)) else NULL
+  if (...length()) unlist(list(...), recursive = FALSE) else NULL
 }
 
 #' @rdname data_items

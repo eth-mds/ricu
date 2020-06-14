@@ -233,3 +233,20 @@ eicu_adx <- function(x, val_var, ...) {
 
   set(x, j = val_var, value = cats)
 }
+
+hirid_vaso <- function(x, val_var, env, ...) {
+
+  ids <- id_vars(x)
+
+  res <- dt_gforce(x, "sum")
+
+  sex <- load_id("general", env, cols = "sex", id_var = ids)
+
+  sex <- sex[,
+    c("weight", "sex") := list(fifelse(get("sex") == "M", 85, 65), NULL)
+  ]
+
+  res <- merge(res, sex, by = ids)
+
+  res[, c(val_var) := get(val_var) / get("weight")]
+}
