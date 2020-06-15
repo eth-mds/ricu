@@ -180,7 +180,7 @@ hop <- function(x, expr, windows, full_window = FALSE,
 
   tmp_col <- new_names(x)
   x <- x[, c(tmp_col) := get(tbl_ind)]
-  on.exit(rm_cols(x, tmp_col, by_ref = TRUE))
+  on.exit(rm_cols(x, tmp_col, skip_absent = TRUE, by_ref = TRUE))
 
   join <- c(paste(tbl_id, "==", win_id), paste(tbl_ind, "<=", upr_col),
                                          paste(tmp_col, ">=", lwr_col))
@@ -198,7 +198,11 @@ hop <- function(x, expr, windows, full_window = FALSE,
   .x_ <- .win_ <- .expr_ <- .join_ <- .nomatch_ <- NULL
 
   res <- local({
-    .x_[.win_, eval(.expr_), on = .join_, by = .EACHI, nomatch = .nomatch_]
+    if (is.na(.nomatch_)) {
+      .x_[.win_, eval(.expr_), on = .join_, by = .EACHI]
+    } else {
+      .x_[.win_, eval(.expr_), on = .join_, by = .EACHI, nomatch = .nomatch_]
+    }
   }, envir = list2env(
     list(.x_ = x, .win_ = windows, .expr_ = exp, .join_ = join,
          .nomatch_ = nomatch),
@@ -207,5 +211,5 @@ hop <- function(x, expr, windows, full_window = FALSE,
 
   assert_that(is_unique(res))
 
-  rm_cols(res, tmp_col, by_ref = TRUE)
+  rm_cols(res, tmp_col, skip_absent = TRUE, by_ref = TRUE)
 }
