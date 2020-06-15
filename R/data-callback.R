@@ -74,8 +74,7 @@ eicu_sampling <- function(x, val_var, ...) {
 multiply_by <- function(factor) {
   factor <- force(factor)
   function(x, val_var, ...) {
-    x <- x[, c(val_var) := get(val_var) * factor]
-    x
+    x[, c(val_var) := get(val_var) * factor]
   }
 }
 
@@ -246,7 +245,18 @@ hirid_vaso <- function(x, val_var, env, ...) {
 
   res <- merge(res, sex, by = ids)
 
-  res[, c(val_var) := get(val_var) / get("weight")]
+  frac <- 1 / as.double(interval(x), units = "mins")
+
+  res[,
+    c(val_var, "weight") := list(frac * get(val_var) / get("weight"), NULL)
+  ]
+}
+
+hirid_dobu <- function(x, val_var, env, ...) {
+
+  res <- hirid_vaso(x, val_var, env)
+
+  res[, c(val_var) := 1000 * get(val_var)]
 }
 
 hirid_insulin <- function(x, ...) dt_gforce(x, "sum")

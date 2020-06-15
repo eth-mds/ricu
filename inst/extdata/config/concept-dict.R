@@ -953,7 +953,7 @@ cfg <- list(
       ),
       hirid = list(
         list(ids = 426L, table = "pharma", sub_var = "pharmaid",
-             callback = "hirid_vaso")
+             callback = "hirid_dobu")
       )
     )
   ),

@@ -1019,7 +1019,7 @@
           "ids": 426,
           "table": "pharma",
           "sub_var": "pharmaid",
-          "callback": "hirid_vaso"
+          "callback": "hirid_dobu"
         }
       ],
       "mimic": [
