@@ -1727,7 +1727,8 @@
         {
           "ids": [15, 1000724],
           "table": "pharma",
-          "sub_var": "pharmaid"
+          "sub_var": "pharmaid",
+          "callback": "hirid_insulin"
         }
       ],
       "mimic": [

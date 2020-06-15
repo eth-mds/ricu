@@ -1249,7 +1249,8 @@ cfg <- list(
              callback = "force_numeric_val_var", class = "rgx_itm")
       ),
       hirid = list(
-        list(ids = c(15L, 1000724L), table = "pharma", sub_var = "pharmaid")
+        list(ids = c(15L, 1000724L), table = "pharma", sub_var = "pharmaid",
+             callback = "hirid_insulin")
       )
     )
   ),

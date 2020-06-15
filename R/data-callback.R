@@ -250,3 +250,5 @@ hirid_vaso <- function(x, val_var, env, ...) {
 
   res[, c(val_var) := get(val_var) / get("weight")]
 }
+
+hirid_insulin <- function(x, ...) dt_gforce(x, "sum")
