@@ -7,7 +7,7 @@
 \alias{add_unit_var}
 \title{Internal utilities for \code{item}/\code{concept} objects}
 \usage{
-load_cncpt(x, verbose, ...)
+load_cncpt(x, ...)
 
 load_itm(x, patient_ids, id_type, interval)
 
@@ -17,8 +17,6 @@ add_unit_var(x)
 }
 \arguments{
 \item{x}{Object defining the row-subsetting}
-
-\item{verbose}{Logical flag for muting informational output}
 
 \item{...}{Passed to downstream methods}
 

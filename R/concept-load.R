@@ -66,13 +66,17 @@ load_concepts.concept <- function(x, aggregate = NULL, merge_data = TRUE,
       progr_iter(x[["name"]], pb)
     }
 
-    dat <- load_cncpt(x, verbose, ...)
+    out <- capture.output(dat <- load_cncpt(x, ...), type = "message")
 
-    if (isFALSE(agg)) {
-      return(dat)
+    if (is.null(pb) && verbose) {
+      message(paste0(out, collapse = "\n"))
     }
 
-    make_unique(dat, agg)
+    if (!isFALSE(agg)) {
+      dat <- make_unique(dat, agg)
+    }
+
+    list(dat, out)
   }
 
   assert_that(is.flag(merge_data), same_src(x), is.flag(verbose))
@@ -87,6 +91,22 @@ load_concepts.concept <- function(x, aggregate = NULL, merge_data = TRUE,
 
   res <- Map(load_one, x, rep_arg(aggregate, names(x)),
              MoreArgs = c(list(pba), list(...)))
+
+  if (verbose && not_null(pba)) {
+
+    out <- lst_xtr(res, 2L)
+    out <- out[lengths(out) > 0L]
+
+    if (has_length(out)) {
+
+      out <- lapply(out, paste0, collapse = "\n")
+
+      message("Successfully loaded ", len, " concepts, but encountered some ",
+        "issues:\n", paste0("  * ", names(out), ":\n", out, collapse = "\n"))
+    }
+  }
+
+  res <- lst_xtr(res, 1L)
 
   if (isFALSE(merge_data)) {
     return(res)
@@ -131,17 +151,17 @@ load_concepts.item <- function(x, patient_ids = NULL, id_type = "icustay",
 
   assert_that(all_fun(Map(inherits, res, chr_xtr(x, "targ")), isTRUE))
 
-  rbind_lst(res)
+  rbind_lst(res, fill = TRUE)
 }
 
 #' @inheritParams load_concepts
 #' @rdname item_utils
 #' @keywords internal
 #' @export
-load_cncpt <- function(x, verbose, ...) UseMethod("load_cncpt", x)
+load_cncpt <- function(x, ...) UseMethod("load_cncpt", x)
 
 #' @export
-load_cncpt.cncpt <- function(x, verbose, ...) {
+load_cncpt.cncpt <- function(x, ...) {
 
   res <- load_concepts(x[["items"]], ...)
   res <- rm_na(res)
@@ -150,7 +170,7 @@ load_cncpt.cncpt <- function(x, verbose, ...) {
 }
 
 #' @export
-load_cncpt.num_cncpt <- function(x, verbose, ...) {
+load_cncpt.num_cncpt <- function(x, ...) {
 
   check_bound <- function(x, val, op) {
     vc  <- x[["val_var"]]
@@ -182,20 +202,19 @@ load_cncpt.num_cncpt <- function(x, verbose, ...) {
 
   if (!all(keep)) {
 
-    if (verbose) n_row <- nrow(res)
+    n_row <- nrow(res)
 
     res <- res[keep, ]
 
-    if (verbose) {
-      n_rm <- n_row - nrow(res)
-      message("    removed ", n_rm, " (", prcnt(n_rm, n_row), ") of rows ",
-              "due to out of spec entries")
-    }
+    n_rm <- n_row - nrow(res)
+
+    message("    removed ", n_rm, " (", prcnt(n_rm, n_row), ") of rows ",
+            "due to out of spec entries")
   }
 
   unit <- x[["unit"]]
 
-  if (verbose && has_name(res, "unit_var")) {
+  if (has_name(res, "unit_var")) {
     report_unit(res, unit)
   }
 
@@ -209,7 +228,7 @@ load_cncpt.num_cncpt <- function(x, verbose, ...) {
 }
 
 #' @export
-load_cncpt.fct_cncpt <- function(x, verbose, ...) {
+load_cncpt.fct_cncpt <- function(x, ...) {
 
   lvl <- x[["levels"]]
 
@@ -223,15 +242,14 @@ load_cncpt.fct_cncpt <- function(x, verbose, ...) {
 
   if (!all(keep)) {
 
-    if (verbose) n_row <- nrow(res)
+    n_row <- nrow(res)
 
     res <- res[keep, ]
 
-    if (verbose) {
-      n_rm <- n_row - nrow(res)
-      message("    removed ", n_rm, " (", prcnt(n_rm, n_row), ") of rows ",
-              "due to out of spec entries")
-    }
+    n_rm <- n_row - nrow(res)
+
+    message("    removed ", n_rm, " (", prcnt(n_rm, n_row), ") of rows ",
+            "due to out of spec entries")
   }
 
   rename_cols(res, x[["name"]], "val_var", by_ref = TRUE)
