@@ -169,12 +169,10 @@ hirid_death <- function(x, val_var, item_var, ...) {
   tmp <- split(x, by = item_var, keep.by = FALSE)
   tmp <- lapply(tmp, threshold, val_var, 40)
   tmp <- lapply(tmp, score, idc, val_var)
-  tmp <- reduce(merge, tmp, all = TRUE)
+  res <- rbind_lst(tmp)
+  res <- res[, any(get("V1")), by = idc]
 
-  tmp <- tmp[, c(val_var, "V1.x", "V1.y") := list(get("V1.x") | get("V1.y"),
-                                                  NULL, NULL)]
-
-  as_id_tbl(tmp, id_vars(x))
+  rename_cols(res, val_var, "V1", by_ref = TRUE)
 }
 
 mf_sex <- function(x, val_var, ...) {
