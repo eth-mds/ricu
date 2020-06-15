@@ -12,7 +12,7 @@
       fun_body <- as.call(c(as.name("{"), fun_body))
     }
 
-    if (!length(grep("icu_tbl", fun_body[[2L]], fixed = TRUE))) {
+    if (!length(grep("id_tbl", fun_body[[2L]], fixed = TRUE))) {
 
       fun_body <- fun_body[c(1L, NA, 2L:length(fun_body))]
       fun_body[[2L]] <- parse(text = fix)[[1L]]
@@ -39,11 +39,11 @@
 
     cbind_fix <- paste0(
       "if (!identical(class(..1), 'data.frame')) for (x in list(...)) { ",
-      "if (inherits(x, 'icu_tbl')) return(", prefix, ".cbind.icu_tbl(...)) }"
+      "if (inherits(x, 'id_tbl')) return(", prefix, ".cbind.id_tbl(...)) }"
     )
 
     rbind_fix <- paste0("for (x in list(...)) { ",
-      "if (inherits(x, 'icu_tbl')) return(", prefix, ".rbind.icu_tbl(...)) }")
+      "if (inherits(x, 'id_tbl')) return(", prefix, ".rbind.id_tbl(...)) }")
 
     fix_base_fun(base::cbind.data.frame, cbind_fix)
     fix_base_fun(base::rbind.data.frame, rbind_fix)
