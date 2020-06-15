@@ -392,10 +392,10 @@ split_indices <- function(len, n_chunks) {
 
 force_numeric <- function(x) {
   res <- suppressWarnings(as.numeric(x))
-  new_na <- is.na(res) & !is.na(x)
-  if (sum(new_na) > 0L) {
-    message("lost ", sum(new_na), " (", round(mean(new_na) * 100, digits = 2),
-            "%) entries due to `force_numeric()`")
+  new_na <- sum(is.na(res) & !is.na(x))
+  if (new_na > 0L) {
+    message("    lost ", new_na, " (", prcnt(new_na, length(x)),
+            ") entries due to `force_numeric()`")
   }
   res
 }

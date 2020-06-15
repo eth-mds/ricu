@@ -68,7 +68,7 @@ load_concepts.concept <- function(x, aggregate = NULL, merge_data = TRUE,
 
     out <- capture.output(dat <- load_cncpt(x, ...), type = "message")
 
-    if (is.null(pb) && verbose) {
+    if (verbose && is.null(pb) && has_length(out)) {
       message(paste0(out, collapse = "\n"))
     }
 
