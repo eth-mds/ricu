@@ -236,6 +236,7 @@ hirid_vaso <- function(x, val_var, env, ...) {
   ids <- id_vars(x)
 
   res <- dt_gforce(x, "sum")
+  res <- res[get(val_var) > 0, ]
 
   sex <- load_id("general", env, cols = "sex", id_var = ids)
 
