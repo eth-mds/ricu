@@ -249,21 +249,17 @@ hirid_vaso <- function(x, val_var, unit_var, env, ...) {
             ") entries due to unexpected units")
   }
 
-  x <- dt_gforce(x, "sum", vars = val_var)
-  x <- x[, c(unit_var) := "mcg/kg/min"]
-
   sex <- load_id("general", env, cols = "sex", id_var = ids)
-
   sex <- sex[,
     c("weight", "sex") := list(fifelse(get("sex") == "M", 85, 65), NULL)
   ]
 
-  x <- merge(x, sex, by = ids)
+  x <- merge(dt_gforce(x, "sum", vars = val_var), sex, by = ids)
 
   frac <- 1 / as.double(interval(x), units = "mins")
 
-  x[,
-    c(val_var, "weight") := list(frac * get(val_var) / get("weight"), NULL)
+  x[, c(val_var, unit_var, "weight") := list(
+    frac * get(val_var) / get("weight"), "mcg/kg/min", NULL)
   ]
 }
 

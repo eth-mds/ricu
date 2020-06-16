@@ -17,7 +17,7 @@
 new_itm <- function(src, ..., target = c("ts_tbl", "id_tbl"),
                     class = "sel_itm") {
 
-  assert_that(is.string(src), is.string(class))
+  assert_that(is.string(src), is.character(class), has_length(class))
 
   target <- match.arg(target)
 

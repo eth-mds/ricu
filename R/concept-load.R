@@ -298,6 +298,45 @@ load_itm.rgx_itm <- function(x, patient_ids, id_type, interval) {
   load_sub_itm(x, patient_ids, id_type, interval)
 }
 
+#' @export
+load_itm.hrd_itm <- function(x, patient_ids, id_type, interval) {
+
+  qry <- prepare_query(x)
+  tbl <- as_src_tbl(x)
+  id  <- id_vars(as_id_cfg(tbl)[id_type])
+
+  itm <- x[["itm_vars"]]
+  cbc <- x[["cb_vars"]]
+  sub <- x[["sub_var"]]
+
+  if (need_idx(x)) {
+    res <- load_ts(tbl, !!qry, c(itm, sub, cbc), id, x[["index_var"]],
+                   interval)
+  } else {
+    res <- load_id(tbl, !!qry, c(itm, sub, cbc), id, interval)
+  }
+
+  res <- merge_patid(res, patient_ids)
+
+  env <- as_src_env(x)
+  unt <- load_src("variables", env, cols = c("id", "unit"))
+  res <- merge(res, unt, by.x = sub, by.y = "id", all.x = TRUE)
+
+  if (!sub %in% cbc) {
+    res <- rm_cols(res, sub, by_ref = TRUE)
+  }
+
+  res <- do.call(x[["callback"]],
+    c(list(res), as.list(c(itm, cbc, unit_var = "unit")), list(env = env))
+  )
+
+  res <- rm_cols(res, setdiff(data_vars(res), c(itm, "unit")), by_ref = TRUE)
+  res <- rename_cols(res, c(names(itm), "unit_var"), c(itm, "unit"),
+                     by_ref = TRUE)
+
+  res
+}
+
 load_sub_itm <- function(x, patient_ids, id_type, interval) {
 
   qry <- prepare_query(x)

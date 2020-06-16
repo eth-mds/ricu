@@ -107,7 +107,8 @@
         {
           "ids": 20002600,
           "table": "observations",
-          "sub_var": "variableid"
+          "sub_var": "variableid",
+          "class": ["hrd_itm", "sel_itm"]
         }
       ],
       "mimic": [
@@ -150,7 +151,8 @@
           "ids": 24000605,
           "table": "observations",
           "sub_var": "variableid",
-          "callback": "multiply_hirid_albu"
+          "callback": "multiply_hirid_albu",
+          "class": ["hrd_itm", "sel_itm"]
         }
       ],
       "mimic": [
@@ -191,7 +193,8 @@
         {
           "ids": 20002700,
           "table": "observations",
-          "sub_var": "variableid"
+          "sub_var": "variableid",
+          "class": ["hrd_itm", "sel_itm"]
         }
       ],
       "mimic": [
@@ -306,7 +309,8 @@
         {
           "ids": 24000330,
           "table": "observations",
-          "sub_var": "variableid"
+          "sub_var": "variableid",
+          "class": ["hrd_itm", "sel_itm"]
         }
       ],
       "mimic": [
@@ -348,7 +352,8 @@
         {
           "ids": 20001300,
           "table": "observations",
-          "sub_var": "variableid"
+          "sub_var": "variableid",
+          "class": ["hrd_itm", "sel_itm"]
         }
       ],
       "mimic": [
@@ -425,7 +430,8 @@
         {
           "ids": 20004200,
           "table": "observations",
-          "sub_var": "variableid"
+          "sub_var": "variableid",
+          "class": ["hrd_itm", "sel_itm"]
         }
       ],
       "mimic": [
@@ -468,7 +474,8 @@
           "ids": 24000560,
           "table": "observations",
           "sub_var": "variableid",
-          "callback": "multiply_hirid_bili"
+          "callback": "multiply_hirid_bili",
+          "class": ["hrd_itm", "sel_itm"]
         }
       ],
       "mimic": [
@@ -511,7 +518,8 @@
           "ids": 20004300,
           "table": "observations",
           "sub_var": "variableid",
-          "callback": "multiply_hirid_bili"
+          "callback": "multiply_hirid_bili",
+          "class": ["hrd_itm", "sel_itm"]
         }
       ],
       "mimic": [
@@ -554,7 +562,8 @@
         {
           "ids": 20002200,
           "table": "observations",
-          "sub_var": "variableid"
+          "sub_var": "variableid",
+          "class": ["hrd_itm", "sel_itm"]
         }
       ],
       "mimic": [
@@ -601,7 +610,8 @@
           "ids": 20005100,
           "table": "observations",
           "sub_var": "variableid",
-          "callback": "multiply_hirid_calc"
+          "callback": "multiply_hirid_calc",
+          "class": ["hrd_itm", "sel_itm"]
         }
       ],
       "mimic": [
@@ -643,7 +653,8 @@
         {
           "ids": 24000522,
           "table": "observations",
-          "sub_var": "variableid"
+          "sub_var": "variableid",
+          "class": ["hrd_itm", "sel_itm"]
         }
       ],
       "mimic": [
@@ -719,7 +730,8 @@
         {
           "ids": 24000526,
           "table": "observations",
-          "sub_var": "variableid"
+          "sub_var": "variableid",
+          "class": ["hrd_itm", "sel_itm"]
         }
       ]
     }
@@ -747,7 +759,8 @@
         {
           "ids": [24000439, 24000521],
           "table": "observations",
-          "sub_var": "variableid"
+          "sub_var": "variableid",
+          "class": ["hrd_itm", "sel_itm"]
         }
       ],
       "mimic": [
@@ -788,7 +801,8 @@
         {
           "ids": 24000210,
           "table": "observations",
-          "sub_var": "variableid"
+          "sub_var": "variableid",
+          "class": ["hrd_itm", "sel_itm"]
         }
       ],
       "mimic": [
@@ -829,7 +843,8 @@
         {
           "ids": 24000220,
           "table": "observations",
-          "sub_var": "variableid"
+          "sub_var": "variableid",
+          "class": ["hrd_itm", "sel_itm"]
         }
       ],
       "mimic": [
@@ -872,7 +887,8 @@
           "ids": 20000600,
           "table": "observations",
           "sub_var": "variableid",
-          "callback": "multiply_hirid_crea"
+          "callback": "multiply_hirid_crea",
+          "class": ["hrd_itm", "sel_itm"]
         }
       ],
       "mimic": [
@@ -916,7 +932,8 @@
           "table": "observations",
           "sub_var": "variableid",
           "item_var": "variableid",
-          "callback": "hirid_death"
+          "callback": "hirid_death",
+          "class": ["hrd_itm", "sel_itm"]
         }
       ],
       "mimic": [
@@ -960,7 +977,8 @@
         {
           "ids": 120,
           "table": "observations",
-          "sub_var": "variableid"
+          "sub_var": "variableid",
+          "class": ["hrd_itm", "sel_itm"]
         }
       ],
       "mimic": [
@@ -1178,7 +1196,8 @@
         {
           "ids": [2200, 8290, 30010009],
           "table": "observations",
-          "sub_var": "variableid"
+          "sub_var": "variableid",
+          "class": ["hrd_itm", "sel_itm"]
         }
       ],
       "mimic": [
@@ -1234,7 +1253,8 @@
         {
           "ids": 2010,
           "table": "observations",
-          "sub_var": "variableid"
+          "sub_var": "variableid",
+          "class": ["hrd_itm", "sel_itm"]
         }
       ],
       "mimic": [
@@ -1277,7 +1297,8 @@
           "ids": 24000536,
           "table": "observations",
           "sub_var": "variableid",
-          "callback": "multiply_hirid_fibr"
+          "callback": "multiply_hirid_fibr",
+          "class": ["hrd_itm", "sel_itm"]
         }
       ],
       "mimic": [
@@ -1356,7 +1377,8 @@
         {
           "ids": 10000300,
           "table": "observations",
-          "sub_var": "variableid"
+          "sub_var": "variableid",
+          "class": ["hrd_itm", "sel_itm"]
         }
       ],
       "mimic": [
@@ -1397,7 +1419,8 @@
         {
           "ids": 10000200,
           "table": "observations",
-          "sub_var": "variableid"
+          "sub_var": "variableid",
+          "class": ["hrd_itm", "sel_itm"]
         }
       ],
       "mimic": [
@@ -1472,7 +1495,8 @@
         {
           "ids": 10000100,
           "table": "observations",
-          "sub_var": "variableid"
+          "sub_var": "variableid",
+          "class": ["hrd_itm", "sel_itm"]
         }
       ],
       "mimic": [
@@ -1525,7 +1549,8 @@
           "ids": [20005110, 24000523, 24000585],
           "table": "observations",
           "sub_var": "variableid",
-          "callback": "multiply_hirid_gluc"
+          "callback": "multiply_hirid_gluc",
+          "class": ["hrd_itm", "sel_itm"]
         }
       ],
       "mimic": [
@@ -1567,7 +1592,8 @@
         {
           "ids": 200,
           "table": "observations",
-          "sub_var": "variableid"
+          "sub_var": "variableid",
+          "class": ["hrd_itm", "sel_itm"]
         }
       ],
       "mimic": [
@@ -1645,7 +1671,8 @@
           "ids": [24000548, 24000836, 20000900],
           "table": "observations",
           "sub_var": "variableid",
-          "callback": "multiply_hirid_hemo"
+          "callback": "multiply_hirid_hemo",
+          "class": ["hrd_itm", "sel_itm"]
         }
       ],
       "mimic": [
@@ -1684,7 +1711,8 @@
         {
           "ids": 24000567,
           "table": "observations",
-          "sub_var": "variableid"
+          "sub_var": "variableid",
+          "class": ["hrd_itm", "sel_itm"]
         }
       ],
       "mimic": [
@@ -1786,7 +1814,8 @@
         {
           "ids": 24000524,
           "table": "observations",
-          "sub_var": "variableid"
+          "sub_var": "variableid",
+          "class": ["hrd_itm", "sel_itm"]
         }
       ],
       "mimic": [
@@ -1890,7 +1919,8 @@
         {
           "ids": 24000480,
           "table": "observations",
-          "sub_var": "variableid"
+          "sub_var": "variableid",
+          "class": ["hrd_itm", "sel_itm"]
         }
       ],
       "mimic": [
@@ -1935,7 +1965,8 @@
           "ids": 24000230,
           "table": "observations",
           "sub_var": "variableid",
-          "callback": "multiply_hirid_magn"
+          "callback": "multiply_hirid_magn",
+          "class": ["hrd_itm", "sel_itm"]
         }
       ],
       "mimic": [
@@ -1976,7 +2007,8 @@
         {
           "ids": 24000160,
           "table": "observations",
-          "sub_var": "variableid"
+          "sub_var": "variableid",
+          "class": ["hrd_itm", "sel_itm"]
         }
       ],
       "mimic": [
@@ -2018,7 +2050,8 @@
         {
           "ids": 24000170,
           "table": "observations",
-          "sub_var": "variableid"
+          "sub_var": "variableid",
+          "class": ["hrd_itm", "sel_itm"]
         }
       ],
       "mimic": [
@@ -2060,7 +2093,8 @@
         {
           "ids": 24000150,
           "table": "observations",
-          "sub_var": "variableid"
+          "sub_var": "variableid",
+          "class": ["hrd_itm", "sel_itm"]
         }
       ],
       "mimic": [
@@ -2112,7 +2146,8 @@
         {
           "ids": 110,
           "table": "observations",
-          "sub_var": "variableid"
+          "sub_var": "variableid",
+          "class": ["hrd_itm", "sel_itm"]
         }
       ],
       "mimic": [
@@ -2154,7 +2189,8 @@
         {
           "ids": 24000549,
           "table": "observations",
-          "sub_var": "variableid"
+          "sub_var": "variableid",
+          "class": ["hrd_itm", "sel_itm"]
         }
       ],
       "mimic": [
@@ -2196,7 +2232,8 @@
         {
           "ids": 24000550,
           "table": "observations",
-          "sub_var": "variableid"
+          "sub_var": "variableid",
+          "class": ["hrd_itm", "sel_itm"]
         }
       ],
       "mimic": [
@@ -2307,7 +2344,8 @@
         {
           "ids": [4000, 8280, 20000800],
           "table": "observations",
-          "sub_var": "variableid"
+          "sub_var": "variableid",
+          "class": ["hrd_itm", "sel_itm"]
         }
       ],
       "mimic": [
@@ -2349,7 +2387,8 @@
         {
           "ids": 20001200,
           "table": "observations",
-          "sub_var": "variableid"
+          "sub_var": "variableid",
+          "class": ["hrd_itm", "sel_itm"]
         }
       ],
       "mimic": [
@@ -2391,7 +2430,8 @@
         {
           "ids": 20000200,
           "table": "observations",
-          "sub_var": "variableid"
+          "sub_var": "variableid",
+          "class": ["hrd_itm", "sel_itm"]
         }
       ],
       "mimic": [
@@ -2432,7 +2472,8 @@
         {
           "ids": 20000300,
           "table": "observations",
-          "sub_var": "variableid"
+          "sub_var": "variableid",
+          "class": ["hrd_itm", "sel_itm"]
         }
       ],
       "mimic": [
@@ -2475,7 +2516,8 @@
           "ids": 20002500,
           "table": "observations",
           "sub_var": "variableid",
-          "callback": "multiply_hirid_phos"
+          "callback": "multiply_hirid_phos",
+          "class": ["hrd_itm", "sel_itm"]
         }
       ],
       "mimic": [
@@ -2517,7 +2559,8 @@
         {
           "ids": 20000110,
           "table": "observations",
-          "sub_var": "variableid"
+          "sub_var": "variableid",
+          "class": ["hrd_itm", "sel_itm"]
         }
       ],
       "mimic": [
@@ -2559,7 +2602,8 @@
         {
           "ids": [20000500, 24000520, 24000833, 24000867],
           "table": "observations",
-          "sub_var": "variableid"
+          "sub_var": "variableid",
+          "class": ["hrd_itm", "sel_itm"]
         }
       ],
       "mimic": [
@@ -2634,7 +2678,8 @@
         {
           "ids": 20004410,
           "table": "observations",
-          "sub_var": "variableid"
+          "sub_var": "variableid",
+          "class": ["hrd_itm", "sel_itm"]
         }
       ],
       "mimic": [
@@ -2675,7 +2720,8 @@
         {
           "ids": 15001565,
           "table": "observations",
-          "sub_var": "variableid"
+          "sub_var": "variableid",
+          "class": ["hrd_itm", "sel_itm"]
         }
       ]
     }
@@ -2773,7 +2819,8 @@
         {
           "ids": [300, 310],
           "table": "observations",
-          "sub_var": "variableid"
+          "sub_var": "variableid",
+          "class": ["hrd_itm", "sel_itm"]
         }
       ],
       "mimic": [
@@ -2801,7 +2848,8 @@
         {
           "ids": 24000668,
           "table": "observations",
-          "sub_var": "variableid"
+          "sub_var": "variableid",
+          "class": ["hrd_itm", "sel_itm"]
         }
       ],
       "mimic": [
@@ -2888,7 +2936,8 @@
         {
           "ids": [20000400, 24000519, 24000658, 24000835, 24000866],
           "table": "observations",
-          "sub_var": "variableid"
+          "sub_var": "variableid",
+          "class": ["hrd_itm", "sel_itm"]
         }
       ],
       "mimic": [
@@ -2930,7 +2979,8 @@
         {
           "ids": 100,
           "table": "observations",
-          "sub_var": "variableid"
+          "sub_var": "variableid",
+          "class": ["hrd_itm", "sel_itm"]
         }
       ],
       "mimic": [
@@ -2972,7 +3022,8 @@
         {
           "ids": [410, 400, 7100],
           "table": "observations",
-          "sub_var": "variableid"
+          "sub_var": "variableid",
+          "class": ["hrd_itm", "sel_itm"]
         }
       ],
       "mimic": [
@@ -3010,7 +3061,8 @@
           "ids": 15001552,
           "table": "observations",
           "sub_var": "variableid",
-          "callback": "hirid_trach"
+          "callback": "hirid_trach",
+          "class": ["hrd_itm", "sel_itm"]
         }
       ],
       "mimic": [
@@ -3087,7 +3139,8 @@
         {
           "ids": 24000806,
           "table": "observations",
-          "sub_var": "variableid"
+          "sub_var": "variableid",
+          "class": ["hrd_itm", "sel_itm"]
         }
       ],
       "mimic": [
@@ -3130,7 +3183,8 @@
           "ids": 20004100,
           "table": "observations",
           "sub_var": "variableid",
-          "callback": "multiply_hirid_urea"
+          "callback": "multiply_hirid_urea",
+          "class": ["hrd_itm", "sel_itm"]
         }
       ],
       "mimic": [
@@ -3156,7 +3210,8 @@
         {
           "ids": 30005110,
           "table": "observations",
-          "sub_var": "variableid"
+          "sub_var": "variableid",
+          "class": ["hrd_itm", "sel_itm"]
         }
       ]
     }
@@ -3215,7 +3270,8 @@
         {
           "ids": 10020000,
           "table": "observations",
-          "sub_var": "variableid"
+          "sub_var": "variableid",
+          "class": ["hrd_itm", "sel_itm"]
         }
       ]
     }
@@ -3311,7 +3367,8 @@
           "ids": 15001552,
           "table": "observations",
           "sub_var": "variableid",
-          "callback": "hirid_vent_end"
+          "callback": "hirid_vent_end",
+          "class": ["hrd_itm", "sel_itm"]
         }
       ],
       "mimic": [
@@ -3391,7 +3448,8 @@
           "ids": 15001552,
           "table": "observations",
           "sub_var": "variableid",
-          "callback": "hirid_vent_start"
+          "callback": "hirid_vent_start",
+          "class": ["hrd_itm", "sel_itm"]
         }
       ],
       "mimic": [
@@ -3456,7 +3514,8 @@
         {
           "ids": 20000700,
           "table": "observations",
-          "sub_var": "variableid"
+          "sub_var": "variableid",
+          "class": ["hrd_itm", "sel_itm"]
         }
       ],
       "mimic": [

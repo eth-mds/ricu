@@ -12,7 +12,7 @@ new_src_cfg(
   col_cfg,
   tbl_cfg = NULL,
   url = NULL,
-  class_prefix = name
+  class_prefix = NULL
 )
 
 is_src_cfg(x)
