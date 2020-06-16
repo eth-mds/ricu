@@ -15,7 +15,11 @@
 #' @keywords internal
 #'
 new_src_cfg <- function(name, id_cfg, col_cfg, tbl_cfg = NULL, url = NULL,
-                        class_prefix = name) {
+                        class_prefix = NULL) {
+
+  if (is.null(class_prefix)) {
+    class_prefix <- name
+  }
 
   assert_that(
     is.string(name), null_or(url, is.string), is_id_cfg(id_cfg),
