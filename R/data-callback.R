@@ -231,12 +231,26 @@ eicu_adx <- function(x, val_var, ...) {
   set(x, j = val_var, value = cats)
 }
 
-hirid_vaso <- function(x, val_var, env, ...) {
+hirid_vaso <- function(x, val_var, unit_var, env, ...) {
 
   ids <- id_vars(x)
 
-  res <- dt_gforce(x, "sum")
-  res <- res[get(val_var) > 0, ]
+  x <- x[get(val_var) > 0, ]
+  x <- x[get(unit_var) == "mg",
+    c(val_var, unit_var) := list(1000 * get(val_var), "\u00b5g")
+  ]
+
+  old_row <- nrow(x)
+  x <- x[get(unit_var) == "\u00b5g", ]
+  dif_row <- old_row - nrow(x)
+
+  if (dif_row > 0) {
+    message("    lost ", dif_row, " (", prcnt(dif_row, old_row),
+            ") entries due to unexpected units")
+  }
+
+  x <- dt_gforce(x, "sum", vars = val_var)
+  x <- x[, c(unit_var) := "mcg/kg/min"]
 
   sex <- load_id("general", env, cols = "sex", id_var = ids)
 
@@ -244,20 +258,13 @@ hirid_vaso <- function(x, val_var, env, ...) {
     c("weight", "sex") := list(fifelse(get("sex") == "M", 85, 65), NULL)
   ]
 
-  res <- merge(res, sex, by = ids)
+  x <- merge(x, sex, by = ids)
 
   frac <- 1 / as.double(interval(x), units = "mins")
 
-  res[,
+  x[,
     c(val_var, "weight") := list(frac * get(val_var) / get("weight"), NULL)
   ]
-}
-
-hirid_dobu <- function(x, val_var, env, ...) {
-
-  res <- hirid_vaso(x, val_var, env)
-
-  res[, c(val_var) := 1000 * get(val_var)]
 }
 
 hirid_insulin <- function(x, ...) dt_gforce(x, "sum")
