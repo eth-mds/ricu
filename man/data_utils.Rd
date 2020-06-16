@@ -8,9 +8,7 @@
 \alias{id_origin.default}
 \alias{id_windows}
 \alias{id_windows.mimic_ids}
-\alias{id_windows.mimic_demo_ids}
 \alias{id_windows.eicu_ids}
-\alias{id_windows.eicu_demo_ids}
 \alias{id_windows.hirid_ids}
 \alias{id_windows.default}
 \title{Data loading utilities}
@@ -29,11 +27,7 @@ id_windows(x, ...)
 
 \method{id_windows}{mimic_ids}(x, env = as_src_env(x), ...)
 
-\method{id_windows}{mimic_demo_ids}(x, env = as_src_env(x), ...)
-
 \method{id_windows}{eicu_ids}(x, env = as_src_env(x), ...)
-
-\method{id_windows}{eicu_demo_ids}(x, env = as_src_env(x), ...)
 
 \method{id_windows}{hirid_ids}(x, env = as_src_env(x), ...)
 

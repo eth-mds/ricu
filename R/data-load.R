@@ -57,31 +57,9 @@ load_difftime.mimic_tbl <- function(x, rows, cols = colnames(x),
 
 #' @rdname load_src
 #' @export
-load_difftime.mimic_demo_tbl <- function(x, rows, cols = colnames(x),
-                                         id_hint = id_vars(x),
-                                         time_vars = ricu::time_vars(x), ...) {
-
-  warn_dots(...)
-
-  load_mihi(x, {{ rows }}, cols, id_hint, time_vars)
-}
-
-#' @rdname load_src
-#' @export
 load_difftime.eicu_tbl <- function(x, rows, cols = colnames(x),
                                    id_hint = id_vars(x),
                                    time_vars = ricu::time_vars(x), ...) {
-
-  warn_dots(...)
-
-  load_eicu(x, {{ rows }}, cols, id_hint, time_vars)
-}
-
-#' @rdname load_src
-#' @export
-load_difftime.eicu_demo_tbl <- function(x, rows, cols = colnames(x),
-                                        id_hint = id_vars(x),
-                                        time_vars = ricu::time_vars(x), ...) {
 
   warn_dots(...)
 

@@ -62,14 +62,12 @@ get_from_data_env <- function(source) {
   }
 }
 
-new_src_tbl <- function(files, col_cfg, src_env) {
+new_src_tbl <- function(files, col_cfg, prefix, src_env) {
 
   assert_that(is_src_env(src_env))
 
-  name <- src_name(src_env)
-
   res <- prt::new_prt(files)
-  class(res) <- c(paste0(c(name, "src"), "_tbl"), class(res))
+  class(res) <- c(paste0(c(prefix, "src"), "_tbl"), class(res))
 
   attr(res, "col_cfg") <- as_col_cfg(col_cfg)
   attr(res, "src_env") <- src_env

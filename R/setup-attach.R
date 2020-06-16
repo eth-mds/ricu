@@ -121,7 +121,7 @@ setup_src_env.src_cfg <- function(x, env, dir = src_data_dir(x)) {
   }
 
   dat_tbls <- Map(new_src_tbl, fst_paths, as_col_cfg(x),
-                  MoreArgs = list(src_env = env))
+                  MoreArgs = list(prefix = x[["prefix"]], src_env = env))
   names(dat_tbls) <- tables
 
   list2env(dat_tbls, envir = env)

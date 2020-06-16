@@ -26,8 +26,8 @@ new_src_cfg <- function(name, id_cfg, col_cfg, tbl_cfg = NULL, url = NULL,
   names(tbl_cfg) <- chr_ply(tbl_cfg, tbl_name)
 
   structure(
-    list(name = name, url = url, id_cfg = id_cfg, col_cfg = col_cfg,
-         tbl_cfg = tbl_cfg),
+    list(name = name, url = url, prefix = class_prefix, id_cfg = id_cfg,
+         col_cfg = col_cfg, tbl_cfg = tbl_cfg),
     class = paste0(c(class_prefix, "src"), "_cfg")
   )
 }

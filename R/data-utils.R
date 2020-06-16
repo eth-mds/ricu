@@ -80,21 +80,7 @@ id_windows.mimic_ids <- function(x, env = as_src_env(x), ...) {
 
 #' @rdname data_utils
 #' @export
-id_windows.mimic_demo_ids <- function(x, env = as_src_env(x), ...) {
-  warn_dots(...)
-  id_wins_mimic(x, env)
-}
-
-#' @rdname data_utils
-#' @export
 id_windows.eicu_ids <- function(x, env = as_src_env(x), ...) {
-  warn_dots(...)
-  id_wins_eicu(x, env)
-}
-
-#' @rdname data_utils
-#' @export
-id_windows.eicu_demo_ids <- function(x, env = as_src_env(x), ...) {
   warn_dots(...)
   id_wins_eicu(x, env)
 }
