@@ -182,6 +182,7 @@ id_wins_hirid <- memoise::memoise(
     obs <- get("observations", env)
     obs <- subset(obs, .env$ind_fun(.data$patientid, .data$datetime),
                   c("patientid", "datetime"), part_safe = TRUE)
+    obs <- obs[, list(datetime = max(get("datetime"))), by = "patientid"]
     tbl <- get(field(x, "table"), env)[, c(ids, sta)]
 
     res <- merge(tbl, obs, by = ids)

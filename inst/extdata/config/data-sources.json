@@ -8764,6 +8764,7 @@
         "defaults": {
           "index_var": "givenat",
           "val_var": "givendose",
+          "unit_var": "doseunit",
           "time_vars": ["givenat", "enteredentryat"]
         },
         "num_rows": 16270399,

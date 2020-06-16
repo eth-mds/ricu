@@ -570,7 +570,8 @@ hirid_tbl_cfg <- function() {
     ),
     pharma = list(
       index_var = "givenat",
-      val_var = "givendose"
+      val_var = "givendose",
+      unit_var = "doseunit"
     ),
     variables = list(
       id_var = "id"

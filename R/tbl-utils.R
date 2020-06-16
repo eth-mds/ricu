@@ -449,7 +449,7 @@ make_unique <- function(x, expr = NULL, by = meta_vars(x), vars = data_vars(x),
 
       assert_that(all(is_num_col), msg = paste("For automatically determining",
         "an aggregation function, either all of or none of vars",
-        concat(quote_bt(vars)), "is expected to be of numeric type")
+        concat(quote_bt(vars)), "are expected to be of numeric type")
       )
 
       fun <- "median"

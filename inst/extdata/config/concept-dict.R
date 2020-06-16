@@ -1214,7 +1214,7 @@ cfg <- list(
              class = "col_itm")
       ),
       hirid = list(
-        list(ids = c(410L, 400L), table = "observations",
+        list(ids = c(410L, 400L, 7100L), table = "observations",
              sub_var = "variableid")
       )
     )

@@ -13,7 +13,7 @@
 #' @export
 #'
 extend_ts <- function(x, min_col = "min", max_col = "max", step_size = 1L,
-                          id_vars = NULL, new_col = "hadm_time") {
+                      id_vars = NULL, new_col = "hadm_time") {
 
   seq_time <- function(min, max, step, unit) {
     do_seq <- function(min, max) seq(min, max, step)
@@ -25,7 +25,7 @@ extend_ts <- function(x, min_col = "min", max_col = "max", step_size = 1L,
 
   unit <- units(x[[min_col]])
 
-  x <- na.omit(x, c(id_vars, min_col, max_col))
+  x <- rm_na(x, c(id_vars, min_col, max_col), "any")
   x <- x[get(min_col) <= get(max_col), ]
 
   res <- x[, lapply(.SD, as.double), .SDcols = c(min_col, max_col),
@@ -198,7 +198,7 @@ hop <- function(x, expr, windows, full_window = FALSE,
   .x_ <- .win_ <- .expr_ <- .join_ <- .nomatch_ <- NULL
 
   res <- local({
-    if (is.na(.nomatch_)) {
+    if (isTRUE(is.na(.nomatch_))) {
       .x_[.win_, eval(.expr_), on = .join_, by = .EACHI]
     } else {
       .x_[.win_, eval(.expr_), on = .join_, by = .EACHI, nomatch = .nomatch_]

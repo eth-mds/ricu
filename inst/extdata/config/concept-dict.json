@@ -2970,7 +2970,7 @@
       ],
       "hirid": [
         {
-          "ids": [410, 400],
+          "ids": [410, 400, 7100],
           "table": "observations",
           "sub_var": "variableid"
         }
