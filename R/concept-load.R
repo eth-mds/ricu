@@ -218,7 +218,7 @@ load_cncpt.num_cncpt <- function(x, ...) {
     n_rm <- n_row - nrow(res)
 
     print_msg("removed ", n_rm, " (", prcnt(n_rm, n_row), ") of rows ",
-              "due to out of spec entries")
+              "due to out of range entries")
   }
 
   unit <- x[["unit"]]
@@ -276,17 +276,20 @@ load_itm.col_itm <- function(x, patient_ids, id_type, interval) {
 
   itm <- x[["itm_vars"]]
   cbc <- x[["cb_vars"]]
-  col <- c(itm, cbc)
 
-  res <- do_itm_load(x, col, patient_ids, id_type, interval)
+  res <- do_itm_load(x, c(itm, cbc), patient_ids, id_type, interval)
 
-  arg <- c(list(res), as.list(col), list(env = as_src_env(x)))
-  res <- do.call(x[["callback"]], arg)
+  if (!"unit_var" %in% names(itm)) {
 
-  res <- rm_cols(res, setdiff(data_vars(res), itm), by_ref = TRUE)
-  res <- rename_cols(res, names(itm), itm, by_ref = TRUE)
+    unt <- x[["unit_val"]]
 
-  res
+    if (not_null(unt)) {
+      res[, c("unit") := unt]
+      itm <- c(itm, unit_var = "unit")
+    }
+  }
+
+  itm_cleanup(res, itm, cbc, as_src_env(x), x[["callback"]])
 }
 
 #' @export
@@ -306,25 +309,37 @@ load_itm.hrd_itm <- function(x, patient_ids, id_type, interval) {
   cbc <- x[["cb_vars"]]
   sub <- x[["sub_var"]]
 
-  res <- do_itm_load(x, c(itm, sub, cbc), patient_ids, id_type, interval)
-
+  adu <- !"unit_var" %in% names(itm)
   env <- as_src_env(x)
-  unt <- load_src("variables", env, cols = c("id", "unit"))
-  res <- merge(res, unt, by.x = sub, by.y = "id", all.x = TRUE)
 
-  if (!sub %in% cbc) {
-    res <- rm_cols(res, sub, by_ref = TRUE)
+  if (adu) {
+
+    res <- do_itm_load(x, c(itm, sub, cbc), patient_ids, id_type, interval)
+    unt <- load_src("variables", env, cols = c("id", "unit"))
+    res <- merge(res, unt, by.x = sub, by.y = "id", all.x = TRUE)
+
+    if (!sub %in% cbc) {
+      res <- rm_cols(res, sub, by_ref = TRUE)
+    }
+
+    itm <- c(itm, unit_var = "unit")
+
+  } else {
+    res <- do_itm_load(x, c(itm, cbc), patient_ids, id_type, interval)
   }
 
-  res <- do.call(x[["callback"]],
-    c(list(res), as.list(c(itm, cbc, unit_var = "unit")), list(env = env))
-  )
+  itm_cleanup(res, itm, cbc, env, x[["callback"]])
+}
 
-  res <- rm_cols(res, setdiff(data_vars(res), c(itm, "unit")), by_ref = TRUE)
-  res <- rename_cols(res, c(names(itm), "unit_var"), c(itm, "unit"),
-                     by_ref = TRUE)
+itm_cleanup <- function(x, itm, cbc, env, cbf) {
 
-  res
+  arg <- c(list(x), as.list(c(itm, cbc)), list(env = env))
+  x <- do.call(cbf, arg)
+
+  x <- rm_cols(x, setdiff(data_vars(x), itm), by_ref = TRUE)
+  x <- rename_cols(x, names(itm), itm, by_ref = TRUE)
+
+  x
 }
 
 do_itm_load <- function(x, cols, patient_ids, id_type, interval) {
@@ -346,17 +361,10 @@ load_sub_itm <- function(x, patient_ids, id_type, interval) {
 
   itm <- x[["itm_vars"]]
   cbc <- x[["cb_vars"]]
-  col <- c(itm, cbc)
 
-  res <- do_itm_load(x, col, patient_ids, id_type, interval)
+  res <- do_itm_load(x, c(itm, cbc), patient_ids, id_type, interval)
 
-  arg <- c(list(res), as.list(col), list(env = as_src_env(x)))
-  res <- do.call(x[["callback"]], arg)
-
-  res <- rm_cols(res, setdiff(data_vars(res), itm), by_ref = TRUE)
-  res <- rename_cols(res, names(itm), itm, by_ref = TRUE)
-
-  res
+  itm_cleanup(res, itm, cbc, as_src_env(x), x[["callback"]])
 }
 
 #' @export

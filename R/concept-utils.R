@@ -111,10 +111,14 @@ init_itm.sel_itm <- function(x, table, sub_var, ids, itm_vars = NULL,
   x
 }
 
+#' @param unit_val String valued unit to be used in case no `unit_var` is
+#' available for the given table
+#'
 #' @rdname data_items
 #' @export
 init_itm.col_itm <- function(x, table, itm_vars = NULL, index_var = NULL,
-                             callback = "identity_callback", ...) {
+                             unit_val = NULL, callback = "identity_callback",
+                             ...) {
 
   x[["table"]] <- table
 
@@ -123,11 +127,11 @@ init_itm.col_itm <- function(x, table, itm_vars = NULL, index_var = NULL,
   cb_vars   <- cbk_var_helper(...)
 
   assert_that(
-    is.string(table), is_fun_name(callback),
+    is.string(table), is_fun_name(callback), null_or(unit_val, is.string),
     all_fun(c(list(itm_vars), index_var, cb_vars), is_colname, as_src_tbl(x))
   )
 
-  todo <- c("itm_vars", "index_var", "cb_vars", "callback")
+  todo <- c("itm_vars", "index_var", "cb_vars", "unit_val", "callback")
   x[todo] <- mget(todo)
 
   x

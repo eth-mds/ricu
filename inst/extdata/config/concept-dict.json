@@ -2312,7 +2312,7 @@
     }
   },
   "o2_saturation": {
-    "unit": ["%", null],
+    "unit": ["%", "% Sat."],
     "min": 70,
     "max": 100,
     "sources": {
@@ -2320,6 +2320,7 @@
         {
           "table": "vitalperiodic",
           "itm_vars": "sao2",
+          "unit_val": "%",
           "class": "col_itm"
         },
         {
@@ -2332,6 +2333,7 @@
         {
           "table": "vitalperiodic",
           "itm_vars": "sao2",
+          "unit_val": "%",
           "class": "col_itm"
         },
         {

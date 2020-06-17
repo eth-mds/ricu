@@ -35,6 +35,7 @@ init_itm(x, ...)
   table,
   itm_vars = NULL,
   index_var = NULL,
+  unit_val = NULL,
   callback = "identity_callback",
   ...
 )
@@ -83,6 +84,9 @@ considered corresponding to the data item}
 
 \item{callback}{Name of a function to be called on the returned data used
 for data cleanup operations}
+
+\item{unit_val}{String valued unit to be used in case no \code{unit_var} is
+available for the given table}
 
 \item{regex}{String-valued regular expression which will be evaluated by
 \code{\link[base:grepl]{base::grepl()}} with \code{ignore.case = TRUE}}

@@ -97,7 +97,7 @@ cfg <- list(
     )
   ),
   o2_saturation = list(
-    unit = c("%", NA),
+    unit = c("%", "% Sat."),
     min = 70,
     max = 100,
     sources = list(
@@ -106,7 +106,8 @@ cfg <- list(
              sub_var = "itemid")
       ),
       eicu = list(
-        list(table = "vitalperiodic", itm_vars = "sao2", class = "col_itm"),
+        list(table = "vitalperiodic", itm_vars = "sao2", unit_val = "%",
+             class = "col_itm"),
         list(ids = "O2 Sat (%)", table = "lab", sub_var = "labname")
       ),
       hirid = list(
