@@ -4,7 +4,6 @@
 \alias{id_origin}
 \alias{id_origin.id_cfg}
 \alias{id_origin.eicu_ids}
-\alias{id_origin.eicu_demo_ids}
 \alias{id_origin.default}
 \alias{id_windows}
 \alias{id_windows.mimic_ids}
@@ -18,8 +17,6 @@ id_origin(x, ...)
 \method{id_origin}{id_cfg}(x, id, env = as_src_env(x), ...)
 
 \method{id_origin}{eicu_ids}(x, ...)
-
-\method{id_origin}{eicu_demo_ids}(x, ...)
 
 \method{id_origin}{default}(x, id, env = as_src_env(x), ...)
 

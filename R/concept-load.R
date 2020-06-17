@@ -370,19 +370,35 @@ load_sub_itm <- function(x, patient_ids, id_type, interval) {
 #' @export
 load_itm.los_itm <- function(x, patient_ids, id_type, interval) {
 
+  as_day <- function(x) as.double(x, units = "days")
+
   win <- x[["win_type"]]
   cfg <- as_id_cfg(x)
-  res <- stay_windows(cfg, id_type = id_type, win_type = win,
-                      in_time = NULL, interval = mins(1L))
 
-  if (!identical(win, id_type)) {
-    res <- rm_cols(res, id_vars(cfg[id_type]), by_ref = TRUE)
+  if (identical(win, id_type)) {
+
+    res <- id_map_min(cfg, id_vars(cfg[id_type]), id_vars(cfg[win]),
+                      NULL, "end")
+
+    res <- res[, c("val_var", "end") := list(as_day(get("end")), NULL)]
+
+  } else {
+
+    res <- id_map_min(cfg, id_vars(cfg[id_type]), id_vars(cfg[win]),
+                      "start", "end")
+
+    res <- res[, c("val_var", "start", "end") := list(
+      as_day(get("end") - get("start")), NULL, NULL
+    )]
+
+    res <- rm_cols(res, id_vars(cfg[win]), by_ref = TRUE)
+
+    if (cfg[win] > cfg[id_type]) {
+      res <- unique(res)
+    }
   }
 
-  res <- merge_patid(res, patient_ids)
-  res <- rename_cols(res, "val_var", data_vars(res), by_ref = TRUE)
-
-  set(res, j = "val_var", value = as.double(res[["val_var"]], units = "days"))
+  res
 }
 
 merge_patid <- function(x, patid) {

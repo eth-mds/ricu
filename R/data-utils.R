@@ -47,13 +47,6 @@ id_origin.eicu_ids <- function(x, ...) {
 
 #' @rdname data_utils
 #' @export
-id_origin.eicu_demo_ids <- function(x, ...) {
-  warning("Absolute ID origin times are not available for source `eicu_demo`")
-  NextMethod()
-}
-
-#' @rdname data_utils
-#' @export
 id_origin.default <- function(x, id, env = as_src_env(x), ...) {
   id_origin(as_id_cfg(x), id = id, env = env, ...)
 }
@@ -151,7 +144,7 @@ id_wins_eicu <- memoise::memoise(
     res <- get("patient", env)[, c(ids, sta, end)]
 
     icu_in  <- "unitadmitoffset"
-    sta <- c(sta, icu_in)
+    sta <- c(icu_in, sta)
     res <- res[, c(icu_in) := 0L]
 
     res <- res[, c(sta, end) := lapply(.SD, as.difftime, units = "mins"),
