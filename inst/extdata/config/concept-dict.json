@@ -1882,6 +1882,12 @@
           "class": "los_itm"
         }
       ],
+      "hirid": [
+        {
+          "win_type": "icustay",
+          "class": "los_itm"
+        }
+      ],
       "mimic": [
         {
           "win_type": "icustay",

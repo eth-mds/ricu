@@ -1406,6 +1406,9 @@ cfg <- list(
       ),
       eicu = list(
         list(win_type = "icustay", class = "los_itm")
+      ),
+      hirid = list(
+        list(win_type = "icustay", class = "los_itm")
       )
     )
   ),
