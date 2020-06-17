@@ -361,8 +361,8 @@ init_cncpt.num_cncpt <- function(x, unit = NULL, min = NULL, max = NULL, ...) {
 
   warn_dots(...)
 
-  assert_that(null_or(unit, is.string), null_or(min, is.number),
-              null_or(max, is.number))
+  assert_that(null_or(unit, is.character), null_or(unit, has_length),
+              null_or(min, is.number), null_or(max, is.number))
 
   todo <- c("unit", "min", "max")
   x[todo] <- mget(todo)

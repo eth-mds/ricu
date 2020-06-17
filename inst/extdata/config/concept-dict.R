@@ -1,7 +1,7 @@
 
 cfg <- list(
   heart_rate = list(
-    unit = "bpm",
+    unit = c("bpm", "/min"),
     min = 0,
     max = 300,
     sources = list(
@@ -97,7 +97,7 @@ cfg <- list(
     )
   ),
   o2_saturation = list(
-    unit = "%",
+    unit = c("%", NA),
     min = 70,
     max = 100,
     sources = list(

@@ -341,7 +341,7 @@ ellipsis <- function(fancy = l10n_info()$`UTF-8`) {
 
 quote_bt <- function(x) encodeString(x, quote = "`")
 
-concat <- function(x) paste(x, collapse = ", ")
+concat <- function(...) paste0(..., collapse = ", ")
 
 prcnt <- function(x, tot = sum(x)) {
   paste0(round(x / tot * 100, digits = 2), "%")

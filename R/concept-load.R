@@ -172,6 +172,11 @@ load_cncpt.cncpt <- function(x, ...) {
 #' @export
 load_cncpt.num_cncpt <- function(x, ...) {
 
+  print_msg <- function(...) {
+    message(paste(strwrap(paste0(...), indent = 4L, exdent = 6L),
+                  collapse = "\n"))
+  }
+
   check_bound <- function(x, val, op) {
     vc  <- x[["val_var"]]
     nna <- !is.na(vc)
@@ -182,16 +187,20 @@ load_cncpt.num_cncpt <- function(x, ...) {
 
     ct  <- table(x[["unit_var"]], useNA = "ifany")
     nm  <- names(ct)
-    rep <- paste0(nm, " (", prcnt(ct), ")", collapse = ", ")
+    pct <- prcnt(ct)
 
-    if (sum(!is.na(nm)) > 1L) {
-      msg <- paste0("multiple units detected: ", rep)
-    } else if (!identical(tolower(unt), tolower(nm[!is.na(nm)]))) {
-      msg <- paste0("not all units are in [", unt, "]: ", rep)
-    } else msg <- NULL
+    if (has_length(unt)) {
 
-    if (not_null(msg)) {
-      message(paste(strwrap(msg, indent = 4L, exdent = 6L), collapse = "\n"))
+      ok <- tolower(nm) %in% tolower(unt)
+
+      if (!all(ok)) {
+        print_msg("not all units are in ", concat("[", unt, "]"), ": ",
+                  concat(nm[!ok], " (", pct[!ok], ")"))
+      }
+
+    } else if (length(nm) > 1L) {
+
+      print_msg("multiple units detected: ", concat(nm, " (", pct, ")"))
     }
   }
 
@@ -208,8 +217,8 @@ load_cncpt.num_cncpt <- function(x, ...) {
 
     n_rm <- n_row - nrow(res)
 
-    message("    removed ", n_rm, " (", prcnt(n_rm, n_row), ") of rows ",
-            "due to out of spec entries")
+    print_msg("removed ", n_rm, " (", prcnt(n_rm, n_row), ") of rows ",
+              "due to out of spec entries")
   }
 
   unit <- x[["unit"]]
@@ -221,7 +230,7 @@ load_cncpt.num_cncpt <- function(x, ...) {
   res <- rm_cols(res, "unit_var", skip_absent = TRUE, by_ref = TRUE)
 
   if (not_null(unit)) {
-    setattr(res[["val_var"]], "units", unit)
+    setattr(res[["val_var"]], "units", unit[1L])
   }
 
   rename_cols(res, x[["name"]], "val_var", by_ref = TRUE)
