@@ -66,7 +66,21 @@ load_concepts.concept <- function(x, aggregate = NULL, merge_data = TRUE,
       progr_iter(x[["name"]], pb)
     }
 
-    out <- capture.output(dat <- load_cncpt(x, ...), type = "message")
+    out <- NULL
+    con <- textConnection("out", "w", local = TRUE)
+    sink(con, type = "message")
+
+    on.exit({
+      sink(type = "message")
+      close(con)
+    })
+
+    dat <- withCallingHandlers(
+      load_cncpt(x, ...),
+      error = function(e) sink(type = "message")
+    )
+
+    sink(type = "message")
 
     if (verbose && is.null(pb) && has_length(out)) {
       message(paste0(out, collapse = "\n"))
