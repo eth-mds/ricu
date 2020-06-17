@@ -36,18 +36,17 @@ is_itm <- function(x) inherits(x, "itm")
 src_name.itm <- function(x) x[["src"]]
 
 #' @export
-as_src_tbl.sel_itm <- function(x, ...) {
-  as_src_tbl(x[["table"]], src_name(x), ...)
-}
+tbl_name.sel_itm <- function(x) x[["table"]]
 
 #' @export
-as_src_tbl.col_itm <- function(x, ...) {
-  as_src_tbl(x[["table"]], src_name(x), ...)
-}
+tbl_name.col_itm <- function(x) x[["table"]]
 
 #' @export
-as_src_tbl.rgx_itm <- function(x, ...) {
-  as_src_tbl(x[["table"]], src_name(x), ...)
+tbl_name.rgx_itm <- function(x) x[["table"]]
+
+#' @export
+as_src_tbl.itm <- function(x, ...) {
+  as_src_tbl(tbl_name(x), src_name(x), ...)
 }
 
 itm_var_helper <- function(x, col) {
@@ -263,7 +262,17 @@ unt_col_helper <- function(x) {
 add_unit_var <- function(x) UseMethod("add_unit_var", x)
 
 #' @export
-add_unit_var.sel_itm <- function(x) unt_col_helper(x)
+add_unit_var.sel_itm <- function(x) {
+
+  if (identical(src_name(x), "hirid") &&
+      identical(tbl_name(x), "observations")) {
+
+    class(x) <- unique(c("hrd_itm", class(x)))
+    return(x)
+  }
+
+  unt_col_helper(x)
+}
 
 #' @export
 add_unit_var.col_itm <- function(x) unt_col_helper(x)
