@@ -222,6 +222,10 @@ prepare_query.rgx_itm <- function(x) {
   )
 }
 
+#' @keywords internal
+#' @export
+prepare_query.col_itm <- function(x) rlang::quo(NULL)
+
 unt_col_helper <- function(x) {
 
   itm <- x[["itm_vars"]]
