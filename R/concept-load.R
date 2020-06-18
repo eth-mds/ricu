@@ -84,6 +84,7 @@ load_concepts.concept <- function(x, aggregate = NULL, merge_data = TRUE,
 
     if (verbose && is.null(pb) && has_length(out)) {
       message(paste0(out, collapse = "\n"))
+      out <- NULL
     }
 
     if (!isFALSE(agg)) {
@@ -97,7 +98,7 @@ load_concepts.concept <- function(x, aggregate = NULL, merge_data = TRUE,
 
   len <- length(x)
 
-  if (verbose) {
+  if (verbose && interactive()) {
     pba <- progr_init(len, paste("Loading", len, "concepts"))
   } else {
     pba <- NULL
