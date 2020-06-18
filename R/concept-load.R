@@ -81,6 +81,8 @@ load_concepts.concept <- function(x, aggregate = NULL, merge_data = TRUE,
     )
 
     sink(type = "message")
+    close(con)
+    on.exit()
 
     if (verbose && is.null(pb) && has_length(out)) {
       message(paste0(out, collapse = "\n"))
