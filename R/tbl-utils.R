@@ -192,7 +192,7 @@ rm_cols <- function(x, cols, skip_absent = FALSE, by_ref = FALSE) {
     x <- copy(x)
   }
 
-  if (any(cols %in% meta_vars(x))) {
+  if (is_id_tbl(x) && any(cols %in% meta_vars(x))) {
     ptyp <- as_ptype(x)
   } else {
     ptyp <- NULL
