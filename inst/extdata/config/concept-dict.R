@@ -1383,20 +1383,28 @@ cfg <- list(
         list(win_type = "hadm", class = "los_itm")
       )
     )
+  ),
+  pa_fi = list(
+    concepts = c("pa_o2", "fi_o2"),
+    callback = "sofa_pafi",
+    class = "rec_cncpt"
   )
 )
 
 cfg <- lapply(cfg, function(x) {
 
-  if ("mimic" %in% names(x[["sources"]]))
-    x[["sources"]] <- c(x[["sources"]],
-                        mimic_demo = list(x[["sources"]][["mimic"]]))
+  if ("sources" %in% names(x)) {
 
-  if ("eicu" %in% names(x[["sources"]]))
-    x[["sources"]] <- c(x[["sources"]],
-                        eicu_demo = list(x[["sources"]][["eicu"]]))
+    if ("mimic" %in% names(x[["sources"]]))
+      x[["sources"]] <- c(x[["sources"]],
+                          mimic_demo = list(x[["sources"]][["mimic"]]))
 
-  x[["sources"]] <- x[["sources"]][order(names(x[["sources"]]))]
+    if ("eicu" %in% names(x[["sources"]]))
+      x[["sources"]] <- c(x[["sources"]],
+                          eicu_demo = list(x[["sources"]][["eicu"]]))
+
+    x[["sources"]] <- x[["sources"]][order(names(x[["sources"]]))]
+  }
 
   x
 })

@@ -26,6 +26,7 @@ Imports:
     readr,
     jsonlite,
     methods,
+    stats,
     prt,
     tibble,
     backports,

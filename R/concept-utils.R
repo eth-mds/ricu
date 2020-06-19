@@ -268,10 +268,13 @@ add_unit_var.sel_itm <- function(x) {
       identical(tbl_name(x), "observations")) {
 
     class(x) <- unique(c("hrd_itm", class(x)))
-    return(x)
+
+  } else {
+
+    x <- unt_col_helper(x)
   }
 
-  unt_col_helper(x)
+  x
 }
 
 #' @export
@@ -329,12 +332,26 @@ is_item <- function(x) inherits(x, "item")
 #' @export
 src_name.item <- function(x) names(x)
 
+#' @rdname data_concepts
+#' @export
+n_itm <- function(x) UseMethod("n_itm", x)
+
+#' @rdname data_concepts
+#' @export
+n_itm.itm <- function(x) 1L
+
+#' @rdname data_concepts
+#' @export
+n_itm.item <- function(x) length(x)
+
 #' Data concept
 #'
 #' Clinical concepts are represented by `concept` objects.
 #'
 #' @param name The name of the concept
 #' @param items Zero or more `itm` objects
+#' @param aggregate NULL or a string denoting a function used to aggregate per
+#' id and if applicable per time step
 #' @param ... Further specification of the `cncpt` object (passed to
 #' [init_cncpt()])
 #' @param class `NULL` or a string-valued sub-class name used for customizing
@@ -343,11 +360,17 @@ src_name.item <- function(x) names(x)
 #' @rdname data_concepts
 #'
 #' @export
-new_cncpt <- function(name, items, ..., class = "num_cncpt") {
+new_cncpt <- function(name, items, aggregate = NULL, ...,
+                      class = "num_cncpt") {
 
-  assert_that(is.string(name), null_or(class, is.string))
+  assert_that(is.string(name), null_or(aggregate, is.string),
+              null_or(class, is.string))
 
-  res <- structure(list(name = name, items = as_item(items)),
+  if (!is_concept(items)) {
+    items <- as_item(items)
+  }
+
+  res <- structure(list(name = name, items = items, aggregate = aggregate),
                    class = c(class, "cncpt"))
 
   init_cncpt(res, ...)
@@ -413,9 +436,42 @@ init_cncpt.cncpt <- function(x, ...) {
   x
 }
 
+#' @param callback Name of a function to be called on the returned data used
+#' for data cleanup operations
+#'
+#' @rdname data_concepts
+#' @export
+init_cncpt.rec_cncpt <- function(x, callback, ...) {
+
+  warn_dots(...)
+
+  assert_that(is_concept(x[["items"]]), is.string(callback))
+
+  x["callback"] <- callback
+
+  x
+}
+
 #' @rdname data_concepts
 #' @export
 src_name.cncpt <- function(x) src_name(x[["items"]])
+
+#' @importFrom stats aggregate
+#' @export
+aggregate.cncpt <- function(x, tbl, fun = NULL, ...) {
+
+  fun <- coalesce(fun, x[["aggregate"]])
+
+  if (!isFALSE(fun)) {
+    tbl <- make_unique(tbl, fun)
+  }
+
+  tbl
+}
+
+#' @rdname data_concepts
+#' @export
+n_itm.cncpt <- function(x) sum(int_ply(x[["items"]], n_itm))
 
 #' @rdname data_concepts
 #' @export
@@ -474,6 +530,10 @@ as.list.concept <- function(x, ...) vec_data(x)
 #' @export
 src_name.concept <- function(x) lapply(x, src_name)
 
+#' @rdname data_concepts
+#' @export
+n_itm.concept <- function(x) sum(int_ply(x, n_itm))
+
 #' @param src `NULL` or the name of a data source
 #' @param concepts A character vector used to subset the concept dictionary or
 #' `NULL` indicating no subsetting
@@ -492,21 +552,33 @@ read_dictionary <- function(src = NULL, concepts = NULL,
 
   do_cncpt <- function(name, sources, target = "ts_tbl", ...) {
 
-    if (not_null(src)) {
-      sources <- sources[src]
-    }
-
-    itms <- new_item(
-      do.call(c, Map(do_itm, names(sources), target, sources))
-    )
-
     lst <- list(...)
+
+    if (is_concept(sources)) {
+
+      itms <- sources
+      lst[["concepts"]] <- NULL
+
+    } else {
+
+      if (not_null(src)) {
+        sources <- sources[src]
+      }
+
+      itms <- new_item(
+        do.call(c, Map(do_itm, names(sources), target, sources))
+      )
+    }
 
     if (has_length(lst)) {
       do.call(new_cncpt, c(list(name = name, items = itms), lst))
     } else {
       do.call(new_cncpt, c(list(name = name, items = itms, class = NULL)))
     }
+  }
+
+  do_new <- function(x) {
+    new_concept(lapply(Map(c, name = names(x), x), do_call, do_cncpt))
   }
 
   if (is.null(file)) {
@@ -524,10 +596,19 @@ read_dictionary <- function(src = NULL, concepts = NULL,
 
   if (not_null(concepts)) {
     assert_that(has_name(x, concepts))
-    x <- x[concepts]
+    sub <- x[concepts]
+  } else {
+    sub <- x
   }
 
-  new_concept(lapply(Map(c, name = names(x), x), do_call, do_cncpt))
+  re_con <- lapply(lst_xtr(sub, "concepts"), function(i) do_new(x[i]))
+  is_rec <- lgl_ply(lst_xtr(sub, "class"), identical, "rec_cncpt")
+
+  if (any(is_rec)) {
+    sub[is_rec] <- Map(`[[<-`, sub[is_rec], "sources", re_con[is_rec])
+  }
+
+  do_new(sub)
 }
 
 identity_callback <- function(x, ...) x

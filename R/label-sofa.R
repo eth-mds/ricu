@@ -39,7 +39,7 @@
 #' @export
 #'
 sofa_data <- function(source, pafi_win_length = hours(2L),
-                      pafi_mode = c("match_vals", "extreme_vals", "fill_gaps"),
+                      pafi_mode = "match_vals",
                       fix_na_fio2 = TRUE, vent_win_length = hours(6L),
                       vent_min_win = mins(10L), gcs_win_length = hours(6L),
                       fix_na_gcs = TRUE, urine_min_win = hours(12L),
@@ -57,8 +57,6 @@ sofa_data <- function(source, pafi_win_length = hours(2L),
   )
 
   sel_non_null <- function(x, sel) Filter(Negate(is.null), x[sel])
-
-  pafi_mode <- match.arg(pafi_mode)
 
   vent_conc <- c("vent_start", "vent_end")
   gcs_conc <- c("gcs_eye", "gcs_motor", "gcs_verbal", "gcs_total")
@@ -132,24 +130,28 @@ sofa_data <- function(source, pafi_win_length = hours(2L),
   res
 }
 
-sofa_pafi <- function(pao2, fio2, win_length, mode, fix_na_fio2) {
+sofa_pafi <- function(pa_o2, fi_o2, win_length = hours(2L),
+                      mode = c("match_vals", "extreme_vals", "fill_gaps"),
+                      fix_na_fio2 = TRUE) {
 
-  assert_that(same_interval(pao2, fio2),
-              has_cols(pao2, "pa_o2"), has_cols(fio2, "fi_o2"))
+  mode <- match.arg(mode)
+
+  assert_that(same_interval(pa_o2, fi_o2),
+              has_cols(pa_o2, "pa_o2"), has_cols(fi_o2, "fi_o2"))
 
   if (identical(mode, "match_vals")) {
 
     res <- rbind(
-      fio2[pao2, on = paste(meta_vars(fio2), "==", meta_vars(pao2)),
+      fi_o2[pa_o2, on = paste(meta_vars(fi_o2), "==", meta_vars(pa_o2)),
            roll = win_length],
-      pao2[fio2, on = paste(meta_vars(pao2), "==", meta_vars(fio2)),
+      pa_o2[fi_o2, on = paste(meta_vars(pa_o2), "==", meta_vars(fi_o2)),
            roll = win_length]
     )
     res <- unique(res)
 
   } else {
 
-    res <- merge(pao2, fio2, all = TRUE)
+    res <- merge(pa_o2, fi_o2, all = TRUE)
 
     if (identical(mode, "fill_gaps")) {
       res <- fill_gaps(res)

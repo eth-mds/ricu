@@ -2376,6 +2376,11 @@
       ]
     }
   },
+  "pa_fi": {
+    "concepts": ["pa_o2", "fi_o2"],
+    "callback": "sofa_pafi",
+    "class": "rec_cncpt"
+  },
   "pa_o2": {
     "unit": "mmHg",
     "min": 40,

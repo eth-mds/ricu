@@ -3,16 +3,22 @@
 \name{item}
 \alias{item}
 \alias{as_item}
+\alias{n_itm}
+\alias{n_itm.itm}
+\alias{n_itm.item}
 \alias{new_cncpt}
 \alias{is_cncpt}
 \alias{init_cncpt}
 \alias{init_cncpt.num_cncpt}
 \alias{init_cncpt.fct_cncpt}
 \alias{init_cncpt.cncpt}
+\alias{init_cncpt.rec_cncpt}
 \alias{src_name.cncpt}
+\alias{n_itm.cncpt}
 \alias{new_concept}
 \alias{concept}
 \alias{is_concept}
+\alias{n_itm.concept}
 \alias{read_dictionary}
 \title{Data concept}
 \usage{
@@ -20,7 +26,13 @@ item(...)
 
 as_item(x)
 
-new_cncpt(name, items, ..., class = "num_cncpt")
+n_itm(x)
+
+\method{n_itm}{itm}(x)
+
+\method{n_itm}{item}(x)
+
+new_cncpt(name, items, aggregate = NULL, ..., class = "num_cncpt")
 
 is_cncpt(x, ...)
 
@@ -32,13 +44,19 @@ init_cncpt(x, ...)
 
 \method{init_cncpt}{cncpt}(x, ...)
 
+\method{init_cncpt}{rec_cncpt}(x, callback, ...)
+
 \method{src_name}{cncpt}(x)
+
+\method{n_itm}{cncpt}(x)
 
 new_concept(x)
 
 concept(...)
 
 is_concept(x)
+
+\method{n_itm}{concept}(x)
 
 read_dictionary(
   src = NULL,
@@ -58,6 +76,9 @@ read_dictionary(
 
 \item{items}{Zero or more \code{itm} objects}
 
+\item{aggregate}{NULL or a string denoting a function used to aggregate per
+id and if applicable per time step}
+
 \item{class}{\code{NULL} or a string-valued sub-class name used for customizing
 concept behavior}
 
@@ -68,6 +89,9 @@ be \code{NULL})}
 numeric concept}
 
 \item{levels}{A vector of possible values a categorical concept may take on}
+
+\item{callback}{Name of a function to be called on the returned data used
+for data cleanup operations}
 
 \item{src}{\code{NULL} or the name of a data source}
 

@@ -479,12 +479,35 @@ do_call <- function(x, fun, args = NULL) {
   else do.call(fun, unname(x[args]))
 }
 
-progr_init <- function(len = NULL, msg = "loading", ...) {
+progr_init <- function(len = NULL, msg = "loading", capture_output = FALSE,
+                       ...) {
 
   if (interactive() && is_pkg_available("progress") && len > 1L) {
 
-    res <- progress::progress_bar$new(format = ":what [:bar] :percent",
-                                      total = len, ...)
+    if (capture_output) {
+
+      out <- NULL
+      con <- textConnection("out", "w", local = TRUE)
+
+      fun <- function(x) {
+        close(con)
+        if (has_length(out)) {
+          message(paste(out, collapse = "\n"))
+        }
+      }
+
+    } else {
+
+      fun <- identity
+      con <- stderr()
+    }
+
+    res <- progress::progress_bar$new(
+      format = ":what [:bar] :percent", total = len, callback = fun,
+      clear = FALSE, ...
+    )
+
+    attr(res, "con") <- con
 
     if (not_null(msg)) {
       res$message(msg)
@@ -499,24 +522,53 @@ progr_init <- function(len = NULL, msg = "loading", ...) {
   res
 }
 
-progr_iter <- function(name, pb = NULL, len = 1L) {
+progr_iter <- function(name = "", pb = NULL, len = 1L) {
 
   assert_that(is.string(name))
 
+  if (isFALSE(pb)) {
+    return(invisible(NULL))
+  }
+
+  xtra <- paste0("  * `", name, "`")
+
   if (is.null(pb)) {
 
-    message("  * `", name, "`")
-
-  } else {
-
-    if (nchar(name) > 15L) {
-      name <- paste0(substr(name, 1L, 15L - nchar(ellipsis())), ellipsis())
-    } else {
-      name <- sprintf("%-15s", name)
+    if (nzchar(name)) {
+      message(xtra)
     }
 
-    pb$tick(len = len, tokens = list(what = name))
+    return(invisible(NULL))
   }
+
+  if (nchar(name) > 15L) {
+    name <- paste0(substr(name, 1L, 15L - nchar(ellipsis())), ellipsis())
+  } else {
+    name <- sprintf("%-15s", name)
+  }
+
+  if (nzchar(name)) {
+    pb$tick(len = len, tokens = list(what = name))
+  } else {
+    pb$tick(len = len)
+  }
+
+  invisible(xtra)
+}
+
+progr_msg <- function(..., pb = NULL) {
+
+  msg <- paste0(..., collapse = "\n")
+
+  if (nzchar(msg)) {
+    if (is.null(pb)) {
+      message(msg)
+    } else if (!isFALSE(pb)) {
+      writeLines(msg, attr(pb, "con"))
+    }
+  }
+
+  invisible(NULL)
 }
 
 warn_dots <- function(...) {

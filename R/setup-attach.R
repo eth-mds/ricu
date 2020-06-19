@@ -79,13 +79,6 @@ setup_src_env.src_cfg <- function(x, env, dir = src_data_dir(x)) {
 
   if (any(missing)) {
 
-    sink_no <- sink.number(type = "message")
-
-    if (!identical(sink_no, 2L)) {
-      sink(type = "message")
-      on.exit(sink(getConnection(sink_no), type = "message"))
-    }
-
     todo <- tables[missing]
 
     msg <- paste("\nThe following tables are missing from", dir,

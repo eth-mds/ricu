@@ -4,7 +4,16 @@
 \alias{load_concepts}
 \alias{load_concepts.character}
 \alias{load_concepts.concept}
+\alias{load_concepts.cncpt}
+\alias{load_concepts.num_cncpt}
+\alias{load_concepts.fct_cncpt}
+\alias{load_concepts.rec_cncpt}
 \alias{load_concepts.item}
+\alias{load_concepts.col_itm}
+\alias{load_concepts.sel_itm}
+\alias{load_concepts.rgx_itm}
+\alias{load_concepts.hrd_itm}
+\alias{load_concepts.los_itm}
 \alias{load_dictionary}
 \title{Load concept data}
 \usage{
@@ -14,7 +23,64 @@ load_concepts(x, ...)
 
 \method{load_concepts}{concept}(x, aggregate = NULL, merge_data = TRUE, verbose = TRUE, ...)
 
+\method{load_concepts}{cncpt}(x, aggregate = NULL, ..., progress = NULL)
+
+\method{load_concepts}{num_cncpt}(x, aggregate = NULL, ..., progress = NULL)
+
+\method{load_concepts}{fct_cncpt}(x, aggregate = NULL, ..., progress = NULL)
+
+\method{load_concepts}{rec_cncpt}(
+  x,
+  aggregate = NULL,
+  patient_ids = NULL,
+  id_type = "icustay",
+  interval = hours(1L),
+  ...,
+  progress = NULL
+)
+
 \method{load_concepts}{item}(
+  x,
+  patient_ids = NULL,
+  id_type = "icustay",
+  interval = hours(1L),
+  progress = NULL,
+  ...
+)
+
+\method{load_concepts}{col_itm}(
+  x,
+  patient_ids = NULL,
+  id_type = "icustay",
+  interval = hours(1L),
+  ...
+)
+
+\method{load_concepts}{sel_itm}(
+  x,
+  patient_ids = NULL,
+  id_type = "icustay",
+  interval = hours(1L),
+  ...
+)
+
+\method{load_concepts}{rgx_itm}(
+  x,
+  patient_ids = NULL,
+  id_type = "icustay",
+  interval = hours(1L),
+  ...
+)
+
+\method{load_concepts}{hrd_itm}(
+  x,
+  patient_ids = NULL,
+  id_type = "icustay",
+  interval = hours(1L),
+  ...
+)
+
+\method{load_concepts}{los_itm}(
   x,
   patient_ids = NULL,
   id_type = "icustay",
@@ -46,6 +112,9 @@ names}
 wide format or return a list, each entry corresponding to a concept}
 
 \item{verbose}{Logical flag for muting informational output}
+
+\item{progress}{Either \code{NULL}, or a progress bar object as created by
+\link[progress:progress_bar]{progress::progress_bar}}
 
 \item{patient_ids}{Optional vector of patient ids to subset the fetched data
 with}

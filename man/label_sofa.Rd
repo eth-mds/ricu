@@ -10,7 +10,7 @@
 sofa_data(
   source,
   pafi_win_length = hours(2L),
-  pafi_mode = c("match_vals", "extreme_vals", "fill_gaps"),
+  pafi_mode = "match_vals",
   fix_na_fio2 = TRUE,
   vent_win_length = hours(6L),
   vent_min_win = mins(10L),
