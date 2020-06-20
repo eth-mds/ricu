@@ -264,3 +264,16 @@ hirid_vaso <- function(x, val_var, unit_var, env, ...) {
 }
 
 hirid_insulin <- function(x, ...) dt_gforce(x, "sum")
+
+hirid_urine <- function(x, val_var, unit_var, ...) {
+
+  do_diff <- function(x) {
+    res <- c(x[1L], diff(x))
+    res[res < 0] <- 0
+    res
+  }
+
+  idx <- id_vars(x)
+
+  x[, c(val_var, unit_var) := list(do_diff(get(val_var)), "mL"), by = idx]
+}

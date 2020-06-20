@@ -899,10 +899,11 @@ cfg <- list(
       )
   )
   ),
-  urine_events = list(
+  urine_out = list(
     unit = "mL",
     min = 0,
     max = 2000,
+    aggregate = "sum",
     sources = list(
       mimic = list(
         list(ids = c(40055L,   40056L,  40057L,  40065L,  40069L,  40085L,
@@ -917,22 +918,10 @@ cfg <- list(
              sub_var = "celllabel"),
         list(regex = c("catheter.+output|output.+catheter"),
              table = "intakeoutput", sub_var = "celllabel", class = "rgx_itm")
-      )
-  )
-  ),
-  urine_hourly = list(
-    unit = "mL",
-    sources = list(
+      ),
       hirid = list(
-        list(ids = 10020000L, table = "observations", sub_var = "variableid")
-      )
-    )
-  ),
-  urine_cumulative = list(
-    unit = "mL",
-    sources = list(
-      hirid = list(
-        list(ids = 30005110L, table = "observations", sub_var = "variableid")
+        list(ids = 30005110L, table = "observations", sub_var = "variableid",
+             callback = "hirid_urine")
       )
     )
   ),
@@ -1399,6 +1388,11 @@ cfg <- list(
     concepts = c("gcs_eye", "gcs_motor", "gcs_verbal", "gcs_total",
                  "tracheostomy", "rass_scale"),
     callback = "sofa_gcs",
+    class = "rec_cncpt"
+  ),
+  urine_24 = list(
+    concepts = "urine_out",
+    callback = "sofa_urine",
     class = "rec_cncpt"
   )
 )

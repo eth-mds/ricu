@@ -18,7 +18,6 @@
 #' @param fix_na_gcs Logical flag controlling imputation of missing GCS values
 #' with the respective maximum values
 #' @param urine_min_win Minimal time span required for calculation of urine/24h
-#' @param icu_limits ICU stay durations used for calculating urine output
 #'
 #' @inheritParams si_data
 #' @inheritParams load_concepts
@@ -43,21 +42,14 @@ sofa_data <- function(source, pafi_win_length = hours(2L),
                       fix_na_fio2 = TRUE, vent_win_length = hours(6L),
                       vent_min_win = mins(10L), gcs_win_length = hours(6L),
                       fix_na_gcs = TRUE, urine_min_win = hours(12L),
-                      icu_limits = NULL, id_type = "icustay",
-                      interval = hours(1L),
+                      id_type = "icustay", interval = hours(1L),
                       dictionary = read_dictionary(source), ...) {
-
-  assert_that(
-    is_time(urine_min_win, allow_neg = FALSE),
-    urine_min_win > interval, urine_min_win <= hours(24L)
-  )
 
   sel_non_null <- function(x, sel) Filter(Negate(is.null), x[sel])
 
   vent_conc <- c("vent_start", "vent_end")
   gcs_conc <- c("gcs_eye", "gcs_motor", "gcs_verbal", "gcs_total")
   sed_conc <- c("tracheostomy", "rass_scale")
-  urine_conc <- c("urine_cumulative", "urine_events")
 
   agg_funs <- c(
     pa_o2 = "min", fi_o2 = "max", vent_start = "sum", vent_end = "sum",
@@ -65,7 +57,7 @@ sofa_data <- function(source, pafi_win_length = hours(2L),
     norepinephrine = "max", epinephrine = "max", dopamine = "max",
     dobutamine = "max", gcs_eye = "min", gcs_motor = "min", gcs_verbal = "min",
     gcs_total = "min", tracheostomy = "sum", rass_scale = "min",
-    creatinine = "max", urine_cumulative = "max", urine_events = "sum"
+    creatinine = "max", urine_out = "sum"
   )
 
   dat_dict  <- dictionary[setdiff(names(agg_funs), vent_conc)]
@@ -93,34 +85,25 @@ sofa_data <- function(source, pafi_win_length = hours(2L),
     gcs_win_length, fix_na_gcs
   )
 
-  dat[["urine"]] <- sofa_urine(
-    reduce(merge, sel_non_null(dat, urine_conc), all = TRUE),
-    icu_limits, urine_min_win, interval
-  )
+  dat[["urine"]] <- sofa_urine(dat[["urine_out"]], urine_min_win, interval)
 
-  dat[c("pa_o2", "fi_o2", vent_conc, gcs_conc, sed_conc, urine_conc)] <- NULL
+  dat[c("pa_o2", "fi_o2", vent_conc, gcs_conc, sed_conc, "urine_out")] <- NULL
 
   res <- reduce(merge, dat, all = TRUE)
 
-  res <- res[is_true(get("pafi") < 200) & !is_true(get("vent")),
-             c("pafi") := 200]
+  res <- res[is_true(get("pa_fi") < 200) & !is_true(get("vent_ind")),
+             c("pa_fi") := 200]
 
-  res <- rm_cols(res, "vent", by_ref = TRUE)
+  res <- rm_cols(res, "vent_ind", by_ref = TRUE)
 
   rename <- c(
     platelet_count = "coag", bilirubin_total = "bili", mean_bp = "map",
     dopamine = "dopa", norepinephrine = "norepi", dobutamine = "dobu",
-    epinephrine = "epi", creatinine = "crea", urine_24 = "urine"
+    epinephrine = "epi", creatinine = "crea", urine_24 = "urine",
+    pa_fi = "pafi"
   )
 
-  need_cols <- c("pafi", rename, "gcs")
-  rename    <- rename[intersect(names(rename), colnames(res))]
-
   res <- rename_cols(res, rename, names(rename), by_ref = TRUE)
-
-  if (!has_cols(res, need_cols)) {
-    res <- res[, c(setdiff(need_cols, data_vars(res))) := NA_real_]
-  }
 
   res
 }
@@ -169,7 +152,7 @@ sofa_pafi <- function(pa_o2, fi_o2, win_length = hours(2L),
   }
 
   res <- res[!is.na(get("pa_o2")) & !is.na(get("fi_o2")) & get("fi_o2") != 0, ]
-  res <- res[, c("pafi") := 100 * get("pa_o2") / get("fi_o2")]
+  res <- res[, c("pa_fi") := 100 * get("pa_o2") / get("fi_o2")]
   res <- res[, c("pa_o2", "fi_o2") := NULL]
 
   res
@@ -232,7 +215,7 @@ sofa_vent <- function(vent_start, vent_end, win_length = hours(6L),
     extend_ts(merged, min_col = "start_time", max_col = "stop_time",
               step_size = as.double(interval), id_vars = id_vars(merged))
   )
-  res <- res[, c("vent") := TRUE]
+  res <- res[, c("vent_ind") := TRUE]
 
   res
 }
@@ -296,14 +279,10 @@ sofa_gcs <- function(gcs_eye, gcs_motor, gcs_verbal, gcs_total, tracheostomy,
   dat
 }
 
-sofa_urine <- function(urine, limits, min_win, interval) {
+sofa_urine <- function(urine_out, min_win = hours(12L),
+                       interval = ricu::interval(urine_out)) {
 
   convert_dt <- function(x) as.double(x, units(interval))
-
-  do_diff <- function(x) {
-    res <- c(diff(x), 0)
-    ifelse(res < 0, x + res, res)
-  }
 
   urine_sum <- local({
 
@@ -316,30 +295,14 @@ sofa_urine <- function(urine, limits, min_win, interval) {
     }
   })
 
-  idx <- id_vars(urine)
+  assert_that(
+    has_interval(urine_out, interval), is_interval(min_win),
+    min_win > interval, min_win <= hours(24L)
+  )
 
-  if (!all(is.na(urine[["urine_cumulative"]]))) {
+  res <- fill_gaps(urine_out)
 
-    assert_that(all(is.na(urine[["urine_events"]])))
-
-    urine <- urine[, c("urine_events") := do_diff(get("urine_cumulative")),
-                   by = idx]
-  }
-
-  if (is.null(limits)) {
-
-    limits <- urine[, list(start = min(get(index_var(urine))),
-                           end = max(get(index_var(urine)))), by = idx]
-  }
-
-  assert_that(has_name(limits, c("start", "end")))
-
-  limits <- merge(limits, unique(urine[, idx, with = FALSE]), all.y = TRUE,
-                  by.x = id_vars(limits), by.y = idx)
-
-  res <- fill_gaps(urine, limits = limits, min_col = "start", max_col = "end")
-
-  expr <- substitute(list(urine_24 = win_agg_fun(urine_events)),
+  expr <- substitute(list(urine_24 = win_agg_fun(urine_out)),
                      list(win_agg_fun = urine_sum))
 
   slide(res, !!expr, hours(24L))

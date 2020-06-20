@@ -305,7 +305,7 @@ on_failure(is_colname) <- function(call, env) {
   paste0(deparse(call$x), " is not a column name in ", deparse(call$tbl))
 }
 
-same_src <- function(x) length(unique(unlist(src_name(x)))) == 1L
+same_src <- function(x) length(unique(unlist(src_name(x)))) <= 1L
 
 on_failure(same_src) <- function(call, env) {
   paste0(deparse(call$x), " cannot represent data from multiple sources")

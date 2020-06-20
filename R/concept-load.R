@@ -98,9 +98,16 @@ load_concepts.concept <- function(x, aggregate = NULL, merge_data = TRUE,
 }
 
 load_one_concept_helper <- function(x, aggregate, ..., progress) {
+
   progr_iter(x[["name"]], progress, 0L)
-  on.exit(progr_iter(x[["name"]], progress, 1L))
-  load_concepts(x, aggregate, ..., progress = progress)
+
+  res <- load_concepts(x, aggregate, ..., progress = progress)
+
+  assert_that(has_name(res, x[["name"]]))
+
+  progr_iter(pb = progress)
+
+  res
 }
 
 #' @param progress Either `NULL`, or a progress bar object as created by
@@ -274,8 +281,14 @@ load_concepts.item <- function(x, patient_ids = NULL, id_type = "icustay",
                                interval = hours(1L), progress = NULL, ...) {
 
   load_one <- function(x, prog, ...) {
+
     progr_iter(pb = prog)
-    load_concepts(x, ...)
+
+    res <- load_concepts(x, ...)
+
+    assert_that(inherits(res, x[["targ"]]))
+
+    res
   }
 
   warn_dots(...)

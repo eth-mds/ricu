@@ -411,7 +411,9 @@ init_cncpt.num_cncpt <- function(x, unit = NULL, min = NULL, max = NULL, ...) {
   todo <- c("unit", "min", "max")
   x[todo] <- mget(todo)
 
-  x[["items"]] <- new_item(lapply(x[["items"]], add_unit_var))
+  targ <- attr(x[["items"]], "target")
+
+  x[["items"]] <- new_item(lapply(x[["items"]], add_unit_var), targ)
 
   x
 }

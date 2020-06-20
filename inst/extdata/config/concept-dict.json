@@ -3167,22 +3167,16 @@
       ]
     }
   },
-  "urine_cumulative": {
-    "unit": "mL",
-    "sources": {
-      "hirid": [
-        {
-          "ids": 30005110,
-          "table": "observations",
-          "sub_var": "variableid"
-        }
-      ]
-    }
+  "urine_24": {
+    "concepts": "urine_out",
+    "callback": "sofa_urine",
+    "class": "rec_cncpt"
   },
-  "urine_events": {
+  "urine_out": {
     "unit": "mL",
     "min": 0,
     "max": 2000,
+    "aggregate": "sum",
     "sources": {
       "eicu": [
         {
@@ -3210,6 +3204,14 @@
           "class": "rgx_itm"
         }
       ],
+      "hirid": [
+        {
+          "ids": 30005110,
+          "table": "observations",
+          "sub_var": "variableid",
+          "callback": "hirid_urine"
+        }
+      ],
       "mimic": [
         {
           "ids": [40055, 40056, 40057, 40065, 40069, 40085, 40086, 40094, 40096, 40405, 40428, 40473, 40715, 43175, 226557, 226558, 226559, 226560, 226561, 226563, 226564, 226565, 226566, 226567, 226584, 227510],
@@ -3222,18 +3224,6 @@
           "ids": [40055, 40056, 40057, 40065, 40069, 40085, 40086, 40094, 40096, 40405, 40428, 40473, 40715, 43175, 226557, 226558, 226559, 226560, 226561, 226563, 226564, 226565, 226566, 226567, 226584, 227510],
           "table": "outputevents",
           "sub_var": "itemid"
-        }
-      ]
-    }
-  },
-  "urine_hourly": {
-    "unit": "mL",
-    "sources": {
-      "hirid": [
-        {
-          "ids": 10020000,
-          "table": "observations",
-          "sub_var": "variableid"
         }
       ]
     }

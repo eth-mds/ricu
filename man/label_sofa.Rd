@@ -17,7 +17,6 @@ sofa_data(
   gcs_win_length = hours(6L),
   fix_na_gcs = TRUE,
   urine_min_win = hours(12L),
-  icu_limits = NULL,
   id_type = "icustay",
   interval = hours(1L),
   dictionary = read_dictionary(source),
@@ -80,8 +79,6 @@ if no newer measurement is available}
 with the respective maximum values}
 
 \item{urine_min_win}{Minimal time span required for calculation of urine/24h}
-
-\item{icu_limits}{ICU stay durations used for calculating urine output}
 
 \item{id_type}{String specifying the patient id type to return}
 
