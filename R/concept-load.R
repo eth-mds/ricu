@@ -60,20 +60,23 @@ load_concepts.character <- function(x, src = NULL, concepts = NULL, ...) {
 load_concepts.concept <- function(x, aggregate = NULL, merge_data = TRUE,
                                   verbose = TRUE, ...) {
 
+  load_one <- function(x, agg, ..., prog) {
+    progr_iter(x[["name"]], prog, 0L)
+    on.exit(progr_iter(x[["name"]], prog, 1L))
+    load_concepts(x, agg, ..., progress = prog)
+  }
+
   assert_that(is.flag(merge_data), same_src(x), is.flag(verbose))
 
-  len <- n_itm(x)
-
   if (verbose) {
-    pba <- progr_init(len + 1L, paste("Loading", len, "concepts"),
+    pba <- progr_init(n_tick(x), paste("Loading", length(x), "concepts"),
                       capture_output = TRUE)
   } else {
     pba <- FALSE
   }
 
-  ext <- c(list(...), list(progress = pba))
-  agg <- rep_arg(aggregate, names(x))
-  res <- Map(load_concepts, x, agg, MoreArgs = ext)
+  res <- Map(load_one, x, rep_arg(aggregate, names(x)),
+             MoreArgs = c(list(...), list(prog = pba)))
 
   if (inherits(pba, "progress_bar")) {
     pba$update(1)
@@ -107,8 +110,6 @@ load_concepts.concept <- function(x, aggregate = NULL, merge_data = TRUE,
 #' @export
 load_concepts.cncpt <- function(x, aggregate = NULL, ..., progress = NULL) {
 
-  progr_iter(x[["name"]], progress, 0L)
-
   res <- load_concepts(x[["items"]], ..., progress = progress)
   res <- rm_na(res)
 
@@ -123,7 +124,7 @@ load_concepts.num_cncpt <- function(x, aggregate = NULL, ...,
                                     progress = NULL) {
 
   mk_msg <- function(...) {
-    paste(strwrap(paste0(...), indent = 4L, exdent = 6L), collapse = "\n")
+    paste(strwrap(paste0(...), indent = 2L, exdent = 4L), collapse = "\n")
   }
 
   check_bound <- function(x, val, op) {
@@ -155,7 +156,6 @@ load_concepts.num_cncpt <- function(x, aggregate = NULL, ...,
     }
   }
 
-  xtr <- progr_iter(x[["name"]], progress, 0L)
   res <- load_concepts(x[["items"]], ..., progress = progress)
 
   keep <- check_bound(res, x[["min"]], `>=`) &
@@ -183,7 +183,13 @@ load_concepts.num_cncpt <- function(x, aggregate = NULL, ...,
     msg <- c(msg, report_unit(res, unit))
   }
 
-  progr_msg(c(xtr, msg), pb = progress)
+  if (inherits(progress, "progress_bar")) {
+    hdr <- paste0("* `", x[["name"]], "`")
+  } else {
+    hdr <- NULL
+  }
+
+  progr_msg(c(hdr, msg), pb = progress)
 
   res <- rm_cols(res, "unit_var", skip_absent = TRUE, by_ref = TRUE)
 
@@ -200,8 +206,6 @@ load_concepts.num_cncpt <- function(x, aggregate = NULL, ...,
 #' @export
 load_concepts.fct_cncpt <- function(x, aggregate = NULL, ...,
                                     progress = NULL) {
-
-  xtr <- progr_iter(x[["name"]], progress, 0L)
 
   lvl <- x[["levels"]]
 
@@ -225,11 +229,17 @@ load_concepts.fct_cncpt <- function(x, aggregate = NULL, ...,
 
     n_rm <- n_row - nrow(res)
 
-    msg <- paste0("    removed ", n_rm, " (", prcnt(n_rm, n_row), ") of rows ",
+    msg <- paste0("  removed ", n_rm, " (", prcnt(n_rm, n_row), ") of rows ",
                   "due to level mismatch")
   }
 
-  progr_msg(c(xtr, msg), pb = progress)
+  if (inherits(progress, "progress_bar")) {
+    hdr <- paste0("* `", x[["name"]], "`")
+  } else {
+    hdr <- NULL
+  }
+
+  progr_msg(c(hdr, msg), pb = progress)
 
   res <- rename_cols(res, x[["name"]], "val_var", by_ref = TRUE)
 
@@ -242,14 +252,14 @@ load_concepts.rec_cncpt <- function(x, aggregate = NULL, patient_ids = NULL,
                                     id_type = "icustay", interval = hours(1L),
                                     ..., progress = NULL) {
 
-  progr_iter(x[["name"]], progress, 0L)
-
   ext <- list(patient_ids = patient_ids, id_type = id_type,
-              interval = interval, progress = progress)
+              interval = coalesce(x[["interval"]], interval),
+              progress = progress)
+
   agg <- rep_arg(aggregate, names(x[["items"]]))
   dat <- Map(load_concepts, x[["items"]], agg, MoreArgs = ext)
 
-  do.call(x[["callback"]], c(dat, list(...)))
+  do.call(x[["callback"]], c(dat, list(...), list(interval = interval)))
 }
 
 #' @param patient_ids Optional vector of patient ids to subset the fetched data
@@ -285,7 +295,7 @@ load_concepts.item <- function(x, patient_ids = NULL, id_type = "icustay",
 #' @rdname load_concepts
 #' @export
 load_concepts.col_itm <- function(x, patient_ids = NULL, id_type = "icustay",
-                               interval = hours(1L), ...) {
+                                  interval = hours(1L), ...) {
 
   itm <- x[["itm_vars"]]
   cbc <- x[["cb_vars"]]

@@ -1388,6 +1388,12 @@ cfg <- list(
     concepts = c("pa_o2", "fi_o2"),
     callback = "sofa_pafi",
     class = "rec_cncpt"
+  ),
+  vent_ind = list(
+    concepts = c("vent_start", "vent_end"),
+    interval = "00:01:00",
+    callback = "sofa_vent",
+    class = "rec_cncpt"
   )
 )
 

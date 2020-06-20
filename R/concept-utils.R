@@ -334,15 +334,15 @@ src_name.item <- function(x) names(x)
 
 #' @rdname data_concepts
 #' @export
-n_itm <- function(x) UseMethod("n_itm", x)
+n_tick <- function(x) UseMethod("n_tick", x)
 
 #' @rdname data_concepts
 #' @export
-n_itm.itm <- function(x) 1L
+n_tick.itm <- function(x) 1L
 
 #' @rdname data_concepts
 #' @export
-n_itm.item <- function(x) length(x)
+n_tick.item <- function(x) length(x)
 
 #' Data concept
 #'
@@ -438,16 +438,24 @@ init_cncpt.cncpt <- function(x, ...) {
 
 #' @param callback Name of a function to be called on the returned data used
 #' for data cleanup operations
+#' @param interval Time interval used for data loading; if NULL, the respective
+#' interval passed as argument to [load_concepts()] is taken
 #'
 #' @rdname data_concepts
 #' @export
-init_cncpt.rec_cncpt <- function(x, callback, ...) {
+init_cncpt.rec_cncpt <- function(x, callback, interval = NULL, ...) {
 
   warn_dots(...)
 
-  assert_that(is_concept(x[["items"]]), is.string(callback))
+  assert_that(is_concept(x[["items"]]), is.string(callback),
+              null_or(interval, is.string))
 
-  x["callback"] <- callback
+  if (not_null(interval)) {
+    interval <- as.difftime(interval)
+  }
+
+  todo <- c("callback", "interval")
+  x[todo] <- mget(todo)
 
   x
 }
@@ -471,7 +479,7 @@ aggregate.cncpt <- function(x, tbl, fun = NULL, ...) {
 
 #' @rdname data_concepts
 #' @export
-n_itm.cncpt <- function(x) sum(int_ply(x[["items"]], n_itm))
+n_tick.cncpt <- function(x) sum(int_ply(x[["items"]], n_tick)) + 1L
 
 #' @rdname data_concepts
 #' @export
@@ -532,7 +540,7 @@ src_name.concept <- function(x) lapply(x, src_name)
 
 #' @rdname data_concepts
 #' @export
-n_itm.concept <- function(x) sum(int_ply(x, n_itm))
+n_tick.concept <- function(x) sum(int_ply(x, n_tick))
 
 #' @param src `NULL` or the name of a data source
 #' @param concepts A character vector used to subset the concept dictionary or

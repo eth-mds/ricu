@@ -1,8 +1,6 @@
 
 test_that("load concepts", {
 
-
-
   gluc <- concept("gluc",
     item("mimic_demo", "labevents", "itemid", list(c(50809L, 50931L)))
   )

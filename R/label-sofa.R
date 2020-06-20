@@ -48,9 +48,6 @@ sofa_data <- function(source, pafi_win_length = hours(2L),
                       dictionary = read_dictionary(source), ...) {
 
   assert_that(
-    is_time(pafi_win_length, allow_neg = FALSE), pafi_win_length > interval,
-    is.flag(fix_na_fio2), is_time(vent_win_length, allow_neg = FALSE),
-    is_time(vent_min_win, allow_neg = FALSE), vent_min_win < vent_win_length,
     is_time(gcs_win_length, allow_neg = FALSE), gcs_win_length > interval,
     is.flag(fix_na_gcs), is_time(urine_min_win, allow_neg = FALSE),
     urine_min_win > interval, urine_min_win <= hours(24L)
@@ -132,12 +129,15 @@ sofa_data <- function(source, pafi_win_length = hours(2L),
 
 sofa_pafi <- function(pa_o2, fi_o2, win_length = hours(2L),
                       mode = c("match_vals", "extreme_vals", "fill_gaps"),
-                      fix_na_fio2 = TRUE) {
+                      fix_na_fio2 = TRUE, interval = ricu::interval(pa_o2)) {
 
   mode <- match.arg(mode)
 
-  assert_that(same_interval(pa_o2, fi_o2),
-              has_cols(pa_o2, "pa_o2"), has_cols(fi_o2, "fi_o2"))
+  assert_that(
+    all_equal(interval(pa_o2), interval), all_equal(interval(fi_o2), interval),
+    is_time(win_length, allow_neg = FALSE), win_length > interval,
+    is.flag(fix_na_fio2), has_cols(pa_o2, "pa_o2"), has_cols(fi_o2, "fi_o2")
+  )
 
   if (identical(mode, "match_vals")) {
 
@@ -177,41 +177,50 @@ sofa_pafi <- function(pa_o2, fi_o2, win_length = hours(2L),
   res
 }
 
-sofa_vent <- function(start, stop, win_length, min_length, interval) {
+sofa_vent <- function(vent_start, vent_end, win_length = hours(6L),
+                      min_length = mins(10L),
+                      interval = ricu::interval(vent_start)) {
 
   final_units <- function(x) {
     units(x) <- units(interval)
     round_to(x, as.double(interval))
   }
 
-  assert_that(interval(start) < min_length)
+  assert_that(
+    is_time(win_length, allow_neg = FALSE),
+    is_time(min_length, allow_neg = FALSE), min_length < win_length,
+    interval(vent_start) < min_length
+  )
 
-  units(win_length) <- time_unit(start)
-  units(min_length) <- time_unit(start)
+  units(win_length) <- time_unit(vent_start)
+  units(min_length) <- time_unit(vent_start)
 
-  if (is.null(stop)) {
+  if (is.null(vent_end)) {
 
-    ind <- index_var(start)
+    ind <- index_var(vent_start)
 
-    merged <- copy(start)
+    merged <- copy(vent_start)
     merged <- merged[,
       c("start_time", "stop_time") := list(get(ind), get(ind) + win_length)
     ]
 
   } else {
 
-    assert_that(same_interval(start, stop))
+    assert_that(same_interval(vent_start, vent_end))
 
-    start[, c("start_time") := get(index_var(start))]
-    stop[ , c("stop_time")  := get(index_var(stop))]
+    ind_start <- index_var(vent_start)
+    ind_end   <- index_var(vent_end)
+
+    vent_start[, c("start_time") := get(ind_start)]
+    vent_end[ , c("stop_time")  := get(ind_end)]
 
     on.exit({
-      rm_cols(start, "start_time", by_ref = TRUE)
-      rm_cols(stop,  "stop_time", by_ref = TRUE)
+      rm_cols(vent_start, "start_time", by_ref = TRUE)
+      rm_cols(vent_end,  "stop_time", by_ref = TRUE)
     })
 
-    join   <- paste(meta_vars(stop), "==", meta_vars(start))
-    merged <- stop[start, roll = -win_length, on = join]
+    join   <- paste(meta_vars(vent_end), "==", meta_vars(vent_start))
+    merged <- vent_end[vent_start, roll = -win_length, on = join]
     merged <- merged[is.na(get("stop_time")),
                      c("stop_time") := get("start_time") + win_length]
   }

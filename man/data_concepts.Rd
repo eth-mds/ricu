@@ -3,9 +3,9 @@
 \name{item}
 \alias{item}
 \alias{as_item}
-\alias{n_itm}
-\alias{n_itm.itm}
-\alias{n_itm.item}
+\alias{n_tick}
+\alias{n_tick.itm}
+\alias{n_tick.item}
 \alias{new_cncpt}
 \alias{is_cncpt}
 \alias{init_cncpt}
@@ -14,11 +14,11 @@
 \alias{init_cncpt.cncpt}
 \alias{init_cncpt.rec_cncpt}
 \alias{src_name.cncpt}
-\alias{n_itm.cncpt}
+\alias{n_tick.cncpt}
 \alias{new_concept}
 \alias{concept}
 \alias{is_concept}
-\alias{n_itm.concept}
+\alias{n_tick.concept}
 \alias{read_dictionary}
 \title{Data concept}
 \usage{
@@ -26,11 +26,11 @@ item(...)
 
 as_item(x)
 
-n_itm(x)
+n_tick(x)
 
-\method{n_itm}{itm}(x)
+\method{n_tick}{itm}(x)
 
-\method{n_itm}{item}(x)
+\method{n_tick}{item}(x)
 
 new_cncpt(name, items, aggregate = NULL, ..., class = "num_cncpt")
 
@@ -44,11 +44,11 @@ init_cncpt(x, ...)
 
 \method{init_cncpt}{cncpt}(x, ...)
 
-\method{init_cncpt}{rec_cncpt}(x, callback, ...)
+\method{init_cncpt}{rec_cncpt}(x, callback, interval = NULL, ...)
 
 \method{src_name}{cncpt}(x)
 
-\method{n_itm}{cncpt}(x)
+\method{n_tick}{cncpt}(x)
 
 new_concept(x)
 
@@ -56,7 +56,7 @@ concept(...)
 
 is_concept(x)
 
-\method{n_itm}{concept}(x)
+\method{n_tick}{concept}(x)
 
 read_dictionary(
   src = NULL,
@@ -92,6 +92,9 @@ numeric concept}
 
 \item{callback}{Name of a function to be called on the returned data used
 for data cleanup operations}
+
+\item{interval}{Time interval used for data loading; if NULL, the respective
+interval passed as argument to \code{\link[=load_concepts]{load_concepts()}} is taken}
 
 \item{src}{\code{NULL} or the name of a data source}
 

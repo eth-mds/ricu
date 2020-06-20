@@ -503,8 +503,7 @@ progr_init <- function(len = NULL, msg = "loading", capture_output = FALSE,
     }
 
     res <- progress::progress_bar$new(
-      format = ":what [:bar] :percent", total = len, callback = fun,
-      clear = FALSE, ...
+      format = ":what [:bar] :percent", total = len, callback = fun, ...
     )
 
     attr(res, "con") <- con
@@ -530,30 +529,36 @@ progr_iter <- function(name = "", pb = NULL, len = 1L) {
     return(invisible(NULL))
   }
 
-  xtra <- paste0("  * `", name, "`")
-
   if (is.null(pb)) {
 
     if (nzchar(name)) {
-      message(xtra)
+      message(paste0("* `", name, "`"))
     }
 
     return(invisible(NULL))
   }
 
-  if (nchar(name) > 15L) {
-    name <- paste0(substr(name, 1L, 15L - nchar(ellipsis())), ellipsis())
-  } else {
-    name <- sprintf("%-15s", name)
-  }
-
   if (nzchar(name)) {
+
+    if (nchar(name) > 15L) {
+      name <- paste0(substr(name, 1L, 15L - nchar(ellipsis())), ellipsis())
+    } else {
+      name <- sprintf("%-15s", name)
+    }
+
     pb$tick(len = len, tokens = list(what = name))
+    attr(pb, "token") <- name
+
+  } else if (not_null(attr(pb, "token"))) {
+
+    pb$tick(len = len, tokens = list(what = attr(pb, "token")))
+
   } else {
+
     pb$tick(len = len)
   }
 
-  invisible(xtra)
+  invisible(NULL)
 }
 
 progr_msg <- function(..., pb = NULL) {
@@ -597,8 +602,6 @@ wrap_null <- function(...) {
 
   invisible(NULL)
 }
-
-all_equal <- function(x, y, ...) isTRUE(all.equal(x, y, ...))
 
 coalesce <- function(...) {
   for (x in list(...)) if (is.null(x)) next else return(x)

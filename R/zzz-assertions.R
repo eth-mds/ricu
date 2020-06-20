@@ -284,3 +284,8 @@ on_failure(same_src) <- function(call, env) {
   paste0(deparse(call$x), " cannot represent data from multiple sources")
 }
 
+all_equal <- function(x, y, ...) isTRUE(all.equal(x, y, ...))
+
+on_failure(all_equal) <- function(call, env) {
+  paste0(deparse(call$x), " and ", deparse(call$x), " are not equal")
+}
