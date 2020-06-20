@@ -60,12 +60,6 @@ load_concepts.character <- function(x, src = NULL, concepts = NULL, ...) {
 load_concepts.concept <- function(x, aggregate = NULL, merge_data = TRUE,
                                   verbose = TRUE, ...) {
 
-  load_one <- function(x, agg, ..., prog) {
-    progr_iter(x[["name"]], prog, 0L)
-    on.exit(progr_iter(x[["name"]], prog, 1L))
-    load_concepts(x, agg, ..., progress = prog)
-  }
-
   assert_that(is.flag(merge_data), same_src(x), is.flag(verbose))
 
   if (verbose) {
@@ -75,10 +69,10 @@ load_concepts.concept <- function(x, aggregate = NULL, merge_data = TRUE,
     pba <- FALSE
   }
 
-  res <- Map(load_one, x, rep_arg(aggregate, names(x)),
-             MoreArgs = c(list(...), list(prog = pba)))
+  res <- Map(load_one_concept_helper, x, rep_arg(aggregate, names(x)),
+             MoreArgs = c(list(...), list(progress = pba)))
 
-  if (inherits(pba, "progress_bar")) {
+  if (inherits(pba, "progress_bar") && !pba$finished) {
     pba$update(1)
   }
 
@@ -101,6 +95,12 @@ load_concepts.concept <- function(x, aggregate = NULL, merge_data = TRUE,
   }
 
   res
+}
+
+load_one_concept_helper <- function(x, aggregate, ..., progress) {
+  progr_iter(x[["name"]], progress, 0L)
+  on.exit(progr_iter(x[["name"]], progress, 1L))
+  load_concepts(x, aggregate, ..., progress = progress)
 }
 
 #' @param progress Either `NULL`, or a progress bar object as created by
@@ -257,7 +257,7 @@ load_concepts.rec_cncpt <- function(x, aggregate = NULL, patient_ids = NULL,
               progress = progress)
 
   agg <- rep_arg(aggregate, names(x[["items"]]))
-  dat <- Map(load_concepts, x[["items"]], agg, MoreArgs = ext)
+  dat <- Map(load_one_concept_helper, x[["items"]], agg, MoreArgs = ext)
 
   do.call(x[["callback"]], c(dat, list(...), list(interval = interval)))
 }
@@ -281,8 +281,17 @@ load_concepts.item <- function(x, patient_ids = NULL, id_type = "icustay",
   warn_dots(...)
 
   if (length(x) == 0L) {
-    res <- setNames(list(integer(), numeric()), c(id_type, "val_var"))
-    return(as_id_tbl(res, id_vars = id_type, by_ref = TRUE))
+
+    if (need_idx(x)) {
+      res <- setNames(list(integer(), interval[-1L], numeric()),
+                      c("id_var", "index_var", "val_var"))
+      res <- as_ts_tbl(res, interval = interval, by_ref = TRUE)
+    } else {
+      res <- setNames(list(integer(), numeric()), c("id_var", "val_var"))
+      res <- as_id_tbl(res, by_ref = TRUE)
+    }
+
+    return(res)
   }
 
   res <- lapply(x, load_one, progress, patient_ids, id_type, interval)

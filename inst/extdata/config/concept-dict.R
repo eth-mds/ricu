@@ -1394,6 +1394,12 @@ cfg <- list(
     interval = "00:01:00",
     callback = "sofa_vent",
     class = "rec_cncpt"
+  ),
+  gcs = list(
+    concepts = c("gcs_eye", "gcs_motor", "gcs_verbal", "gcs_total",
+                 "tracheostomy", "rass_scale"),
+    callback = "sofa_gcs",
+    class = "rec_cncpt"
   )
 )
 

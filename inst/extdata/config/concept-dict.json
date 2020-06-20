@@ -1334,6 +1334,11 @@
       ]
     }
   },
+  "gcs": {
+    "concepts": ["gcs_eye", "gcs_motor", "gcs_verbal", "gcs_total", "tracheostomy", "rass_scale"],
+    "callback": "sofa_gcs",
+    "class": "rec_cncpt"
+  },
   "gcs_eye": {
     "sources": {
       "eicu": [
@@ -3359,7 +3364,7 @@
   },
   "vent_ind": {
     "concepts": ["vent_start", "vent_end"],
-    "interval": "0:1:0",
+    "interval": "00:01:00",
     "callback": "sofa_vent",
     "class": "rec_cncpt"
   },

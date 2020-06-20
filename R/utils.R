@@ -263,22 +263,6 @@ is_difftime <- function(x) inherits(x, "difftime")
 
 is_one_min <- function(x) all_equal(x, mins(1L))
 
-#' @param allow_neg Logical flag indicating whether to allow negative values
-#'
-#' @rdname difftime
-#' @export
-#'
-is_time <- function(x, allow_neg = TRUE) {
-  is_difftime(x) && length(x) == 1L && (allow_neg || all(x >= 0))
-}
-
-#' @rdname difftime
-#' @export
-#'
-is_time_vec <- function(x, allow_neg = TRUE) {
-  is_difftime(x) && (allow_neg || all(x >= 0))
-}
-
 re_time <- function(x, interval) {
   round_to(`units<-`(x, units(interval)), as.double(interval))
 }
@@ -351,18 +335,6 @@ str_in_vec_once <- function(str, vec) identical(sum(vec %in% str), 1L)
 
 null_or_subs <- function(x, where = parent.frame(1L)) {
   if (missing(x)) NULL else do.call("substitute", list(substitute(x), where))
-}
-
-carry_backwards <- function(x) {
-
-  res <- x[length(x)]
-
-  if (is.na(res)) {
-    no_na <- not_na(x)
-    if (any(no_na)) return(tail(x[no_na], n = 1L))
-  }
-
-  res
 }
 
 #' @rdname utils

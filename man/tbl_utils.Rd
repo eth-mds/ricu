@@ -11,6 +11,7 @@
 \alias{meta_vars.id_tbl}
 \alias{meta_vars.ts_tbl}
 \alias{data_vars}
+\alias{data_var}
 \alias{data_col}
 \alias{interval}
 \alias{interval.ts_tbl}
@@ -55,6 +56,8 @@ meta_vars(x)
 \method{meta_vars}{ts_tbl}(x)
 
 data_vars(x)
+
+data_var(x)
 
 data_col(x)
 

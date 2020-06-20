@@ -49,6 +49,14 @@ data_vars <- function(x) setdiff(colnames(x), meta_vars(x))
 
 #' @rdname tbl_utils
 #' @export
+data_var <- function(x) {
+  res <- data_vars(x)
+  assert_that(is.string(res))
+  res
+}
+
+#' @rdname tbl_utils
+#' @export
 data_col <- function(x) {
   col <- data_vars(x)
   assert_that(length(col) == 1L)
@@ -70,7 +78,7 @@ interval.difftime <- function(x) {
   dif <- diff(x)
   res <- min(dif[dif > 0], na.rm = TRUE)
 
-  assert_that(has_interval(x, res), msg = paste(
+  assert_that(fits_interval(x, res), msg = paste(
     "failed to determine interval from data: not all time steps are a",
     "multiple of the minimal time step", format(res))
   )

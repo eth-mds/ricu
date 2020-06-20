@@ -62,7 +62,9 @@ itm_var_helper <- function(x, col) {
   res
 }
 
-need_idx <- function(x) identical(x[["targ"]], "ts_tbl")
+need_idx <- function(x) {
+  identical(coalesce(attr(x, "target"), x[["targ"]]), "ts_tbl")
+}
 
 idx_var_helper <- function(x, col) {
   if (need_idx(x)) coalesce(col, index_var(as_src_tbl(x))) else NULL
@@ -288,11 +290,17 @@ add_unit_var.itm <- function(x) x
 
 #' @rdname data_items
 #' @export
-new_item <- function(x) {
+new_item <- function(x, target = NULL) {
 
-  assert_that(is.list(x), all_fun(x, is_itm))
+  trg <- chr_xtr(x, "targ")
 
-  new_vctr(x, class = "item")
+  if (is.null(target)) {
+    target <- trg[1L]
+  }
+
+  assert_that(is.list(x), all_fun(x, is_itm), all_fun(trg, identical, target))
+
+  new_vctr(x, target = target, class = "item")
 }
 
 #' @rdname data_concepts
@@ -574,7 +582,8 @@ read_dictionary <- function(src = NULL, concepts = NULL,
       }
 
       itms <- new_item(
-        do.call(c, Map(do_itm, names(sources), target, sources))
+        do.call(c, Map(do_itm, names(sources), target, sources)),
+        target
       )
     }
 

@@ -55,7 +55,7 @@ init_itm(x, ...)
 
 \method{init_itm}{itm}(x, ...)
 
-new_item(x)
+new_item(x, target = NULL)
 
 is_item(x)
 }

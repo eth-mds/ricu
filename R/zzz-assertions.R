@@ -62,11 +62,27 @@ on_failure(has_time_cols) <- function(call, env) {
          " are contained in ", deparse(call$x), " as `difftime` objects")
 }
 
+#' @param allow_neg Logical flag indicating whether to allow negative values
+#'
+#' @rdname difftime
+#' @export
+#'
+is_time <- function(x, allow_neg = TRUE) {
+  is_difftime(x) && length(x) == 1L && (allow_neg || all(x >= 0))
+}
+
 on_failure(is_time) <- function(call, env) {
   pos <- is.null(call$allow_neg) || !eval(call$allow_neg, env)
   paste0(deparse(call$x), " is not a",
          if (pos) " strictly positive " else " ",
          "`difftime` object of length 1")
+}
+
+#' @rdname difftime
+#' @export
+#'
+is_time_vec <- function(x, allow_neg = TRUE) {
+  is_difftime(x) && (allow_neg || all(x >= 0))
 }
 
 on_failure(is_time_vec) <- function(call, env) {
@@ -80,13 +96,6 @@ same_time_unit <- function(x, y)
   is_time_vec(x) && is_time_vec(y) && identical(units(x), units(y))
 
 on_failure(same_time_unit) <- function(call, env) {
-  paste0("`", deparse(call$x), "` and `", deparse(call$y),
-         "` are not on the same time scale")
-}
-
-same_interval <- function(x, y) all_equal(interval(x), interval(y))
-
-on_failure(same_interval) <- function(call, env) {
   paste0("`", deparse(call$x), "` and `", deparse(call$y),
          "` are not on the same time scale")
 }
@@ -213,15 +222,33 @@ on_failure(same_ts) <- function(call, env) {
          "` differ in id, index and/or interval")
 }
 
-has_interval <- function(x, interval) {
-  same_time_unit(x, interval) && all(
+is_interval <- function(x) is_time(x, allow_neg = FALSE)
+
+fits_interval <- function(x, interval) {
+  is_interval(interval) && same_time_unit(x, interval) && all(
     val_or_na(as.double(x) %% as.double(interval), 0)
   )
 }
 
-on_failure(has_interval) <- function(call, env) {
+on_failure(fits_interval) <- function(call, env) {
   paste0(deparse(call$x), " does not conform to an interval of ",
          format(eval(call$interval, env)))
+}
+
+has_interval <- function(x, interval) {
+  all_equal(interval(x), interval)
+}
+
+on_failure(has_interval) <- function(call, env) {
+  paste0(deparse(call$x), " does not have an interval of ",
+         format(eval(call$interval, env)))
+}
+
+same_interval <- function(x, y) all_equal(interval(x), interval(y))
+
+on_failure(same_interval) <- function(call, env) {
+  paste0("`", deparse(call$x), "` and `", deparse(call$y),
+         "` are not on the same time scale")
 }
 
 is_scalar <- function(x, allow_null = FALSE) {

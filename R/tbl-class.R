@@ -339,8 +339,7 @@ validate_tbl.ts_tbl <- function(x) {
 
   res <- validate_that(
     is_disjoint(id_vars(x), index_var(x)),
-    is_time_vec(index, allow_neg = TRUE), is_time(inval, allow_neg = FALSE),
-    has_interval(index, inval)
+    is_time_vec(index, allow_neg = TRUE), fits_interval(index, inval)
   )
 
   if (isTRUE(res)) NextMethod() else res

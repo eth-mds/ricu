@@ -213,3 +213,19 @@ hop <- function(x, expr, windows, full_window = FALSE,
 
   rm_cols(res, tmp_col, skip_absent = TRUE, by_ref = TRUE)
 }
+
+locf <- function(x) {
+
+  res <- last_elem(x)
+
+  if (is.na(res)) {
+
+    no_na <- !is.na(x)
+
+    if (any(no_na)) {
+      res <- last_elem(x[no_na])
+    }
+  }
+
+  res
+}

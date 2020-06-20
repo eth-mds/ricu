@@ -48,8 +48,7 @@ sofa_data <- function(source, pafi_win_length = hours(2L),
                       dictionary = read_dictionary(source), ...) {
 
   assert_that(
-    is_time(gcs_win_length, allow_neg = FALSE), gcs_win_length > interval,
-    is.flag(fix_na_gcs), is_time(urine_min_win, allow_neg = FALSE),
+    is_time(urine_min_win, allow_neg = FALSE),
     urine_min_win > interval, urine_min_win <= hours(24L)
   )
 
@@ -89,9 +88,8 @@ sofa_data <- function(source, pafi_win_length = hours(2L),
   )
 
   dat[["gcs"]] <- sofa_gcs(
-    reduce(merge, sel_non_null(dat, gcs_conc), all = TRUE),
-    reduce(merge, c(list(dat[["vent"]]), sel_non_null(dat, sed_conc)),
-           all = TRUE),
+    dat[["gcs_eye"]], dat[["gcs_motor"]], dat[["gcs_verbal"]],
+    dat[["gcs_total"]], dat[["tracheostomy"]], dat[["rass_scale"]],
     gcs_win_length, fix_na_gcs
   )
 
@@ -134,9 +132,9 @@ sofa_pafi <- function(pa_o2, fi_o2, win_length = hours(2L),
   mode <- match.arg(mode)
 
   assert_that(
-    all_equal(interval(pa_o2), interval), all_equal(interval(fi_o2), interval),
-    is_time(win_length, allow_neg = FALSE), win_length > interval,
-    is.flag(fix_na_fio2), has_cols(pa_o2, "pa_o2"), has_cols(fi_o2, "fi_o2")
+    has_interval(pa_o2, interval), has_interval(fi_o2, interval),
+    is_interval(win_length), win_length > interval, is.flag(fix_na_fio2),
+    has_cols(pa_o2, "pa_o2"), has_cols(fi_o2, "fi_o2")
   )
 
   if (identical(mode, "match_vals")) {
@@ -187,8 +185,7 @@ sofa_vent <- function(vent_start, vent_end, win_length = hours(6L),
   }
 
   assert_that(
-    is_time(win_length, allow_neg = FALSE),
-    is_time(min_length, allow_neg = FALSE), min_length < win_length,
+    is_interval(win_length), is_interval(min_length), min_length < win_length,
     interval(vent_start) < min_length
   )
 
@@ -240,82 +237,63 @@ sofa_vent <- function(vent_start, vent_end, win_length = hours(6L),
   res
 }
 
-sofa_gcs <- function(gcs, sed, win_length, set_na_max) {
+sofa_gcs <- function(gcs_eye, gcs_motor, gcs_verbal, gcs_total, tracheostomy,
+                     rass_scale, win_length = hours(6L), set_sed_max = TRUE,
+                     set_na_max = TRUE, interval = ricu::interval(gcs_eye)) {
 
-  determine_sed <- function(fun, col, tbl) {
+  assert_that(
+    has_interval(gcs_eye, interval), has_interval(gcs_motor, interval),
+    has_interval(gcs_verbal, interval), has_interval(gcs_total, interval),
+    has_interval(tracheostomy, interval), has_interval(rass_scale, interval),
+    is_interval(win_length), win_length > interval, is.flag(set_sed_max),
+    is.flag(set_na_max)
+  )
 
-    if (col %in% data_vars(tbl)) {
-      set(tbl, j = col, value = is_true(fun(tbl[[col]])))
-    }
+  tra_var <- data_var(tracheostomy)
+  ras_var <- data_var(rass_scale)
 
-    invisible(NULL)
+  sed <- merge(tracheostomy, rass_scale, all = TRUE)
+  sed <- sed[, c("is_sed", tra_var, ras_var) := list(
+    get(tra_var) | get(ras_var) <= -2, NULL, NULL)
+  ]
+
+  dat <- reduce(merge, list(gcs_eye, gcs_motor, gcs_verbal, gcs_total, sed),
+                all = TRUE)
+
+  if (set_sed_max) {
+    dat <- dat[is_true(get("is_sed")),
+      c("gcs_eye", "gcs_verbal", "gcs_motor", "gcs_total") := list(4, 5, 6, 15)
+    ]
   }
 
-  sed_feats <- c("tracheostomy", "rass_scale", "vent")
-  sed_funs <- list(function(x) x > 0, function(x) x <= -2, identity)
-
-  assert_that(same_interval(gcs, sed), all(data_vars(sed) %in% sed_feats))
-
-  Map(determine_sed, sed_funs, sed_feats, list(sed))
-
-  sed <- sed[, c("is_sed") := Reduce(`|`, .SD), .SDcols = data_vars(sed)]
-  sed <- sed[, c(intersect(data_vars(sed), sed_feats)) := NULL]
-
-  dat <- merge(gcs, sed, all = TRUE)
-
-  dat <- dat[is_true(get("is_sed")),
-             c("gcs_eye", "gcs_verbal", "gcs_motor") := list(4, 5, 6)]
-
-  if ("gcs_total" %in% colnames(dat)) {
-
-    expr <- substitute(
-      list(eye_imp = fun(gcs_eye), verb_imp = fun(gcs_verbal),
-           mot_imp = fun(gcs_motor), tot_imp = fun(gcs_total)),
-      list(fun = carry_backwards)
-    )
-
-  } else {
-
-    expr <- substitute(list(eye_imp = fun(gcs_eye), verb_imp = fun(gcs_verbal),
-                            mot_imp = fun(gcs_motor)),
-                       list(fun = carry_backwards))
-  }
+  expr <- substitute(
+    list(gcs_eye = fun(gcs_eye), gcs_verbal = fun(gcs_verbal),
+         gcs_motor = fun(gcs_motor), gcs_total = fun(gcs_total)),
+    list(fun = locf)
+  )
 
   dat <- fill_gaps(dat)
   dat <- slide(dat, !!expr, before = win_length)
 
   if (set_na_max) {
-
-    if ("tot_imp" %in% colnames(dat)) {
-
-      dat <- dat[, c("eye_imp", "verb_imp", "mot_imp", "tot_imp") := list(
-        replace_na(get("eye_imp"), 4), replace_na(get("verb_imp"), 5),
-        replace_na(get("mot_imp"), 6), replace_na(get("tot_imp"), 15)
-      )]
-
-    } else {
-
-      dat <- dat[, c("eye_imp", "verb_imp", "mot_imp") := list(
-        replace_na(get("eye_imp"), 4), replace_na(get("verb_imp"), 5),
-        replace_na(get("mot_imp"), 6)
-      )]
-    }
-  }
-
-  if ("tot_imp" %in% colnames(dat)) {
-
-    dat <- dat[, c("gcs") := fifelse(
-      is.na(get("tot_imp")),
-      get("eye_imp") + get("verb_imp") + get("mot_imp"),
-      get("tot_imp")
+    dat <- dat[, c("gcs_eye", "gcs_verbal", "gcs_motor") := list(
+      replace_na(get("gcs_eye"), 4), replace_na(get("gcs_verbal"), 5),
+      replace_na(get("gcs_motor"), 6)
     )]
-
-  } else {
-
-    dat <- dat[, c("gcs") := get("eye_imp") + get("verb_imp") + get("mot_imp")]
   }
 
-  rm_cols(dat, c("eye_imp", "verb_imp", "mot_imp", "tot_imp"), by_ref = TRUE)
+  dat <- dat[is.na(get("gcs_total")), c("gcs_total") := list(
+    get("gcs_eye") + get("gcs_verbal") + get("gcs_motor")
+  )]
+
+  if (set_na_max) {
+    dat <- dat[, c("gcs_total") := list(replace_na(get("gcs_total"), 15))]
+  }
+
+  dat <- rename_cols(dat, "gcs", "gcs_total")
+  dat <- rm_cols(dat, c("gcs_eye", "gcs_verbal", "gcs_motor"))
+
+  dat
 }
 
 sofa_urine <- function(urine, limits, min_win, interval) {
