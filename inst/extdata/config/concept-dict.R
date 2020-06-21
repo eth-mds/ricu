@@ -1394,6 +1394,13 @@ cfg <- list(
     concepts = "urine_out",
     callback = "sofa_urine",
     class = "rec_cncpt"
+  ),
+  sofa_score = list(
+    concepts = c("pa_fi", "vent_ind", "platelet_count", "bilirubin_total",
+                 "mean_bp", "norepinephrine", "epinephrine", "dopamine",
+                 "dobutamine", "gcs", "creatinine", "urine_24"),
+    callback = "sofa_score",
+    class = "rec_cncpt"
   )
 )
 

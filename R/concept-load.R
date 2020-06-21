@@ -76,6 +76,8 @@ load_concepts.concept <- function(x, aggregate = NULL, merge_data = TRUE,
     pba$update(1)
   }
 
+  assert_that(all_fun(Map(inherits, res, chr_ply(x, target_class)), isTRUE))
+
   if (isFALSE(merge_data)) {
     return(res)
   }
@@ -264,9 +266,13 @@ load_concepts.rec_cncpt <- function(x, aggregate = NULL, patient_ids = NULL,
               progress = progress)
 
   agg <- rep_arg(aggregate, names(x[["items"]]))
-  dat <- Map(load_one_concept_helper, x[["items"]], agg, MoreArgs = ext)
 
-  do.call(x[["callback"]], c(dat, list(...), list(interval = interval)))
+  dat <- Map(load_one_concept_helper, x[["items"]], agg, MoreArgs = ext)
+  dat <- do.call(x[["callback"]], c(dat, list(...), list(interval = interval)))
+
+  assert_that(inherits(dat, target_class(x)))
+
+  dat
 }
 
 #' @param patient_ids Optional vector of patient ids to subset the fetched data
@@ -286,7 +292,7 @@ load_concepts.item <- function(x, patient_ids = NULL, id_type = "icustay",
 
     res <- load_concepts(x, ...)
 
-    assert_that(inherits(res, x[["targ"]]))
+    assert_that(inherits(res, target_class(x)))
 
     res
   }
@@ -307,11 +313,10 @@ load_concepts.item <- function(x, patient_ids = NULL, id_type = "icustay",
     return(res)
   }
 
-  res <- lapply(x, load_one, progress, patient_ids, id_type, interval)
-
-  assert_that(all_fun(Map(inherits, res, chr_xtr(x, "targ")), isTRUE))
-
-  rbind_lst(res, fill = TRUE)
+  rbind_lst(
+    lapply(x, load_one, progress, patient_ids, id_type, interval),
+    fill = TRUE
+  )
 }
 
 #' @rdname load_concepts

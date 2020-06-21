@@ -3,11 +3,14 @@
 \name{prepare_query}
 \alias{prepare_query}
 \alias{add_unit_var}
+\alias{target_class}
 \title{Internal utilities for \code{item}/\code{concept} objects}
 \usage{
 prepare_query(x)
 
 add_unit_var(x)
+
+target_class(x)
 }
 \arguments{
 \item{x}{Object defining the row-subsetting}

@@ -22,7 +22,7 @@ new_itm <- function(src, ..., target = c("ts_tbl", "id_tbl"),
   target <- match.arg(target)
 
   init_itm(
-    structure(list(src = src, targ = target), class = c(class, "itm")), ...
+    structure(list(src = src, target = target), class = c(class, "itm")), ...
   )
 }
 
@@ -60,10 +60,6 @@ itm_var_helper <- function(x, col) {
   assert_that(has_name(res, "val_var"))
 
   res
-}
-
-need_idx <- function(x) {
-  identical(coalesce(attr(x, "target"), x[["targ"]]), "ts_tbl")
 }
 
 idx_var_helper <- function(x, col) {
@@ -292,7 +288,7 @@ add_unit_var.itm <- function(x) x
 #' @export
 new_item <- function(x, target = NULL) {
 
-  trg <- chr_xtr(x, "targ")
+  trg <- chr_ply(x, target_class)
 
   if (is.null(target)) {
     target <- trg[1L]
@@ -351,6 +347,25 @@ n_tick.itm <- function(x) 1L
 #' @rdname data_concepts
 #' @export
 n_tick.item <- function(x) length(x)
+
+#' @rdname item_utils
+#' @keywords internal
+#' @export
+target_class <- function(x) UseMethod("target_class", x)
+
+#' @export
+target_class.itm <- function(x) x[["target"]]
+
+#' @export
+target_class.item <- function(x) attr(x, "target")
+
+#' @export
+target_class.cncpt <- function(x) target_class(x[["items"]])
+
+#' @export
+target_class.rec_cncpt <- function(x) x[["target"]]
+
+need_idx <- function(x) identical(target_class(x), "ts_tbl")
 
 #' Data concept
 #'
@@ -448,14 +463,18 @@ init_cncpt.cncpt <- function(x, ...) {
 
 #' @param callback Name of a function to be called on the returned data used
 #' for data cleanup operations
+#' @param target The target object yielded by loading
 #' @param interval Time interval used for data loading; if NULL, the respective
 #' interval passed as argument to [load_concepts()] is taken
 #'
 #' @rdname data_concepts
 #' @export
-init_cncpt.rec_cncpt <- function(x, callback, interval = NULL, ...) {
+init_cncpt.rec_cncpt <- function(x, callback, target = c("ts_tbl", "id_tbl"),
+                                 interval = NULL, ...) {
 
   warn_dots(...)
+
+  target <- match.arg(target)
 
   assert_that(is_concept(x[["items"]]), is.string(callback),
               null_or(interval, is.string))
@@ -464,7 +483,7 @@ init_cncpt.rec_cncpt <- function(x, callback, interval = NULL, ...) {
     interval <- as.difftime(interval)
   }
 
-  todo <- c("callback", "interval")
+  todo <- c("callback", "target", "interval")
   x[todo] <- mget(todo)
 
   x
@@ -515,27 +534,11 @@ concept <- function(...) {
 is_concept <- function(x) inherits(x, "concept")
 
 #' @export
-vec_ptype_full.concept <- function(x, ...) {
-
-  srcs <- sort(
-    unique(unlist(lapply(lst_xtr(x, "items"), names), use.names = FALSE))
-  )
-
-  paste0(class(x)[1L], "{", concat(srcs), "}")
-}
-
-#' @export
 format.concept <- function(x, ...) {
-
-  cnt  <- function(i, nm) int_ply(nm, function(x) sum(x == i))
-
-  nms  <- lapply(lst_xtr(x, "items"), names)
-  srcs <- sort(unique(unlist(nms, use.names = FALSE)))
-  cnts <- int_ply(srcs, cnt, nms, length = length(nms))
-
-  apply(
-    matrix(cnts, nrow = length(nms)), 1L,
-    function(row) paste0("[", paste0(row, collapse = ", "), "]")
+  paste0(
+    "<", chr_xtr(lapply(x, "class"), 1L), "[",
+    int_ply(lst_xtr(x, "items"), length), "]> ", arrow(), " <",
+    chr_ply(x, target_class), ">"
   )
 }
 
@@ -590,14 +593,35 @@ read_dictionary <- function(src = NULL, concepts = NULL,
     }
 
     if (has_length(lst)) {
-      do.call(new_cncpt, c(list(name = name, items = itms), lst))
+
+      if ("rec_cncpt" %in% lst[["class"]]) {
+
+        do.call(new_cncpt,
+          c(list(name = name, items = itms, target = target), lst)
+        )
+
+      } else {
+        do.call(new_cncpt, c(list(name = name, items = itms), lst))
+      }
     } else {
       do.call(new_cncpt, c(list(name = name, items = itms, class = NULL)))
     }
   }
 
-  do_new <- function(x) {
-    new_concept(lapply(Map(c, name = names(x), x), do_call, do_cncpt))
+  do_new <- function(sel, ful) {
+
+    assert_that(has_name(ful, sel))
+
+    sub <- ful[sel]
+
+    re_con <- lapply(lst_xtr(sub, "concepts"), do_new, ful)
+    is_rec <- lgl_ply(lst_xtr(sub, "class"), identical, "rec_cncpt")
+
+    if (any(is_rec)) {
+      sub[is_rec] <- Map(`[[<-`, sub[is_rec], "sources", re_con[is_rec])
+    }
+
+    new_concept(lapply(Map(c, name = names(sub), sub), do_call, do_cncpt))
   }
 
   if (is.null(file)) {
@@ -613,21 +637,11 @@ read_dictionary <- function(src = NULL, concepts = NULL,
 
   assert_that(null_or(src, is.string))
 
-  if (not_null(concepts)) {
-    assert_that(has_name(x, concepts))
-    sub <- x[concepts]
-  } else {
-    sub <- x
+  if (is.null(concepts)) {
+    concepts <- names(x)
   }
 
-  re_con <- lapply(lst_xtr(sub, "concepts"), function(i) do_new(x[i]))
-  is_rec <- lgl_ply(lst_xtr(sub, "class"), identical, "rec_cncpt")
-
-  if (any(is_rec)) {
-    sub[is_rec] <- Map(`[[<-`, sub[is_rec], "sources", re_con[is_rec])
-  }
-
-  do_new(sub)
+  do_new(concepts, x)
 }
 
 identity_callback <- function(x, ...) x

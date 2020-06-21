@@ -255,7 +255,6 @@ sofa_gcs <- function(gcs_eye, gcs_motor, gcs_verbal, gcs_total, tracheostomy,
     list(fun = locf)
   )
 
-  dat <- fill_gaps(dat)
   dat <- slide(dat, !!expr, before = win_length)
 
   if (set_na_max) {
@@ -306,6 +305,47 @@ sofa_urine <- function(urine_out, min_win = hours(12L),
                      list(win_agg_fun = urine_sum))
 
   slide(res, !!expr, hours(24L))
+}
+
+sofa_score <- function(pa_fi, vent_ind, platelet_count, bilirubin_total,
+                       mean_bp, norepinephrine, epinephrine, dopamine,
+                       dobutamine, gcs, creatinine, urine_24, ...,
+                       interval = ricu::interval(pa_fi)) {
+
+  args <- list(...)
+
+  assert_that(!has_name(args, c("tbl", "by_ref")))
+
+  dat <- reduce(merge,
+    list(pa_fi, vent_ind, platelet_count, bilirubin_total, mean_bp,
+         norepinephrine, epinephrine, dopamine, dobutamine, gcs, creatinine,
+         urine_24),
+    all = TRUE)
+
+  assert_that(has_interval(dat, interval))
+
+  dat <- dat[is_true(get("pa_fi") < 200) & !is_true(get("vent_ind")),
+             c("pa_fi") := 200]
+
+  dat <- rm_cols(dat, "vent_ind", by_ref = TRUE)
+
+  rename <- c(
+    platelet_count = "coag", bilirubin_total = "bili", mean_bp = "map",
+    dopamine = "dopa", norepinephrine = "norepi", dobutamine = "dobu",
+    epinephrine = "epi", creatinine = "crea", urine_24 = "urine",
+    pa_fi = "pafi"
+  )
+
+  dat <- rename_cols(dat, rename, names(rename), by_ref = TRUE)
+
+  com_args <- names(args)[names(args) %in% names(formals(sofa_compute))]
+  win_args <- names(args)[names(args) %in% names(formals(sofa_window))]
+
+  dat <- do.call(sofa_window, c(list(dat), args[win_args]))
+  dat <- do.call(sofa_compute, c(list(dat), args[com_args],
+                                 list(by_ref = TRUE)))
+
+  dat
 }
 
 #' @param pafi_win_fun,coag_win_fun,bili_win_fun,map_win_fun,dopa_win_fun,norepi_win_fun,dobu_win_fun,epi_win_fun,gcs_win_fun,crea_win_fun,urine_win_fun

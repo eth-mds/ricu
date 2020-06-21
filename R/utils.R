@@ -319,6 +319,8 @@ big_mark <- function(x, ...) {
 
 times <- function(fancy = l10n_info()$`UTF-8`) if (fancy) "\u00d7" else "x"
 
+arrow <- function(fancy = l10n_info()$`UTF-8`) if (fancy) "\u2192" else "->"
+
 ellipsis <- function(fancy = l10n_info()$`UTF-8`) {
   if (fancy) "\u2026" else "..."
 }

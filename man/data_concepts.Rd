@@ -44,7 +44,7 @@ init_cncpt(x, ...)
 
 \method{init_cncpt}{cncpt}(x, ...)
 
-\method{init_cncpt}{rec_cncpt}(x, callback, interval = NULL, ...)
+\method{init_cncpt}{rec_cncpt}(x, callback, target = c("ts_tbl", "id_tbl"), interval = NULL, ...)
 
 \method{src_name}{cncpt}(x)
 
@@ -92,6 +92,8 @@ numeric concept}
 
 \item{callback}{Name of a function to be called on the returned data used
 for data cleanup operations}
+
+\item{target}{The target object yielded by loading}
 
 \item{interval}{Time interval used for data loading; if NULL, the respective
 interval passed as argument to \code{\link[=load_concepts]{load_concepts()}} is taken}
