@@ -265,7 +265,9 @@ load_concepts.rec_cncpt <- function(x, aggregate = NULL, patient_ids = NULL,
               interval = coalesce(x[["interval"]], interval),
               progress = progress)
 
-  agg <- rep_arg(aggregate, names(x[["items"]]))
+  agg <- x[["aggregate"]]
+  agg <- Map(coalesce, rep_arg(aggregate, names(agg)), agg)
+  agg <- agg[names(x[["items"]])]
 
   dat <- Map(load_one_concept_helper, x[["items"]], agg, MoreArgs = ext)
   dat <- do.call(x[["callback"]], c(dat, list(...), list(interval = interval)))
@@ -498,21 +500,4 @@ load_dictionary <- function(source = NULL, concepts = NULL,
           "instead.")
 
   load_concepts(concepts, source, dictionary, ...)
-}
-
-rep_arg <- function(arg, names) {
-
-  if (length(arg) <= 1L) {
-    arg <- rep(list(arg), length(names))
-  }
-
-  if (is.null(names(arg))) {
-    names(arg) <- names
-  } else {
-    arg <- arg[names]
-  }
-
-  assert_that(identical(names(arg), names))
-
-  arg
 }

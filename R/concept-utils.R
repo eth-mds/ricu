@@ -386,8 +386,7 @@ need_idx <- function(x) identical(target_class(x), "ts_tbl")
 new_cncpt <- function(name, items, aggregate = NULL, ...,
                       class = "num_cncpt") {
 
-  assert_that(is.string(name), null_or(aggregate, is.string),
-              null_or(class, is.string))
+  assert_that(is.string(name), null_or(class, is.string))
 
   if (!is_concept(items)) {
     items <- as_item(items)
@@ -421,7 +420,8 @@ init_cncpt.num_cncpt <- function(x, unit = NULL, min = NULL, max = NULL, ...) {
   warn_dots(...)
 
   assert_that(null_or(unit, is.character), null_or(unit, has_length),
-              null_or(min, is.number), null_or(max, is.number))
+              null_or(min, is.number), null_or(max, is.number),
+              null_or(x[["aggregate"]], is.string))
 
   todo <- c("unit", "min", "max")
   x[todo] <- mget(todo)
@@ -441,7 +441,8 @@ init_cncpt.fct_cncpt <- function(x, levels, ...) {
 
   warn_dots(...)
 
-  assert_that(is.atomic(levels), has_length(levels))
+  assert_that(is.atomic(levels), has_length(levels),
+              null_or(x[["aggregate"]], is.string))
 
   x[["levels"]] <- levels
 
@@ -454,7 +455,8 @@ init_cncpt.cncpt <- function(x, ...) {
 
   dots <- list(...)
 
-  assert_that(is_disjoint(names(x), names(dots)))
+  assert_that(is_disjoint(names(x), names(dots)),
+              null_or(x[["aggregate"]], is.string))
 
   x[names(dots)] <- dots
 
@@ -472,6 +474,8 @@ init_cncpt.cncpt <- function(x, ...) {
 init_cncpt.rec_cncpt <- function(x, callback, target = c("ts_tbl", "id_tbl"),
                                  interval = NULL, ...) {
 
+  really_na <- function(x) not_null(x) && is.na(x)
+
   warn_dots(...)
 
   target <- match.arg(target)
@@ -482,6 +486,11 @@ init_cncpt.rec_cncpt <- function(x, callback, target = c("ts_tbl", "id_tbl"),
   if (not_null(interval)) {
     interval <- as.difftime(interval)
   }
+
+  agg <- rep_arg(x[["aggregate"]], names(x[["items"]]))
+  agg[lgl_ply(agg, really_na)] <- list(NULL)
+
+  x[["aggregate"]] <- agg
 
   todo <- c("callback", "target", "interval")
   x[todo] <- mget(todo)
@@ -504,6 +513,12 @@ aggregate.cncpt <- function(x, tbl, fun = NULL, ...) {
   }
 
   tbl
+}
+
+#' @importFrom stats aggregate
+#' @export
+aggregate.rec_cncpt <- function(x, ...) {
+  stop("please use `callback` for aggregating within time-steps")
 }
 
 #' @rdname data_concepts

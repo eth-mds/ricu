@@ -200,7 +200,7 @@ write_json <- function(x, path, null = "null", auto_unbox = TRUE,
                        pretty = TRUE, ...) {
 
   jsonlite::write_json(x, path, null = null, auto_unbox = auto_unbox,
-                       pretty = pretty)
+                       pretty = pretty, ...)
 }
 
 is_pkg_available <- function(pkg) requireNamespace(pkg, quietly = TRUE)
@@ -579,4 +579,34 @@ wrap_null <- function(...) {
 
 coalesce <- function(...) {
   for (x in list(...)) if (is.null(x)) next else return(x)
+}
+
+rep_arg <- function(arg, names) {
+
+  if (is.count(names)) {
+    len <- names
+  } else {
+    assert_that(is.character(names), has_length(names))
+    len <- length(names)
+  }
+
+  if (length(arg) <= 1L) {
+    arg <- rep(list(arg), len)
+  }
+
+  assert_that(all_equal(length(arg), len))
+
+  if (is.count(names)) {
+    return(arg)
+  }
+
+  if (is.null(names(arg))) {
+    names(arg) <- names
+  } else {
+    arg <- arg[names]
+  }
+
+  assert_that(identical(names(arg), names))
+
+  arg
 }

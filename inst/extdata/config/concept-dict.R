@@ -843,6 +843,8 @@ cfg <- list(
     )
   ),
   gcs_eye = list(
+    min = 1,
+    max = 4,
     sources = list(
       mimic = list(
         list(ids = c(184L, 220739L), table = "chartevents", sub_var = "itemid")
@@ -858,6 +860,8 @@ cfg <- list(
     )
   ),
   gcs_verbal = list(
+    min = 1,
+    max = 5,
     sources = list(
       mimic = list(
         list(ids = c(723L, 223900L), table = "chartevents", sub_var = "itemid")
@@ -873,6 +877,8 @@ cfg <- list(
     )
   ),
   gcs_motor = list(
+    min = 1,
+    max = 6,
     sources = list(
       mimic = list(
         list(ids = c(454L, 223901L), table = "chartevents", sub_var = "itemid")
@@ -888,6 +894,8 @@ cfg <- list(
     )
   ),
   gcs_total = list(
+    min = 3,
+    max = 15,
     sources = list(
       mimic = list(
         list(ids = 198L, table = "chartevents", sub_var = "itemid")
@@ -1375,6 +1383,7 @@ cfg <- list(
   ),
   pa_fi = list(
     concepts = c("pa_o2", "fi_o2"),
+    aggregate = c("min", "max"),
     callback = "sofa_pafi",
     class = "rec_cncpt"
   ),
@@ -1387,6 +1396,7 @@ cfg <- list(
   gcs = list(
     concepts = c("gcs_eye", "gcs_motor", "gcs_verbal", "gcs_total",
                  "tracheostomy", "rass_scale"),
+    aggregate = c("min", "min", "min", "min", NA, "min"),
     callback = "sofa_gcs",
     class = "rec_cncpt"
   ),
@@ -1399,6 +1409,8 @@ cfg <- list(
     concepts = c("pa_fi", "vent_ind", "platelet_count", "bilirubin_total",
                  "mean_bp", "norepinephrine", "epinephrine", "dopamine",
                  "dobutamine", "gcs", "creatinine", "urine_24"),
+    aggregate = c(NA, NA, "min", "max", "min", "max", "max", "max", "max", NA,
+                  "max", NA),
     callback = "sofa_score",
     class = "rec_cncpt"
   )

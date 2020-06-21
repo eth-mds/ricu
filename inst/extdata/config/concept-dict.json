@@ -1336,10 +1336,13 @@
   },
   "gcs": {
     "concepts": ["gcs_eye", "gcs_motor", "gcs_verbal", "gcs_total", "tracheostomy", "rass_scale"],
+    "aggregate": ["min", "min", "min", "min", null, "min"],
     "callback": "sofa_gcs",
     "class": "rec_cncpt"
   },
   "gcs_eye": {
+    "min": 1,
+    "max": 4,
     "sources": {
       "eicu": [
         {
@@ -1381,6 +1384,8 @@
     }
   },
   "gcs_motor": {
+    "min": 1,
+    "max": 6,
     "sources": {
       "eicu": [
         {
@@ -1422,6 +1427,8 @@
     }
   },
   "gcs_total": {
+    "min": 3,
+    "max": 15,
     "sources": {
       "eicu": [
         {
@@ -1456,6 +1463,8 @@
     }
   },
   "gcs_verbal": {
+    "min": 1,
+    "max": 5,
     "sources": {
       "eicu": [
         {
@@ -2383,6 +2392,7 @@
   },
   "pa_fi": {
     "concepts": ["pa_o2", "fi_o2"],
+    "aggregate": ["min", "max"],
     "callback": "sofa_pafi",
     "class": "rec_cncpt"
   },
@@ -2927,6 +2937,7 @@
   },
   "sofa_score": {
     "concepts": ["pa_fi", "vent_ind", "platelet_count", "bilirubin_total", "mean_bp", "norepinephrine", "epinephrine", "dopamine", "dobutamine", "gcs", "creatinine", "urine_24"],
+    "aggregate": [null, null, "min", "max", "min", "max", "max", "max", "max", null, "max", null],
     "callback": "sofa_score",
     "class": "rec_cncpt"
   },

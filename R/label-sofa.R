@@ -64,10 +64,10 @@ sofa_data <- function(source, pafi_win_length = hours(2L),
   vent_dict <- dictionary[vent_conc]
 
   dat <- c(
-    load_concepts(dat_dict, agg_funs, merge_data = FALSE, id_type = id_type,
-                  interval = interval, ...),
-    load_concepts(vent_dict, agg_funs, merge_data = FALSE, id_type = id_type,
-                  interval = mins(1L), ...)
+    load_concepts(dat_dict, agg_funs[names(dat_dict)], merge_data = FALSE,
+                  id_type = id_type, interval = interval, ...),
+    load_concepts(vent_dict, agg_funs[names(vent_dict)], merge_data = FALSE,
+                  id_type = id_type, interval = mins(1L), ...)
   )
 
   dat[["pafi"]] <- sofa_pafi(
