@@ -1,39 +1,26 @@
 
-sofa  <- sofa_data("mimic_demo")
-sowin <- sofa_window(sofa)
-score <- sofa_compute(sowin)
+mimic <- load_concepts("sofa_score", "mimic_demo")
+eicu  <- load_concepts("sofa_score", "eicu_demo")
 
 test_that("sofa", {
 
-  expect_is(sofa, "ts_tbl")
-  expect_true(is_ts_tbl(sofa))
-  expect_identical(id_vars(sofa), "icustay_id")
-  expect_identical(index_var(sofa), "charttime")
-  expect_setequal(data_vars(sofa),
-    c("norepi", "dopa", "dobu", "map", "epi", "bili", "crea", "coag", "pafi",
-      "gcs", "urine"))
-  expect_gt(nrow(sofa), 0L)
-  expect_equal(interval(sofa), hours(1L))
-
-  expect_is(sowin, "ts_tbl")
-  expect_true(is_ts_tbl(sowin))
-  expect_identical(id_vars(sowin), "icustay_id")
-  expect_identical(index_var(sowin), "charttime")
-  expect_setequal(data_vars(sowin),
-    c("norepi", "dopa", "dobu", "map", "epi", "bili", "crea", "coag", "pafi",
-      "gcs", "urine"))
-  expect_gte(nrow(sowin), nrow(sofa))
-  expect_equal(interval(sowin), interval(sofa))
-
-  expect_is(score, "ts_tbl")
-  expect_true(is_ts_tbl(score))
-  expect_identical(id_vars(score), "icustay_id")
-  expect_identical(index_var(score), "charttime")
-  expect_setequal(data_vars(score),
+  expect_is(mimic, "ts_tbl")
+  expect_true(is_ts_tbl(mimic))
+  expect_identical(id_vars(mimic), "icustay_id")
+  expect_identical(index_var(mimic), "charttime")
+  expect_equal(interval(mimic), hours(1L))
+  expect_setequal(data_vars(mimic),
     c("sofa_resp", "sofa_coag", "sofa_liver", "sofa_cardio", "sofa_cns",
       "sofa_renal", "sofa_score"))
-  expect_identical(nrow(score), nrow(sowin))
-  expect_equal(interval(score), interval(sofa))
+
+  expect_is(eicu, "ts_tbl")
+  expect_true(is_ts_tbl(eicu))
+  expect_identical(id_vars(eicu), "patientunitstayid")
+  expect_identical(index_var(eicu), "respchartoffset")
+  expect_equal(interval(eicu), hours(1L))
+  expect_setequal(data_vars(eicu),
+    c("sofa_resp", "sofa_coag", "sofa_liver", "sofa_cardio", "sofa_cns",
+      "sofa_renal", "sofa_score"))
 })
 
 si    <- si_data("mimic_demo")
@@ -58,7 +45,7 @@ test_that("suspicion of infection", {
   expect_equal(interval(siwin), interval(si))
 })
 
-sep3 <- sepsis_3(score, siwin)
+sep3 <- sepsis_3(mimic, siwin)
 
 test_that("sepsis 3", {
 

@@ -44,7 +44,7 @@ The sepsis 3 label consists of a suspected infection combined with an acute
 increase in SOFA score.
 }
 \details{
-The Sepsis-3 Consensus (\href{https://jamanetwork.com/journals/jama/fullarticle/2492881}{Singer et. al. 2016.}) defined sepsis as an acute increase in the SOFA score (see \code{\link[=sofa]{sofa()}}) of > 2 points within the suspected infection (SI) window (see \code{\link[=si_windows]{si_windows()}}):
+The Sepsis-3 Consensus (\href{https://jamanetwork.com/journals/jama/fullarticle/2492881}{Singer et. al. 2016.}) defined sepsis as an acute increase in the SOFA score (see \code{\link[=sofa_score]{sofa_score()}}) of > 2 points within the suspected infection (SI) window (see \code{\link[=si_windows]{si_windows()}}):
 
 \figure{sep-3.png}
 

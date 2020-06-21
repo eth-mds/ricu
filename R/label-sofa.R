@@ -4,23 +4,11 @@
 #' The SOFA (Sequential Organ Failure Assessment) score is a commonly used
 #' assessment tool used to track a patient's well-being in an ICU.
 #'
-#' @param pafi_win_length Time-span during which matching of PaO2 and FiO2
-#' values is allowed
-#' @param pafi_mode Method for matching PaO2 and FiO2 values
-#' @param fix_na_fio2 Logical flag indicating whether to impute missing FiO2
-#' values with 21
-#' @param vent_win_length Default ventilation window if no stop time can be
-#' matched to a start time
-#' @param vent_min_win Minimal time span between a ventilation start and end
-#' time
-#' @param gcs_win_length Maximal time window for which a GCS value is valid
-#' if no newer measurement is available
-#' @param fix_na_gcs Logical flag controlling imputation of missing GCS values
-#' with the respective maximum values
-#' @param urine_min_win Minimal time span required for calculation of urine/24h
-#'
-#' @inheritParams si_data
-#' @inheritParams load_concepts
+#' @param pa_fi,vent_ind,platelet_count,bilirubin_total,mean_bp,norepinephrine,epinephrine,dopamine,dobutamine,gcs,creatinine,urine_24 Data input used for
+#' sofa score evaluation (`ts_tbl` objects, as produced by [load_concepts()])
+#' @param ... Passed to `sofa_window()` or `sofa_compute()`
+#' @param interval Time series interval (only used for checking consistency
+#' of input data)
 #'
 #' @details The SOFA score ([Vincent et. al.](https://www.researchgate.net/profile/Rui_Moreno/publication/14361654_The_SOFA_Sepsis-related_Organ_Failure_Assessment_score_to_describe_organ_dysfunctionfailure_On_behalf_of_the_Working_Group_on_Sepsis-Related_Problems_of_the_European_Society_of_Intensive_Care_Medicine/links/0c960536cf4f20aef4000000.pdf)) is evaluated as follows:
 #'
@@ -37,64 +25,27 @@
 #' @rdname label_sofa
 #' @export
 #'
-sofa_data <- function(source, pafi_win_length = hours(2L),
-                      pafi_mode = "match_vals",
-                      fix_na_fio2 = TRUE, vent_win_length = hours(6L),
-                      vent_min_win = mins(10L), gcs_win_length = hours(6L),
-                      fix_na_gcs = TRUE, urine_min_win = hours(12L),
-                      id_type = "icustay", interval = hours(1L),
-                      dictionary = read_dictionary(source), ...) {
+sofa_score <- function(pa_fi, vent_ind, platelet_count, bilirubin_total,
+                       mean_bp, norepinephrine, epinephrine, dopamine,
+                       dobutamine, gcs, creatinine, urine_24, ...,
+                       interval = ricu::interval(pa_fi)) {
 
-  sel_non_null <- function(x, sel) Filter(Negate(is.null), x[sel])
+  args <- list(...)
 
-  vent_conc <- c("vent_start", "vent_end")
-  gcs_conc <- c("gcs_eye", "gcs_motor", "gcs_verbal", "gcs_total")
-  sed_conc <- c("tracheostomy", "rass_scale")
+  assert_that(!has_name(args, c("tbl", "by_ref")))
 
-  agg_funs <- c(
-    pa_o2 = "min", fi_o2 = "max", vent_start = "sum", vent_end = "sum",
-    platelet_count = "min", bilirubin_total = "max", mean_bp = "min",
-    norepinephrine = "max", epinephrine = "max", dopamine = "max",
-    dobutamine = "max", gcs_eye = "min", gcs_motor = "min", gcs_verbal = "min",
-    gcs_total = "min", tracheostomy = "sum", rass_scale = "min",
-    creatinine = "max", urine_out = "sum"
-  )
+  dat <- reduce(merge,
+    list(pa_fi, vent_ind, platelet_count, bilirubin_total, mean_bp,
+         norepinephrine, epinephrine, dopamine, dobutamine, gcs, creatinine,
+         urine_24),
+    all = TRUE)
 
-  dat_dict  <- dictionary[setdiff(names(agg_funs), vent_conc)]
-  vent_dict <- dictionary[vent_conc]
+  assert_that(has_interval(dat, interval))
 
-  dat <- c(
-    load_concepts(dat_dict, agg_funs[names(dat_dict)], merge_data = FALSE,
-                  id_type = id_type, interval = interval, ...),
-    load_concepts(vent_dict, agg_funs[names(vent_dict)], merge_data = FALSE,
-                  id_type = id_type, interval = mins(1L), ...)
-  )
-
-  dat[["pafi"]] <- sofa_pafi(
-    dat[["pa_o2"]], dat[["fi_o2"]], pafi_win_length, pafi_mode, fix_na_fio2
-  )
-
-  dat[["vent"]] <- sofa_vent(
-    dat[["vent_start"]], dat[["vent_end"]], vent_win_length, vent_min_win,
-    interval
-  )
-
-  dat[["gcs"]] <- sofa_gcs(
-    dat[["gcs_eye"]], dat[["gcs_motor"]], dat[["gcs_verbal"]],
-    dat[["gcs_total"]], dat[["tracheostomy"]], dat[["rass_scale"]],
-    gcs_win_length, fix_na_gcs
-  )
-
-  dat[["urine"]] <- sofa_urine(dat[["urine_out"]], urine_min_win, interval)
-
-  dat[c("pa_o2", "fi_o2", vent_conc, gcs_conc, sed_conc, "urine_out")] <- NULL
-
-  res <- reduce(merge, dat, all = TRUE)
-
-  res <- res[is_true(get("pa_fi") < 200) & !is_true(get("vent_ind")),
+  dat <- dat[is_true(get("pa_fi") < 200) & !is_true(get("vent_ind")),
              c("pa_fi") := 200]
 
-  res <- rm_cols(res, "vent_ind", by_ref = TRUE)
+  dat <- rm_cols(dat, "vent_ind", by_ref = TRUE)
 
   rename <- c(
     platelet_count = "coag", bilirubin_total = "bili", mean_bp = "map",
@@ -103,11 +54,28 @@ sofa_data <- function(source, pafi_win_length = hours(2L),
     pa_fi = "pafi"
   )
 
-  res <- rename_cols(res, rename, names(rename), by_ref = TRUE)
+  dat <- rename_cols(dat, rename, names(rename), by_ref = TRUE)
 
-  res
+  com_args <- names(args)[names(args) %in% names(formals(sofa_compute))]
+  win_args <- names(args)[names(args) %in% names(formals(sofa_window))]
+
+  dat <- do.call(sofa_window, c(list(dat), args[win_args]))
+  dat <- do.call(sofa_compute, c(list(dat), args[com_args],
+                                 list(by_ref = TRUE)))
+
+  dat
 }
 
+#' @param pa_o2,fi_o2 Data input used for pafi evaluation
+#' @param win_length Time-span during which matching of PaO2 and FiO2
+#' values is allowed
+#' @param mode Method for matching PaO2 and FiO2 values
+#' @param fix_na_fio2 Logical flag indicating whether to impute missing FiO2
+#' values with 21
+#'
+#' @rdname label_sofa
+#' @export
+#'
 sofa_pafi <- function(pa_o2, fi_o2, win_length = hours(2L),
                       mode = c("match_vals", "extreme_vals", "fill_gaps"),
                       fix_na_fio2 = TRUE, interval = ricu::interval(pa_o2)) {
@@ -158,6 +126,15 @@ sofa_pafi <- function(pa_o2, fi_o2, win_length = hours(2L),
   res
 }
 
+#' @param vent_start,vent_end Data input used for vent evaluation
+#' @param win_length Default ventilation window if no stop time can be
+#' matched to a start time
+#' @param min_length Minimal time span between a ventilation start and end
+#' time
+#'
+#' @rdname label_sofa
+#' @export
+#'
 sofa_vent <- function(vent_start, vent_end, win_length = hours(6L),
                       min_length = mins(10L),
                       interval = ricu::interval(vent_start)) {
@@ -220,6 +197,17 @@ sofa_vent <- function(vent_start, vent_end, win_length = hours(6L),
   res
 }
 
+#' @param gcs_eye,gcs_motor,gcs_verbal,gcs_total,tracheostomy,rass_scale Data
+#' input used for gcs evaluation
+#' @param win_length Maximal time window for which a GCS value is valid
+#' if no newer measurement is available
+#' @param set_sed_max Logical flag for considering sedation
+#' @param set_na_max Logical flag controlling imputation of missing GCS values
+#' with the respective maximum values
+#'
+#' @rdname label_sofa
+#' @export
+#'
 sofa_gcs <- function(gcs_eye, gcs_motor, gcs_verbal, gcs_total, tracheostomy,
                      rass_scale, win_length = hours(6L), set_sed_max = TRUE,
                      set_na_max = TRUE, interval = ricu::interval(gcs_eye)) {
@@ -278,6 +266,12 @@ sofa_gcs <- function(gcs_eye, gcs_motor, gcs_verbal, gcs_total, tracheostomy,
   dat
 }
 
+#' @param urine_out Data input used for urine/24h evaluation
+#' @param min_win Minimal time span required for calculation of urine/24h
+#'
+#' @rdname label_sofa
+#' @export
+#'
 sofa_urine <- function(urine_out, min_win = hours(12L),
                        interval = ricu::interval(urine_out)) {
 
@@ -307,47 +301,7 @@ sofa_urine <- function(urine_out, min_win = hours(12L),
   slide(res, !!expr, hours(24L))
 }
 
-sofa_score <- function(pa_fi, vent_ind, platelet_count, bilirubin_total,
-                       mean_bp, norepinephrine, epinephrine, dopamine,
-                       dobutamine, gcs, creatinine, urine_24, ...,
-                       interval = ricu::interval(pa_fi)) {
-
-  args <- list(...)
-
-  assert_that(!has_name(args, c("tbl", "by_ref")))
-
-  dat <- reduce(merge,
-    list(pa_fi, vent_ind, platelet_count, bilirubin_total, mean_bp,
-         norepinephrine, epinephrine, dopamine, dobutamine, gcs, creatinine,
-         urine_24),
-    all = TRUE)
-
-  assert_that(has_interval(dat, interval))
-
-  dat <- dat[is_true(get("pa_fi") < 200) & !is_true(get("vent_ind")),
-             c("pa_fi") := 200]
-
-  dat <- rm_cols(dat, "vent_ind", by_ref = TRUE)
-
-  rename <- c(
-    platelet_count = "coag", bilirubin_total = "bili", mean_bp = "map",
-    dopamine = "dopa", norepinephrine = "norepi", dobutamine = "dobu",
-    epinephrine = "epi", creatinine = "crea", urine_24 = "urine",
-    pa_fi = "pafi"
-  )
-
-  dat <- rename_cols(dat, rename, names(rename), by_ref = TRUE)
-
-  com_args <- names(args)[names(args) %in% names(formals(sofa_compute))]
-  win_args <- names(args)[names(args) %in% names(formals(sofa_window))]
-
-  dat <- do.call(sofa_window, c(list(dat), args[win_args]))
-  dat <- do.call(sofa_compute, c(list(dat), args[com_args],
-                                 list(by_ref = TRUE)))
-
-  dat
-}
-
+#' @param tbl Table holding SOFA covariates
 #' @param pafi_win_fun,coag_win_fun,bili_win_fun,map_win_fun,dopa_win_fun,norepi_win_fun,dobu_win_fun,epi_win_fun,gcs_win_fun,crea_win_fun,urine_win_fun
 #' functions used to calculate worst values over windows
 #' @param explicit_wins The default `FALSE` iterates over all time steps,
@@ -520,25 +474,4 @@ sofa_renal <- function(cre, uri, na_val) {
       )
     )
   )
-}
-
-#' @rdname label_sofa
-#' @export
-#'
-sofa <- function(source, ...) {
-
-  args <- list(...)
-
-  assert_that(!has_name(args, c("tbl", "by_ref")))
-
-  com_args <- names(args)[names(args) %in% names(formals(sofa_compute))]
-  win_args <- names(args)[names(args) %in% names(formals(sofa_window))]
-  dat_args <- setdiff(names(args), c(com_args, win_args))
-
-  dat <- do.call(sofa_data, c(list(source), args[dat_args]))
-  dat <- do.call(sofa_window, c(list(dat), args[win_args]))
-  dat <- do.call(sofa_compute, c(list(dat), args[com_args],
-                                 list(by_ref = TRUE)))
-
-  dat
 }

@@ -12,7 +12,7 @@
 #' window
 #' @param sofa_thresh Required SOFA increase to trigger Sepsis 3
 #'
-#' @details The Sepsis-3 Consensus ([Singer et. al. 2016.](https://jamanetwork.com/journals/jama/fullarticle/2492881)) defined sepsis as an acute increase in the SOFA score (see [sofa()]) of &gt; 2 points within the suspected infection (SI) window (see [si_windows()]):
+#' @details The Sepsis-3 Consensus ([Singer et. al. 2016.](https://jamanetwork.com/journals/jama/fullarticle/2492881)) defined sepsis as an acute increase in the SOFA score (see [sofa_score()]) of &gt; 2 points within the suspected infection (SI) window (see [si_windows()]):
 #'
 #' \figure{sep-3.png}
 #'

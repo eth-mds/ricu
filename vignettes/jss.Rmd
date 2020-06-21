@@ -135,8 +135,8 @@ The first example we look at is the association of lactate levels and mortality.
 ```{r time_cox_model}
 source <- "mimic_demo"
 # data loading
-tbl <- fill_gaps(load_concepts(c("lactate", "death"), source, verbose = FALSE))
-tbl <- merge(tbl, sofa(source, verbose = FALSE), all = TRUE)
+tbl <- load_concepts(c("lactate", "death", "sofa_score"), source,
+                     verbose = FALSE)
 tbl <- tbl[, c(meta_vars(tbl), "lactate", "sofa_score", "death"), with = FALSE]
 tbl <- tbl[, lactate := nafill(lactate, "locf")]
 tbl <- tbl[, lactate := nafill(lactate, fill = 1)]
