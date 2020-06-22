@@ -1419,6 +1419,11 @@ cfg <- list(
     aggregate = lapply(list("sum", FALSE), list),
     callback = "susp_inf",
     class = "rec_cncpt"
+  ),
+  sepsis_3 = list(
+    concepts = c("sofa_score", "susp_inf"),
+    callback = "sepsis_3",
+    class = "rec_cncpt"
   )
 )
 

@@ -2848,6 +2848,11 @@
       ]
     }
   },
+  "sepsis_3": {
+    "concepts": ["sofa_score", "susp_inf"],
+    "callback": "sepsis_3",
+    "class": "rec_cncpt"
+  },
   "sex": {
     "target": "id_tbl",
     "levels": ["Female", "Male"],

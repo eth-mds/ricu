@@ -4,13 +4,15 @@
 #' The sepsis 3 label consists of a suspected infection combined with an acute
 #' increase in SOFA score.
 #'
-#' @param sofa `ts_tbl` with a column `sofa_score`
-#' @param si `ts_tbl` with columns `si_lwr` and `si_upr` defining windows for
+#' @param sofa_score `ts_tbl` with a column `sofa_score`
+#' @param susp_inf `ts_tbl` with columns `si_lwr` and `si_upr` defining windows for
 #' which a suspected infection is valid
 #' @param si_window Switch that can be used to filter SI windows
 #' @param delta_fun Function used to determine the SOFA increase during an SI
 #' window
 #' @param sofa_thresh Required SOFA increase to trigger Sepsis 3
+#' @param interval Time series interval (only used for checking consistency
+#' of input data)
 #'
 #' @details The Sepsis-3 Consensus ([Singer et. al. 2016.](https://jamanetwork.com/journals/jama/fullarticle/2492881)) defined sepsis as an acute increase in the SOFA score (see [sofa_score()]) of &gt; 2 points within the suspected infection (SI) window (see [si_windows()]):
 #'
@@ -25,38 +27,39 @@
 #' @rdname sepsis_3
 #' @export
 #'
-sepsis_3 <- function(sofa, si, si_window = c("first", "last", "any"),
-                     delta_fun = delta_cummin,
-                     sofa_thresh = 2L) {
+sepsis_3 <- function(sofa_score, susp_inf,
+                     si_window = c("first", "last", "any"),
+                     delta_fun = delta_cummin, sofa_thresh = 2L,
+                     interval = ricu::interval(sofa_score)) {
 
-  assert_that(same_interval(sofa, si), same_id(sofa, si),
-              has_col(sofa, "sofa_score"),
-              has_time_cols(si, c("si_lwr", "si_upr")))
+  assert_that(has_interval(sofa_score, interval),
+              has_interval(susp_inf, interval), is.count(sofa_thresh))
 
   si_window <- match.arg(si_window)
 
-  id <- id_vars(sofa)
-  ind <- index_var(sofa)
+  id <- id_vars(sofa_score)
+  ind <- index_var(sofa_score)
 
-  sofa <- sofa[, c("join_time1", "join_time2") := list(get(ind), get(ind))]
+  sofa_score <- sofa_score[, c("join_time1", "join_time2") := list(
+    get(ind), get(ind)
+  )]
 
-  on.exit(rm_cols(sofa, c("join_time1", "join_time2"), by_ref = TRUE))
+  on.exit(rm_cols(sofa_score, c("join_time1", "join_time2"), by_ref = TRUE))
 
   join_clause <- c(id, "join_time1 >= si_lwr", "join_time2 <= si_upr")
 
-  if (si_window == "first") si <- si[, head(.SD, n = 1L), by = id]
-  if (si_window == "last")  si <- si[, tail(.SD, n = 1L), by = id]
+  if (si_window %in%  c("first", "last")) {
+    susp_inf <- dt_gforce(susp_inf, si_window, id)
+  }
 
-  res <- sofa[si, c(list(delta_sofa = delta_fun(get("sofa_score"))),
-                    mget(c(ind, index_var(si)))),
-              on = join_clause, by = .EACHI, nomatch = 0]
+  res <- sofa_score[susp_inf,
+    c(list(delta_sofa = delta_fun(get("sofa_score"))), mget(ind)),
+    on = join_clause, by = .EACHI, nomatch = NULL]
 
-  res <- res[is_true(get("delta_sofa") >= get("sofa_thresh")), ]
+  res <- res[is_true(get("delta_sofa") >= sofa_thresh), ]
 
   res <- rm_cols(res, c("join_time1", "join_time2", "delta_sofa"))
-  res <- rename_cols(res, "sep3_time", index_var(res))
-
-  res <- res[, head(.SD, n = 1L), by = id]
+  res <- rename_cols(res, "sepsis_3", index_var(res))
 
   res
 }

@@ -8,11 +8,12 @@
 \title{Sepsis 3 label}
 \usage{
 sepsis_3(
-  sofa,
-  si,
+  sofa_score,
+  susp_inf,
   si_window = c("first", "last", "any"),
   delta_fun = delta_cummin,
-  sofa_thresh = 2L
+  sofa_thresh = 2L,
+  interval = ricu::interval(sofa_score)
 )
 
 delta_cummin(x)
@@ -22,9 +23,9 @@ delta_start(x)
 delta_min(x, shifts = seq.int(0L, 23L))
 }
 \arguments{
-\item{sofa}{\code{ts_tbl} with a column \code{sofa_score}}
+\item{sofa_score}{\code{ts_tbl} with a column \code{sofa_score}}
 
-\item{si}{\code{ts_tbl} with columns \code{si_lwr} and \code{si_upr} defining windows for
+\item{susp_inf}{\code{ts_tbl} with columns \code{si_lwr} and \code{si_upr} defining windows for
 which a suspected infection is valid}
 
 \item{si_window}{Switch that can be used to filter SI windows}
@@ -33,6 +34,9 @@ which a suspected infection is valid}
 window}
 
 \item{sofa_thresh}{Required SOFA increase to trigger Sepsis 3}
+
+\item{interval}{Time series interval (only used for checking consistency
+of input data)}
 
 \item{x}{Vector of SOFA scores}
 

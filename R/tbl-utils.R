@@ -396,8 +396,8 @@ dt_gforce <- function(x,
     prod   = x[, lapply(.SD, prod, na.rm = na_rm),   by = by, .SDcols = vars],
     var    = x[, lapply(.SD, var, na.rm = na_rm),    by = by, .SDcols = vars],
     sd     = x[, lapply(.SD, sd, na.rm = na_rm),     by = by, .SDcols = vars],
-    first  = x[, lapply(.SD, data.table::first),     by = by, .SDcols = vars],
-    last   = x[, lapply(.SD, data.table::last),      by = by, .SDcols = vars]
+    first  = x[, first(.SD),                         by = by, .SDcols = vars],
+    last   = x[, last(.SD),                          by = by, .SDcols = vars]
   )
 }
 
