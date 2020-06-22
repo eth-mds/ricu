@@ -1413,6 +1413,12 @@ cfg <- list(
                   "max", NA),
     callback = "sofa_score",
     class = "rec_cncpt"
+  ),
+  susp_inf = list(
+    concepts = c("antibiotics", "fluid_sampling"),
+    aggregate = lapply(list("sum", FALSE), list),
+    callback = "susp_inf",
+    class = "rec_cncpt"
   )
 )
 

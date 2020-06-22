@@ -2941,6 +2941,19 @@
     "callback": "sofa_score",
     "class": "rec_cncpt"
   },
+  "susp_inf": {
+    "concepts": ["antibiotics", "fluid_sampling"],
+    "aggregate": [
+      [
+        "sum"
+      ],
+      [
+        false
+      ]
+    ],
+    "callback": "susp_inf",
+    "class": "rec_cncpt"
+  },
   "systolic_bp": {
     "unit": "mmHg",
     "min": 0,

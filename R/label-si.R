@@ -4,14 +4,16 @@
 #' Suspected infection is defined as co-occurrence of of antibiotic treatment
 #' and body-fluid sampling.
 #'
-#' @param source String valued name of data source
+#' @param antibiotics,fluid_sampling Data input used for determining suspicion
+#' of infection (`ts_tbl` objects, as produced by [load_concepts()])
 #' @param abx_count_win Time span during which to apply the `abx_min_count`
 #' criterion
 #' @param abx_min_count Minimal number of antibiotic administrations
 #' @param positive_cultures Logical flag indicating whether to require
 #' cultures to be positive
-#' @param dictionary `dictionary` object to use for concept lookup
-#' @param ... Passed to [load_concepts()]
+#' @param ... Passed to [si_windows()]
+#' @param interval Time series interval (only used for checking consistency
+#' of input data)
 #'
 #' @details Suspected infection can occur in one of the two following ways:
 #' - administration of antibiotics followed by a culture sampling within
@@ -70,9 +72,9 @@
 #' @rdname label_si
 #' @export
 #'
-si_data <- function(source, abx_count_win = hours(24L), abx_min_count = 1L,
-                    positive_cultures = FALSE,
-                    dictionary = read_dictionary(source), ...) {
+susp_inf <- function(antibiotics, fluid_sampling, abx_count_win = hours(24L),
+                     abx_min_count = 1L, positive_cultures = FALSE, ...,
+                     interval = ricu::interval(antibiotics)) {
 
   assert_that(is.count(abx_min_count), is.flag(positive_cultures))
 
@@ -82,35 +84,15 @@ si_data <- function(source, abx_count_win = hours(24L), abx_min_count = 1L,
     samp_fun <- quote(list(fluid_sampling = .N))
   }
 
-  funs <- c(antibiotics = "sum", fluid_sampling = samp_fun)
-  dictionary <- dictionary[names(funs)]
+  res <- merge(
+    si_abx(antibiotics, abx_count_win, abx_min_count),
+    si_samp(make_unique(fluid_sampling, samp_fun)),
+    all = TRUE
+  )
 
-  dat <- load_concepts(dictionary, aggregate = funs, merge_data = FALSE, ...)
+  res <- rename_cols(res, c("abx", "samp"), c("antibiotics", "fluid_sampling"))
 
-  if (has_name(dat, "antibiotics")) {
-    dat[["antibiotics"]] <- si_abx(dat[["antibiotics"]], abx_count_win,
-                                   abx_min_count)
-  }
-
-  if (has_name(dat, "fluid_sampling")) {
-    dat[["fluid_sampling"]] <- si_samp(dat[["fluid_sampling"]])
-  }
-
-  res <- reduce(merge, dat, all = TRUE)
-
-  if ("antibiotics" %in% data_vars(res)) {
-    res <- rename_cols(res, "abx", "antibiotics")
-  } else {
-    res <- res[, c("abx") := NA]
-  }
-
-  if ("fluid_sampling" %in% data_vars(res)) {
-    res <- rename_cols(res, "samp", "fluid_sampling")
-  } else {
-    res <- res[, c("samp") := NA]
-  }
-
-  res
+  si_windows(res, ...)
 }
 
 si_abx <- function(x, count_win, min_count) {
@@ -172,45 +154,27 @@ si_windows <- function(tbl, si_mode = c("and", "or"), abx_win = hours(24L),
 
     join_clause <- c(id, paste(c("win_end >=", "time_copy <="), ind))
 
-    abx_samp <- dat[[1L]][dat[[2L]], list(si_time = min_fun(get(ind))),
+    abx_samp <- dat[[1L]][dat[[2L]], list(susp_inf = min_fun(get(ind))),
                           on = join_clause, by = .EACHI, nomatch = NULL]
-    samp_abx <- dat[[2L]][dat[[1L]], list(si_time = min_fun(get(ind))),
+    samp_abx <- dat[[2L]][dat[[1L]], list(susp_inf = min_fun(get(ind))),
                           on = join_clause, by = .EACHI, nomatch = NULL]
 
-    res <- unique(rbind(abx_samp[, c(id, "si_time"), with = FALSE],
-                        samp_abx[, c(id, "si_time"), with = FALSE]))
+    res <- unique(rbind(abx_samp[, c(id, "susp_inf"), with = FALSE],
+                        samp_abx[, c(id, "susp_inf"), with = FALSE]))
 
-    res <- as_ts_tbl(res, id, "si_time", interval(tbl))
+    res <- as_ts_tbl(res, id, "susp_inf", interval(tbl))
 
   } else {
 
     res <- tbl[get("abx") | get("samp"), ]
     res <- rm_cols(res, data_vars(res))
-    res <- rename_cols(res, "si_time", ind)
+    res <- rename_cols(res, "susp_inf", ind)
   }
 
   res <- res[, c("si_lwr", "si_upr") := list(
-    get("si_time") - win_args[["si_lwr"]],
-    get("si_time") + win_args[["si_upr"]]
+    get("susp_inf") - win_args[["si_lwr"]],
+    get("susp_inf") + win_args[["si_upr"]]
   )]
 
   res
-}
-
-#' @rdname label_si
-#' @export
-#'
-si <- function(source, ...) {
-
-  args <- list(...)
-
-  assert_that(!has_name(args, "tbl"))
-
-  win_args <- names(args)[names(args) %in% names(formals(si_windows))]
-  dat_args <- setdiff(names(args), win_args)
-
-  dat <- do.call(si_data, c(list(source), args[dat_args]))
-  dat <- do.call(si_windows, c(list(dat), args[win_args]))
-
-  dat
 }
