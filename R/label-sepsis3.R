@@ -58,8 +58,9 @@ sepsis_3 <- function(sofa_score, susp_inf,
 
   res <- res[is_true(get("delta_sofa") >= sofa_thresh), ]
 
-  res <- rm_cols(res, c("join_time1", "join_time2", "delta_sofa"))
-  res <- rename_cols(res, "sepsis_3", index_var(res))
+  res <- rm_cols(res, c("join_time1", "join_time2", "delta_sofa"),
+                 by_ref = TRUE)
+  res <- rename_cols(res, "sepsis_3", index_var(res), by_ref = TRUE)
 
   res
 }

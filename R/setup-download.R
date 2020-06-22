@@ -204,7 +204,7 @@ download_pysionet_file <- function(url, dest = NULL, user = NULL,
       on.exit(close(con))
 
       prog_fun <- function(x) {
-        progr_iter(basename(url), progress, length(x))
+        progress_tick(NULL, progress, length(x))
         writeBin(x, con)
       }
 
@@ -302,9 +302,7 @@ download_check_data <- function(dest_folder, files, url, user, pass, src) {
 
   dl_one <- function(url, size, path, prog) {
 
-    if (is.null(prog)) {
-      progr_iter(basename(url), NULL, size)
-    }
+    progress_tick(basename(url), prog, 0L)
 
     download_pysionet_file(url, path, user, pass, progress = prog)
 
@@ -336,7 +334,7 @@ download_check_data <- function(dest_folder, files, url, user, pass, src) {
 
   sizes <- dbl_ply(urls, get_file_size, user, pass)
 
-  pba <- progr_init(sum(sizes),
+  pba <- progress_init(sum(sizes),
     paste0("Downloading ", length(files), " files for ", quote_bt(src))
   )
 
@@ -344,7 +342,6 @@ download_check_data <- function(dest_folder, files, url, user, pass, src) {
 
   if (!(is.null(pba) || pba$finished)) {
     pba$update(1)
-    pba$terminate()
   }
 
   if (is_pkg_available("openssl")) {

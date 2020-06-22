@@ -63,18 +63,16 @@ load_concepts.concept <- function(x, aggregate = NULL, merge_data = TRUE,
   assert_that(is.flag(merge_data), same_src(x), is.flag(verbose))
 
   if (verbose) {
-    pba <- progr_init(n_tick(x), paste("Loading", length(x), "concepts"),
-                      capture_output = TRUE)
+    pba <- progress_init(n_tick(x), paste("Loading", length(x), "concepts"))
   } else {
     pba <- FALSE
   }
 
-  res <- Map(load_one_concept_helper, x, rep_arg(aggregate, names(x)),
-             MoreArgs = c(list(...), list(progress = pba)))
-
-  if (inherits(pba, "progress_bar") && !pba$finished) {
-    pba$update(1)
-  }
+  res <- with_progress(
+    Map(load_one_concept_helper, x, rep_arg(aggregate, names(x)),
+        MoreArgs = c(list(...), list(progress = pba))),
+    pba
+  )
 
   assert_that(all_fun(Map(inherits, res, chr_ply(x, target_class)), isTRUE))
 
@@ -101,13 +99,13 @@ load_concepts.concept <- function(x, aggregate = NULL, merge_data = TRUE,
 
 load_one_concept_helper <- function(x, aggregate, ..., progress) {
 
-  progr_iter(x[["name"]], progress, 0L)
+  progress_tick(x[["name"]], progress, 0L)
 
   res <- load_concepts(x, aggregate, ..., progress = progress)
 
   assert_that(has_name(res, x[["name"]]))
 
-  progr_iter(pb = progress)
+  progress_tick(progress_bar = progress)
 
   res
 }
@@ -132,8 +130,10 @@ load_concepts.cncpt <- function(x, aggregate = NULL, ..., progress = NULL) {
 load_concepts.num_cncpt <- function(x, aggregate = NULL, ...,
                                     progress = NULL) {
 
-  mk_msg <- function(...) {
-    paste(strwrap(paste0(...), indent = 2L, exdent = 4L), collapse = "\n")
+  print_msg <- function(...) {
+    progress_msg(
+      paste(strwrap(paste0(...), indent = 2L, exdent = 4L), collapse = "\n")
+    )
   }
 
   check_bound <- function(x, val, op) {
@@ -156,12 +156,12 @@ load_concepts.num_cncpt <- function(x, aggregate = NULL, ...,
         return(NULL)
       }
 
-      mk_msg("not all units are in ", concat("[", unt, "]"), ": ",
-             concat(nm[!ok], " (", pct[!ok], ")"))
+      print_msg("not all units are in ", concat("[", unt, "]"), ": ",
+                concat(nm[!ok], " (", pct[!ok], ")"))
 
     } else if (length(nm) > 1L) {
 
-      mk_msg("multiple units detected: ", concat(nm, " (", pct, ")"))
+      print_msg("multiple units detected: ", concat(nm, " (", pct, ")"))
     }
   }
 
@@ -170,11 +170,7 @@ load_concepts.num_cncpt <- function(x, aggregate = NULL, ...,
   keep <- check_bound(res, x[["min"]], `>=`) &
           check_bound(res, x[["max"]], `<=`)
 
-  if (all(keep)) {
-
-    msg <- NULL
-
-  } else {
+  if (!all(keep)) {
 
     n_row <- nrow(res)
 
@@ -182,23 +178,15 @@ load_concepts.num_cncpt <- function(x, aggregate = NULL, ...,
 
     n_rm <- n_row - nrow(res)
 
-    msg <- mk_msg("removed ", n_rm, " (", prcnt(n_rm, n_row), ") of rows ",
-                  "due to out of range entries")
+    print_msg("removed ", n_rm, " (", prcnt(n_rm, n_row), ") of rows ",
+              "due to out of range entries")
   }
 
   unit <- x[["unit"]]
 
   if (has_name(res, "unit_var")) {
-    msg <- c(msg, report_unit(res, unit))
+    report_unit(res, unit)
   }
-
-  if (inherits(progress, "progress_bar")) {
-    hdr <- paste0("* `", x[["name"]], "`")
-  } else {
-    hdr <- NULL
-  }
-
-  progr_msg(c(hdr, msg), pb = progress)
 
   res <- rm_cols(res, "unit_var", skip_absent = TRUE, by_ref = TRUE)
 
@@ -226,11 +214,7 @@ load_concepts.fct_cncpt <- function(x, aggregate = NULL, ...,
     keep <- res[["val_var"]] %in% lvl
   }
 
-  if (all(keep)) {
-
-    msg <- NULL
-
-  } else {
+  if (!all(keep)) {
 
     n_row <- nrow(res)
 
@@ -238,17 +222,9 @@ load_concepts.fct_cncpt <- function(x, aggregate = NULL, ...,
 
     n_rm <- n_row - nrow(res)
 
-    msg <- paste0("  removed ", n_rm, " (", prcnt(n_rm, n_row), ") of rows ",
-                  "due to level mismatch")
+    progress_msg("  removed ", n_rm, " (", prcnt(n_rm, n_row), ") of rows ",
+                 "due to level mismatch")
   }
-
-  if (inherits(progress, "progress_bar")) {
-    hdr <- paste0("* `", x[["name"]], "`")
-  } else {
-    hdr <- NULL
-  }
-
-  progr_msg(c(hdr, msg), pb = progress)
 
   res <- rename_cols(res, x[["name"]], "val_var", by_ref = TRUE)
 
@@ -290,7 +266,7 @@ load_concepts.item <- function(x, patient_ids = NULL, id_type = "icustay",
 
   load_one <- function(x, prog, ...) {
 
-    progr_iter(pb = prog)
+    progress_tick(progress_bar = prog)
 
     res <- load_concepts(x, ...)
 

@@ -307,32 +307,6 @@ last_elem <- function(x) x[length(x)]
 #'
 first_elem <- function(x) x[1L]
 
-cat_line <- function(...) {
-  line <- trimws(paste0(...), "right")
-  cat(paste0(line, "\n"), sep = "")
-}
-
-big_mark <- function(x, ...) {
-  mark <- if (identical(getOption("OutDec"), ",")) "." else ","
-  formatC(x, big.mark = mark, format = "d", ...)
-}
-
-times <- function(fancy = l10n_info()$`UTF-8`) if (fancy) "\u00d7" else "x"
-
-arrow <- function(fancy = l10n_info()$`UTF-8`) if (fancy) "\u2192" else "->"
-
-ellipsis <- function(fancy = l10n_info()$`UTF-8`) {
-  if (fancy) "\u2026" else "..."
-}
-
-quote_bt <- function(x) encodeString(x, quote = "`")
-
-concat <- function(...) paste0(..., collapse = ", ")
-
-prcnt <- function(x, tot = sum(x)) {
-  paste0(round(x / tot * 100, digits = 2), "%")
-}
-
 str_in_vec_once <- function(str, vec) identical(sum(vec %in% str), 1L)
 
 null_or_subs <- function(x, where = parent.frame(1L)) {
@@ -451,103 +425,6 @@ map <- function(f, ...) Map(f, ..., USE.NAMES = FALSE)
 do_call <- function(x, fun, args = NULL) {
   if (is.null(args)) do.call(fun, x)
   else do.call(fun, unname(x[args]))
-}
-
-progr_init <- function(len = NULL, msg = "loading", capture_output = FALSE,
-                       ...) {
-
-  if (interactive() && is_pkg_available("progress") && len > 1L) {
-
-    if (capture_output) {
-
-      out <- NULL
-      con <- textConnection("out", "w", local = TRUE)
-
-      fun <- function(x) {
-        close(con)
-        if (has_length(out)) {
-          message(paste(out, collapse = "\n"))
-        }
-      }
-
-    } else {
-
-      fun <- identity
-      con <- stderr()
-    }
-
-    res <- progress::progress_bar$new(
-      format = ":what [:bar] :percent", total = len, callback = fun, ...
-    )
-
-    attr(res, "con") <- con
-
-    if (not_null(msg)) {
-      res$message(msg)
-    }
-
-  } else {
-
-    message(msg)
-    res <- NULL
-  }
-
-  res
-}
-
-progr_iter <- function(name = "", pb = NULL, len = 1L) {
-
-  assert_that(is.string(name))
-
-  if (isFALSE(pb)) {
-    return(invisible(NULL))
-  }
-
-  if (is.null(pb)) {
-
-    if (nzchar(name)) {
-      message(paste0("* `", name, "`"))
-    }
-
-    return(invisible(NULL))
-  }
-
-  if (nzchar(name)) {
-
-    if (nchar(name) > 15L) {
-      name <- paste0(substr(name, 1L, 15L - nchar(ellipsis())), ellipsis())
-    } else {
-      name <- sprintf("%-15s", name)
-    }
-
-    pb$tick(len = len, tokens = list(what = name))
-    attr(pb, "token") <- name
-
-  } else if (not_null(attr(pb, "token"))) {
-
-    pb$tick(len = len, tokens = list(what = attr(pb, "token")))
-
-  } else {
-
-    pb$tick(len = len)
-  }
-
-  invisible(NULL)
-}
-
-progr_msg <- function(..., pb = NULL) {
-
-  msg <- paste0(..., collapse = "\n")
-
-  if (nzchar(msg)) {
-    if (is.null(pb)) {
-      message(msg)
-    } else if (!isFALSE(pb)) {
-      writeLines(msg, attr(pb, "con"))
-    }
-  }
-
-  invisible(NULL)
 }
 
 warn_dots <- function(...) {

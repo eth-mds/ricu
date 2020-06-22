@@ -121,7 +121,7 @@ import_src.src_cfg <- function(x, dir = src_data_dir(x), force = FALSE, ...) {
   }
 
   tbl <- tbl[todo]
-  pba <- progr_init(sum(int_ply(tbl, nrow)),
+  pba <- progress_init(sum(int_ply(tbl, nrow)),
     paste0("Importing ", length(tbl), " tables for ", quote_bt(src_name(x)))
   )
 
@@ -131,7 +131,6 @@ import_src.src_cfg <- function(x, dir = src_data_dir(x), force = FALSE, ...) {
 
   if (!(is.null(pba) || pba$finished)) {
     pba$update(1)
-    pba$terminate()
   }
 
   message("Successfully imported ", length(tbl), " tables")
@@ -192,7 +191,7 @@ merge_fst_chunks <- function(src_dir, targ_dir, cols, prog, nme) {
 
   fst::write_fst(dat, new_file, compress = 100L)
 
-  progr_iter(paste(nme, "part", part_no), prog, floor(nrow(dat) / 2))
+  progress_tick(paste(nme, "part", part_no), prog, floor(nrow(dat) / 2))
 
   invisible(NULL)
 }
@@ -211,7 +210,7 @@ split_write <- function(x, part_fun, dir, chunk_no, prog, nme) {
 
   Map(fst::write_fst, x, tmp_nme)
 
-  progr_iter(paste(nme, "chunk", chunk_no), prog, floor(n_row / 2))
+  progress_tick(paste(nme, "chunk", chunk_no), prog, floor(n_row / 2))
 
   invisible(NULL)
 }
@@ -280,7 +279,7 @@ csv_to_fst <- function(x, dir, progress = NULL) {
 
   fst_table <- fst::fst(dst)
 
-  progr_iter(tbl_name(x), pb = progress, len = check_n_row(x, nrow(fst_table)))
+  progress_tick(tbl_name(x), progress, check_n_row(x, nrow(fst_table)))
 
   invisible(NULL)
 }
