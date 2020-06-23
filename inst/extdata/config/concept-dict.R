@@ -1424,6 +1424,25 @@ cfg <- list(
     concepts = c("sofa_score", "susp_inf"),
     callback = "sepsis_3",
     class = "rec_cncpt"
+  ),
+  bands = list(
+    sources = list(
+      mimic = list(
+        list(ids = 51144L, table = "labevents", sub_var = "itemid")
+      ),
+      eicu = list(
+        list(ids = "-bands", table = "lab", sub_var = "labname")
+      ),
+      hirid = list(
+        list(ids = 24000557L, table = "observations", sub_var = "variableid")
+      )
+    )
+  ),
+  sirs_score = list(
+    concepts = c("temperature", "heart_rate", "respiratory_rate", "pa_co2",
+                 "white_blood_cells", "bands"),
+    callback = "sirs_score",
+    class = "rec_cncpt"
   )
 )
 

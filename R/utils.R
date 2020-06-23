@@ -338,16 +338,6 @@ split_indices <- function(len, n_chunks) {
   }
 }
 
-force_numeric <- function(x) {
-  res <- suppressWarnings(as.numeric(x))
-  new_na <- sum(is.na(res) & !is.na(x))
-  if (new_na > 0L) {
-    message("    lost ", new_na, " (", prcnt(new_na, length(x)),
-            ") entries due to `force_numeric()`")
-  }
-  res
-}
-
 new_names <- function(old_names = character(0L), n = 1L,
                       chars = c(letters, LETTERS, 0L:9L), length = 15L) {
 

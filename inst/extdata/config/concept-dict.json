@@ -325,6 +325,45 @@
       ]
     }
   },
+  "bands": {
+    "sources": {
+      "eicu": [
+        {
+          "ids": "-bands",
+          "table": "lab",
+          "sub_var": "labname"
+        }
+      ],
+      "eicu_demo": [
+        {
+          "ids": "-bands",
+          "table": "lab",
+          "sub_var": "labname"
+        }
+      ],
+      "hirid": [
+        {
+          "ids": 24000557,
+          "table": "observations",
+          "sub_var": "variableid"
+        }
+      ],
+      "mimic": [
+        {
+          "ids": 51144,
+          "table": "labevents",
+          "sub_var": "itemid"
+        }
+      ],
+      "mimic_demo": [
+        {
+          "ids": 51144,
+          "table": "labevents",
+          "sub_var": "itemid"
+        }
+      ]
+    }
+  },
   "base_excess": {
     "unit": "mEq/L",
     "min": -25,
@@ -2897,6 +2936,11 @@
         }
       ]
     }
+  },
+  "sirs_score": {
+    "concepts": ["temperature", "heart_rate", "respiratory_rate", "pa_co2", "white_blood_cells", "bands"],
+    "callback": "sirs_score",
+    "class": "rec_cncpt"
   },
   "sodium": {
     "unit": "mEq/L",

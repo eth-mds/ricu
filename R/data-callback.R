@@ -13,6 +13,16 @@ percent_as_numeric <- function(x, val_var, ...) {
   set(x, j = val_var, value = as.numeric(sub("%", "", x[[val_var]])))
 }
 
+force_numeric <- function(x) {
+  res <- suppressWarnings(as.numeric(x))
+  new_na <- sum(is.na(res) & !is.na(x))
+  if (new_na > 0L) {
+    progress_msg("  lost ", new_na, " (", prcnt(new_na, length(x)),
+                 ") entries due to `force_numeric()`")
+  }
+  res
+}
+
 force_numeric_var <- function(x, col) {
   set(x, j = col, value = force_numeric(x[[col]]))
 }
