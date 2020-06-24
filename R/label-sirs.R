@@ -4,7 +4,9 @@
 #' The SIRS (Systemic Inflammatory Response Syndrome) score is a commonly used
 #' assessment tool used to track a patient's well-being in an ICU.
 #'
-#' @param temperature, heart_rate, respiratory_rate, pa_co2,white_blood_cells, bands Data input used for SIRS score evaluation
+#' @param temperature,heart_rate,respiratory_rate,pa_co2,white_blood_cells,bands Data input used
+#' for SIRS score evaluation
+#' @param win_length Window used for carry forward imputation
 #' @param interval Time series interval (only used for checking consistency
 #' of input data)
 #'
@@ -12,7 +14,7 @@
 #' @export
 #'
 sirs_score <- function(temperature, heart_rate, respiratory_rate, pa_co2,
-                       white_blood_cells, bands,
+                       white_blood_cells, bands, win_length = hours(24L),
                        interval = ricu::interval(temperature)) {
 
   temp <- function(x) fifelse(x < 36 | x > 38, 1L, 0L)
@@ -38,6 +40,14 @@ sirs_score <- function(temperature, heart_rate, respiratory_rate, pa_co2,
 
   res <- reduce(merge, list(temperature, heart_rate, respiratory, wbc),
                 all = TRUE)
+
+  expr <- substitute(
+    list(temperature = fun(temperature), heart_rate = fun(heart_rate),
+         respiratory = fun(respiratory), wbc = fun(wbc)),
+    list(fun = locf)
+  )
+
+  res <- slide(res, !!expr, before = win_length)
 
   res <- res[, c("sirs_score") := rowSums(.SD, na.rm = TRUE),
     .SDcols = c("temperature", "heart_rate", "respiratory", "wbc")

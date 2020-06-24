@@ -11,11 +11,15 @@ sirs_score(
   pa_co2,
   white_blood_cells,
   bands,
+  win_length = hours(24L),
   interval = ricu::interval(temperature)
 )
 }
 \arguments{
-\item{temperature, }{heart_rate, respiratory_rate, pa_co2,white_blood_cells, bands Data input used for SIRS score evaluation}
+\item{temperature, heart_rate, respiratory_rate, pa_co2, white_blood_cells, bands}{Data input used
+for SIRS score evaluation}
+
+\item{win_length}{Window used for carry forward imputation}
 
 \item{interval}{Time series interval (only used for checking consistency
 of input data)}
