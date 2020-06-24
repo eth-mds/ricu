@@ -262,11 +262,32 @@ read_src_cfg <- function(src = NULL, name = "data-sources", file = NULL) {
 
   if (is.null(file)) {
 
-    cfg <- get_config(name)
+    file <- paste0(name, ".json")
+
+    usr_file <- file.path(config_dir_path(), file)
+
+    if (file.exists(usr_file)) {
+
+      usr_file <- read_json(usr_file)
+      usr_nme  <- chr_xtr(usr_file, "name")
+
+      if (not_null(src) && all(src %in% usr_nme)) {
+        return(lapply(usr_file[usr_nme %in% src], mk_cfg))
+      }
+
+    } else {
+
+      usr_file <- NULL
+    }
+
+    default <- read_json(file.path(default_config_path(), file))
+    def_nme <- chr_xtr(default, "name")
+
+    default <- default[def_nme %in% setdiff(def_nme, usr_nme)]
+
+    cfg <- c(usr_file, default)
 
   } else {
-
-    assert_that(missing(name), file.exists(file))
 
     cfg <- read_json(file)
   }
