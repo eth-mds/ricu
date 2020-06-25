@@ -174,7 +174,7 @@ import_tbl.tbl_cfg <- function(x, dir = src_data_dir(x), progress = NULL,
   }
 }
 
-merge_fst_chunks <- function(src_dir, targ_dir, cols, prog, nme) {
+merge_fst_chunks <- function(src_dir, targ_dir, cols, sort_col, prog, nme) {
 
   files <- list.files(src_dir, full.names = TRUE)
 
@@ -184,6 +184,7 @@ merge_fst_chunks <- function(src_dir, targ_dir, cols, prog, nme) {
 
   dat <- lapply(files[sort_ind], fst::read_fst, as.data.table = TRUE)
   dat <- rbindlist(dat)
+  dat <- data.table::setorderv(dat, sort_col)
   dat <- setnames(dat, names(cols), cols)
 
   part_no  <- sub("part_", "", basename(src_dir))
@@ -224,12 +225,14 @@ partition_table <- function(x, dir, progress = NULL, chunk_length = 10 ^ 7) {
 
   spec <- col_spec(x)
   pfun <- partition_fun(x, orig_names = TRUE)
+  pcol <- partition_col(x, orig_names = TRUE)
   file <- file.path(dir, dst_files(x))
   name <- tbl_name(x)
 
   if (length(file) == 1L) {
 
     callback <- function(x, pos, ...) {
+      readr::stop_for_problems(x)
       split_write(x, pfun, tempdir, ((pos - 1L) / chunk_length) + 1L,
                   progress, name)
     }
@@ -252,7 +255,7 @@ partition_table <- function(x, dir, progress = NULL, chunk_length = 10 ^ 7) {
   targ <- file.path(dir, name)
 
   for (src_dir in list.files(tempdir, full.names = TRUE)) {
-    merge_fst_chunks(src_dir, targ, cols, progress, name)
+    merge_fst_chunks(src_dir, targ, cols, pcol, progress, name)
   }
 
   fst_tables <- lapply(file.path(dir, fst_names(x)), fst::fst)

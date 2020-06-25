@@ -181,12 +181,25 @@ col_names <- function(x) {
 
 partition_fun <- function(x, orig_names = FALSE) {
 
+  assert_that(is_tbl_cfg(x), n_partitions(x) > 1L)
+
+  part <- x[["partitioning"]]
+
+  col <- partition_col(x, orig_names)
+  breaks <- force(part[["breaks"]])
+
+  function(x) {
+    findInterval(x[[col]], breaks) + 1L
+  }
+}
+
+partition_col <- function(x, orig_names = FALSE) {
+
   assert_that(is_tbl_cfg(x), is.flag(orig_names), n_partitions(x) > 1L)
 
   part <- x[["partitioning"]]
 
   col <- part[["col"]]
-  breaks <- force(part[["breaks"]])
 
   if (orig_names) {
     nms <- col_names(x)
@@ -195,9 +208,7 @@ partition_fun <- function(x, orig_names = FALSE) {
 
   assert_that(is.string(col))
 
-  function(x) {
-    findInterval(x[[col]], breaks) + 1L
-  }
+  col
 }
 
 #' @export
