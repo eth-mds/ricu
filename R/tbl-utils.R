@@ -148,8 +148,6 @@ rename_cols.ts_tbl <- function(x, new, old = colnames(x),
 rename_cols.id_tbl <- function(x, new, old = colnames(x),
                                skip_absent = FALSE, ...) {
 
-  assert_that(is.flag(skip_absent))
-
   if (skip_absent) {
 
     hits <- old %in% colnames(x)
@@ -169,7 +167,9 @@ rename_cols.id_tbl <- function(x, new, old = colnames(x),
 rename_cols.data.table <- function(x, new, old = colnames(x),
                                    skip_absent = FALSE, by_ref = FALSE) {
 
-  assert_that(has_cols(x, old))
+  if (!skip_absent) {
+    assert_that(has_cols(x, old))
+  }
 
   if (!by_ref) {
     x <- copy(x)

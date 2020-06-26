@@ -120,7 +120,9 @@ load_mihi <- function(x, rows, cols, id_hint, time_vars) {
 
   if (length(time_vars)) {
 
-    dat <- merge(dat, id_origin(x, id_col), by = id_col)
+    dat <- merge(dat, id_origin(x, id_col, origin_name = "origin"),
+                 by = id_col)
+
     dat <- dat[,
       c(time_vars) := lapply(.SD, dt_round_min, get("origin")),
       .SDcols = time_vars

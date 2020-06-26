@@ -141,6 +141,9 @@ part_desc <- function(x) {
 #' @export
 src_name.src_tbl <- function(x) src_name(as_col_cfg(x))
 
+#' @export
+tbl_name.src_tbl <- function(x) tbl_name(as_col_cfg(x))
+
 #' @rdname attach_src
 #' @export
 as_src_tbl <- function(x, ...) UseMethod("as_src_tbl", x)

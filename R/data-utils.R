@@ -10,19 +10,22 @@
 #'
 #' @rdname data_utils
 #' @export
-id_origin <- function(x, ...) UseMethod("id_origin", x)
+id_orig <- function(x, ...) UseMethod("id_orig", x)
 
 #' @param id ID name for which to return origin times
+#' @param origin_name String-valued name which will be used to label the origin
+#' column
 #' @param env Data environment in which to look for tables to construct helper
 #' tables
 #'
 #' @rdname data_utils
 #' @export
-id_origin.id_cfg <- function(x, id, env = as_src_env(x), ...) {
+id_orig.id_cfg <- function(x, id, origin_name = NULL, env = as_src_env(x),
+                           ...) {
 
   warn_dots(...)
 
-  assert_that(is.string(id))
+  assert_that(is.string(id), null_or(origin_name, is.string))
 
   opts <- id_var_opts(x)
 
@@ -30,66 +33,147 @@ id_origin.id_cfg <- function(x, id, env = as_src_env(x), ...) {
 
     assert_that(id %in% opts)
 
-    return(id_origin(x[id == opts], id, env))
+    return(id_orig(x[id == opts], id, origin_name, env))
   }
 
   assert_that(length(x) == 1L)
 
-  id_orig_all(field(x, "table"), opts, field(x, "start"), env)
-}
+  res  <- get(field(x, "table"), envir = env)
+  strt <- field(x, "start")
 
-#' @rdname data_utils
-#' @export
-id_origin.eicu_ids <- function(x, ...) {
-  warning("Absolute ID origin times are not available for source `eicu`")
-  NextMethod()
-}
-
-#' @rdname data_utils
-#' @export
-id_origin.default <- function(x, id, env = as_src_env(x), ...) {
-  id_origin(as_id_cfg(x), id = id, env = env, ...)
-}
-
-id_orig_all <- memoise::memoise(
-  function(tbl, id, start, env) {
-    res <- get(tbl, envir = env)
-    res <- res[, c(id, start)]
-    res <- rename_cols(res, "origin", start, by_ref = TRUE)
-    as_id_tbl(res, id, by_ref = TRUE)
+  if (strt %in% colnames(res)) {
+    res <- res[, c(id, strt)]
+  } else {
+    res <- res[, id]
+    res <- res[, c(strt) := 0]
   }
-)
 
-#' @rdname data_utils
-#' @export
-id_windows <- function(x, ...) UseMethod("id_windows", x)
+  res <- as_id_tbl(unique(res), id, by_ref = TRUE)
 
-#' @rdname data_utils
-#' @export
-id_windows.mimic_ids <- function(x, env = as_src_env(x), ...) {
-  warn_dots(...)
-  id_wins_mimic(x, env)
+  if (not_null(origin_name)) {
+    res <- rename_cols(res, origin_name, strt)
+  }
+
+  res
 }
 
 #' @rdname data_utils
 #' @export
-id_windows.eicu_ids <- function(x, env = as_src_env(x), ...) {
-  warn_dots(...)
-  id_wins_eicu(x, env)
+id_orig.default <- function(x, id, env = as_src_env(x), ...) {
+  id_orig(as_id_cfg(x), id = id, env = env, ...)
 }
 
 #' @rdname data_utils
 #' @export
-id_windows.hirid_ids <- function(x, env = as_src_env(x), ...) {
+id_origin <- memoise::memoise(id_orig)
+
+#' @rdname data_utils
+#' @export
+id_win_min <- function(x, ...) UseMethod("id_win_min", x)
+
+#' @rdname data_utils
+#' @export
+id_win_min.mimic_ids <- function(x, env = as_src_env(x), ...) {
+
   warn_dots(...)
-  id_wins_hirid(x, env)
+
+  merge_inter <- function(x, y) {
+    merge(x, y, by = intersect(colnames(x), colnames(y)))
+  }
+
+  get_id_tbl <- function(tbl, id, start, end, aux) {
+    get(tbl, envir = env)[, c(id, start, end, aux)]
+  }
+
+  x <- sort(x, decreasing = TRUE)
+
+  ids  <- field(x, "id")
+  sta <- field(x, "start")
+  end  <- field(x, "end")
+
+  res <- Map(get_id_tbl, field(x, "table"), ids, sta,
+             end, c(as.list(ids[-1L]), list(NULL)))
+  res <- Reduce(merge_inter, res)
+
+  res <- res[, c(sta, end) := lapply(.SD, as_dt_min, get(sta[1L])),
+             .SDcols = c(sta, end)]
+
+  order_rename(res, ids, sta, end)
 }
 
 #' @rdname data_utils
 #' @export
-id_windows.default <- function(x, env = as_src_env(x), ...) {
+id_win_min.eicu_ids <- function(x, env = as_src_env(x), ...) {
+
+  warn_dots(...)
+
+  x <- sort(x, decreasing = TRUE)
+
+  ids <- field(x, "id")
+  sta <- field(x, "start")
+  end <- field(x, "end")
+
+  if (anyNA(sta)) {
+    sta <- sta[!is.na(sta)]
+  }
+
+  res <- get("patient", env)[, c(ids, sta, end)]
+
+  icu_in  <- "unitadmitoffset"
+  sta <- c(icu_in, sta)
+  res <- res[, c(icu_in) := 0L]
+
+  res <- res[, c(sta, end) := lapply(.SD, as.difftime, units = "mins"),
+             .SDcols = c(sta, end)]
+
+  order_rename(res, ids, sta, end)
+}
+
+#' @importFrom rlang .data .env
+#'
+#' @rdname data_utils
+#' @export
+id_win_min.hirid_ids <- function(x, env = as_src_env(x), ...) {
+
+  warn_dots(...)
+
+  ind_fun <- function(id, index) {
+
+    tmp <- data.table::setDT(list(id = id, index = index))
+
+    ind <- tmp[, .I[which.max(get("index"))], by = "id"][["V1"]]
+
+    res <- logical(nrow(tmp))
+    res[ind] <- TRUE
+
+    res
+  }
+
+  ids <- field(x, "id")
+  sta <- field(x, "start")
+
+  obs <- get("observations", env)
+  obs <- subset(obs, .env$ind_fun(.data$patientid, .data$datetime),
+                c("patientid", "datetime"), part_safe = TRUE)
+  obs <- obs[, list(datetime = max(get("datetime"))), by = "patientid"]
+  tbl <- get(field(x, "table"), env)[, c(ids, sta)]
+
+  res <- merge(tbl, obs, by = ids)
+  res <- res[, c(sta, "datetime") := lapply(.SD, as_dt_min, get(sta)),
+             .SDcols = c(sta, "datetime")]
+
+  order_rename(res, ids, sta, "datetime")
+}
+
+#' @rdname data_utils
+#' @export
+id_win_min.default <- function(x, env = as_src_env(x), ...) {
   id_windows(as_id_cfg(x, ...), env = env)
 }
+
+#' @rdname data_utils
+#' @export
+id_windows <- memoise::memoise(id_win_min)
 
 order_rename <- function(x, id_var, st_var, ed_var) {
   x <- setcolorder(x, c(id_var, st_var, ed_var))
@@ -99,92 +183,6 @@ order_rename <- function(x, id_var, st_var, ed_var) {
 }
 
 as_dt_min <- function(x, y) round(difftime(x, y, units = "mins"))
-
-id_wins_mimic <- memoise::memoise(
-  function(x, env) {
-
-    merge_inter <- function(x, y) {
-      merge(x, y, by = intersect(colnames(x), colnames(y)))
-    }
-
-    get_id_tbl <- function(tbl, id, start, end, aux) {
-      get(tbl, envir = env)[, c(id, start, end, aux)]
-    }
-
-    x <- sort(x, decreasing = TRUE)
-
-    ids  <- field(x, "id")
-    sta <- field(x, "start")
-    end  <- field(x, "end")
-
-    res <- Map(get_id_tbl, field(x, "table"), ids, sta,
-               end, c(as.list(ids[-1L]), list(NULL)))
-    res <- Reduce(merge_inter, res)
-
-    res <- res[, c(sta, end) := lapply(.SD, as_dt_min, get(sta[1L])),
-               .SDcols = c(sta, end)]
-
-    order_rename(res, ids, sta, end)
-  }
-)
-
-id_wins_eicu <- memoise::memoise(
-  function(x, env) {
-
-    x <- sort(x, decreasing = TRUE)
-
-    ids <- field(x, "id")
-    sta <- field(x, "start")
-    end <- field(x, "end")
-
-    if (anyNA(sta)) {
-      sta <- sta[!is.na(sta)]
-    }
-
-    res <- get("patient", env)[, c(ids, sta, end)]
-
-    icu_in  <- "unitadmitoffset"
-    sta <- c(icu_in, sta)
-    res <- res[, c(icu_in) := 0L]
-
-    res <- res[, c(sta, end) := lapply(.SD, as.difftime, units = "mins"),
-               .SDcols = c(sta, end)]
-
-    order_rename(res, ids, sta, end)
-  }
-)
-
-id_wins_hirid <- memoise::memoise(
-  function(x, env) {
-
-    ind_fun <- function(id, index) {
-
-      tmp <- data.table::setDT(list(id = id, index = index))
-
-      ind <- tmp[, .I[which.max(get("index"))], by = "id"][["V1"]]
-
-      res <- logical(nrow(tmp))
-      res[ind] <- TRUE
-
-      res
-    }
-
-    ids <- field(x, "id")
-    sta <- field(x, "start")
-
-    obs <- get("observations", env)
-    obs <- subset(obs, .env$ind_fun(.data$patientid, .data$datetime),
-                  c("patientid", "datetime"), part_safe = TRUE)
-    obs <- obs[, list(datetime = max(get("datetime"))), by = "patientid"]
-    tbl <- get(field(x, "table"), env)[, c(ids, sta)]
-
-    res <- merge(tbl, obs, by = ids)
-    res <- res[, c(sta, "datetime") := lapply(.SD, as_dt_min, get(sta)),
-               .SDcols = c(sta, "datetime")]
-
-    order_rename(res, ids, sta, "datetime")
-  }
-)
 
 id_map_min <- function(x, id_name, win_id, in_time, out_time, ...) {
 
