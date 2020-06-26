@@ -24,7 +24,7 @@
 \alias{setup_src_env.src_cfg}
 \title{Data attach utilities}
 \format{
-An object of class \code{environment} of length 5.
+An object of class \code{environment} of length 4.
 }
 \usage{
 data
@@ -49,9 +49,9 @@ as_src_env(x)
 
 attach_src(x, ...)
 
-\method{attach_src}{src_cfg}(x, dir = src_data_dir(x), assign_env = .GlobalEnv, ...)
+\method{attach_src}{src_cfg}(x, assign_env = .GlobalEnv, dir = src_data_dir(x), ...)
 
-\method{attach_src}{character}(x, name = "data-sources", file = NULL, ...)
+\method{attach_src}{character}(x, name = "data-sources", file = NULL, assign_env = .GlobalEnv, ...)
 
 setup_src_env(x, env, dir = NULL)
 
@@ -66,10 +66,10 @@ setup_src_env(x, env, dir = NULL)
 
 \item{env}{Environment where data proxy objects are created}
 
+\item{assign_env}{Environment in which the data source will become available}
+
 \item{dir}{Directory used to look for \code{\link[fst:fst]{fst::fst()}} files; \code{NULL} calls
 \code{\link[=data_dir]{data_dir()}} using the source name as \code{subdir} argument}
-
-\item{assign_env}{Environment in which the data source will become available}
 
 \item{name}{String valued name of a config file which will be looked up in
 the default config directors}

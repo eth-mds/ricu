@@ -298,7 +298,10 @@ read_src_cfg <- function(src = NULL, name = "data-sources", file = NULL) {
     src <- cfg_nme
   }
 
-  assert_that(is.character(src), all(src %in% cfg_nme))
+  assert_that(is.character(src), all(src %in% cfg_nme), msg = paste(
+    "Could not read configuration for the following source(s)",
+    concat(quote_bt(src[!src %in% cfg_nme])))
+  )
 
   lapply(cfg[cfg_nme %in% src], mk_cfg)
 }

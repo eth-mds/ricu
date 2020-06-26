@@ -29,13 +29,14 @@
 
   backports::import(pkgname)
 
-  attach_src(c("mimic", "mimic_demo", "eicu", "eicu_demo", "hirid"),
-             assign_env = pkg_env())
+  srcs <- auto_load_src_names()
+  attach_src(srcs, assign_env = pkg_env())
+  namespaceExport(pkg_env(), srcs)
 
   if (base::getRversion() < "4.0.0") {
 
     if (missing(pkgname)) prefix <- ""
-    else                  prefix <- "ricu::"
+    else                  prefix <- paste0(methods::getPackageName(), "::")
 
     cbind_fix <- paste0(
       "if (!identical(class(..1), 'data.frame')) for (x in list(...)) { ",
@@ -48,6 +49,34 @@
     fix_base_fun(base::cbind.data.frame, cbind_fix)
     fix_base_fun(base::rbind.data.frame, rbind_fix)
   }
+}
+
+.onAttach <- function(libname, pkgname) {
+
+  out <- character(0L)
+  con <- textConnection("out", "w", local = TRUE)
+  on.exit(close(con))
+
+  pkg <- methods::getPackageName()
+  ver <- utils::packageVersion(pkg)
+
+  srcs  <- auto_load_src_names()
+  avail <- ls(envir = data_env())
+  bull  <- ifelse(srcs %in% avail, "tick", "cross")
+  color <- ifelse(srcs %in% avail, "green", "red")
+
+  cli::cat_rule(paste(pkg, ver), file = con)
+
+  cli::cat_line(
+    "The following data sources are configured to be attached:", file = con
+  )
+
+  Map(cli::cat_bullet, srcs, bullet = bull, bullet_col = color,
+      MoreArgs = list(file = con))
+
+  cli::cat_rule(file = con)
+
+  packageStartupMessage(paste(out, collapse = "\n"))
 }
 
 .datatable.aware = TRUE

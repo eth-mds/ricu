@@ -5,32 +5,22 @@ data <- new.env()
 
 #' @name mimic
 #' @rdname attach_src
-#' @export mimic
-#'
 NULL
 
 #' @name mimic_demo
 #' @rdname attach_src
-#' @export mimic_demo
-#'
 NULL
 
 #' @name eicu
 #' @rdname attach_src
-#' @export eicu
-#'
 NULL
 
 #' @name eicu_demo
 #' @rdname attach_src
-#' @export eicu_demo
-#'
 NULL
 
 #' @name hirid
 #' @rdname attach_src
-#' @export hirid
-#'
 NULL
 
 pkg_env <- function() asNamespace(methods::getPackageName())

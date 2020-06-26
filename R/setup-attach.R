@@ -19,20 +19,30 @@ attach_src <- function(x, ...) UseMethod("attach_src", x)
 #'
 #' @export
 #'
-attach_src.src_cfg <- function(x, dir = src_data_dir(x),
-                               assign_env = .GlobalEnv, ...) {
+attach_src.src_cfg <- function(x, assign_env = .GlobalEnv,
+                               dir = src_data_dir(x), ...) {
 
   warn_dots(...)
 
-  assert_that(is.string(dir), is.environment(assign_env))
+  tryCatch({
 
-  src <- src_name(x)
+    assert_that(is.string(dir), is.environment(assign_env))
 
-  dat_env <- data_env()
-  src_env <- new_src_env(src, x, env = new.env(parent = dat_env))
+    src <- src_name(x)
 
-  delayedAssign(src, setup_src_env(x, src_env, dir), assign.env = dat_env)
-  makeActiveBinding(src, get_from_data_env(src), assign_env)
+    dat_env <- data_env()
+    src_env <- new_src_env(src, x, env = new.env(parent = dat_env))
+
+    delayedAssign(src, setup_src_env(x, src_env, dir), assign.env = dat_env)
+    makeActiveBinding(src, get_from_data_env(src), assign_env)
+
+  }, error = function(err) {
+
+    warning("Failed to load source `", src, "` with error\n  ",
+            conditionMessage(err))
+
+    assign(src, NULL, envir = assign_env)
+  })
 
   invisible(NULL)
 }
@@ -40,10 +50,29 @@ attach_src.src_cfg <- function(x, dir = src_data_dir(x),
 #' @inheritParams read_src_cfg
 #' @rdname attach_src
 #' @export
-attach_src.character <- function(x, name = "data-sources", file = NULL, ...) {
+attach_src.character <- function(x, name = "data-sources", file = NULL,
+                                 assign_env = .GlobalEnv, ...) {
 
-  for (cfg in read_src_cfg(x, name, file)) {
-    attach_src(cfg, ...)
+  cfgs <- tryCatch(read_src_cfg(x, name, file), error = function(err) {
+
+    warning("Failed to read source configuration \"",
+            basename(coalesce(file, name)), "\" with error:\n  ",
+            conditionMessage(err), call. = FALSE)
+
+    NULL
+  })
+
+  if (is.null(cfgs)) {
+
+    for (src in x) {
+      assign(src, NULL, envir = assign_env)
+    }
+
+  } else {
+
+    for (cfg in cfgs) {
+      attach_src(cfg, assign_env = assign_env, ...)
+    }
   }
 
   invisible(NULL)

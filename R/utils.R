@@ -477,3 +477,14 @@ rep_arg <- function(arg, names) {
 
   arg
 }
+
+auto_load_src_names <- function() {
+
+  res <- Sys.getenv("RICU_SRC_LOAD", unset = NA_character_)
+
+  if (is.na(res)) {
+    c("mimic", "mimic_demo", "eicu", "eicu_demo", "hirid")
+  } else {
+    strsplit(res, ",")[[1L]]
+  }
+}

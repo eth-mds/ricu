@@ -32,7 +32,9 @@ Imports:
     backports,
     memoise,
     rlang,
-    vctrs
+    vctrs,
+    cli,
+    utils
 Suggests:
     openssl,
     xml2,
