@@ -91,7 +91,7 @@
 
   cli::cat_line(
     "\nThe following data sources are configured to be attached:\n",
-    "(use the environment variable `RICU_SRC_LOAD` to change this)\n",
+    "(the environment variable `RICU_SRC_LOAD` controls this)\n",
     file = con
   )
 

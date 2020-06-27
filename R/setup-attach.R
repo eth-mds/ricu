@@ -38,7 +38,7 @@ attach_src.src_cfg <- function(x, assign_env = .GlobalEnv,
 
   }, error = function(err) {
 
-    warning("Failed to load source `", src, "` with error\n  ",
+    warning("Failed to attach source `", src, "` with error\n  ",
             conditionMessage(err))
 
     assign(src, NULL, envir = assign_env)
@@ -47,7 +47,7 @@ attach_src.src_cfg <- function(x, assign_env = .GlobalEnv,
   invisible(NULL)
 }
 
-#' @inheritParams read_src_cfg
+#' @inheritParams load_src_cfg
 #' @rdname attach_src
 #' @export
 attach_src.character <- function(x, name = "data-sources", file = NULL,
@@ -62,15 +62,17 @@ attach_src.character <- function(x, name = "data-sources", file = NULL,
     NULL
   })
 
-  if (is.null(cfgs)) {
+  for (src in x) {
 
-    for (src in x) {
+    cfg <- tryCatch(parse_src_cfg(cfgs[[src]]), error = function(err) {
+
+      warning("Failed to read source configuration for source `", src,
+              "` with error:\n  ", conditionMessage(err), call. = FALSE)
+
       assign(src, NULL, envir = assign_env)
-    }
+    })
 
-  } else {
-
-    for (cfg in cfgs) {
+    if (not_null(cfg)) {
       attach_src(cfg, assign_env = assign_env, ...)
     }
   }

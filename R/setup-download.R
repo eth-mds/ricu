@@ -144,13 +144,13 @@ download_src.src_cfg <- function(x, dir = src_data_dir(x), tables = NULL,
   invisible(NULL)
 }
 
-#' @inheritParams read_src_cfg
+#' @inheritParams load_src_cfg
 #' @rdname download
 #' @export
 download_src.character <- function(x, name = "data-sources", file = NULL,
                                    ...) {
 
-  for (cfg in read_src_cfg(x, name, file)) {
+  for (cfg in load_src_cfg(x, name, file)) {
     download_src(cfg, ...)
   }
 

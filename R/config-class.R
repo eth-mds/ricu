@@ -228,37 +228,23 @@ is_tbl_cfg <- function(x) inherits(x, "tbl_cfg")
 #'
 #' @export
 #'
+load_src_cfg <- function(src = NULL, name = "data-sources", file = NULL) {
+
+  res <- read_src_cfg(src, name, file)
+
+  if (is.null(src)) {
+    src <- names(res)
+  }
+
+  assert_that(identical(src, names(res)), msg = paste(
+    "Could not read configuration for the following source(s)",
+    concat(quote_bt(setdiff(src, names(res)))))
+  )
+
+  lapply(res, parse_src_cfg)
+}
+
 read_src_cfg <- function(src = NULL, name = "data-sources", file = NULL) {
-
-  mk_id_cfg <- function(name, id_cfg, class_prefix = name, ...) {
-    do.call(new_id_cfg,
-      list(
-        names(id_cfg), name, chr_xtr(id_cfg, "id"),
-        int_xtr(id_cfg, "position"), chr_xtr_null(id_cfg, "start"),
-        chr_xtr_null(id_cfg, "end"), chr_xtr_null(id_cfg, "table"),
-        class_prefix = class_prefix
-      )
-    )
-  }
-
-  mk_col_cfg <- function(name, tables, class_prefix = name, ...) {
-    args <- map(c, chr_xtr(tables, "name"), name, lst_xtr(tables, "defaults"),
-                class_prefix = list(list(class_prefix)))
-    lapply(args, do_call, new_col_cfg)
-  }
-
-  mk_tbl_cfg <- function(name, tables, class_prefix = name, ...) {
-    args <- map(c, chr_xtr(tables, "name"), name,
-      mul_xtr(tables, c("files", "cols", "num_rows", "partitioning")),
-      class_prefix = list(list(class_prefix))
-    )
-    lapply(args, do_call, new_tbl_cfg)
-  }
-
-  mk_cfg <- function(x) {
-    new_src_cfg(x[["name"]], do.call(mk_id_cfg, x), do.call(mk_col_cfg, x),
-                do.call(mk_tbl_cfg, x), x[["url"]], x[["class_prefix"]])
-  }
 
   if (is.null(file)) {
 
@@ -272,7 +258,7 @@ read_src_cfg <- function(src = NULL, name = "data-sources", file = NULL) {
       usr_nme  <- chr_xtr(usr_file, "name")
 
       if (not_null(src) && all(src %in% usr_nme)) {
-        return(lapply(usr_file[usr_nme %in% src], mk_cfg))
+        return(setNames(usr_file, usr_nme)[src])
       }
 
     } else {
@@ -285,23 +271,62 @@ read_src_cfg <- function(src = NULL, name = "data-sources", file = NULL) {
 
     default <- default[def_nme %in% setdiff(def_nme, usr_nme)]
 
-    cfg <- c(usr_file, default)
+    res <- c(usr_file, default)
 
   } else {
 
-    cfg <- read_json(file)
+    res <- read_json(file)
   }
 
-  cfg_nme <- chr_xtr(cfg, "name")
+  setNames(res, chr_xtr(res, "name"))[src]
+}
 
-  if (is.null(src)) {
-    src <- cfg_nme
+parse_src_cfg <- function(x) {
+
+  mk_id_cfg <- function(name, id_cfg, class_prefix = name, ...) {
+
+    id <- chr_xtr(id_cfg, "id")
+    po <- int_xtr(id_cfg, "position")
+    st <- chr_xtr_null(id_cfg, "start")
+    en <- chr_xtr_null(id_cfg, "end")
+    tb <- chr_xtr_null(id_cfg, "table")
+
+    args <- list(
+      names(id_cfg), name, id, po, st, en, tb, class_prefix = class_prefix
+    )
+
+    do.call(new_id_cfg, args)
   }
 
-  assert_that(is.character(src), all(src %in% cfg_nme), msg = paste(
-    "Could not read configuration for the following source(s)",
-    concat(quote_bt(src[!src %in% cfg_nme])))
+  mk_col_cfg <- function(name, tables, class_prefix = name, ...) {
+
+    na <- chr_xtr(tables, "name")
+    df <- lst_xtr(tables, "defaults")
+    pf <- list(list(class_prefix))
+
+    args <- map(c, na, name, df, class_prefix = pf)
+
+    lapply(args, do_call, new_col_cfg)
+  }
+
+  mk_tbl_cfg <- function(name, tables, class_prefix = name, ...) {
+
+    na <- chr_xtr(tables, "name")
+    rs <- mul_xtr(tables, c("files", "cols", "num_rows", "partitioning"))
+    pf <- list(list(class_prefix))
+
+    args <- map(c, chr_xtr(tables, "name"), name, rs, class_prefix = pf)
+
+    lapply(args, do_call, new_tbl_cfg)
+  }
+
+  assert_that(is.list(x), has_name(x, c("name", "id_cfg", "tables")))
+
+  id_cfg  <- do.call(mk_id_cfg, x)
+  col_cfg <- do.call(mk_col_cfg, x)
+  tbl_cfg <- do.call(mk_tbl_cfg, x)
+
+  new_src_cfg(
+    x[["name"]], id_cfg, col_cfg, tbl_cfg, x[["url"]], x[["class_prefix"]]
   )
-
-  lapply(cfg[cfg_nme %in% src], mk_cfg)
 }
