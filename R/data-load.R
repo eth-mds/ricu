@@ -179,7 +179,7 @@ load_id.src_tbl <- function(x, rows, cols = colnames(x),
 
   time_vars <- intersect(time_vars, colnames(res))
 
-  res <- change_id(res, id_var, as_id_cfg(x), cols = time_vars)
+  res <- change_id(res, id_var, x, cols = time_vars)
 
   if (!is_one_min(interval)) {
     res <- change_interval(res, interval, time_vars, by_ref = TRUE)
@@ -220,7 +220,7 @@ load_ts.src_tbl <- function(x, rows, cols = colnames(x), id_var = id_vars(x),
 
   time_vars <- intersect(time_vars, colnames(res))
 
-  res <- change_id(res, id_var, as_id_cfg(x), cols = time_vars)
+  res <- change_id(res, id_var, x, cols = time_vars)
 
   change_interval(res, interval, time_vars, by_ref = TRUE)
 }

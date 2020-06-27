@@ -5,41 +5,60 @@
 #' `id_origin()` which returns origin times for a given ID and `id_windows()`
 #' which defines stay windows and relationships between ID systems.
 #'
-#' @param x Object to dispatch on
-#' @param ... Generic consistency
-#'
-#' @rdname data_utils
-#' @export
-id_orig <- function(x, ...) UseMethod("id_orig", x)
-
+#' @param x Object identify the ID system (passed to [as_src_env()])
 #' @param id ID name for which to return origin times
 #' @param origin_name String-valued name which will be used to label the origin
 #' column
-#' @param env Data environment in which to look for tables to construct helper
-#' tables
+#' @param copy Logical flag indicating whether to return a copy of the memoized
+#' `0data.table` for safety
 #'
 #' @rdname data_utils
+#' @keywords internal
 #' @export
-id_orig.id_cfg <- function(x, id, origin_name = NULL, env = as_src_env(x),
-                           ...) {
+id_origin <- function(x, id, origin_name = NULL, copy = TRUE) {
 
-  warn_dots(...)
+  assert_that(is.string(id), is.flag(copy))
 
-  assert_that(is.string(id), null_or(origin_name, is.string))
+  x <- as_src_env(x)
 
-  opts <- id_var_opts(x)
+  key <- paste(src_name(x), id, sep = ":")
+  res <- get0(key, envir = id_orig_env, mode = "list", inherits = FALSE,
+              ifnotfound = NULL)
 
-  if (!identical(opts, id)) {
-
-    assert_that(id %in% opts)
-
-    return(id_orig(x[id == opts], id, origin_name, env))
+  if (is.null(res)) {
+    res <- id_orig_helper(x, id)
+    assign(key, res, id_orig_env)
   }
 
-  assert_that(length(x) == 1L)
+  assert_that(is_id_tbl(res), identical(id_vars(res), id))
 
-  res  <- get(field(x, "table"), envir = env)
-  strt <- field(x, "start")
+  if (not_null(origin_name)) {
+    res <- rename_cols(res, c(id, origin_name))
+  } else if (copy) {
+    res <- copy(res)
+  }
+
+  res
+}
+
+id_orig_env <- new.env()
+
+#' @rdname data_utils
+#' @export
+id_orig_helper <- function(x, id) UseMethod("id_orig_helper", x)
+
+#' @rdname data_utils
+#' @export
+id_orig_helper.src_env <- function(x, id) {
+
+  assert_that(is.string(id))
+
+  cfg <- as_id_cfg(x)[id == id_var_opts(x)]
+
+  assert_that(length(cfg) == 1L)
+
+  res  <- as_src_tbl(x, field(cfg, "table"))
+  strt <- field(cfg, "start")
 
   if (strt %in% colnames(res)) {
     res <- res[, c(id, strt)]
@@ -48,50 +67,58 @@ id_orig.id_cfg <- function(x, id, origin_name = NULL, env = as_src_env(x),
     res <- res[, c(strt) := 0]
   }
 
-  res <- as_id_tbl(unique(res), id, by_ref = TRUE)
+  as_id_tbl(unique(res), id, by_ref = TRUE)
+}
 
-  if (not_null(origin_name)) {
-    res <- rename_cols(res, origin_name, strt)
+#' @rdname data_utils
+#' @export
+id_windows <- function(x, copy = TRUE) {
+
+  x <- as_src_env(x)
+
+  key <- src_name(x)
+  res <- get0(key, envir = id_win_env, mode = "list", inherits = FALSE,
+              ifnotfound = NULL)
+
+  if (is.null(res)) {
+    res <- id_win_helper(x)
+    assign(key, res, id_win_env)
+  }
+
+  assert_that(is_id_tbl(res))
+
+  if (copy) {
+    res <- copy(res)
   }
 
   res
 }
 
-#' @rdname data_utils
-#' @export
-id_orig.default <- function(x, id, env = as_src_env(x), ...) {
-  id_orig(as_id_cfg(x), id = id, env = env, ...)
-}
+id_win_env <- new.env()
 
 #' @rdname data_utils
 #' @export
-id_origin <- memoise::memoise(id_orig)
+id_win_helper <- function(x) UseMethod("id_win_helper", x)
 
 #' @rdname data_utils
 #' @export
-id_win_min <- function(x, ...) UseMethod("id_win_min", x)
-
-#' @rdname data_utils
-#' @export
-id_win_min.mimic_ids <- function(x, env = as_src_env(x), ...) {
-
-  warn_dots(...)
+id_win_helper.mimic_env <- function(x) {
 
   merge_inter <- function(x, y) {
     merge(x, y, by = intersect(colnames(x), colnames(y)))
   }
 
   get_id_tbl <- function(tbl, id, start, end, aux) {
-    get(tbl, envir = env)[, c(id, start, end, aux)]
+    as_src_tbl(x, tbl)[, c(id, start, end, aux)]
   }
 
-  x <- sort(x, decreasing = TRUE)
+  cfg <- sort(as_id_cfg(x), decreasing = TRUE)
 
-  ids  <- field(x, "id")
-  sta <- field(x, "start")
-  end  <- field(x, "end")
+  ids  <- field(cfg, "id")
+  sta <- field(cfg, "start")
+  end  <- field(cfg, "end")
 
-  res <- Map(get_id_tbl, field(x, "table"), ids, sta,
+  res <- Map(get_id_tbl, field(cfg, "table"), ids, sta,
              end, c(as.list(ids[-1L]), list(NULL)))
   res <- Reduce(merge_inter, res)
 
@@ -103,25 +130,24 @@ id_win_min.mimic_ids <- function(x, env = as_src_env(x), ...) {
 
 #' @rdname data_utils
 #' @export
-id_win_min.eicu_ids <- function(x, env = as_src_env(x), ...) {
+id_win_helper.eicu_env <- function(x) {
 
-  warn_dots(...)
+  cfg <- sort(as_id_cfg(x), decreasing = TRUE)
 
-  x <- sort(x, decreasing = TRUE)
+  ids <- field(cfg, "id")
+  sta <- field(cfg, "start")
+  end <- field(cfg, "end")
 
-  ids <- field(x, "id")
-  sta <- field(x, "start")
-  end <- field(x, "end")
+  tbl <- as_src_tbl(x, "patient")
+  mis <- setdiff(sta, colnames(tbl))
 
-  if (anyNA(sta)) {
-    sta <- sta[!is.na(sta)]
+  assert_that(length(mis) >= 1L)
+
+  res <- tbl[, c(ids, intersect(sta, colnames(tbl)), end)]
+
+  if (has_length(mis)) {
+    res[, c(mis) := 0L]
   }
-
-  res <- get("patient", env)[, c(ids, sta, end)]
-
-  icu_in  <- "unitadmitoffset"
-  sta <- c(icu_in, sta)
-  res <- res[, c(icu_in) := 0L]
 
   res <- res[, c(sta, end) := lapply(.SD, as.difftime, units = "mins"),
              .SDcols = c(sta, end)]
@@ -133,9 +159,7 @@ id_win_min.eicu_ids <- function(x, env = as_src_env(x), ...) {
 #'
 #' @rdname data_utils
 #' @export
-id_win_min.hirid_ids <- function(x, env = as_src_env(x), ...) {
-
-  warn_dots(...)
+id_win_helper.hirid_env <- function(x) {
 
   ind_fun <- function(id, index) {
 
@@ -149,14 +173,16 @@ id_win_min.hirid_ids <- function(x, env = as_src_env(x), ...) {
     res
   }
 
-  ids <- field(x, "id")
-  sta <- field(x, "start")
+  cfg <- sort(as_id_cfg(x), decreasing = TRUE)
 
-  obs <- get("observations", env)
+  ids <- field(cfg, "id")
+  sta <- field(cfg, "start")
+
+  obs <- as_src_tbl(x, "observations")
   obs <- subset(obs, .env$ind_fun(.data$patientid, .data$datetime),
                 c("patientid", "datetime"), part_safe = TRUE)
   obs <- obs[, list(datetime = max(get("datetime"))), by = "patientid"]
-  tbl <- get(field(x, "table"), env)[, c(ids, sta)]
+  tbl <- as_src_tbl(x, field(cfg, "table"))[, c(ids, sta)]
 
   res <- merge(tbl, obs, by = ids)
   res <- res[, c(sta, "datetime") := lapply(.SD, as_dt_min, get(sta)),
@@ -164,16 +190,6 @@ id_win_min.hirid_ids <- function(x, env = as_src_env(x), ...) {
 
   order_rename(res, ids, sta, "datetime")
 }
-
-#' @rdname data_utils
-#' @export
-id_win_min.default <- function(x, env = as_src_env(x), ...) {
-  id_windows(as_id_cfg(x, ...), env = env)
-}
-
-#' @rdname data_utils
-#' @export
-id_windows <- memoise::memoise(id_win_min)
 
 order_rename <- function(x, id_var, st_var, ed_var) {
   x <- setcolorder(x, c(id_var, st_var, ed_var))
@@ -184,47 +200,80 @@ order_rename <- function(x, id_var, st_var, ed_var) {
 
 as_dt_min <- function(x, y) round(difftime(x, y, units = "mins"))
 
-id_map_min <- function(x, id_name, win_id, in_time, out_time, ...) {
+#' @param id_var Type of ID all returned times are relative to
+#' @param win_var Type of ID for which the in/out times is returned
+#' @param in_time,out_time column names of the returned in/out times
+#'
+#' @rdname data_utils
+#' @export
+id_map <- function(x, id_var, win_var, in_time = NULL, out_time = NULL) {
 
-  x <- as_id_cfg(x, ...)
+  assert_that(is.string(id_var), is.string(win_var),
+              null_or(in_time, is.string), null_or(out_time, is.string))
+
+  x <- as_src_env(x)
+
+  key <- paste(src_name(x), paste(id_var, win_var, sep = "_"), sep = ":")
+  res <- get0(key, envir = id_map_env, mode = "list", inherits = FALSE,
+              ifnotfound = NULL)
+
+  if (is.null(res)) {
+    res <- id_map_helper(x, id_var, win_var)
+    assign(key, res, id_map_env)
+  }
+
+  assert_that(is_id_tbl(res), identical(id_vars(res), id_var))
+
+  inn <- if (is.null(in_time)) NULL else paste0(win_var, "_start")
+  out <- if (is.null(out_time)) NULL else paste0(win_var, "_end")
+
+  res <- res[, unique(c(id_var, win_var, inn, out)), with = FALSE]
+
+  if (not_null(coalesce(in_time, out_time))) {
+    res <- rename_cols(res, c(in_time, out_time), c(inn, out), by_ref = TRUE)
+  }
+
+  res
+}
+
+id_map_env <- new.env()
+
+#' @rdname data_utils
+#' @export
+id_map_helper <- function(x, id_var, win_var) UseMethod("id_map_helper", x)
+
+#' @rdname data_utils
+#' @export
+id_map_helper.src_env <- function(x, id_var, win_var) {
 
   map    <- id_windows(x)
   map_id <- id_vars(map)
 
-  if (identical(id_name, map_id) || (is.null(in_time) && is.null(out_time))) {
+  if (identical(id_var, map_id)) {
     ori <- NULL
   } else {
-    ori <- paste0(id_name, "_start")
+    ori <- paste0(id_var, "_start")
   }
 
-  inn <- if (is.null(in_time))  NULL else paste0(win_id, "_start")
-  out <- if (is.null(out_time)) NULL else paste0(win_id, "_end")
-  iot <- c(in_time, out_time)
+  inn <- paste0(win_var, "_start")
+  out <- paste0(win_var, "_end")
 
-  map <- map[, unique(c(id_name, win_id, inn, out, ori)), with = FALSE]
+  map <- map[, unique(c(id_var, win_var, inn, out, ori)), with = FALSE]
 
   if (not_null(ori)) {
-    map <- map[, c(iot) := lapply(.SD, `-`, get(ori)),
+    map <- map[, c(inn, out) := lapply(.SD, `-`, get(ori)),
                .SDcols = c(inn, out)]
-  } else if (not_null(in_time) || not_null(out_time)) {
-    map <- rename_cols(map, iot, c(inn, out), by_ref = TRUE)
+    map <- rm_cols(map, ori, by_ref = TRUE)
   }
 
-  map <- rm_cols(map, setdiff(colnames(map), c(id_name, win_id, iot)),
-                 by_ref = TRUE)
-
-  if (max(x[id_var_opts(x) %in% c(id_name, win_id)]) < max(x)) {
-    map <- unique(map)
-  }
-
-  as_id_tbl(map, id_name, by_ref = TRUE)
+  as_id_tbl(unique(map), id_var, by_ref = TRUE)
 }
 
 #' Stays
 #'
 #' For a given ID type, get all stays with corresponding start and end times.
 #'
-#' @param x Object to dispatch on
+#' @param x Passed to [as_id_cfg()] and [as_src_env()]
 #' @param id_type Type of ID all returned times are relative to
 #' @param win_type Type of ID for which the in/out times is returned
 #' @param in_time,out_time column names of the returned in/out times
@@ -237,11 +286,11 @@ stay_windows <- function(x, id_type = "icustay", win_type = "icustay",
                          in_time = "start", out_time = "end",
                          interval = hours(1L)) {
 
-  assert_that(is_time(interval, allow_neg = FALSE))
+  assert_that(is_interval(interval))
 
   cfg <- as_id_cfg(x)
-  res <- id_map_min(cfg, id_vars(cfg[id_type]), id_vars(cfg[win_type]),
-                    in_time, out_time)
+  res <- id_map(x, id_vars(cfg[id_type]), id_vars(cfg[win_type]),
+                in_time, out_time)
 
   if (!is_one_min(interval) && (not_null(in_time) || not_null(out_time))) {
 
@@ -260,13 +309,13 @@ stay_windows <- function(x, id_type = "icustay", win_type = "icustay",
 #'
 #' @param x `icu_tbl` object for which to make the id change
 #' @param target_id The destination id name
-#' @param id_cfg An `id_cfg` object, specifying the id options
+#' @param src Passed to [as_id_cfg()] and [as_src_env()]
 #' @param ... Passed to `upgrade_id()`/`downgrade_id()`
 #'
 #' @rdname change_id
 #' @export
 #'
-change_id <- function(x, target_id, id_cfg, ...) {
+change_id <- function(x, target_id, src, ...) {
 
   assert_that(is.string(target_id))
 
@@ -276,14 +325,16 @@ change_id <- function(x, target_id, id_cfg, ...) {
     return(x)
   }
 
-  opt <- id_var_opts(id_cfg)
-  src <- id_cfg[orig_id   == opt]
-  dst <- id_cfg[target_id == opt]
+  id_cfg <- as_id_cfg(src)
 
-  if (isTRUE(src < dst)) {
-    upgrade_id(x, target_id, id_cfg, ...)
-  } else if (isTRUE(src > dst)) {
-    downgrade_id(x, target_id, id_cfg, ...)
+  opt <- id_var_opts(id_cfg)
+  ori <- id_cfg[orig_id   == opt]
+  fin <- id_cfg[target_id == opt]
+
+  if (isTRUE(ori < fin)) {
+    upgrade_id(x, target_id, src, ...)
+  } else if (isTRUE(ori > fin)) {
+    downgrade_id(x, target_id, src, ...)
   } else {
     stop("Cannot handle conversion of IDs with identical positions")
   }
@@ -294,9 +345,9 @@ change_id <- function(x, target_id, id_cfg, ...) {
 #' @rdname change_id
 #' @export
 #'
-upgrade_id <- function(x, target_id, id_cfg, cols = time_vars(x), ...) {
+upgrade_id <- function(x, target_id, src, cols = time_vars(x), ...) {
 
-  cfg <- as_id_cfg(id_cfg)
+  cfg <- as_id_cfg(src)
   opt <- id_var_opts(cfg)
 
   assert_that(cfg[id_vars(x) == opt] < cfg[target_id == opt])
@@ -307,9 +358,9 @@ upgrade_id <- function(x, target_id, id_cfg, cols = time_vars(x), ...) {
 #' @rdname change_id
 #' @export
 #'
-downgrade_id <- function(x, target_id, id_cfg, cols = time_vars(x), ...) {
+downgrade_id <- function(x, target_id, src, cols = time_vars(x), ...) {
 
-  cfg <- as_id_cfg(id_cfg)
+  cfg <- as_id_cfg(src)
   opt <- id_var_opts(cfg)
 
   assert_that(cfg[id_vars(x) == opt] > cfg[target_id == opt])
@@ -320,7 +371,7 @@ downgrade_id <- function(x, target_id, id_cfg, cols = time_vars(x), ...) {
 #' @rdname change_id
 #' @export
 #'
-upgrade_id.ts_tbl <- function(x, target_id, id_cfg, cols = time_vars(x), ...) {
+upgrade_id.ts_tbl <- function(x, target_id, src, cols = time_vars(x), ...) {
 
   assert_that(index_var(x) %in% cols)
 
@@ -332,7 +383,7 @@ upgrade_id.ts_tbl <- function(x, target_id, id_cfg, cols = time_vars(x), ...) {
   sft <- new_names(x)
   idx <- index_var(x)
 
-  map <- id_map_min(id_cfg, id_vars(x), target_id, sft, idx)
+  map <- id_map(src, id_vars(x), target_id, sft, idx)
 
   res <- map[x, on = meta_vars(x), roll = -Inf, rollends = TRUE]
   res <- res[, c(cols) := lapply(.SD, `-`, get(sft)), .SDcols = cols]
@@ -346,15 +397,15 @@ upgrade_id.ts_tbl <- function(x, target_id, id_cfg, cols = time_vars(x), ...) {
 #' @rdname change_id
 #' @export
 #'
-upgrade_id.id_tbl <- function(x, target_id, id_cfg, cols = time_vars(x), ...) {
+upgrade_id.id_tbl <- function(x, target_id, src, cols = time_vars(x), ...) {
 
-  change_id_helper(x, target_id, id_cfg, cols, "up", ...)
+  change_id_helper(x, target_id, src, cols, "up", ...)
 }
 
 #' @rdname change_id
 #' @export
 #'
-downgrade_id.ts_tbl <- function(x, target_id, id_cfg, cols = time_vars(x),
+downgrade_id.ts_tbl <- function(x, target_id, src, cols = time_vars(x),
                                 ...) {
 
   assert_that(index_var(x) %in% cols)
@@ -364,7 +415,7 @@ downgrade_id.ts_tbl <- function(x, target_id, id_cfg, cols = time_vars(x),
             "interval to 1 minute")
   }
 
-  res <- change_id_helper(x, target_id, id_cfg, cols, "down", ...)
+  res <- change_id_helper(x, target_id, src, cols, "down", ...)
 
   change_interval(res, mins(1L), cols, by_ref = TRUE)
 }
@@ -372,13 +423,13 @@ downgrade_id.ts_tbl <- function(x, target_id, id_cfg, cols = time_vars(x),
 #' @rdname change_id
 #' @export
 #'
-downgrade_id.id_tbl <- function(x, target_id, id_cfg, cols = time_vars(x),
+downgrade_id.id_tbl <- function(x, target_id, src, cols = time_vars(x),
                                 ...) {
 
-  change_id_helper(x, target_id, id_cfg, cols, "down", ...)
+  change_id_helper(x, target_id, src, cols, "down", ...)
 }
 
-change_id_helper <- function(x, targ, cfg, cols, dir = c("down", "up"), ...) {
+change_id_helper <- function(x, targ, src, cols, dir = c("down", "up"), ...) {
 
   dir <- match.arg(dir)
   idx <- id_vars(x)
@@ -390,9 +441,9 @@ change_id_helper <- function(x, targ, cfg, cols, dir = c("down", "up"), ...) {
   }
 
   if (identical(dir, "down")) {
-    map <- id_map_min(cfg, targ, idx, sft, NULL)
+    map <- id_map(src, targ, idx, sft, NULL)
   } else {
-    map <- id_map_min(cfg, idx, targ, sft, NULL)
+    map <- id_map(src, idx, targ, sft, NULL)
   }
 
   res <- merge(x, map, by = idx, ...)

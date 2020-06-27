@@ -31,7 +31,7 @@ attach_src.src_cfg <- function(x, assign_env = .GlobalEnv,
     src <- src_name(x)
 
     dat_env <- data_env()
-    src_env <- new_src_env(src, x, env = new.env(parent = dat_env))
+    src_env <- new_src_env(x, env = new.env(parent = dat_env))
 
     delayedAssign(src, setup_src_env(x, src_env, dir), assign.env = dat_env)
     makeActiveBinding(src, get_from_data_env(src), assign_env)

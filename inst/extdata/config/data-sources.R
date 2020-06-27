@@ -615,57 +615,49 @@ hirid_tbl_cfg <- function() {
 pkg_dir <- rprojroot::find_root(rprojroot::is_r_package)
 cfg_dir <- file.path(pkg_dir, "inst", "extdata", "config")
 
+eicu_id_cfg <- list(
+  hadm = list(id = "patienthealthsystemstayid", position = 1L,
+              start = "hospitaladmitoffset",
+              end = "hospitaldischargeoffset", table = "patient"),
+  icustay = list(id = "patientunitstayid", position = 2L,
+                 start = "unitadmitoffset", end = "unitdischargeoffset",
+                 table = "patient")
+)
+
+mimic_id_cfg <- list(
+  patient = list(id = "subject_id", position = 1L, start = "dob",
+                 end = "dod", table = "patients"),
+  hadm = list(id = "hadm_id", position = 2L, start = "admittime",
+              end = "dischtime", table = "admissions"),
+  icustay = list(id = "icustay_id", position = 3L, start = "intime",
+                 end = "outtime", table = "icustays")
+)
+
 cfg <- list(
   list(
     name = "eicu",
     url = "https://physionet.org/files/eicu-crd/2.0",
-    id_cfg = list(
-      hadm = list(id = "patienthealthsystemstayid", position = 1L,
-                  start = "hospitaladmitoffset",
-                  end = "hospitaldischargeoffset", table = "patient"),
-      icustay = list(id = "patientunitstayid", position = 2L,
-                     end = "unitdischargeoffset", table = "patient")
-    ),
+    id_cfg = eicu_id_cfg,
     tables = eicu_tbl_cfg(is_demo = FALSE)
   ),
   list(
     name = "eicu_demo",
     class_prefix = c("eicu_demo", "eicu"),
     url = "https://physionet.org/files/eicu-crd-demo/2.0",
-    id_cfg = list(
-      hadm = list(id = "patienthealthsystemstayid", position = 1L,
-                  start = "hospitaladmitoffset",
-                  end = "hospitaldischargeoffset", table = "patient"),
-      icustay = list(id = "patientunitstayid", end = "unitdischargeoffset",
-                     table = "patient", position = 2L)
-    ),
+    id_cfg = eicu_id_cfg,
     tables = eicu_tbl_cfg(is_demo = TRUE)
   ),
   list(
     name = "mimic",
     url = "https://physionet.org/files/mimiciii/1.4",
-    id_cfg = list(
-      patient = list(id = "subject_id", position = 1L, start = "dob",
-                     end = "dod", table = "patients"),
-      hadm = list(id = "hadm_id", position = 2L, start = "admittime",
-                  end = "dischtime", table = "admissions"),
-      icustay = list(id = "icustay_id", position = 3L, start = "intime",
-                     end = "outtime", table = "icustays")
-    ),
+    id_cfg = mimic_id_cfg,
     tables = mimic_tbl_cfg(is_demo = FALSE)
   ),
   list(
     name = "mimic_demo",
     class_prefix = c("mimic_demo", "mimic"),
     url = "https://physionet.org/files/mimiciii-demo/1.4",
-    id_cfg = list(
-      patient = list(id = "subject_id", position = 1L, start = "dob",
-                     end = "dod", table = "patients"),
-      hadm = list(id = "hadm_id", position = 2L, start = "admittime",
-                  end = "dischtime", table = "admissions"),
-      icustay = list(id = "icustay_id", position = 3L, start = "intime",
-                     end = "outtime", table = "icustays")
-    ),
+    id_cfg = mimic_id_cfg,
     tables = mimic_tbl_cfg(is_demo = TRUE)
   ),
   list(

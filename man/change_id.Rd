@@ -10,26 +10,26 @@
 \alias{downgrade_id.id_tbl}
 \title{Switch between id types}
 \usage{
-change_id(x, target_id, id_cfg, ...)
+change_id(x, target_id, src, ...)
 
-upgrade_id(x, target_id, id_cfg, cols = time_vars(x), ...)
+upgrade_id(x, target_id, src, cols = time_vars(x), ...)
 
-downgrade_id(x, target_id, id_cfg, cols = time_vars(x), ...)
+downgrade_id(x, target_id, src, cols = time_vars(x), ...)
 
-\method{upgrade_id}{ts_tbl}(x, target_id, id_cfg, cols = time_vars(x), ...)
+\method{upgrade_id}{ts_tbl}(x, target_id, src, cols = time_vars(x), ...)
 
-\method{upgrade_id}{id_tbl}(x, target_id, id_cfg, cols = time_vars(x), ...)
+\method{upgrade_id}{id_tbl}(x, target_id, src, cols = time_vars(x), ...)
 
-\method{downgrade_id}{ts_tbl}(x, target_id, id_cfg, cols = time_vars(x), ...)
+\method{downgrade_id}{ts_tbl}(x, target_id, src, cols = time_vars(x), ...)
 
-\method{downgrade_id}{id_tbl}(x, target_id, id_cfg, cols = time_vars(x), ...)
+\method{downgrade_id}{id_tbl}(x, target_id, src, cols = time_vars(x), ...)
 }
 \arguments{
 \item{x}{\code{icu_tbl} object for which to make the id change}
 
 \item{target_id}{The destination id name}
 
-\item{id_cfg}{An \code{id_cfg} object, specifying the id options}
+\item{src}{Passed to \code{\link[=as_id_cfg]{as_id_cfg()}} and \code{\link[=as_src_env]{as_src_env()}}}
 
 \item{...}{Passed to \code{upgrade_id()}/\code{downgrade_id()}}
 

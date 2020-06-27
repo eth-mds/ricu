@@ -183,12 +183,12 @@ as_src_tbl.character <- function(x, env, ...) {
   as_src_tbl(as_src_env(env), x, ...)
 }
 
-new_src_env <- function(src_name, id_cfg, env = new.env(parent = data_env())) {
+new_src_env <- function(x, env = new.env(parent = data_env())) {
 
-  assert_that(is.string(src_name), is.environment(env))
+  assert_that(is_src_cfg(x), is.environment(env))
 
-  structure(env, class = paste0(c(src_name, "src"), "_env"),
-            src_name = src_name, id_cfg = as_id_cfg(id_cfg))
+  structure(env, class = paste0(c(x[["prefix"]], "src"), "_env"),
+            src_name = src_name(x), id_cfg = as_id_cfg(x))
 }
 
 is_src_env <- function(x) inherits(x, "src_env")

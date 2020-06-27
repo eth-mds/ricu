@@ -30,7 +30,6 @@ Imports:
     prt,
     tibble,
     backports,
-    memoise,
     rlang,
     vctrs,
     cli,

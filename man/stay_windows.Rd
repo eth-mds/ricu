@@ -14,7 +14,7 @@ stay_windows(
 )
 }
 \arguments{
-\item{x}{Object to dispatch on}
+\item{x}{Passed to \code{\link[=as_id_cfg]{as_id_cfg()}} and \code{\link[=as_src_env]{as_src_env()}}}
 
 \item{id_type}{Type of ID all returned times are relative to}
 

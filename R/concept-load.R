@@ -421,15 +421,13 @@ load_concepts.los_itm <- function(x, patient_ids = NULL, id_type = "icustay",
 
   if (identical(win, id_type)) {
 
-    res <- id_map_min(cfg, id_vars(cfg[id_type]), id_vars(cfg[win]),
-                      NULL, "end")
+    res <- id_map(x, id_vars(cfg[id_type]), id_vars(cfg[win]), NULL, "end")
 
     res <- res[, c("val_var", "end") := list(as_day(get("end")), NULL)]
 
   } else {
 
-    res <- id_map_min(cfg, id_vars(cfg[id_type]), id_vars(cfg[win]),
-                      "start", "end")
+    res <- id_map(x, id_vars(cfg[id_type]), id_vars(cfg[win]), "start", "end")
 
     res <- res[, c("val_var", "start", "end") := list(
       as_day(get("end") - get("start")), NULL, NULL
