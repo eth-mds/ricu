@@ -53,6 +53,23 @@
 
 .onAttach <- function(libname, pkgname) {
 
+  src_stats <- function(src) {
+
+    src_env <- tryCatch(
+      get0(src, envir = data_env(), inherits = FALSE),
+      message = function(msg) attr(msg, "tbl_ok"),
+      error = function(err) NULL
+    )
+
+    if (is.null(src_env)) {
+      c(NA_integer_, NA_integer_)
+    } else if (is_src_env(src_env)) {
+      rep(length(src_env), 2L)
+    } else {
+      c(sum(src_env), length(src_env))
+    }
+  }
+
   out <- character(0L)
   con <- textConnection("out", "w", local = TRUE)
   on.exit(close(con))
@@ -61,20 +78,29 @@
   ver <- utils::packageVersion(pkg)
 
   srcs  <- auto_load_src_names()
+  stats <- int_ply(srcs, src_stats, length = 2L)
   avail <- ls(envir = data_env())
-  bull  <- ifelse(srcs %in% avail, "tick", "cross")
-  color <- ifelse(srcs %in% avail, "green", "red")
+  avail <- is_true(srcs %in% avail & stats[1L, ] == stats[2L, ])
+  bull  <- ifelse(avail, "tick", "cross")
+  color <- ifelse(avail, "green", "red")
+  srcs  <- paste0(srcs, ": ", stats[1L, ], " of ", stats[2L, ],
+                  " tables available")
 
+  cli::cat_line(file = con)
   cli::cat_rule(paste(pkg, ver), file = con)
 
   cli::cat_line(
-    "The following data sources are configured to be attached:", file = con
+    "\nThe following data sources are configured to be attached:\n",
+    "(use the environment variable `RICU_SRC_LOAD` to change this)\n",
+    file = con
   )
 
   Map(cli::cat_bullet, srcs, bullet = bull, bullet_col = color,
       MoreArgs = list(file = con))
 
+  cli::cat_line(file = con)
   cli::cat_rule(file = con)
+  cli::cat_line(file = con)
 
   packageStartupMessage(paste(out, collapse = "\n"))
 }

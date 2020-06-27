@@ -115,6 +115,9 @@ setup_src_env.src_cfg <- function(x, env, dir = src_data_dir(x)) {
 
     if (interactive()) {
 
+      msg <- simpleMessage(msg)
+      attr(msg, "tbl_ok") <- setNames(!missing, tables)
+
       message(msg)
       resp <- readline("Download now (Y/n)? ")
 
@@ -124,7 +127,10 @@ setup_src_env.src_cfg <- function(x, env, dir = src_data_dir(x)) {
 
     } else {
 
-      stop(msg)
+      err <- simpleError(msg)
+      class(err) <- c("miss_tbl_err", class(err))
+
+      stop(err)
     }
 
     tmp <- ensure_dirs(tempfile())

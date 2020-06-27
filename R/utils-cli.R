@@ -115,14 +115,14 @@ create_progress_handler <- function(progress_bar) {
         msgs <- c(attr(progress_bar, "messages"), conditionMessage(msg))
         attr(progress_bar, "messages") <- msgs
 
-        tryInvokeRestart("muffleMessage")
+        invokeRestart("muffleMessage")
       }
     }
 
   } else if (isFALSE(progress_bar)) {
 
     function(msg) {
-      if (inherits(msg, "progress_msg")) tryInvokeRestart("muffleMessage")
+      if (inherits(msg, "progress_msg")) invokeRestart("muffleMessage")
     }
 
   } else {

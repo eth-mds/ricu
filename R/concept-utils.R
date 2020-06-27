@@ -170,8 +170,7 @@ init_itm.fun_itm <- function(x, callback, ...) {
 
   assert_that(is_fun_name(callback), is_disjoint(names(x), names(dots)))
 
-  x[["callback"]] <- callback
-  x[names(dots)] <- dots
+  x[c("callback", names(dots))] <- c(list(callback), dots)
 
   x
 }

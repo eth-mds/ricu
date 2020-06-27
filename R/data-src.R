@@ -29,15 +29,20 @@ data_env <- function() get("data", envir = pkg_env(), mode = "environment")
 
 get_from_data_env <- function(source) {
 
-  err_fun <- function(e) {
+  err_fun <- function(err) {
 
-    msg <- conditionMessage(e)
-
-    if (any(!grepl("^\nThe following tables are missing from\n", msg))) {
-      message(msg)
-    }
+    if (!inherits(err, "miss_tbl_err")) stop(err)
 
     invisible(NULL)
+  }
+
+  warn_fun <- function(warn) {
+
+    msg <- warn[["message"]]
+
+    if (identical(msg, "restarting interrupted promise evaluation")) {
+      invokeRestart("muffleWarning")
+    }
   }
 
   source <- force(source)
@@ -48,7 +53,10 @@ get_from_data_env <- function(source) {
       msg = paste0("Cannot update read-only data source `", source, "`")
     )
 
-    tryCatch(as_src_env(source), error = err_fun)
+    tryCatch(
+      withCallingHandlers(as_src_env(source), warning = warn_fun),
+      error = err_fun
+    )
   }
 }
 
@@ -162,7 +170,7 @@ as_src_tbl.src_env <- function(x, tbl, ...) {
 
   assert_that(is.string(tbl))
 
-  res <- get0(tbl, envir = x, ifnotfound = NULL)
+  res <- get0(tbl, envir = x, inherits = FALSE, ifnotfound = NULL)
 
   if (is.null(res)) {
     stop("Table `", tbl, "` not found for `", src_name(x), "`. Available ",
