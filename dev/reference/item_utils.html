@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Internal utilities for <code>item</code>/<code>concept</code> objects — load_cncpt • ICU data with R</title>
+<title>Internal utilities for <code>item</code>/<code>concept</code> objects — prepare_query • ICU data with R</title>
 
 
 <!-- jquery -->
@@ -39,7 +39,7 @@
 
 
 
-<meta property="og:title" content="Internal utilities for <code>item</code>/<code>concept</code> objects — load_cncpt" />
+<meta property="og:title" content="Internal utilities for <code>item</code>/<code>concept</code> objects — prepare_query" />
 <meta property="og:description" content="Internal utilities for item/concept objects" />
 
 
@@ -85,9 +85,6 @@
   </a>
 </li>
 <li>
-  <a href="../articles/ricu.pdf">Get started</a>
-</li>
-<li>
   <a href="../reference/index.html">Reference</a>
 </li>
 <li class="dropdown">
@@ -97,6 +94,9 @@
     <span class="caret"></span>
   </a>
   <ul class="dropdown-menu" role="menu">
+    <li>
+      <a href="../articles/jss.pdf">\pkg{ricu}: \proglang{R}'s interface for ICU data (PDF)</a>
+    </li>
     <li>
       <a href="../articles/uom.html">Units of measurement</a>
     </li>
@@ -132,13 +132,11 @@
     <p>Internal utilities for <code>item</code>/<code>concept</code> objects</p>
     </div>
 
-    <pre class="usage"><span class='fu'>load_cncpt</span>(<span class='no'>x</span>, <span class='no'>verbose</span>, <span class='no'>...</span>)
+    <pre class="usage"><span class='fu'>prepare_query</span>(<span class='kw'>x</span>)
 
-<span class='fu'>load_itm</span>(<span class='no'>x</span>, <span class='no'>patient_ids</span>, <span class='no'>id_type</span>, <span class='no'>interval</span>)
+<span class='fu'>add_unit_var</span>(<span class='kw'>x</span>)
 
-<span class='fu'>prepare_query</span>(<span class='no'>x</span>)
-
-<span class='fu'>add_unit_col</span>(<span class='no'>x</span>)</pre>
+<span class='fu'>target_class</span>(<span class='kw'>x</span>)</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -146,28 +144,6 @@
     <tr>
       <th>x</th>
       <td><p>Object defining the row-subsetting</p></td>
-    </tr>
-    <tr>
-      <th>verbose</th>
-      <td><p>Logical flag for muting informational output</p></td>
-    </tr>
-    <tr>
-      <th>...</th>
-      <td><p>Passed to downstream methods</p></td>
-    </tr>
-    <tr>
-      <th>patient_ids</th>
-      <td><p>Optional vector of patient ids to subset the fetched data
-with</p></td>
-    </tr>
-    <tr>
-      <th>id_type</th>
-      <td><p>String specifying the patient id type to return</p></td>
-    </tr>
-    <tr>
-      <th>interval</th>
-      <td><p>The time interval used to discretize time stamps with,
-specified as <code><a href='https://rdrr.io/r/base/difftime.html'>base::difftime()</a></code> object</p></td>
     </tr>
     </table>
 

@@ -86,9 +86,6 @@ individual sessions." />
   </a>
 </li>
 <li>
-  <a href="../articles/ricu.pdf">Get started</a>
-</li>
-<li>
   <a href="../reference/index.html">Reference</a>
 </li>
 <li class="dropdown">
@@ -98,6 +95,9 @@ individual sessions." />
     <span class="caret"></span>
   </a>
   <ul class="dropdown-menu" role="menu">
+    <li>
+      <a href="../articles/jss.pdf">\pkg{ricu}: \proglang{R}'s interface for ICU data (PDF)</a>
+    </li>
     <li>
       <a href="../articles/uom.html">Units of measurement</a>
     </li>
@@ -134,11 +134,11 @@ individual sessions." />
 individual sessions.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>data_dir</span>(<span class='kw'>subdir</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>create</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>)
+    <pre class="usage"><span class='fu'>data_dir</span>(subdir = <span class='kw'>NULL</span>, create = <span class='fl'>TRUE</span>)
 
-<span class='fu'>get_config</span>(<span class='no'>name</span>, <span class='kw'>dir</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='no'>...</span>)
+<span class='fu'>get_config</span>(<span class='kw'>name</span>, dir = <span class='kw'>NULL</span>, <span class='kw'>...</span>)
 
-<span class='fu'>set_config</span>(<span class='no'>x</span>, <span class='no'>name</span>, <span class='kw'>dir</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/file.path.html'>file.path</a></span>(<span class='st'>"inst"</span>, <span class='st'>"extdata"</span>, <span class='st'>"config"</span>), <span class='no'>...</span>)</pre>
+<span class='fu'>set_config</span>(<span class='kw'>x</span>, <span class='kw'>name</span>, dir = <span class='fu'><a href='https://rdrr.io/r/base/file.path.html'>file.path</a></span>(<span class='st'>"inst"</span>, <span class='st'>"extdata"</span>, <span class='st'>"config"</span>), <span class='kw'>...</span>)</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -195,17 +195,16 @@ to make it apply to all R sessions. For example, it could be set within:</p><ul>
 <p>Any directory specified as environment variable will recursively be created.</p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='fu'><a href='https://rdrr.io/r/base/Sys.setenv.html'>Sys.setenv</a></span>(<span class='kw'>RICU_DATA_PATH</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/tempfile.html'>tempdir</a></span>())
+    <pre class="examples"><div class='input'><span class='fu'><a href='https://rdrr.io/r/base/Sys.setenv.html'>Sys.setenv</a></span>(RICU_DATA_PATH = <span class='fu'><a href='https://rdrr.io/r/base/tempfile.html'>tempdir</a></span>())
 <span class='fu'><a href='https://rdrr.io/r/base/identical.html'>identical</a></span>(<span class='fu'>data_dir</span>(), <span class='fu'><a href='https://rdrr.io/r/base/tempfile.html'>tempdir</a></span>())</div><div class='output co'>#&gt; [1] TRUE</div><div class='input'>
-<span class='fu'><a href='https://rdrr.io/r/base/files2.html'>dir.exists</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/file.path.html'>file.path</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/tempfile.html'>tempdir</a></span>(), <span class='st'>"some_subdir"</span>))</div><div class='output co'>#&gt; [1] FALSE</div><div class='input'><span class='no'>some_subdir</span> <span class='kw'>&lt;-</span> <span class='fu'>data_dir</span>(<span class='st'>"some_subdir"</span>)
-<span class='fu'><a href='https://rdrr.io/r/base/files2.html'>dir.exists</a></span>(<span class='no'>some_subdir</span>)</div><div class='output co'>#&gt; [1] TRUE</div><div class='input'>
-<span class='no'>cfg</span> <span class='kw'>&lt;-</span> <span class='fu'>get_config</span>(<span class='st'>"concept-dict"</span>)
+<span class='fu'><a href='https://rdrr.io/r/base/files2.html'>dir.exists</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/file.path.html'>file.path</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/tempfile.html'>tempdir</a></span>(), <span class='st'>"some_subdir"</span>))</div><div class='output co'>#&gt; [1] FALSE</div><div class='input'><span class='kw'>some_subdir</span> <span class='op'>&lt;-</span> <span class='fu'>data_dir</span>(<span class='st'>"some_subdir"</span>)
+<span class='fu'><a href='https://rdrr.io/r/base/files2.html'>dir.exists</a></span>(<span class='kw'>some_subdir</span>)</div><div class='output co'>#&gt; [1] TRUE</div><div class='input'>
+<span class='kw'>cfg</span> <span class='op'>&lt;-</span> <span class='fu'>get_config</span>(<span class='st'>"concept-dict"</span>)
 <span class='fu'><a href='https://rdrr.io/r/base/identical.html'>identical</a></span>(
-  <span class='no'>cfg</span>,
+  <span class='kw'>cfg</span>,
   <span class='fu'>get_config</span>(<span class='st'>"concept-dict"</span>,
-             <span class='fu'><a href='https://rdrr.io/r/base/system.file.html'>system.file</a></span>(<span class='st'>"extdata"</span>, <span class='st'>"config"</span>, <span class='kw'>package</span> <span class='kw'>=</span> <span class='st'>"ricu"</span>))
-)</div><div class='output co'>#&gt; [1] TRUE</div><div class='input'>
-</div></pre>
+             <span class='fu'><a href='https://rdrr.io/r/base/system.file.html'>system.file</a></span>(<span class='st'>"extdata"</span>, <span class='st'>"config"</span>, package = <span class='st'>"ricu"</span>))
+)</div><div class='output co'>#&gt; [1] TRUE</div><div class='input'></div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">

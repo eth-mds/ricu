@@ -85,9 +85,6 @@
   </a>
 </li>
 <li>
-  <a href="../articles/ricu.pdf">Get started</a>
-</li>
-<li>
   <a href="../reference/index.html">Reference</a>
 </li>
 <li class="dropdown">
@@ -97,6 +94,9 @@
     <span class="caret"></span>
   </a>
   <ul class="dropdown-menu" role="menu">
+    <li>
+      <a href="../articles/jss.pdf">\pkg{ricu}: \proglang{R}'s interface for ICU data (PDF)</a>
+    </li>
     <li>
       <a href="../articles/uom.html">Units of measurement</a>
     </li>
@@ -132,19 +132,19 @@
     <p>Utility functions for working with <code><a href='https://rdrr.io/r/base/difftime.html'>base::difftime()</a></code> objects.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>secs</span>(<span class='no'>x</span>)
+    <pre class="usage"><span class='fu'>secs</span>(<span class='kw'>x</span>)
 
-<span class='fu'>mins</span>(<span class='no'>x</span>)
+<span class='fu'>mins</span>(<span class='kw'>x</span>)
 
-<span class='fu'>hours</span>(<span class='no'>x</span>)
+<span class='fu'>hours</span>(<span class='kw'>x</span>)
 
-<span class='fu'>days</span>(<span class='no'>x</span>)
+<span class='fu'>days</span>(<span class='kw'>x</span>)
 
-<span class='fu'>weeks</span>(<span class='no'>x</span>)
+<span class='fu'>weeks</span>(<span class='kw'>x</span>)
 
-<span class='fu'>is_time</span>(<span class='no'>x</span>, <span class='kw'>allow_neg</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>)
+<span class='fu'>is_time</span>(<span class='kw'>x</span>, allow_neg = <span class='fl'>TRUE</span>)
 
-<span class='fu'>is_time_vec</span>(<span class='no'>x</span>, <span class='kw'>allow_neg</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>)</pre>
+<span class='fu'>is_time_vec</span>(<span class='kw'>x</span>, allow_neg = <span class='fl'>TRUE</span>, interval = <span class='kw'>NULL</span>)</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -156,6 +156,10 @@
     <tr>
       <th>allow_neg</th>
       <td><p>Logical flag indicating whether to allow negative values</p></td>
+    </tr>
+    <tr>
+      <th>interval</th>
+      <td><p>NULL or an interval to check against</p></td>
     </tr>
     </table>
 

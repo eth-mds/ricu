@@ -89,9 +89,6 @@ gained by applying for up an account with PhysioNet ." />
   </a>
 </li>
 <li>
-  <a href="../articles/ricu.pdf">Get started</a>
-</li>
-<li>
   <a href="../reference/index.html">Reference</a>
 </li>
 <li class="dropdown">
@@ -101,6 +98,9 @@ gained by applying for up an account with PhysioNet ." />
     <span class="caret"></span>
   </a>
   <ul class="dropdown-menu" role="menu">
+    <li>
+      <a href="../articles/jss.pdf">\pkg{ricu}: \proglang{R}'s interface for ICU data (PDF)</a>
+    </li>
     <li>
       <a href="../articles/uom.html">Units of measurement</a>
     </li>
@@ -140,21 +140,21 @@ publicly available, full download requires credentialed access which can be
 gained by applying for up an account with <a href='https://physionet.org'>PhysioNet </a>.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>download_src</span>(<span class='no'>x</span>, <span class='no'>...</span>)
+    <pre class="usage"><span class='fu'>download_src</span>(<span class='kw'>x</span>, <span class='kw'>...</span>)
 
 <span class='co'># S3 method for src_cfg</span>
 <span class='fu'>download_src</span>(
-  <span class='no'>x</span>,
-  <span class='kw'>dir</span> <span class='kw'>=</span> <span class='fu'>src_data_dir</span>(<span class='no'>x</span>),
-  <span class='kw'>tables</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>force</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
-  <span class='kw'>user</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>pass</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='no'>...</span>
+  <span class='kw'>x</span>,
+  dir = <span class='fu'>src_data_dir</span>(<span class='kw'>x</span>),
+  tables = <span class='kw'>NULL</span>,
+  force = <span class='fl'>FALSE</span>,
+  user = <span class='kw'>NULL</span>,
+  pass = <span class='kw'>NULL</span>,
+  <span class='kw'>...</span>
 )
 
 <span class='co'># S3 method for character</span>
-<span class='fu'>download_src</span>(<span class='no'>x</span>, <span class='kw'>name</span> <span class='kw'>=</span> <span class='st'>"data-sources"</span>, <span class='kw'>file</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='no'>...</span>)</pre>
+<span class='fu'>download_src</span>(<span class='kw'>x</span>, name = <span class='st'>"data-sources"</span>, file = <span class='kw'>NULL</span>, <span class='kw'>...</span>)</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -231,17 +231,18 @@ Celi LA, Mark RG and Badawi O. Scientific Data (2018). DOI:
 http://dx.doi.org/10.1038/sdata.2018.178.</p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='kw'>if</span> (<span class='fl'>FALSE</span>) {
+    <pre class="examples"><div class='input'><span class='co'>if</span> (<span class='fl'>FALSE</span>) {
 
-<span class='no'>dir</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/tempfile.html'>tempdir</a></span>()
-<span class='fu'><a href='https://rdrr.io/r/base/list.files.html'>list.files</a></span>(<span class='no'>dir</span>)
+<span class='kw'>dir</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/tempfile.html'>tempdir</a></span>()
+<span class='fu'><a href='https://rdrr.io/r/base/list.files.html'>list.files</a></span>(<span class='kw'>dir</span>)
 
-<span class='fu'>download_datasource</span>(<span class='st'>"mimic_demo"</span>, <span class='kw'>dir</span> <span class='kw'>=</span> <span class='no'>dir</span>)
-<span class='fu'><a href='https://rdrr.io/r/base/list.files.html'>list.files</a></span>(<span class='no'>dir</span>)
+<span class='fu'>download_datasource</span>(<span class='st'>"mimic_demo"</span>, dir = <span class='kw'>dir</span>)
+<span class='fu'><a href='https://rdrr.io/r/base/list.files.html'>list.files</a></span>(<span class='kw'>dir</span>)
 
-<span class='fu'><a href='https://rdrr.io/r/base/unlink.html'>unlink</a></span>(<span class='no'>dir</span>, <span class='kw'>recursive</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>)
+<span class='fu'><a href='https://rdrr.io/r/base/unlink.html'>unlink</a></span>(<span class='kw'>dir</span>, recursive = <span class='fl'>TRUE</span>)
 
-}</div></pre>
+}
+</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">

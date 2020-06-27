@@ -88,9 +88,6 @@ mechanisms for loading data." />
   </a>
 </li>
 <li>
-  <a href="../articles/ricu.pdf">Get started</a>
-</li>
-<li>
   <a href="../reference/index.html">Reference</a>
 </li>
 <li class="dropdown">
@@ -100,6 +97,9 @@ mechanisms for loading data." />
     <span class="caret"></span>
   </a>
   <ul class="dropdown-menu" role="menu">
+    <li>
+      <a href="../articles/jss.pdf">\pkg{ricu}: \proglang{R}'s interface for ICU data (PDF)</a>
+    </li>
     <li>
       <a href="../articles/uom.html">Units of measurement</a>
     </li>
@@ -138,68 +138,85 @@ expression (suffix <code>_quo</code>), this set of functions provides the basic
 mechanisms for loading data.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>load_src</span>(<span class='no'>x</span>, <span class='no'>...</span>)
+    <pre class="usage"><span class='fu'>load_src</span>(<span class='kw'>x</span>, <span class='kw'>...</span>)
 
 <span class='co'># S3 method for src_tbl</span>
-<span class='fu'>load_src</span>(<span class='no'>x</span>, <span class='no'>rows</span>, <span class='kw'>cols</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/colnames.html'>colnames</a></span>(<span class='no'>x</span>), <span class='no'>...</span>)
+<span class='fu'>load_src</span>(<span class='kw'>x</span>, <span class='kw'>rows</span>, cols = <span class='fu'><a href='https://rdrr.io/r/base/colnames.html'>colnames</a></span>(<span class='kw'>x</span>), <span class='kw'>...</span>)
 
 <span class='co'># S3 method for character</span>
-<span class='fu'>load_src</span>(<span class='no'>x</span>, <span class='no'>src</span>, <span class='no'>...</span>)
+<span class='fu'>load_src</span>(<span class='kw'>x</span>, <span class='kw'>src</span>, <span class='kw'>...</span>)
 
-<span class='fu'>load_difftime</span>(<span class='no'>x</span>, <span class='no'>...</span>)
+<span class='fu'>load_difftime</span>(<span class='kw'>x</span>, <span class='kw'>...</span>)
 
 <span class='co'># S3 method for mimic_tbl</span>
-<span class='fu'>load_difftime</span>(<span class='no'>x</span>, <span class='no'>rows</span>, <span class='kw'>cols</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/colnames.html'>colnames</a></span>(<span class='no'>x</span>), <span class='kw'>id_hint</span> <span class='kw'>=</span> <span class='fu'><a href='default_col.html'>default_col</a></span>(<span class='no'>x</span>, <span class='st'>"id"</span>), <span class='no'>...</span>)
-
-<span class='co'># S3 method for mimic_demo_tbl</span>
-<span class='fu'>load_difftime</span>(<span class='no'>x</span>, <span class='no'>rows</span>, <span class='kw'>cols</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/colnames.html'>colnames</a></span>(<span class='no'>x</span>), <span class='kw'>id_hint</span> <span class='kw'>=</span> <span class='fu'><a href='default_col.html'>default_col</a></span>(<span class='no'>x</span>, <span class='st'>"id"</span>), <span class='no'>...</span>)
+<span class='fu'>load_difftime</span>(
+  <span class='kw'>x</span>,
+  <span class='kw'>rows</span>,
+  cols = <span class='fu'><a href='https://rdrr.io/r/base/colnames.html'>colnames</a></span>(<span class='kw'>x</span>),
+  id_hint = <span class='fu'>id_vars</span>(<span class='kw'>x</span>),
+  time_vars = <span class='kw'>ricu</span>::<span class='fu'><a href='https://rdrr.io/pkg/ricu/man/tbl_utils.html'>time_vars</a></span>(<span class='kw'>x</span>),
+  <span class='kw'>...</span>
+)
 
 <span class='co'># S3 method for eicu_tbl</span>
-<span class='fu'>load_difftime</span>(<span class='no'>x</span>, <span class='no'>rows</span>, <span class='kw'>cols</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/colnames.html'>colnames</a></span>(<span class='no'>x</span>), <span class='no'>...</span>)
-
-<span class='co'># S3 method for eicu_demo_tbl</span>
-<span class='fu'>load_difftime</span>(<span class='no'>x</span>, <span class='no'>rows</span>, <span class='kw'>cols</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/colnames.html'>colnames</a></span>(<span class='no'>x</span>), <span class='no'>...</span>)
+<span class='fu'>load_difftime</span>(
+  <span class='kw'>x</span>,
+  <span class='kw'>rows</span>,
+  cols = <span class='fu'><a href='https://rdrr.io/r/base/colnames.html'>colnames</a></span>(<span class='kw'>x</span>),
+  id_hint = <span class='fu'>id_vars</span>(<span class='kw'>x</span>),
+  time_vars = <span class='kw'>ricu</span>::<span class='fu'><a href='https://rdrr.io/pkg/ricu/man/tbl_utils.html'>time_vars</a></span>(<span class='kw'>x</span>),
+  <span class='kw'>...</span>
+)
 
 <span class='co'># S3 method for hirid_tbl</span>
-<span class='fu'>load_difftime</span>(<span class='no'>x</span>, <span class='no'>rows</span>, <span class='kw'>cols</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/colnames.html'>colnames</a></span>(<span class='no'>x</span>), <span class='kw'>id_hint</span> <span class='kw'>=</span> <span class='fu'><a href='default_col.html'>default_col</a></span>(<span class='no'>x</span>, <span class='st'>"id"</span>), <span class='no'>...</span>)
+<span class='fu'>load_difftime</span>(
+  <span class='kw'>x</span>,
+  <span class='kw'>rows</span>,
+  cols = <span class='fu'><a href='https://rdrr.io/r/base/colnames.html'>colnames</a></span>(<span class='kw'>x</span>),
+  id_hint = <span class='fu'>id_vars</span>(<span class='kw'>x</span>),
+  time_vars = <span class='kw'>ricu</span>::<span class='fu'><a href='https://rdrr.io/pkg/ricu/man/tbl_utils.html'>time_vars</a></span>(<span class='kw'>x</span>),
+  <span class='kw'>...</span>
+)
 
 <span class='co'># S3 method for character</span>
-<span class='fu'>load_difftime</span>(<span class='no'>x</span>, <span class='no'>src</span>, <span class='no'>...</span>)
+<span class='fu'>load_difftime</span>(<span class='kw'>x</span>, <span class='kw'>src</span>, <span class='kw'>...</span>)
 
-<span class='fu'>load_id</span>(<span class='no'>x</span>, <span class='no'>...</span>)
+<span class='fu'>load_id</span>(<span class='kw'>x</span>, <span class='kw'>...</span>)
 
 <span class='co'># S3 method for src_tbl</span>
 <span class='fu'>load_id</span>(
-  <span class='no'>x</span>,
-  <span class='no'>rows</span>,
-  <span class='kw'>cols</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/colnames.html'>colnames</a></span>(<span class='no'>x</span>),
-  <span class='kw'>id_col</span> <span class='kw'>=</span> <span class='fu'><a href='default_col.html'>default_col</a></span>(<span class='no'>x</span>, <span class='st'>"id"</span>),
-  <span class='kw'>interval</span> <span class='kw'>=</span> <span class='fu'><a href='difftime.html'>hours</a></span>(<span class='fl'>1L</span>),
-  <span class='no'>...</span>
+  <span class='kw'>x</span>,
+  <span class='kw'>rows</span>,
+  cols = <span class='fu'><a href='https://rdrr.io/r/base/colnames.html'>colnames</a></span>(<span class='kw'>x</span>),
+  id_var = <span class='fu'>id_vars</span>(<span class='kw'>x</span>),
+  interval = <span class='fu'>hours</span>(<span class='fl'>1L</span>),
+  time_vars = <span class='kw'>ricu</span>::<span class='fu'><a href='https://rdrr.io/pkg/ricu/man/tbl_utils.html'>time_vars</a></span>(<span class='kw'>x</span>),
+  <span class='kw'>...</span>
 )
 
 <span class='co'># S3 method for character</span>
-<span class='fu'>load_id</span>(<span class='no'>x</span>, <span class='no'>src</span>, <span class='no'>...</span>)
+<span class='fu'>load_id</span>(<span class='kw'>x</span>, <span class='kw'>src</span>, <span class='kw'>...</span>)
 
-<span class='fu'>load_ts</span>(<span class='no'>x</span>, <span class='no'>...</span>)
+<span class='fu'>load_ts</span>(<span class='kw'>x</span>, <span class='kw'>...</span>)
 
 <span class='co'># S3 method for src_tbl</span>
 <span class='fu'>load_ts</span>(
-  <span class='no'>x</span>,
-  <span class='no'>rows</span>,
-  <span class='kw'>cols</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/colnames.html'>colnames</a></span>(<span class='no'>x</span>),
-  <span class='kw'>id_col</span> <span class='kw'>=</span> <span class='fu'><a href='default_col.html'>default_col</a></span>(<span class='no'>x</span>, <span class='st'>"id"</span>),
-  <span class='kw'>index_col</span> <span class='kw'>=</span> <span class='fu'><a href='default_col.html'>default_col</a></span>(<span class='no'>x</span>, <span class='st'>"index"</span>),
-  <span class='kw'>interval</span> <span class='kw'>=</span> <span class='fu'><a href='difftime.html'>hours</a></span>(<span class='fl'>1L</span>),
-  <span class='no'>...</span>
+  <span class='kw'>x</span>,
+  <span class='kw'>rows</span>,
+  cols = <span class='fu'><a href='https://rdrr.io/r/base/colnames.html'>colnames</a></span>(<span class='kw'>x</span>),
+  id_var = <span class='fu'>id_vars</span>(<span class='kw'>x</span>),
+  index_var = <span class='kw'>ricu</span>::<span class='fu'><a href='https://rdrr.io/pkg/ricu/man/tbl_utils.html'>index_var</a></span>(<span class='kw'>x</span>),
+  interval = <span class='fu'>hours</span>(<span class='fl'>1L</span>),
+  time_vars = <span class='kw'>ricu</span>::<span class='fu'><a href='https://rdrr.io/pkg/ricu/man/tbl_utils.html'>time_vars</a></span>(<span class='kw'>x</span>),
+  <span class='kw'>...</span>
 )
 
 <span class='co'># S3 method for character</span>
-<span class='fu'>load_ts</span>(<span class='no'>x</span>, <span class='no'>src</span>, <span class='no'>...</span>)
+<span class='fu'>load_ts</span>(<span class='kw'>x</span>, <span class='kw'>src</span>, <span class='kw'>...</span>)
 
-<span class='fu'>data_id</span>(<span class='no'>source</span>, <span class='no'>table</span>, <span class='no'>...</span>)
+<span class='fu'>data_id</span>(<span class='kw'>source</span>, <span class='kw'>table</span>, <span class='kw'>...</span>)
 
-<span class='fu'>data_ts</span>(<span class='no'>source</span>, <span class='no'>table</span>, <span class='no'>...</span>)</pre>
+<span class='fu'>data_ts</span>(<span class='kw'>source</span>, <span class='kw'>table</span>, <span class='kw'>...</span>)</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -222,14 +239,19 @@ mechanisms for loading data.</p>
     </tr>
     <tr>
       <th>src</th>
-      <td><p>Passed to <code><a href='attach_src.html'>as_src_tbl()</a></code> in order to determine the data source</p></td>
+      <td><p>Passed to <code>as_src_tbl()</code> in order to determine the data source</p></td>
     </tr>
     <tr>
       <th>id_hint</th>
       <td><p>String valued id column selection (not necessarily honored)</p></td>
     </tr>
     <tr>
-      <th>id_col</th>
+      <th>time_vars</th>
+      <td><p>Character vector enumerating the columns to be treated as
+timestamps and thus returned as <code><a href='https://rdrr.io/r/base/difftime.html'>base::difftime()</a></code> vectors</p></td>
+    </tr>
+    <tr>
+      <th>id_var</th>
       <td><p>The column defining the id of <code>ts_tbl</code> and <code>id_tbl</code> objects</p></td>
     </tr>
     <tr>
@@ -238,7 +260,7 @@ mechanisms for loading data.</p>
 specified as <code><a href='https://rdrr.io/r/base/difftime.html'>base::difftime()</a></code> object</p></td>
     </tr>
     <tr>
-      <th>index_col</th>
+      <th>index_var</th>
       <td><p>The column defining the index of <code>ts_tbl</code> objects</p></td>
     </tr>
     <tr>

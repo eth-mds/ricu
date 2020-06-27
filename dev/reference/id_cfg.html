@@ -86,9 +86,6 @@ icustay (ICU stay) can be represented by an id_cfg object." />
   </a>
 </li>
 <li>
-  <a href="../articles/ricu.pdf">Get started</a>
-</li>
-<li>
   <a href="../reference/index.html">Reference</a>
 </li>
 <li class="dropdown">
@@ -98,6 +95,9 @@ icustay (ICU stay) can be represented by an id_cfg object." />
     <span class="caret"></span>
   </a>
   <ul class="dropdown-menu" role="menu">
+    <li>
+      <a href="../articles/jss.pdf">\pkg{ricu}: \proglang{R}'s interface for ICU data (PDF)</a>
+    </li>
     <li>
       <a href="../articles/uom.html">Units of measurement</a>
     </li>
@@ -134,26 +134,34 @@ icustay (ICU stay) can be represented by an id_cfg object." />
 <code>icustay</code> (ICU stay) can be represented by an <code>id_cfg</code> object.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>new_id_cfg</span>(<span class='no'>name</span>, <span class='no'>id</span>, <span class='no'>pos</span>, <span class='no'>start</span>, <span class='no'>end</span>, <span class='no'>table</span>, <span class='no'>src</span>)
+    <pre class="usage"><span class='fu'>new_id_cfg</span>(
+  <span class='kw'>name</span>,
+  <span class='kw'>src</span>,
+  <span class='kw'>id</span>,
+  <span class='kw'>pos</span>,
+  start = <span class='fl'>NA_character_</span>,
+  end = <span class='fl'>NA_character_</span>,
+  table = <span class='fl'>NA_character_</span>,
+  class_prefix = <span class='kw'>src</span>
+)
 
-<span class='fu'>is_id_cfg</span>(<span class='no'>x</span>)
+<span class='fu'>is_id_cfg</span>(<span class='kw'>x</span>)
 
-<span class='fu'>as_id_cfg</span>(<span class='no'>x</span>, <span class='no'>...</span>)
-
-<span class='co'># S3 method for list</span>
-<span class='fu'>as_id_cfg</span>(<span class='no'>x</span>, <span class='no'>src</span>, <span class='no'>...</span>)
+<span class='fu'>as_id_cfg</span>(<span class='kw'>x</span>)
 
 <span class='co'># S3 method for id_cfg</span>
-<span class='fu'>as_id_cfg</span>(<span class='no'>x</span>, <span class='no'>...</span>)
+<span class='fu'>as_id_cfg</span>(<span class='kw'>x</span>)
 
 <span class='co'># S3 method for src_cfg</span>
-<span class='fu'>as_id_cfg</span>(<span class='no'>x</span>, <span class='no'>...</span>)
+<span class='fu'>as_id_cfg</span>(<span class='kw'>x</span>)
 
 <span class='co'># S3 method for src_env</span>
-<span class='fu'>as_id_cfg</span>(<span class='no'>x</span>, <span class='no'>...</span>)
+<span class='fu'>as_id_cfg</span>(<span class='kw'>x</span>)
 
 <span class='co'># S3 method for default</span>
-<span class='fu'>as_id_cfg</span>(<span class='no'>x</span>, <span class='no'>...</span>)</pre>
+<span class='fu'>as_id_cfg</span>(<span class='kw'>x</span>)
+
+<span class='fu'>id_var_opts</span>(<span class='kw'>x</span>)</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">

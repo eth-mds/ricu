@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Switch between id types — change_id • ICU data with R</title>
+<title>Tabular ICU data — id_tbl • ICU data with R</title>
 
 
 <!-- jquery -->
@@ -39,10 +39,9 @@
 
 
 
-<meta property="og:title" content="Switch between id types — change_id" />
-<meta property="og:description" content="In ICU settings, multiple ID types may be in use which present an ordering
-or nested structure, for example patient id, hospital stay id and ICU stay
-id. This function allows for converting from one ID to another." />
+<meta property="og:title" content="Tabular ICU data — id_tbl" />
+<meta property="og:description" content="Two objects central to ricu, id_tbl and ts_tbl (both inheriting
+from id_tbl) are used to represent tabular data." />
 
 
 <meta name="robots" content="noindex">
@@ -125,57 +124,127 @@ id. This function allows for converting from one ID to another." />
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Switch between id types</h1>
+    <h1>Tabular ICU data</h1>
     
-    <div class="hidden name"><code>change_id.Rd</code></div>
+    <div class="hidden name"><code>id_tbl.Rd</code></div>
     </div>
 
     <div class="ref-description">
-    <p>In ICU settings, multiple ID types may be in use which present an ordering
-or nested structure, for example patient id, hospital stay id and ICU stay
-id. This function allows for converting from one ID to another.</p>
+    <p>Two objects central to <code>ricu</code>, <code>id_tbl</code> and <code>ts_tbl</code> (both inheriting
+from <code>id_tbl</code>) are used to represent tabular data.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>change_id</span>(<span class='kw'>x</span>, <span class='kw'>target_id</span>, <span class='kw'>src</span>, <span class='kw'>...</span>)
+    <pre class="usage"><span class='fu'>id_tbl</span>(<span class='kw'>...</span>, id_vars = <span class='fl'>1L</span>)
 
-<span class='fu'>upgrade_id</span>(<span class='kw'>x</span>, <span class='kw'>target_id</span>, <span class='kw'>src</span>, cols = <span class='fu'>time_vars</span>(<span class='kw'>x</span>), <span class='kw'>...</span>)
+<span class='fu'>is_id_tbl</span>(<span class='kw'>x</span>)
 
-<span class='fu'>downgrade_id</span>(<span class='kw'>x</span>, <span class='kw'>target_id</span>, <span class='kw'>src</span>, cols = <span class='fu'>time_vars</span>(<span class='kw'>x</span>), <span class='kw'>...</span>)
-
-<span class='co'># S3 method for ts_tbl</span>
-<span class='fu'>upgrade_id</span>(<span class='kw'>x</span>, <span class='kw'>target_id</span>, <span class='kw'>src</span>, cols = <span class='fu'>time_vars</span>(<span class='kw'>x</span>), <span class='kw'>...</span>)
-
-<span class='co'># S3 method for id_tbl</span>
-<span class='fu'>upgrade_id</span>(<span class='kw'>x</span>, <span class='kw'>target_id</span>, <span class='kw'>src</span>, cols = <span class='fu'>time_vars</span>(<span class='kw'>x</span>), <span class='kw'>...</span>)
+<span class='fu'>as_id_tbl</span>(<span class='kw'>x</span>, id_vars = <span class='kw'>NULL</span>, by_ref = <span class='fl'>FALSE</span>)
 
 <span class='co'># S3 method for ts_tbl</span>
-<span class='fu'>downgrade_id</span>(<span class='kw'>x</span>, <span class='kw'>target_id</span>, <span class='kw'>src</span>, cols = <span class='fu'>time_vars</span>(<span class='kw'>x</span>), <span class='kw'>...</span>)
+<span class='fu'>as_id_tbl</span>(<span class='kw'>x</span>, id_vars = <span class='kw'>NULL</span>, by_ref = <span class='fl'>FALSE</span>)
 
 <span class='co'># S3 method for id_tbl</span>
-<span class='fu'>downgrade_id</span>(<span class='kw'>x</span>, <span class='kw'>target_id</span>, <span class='kw'>src</span>, cols = <span class='fu'>time_vars</span>(<span class='kw'>x</span>), <span class='kw'>...</span>)</pre>
+<span class='fu'>as_id_tbl</span>(<span class='kw'>x</span>, id_vars = <span class='kw'>NULL</span>, by_ref = <span class='fl'>FALSE</span>)
+
+<span class='co'># S3 method for data.table</span>
+<span class='fu'>as_id_tbl</span>(<span class='kw'>x</span>, id_vars = <span class='kw'>NULL</span>, by_ref = <span class='fl'>FALSE</span>)
+
+<span class='co'># S3 method for default</span>
+<span class='fu'>as_id_tbl</span>(<span class='kw'>x</span>, id_vars = <span class='kw'>NULL</span>, by_ref = <span class='fl'>FALSE</span>)
+
+<span class='fu'>ts_tbl</span>(<span class='kw'>...</span>, id_vars = <span class='fl'>1L</span>, index_var = <span class='kw'>NULL</span>, interval = <span class='kw'>NULL</span>)
+
+<span class='fu'>is_ts_tbl</span>(<span class='kw'>x</span>)
+
+<span class='fu'>as_ts_tbl</span>(<span class='kw'>x</span>, id_vars = <span class='kw'>NULL</span>, index_var = <span class='kw'>NULL</span>, interval = <span class='kw'>NULL</span>, by_ref = <span class='fl'>FALSE</span>)
+
+<span class='co'># S3 method for ts_tbl</span>
+<span class='fu'>as_ts_tbl</span>(<span class='kw'>x</span>, id_vars = <span class='kw'>NULL</span>, index_var = <span class='kw'>NULL</span>, interval = <span class='kw'>NULL</span>, by_ref = <span class='fl'>FALSE</span>)
+
+<span class='co'># S3 method for id_tbl</span>
+<span class='fu'>as_ts_tbl</span>(<span class='kw'>x</span>, id_vars = <span class='kw'>NULL</span>, index_var = <span class='kw'>NULL</span>, interval = <span class='kw'>NULL</span>, by_ref = <span class='fl'>FALSE</span>)
+
+<span class='co'># S3 method for data.table</span>
+<span class='fu'>as_ts_tbl</span>(<span class='kw'>x</span>, id_vars = <span class='kw'>NULL</span>, index_var = <span class='kw'>NULL</span>, interval = <span class='kw'>NULL</span>, by_ref = <span class='fl'>FALSE</span>)
+
+<span class='co'># S3 method for default</span>
+<span class='fu'>as_ts_tbl</span>(<span class='kw'>x</span>, id_vars = <span class='kw'>NULL</span>, index_var = <span class='kw'>NULL</span>, interval = <span class='kw'>NULL</span>, by_ref = <span class='fl'>FALSE</span>)
+
+<span class='fu'>unclass_tbl</span>(<span class='kw'>x</span>)
+
+<span class='co'># S3 method for ts_tbl</span>
+<span class='fu'>unclass_tbl</span>(<span class='kw'>x</span>)
+
+<span class='co'># S3 method for id_tbl</span>
+<span class='fu'>unclass_tbl</span>(<span class='kw'>x</span>)
+
+<span class='fu'>reclass_tbl</span>(<span class='kw'>x</span>, <span class='kw'>template</span>, stop_on_fail = <span class='fl'>TRUE</span>)
+
+<span class='co'># S3 method for `NULL`</span>
+<span class='fu'>reclass_tbl</span>(<span class='kw'>x</span>, <span class='kw'>template</span>, stop_on_fail = <span class='fl'>TRUE</span>)
+
+<span class='co'># S3 method for id_tbl</span>
+<span class='fu'>reclass_tbl</span>(<span class='kw'>x</span>, <span class='kw'>template</span>, stop_on_fail = <span class='fl'>TRUE</span>)
+
+<span class='co'># S3 method for ts_tbl</span>
+<span class='fu'>reclass_tbl</span>(<span class='kw'>x</span>, <span class='kw'>template</span>, stop_on_fail = <span class='fl'>TRUE</span>)
+
+<span class='fu'>as_ptype</span>(<span class='kw'>x</span>)
+
+<span class='co'># S3 method for id_tbl</span>
+<span class='fu'>as_ptype</span>(<span class='kw'>x</span>)
+
+<span class='co'># S3 method for ts_tbl</span>
+<span class='fu'>as_ptype</span>(<span class='kw'>x</span>)
+
+<span class='fu'>validate_tbl</span>(<span class='kw'>x</span>)
+
+<span class='co'># S3 method for id_tbl</span>
+<span class='fu'>validate_tbl</span>(<span class='kw'>x</span>)
+
+<span class='co'># S3 method for ts_tbl</span>
+<span class='fu'>validate_tbl</span>(<span class='kw'>x</span>)
+
+<span class='co'># S3 method for data.table</span>
+<span class='fu'>validate_tbl</span>(<span class='kw'>x</span>)</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
-      <th>x</th>
-      <td><p><code>icu_tbl</code> object for which to make the id change</p></td>
-    </tr>
-    <tr>
-      <th>target_id</th>
-      <td><p>The destination id name</p></td>
-    </tr>
-    <tr>
-      <th>src</th>
-      <td><p>Passed to <code>as_id_cfg()</code> and <code>as_src_env()</code></p></td>
-    </tr>
-    <tr>
       <th>...</th>
-      <td><p>Passed to <code>upgrade_id()</code>/<code>downgrade_id()</code></p></td>
+      <td><p>forwarded to <code><a href='https://Rdatatable.gitlab.io/data.table/reference/data.table.html'>data.table::data.table()</a></code> or generic consistency</p></td>
     </tr>
     <tr>
-      <th>cols</th>
-      <td><p>Column names that require time-adjustment</p></td>
+      <th>id_vars</th>
+      <td><p>Column name(s) to be used as <code>id</code> column(s)</p></td>
+    </tr>
+    <tr>
+      <th>x</th>
+      <td><p>Object to query/operate on</p></td>
+    </tr>
+    <tr>
+      <th>by_ref</th>
+      <td><p>Logical flag indicating whether to perform the operation by
+reference</p></td>
+    </tr>
+    <tr>
+      <th>index_var</th>
+      <td><p>Column name of the index column</p></td>
+    </tr>
+    <tr>
+      <th>interval</th>
+      <td><p>Time series interval length specified as scalar-valued
+<code>difftime</code> object</p></td>
+    </tr>
+    <tr>
+      <th>template</th>
+      <td><p>Object after which to model the object in question</p></td>
+    </tr>
+    <tr>
+      <th>stop_on_fail</th>
+      <td><p>Logical flag indicating whether to consider failed
+object validation as error</p></td>
     </tr>
     </table>
 

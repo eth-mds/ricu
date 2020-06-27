@@ -88,9 +88,6 @@ split into chunks in order to keep memory requirements under control." />
   </a>
 </li>
 <li>
-  <a href="../articles/ricu.pdf">Get started</a>
-</li>
-<li>
   <a href="../reference/index.html">Reference</a>
 </li>
 <li class="dropdown">
@@ -100,6 +97,9 @@ split into chunks in order to keep memory requirements under control." />
     <span class="caret"></span>
   </a>
   <ul class="dropdown-menu" role="menu">
+    <li>
+      <a href="../articles/jss.pdf">\pkg{ricu}: \proglang{R}'s interface for ICU data (PDF)</a>
+    </li>
     <li>
       <a href="../articles/uom.html">Units of measurement</a>
     </li>
@@ -138,18 +138,18 @@ format, which allows for random row and column access. Large tables are
 split into chunks in order to keep memory requirements under control.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>import_src</span>(<span class='no'>x</span>, <span class='no'>...</span>)
+    <pre class="usage"><span class='fu'>import_src</span>(<span class='kw'>x</span>, <span class='kw'>...</span>)
 
 <span class='co'># S3 method for src_cfg</span>
-<span class='fu'>import_src</span>(<span class='no'>x</span>, <span class='kw'>dir</span> <span class='kw'>=</span> <span class='fu'>src_data_dir</span>(<span class='no'>x</span>), <span class='kw'>force</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='no'>...</span>)
+<span class='fu'>import_src</span>(<span class='kw'>x</span>, dir = <span class='fu'>src_data_dir</span>(<span class='kw'>x</span>), force = <span class='fl'>FALSE</span>, <span class='kw'>...</span>)
 
 <span class='co'># S3 method for character</span>
-<span class='fu'>import_src</span>(<span class='no'>x</span>, <span class='kw'>name</span> <span class='kw'>=</span> <span class='st'>"data-sources"</span>, <span class='kw'>file</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='no'>...</span>)
+<span class='fu'>import_src</span>(<span class='kw'>x</span>, name = <span class='st'>"data-sources"</span>, file = <span class='kw'>NULL</span>, <span class='kw'>...</span>)
 
-<span class='fu'>import_tbl</span>(<span class='no'>x</span>, <span class='no'>...</span>)
+<span class='fu'>import_tbl</span>(<span class='kw'>x</span>, <span class='kw'>...</span>)
 
-<span class='co'># S3 method for tbl_spec</span>
-<span class='fu'>import_tbl</span>(<span class='no'>x</span>, <span class='kw'>dir</span> <span class='kw'>=</span> <span class='fu'>src_data_dir</span>(<span class='no'>x</span>), <span class='kw'>progress</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>cleanup</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='no'>...</span>)</pre>
+<span class='co'># S3 method for tbl_cfg</span>
+<span class='fu'>import_tbl</span>(<span class='kw'>x</span>, dir = <span class='fu'>src_data_dir</span>(<span class='kw'>x</span>), progress = <span class='kw'>NULL</span>, <span class='kw'>...</span>)</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -165,7 +165,7 @@ split into chunks in order to keep memory requirements under control.</p>
     <tr>
       <th>dir</th>
       <td><p>The directory where the data was downloaded to (see
-<code><a href='download.html'>download_src()</a></code>).</p></td>
+<code>download_src()</code>).</p></td>
     </tr>
     <tr>
       <th>force</th>
@@ -186,11 +186,6 @@ the default config directors</p></td>
       <td><p>Either <code>NULL</code> or a progress bar as created by
 <code><a href='https://rdrr.io/pkg/progress/man/progress_bar.html'>progress::progress_bar()</a></code></p></td>
     </tr>
-    <tr>
-      <th>cleanup</th>
-      <td><p>Logical flag, if <code>TRUE</code> the original CSV data is deleted
-after successful import.</p></td>
-    </tr>
     </table>
 
     <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
@@ -207,9 +202,9 @@ a list node defining a single column is a named list with a required,
 string-valued <code>type</code> entry which is interpreted as <code>readr</code> column
 specification function (see <code><a href='https://readr.tidyverse.org/reference/cols.html'>readr::cols()</a></code>). Further list entries will be
 passed as arguments to the column specification function. A column defined
-as</p><pre><span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span>(<span class='kw'>type</span> <span class='kw'>=</span> <span class='st'>"col_datetime"</span>, <span class='kw'>format</span> <span class='kw'>=</span> <span class='st'>"%Y-%m-%d %H:%M:%S"</span>)</pre>
+as</p><pre><span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span>(type = <span class='st'>"col_datetime"</span>, format = <span class='st'>"%Y-%m-%d %H:%M:%S"</span>)</pre>
 
-<p>will therefore result in a <code>readr</code> column specification like</p><pre><span class='fu'>col_datetime</span>(<span class='kw'>format</span> <span class='kw'>=</span> <span class='st'>"%Y-%m-%d %H:%M:%S"</span>)</pre>
+<p>will therefore result in a <code>readr</code> column specification like</p><pre><span class='fu'>col_datetime</span>(format = <span class='st'>"%Y-%m-%d %H:%M:%S"</span>)</pre>
 
 <p>Entries controlling the partitioning of tables, specified as <code>partitioning</code>
 list nodes are expected to be named lists of length 1, where the name
@@ -217,43 +212,44 @@ corresponds to the column used for partitioning and partitions are defined
 as integer vector which is passed to <code><a href='https://rdrr.io/r/base/findInterval.html'>base::findInterval()</a></code>. This implies
 that partitions can only be created on integer valued columns.</p>
 <p>Putting all this together, the expected structure of <code>config</code> is as</p><pre><span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span>(
-  <span class='kw'>name</span> <span class='kw'>=</span> <span class='st'>"some_name"</span>,
-  <span class='kw'>base_url</span> <span class='kw'>=</span> <span class='st'>"some_url"</span>,
-  <span class='kw'>version</span> <span class='kw'>=</span> <span class='st'>"major.minor"</span>,
-  <span class='kw'>tables</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span>(
-    <span class='kw'>file_name_table_1</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span>(
-      <span class='kw'>col_spec</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span>(
-        <span class='kw'>colname_1</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span>(<span class='kw'>type</span> <span class='kw'>=</span> <span class='st'>"col_*"</span>),
-        <span class='kw'>colname_2</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span>(<span class='kw'>type</span> <span class='kw'>=</span> <span class='st'>"col_*"</span>),
-        <span class='no'>...</span>
+  name = <span class='st'>"some_name"</span>,
+  base_url = <span class='st'>"some_url"</span>,
+  version = <span class='st'>"major.minor"</span>,
+  tables = <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span>(
+    file_name_table_1 = <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span>(
+      col_spec = <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span>(
+        colname_1 = <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span>(type = <span class='st'>"col_*"</span>),
+        colname_2 = <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span>(type = <span class='st'>"col_*"</span>),
+        <span class='kw'>...</span>
       )
     ),
-    <span class='kw'>file_name_table_2</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span>(
-      <span class='kw'>col_spec</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span>(<span class='no'>...</span>),
-      <span class='kw'>partitioning</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span>(<span class='kw'>colname_i</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>0L</span>, ))
+    file_name_table_2 = <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span>(
+      col_spec = <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span>(<span class='kw'>...</span>),
+      partitioning = <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span>(colname_i = <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>0L</span>, ))
     ),
-    <span class='no'>...</span>
+    <span class='kw'>...</span>
   )
 )</pre>
 
 <p>Configurations for the MIMIC-III and eICU databases are available in
-<code>extdata/config</code> as JSON files and can be read in using <code><a href='file_utils.html'>get_config()</a></code>.</p>
+<code>extdata/config</code> as JSON files and can be read in using <code>get_config()</code>.</p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='kw'>if</span> (<span class='fl'>FALSE</span>) {
+    <pre class="examples"><div class='input'><span class='co'>if</span> (<span class='fl'>FALSE</span>) {
 
-<span class='no'>dir</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/tempfile.html'>tempdir</a></span>()
-<span class='fu'><a href='https://rdrr.io/r/base/list.files.html'>list.files</a></span>(<span class='no'>dir</span>)
+<span class='kw'>dir</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/tempfile.html'>tempdir</a></span>()
+<span class='fu'><a href='https://rdrr.io/r/base/list.files.html'>list.files</a></span>(<span class='kw'>dir</span>)
 
-<span class='fu'><a href='download.html'>download_src</a></span>(<span class='st'>"mimic_demo"</span>, <span class='no'>dir</span>)
-<span class='fu'><a href='https://rdrr.io/r/base/list.files.html'>list.files</a></span>(<span class='no'>dir</span>)
+<span class='fu'>download_src</span>(<span class='st'>"mimic_demo"</span>, <span class='kw'>dir</span>)
+<span class='fu'><a href='https://rdrr.io/r/base/list.files.html'>list.files</a></span>(<span class='kw'>dir</span>)
 
-<span class='fu'>import_src</span>(<span class='st'>"mimic_demo"</span>, <span class='no'>dir</span>)
-<span class='fu'><a href='https://rdrr.io/r/base/list.files.html'>list.files</a></span>(<span class='no'>dir</span>)
+<span class='fu'>import_src</span>(<span class='st'>"mimic_demo"</span>, <span class='kw'>dir</span>)
+<span class='fu'><a href='https://rdrr.io/r/base/list.files.html'>list.files</a></span>(<span class='kw'>dir</span>)
 
-<span class='fu'><a href='https://rdrr.io/r/base/unlink.html'>unlink</a></span>(<span class='no'>dir</span>, <span class='kw'>recursive</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>)
+<span class='fu'><a href='https://rdrr.io/r/base/unlink.html'>unlink</a></span>(<span class='kw'>dir</span>, recursive = <span class='fl'>TRUE</span>)
 
-}</div></pre>
+}
+</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">

@@ -7,6 +7,9 @@
     <loc>https://septic-tank.github.io/ricu/reference/attach_src.html</loc>
   </url>
   <url>
+    <loc>https://septic-tank.github.io/ricu/reference/cfg_utils.html</loc>
+  </url>
+  <url>
     <loc>https://septic-tank.github.io/ricu/reference/change_id.html</loc>
   </url>
   <url>
@@ -22,9 +25,6 @@
     <loc>https://septic-tank.github.io/ricu/reference/data_utils.html</loc>
   </url>
   <url>
-    <loc>https://septic-tank.github.io/ricu/reference/default_col.html</loc>
-  </url>
-  <url>
     <loc>https://septic-tank.github.io/ricu/reference/difftime.html</loc>
   </url>
   <url>
@@ -34,10 +34,10 @@
     <loc>https://septic-tank.github.io/ricu/reference/file_utils.html</loc>
   </url>
   <url>
-    <loc>https://septic-tank.github.io/ricu/reference/icu_tbl.html</loc>
+    <loc>https://septic-tank.github.io/ricu/reference/id_cfg.html</loc>
   </url>
   <url>
-    <loc>https://septic-tank.github.io/ricu/reference/id_cfg.html</loc>
+    <loc>https://septic-tank.github.io/ricu/reference/id_tbl.html</loc>
   </url>
   <url>
     <loc>https://septic-tank.github.io/ricu/reference/import.html</loc>
@@ -49,6 +49,9 @@
     <loc>https://septic-tank.github.io/ricu/reference/label_si.html</loc>
   </url>
   <url>
+    <loc>https://septic-tank.github.io/ricu/reference/label_sirs.html</loc>
+  </url>
+  <url>
     <loc>https://septic-tank.github.io/ricu/reference/label_sofa.html</loc>
   </url>
   <url>
@@ -56,9 +59,6 @@
   </url>
   <url>
     <loc>https://septic-tank.github.io/ricu/reference/load_src.html</loc>
-  </url>
-  <url>
-    <loc>https://septic-tank.github.io/ricu/reference/meta_utils.html</loc>
   </url>
   <url>
     <loc>https://septic-tank.github.io/ricu/reference/read_src_cfg.html</loc>
@@ -73,10 +73,10 @@
     <loc>https://septic-tank.github.io/ricu/reference/stay_windows.html</loc>
   </url>
   <url>
-    <loc>https://septic-tank.github.io/ricu/reference/tbl_meta.html</loc>
+    <loc>https://septic-tank.github.io/ricu/reference/tbl_cfg.html</loc>
   </url>
   <url>
-    <loc>https://septic-tank.github.io/ricu/reference/tbl_spec.html</loc>
+    <loc>https://septic-tank.github.io/ricu/reference/tbl_meta.html</loc>
   </url>
   <url>
     <loc>https://septic-tank.github.io/ricu/reference/tbl_utils.html</loc>
@@ -88,7 +88,7 @@
     <loc>https://septic-tank.github.io/ricu/reference/utils.html</loc>
   </url>
   <url>
-    <loc>https://septic-tank.github.io/ricu/articles/ricu.pdf</loc>
+    <loc>https://septic-tank.github.io/ricu/articles/jss.pdf</loc>
   </url>
   <url>
     <loc>https://septic-tank.github.io/ricu/articles/uom.html</loc>

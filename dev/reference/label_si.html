@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Suspicion of infection label — si_data • ICU data with R</title>
+<title>Suspicion of infection label — susp_inf • ICU data with R</title>
 
 
 <!-- jquery -->
@@ -39,7 +39,7 @@
 
 
 
-<meta property="og:title" content="Suspicion of infection label — si_data" />
+<meta property="og:title" content="Suspicion of infection label — susp_inf" />
 <meta property="og:description" content="Suspected infection is defined as co-occurrence of of antibiotic treatment
 and body-fluid sampling." />
 
@@ -86,9 +86,6 @@ and body-fluid sampling." />
   </a>
 </li>
 <li>
-  <a href="../articles/ricu.pdf">Get started</a>
-</li>
-<li>
   <a href="../reference/index.html">Reference</a>
 </li>
 <li class="dropdown">
@@ -98,6 +95,9 @@ and body-fluid sampling." />
     <span class="caret"></span>
   </a>
   <ul class="dropdown-menu" role="menu">
+    <li>
+      <a href="../articles/jss.pdf">\pkg{ricu}: \proglang{R}'s interface for ICU data (PDF)</a>
+    </li>
     <li>
       <a href="../articles/uom.html">Units of measurement</a>
     </li>
@@ -134,32 +134,32 @@ and body-fluid sampling." />
 and body-fluid sampling.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>si_data</span>(
-  <span class='no'>source</span>,
-  <span class='kw'>abx_count_win</span> <span class='kw'>=</span> <span class='fu'><a href='difftime.html'>hours</a></span>(<span class='fl'>24L</span>),
-  <span class='kw'>abx_min_count</span> <span class='kw'>=</span> <span class='fl'>1L</span>,
-  <span class='kw'>positive_cultures</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
-  <span class='kw'>dictionary</span> <span class='kw'>=</span> <span class='fu'><a href='data_concepts.html'>read_dictionary</a></span>(<span class='no'>source</span>),
-  <span class='no'>...</span>
+    <pre class="usage"><span class='fu'>susp_inf</span>(
+  <span class='kw'>antibiotics</span>,
+  <span class='kw'>fluid_sampling</span>,
+  abx_count_win = <span class='fu'>hours</span>(<span class='fl'>24L</span>),
+  abx_min_count = <span class='fl'>1L</span>,
+  positive_cultures = <span class='fl'>FALSE</span>,
+  <span class='kw'>...</span>,
+  interval = <span class='kw'>ricu</span>::<span class='fu'><a href='https://rdrr.io/pkg/ricu/man/tbl_utils.html'>interval</a></span>(<span class='kw'>antibiotics</span>)
 )
 
 <span class='fu'>si_windows</span>(
-  <span class='no'>tbl</span>,
-  <span class='kw'>si_mode</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"and"</span>, <span class='st'>"or"</span>),
-  <span class='kw'>abx_win</span> <span class='kw'>=</span> <span class='fu'><a href='difftime.html'>hours</a></span>(<span class='fl'>24L</span>),
-  <span class='kw'>samp_win</span> <span class='kw'>=</span> <span class='fu'><a href='difftime.html'>hours</a></span>(<span class='fl'>72L</span>),
-  <span class='kw'>si_lwr</span> <span class='kw'>=</span> <span class='fu'><a href='difftime.html'>hours</a></span>(<span class='fl'>48L</span>),
-  <span class='kw'>si_upr</span> <span class='kw'>=</span> <span class='fu'><a href='difftime.html'>hours</a></span>(<span class='fl'>24L</span>)
-)
-
-<span class='fu'>si</span>(<span class='no'>source</span>, <span class='no'>...</span>)</pre>
+  <span class='kw'>tbl</span>,
+  si_mode = <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"and"</span>, <span class='st'>"or"</span>),
+  abx_win = <span class='fu'>hours</span>(<span class='fl'>24L</span>),
+  samp_win = <span class='fu'>hours</span>(<span class='fl'>72L</span>),
+  si_lwr = <span class='fu'>hours</span>(<span class='fl'>48L</span>),
+  si_upr = <span class='fu'>hours</span>(<span class='fl'>24L</span>)
+)</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
-      <th>source</th>
-      <td><p>String valued name of data source</p></td>
+      <th>antibiotics, fluid_sampling</th>
+      <td><p>Data input used for determining suspicion
+of infection (<code>ts_tbl</code> objects, as produced by <code>load_concepts()</code>)</p></td>
     </tr>
     <tr>
       <th>abx_count_win</th>
@@ -176,12 +176,13 @@ criterion</p></td>
 cultures to be positive</p></td>
     </tr>
     <tr>
-      <th>dictionary</th>
-      <td><p><code>dictionary</code> object to use for concept lookup</p></td>
+      <th>...</th>
+      <td><p>Passed to <code>si_windows()</code></p></td>
     </tr>
     <tr>
-      <th>...</th>
-      <td><p>Passed to <code><a href='load_concepts.html'>load_concepts()</a></code></p></td>
+      <th>interval</th>
+      <td><p>Time series interval (only used for checking consistency
+of input data)</p></td>
     </tr>
     <tr>
       <th>tbl</th>

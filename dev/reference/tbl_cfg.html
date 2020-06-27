@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Stays — stay_windows • ICU data with R</title>
+<title>Table specification — new_tbl_cfg • ICU data with R</title>
 
 
 <!-- jquery -->
@@ -39,8 +39,10 @@
 
 
 
-<meta property="og:title" content="Stays — stay_windows" />
-<meta property="og:description" content="For a given ID type, get all stays with corresponding start and end times." />
+<meta property="og:title" content="Table specification — new_tbl_cfg" />
+<meta property="og:description" content="Used when importing a data source, a table specification defines column
+data types, source file names, a mapping of source to imported column
+names and optionally a number of expected rows and a partitioning scheme." />
 
 
 <meta name="robots" content="noindex">
@@ -123,47 +125,69 @@
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Stays</h1>
+    <h1>Table specification</h1>
     
-    <div class="hidden name"><code>stay_windows.Rd</code></div>
+    <div class="hidden name"><code>tbl_cfg.Rd</code></div>
     </div>
 
     <div class="ref-description">
-    <p>For a given ID type, get all stays with corresponding start and end times.</p>
+    <p>Used when importing a data source, a table specification defines column
+data types, source file names, a mapping of source to imported column
+names and optionally a number of expected rows and a partitioning scheme.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>stay_windows</span>(
-  <span class='kw'>x</span>,
-  id_type = <span class='st'>"icustay"</span>,
-  win_type = <span class='st'>"icustay"</span>,
-  in_time = <span class='st'>"start"</span>,
-  out_time = <span class='st'>"end"</span>,
-  interval = <span class='fu'>hours</span>(<span class='fl'>1L</span>)
-)</pre>
+    <pre class="usage"><span class='fu'>new_tbl_cfg</span>(
+  <span class='kw'>table</span>,
+  <span class='kw'>src</span>,
+  <span class='kw'>files</span>,
+  <span class='kw'>cols</span>,
+  num_rows = <span class='kw'>NULL</span>,
+  partitioning = <span class='kw'>NULL</span>,
+  class_prefix = <span class='kw'>src</span>
+)
+
+<span class='fu'>is_tbl_cfg</span>(<span class='kw'>x</span>)
+
+<span class='fu'>as_tbl_cfg</span>(<span class='kw'>x</span>)
+
+<span class='co'># S3 method for tbl_cfg</span>
+<span class='fu'>as_tbl_cfg</span>(<span class='kw'>x</span>)
+
+<span class='co'># S3 method for src_cfg</span>
+<span class='fu'>as_tbl_cfg</span>(<span class='kw'>x</span>)</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
+      <th>table</th>
+      <td><p>String valued table name</p></td>
+    </tr>
+    <tr>
+      <th>files</th>
+      <td><p>A character vector of file names</p></td>
+    </tr>
+    <tr>
+      <th>cols</th>
+      <td><p>List containing a list per column each holding string valued
+entries <code>name</code> (column name as used by <code>ricu</code>), <code>col</code> (column name as used
+in the raw data) and <code>spec</code> (name of <code><a href='https://readr.tidyverse.org/reference/cols.html'>readr::cols()</a></code> column specification).
+Further entries will be passed as argument to the respective <code>readr</code> column
+specification</p></td>
+    </tr>
+    <tr>
+      <th>partitioning</th>
+      <td><p>A table partitioning is defined by a column name and a
+vector of numeric values that are passed as <code>vec</code> argument to
+<code><a href='https://rdrr.io/r/base/findInterval.html'>base::findInterval()</a></code></p></td>
+    </tr>
+    <tr>
       <th>x</th>
-      <td><p>Passed to <code>as_id_cfg()</code> and <code>as_src_env()</code></p></td>
+      <td><p>Object to test/coerce</p></td>
     </tr>
     <tr>
-      <th>id_type</th>
-      <td><p>Type of ID all returned times are relative to</p></td>
-    </tr>
-    <tr>
-      <th>win_type</th>
-      <td><p>Type of ID for which the in/out times is returned</p></td>
-    </tr>
-    <tr>
-      <th>in_time, out_time</th>
-      <td><p>column names of the returned in/out times</p></td>
-    </tr>
-    <tr>
-      <th>interval</th>
-      <td><p>The time interval used to discretize time stamps with,
-specified as <code><a href='https://rdrr.io/r/base/difftime.html'>base::difftime()</a></code> object</p></td>
+      <th>nrow</th>
+      <td><p>A count indicating the expected number of rows</p></td>
     </tr>
     </table>
 

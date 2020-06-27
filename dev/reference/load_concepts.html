@@ -86,9 +86,6 @@ of id and time-step and merged into wide format." />
   </a>
 </li>
 <li>
-  <a href="../articles/ricu.pdf">Get started</a>
-</li>
-<li>
   <a href="../reference/index.html">Reference</a>
 </li>
 <li class="dropdown">
@@ -98,6 +95,9 @@ of id and time-step and merged into wide format." />
     <span class="caret"></span>
   </a>
   <ul class="dropdown-menu" role="menu">
+    <li>
+      <a href="../articles/jss.pdf">\pkg{ricu}: \proglang{R}'s interface for ICU data (PDF)</a>
+    </li>
     <li>
       <a href="../articles/uom.html">Units of measurement</a>
     </li>
@@ -134,34 +134,94 @@ of id and time-step and merged into wide format." />
 of id and time-step and merged into wide format.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>load_concepts</span>(<span class='no'>x</span>, <span class='no'>...</span>)
+    <pre class="usage"><span class='fu'>load_concepts</span>(<span class='kw'>x</span>, <span class='kw'>...</span>)
 
 <span class='co'># S3 method for character</span>
-<span class='fu'>load_concepts</span>(<span class='no'>x</span>, <span class='kw'>src</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>concepts</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='no'>...</span>)
+<span class='fu'>load_concepts</span>(<span class='kw'>x</span>, src = <span class='kw'>NULL</span>, concepts = <span class='kw'>NULL</span>, <span class='kw'>...</span>)
 
 <span class='co'># S3 method for concept</span>
+<span class='fu'>load_concepts</span>(<span class='kw'>x</span>, aggregate = <span class='kw'>NULL</span>, merge_data = <span class='fl'>TRUE</span>, verbose = <span class='fl'>TRUE</span>, <span class='kw'>...</span>)
+
+<span class='co'># S3 method for cncpt</span>
+<span class='fu'>load_concepts</span>(<span class='kw'>x</span>, aggregate = <span class='kw'>NULL</span>, <span class='kw'>...</span>, progress = <span class='kw'>NULL</span>)
+
+<span class='co'># S3 method for num_cncpt</span>
+<span class='fu'>load_concepts</span>(<span class='kw'>x</span>, aggregate = <span class='kw'>NULL</span>, <span class='kw'>...</span>, progress = <span class='kw'>NULL</span>)
+
+<span class='co'># S3 method for fct_cncpt</span>
+<span class='fu'>load_concepts</span>(<span class='kw'>x</span>, aggregate = <span class='kw'>NULL</span>, <span class='kw'>...</span>, progress = <span class='kw'>NULL</span>)
+
+<span class='co'># S3 method for rec_cncpt</span>
 <span class='fu'>load_concepts</span>(
-  <span class='no'>x</span>,
-  <span class='kw'>aggregate</span> <span class='kw'>=</span> <span class='fl'>NA_character_</span>,
-  <span class='kw'>merge_data</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
-  <span class='kw'>verbose</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
-  <span class='no'>...</span>
+  <span class='kw'>x</span>,
+  aggregate = <span class='kw'>NULL</span>,
+  patient_ids = <span class='kw'>NULL</span>,
+  id_type = <span class='st'>"icustay"</span>,
+  interval = <span class='fu'>hours</span>(<span class='fl'>1L</span>),
+  <span class='kw'>...</span>,
+  progress = <span class='kw'>NULL</span>
 )
 
 <span class='co'># S3 method for item</span>
 <span class='fu'>load_concepts</span>(
-  <span class='no'>x</span>,
-  <span class='kw'>patient_ids</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>id_type</span> <span class='kw'>=</span> <span class='st'>"icustay"</span>,
-  <span class='kw'>interval</span> <span class='kw'>=</span> <span class='fu'><a href='difftime.html'>hours</a></span>(<span class='fl'>1L</span>),
-  <span class='no'>...</span>
+  <span class='kw'>x</span>,
+  patient_ids = <span class='kw'>NULL</span>,
+  id_type = <span class='st'>"icustay"</span>,
+  interval = <span class='fu'>hours</span>(<span class='fl'>1L</span>),
+  progress = <span class='kw'>NULL</span>,
+  <span class='kw'>...</span>
+)
+
+<span class='co'># S3 method for col_itm</span>
+<span class='fu'>load_concepts</span>(
+  <span class='kw'>x</span>,
+  patient_ids = <span class='kw'>NULL</span>,
+  id_type = <span class='st'>"icustay"</span>,
+  interval = <span class='fu'>hours</span>(<span class='fl'>1L</span>),
+  <span class='kw'>...</span>
+)
+
+<span class='co'># S3 method for sel_itm</span>
+<span class='fu'>load_concepts</span>(
+  <span class='kw'>x</span>,
+  patient_ids = <span class='kw'>NULL</span>,
+  id_type = <span class='st'>"icustay"</span>,
+  interval = <span class='fu'>hours</span>(<span class='fl'>1L</span>),
+  <span class='kw'>...</span>
+)
+
+<span class='co'># S3 method for rgx_itm</span>
+<span class='fu'>load_concepts</span>(
+  <span class='kw'>x</span>,
+  patient_ids = <span class='kw'>NULL</span>,
+  id_type = <span class='st'>"icustay"</span>,
+  interval = <span class='fu'>hours</span>(<span class='fl'>1L</span>),
+  <span class='kw'>...</span>
+)
+
+<span class='co'># S3 method for hrd_itm</span>
+<span class='fu'>load_concepts</span>(
+  <span class='kw'>x</span>,
+  patient_ids = <span class='kw'>NULL</span>,
+  id_type = <span class='st'>"icustay"</span>,
+  interval = <span class='fu'>hours</span>(<span class='fl'>1L</span>),
+  <span class='kw'>...</span>
+)
+
+<span class='co'># S3 method for fun_itm</span>
+<span class='fu'>load_concepts</span>(
+  <span class='kw'>x</span>,
+  patient_ids = <span class='kw'>NULL</span>,
+  id_type = <span class='st'>"icustay"</span>,
+  interval = <span class='fu'>hours</span>(<span class='fl'>1L</span>),
+  <span class='kw'>...</span>
 )
 
 <span class='fu'>load_dictionary</span>(
-  <span class='kw'>source</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>concepts</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>dictionary</span> <span class='kw'>=</span> <span class='fu'><a href='data_concepts.html'>read_dictionary</a></span>(<span class='no'>source</span>),
-  <span class='no'>...</span>
+  source = <span class='kw'>NULL</span>,
+  concepts = <span class='kw'>NULL</span>,
+  dictionary = <span class='fu'>read_dictionary</span>(<span class='kw'>source</span>),
+  <span class='kw'>...</span>
 )</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
@@ -197,6 +257,11 @@ wide format or return a list, each entry corresponding to a concept</p></td>
     <tr>
       <th>verbose</th>
       <td><p>Logical flag for muting informational output</p></td>
+    </tr>
+    <tr>
+      <th>progress</th>
+      <td><p>Either <code>NULL</code>, or a progress bar object as created by
+<a href='https://rdrr.io/pkg/progress/man/progress_bar.html'>progress::progress_bar</a></p></td>
     </tr>
     <tr>
       <th>patient_ids</th>

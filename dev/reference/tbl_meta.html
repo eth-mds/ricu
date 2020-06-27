@@ -41,10 +41,7 @@
 
 <meta property="og:title" content="Read and write utilities — write_psv" />
 <meta property="og:description" content="Support for reading from and writing to .psv files as used for the
-Physionet Sepsis Challenge.
-Tabular ICU data as used by ricu frequently contains a column that defines
-a grouping structure (e.g. patient IDs, ICU stay IDs, etc.) and a column
-holding time information." />
+Physionet Sepsis Challenge." />
 
 
 <meta name="robots" content="noindex">
@@ -89,9 +86,6 @@ holding time information." />
   </a>
 </li>
 <li>
-  <a href="../articles/ricu.pdf">Get started</a>
-</li>
-<li>
   <a href="../reference/index.html">Reference</a>
 </li>
 <li class="dropdown">
@@ -101,6 +95,9 @@ holding time information." />
     <span class="caret"></span>
   </a>
   <ul class="dropdown-menu" role="menu">
+    <li>
+      <a href="../articles/jss.pdf">\pkg{ricu}: \proglang{R}'s interface for ICU data (PDF)</a>
+    </li>
     <li>
       <a href="../articles/uom.html">Units of measurement</a>
     </li>
@@ -135,90 +132,18 @@ holding time information." />
     <div class="ref-description">
     <p>Support for reading from and writing to <code>.psv</code> files as used for the
 Physionet Sepsis Challenge.</p>
-<p>Tabular ICU data as used by <code>ricu</code> frequently contains a column that defines
-a grouping structure (e.g. patient IDs, ICU stay IDs, etc.) and a column
-holding time information.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>write_psv</span>(<span class='no'>x</span>, <span class='no'>dir</span>, <span class='kw'>na_rows</span> <span class='kw'>=</span> <span class='kw'>NULL</span>)
+    <pre class="usage"><span class='fu'>write_psv</span>(<span class='kw'>x</span>, <span class='kw'>dir</span>, na_rows = <span class='kw'>NULL</span>)
 
-<span class='fu'>read_psv</span>(<span class='no'>dir</span>, <span class='kw'>col_spec</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>id_col</span> <span class='kw'>=</span> <span class='st'>"stay_id"</span>)
-
-<span class='fu'>new_id_meta</span>(<span class='no'>tbl_id</span>)
-
-<span class='fu'>is_id_meta</span>(<span class='no'>x</span>)
-
-<span class='fu'>as_id_meta</span>(<span class='no'>x</span>)
-
-<span class='co'># S3 method for id_meta</span>
-<span class='fu'>as_id_meta</span>(<span class='no'>x</span>)
-
-<span class='co'># S3 method for ts_meta</span>
-<span class='fu'>as_id_meta</span>(<span class='no'>x</span>)
-
-<span class='co'># S3 method for id_meta</span>
-<span class='fu'><a href='meta_utils.html'>meta_cols</a></span>(<span class='no'>x</span>)
-
-<span class='co'># S3 method for id_meta</span>
-<span class='fu'>tbl_class</span>(<span class='no'>x</span>)
-
-<span class='co'># S3 method for id_meta</span>
-<span class='fu'>validate_meta</span>(<span class='no'>x</span>, <span class='no'>meta</span>)
-
-<span class='fu'>new_tbl_index</span>(<span class='no'>index</span>, <span class='no'>interval</span>)
-
-<span class='fu'>new_tbl_id</span>(<span class='no'>id</span>, <span class='kw'>opts</span> <span class='kw'>=</span> <span class='kw'>NULL</span>)
-
-<span class='fu'>is_tbl_index</span>(<span class='no'>x</span>)
-
-<span class='fu'>is_tbl_id</span>(<span class='no'>x</span>)
-
-<span class='co'># S3 method for tbl_index</span>
-<span class='fu'>tbl_index</span>(<span class='no'>x</span>)
-
-<span class='co'># S3 method for tbl_id</span>
-<span class='fu'>tbl_id</span>(<span class='no'>x</span>)
-
-<span class='fu'>new_ts_meta</span>(<span class='no'>tbl_id</span>, <span class='no'>tbl_index</span>)
-
-<span class='fu'>is_ts_meta</span>(<span class='no'>x</span>)
-
-<span class='co'># S3 method for ts_meta</span>
-<span class='fu'>validate_meta</span>(<span class='no'>x</span>, <span class='no'>meta</span>)
-
-<span class='fu'>is_tbl_meta</span>(<span class='no'>x</span>)
-
-<span class='fu'>tbl_meta</span>(<span class='no'>x</span>)
-
-<span class='co'># S3 method for tbl_meta</span>
-<span class='fu'>tbl_meta</span>(<span class='no'>x</span>)
-
-<span class='co'># S3 method for tbl_meta</span>
-<span class='fu'>tbl_id</span>(<span class='no'>x</span>)
-
-<span class='fu'>validate_meta</span>(<span class='no'>x</span>, <span class='no'>meta</span>)
-
-<span class='co'># S3 method for icu_tbl</span>
-<span class='fu'>tbl_meta</span>(<span class='no'>x</span>)
-
-<span class='co'># S3 method for icu_tbl</span>
-<span class='fu'>tbl_id</span>(<span class='no'>x</span>)
-
-<span class='fu'>tbl_index</span>(<span class='no'>x</span>)
-
-<span class='fu'>tbl_id</span>(<span class='no'>x</span>)
-
-<span class='fu'>tbl_class</span>(<span class='no'>x</span>)
-
-<span class='co'># S3 method for icu_tbl</span>
-<span class='fu'>tbl_class</span>(<span class='no'>x</span>)</pre>
+<span class='fu'>read_psv</span>(<span class='kw'>dir</span>, col_spec = <span class='kw'>NULL</span>, id_var = <span class='st'>"stay_id"</span>)</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
       <th>x</th>
-      <td><p>Object to query/coerce</p></td>
+      <td><p>Object to write to files</p></td>
     </tr>
     <tr>
       <th>dir</th>
@@ -235,33 +160,8 @@ if <code>NULL</code>, data is written as-is</p></td>
       <td><p>A column specification as created by <code><a href='https://readr.tidyverse.org/reference/cols.html'>readr::cols()</a></code></p></td>
     </tr>
     <tr>
-      <th>id_col</th>
+      <th>id_var</th>
       <td><p>Name of the id column (IDs are generated from file names)</p></td>
-    </tr>
-    <tr>
-      <th>tbl_id, tbl_index</th>
-      <td><p>Meta data objects to construct <code>tbl_meta</code> objects
-with</p></td>
-    </tr>
-    <tr>
-      <th>meta</th>
-      <td><p>Meta data object to validate</p></td>
-    </tr>
-    <tr>
-      <th>index</th>
-      <td><p>Column name of the index column</p></td>
-    </tr>
-    <tr>
-      <th>interval</th>
-      <td><p>Minimal time interval between rows</p></td>
-    </tr>
-    <tr>
-      <th>id</th>
-      <td><p>Column name of the ID column</p></td>
-    </tr>
-    <tr>
-      <th>opts</th>
-      <td><p>Alternative ID systems</p></td>
     </tr>
     </table>
 

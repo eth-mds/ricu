@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Stays — stay_windows • ICU data with R</title>
+<title>Get default columns — src_name • ICU data with R</title>
 
 
 <!-- jquery -->
@@ -39,8 +39,9 @@
 
 
 
-<meta property="og:title" content="Stays — stay_windows" />
-<meta property="og:description" content="For a given ID type, get all stays with corresponding start and end times." />
+<meta property="og:title" content="Get default columns — src_name" />
+<meta property="og:description" content="For a table, query the default columns as specified by an id_cfg
+(new_id_cfg()) or col_cfg (new_col_cfg()) object." />
 
 
 <meta name="robots" content="noindex">
@@ -123,47 +124,44 @@
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Stays</h1>
+    <h1>Get default columns</h1>
     
-    <div class="hidden name"><code>stay_windows.Rd</code></div>
+    <div class="hidden name"><code>cfg_utils.Rd</code></div>
     </div>
 
     <div class="ref-description">
-    <p>For a given ID type, get all stays with corresponding start and end times.</p>
+    <p>For a table, query the default columns as specified by an <code>id_cfg</code>
+(<code>new_id_cfg()</code>) or <code>col_cfg</code> (<code>new_col_cfg()</code>) object.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>stay_windows</span>(
-  <span class='kw'>x</span>,
-  id_type = <span class='st'>"icustay"</span>,
-  win_type = <span class='st'>"icustay"</span>,
-  in_time = <span class='st'>"start"</span>,
-  out_time = <span class='st'>"end"</span>,
-  interval = <span class='fu'>hours</span>(<span class='fl'>1L</span>)
-)</pre>
+    <pre class="usage"><span class='fu'>src_name</span>(<span class='kw'>x</span>)
+
+<span class='co'># S3 method for src_cfg</span>
+<span class='fu'>src_name</span>(<span class='kw'>x</span>)
+
+<span class='co'># S3 method for id_cfg</span>
+<span class='fu'>src_name</span>(<span class='kw'>x</span>)
+
+<span class='co'># S3 method for col_cfg</span>
+<span class='fu'>src_name</span>(<span class='kw'>x</span>)
+
+<span class='co'># S3 method for tbl_cfg</span>
+<span class='fu'>src_name</span>(<span class='kw'>x</span>)
+
+<span class='fu'>tbl_name</span>(<span class='kw'>x</span>)
+
+<span class='co'># S3 method for col_cfg</span>
+<span class='fu'>tbl_name</span>(<span class='kw'>x</span>)
+
+<span class='co'># S3 method for tbl_cfg</span>
+<span class='fu'>tbl_name</span>(<span class='kw'>x</span>)</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
       <th>x</th>
-      <td><p>Passed to <code>as_id_cfg()</code> and <code>as_src_env()</code></p></td>
-    </tr>
-    <tr>
-      <th>id_type</th>
-      <td><p>Type of ID all returned times are relative to</p></td>
-    </tr>
-    <tr>
-      <th>win_type</th>
-      <td><p>Type of ID for which the in/out times is returned</p></td>
-    </tr>
-    <tr>
-      <th>in_time, out_time</th>
-      <td><p>column names of the returned in/out times</p></td>
-    </tr>
-    <tr>
-      <th>interval</th>
-      <td><p>The time interval used to discretize time stamps with,
-specified as <code><a href='https://rdrr.io/r/base/difftime.html'>base::difftime()</a></code> object</p></td>
+      <td><p>Object used for dispatch</p></td>
     </tr>
     </table>
 

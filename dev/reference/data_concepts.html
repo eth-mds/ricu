@@ -85,9 +85,6 @@
   </a>
 </li>
 <li>
-  <a href="../articles/ricu.pdf">Get started</a>
-</li>
-<li>
   <a href="../reference/index.html">Reference</a>
 </li>
 <li class="dropdown">
@@ -97,6 +94,9 @@
     <span class="caret"></span>
   </a>
   <ul class="dropdown-menu" role="menu">
+    <li>
+      <a href="../articles/jss.pdf">\pkg{ricu}: \proglang{R}'s interface for ICU data (PDF)</a>
+    </li>
     <li>
       <a href="../articles/uom.html">Units of measurement</a>
     </li>
@@ -132,43 +132,58 @@
     <p>Clinical concepts are represented by <code>concept</code> objects.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>item</span>(<span class='no'>...</span>)
+    <pre class="usage"><span class='fu'>item</span>(<span class='kw'>...</span>)
 
-<span class='fu'>as_item</span>(<span class='no'>x</span>)
+<span class='fu'>as_item</span>(<span class='kw'>x</span>)
 
-<span class='fu'>new_cncpt</span>(<span class='no'>name</span>, <span class='no'>items</span>, <span class='no'>...</span>, <span class='kw'>class</span> <span class='kw'>=</span> <span class='st'>"num_cncpt"</span>)
+<span class='fu'>n_tick</span>(<span class='kw'>x</span>)
 
-<span class='fu'>is_cncpt</span>(<span class='no'>x</span>, <span class='no'>...</span>)
+<span class='co'># S3 method for itm</span>
+<span class='fu'>n_tick</span>(<span class='kw'>x</span>)
 
-<span class='fu'>init_cncpt</span>(<span class='no'>x</span>, <span class='no'>...</span>)
+<span class='co'># S3 method for item</span>
+<span class='fu'>n_tick</span>(<span class='kw'>x</span>)
+
+<span class='fu'>new_cncpt</span>(<span class='kw'>name</span>, <span class='kw'>items</span>, aggregate = <span class='kw'>NULL</span>, <span class='kw'>...</span>, class = <span class='st'>"num_cncpt"</span>)
+
+<span class='fu'>is_cncpt</span>(<span class='kw'>x</span>, <span class='kw'>...</span>)
+
+<span class='fu'>init_cncpt</span>(<span class='kw'>x</span>, <span class='kw'>...</span>)
 
 <span class='co'># S3 method for num_cncpt</span>
-<span class='fu'>init_cncpt</span>(<span class='no'>x</span>, <span class='kw'>unit</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>min</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>max</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='no'>...</span>)
+<span class='fu'>init_cncpt</span>(<span class='kw'>x</span>, unit = <span class='kw'>NULL</span>, min = <span class='kw'>NULL</span>, max = <span class='kw'>NULL</span>, <span class='kw'>...</span>)
 
 <span class='co'># S3 method for fct_cncpt</span>
-<span class='fu'>init_cncpt</span>(<span class='no'>x</span>, <span class='no'>levels</span>, <span class='no'>...</span>)
+<span class='fu'>init_cncpt</span>(<span class='kw'>x</span>, <span class='kw'>levels</span>, <span class='kw'>...</span>)
 
 <span class='co'># S3 method for cncpt</span>
-<span class='fu'>init_cncpt</span>(<span class='no'>x</span>, <span class='no'>...</span>)
+<span class='fu'>init_cncpt</span>(<span class='kw'>x</span>, <span class='kw'>...</span>)
+
+<span class='co'># S3 method for rec_cncpt</span>
+<span class='fu'>init_cncpt</span>(<span class='kw'>x</span>, <span class='kw'>callback</span>, target = <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"ts_tbl"</span>, <span class='st'>"id_tbl"</span>), interval = <span class='kw'>NULL</span>, <span class='kw'>...</span>)
 
 <span class='co'># S3 method for cncpt</span>
-<span class='fu'>src_name</span>(<span class='no'>x</span>)
+<span class='fu'>src_name</span>(<span class='kw'>x</span>)
 
-<span class='fu'>new_concept</span>(<span class='no'>x</span>)
+<span class='co'># S3 method for cncpt</span>
+<span class='fu'>n_tick</span>(<span class='kw'>x</span>)
 
-<span class='fu'>concept</span>(<span class='no'>...</span>)
+<span class='fu'>new_concept</span>(<span class='kw'>x</span>)
 
-<span class='fu'>is_concept</span>(<span class='no'>x</span>)
+<span class='fu'>concept</span>(<span class='kw'>...</span>)
+
+<span class='fu'>is_concept</span>(<span class='kw'>x</span>)
+
+<span class='co'># S3 method for concept</span>
+<span class='fu'>n_tick</span>(<span class='kw'>x</span>)
 
 <span class='fu'>read_dictionary</span>(
-  <span class='kw'>src</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>concepts</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>name</span> <span class='kw'>=</span> <span class='st'>"concept-dict"</span>,
-  <span class='kw'>file</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='no'>...</span>
-)
-
-<span class='fu'>src_name</span>(<span class='no'>x</span>)</pre>
+  src = <span class='kw'>NULL</span>,
+  concepts = <span class='kw'>NULL</span>,
+  name = <span class='st'>"concept-dict"</span>,
+  file = <span class='kw'>NULL</span>,
+  <span class='kw'>...</span>
+)</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -191,6 +206,11 @@
       <td><p>Zero or more <code>itm</code> objects</p></td>
     </tr>
     <tr>
+      <th>aggregate</th>
+      <td><p>NULL or a string denoting a function used to aggregate per
+id and if applicable per time step</p></td>
+    </tr>
+    <tr>
       <th>class</th>
       <td><p><code>NULL</code> or a string-valued sub-class name used for customizing
 concept behavior</p></td>
@@ -208,6 +228,20 @@ numeric concept</p></td>
     <tr>
       <th>levels</th>
       <td><p>A vector of possible values a categorical concept may take on</p></td>
+    </tr>
+    <tr>
+      <th>callback</th>
+      <td><p>Name of a function to be called on the returned data used
+for data cleanup operations</p></td>
+    </tr>
+    <tr>
+      <th>target</th>
+      <td><p>The target object yielded by loading</p></td>
+    </tr>
+    <tr>
+      <th>interval</th>
+      <td><p>Time interval used for data loading; if NULL, the respective
+interval passed as argument to <code>load_concepts()</code> is taken</p></td>
     </tr>
     <tr>
       <th>src</th>

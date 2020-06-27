@@ -86,9 +86,6 @@ created." />
   </a>
 </li>
 <li>
-  <a href="../articles/ricu.pdf">Get started</a>
-</li>
-<li>
   <a href="../reference/index.html">Reference</a>
 </li>
 <li class="dropdown">
@@ -98,6 +95,9 @@ created." />
     <span class="caret"></span>
   </a>
   <ul class="dropdown-menu" role="menu">
+    <li>
+      <a href="../articles/jss.pdf">\pkg{ricu}: \proglang{R}'s interface for ICU data (PDF)</a>
+    </li>
     <li>
       <a href="../articles/uom.html">Units of measurement</a>
     </li>
@@ -134,19 +134,18 @@ created." />
 created.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>new_src_cfg</span>(<span class='no'>name</span>, <span class='no'>id_cfg</span>, <span class='no'>tables</span>, <span class='kw'>url</span> <span class='kw'>=</span> <span class='kw'>NULL</span>)
+    <pre class="usage"><span class='fu'>new_src_cfg</span>(
+  <span class='kw'>name</span>,
+  <span class='kw'>id_cfg</span>,
+  <span class='kw'>col_cfg</span>,
+  tbl_cfg = <span class='kw'>NULL</span>,
+  url = <span class='kw'>NULL</span>,
+  class_prefix = <span class='kw'>NULL</span>
+)
 
-<span class='fu'>is_src_cfg</span>(<span class='no'>x</span>)
+<span class='fu'>is_src_cfg</span>(<span class='kw'>x</span>)
 
-<span class='fu'>as_src_cfg</span>(<span class='no'>x</span>, <span class='no'>...</span>)
-
-<span class='co'># S3 method for src_cfg</span>
-<span class='fu'>as_src_cfg</span>(<span class='no'>x</span>, <span class='no'>...</span>)
-
-<span class='co'># S3 method for list</span>
-<span class='fu'>as_src_cfg</span>(<span class='no'>x</span>, <span class='no'>...</span>)
-
-<span class='fu'>src_url</span>(<span class='no'>x</span>)</pre>
+<span class='fu'>src_url</span>(<span class='kw'>x</span>)</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -157,21 +156,21 @@ created.</p>
     </tr>
     <tr>
       <th>id_cfg</th>
-      <td><p>List passed to <code><a href='id_cfg.html'>new_id_cfg()</a></code></p></td>
-    </tr>
-    <tr>
-      <th>tables</th>
-      <td><p>List passed to <code><a href='col_cfg.html'>as_col_cfg()</a></code> and potentially to
-<code><a href='tbl_spec.html'>as_tbl_spec()</a></code></p></td>
+      <td><p>List passed to <code>new_id_cfg()</code></p></td>
     </tr>
     <tr>
       <th>url</th>
       <td><p>String valued url used for data downloading (see
-<code><a href='download.html'>download_src()</a></code>)</p></td>
+<code>download_src()</code>)</p></td>
     </tr>
     <tr>
       <th>x</th>
       <td><p>Object to test/coerce</p></td>
+    </tr>
+    <tr>
+      <th>tables</th>
+      <td><p>List passed to <code>as_col_cfg()</code> and potentially to
+<code>as_tbl_cfg()</code></p></td>
     </tr>
     </table>
 

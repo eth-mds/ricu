@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Time series utility functions — expand_limits • ICU data with R</title>
+<title>Time series utility functions — extend_ts • ICU data with R</title>
 
 
 <!-- jquery -->
@@ -39,7 +39,7 @@
 
 
 
-<meta property="og:title" content="Time series utility functions — expand_limits" />
+<meta property="og:title" content="Time series utility functions — extend_ts" />
 <meta property="og:description" content="Time series utility functions" />
 
 
@@ -85,9 +85,6 @@
   </a>
 </li>
 <li>
-  <a href="../articles/ricu.pdf">Get started</a>
-</li>
-<li>
   <a href="../reference/index.html">Reference</a>
 </li>
 <li class="dropdown">
@@ -97,6 +94,9 @@
     <span class="caret"></span>
   </a>
   <ul class="dropdown-menu" role="menu">
+    <li>
+      <a href="../articles/jss.pdf">\pkg{ricu}: \proglang{R}'s interface for ICU data (PDF)</a>
+    </li>
     <li>
       <a href="../articles/uom.html">Units of measurement</a>
     </li>
@@ -132,38 +132,34 @@
     <p>Time series utility functions</p>
     </div>
 
-    <pre class="usage"><span class='fu'>expand_limits</span>(
-  <span class='no'>x</span>,
-  <span class='kw'>min_col</span> <span class='kw'>=</span> <span class='st'>"min"</span>,
-  <span class='kw'>max_col</span> <span class='kw'>=</span> <span class='st'>"max"</span>,
-  <span class='kw'>step_size</span> <span class='kw'>=</span> <span class='fl'>1L</span>,
-  <span class='kw'>id_cols</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>new_col</span> <span class='kw'>=</span> <span class='st'>"hadm_time"</span>
+    <pre class="usage"><span class='fu'>extend_ts</span>(
+  <span class='kw'>x</span>,
+  min_col = <span class='st'>"min"</span>,
+  max_col = <span class='st'>"max"</span>,
+  step_size = <span class='fl'>1L</span>,
+  id_vars = <span class='kw'>NULL</span>,
+  new_col = <span class='st'>"hadm_time"</span>
 )
 
-<span class='fu'>has_no_gaps</span>(<span class='no'>x</span>)
+<span class='fu'>has_no_gaps</span>(<span class='kw'>x</span>)
 
-<span class='fu'>has_gaps</span>(<span class='no'>...</span>)
+<span class='fu'>has_gaps</span>(<span class='kw'>...</span>)
 
-<span class='fu'>fill_gaps</span>(<span class='no'>x</span>, <span class='kw'>limits</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='no'>...</span>)
+<span class='fu'>fill_gaps</span>(<span class='kw'>x</span>, limits = <span class='kw'>NULL</span>, <span class='kw'>...</span>)
 
-<span class='fu'>slide</span>(<span class='no'>x</span>, <span class='no'>expr</span>, <span class='no'>...</span>)
+<span class='fu'>slide</span>(<span class='kw'>x</span>, <span class='kw'>expr</span>, <span class='kw'>before</span>, after = <span class='fu'>hours</span>(<span class='fl'>0L</span>), <span class='kw'>...</span>)
 
-<span class='fu'>slide_quo</span>(<span class='no'>x</span>, <span class='no'>expr</span>, <span class='no'>before</span>, <span class='kw'>after</span> <span class='kw'>=</span> <span class='fu'><a href='difftime.html'>hours</a></span>(<span class='fl'>0L</span>), <span class='no'>...</span>)
+<span class='fu'>slide_index</span>(<span class='kw'>x</span>, <span class='kw'>expr</span>, <span class='kw'>index</span>, <span class='kw'>before</span>, after = <span class='fu'>hours</span>(<span class='fl'>0L</span>), <span class='kw'>...</span>)
 
-<span class='fu'>slide_index</span>(<span class='no'>x</span>, <span class='no'>expr</span>, <span class='no'>...</span>)
-
-<span class='fu'>slide_index_quo</span>(<span class='no'>x</span>, <span class='no'>expr</span>, <span class='no'>index</span>, <span class='no'>before</span>, <span class='kw'>after</span> <span class='kw'>=</span> <span class='fu'><a href='difftime.html'>hours</a></span>(<span class='fl'>0L</span>), <span class='no'>...</span>)
-
-<span class='fu'>hop</span>(<span class='no'>x</span>, <span class='no'>expr</span>, <span class='no'>...</span>)
-
-<span class='fu'>hop_quo</span>(
-  <span class='no'>x</span>,
-  <span class='no'>expr</span>,
-  <span class='no'>windows</span>,
-  <span class='kw'>full_window</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
-  <span class='kw'>lwr_col</span> <span class='kw'>=</span> <span class='st'>"min_time"</span>,
-  <span class='kw'>upr_col</span> <span class='kw'>=</span> <span class='st'>"max_time"</span>
+<span class='fu'>hop</span>(
+  <span class='kw'>x</span>,
+  <span class='kw'>expr</span>,
+  <span class='kw'>windows</span>,
+  full_window = <span class='fl'>FALSE</span>,
+  lwr_col = <span class='st'>"min_time"</span>,
+  upr_col = <span class='st'>"max_time"</span>,
+  nomatch = <span class='kw'>NULL</span>,
+  eval_env = <span class='kw'>NULL</span>
 )</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
@@ -184,7 +180,7 @@ windows bounds</p></td>
 <code>min_col</code> and <code>max_col</code></p></td>
     </tr>
     <tr>
-      <th>id_cols</th>
+      <th>id_vars</th>
       <td><p>Names of the id columns</p></td>
     </tr>
     <tr>
@@ -193,7 +189,7 @@ windows bounds</p></td>
     </tr>
     <tr>
       <th>...</th>
-      <td><p>Passed to the <code>*_quo</code> version and from there to <code>hop_quo()</code></p></td>
+      <td><p>Passed to <code>hop_quo()</code></p></td>
     </tr>
     <tr>
       <th>limits</th>
@@ -226,6 +222,15 @@ where the sliding window extends beyond available data</p></td>
       <th>lwr_col, upr_col</th>
       <td><p>Names of columns (in <code>windows</code>) of lower/upper
 window bounds</p></td>
+    </tr>
+    <tr>
+      <th>nomatch</th>
+      <td><p>Forwarded to <code>data.table::[()</code></p></td>
+    </tr>
+    <tr>
+      <th>eval_env</th>
+      <td><p>Environment in which <code>expr</code> is substituted; <code>NULL</code> resolves
+to the environment in which <code>expr</code> was created</p></td>
     </tr>
     </table>
 

@@ -86,9 +86,6 @@ increase in SOFA score." />
   </a>
 </li>
 <li>
-  <a href="../articles/ricu.pdf">Get started</a>
-</li>
-<li>
   <a href="../reference/index.html">Reference</a>
 </li>
 <li class="dropdown">
@@ -98,6 +95,9 @@ increase in SOFA score." />
     <span class="caret"></span>
   </a>
   <ul class="dropdown-menu" role="menu">
+    <li>
+      <a href="../articles/jss.pdf">\pkg{ricu}: \proglang{R}'s interface for ICU data (PDF)</a>
+    </li>
     <li>
       <a href="../articles/uom.html">Units of measurement</a>
     </li>
@@ -135,28 +135,29 @@ increase in SOFA score.</p>
     </div>
 
     <pre class="usage"><span class='fu'>sepsis_3</span>(
-  <span class='no'>sofa</span>,
-  <span class='no'>si</span>,
-  <span class='kw'>si_window</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"first"</span>, <span class='st'>"last"</span>, <span class='st'>"any"</span>),
-  <span class='kw'>delta_fun</span> <span class='kw'>=</span> <span class='no'>delta_cummin</span>,
-  <span class='kw'>sofa_thresh</span> <span class='kw'>=</span> <span class='fl'>2L</span>
+  <span class='kw'>sofa_score</span>,
+  <span class='kw'>susp_inf</span>,
+  si_window = <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"first"</span>, <span class='st'>"last"</span>, <span class='st'>"any"</span>),
+  delta_fun = <span class='kw'>delta_cummin</span>,
+  sofa_thresh = <span class='fl'>2L</span>,
+  interval = <span class='kw'>ricu</span>::<span class='fu'><a href='https://rdrr.io/pkg/ricu/man/tbl_utils.html'>interval</a></span>(<span class='kw'>sofa_score</span>)
 )
 
-<span class='fu'>delta_cummin</span>(<span class='no'>x</span>)
+<span class='fu'>delta_cummin</span>(<span class='kw'>x</span>)
 
-<span class='fu'>delta_start</span>(<span class='no'>x</span>)
+<span class='fu'>delta_start</span>(<span class='kw'>x</span>)
 
-<span class='fu'>delta_min</span>(<span class='no'>x</span>, <span class='kw'>shifts</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/seq.html'>seq.int</a></span>(<span class='fl'>0L</span>, <span class='fl'>23L</span>))</pre>
+<span class='fu'>delta_min</span>(<span class='kw'>x</span>, shifts = <span class='fu'><a href='https://rdrr.io/r/base/seq.html'>seq.int</a></span>(<span class='fl'>0L</span>, <span class='fl'>23L</span>))</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
-      <th>sofa</th>
+      <th>sofa_score</th>
       <td><p><code>ts_tbl</code> with a column <code>sofa_score</code></p></td>
     </tr>
     <tr>
-      <th>si</th>
+      <th>susp_inf</th>
       <td><p><code>ts_tbl</code> with columns <code>si_lwr</code> and <code>si_upr</code> defining windows for
 which a suspected infection is valid</p></td>
     </tr>
@@ -174,6 +175,11 @@ window</p></td>
       <td><p>Required SOFA increase to trigger Sepsis 3</p></td>
     </tr>
     <tr>
+      <th>interval</th>
+      <td><p>Time series interval (only used for checking consistency
+of input data)</p></td>
+    </tr>
+    <tr>
       <th>x</th>
       <td><p>Vector of SOFA scores</p></td>
     </tr>
@@ -186,7 +192,7 @@ which <code><a href='https://rdrr.io/r/base/Extremes.html'>base::pmin()</a></cod
 
     <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
 
-    <p>The Sepsis-3 Consensus (<a href='https://jamanetwork.com/journals/jama/fullarticle/2492881'>Singer et. al. 2016.</a>) defined sepsis as an acute increase in the SOFA score (see <code><a href='label_sofa.html'>sofa()</a></code>) of &gt; 2 points within the suspected infection (SI) window (see <code><a href='label_si.html'>si_windows()</a></code>):</p>
+    <p>The Sepsis-3 Consensus (<a href='https://jamanetwork.com/journals/jama/fullarticle/2492881'>Singer et. al. 2016.</a>) defined sepsis as an acute increase in the SOFA score (see <code>sofa_score()</code>) of &gt; 2 points within the suspected infection (SI) window (see <code>si_windows()</code>):</p>
 <p><img src='figures/sep-3.png' alt='' /></p>
 <p>A patient can potentially have multiple SI windows. The argument <code>si_window</code> is used to control which SI window we focus on (options are <code>"first", "last", "any"</code>).</p>
 <p>Further, although a 2 or more point increase in the SOFA score is defined, it is not perfectly clear to which value the increase refers. For this the <code>delta_fun</code> argument is used. If the increase is required to happen with respect to the minimal SOFA value (within the SI window) up to the current time, the <code>delta_cummin</code> function should be used. If, however, we are looking for an increase with respect to the start of the SI window, then the <code>delta_start</code> function should be used. Lastly, the increase might be defined with respect to values of the previous 24 hours, in which case the <code>delta_min</code> function is used.</p>

@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Stays — stay_windows • ICU data with R</title>
+<title>SIRS score label — sirs_score • ICU data with R</title>
 
 
 <!-- jquery -->
@@ -39,8 +39,9 @@
 
 
 
-<meta property="og:title" content="Stays — stay_windows" />
-<meta property="og:description" content="For a given ID type, get all stays with corresponding start and end times." />
+<meta property="og:title" content="SIRS score label — sirs_score" />
+<meta property="og:description" content="The SIRS (Systemic Inflammatory Response Syndrome) score is a commonly used
+assessment tool used to track a patient's well-being in an ICU." />
 
 
 <meta name="robots" content="noindex">
@@ -123,47 +124,43 @@
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Stays</h1>
+    <h1>SIRS score label</h1>
     
-    <div class="hidden name"><code>stay_windows.Rd</code></div>
+    <div class="hidden name"><code>label_sirs.Rd</code></div>
     </div>
 
     <div class="ref-description">
-    <p>For a given ID type, get all stays with corresponding start and end times.</p>
+    <p>The SIRS (Systemic Inflammatory Response Syndrome) score is a commonly used
+assessment tool used to track a patient's well-being in an ICU.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>stay_windows</span>(
-  <span class='kw'>x</span>,
-  id_type = <span class='st'>"icustay"</span>,
-  win_type = <span class='st'>"icustay"</span>,
-  in_time = <span class='st'>"start"</span>,
-  out_time = <span class='st'>"end"</span>,
-  interval = <span class='fu'>hours</span>(<span class='fl'>1L</span>)
+    <pre class="usage"><span class='fu'>sirs_score</span>(
+  <span class='kw'>temperature</span>,
+  <span class='kw'>heart_rate</span>,
+  <span class='kw'>respiratory_rate</span>,
+  <span class='kw'>pa_co2</span>,
+  <span class='kw'>white_blood_cells</span>,
+  <span class='kw'>bands</span>,
+  win_length = <span class='fu'>hours</span>(<span class='fl'>24L</span>),
+  interval = <span class='kw'>ricu</span>::<span class='fu'><a href='https://rdrr.io/pkg/ricu/man/tbl_utils.html'>interval</a></span>(<span class='kw'>temperature</span>)
 )</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
-      <th>x</th>
-      <td><p>Passed to <code>as_id_cfg()</code> and <code>as_src_env()</code></p></td>
+      <th>temperature, heart_rate, respiratory_rate, pa_co2, white_blood_cells, bands</th>
+      <td><p>Data input used
+for SIRS score evaluation</p></td>
     </tr>
     <tr>
-      <th>id_type</th>
-      <td><p>Type of ID all returned times are relative to</p></td>
-    </tr>
-    <tr>
-      <th>win_type</th>
-      <td><p>Type of ID for which the in/out times is returned</p></td>
-    </tr>
-    <tr>
-      <th>in_time, out_time</th>
-      <td><p>column names of the returned in/out times</p></td>
+      <th>win_length</th>
+      <td><p>Window used for carry forward imputation</p></td>
     </tr>
     <tr>
       <th>interval</th>
-      <td><p>The time interval used to discretize time stamps with,
-specified as <code><a href='https://rdrr.io/r/base/difftime.html'>base::difftime()</a></code> object</p></td>
+      <td><p>Time series interval (only used for checking consistency
+of input data)</p></td>
     </tr>
     </table>
 

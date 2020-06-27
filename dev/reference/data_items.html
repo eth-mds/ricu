@@ -86,9 +86,6 @@ are used." />
   </a>
 </li>
 <li>
-  <a href="../articles/ricu.pdf">Get started</a>
-</li>
-<li>
   <a href="../reference/index.html">Reference</a>
 </li>
 <li class="dropdown">
@@ -98,6 +95,9 @@ are used." />
     <span class="caret"></span>
   </a>
   <ul class="dropdown-menu" role="menu">
+    <li>
+      <a href="../articles/jss.pdf">\pkg{ricu}: \proglang{R}'s interface for ICU data (PDF)</a>
+    </li>
     <li>
       <a href="../articles/uom.html">Units of measurement</a>
     </li>
@@ -134,55 +134,56 @@ are used." />
 are used.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>new_itm</span>(<span class='no'>src</span>, <span class='no'>...</span>, <span class='kw'>target</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"ts_tbl"</span>, <span class='st'>"id_tbl"</span>), <span class='kw'>class</span> <span class='kw'>=</span> <span class='st'>"sel_itm"</span>)
+    <pre class="usage"><span class='fu'>new_itm</span>(<span class='kw'>src</span>, <span class='kw'>...</span>, target = <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"ts_tbl"</span>, <span class='st'>"id_tbl"</span>), class = <span class='st'>"sel_itm"</span>)
 
-<span class='fu'>is_itm</span>(<span class='no'>x</span>)
+<span class='fu'>is_itm</span>(<span class='kw'>x</span>)
 
-<span class='fu'>init_itm</span>(<span class='no'>x</span>, <span class='no'>...</span>)
+<span class='fu'>init_itm</span>(<span class='kw'>x</span>, <span class='kw'>...</span>)
 
 <span class='co'># S3 method for sel_itm</span>
 <span class='fu'>init_itm</span>(
-  <span class='no'>x</span>,
-  <span class='no'>table</span>,
-  <span class='no'>sub_col</span>,
-  <span class='no'>ids</span>,
-  <span class='kw'>itm_cols</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>index_col</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>callback</span> <span class='kw'>=</span> <span class='st'>"identity_callback"</span>,
-  <span class='no'>...</span>
+  <span class='kw'>x</span>,
+  <span class='kw'>table</span>,
+  <span class='kw'>sub_var</span>,
+  <span class='kw'>ids</span>,
+  itm_vars = <span class='kw'>NULL</span>,
+  index_var = <span class='kw'>NULL</span>,
+  callback = <span class='st'>"identity_callback"</span>,
+  <span class='kw'>...</span>
 )
 
 <span class='co'># S3 method for col_itm</span>
 <span class='fu'>init_itm</span>(
-  <span class='no'>x</span>,
-  <span class='no'>table</span>,
-  <span class='kw'>itm_cols</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>index_col</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>callback</span> <span class='kw'>=</span> <span class='st'>"identity_callback"</span>,
-  <span class='no'>...</span>
+  <span class='kw'>x</span>,
+  <span class='kw'>table</span>,
+  itm_vars = <span class='kw'>NULL</span>,
+  index_var = <span class='kw'>NULL</span>,
+  unit_val = <span class='kw'>NULL</span>,
+  callback = <span class='st'>"identity_callback"</span>,
+  <span class='kw'>...</span>
 )
 
 <span class='co'># S3 method for rgx_itm</span>
 <span class='fu'>init_itm</span>(
-  <span class='no'>x</span>,
-  <span class='no'>table</span>,
-  <span class='no'>sub_col</span>,
-  <span class='no'>regex</span>,
-  <span class='kw'>itm_cols</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>index_col</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>callback</span> <span class='kw'>=</span> <span class='st'>"identity_callback"</span>,
-  <span class='no'>...</span>
+  <span class='kw'>x</span>,
+  <span class='kw'>table</span>,
+  <span class='kw'>sub_var</span>,
+  <span class='kw'>regex</span>,
+  itm_vars = <span class='kw'>NULL</span>,
+  index_var = <span class='kw'>NULL</span>,
+  callback = <span class='st'>"identity_callback"</span>,
+  <span class='kw'>...</span>
 )
 
-<span class='co'># S3 method for los_itm</span>
-<span class='fu'>init_itm</span>(<span class='no'>x</span>, <span class='no'>win_type</span>, <span class='no'>...</span>)
+<span class='co'># S3 method for fun_itm</span>
+<span class='fu'>init_itm</span>(<span class='kw'>x</span>, <span class='kw'>callback</span>, <span class='kw'>...</span>)
 
 <span class='co'># S3 method for itm</span>
-<span class='fu'>init_itm</span>(<span class='no'>x</span>, <span class='no'>...</span>)
+<span class='fu'>init_itm</span>(<span class='kw'>x</span>, <span class='kw'>...</span>)
 
-<span class='fu'>new_item</span>(<span class='no'>x</span>)
+<span class='fu'>new_item</span>(<span class='kw'>x</span>, target = <span class='kw'>NULL</span>)
 
-<span class='fu'>is_item</span>(<span class='no'>x</span>)</pre>
+<span class='fu'>is_item</span>(<span class='kw'>x</span>)</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -213,7 +214,7 @@ are used.</p>
       <td><p>Name of the table containing the data</p></td>
     </tr>
     <tr>
-      <th>sub_col</th>
+      <th>sub_var</th>
       <td><p>Column name used for subsetting</p></td>
     </tr>
     <tr>
@@ -222,11 +223,11 @@ are used.</p>
 considered corresponding to the data item</p></td>
     </tr>
     <tr>
-      <th>itm_cols</th>
-      <td><p>Columns returned as <code><a href='meta_utils.html'>data_cols()</a></code></p></td>
+      <th>itm_vars</th>
+      <td><p>Columns returned as <code>data_vars()</code></p></td>
     </tr>
     <tr>
-      <th>index_col</th>
+      <th>index_var</th>
       <td><p>Column used as index</p></td>
     </tr>
     <tr>
@@ -235,13 +236,14 @@ considered corresponding to the data item</p></td>
 for data cleanup operations</p></td>
     </tr>
     <tr>
+      <th>unit_val</th>
+      <td><p>String valued unit to be used in case no <code>unit_var</code> is
+available for the given table</p></td>
+    </tr>
+    <tr>
       <th>regex</th>
       <td><p>String-valued regular expression which will be evaluated by
 <code><a href='https://rdrr.io/r/base/grep.html'>base::grepl()</a></code> with <code>ignore.case = TRUE</code></p></td>
-    </tr>
-    <tr>
-      <th>win_type</th>
-      <td><p>Passed to <code><a href='stay_windows.html'>stay_windows()</a></code></p></td>
     </tr>
     </table>
 

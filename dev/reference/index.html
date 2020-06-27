@@ -84,9 +84,6 @@
   </a>
 </li>
 <li>
-  <a href="../articles/ricu.pdf">Get started</a>
-</li>
-<li>
   <a href="../reference/index.html">Reference</a>
 </li>
 <li class="dropdown">
@@ -96,6 +93,9 @@
     <span class="caret"></span>
   </a>
   <ul class="dropdown-menu" role="menu">
+    <li>
+      <a href="../articles/jss.pdf">\pkg{ricu}: \proglang{R}'s interface for ICU data (PDF)</a>
+    </li>
     <li>
       <a href="../articles/uom.html">Units of measurement</a>
     </li>
@@ -148,9 +148,15 @@
       <tr>
         
         <td>
-          <p><code><a href="attach_src.html">attach_src()</a></code> <code><a href="attach_src.html">setup_src_env()</a></code> <code><a href="attach_src.html">data</a></code> <code><a href="attach_src.html">as_src_tbl()</a></code> <code><a href="attach_src.html">as_src_env()</a></code> </p>
+          <p><code><a href="attach_src.html">data</a></code> <code><a href="attach_src.html">as_src_tbl()</a></code> <code><a href="attach_src.html">as_src_env()</a></code> <code><a href="attach_src.html">attach_src()</a></code> <code><a href="attach_src.html">setup_src_env()</a></code> </p>
         </td>
         <td><p>Data attach utilities</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="cfg_utils.html">src_name()</a></code> <code><a href="cfg_utils.html">tbl_name()</a></code> </p>
+        </td>
+        <td><p>Get default columns</p></td>
       </tr><tr>
         
         <td>
@@ -160,7 +166,7 @@
       </tr><tr>
         
         <td>
-          <p><code><a href="data_concepts.html">item()</a></code> <code><a href="data_concepts.html">as_item()</a></code> <code><a href="data_concepts.html">new_cncpt()</a></code> <code><a href="data_concepts.html">is_cncpt()</a></code> <code><a href="data_concepts.html">init_cncpt()</a></code> <code><a href="data_concepts.html">new_concept()</a></code> <code><a href="data_concepts.html">concept()</a></code> <code><a href="data_concepts.html">is_concept()</a></code> <code><a href="data_concepts.html">read_dictionary()</a></code> <code><a href="data_concepts.html">src_name()</a></code> </p>
+          <p><code><a href="data_concepts.html">item()</a></code> <code><a href="data_concepts.html">as_item()</a></code> <code><a href="data_concepts.html">n_tick()</a></code> <code><a href="data_concepts.html">new_cncpt()</a></code> <code><a href="data_concepts.html">is_cncpt()</a></code> <code><a href="data_concepts.html">init_cncpt()</a></code> <code><a href="data_concepts.html">src_name(<i>&lt;cncpt&gt;</i>)</a></code> <code><a href="data_concepts.html">new_concept()</a></code> <code><a href="data_concepts.html">concept()</a></code> <code><a href="data_concepts.html">is_concept()</a></code> <code><a href="data_concepts.html">read_dictionary()</a></code> </p>
         </td>
         <td><p>Data concept</p></td>
       </tr><tr>
@@ -169,18 +175,6 @@
           <p><code><a href="data_items.html">new_itm()</a></code> <code><a href="data_items.html">is_itm()</a></code> <code><a href="data_items.html">init_itm()</a></code> <code><a href="data_items.html">new_item()</a></code> <code><a href="data_items.html">is_item()</a></code> </p>
         </td>
         <td><p>Data item</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="data_utils.html">id_origin()</a></code> <code><a href="data_utils.html">id_windows()</a></code> </p>
-        </td>
-        <td><p>Data loading utilities</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="default_col.html">default_col()</a></code> </p>
-        </td>
-        <td><p>Get default columns</p></td>
       </tr><tr>
         
         <td>
@@ -202,7 +196,7 @@
       </tr><tr>
         
         <td>
-          <p><code><a href="icu_tbl.html">is_icu_tbl()</a></code> <code><a href="icu_tbl.html">id_tbl()</a></code> <code><a href="icu_tbl.html">as_id_tbl()</a></code> <code><a href="icu_tbl.html">is_id_tbl()</a></code> <code><a href="icu_tbl.html">ts_tbl()</a></code> <code><a href="icu_tbl.html">as_ts_tbl()</a></code> <code><a href="icu_tbl.html">is_ts_tbl()</a></code> </p>
+          <p><code><a href="id_tbl.html">id_tbl()</a></code> <code><a href="id_tbl.html">is_id_tbl()</a></code> <code><a href="id_tbl.html">as_id_tbl()</a></code> <code><a href="id_tbl.html">ts_tbl()</a></code> <code><a href="id_tbl.html">is_ts_tbl()</a></code> <code><a href="id_tbl.html">as_ts_tbl()</a></code> <code><a href="id_tbl.html">unclass_tbl()</a></code> <code><a href="id_tbl.html">reclass_tbl()</a></code> <code><a href="id_tbl.html">as_ptype()</a></code> <code><a href="id_tbl.html">validate_tbl()</a></code> </p>
         </td>
         <td><p>Tabular ICU data</p></td>
       </tr><tr>
@@ -214,13 +208,19 @@
       </tr><tr>
         
         <td>
-          <p><code><a href="label_si.html">si_data()</a></code> <code><a href="label_si.html">si_windows()</a></code> <code><a href="label_si.html">si()</a></code> </p>
+          <p><code><a href="label_si.html">susp_inf()</a></code> <code><a href="label_si.html">si_windows()</a></code> </p>
         </td>
         <td><p>Suspicion of infection label</p></td>
       </tr><tr>
         
         <td>
-          <p><code><a href="label_sofa.html">sofa_data()</a></code> <code><a href="label_sofa.html">sofa_window()</a></code> <code><a href="label_sofa.html">sofa_compute()</a></code> <code><a href="label_sofa.html">sofa()</a></code> </p>
+          <p><code><a href="label_sirs.html">sirs_score()</a></code> </p>
+        </td>
+        <td><p>SIRS score label</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="label_sofa.html">sofa_score()</a></code> <code><a href="label_sofa.html">sofa_pafi()</a></code> <code><a href="label_sofa.html">sofa_vent()</a></code> <code><a href="label_sofa.html">sofa_gcs()</a></code> <code><a href="label_sofa.html">sofa_urine()</a></code> <code><a href="label_sofa.html">sofa_window()</a></code> <code><a href="label_sofa.html">sofa_compute()</a></code> </p>
         </td>
         <td><p>SOFA score label</p></td>
       </tr><tr>
@@ -235,12 +235,6 @@
           <p><code><a href="load_src.html">load_src()</a></code> <code><a href="load_src.html">load_difftime()</a></code> <code><a href="load_src.html">load_id()</a></code> <code><a href="load_src.html">load_ts()</a></code> <code><a href="load_src.html">data_id()</a></code> <code><a href="load_src.html">data_ts()</a></code> </p>
         </td>
         <td><p>Low level functions for loading data</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="meta_utils.html">index()</a></code> <code><a href="meta_utils.html">id()</a></code> <code><a href="meta_utils.html">id_opts()</a></code> <code><a href="meta_utils.html">interval()</a></code> <code><a href="meta_utils.html">time_unit()</a></code> <code><a href="meta_utils.html">meta_cols()</a></code> <code><a href="meta_utils.html">set_index()</a></code> <code><a href="meta_utils.html">set_interval()</a></code> <code><a href="meta_utils.html">set_id()</a></code> <code><a href="meta_utils.html">set_id_opts()</a></code> <code><a href="meta_utils.html">set_time_unit()</a></code> <code><a href="meta_utils.html">units(<i>&lt;icu_tbl&gt;</i>)</a></code> <code><a href="meta_utils.html">data_cols()</a></code> <code><a href="meta_utils.html">data_unit()</a></code> <code><a href="meta_utils.html">time_step()</a></code> <code><a href="meta_utils.html">time_col()</a></code> </p>
-        </td>
-        <td><p>Utilities for querying and modifying table meta data</p></td>
       </tr><tr>
         
         <td>
@@ -262,13 +256,19 @@
       </tr><tr>
         
         <td>
-          <p><code><a href="tbl_utils.html">rm_cols()</a></code> <code><a href="tbl_utils.html">rename_cols()</a></code> <code><a href="tbl_utils.html">rbind_lst()</a></code> <code><a href="tbl_utils.html">rm_na()</a></code> <code><a href="tbl_utils.html">unmerge()</a></code> <code><a href="tbl_utils.html">dt_gforce()</a></code> <code><a href="tbl_utils.html">is_unique()</a></code> <code><a href="tbl_utils.html">make_unique()</a></code> <code><a href="tbl_utils.html">make_unique_quo()</a></code> </p>
+          <p><code><a href="tbl_meta.html">write_psv()</a></code> <code><a href="tbl_meta.html">read_psv()</a></code> </p>
         </td>
-        <td><p>Utilities for <code>icu_tbl</code> objects</p></td>
+        <td><p>Read and write utilities</p></td>
       </tr><tr>
         
         <td>
-          <p><code><a href="ts_utils.html">expand_limits()</a></code> <code><a href="ts_utils.html">has_no_gaps()</a></code> <code><a href="ts_utils.html">has_gaps()</a></code> <code><a href="ts_utils.html">fill_gaps()</a></code> <code><a href="ts_utils.html">slide()</a></code> <code><a href="ts_utils.html">slide_quo()</a></code> <code><a href="ts_utils.html">slide_index()</a></code> <code><a href="ts_utils.html">slide_index_quo()</a></code> <code><a href="ts_utils.html">hop()</a></code> <code><a href="ts_utils.html">hop_quo()</a></code> </p>
+          <p><code><a href="tbl_utils.html">id_vars()</a></code> <code><a href="tbl_utils.html">id_var()</a></code> <code><a href="tbl_utils.html">id_col()</a></code> <code><a href="tbl_utils.html">index_var()</a></code> <code><a href="tbl_utils.html">index_col()</a></code> <code><a href="tbl_utils.html">meta_vars()</a></code> <code><a href="tbl_utils.html">data_vars()</a></code> <code><a href="tbl_utils.html">data_var()</a></code> <code><a href="tbl_utils.html">data_col()</a></code> <code><a href="tbl_utils.html">interval()</a></code> <code><a href="tbl_utils.html">time_unit()</a></code> <code><a href="tbl_utils.html">time_step()</a></code> <code><a href="tbl_utils.html">time_vars()</a></code> <code><a href="tbl_utils.html">rename_cols()</a></code> <code><a href="tbl_utils.html">rm_cols()</a></code> <code><a href="tbl_utils.html">change_interval()</a></code> <code><a href="tbl_utils.html">rbind_lst()</a></code> <code><a href="tbl_utils.html">rm_na()</a></code> <code><a href="tbl_utils.html">unmerge()</a></code> <code><a href="tbl_utils.html">dt_gforce()</a></code> <code><a href="tbl_utils.html">is_unique()</a></code> <code><a href="tbl_utils.html">make_unique()</a></code> </p>
+        </td>
+        <td><p>Utilities for working with id_tbl and ts_tbl objects</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="ts_utils.html">extend_ts()</a></code> <code><a href="ts_utils.html">has_no_gaps()</a></code> <code><a href="ts_utils.html">has_gaps()</a></code> <code><a href="ts_utils.html">fill_gaps()</a></code> <code><a href="ts_utils.html">slide()</a></code> <code><a href="ts_utils.html">slide_index()</a></code> <code><a href="ts_utils.html">hop()</a></code> </p>
         </td>
         <td><p>Time series utility functions</p></td>
       </tr><tr>

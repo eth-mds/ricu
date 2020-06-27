@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Utilities for <code>icu_tbl</code> objects — rename_cols.id_meta • ICU data with R</title>
+<title>Utilities for working with id_tbl and ts_tbl objects — id_vars • ICU data with R</title>
 
 
 <!-- jquery -->
@@ -39,8 +39,8 @@
 
 
 
-<meta property="og:title" content="Utilities for <code>icu_tbl</code> objects — rename_cols.id_meta" />
-<meta property="og:description" content="Utilities for icu_tbl objects" />
+<meta property="og:title" content="Utilities for working with id_tbl and ts_tbl objects — id_vars" />
+<meta property="og:description" content="Utilities for working with id_tbl and ts_tbl objects" />
 
 
 <meta name="robots" content="noindex">
@@ -85,9 +85,6 @@
   </a>
 </li>
 <li>
-  <a href="../articles/ricu.pdf">Get started</a>
-</li>
-<li>
   <a href="../reference/index.html">Reference</a>
 </li>
 <li class="dropdown">
@@ -97,6 +94,9 @@
     <span class="caret"></span>
   </a>
   <ul class="dropdown-menu" role="menu">
+    <li>
+      <a href="../articles/jss.pdf">\pkg{ricu}: \proglang{R}'s interface for ICU data (PDF)</a>
+    </li>
     <li>
       <a href="../articles/uom.html">Units of measurement</a>
     </li>
@@ -123,93 +123,144 @@
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Utilities for <code>icu_tbl</code> objects</h1>
+    <h1>Utilities for working with id_tbl and ts_tbl objects</h1>
     
     <div class="hidden name"><code>tbl_utils.Rd</code></div>
     </div>
 
     <div class="ref-description">
-    <p>Utilities for <code>icu_tbl</code> objects</p>
+    <p>Utilities for working with id_tbl and ts_tbl objects</p>
     </div>
 
-    <pre class="usage"><span class='co'># S3 method for id_meta</span>
-<span class='fu'>rename_cols</span>(<span class='no'>x</span>, <span class='no'>new</span>, <span class='no'>old</span>, <span class='no'>...</span>)
+    <pre class="usage"><span class='fu'>id_vars</span>(<span class='kw'>x</span>)
 
-<span class='co'># S3 method for tbl_index</span>
-<span class='fu'>rename_cols</span>(<span class='no'>x</span>, <span class='no'>new</span>, <span class='no'>old</span>, <span class='no'>...</span>)
+<span class='co'># S3 method for id_tbl</span>
+<span class='fu'>id_vars</span>(<span class='kw'>x</span>)
 
-<span class='co'># S3 method for tbl_id</span>
-<span class='fu'>rename_cols</span>(<span class='no'>x</span>, <span class='no'>new</span>, <span class='no'>old</span>, <span class='no'>...</span>)
+<span class='fu'>id_var</span>(<span class='kw'>x</span>)
 
-<span class='co'># S3 method for ts_meta</span>
-<span class='fu'>rename_cols</span>(<span class='no'>x</span>, <span class='no'>new</span>, <span class='no'>old</span>, <span class='no'>...</span>)
+<span class='fu'>id_col</span>(<span class='kw'>x</span>)
 
-<span class='fu'>rm_cols</span>(<span class='no'>x</span>, <span class='no'>cols</span>, <span class='no'>...</span>)
+<span class='fu'>index_var</span>(<span class='kw'>x</span>)
+
+<span class='co'># S3 method for ts_tbl</span>
+<span class='fu'>index_var</span>(<span class='kw'>x</span>)
+
+<span class='fu'>index_col</span>(<span class='kw'>x</span>)
+
+<span class='fu'>meta_vars</span>(<span class='kw'>x</span>)
+
+<span class='co'># S3 method for id_tbl</span>
+<span class='fu'>meta_vars</span>(<span class='kw'>x</span>)
+
+<span class='co'># S3 method for ts_tbl</span>
+<span class='fu'>meta_vars</span>(<span class='kw'>x</span>)
+
+<span class='fu'>data_vars</span>(<span class='kw'>x</span>)
+
+<span class='fu'>data_var</span>(<span class='kw'>x</span>)
+
+<span class='fu'>data_col</span>(<span class='kw'>x</span>)
+
+<span class='fu'>interval</span>(<span class='kw'>x</span>)
+
+<span class='co'># S3 method for ts_tbl</span>
+<span class='fu'>interval</span>(<span class='kw'>x</span>)
+
+<span class='co'># S3 method for difftime</span>
+<span class='fu'>interval</span>(<span class='kw'>x</span>)
+
+<span class='fu'>time_unit</span>(<span class='kw'>x</span>)
+
+<span class='fu'>time_step</span>(<span class='kw'>x</span>)
+
+<span class='fu'>time_vars</span>(<span class='kw'>x</span>)
 
 <span class='co'># S3 method for data.table</span>
-<span class='fu'>rm_cols</span>(<span class='no'>x</span>, <span class='no'>cols</span>, <span class='no'>...</span>)
+<span class='fu'>time_vars</span>(<span class='kw'>x</span>)
 
-<span class='fu'>rename_cols</span>(<span class='no'>x</span>, <span class='no'>new</span>, <span class='kw'>old</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/colnames.html'>colnames</a></span>(<span class='no'>x</span>), <span class='no'>...</span>)
+<span class='fu'>rename_cols</span>(<span class='kw'>x</span>, <span class='kw'>new</span>, old = <span class='fu'><a href='https://rdrr.io/r/base/colnames.html'>colnames</a></span>(<span class='kw'>x</span>), skip_absent = <span class='fl'>FALSE</span>, by_ref = <span class='fl'>FALSE</span>)
+
+<span class='co'># S3 method for ts_tbl</span>
+<span class='fu'>rename_cols</span>(<span class='kw'>x</span>, <span class='kw'>new</span>, old = <span class='fu'><a href='https://rdrr.io/r/base/colnames.html'>colnames</a></span>(<span class='kw'>x</span>), skip_absent = <span class='fl'>FALSE</span>, <span class='kw'>...</span>)
+
+<span class='co'># S3 method for id_tbl</span>
+<span class='fu'>rename_cols</span>(<span class='kw'>x</span>, <span class='kw'>new</span>, old = <span class='fu'><a href='https://rdrr.io/r/base/colnames.html'>colnames</a></span>(<span class='kw'>x</span>), skip_absent = <span class='fl'>FALSE</span>, <span class='kw'>...</span>)
 
 <span class='co'># S3 method for data.table</span>
-<span class='fu'>rename_cols</span>(<span class='no'>x</span>, <span class='no'>new</span>, <span class='kw'>old</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/colnames.html'>colnames</a></span>(<span class='no'>x</span>), <span class='no'>...</span>)
+<span class='fu'>rename_cols</span>(<span class='kw'>x</span>, <span class='kw'>new</span>, old = <span class='fu'><a href='https://rdrr.io/r/base/colnames.html'>colnames</a></span>(<span class='kw'>x</span>), skip_absent = <span class='fl'>FALSE</span>, by_ref = <span class='fl'>FALSE</span>)
 
-<span class='co'># S3 method for icu_tbl</span>
-<span class='fu'>rm_cols</span>(<span class='no'>x</span>, <span class='no'>cols</span>, <span class='no'>...</span>)
+<span class='fu'>rm_cols</span>(<span class='kw'>x</span>, <span class='kw'>cols</span>, skip_absent = <span class='fl'>FALSE</span>, by_ref = <span class='fl'>FALSE</span>)
 
-<span class='co'># S3 method for icu_tbl</span>
-<span class='fu'>rename_cols</span>(<span class='no'>x</span>, <span class='no'>new</span>, <span class='kw'>old</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/colnames.html'>colnames</a></span>(<span class='no'>x</span>), <span class='kw'>skip_absent</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='no'>...</span>)
+<span class='fu'>change_interval</span>(<span class='kw'>x</span>, <span class='kw'>new_interval</span>, cols = <span class='fu'>time_vars</span>(<span class='kw'>x</span>), by_ref = <span class='fl'>FALSE</span>)
 
-<span class='fu'>rbind_lst</span>(<span class='no'>x</span>, <span class='no'>...</span>)
+<span class='co'># S3 method for ts_tbl</span>
+<span class='fu'>change_interval</span>(<span class='kw'>x</span>, <span class='kw'>new_interval</span>, cols = <span class='fu'>time_vars</span>(<span class='kw'>x</span>), <span class='kw'>...</span>)
 
-<span class='fu'>rm_na</span>(<span class='no'>x</span>, <span class='kw'>cols</span> <span class='kw'>=</span> <span class='fu'><a href='meta_utils.html'>data_cols</a></span>(<span class='no'>x</span>), <span class='kw'>mode</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"all"</span>, <span class='st'>"any"</span>))
+<span class='co'># S3 method for data.table</span>
+<span class='fu'>change_interval</span>(<span class='kw'>x</span>, <span class='kw'>new_interval</span>, cols = <span class='fu'>time_vars</span>(<span class='kw'>x</span>), by_ref = <span class='fl'>FALSE</span>)
 
-<span class='fu'>unmerge</span>(<span class='no'>x</span>, <span class='kw'>col_groups</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/list.html'>as.list</a></span>(<span class='fu'><a href='meta_utils.html'>data_cols</a></span>(<span class='no'>x</span>)), <span class='kw'>by</span> <span class='kw'>=</span> <span class='fu'><a href='meta_utils.html'>meta_cols</a></span>(<span class='no'>x</span>), <span class='kw'>na_rm</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>)
+<span class='fu'>rbind_lst</span>(<span class='kw'>x</span>, <span class='kw'>...</span>)
+
+<span class='fu'>rm_na</span>(<span class='kw'>x</span>, cols = <span class='fu'>data_vars</span>(<span class='kw'>x</span>), mode = <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"all"</span>, <span class='st'>"any"</span>))
+
+<span class='fu'>unmerge</span>(<span class='kw'>x</span>, col_groups = <span class='fu'><a href='https://rdrr.io/r/base/list.html'>as.list</a></span>(<span class='fu'>data_vars</span>(<span class='kw'>x</span>)), by = <span class='fu'>meta_vars</span>(<span class='kw'>x</span>), na_rm = <span class='fl'>TRUE</span>)
 
 <span class='fu'>dt_gforce</span>(
-  <span class='no'>x</span>,
-  <span class='kw'>fun</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"mean"</span>, <span class='st'>"median"</span>, <span class='st'>"min"</span>, <span class='st'>"max"</span>, <span class='st'>"sum"</span>, <span class='st'>"prod"</span>, <span class='st'>"var"</span>, <span class='st'>"sd"</span>, <span class='st'>"first"</span>, <span class='st'>"last"</span>),
-  <span class='kw'>by</span> <span class='kw'>=</span> <span class='fu'><a href='meta_utils.html'>meta_cols</a></span>(<span class='no'>x</span>),
-  <span class='kw'>cols</span> <span class='kw'>=</span> <span class='fu'><a href='meta_utils.html'>data_cols</a></span>(<span class='no'>x</span>),
-  <span class='kw'>na_rm</span> <span class='kw'>=</span> !<span class='no'>fun</span> <span class='kw'>%in%</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"first"</span>, <span class='st'>"last"</span>)
+  <span class='kw'>x</span>,
+  fun = <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"mean"</span>, <span class='st'>"median"</span>, <span class='st'>"min"</span>, <span class='st'>"max"</span>, <span class='st'>"sum"</span>, <span class='st'>"prod"</span>, <span class='st'>"var"</span>, <span class='st'>"sd"</span>, <span class='st'>"first"</span>, <span class='st'>"last"</span>),
+  by = <span class='fu'>meta_vars</span>(<span class='kw'>x</span>),
+  vars = <span class='fu'>data_vars</span>(<span class='kw'>x</span>),
+  na_rm = <span class='op'>!</span><span class='kw'>fun</span> <span class='op'>%in%</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"first"</span>, <span class='st'>"last"</span>)
 )
 
-<span class='fu'>is_unique</span>(<span class='no'>x</span>, <span class='no'>...</span>)
+<span class='fu'>is_unique</span>(<span class='kw'>x</span>, <span class='kw'>...</span>)
 
 <span class='co'># S3 method for default</span>
-<span class='fu'>is_unique</span>(<span class='no'>x</span>, <span class='no'>...</span>)
+<span class='fu'>is_unique</span>(<span class='kw'>x</span>, <span class='kw'>...</span>)
 
-<span class='fu'>make_unique</span>(<span class='no'>x</span>, <span class='no'>expr</span>, <span class='no'>fun</span>, <span class='no'>...</span>)
-
-<span class='fu'>make_unique_quo</span>(<span class='no'>x</span>, <span class='no'>expr</span>, <span class='kw'>by</span> <span class='kw'>=</span> <span class='fu'><a href='meta_utils.html'>meta_cols</a></span>(<span class='no'>x</span>), <span class='kw'>cols</span> <span class='kw'>=</span> <span class='fu'><a href='meta_utils.html'>data_cols</a></span>(<span class='no'>x</span>), <span class='no'>...</span>)</pre>
+<span class='fu'>make_unique</span>(
+  <span class='kw'>x</span>,
+  expr = <span class='kw'>NULL</span>,
+  by = <span class='fu'>meta_vars</span>(<span class='kw'>x</span>),
+  vars = <span class='fu'>data_vars</span>(<span class='kw'>x</span>),
+  env = <span class='kw'>NULL</span>,
+  <span class='kw'>...</span>
+)</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
       <th>x</th>
-      <td><p>Object to operate on</p></td>
+      <td><p>Object to query/operate on</p></td>
     </tr>
     <tr>
-      <th>new</th>
-      <td><p>New column names</p></td>
+      <th>new, old</th>
+      <td><p>Replacement names and existing column names for renaming
+columns</p></td>
     </tr>
     <tr>
-      <th>old</th>
-      <td><p>Column names to be replaces by the ones specified as <code>new</code></p></td>
+      <th>skip_absent</th>
+      <td><p>Logical flag for ignoring non-existent column names</p></td>
+    </tr>
+    <tr>
+      <th>by_ref</th>
+      <td><p>Logical flag indicating whether to perform the operation by
+reference</p></td>
     </tr>
     <tr>
       <th>...</th>
-      <td><p>Generic consistency</p></td>
+      <td><p>Ignored</p></td>
     </tr>
     <tr>
       <th>cols</th>
       <td><p>Column names of columns to consider</p></td>
     </tr>
     <tr>
-      <th>skip_absent</th>
-      <td><p>Silently ignore absent columns in <code>old</code> (along with
-their corresponding replacements in <code>new</code>)</p></td>
+      <th>new_interval</th>
+      <td><p>Replacement interval length specified as scalar-valued
+<code>difftime</code> object</p></td>
     </tr>
     <tr>
       <th>mode</th>
@@ -236,8 +287,16 @@ missing entries in the respective <code>col_groups</code> group</p></td>
       <td><p>Function name (as string) to apply over groups</p></td>
     </tr>
     <tr>
+      <th>vars</th>
+      <td><p>Column names to apply the function to</p></td>
+    </tr>
+    <tr>
       <th>expr</th>
       <td><p>Expression to apply over groups</p></td>
+    </tr>
+    <tr>
+      <th>env</th>
+      <td><p>Environment to look up names in <code>expr</code></p></td>
     </tr>
     </table>
 
