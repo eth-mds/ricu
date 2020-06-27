@@ -1358,13 +1358,16 @@ cfg <- list(
     target = "id_tbl",
     sources = list(
       mimic = list(
-        list(win_type = "icustay", class = "los_itm")
+        list(callback = "los_callback", win_type = "icustay",
+             class = "fun_itm")
       ),
       eicu = list(
-        list(win_type = "icustay", class = "los_itm")
+        list(callback = "los_callback", win_type = "icustay",
+             class = "fun_itm")
       ),
       hirid = list(
-        list(win_type = "icustay", class = "los_itm")
+        list(callback = "los_callback", win_type = "icustay",
+             class = "fun_itm")
       )
     )
   ),
@@ -1374,10 +1377,10 @@ cfg <- list(
     target = "id_tbl",
     sources = list(
       mimic = list(
-        list(win_type = "hadm", class = "los_itm")
+        list(callback = "los_callback", win_type = "hadm", class = "fun_itm")
       ),
       eicu = list(
-        list(win_type = "hadm", class = "los_itm")
+        list(callback = "los_callback", win_type = "hadm", class = "fun_itm")
       )
     )
   ),

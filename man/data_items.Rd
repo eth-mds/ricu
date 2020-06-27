@@ -7,7 +7,7 @@
 \alias{init_itm.sel_itm}
 \alias{init_itm.col_itm}
 \alias{init_itm.rgx_itm}
-\alias{init_itm.los_itm}
+\alias{init_itm.fun_itm}
 \alias{init_itm.itm}
 \alias{new_item}
 \alias{is_item}
@@ -51,7 +51,7 @@ init_itm(x, ...)
   ...
 )
 
-\method{init_itm}{los_itm}(x, win_type, ...)
+\method{init_itm}{fun_itm}(x, callback, ...)
 
 \method{init_itm}{itm}(x, ...)
 
@@ -90,8 +90,6 @@ available for the given table}
 
 \item{regex}{String-valued regular expression which will be evaluated by
 \code{\link[base:grepl]{base::grepl()}} with \code{ignore.case = TRUE}}
-
-\item{win_type}{Passed to \code{\link[=stay_windows]{stay_windows()}}}
 }
 \description{
 In order to specify the location of data items in data sets, \code{item} objects

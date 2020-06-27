@@ -409,38 +409,15 @@ load_sub_itm <- function(x, patient_ids, id_type, interval) {
 
 #' @rdname load_concepts
 #' @export
-load_concepts.los_itm <- function(x, patient_ids = NULL, id_type = "icustay",
+load_concepts.fun_itm <- function(x, patient_ids = NULL, id_type = "icustay",
                                   interval = hours(1L), ...) {
-
-  as_day <- function(x) as.double(x, units = "days")
 
   warn_dots(...)
 
-  win <- x[["win_type"]]
-  cfg <- as_id_cfg(x)
+  args <- list(x = x, patient_ids = patient_ids, id_type = id_type,
+               interval = interval)
 
-  if (identical(win, id_type)) {
-
-    res <- id_map(x, id_vars(cfg[id_type]), id_vars(cfg[win]), NULL, "end")
-
-    res <- res[, c("val_var", "end") := list(as_day(get("end")), NULL)]
-
-  } else {
-
-    res <- id_map(x, id_vars(cfg[id_type]), id_vars(cfg[win]), "start", "end")
-
-    res <- res[, c("val_var", "start", "end") := list(
-      as_day(get("end") - get("start")), NULL, NULL
-    )]
-
-    res <- rm_cols(res, id_vars(cfg[win]), by_ref = TRUE)
-
-    if (cfg[win] > cfg[id_type]) {
-      res <- unique(res)
-    }
-  }
-
-  res
+  do.call(x[["callback"]], args)
 }
 
 merge_patid <- function(x, patid) {

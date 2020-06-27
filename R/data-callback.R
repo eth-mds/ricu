@@ -287,3 +287,34 @@ hirid_urine <- function(x, val_var, unit_var, ...) {
 
   x[, c(val_var, unit_var) := list(do_diff(get(val_var)), "mL"), by = idx]
 }
+
+los_callback <- function(x, patient_ids, id_type, interval) {
+
+  as_day <- function(x) as.double(x, units = "days")
+
+  win <- x[["win_type"]]
+  cfg <- as_id_cfg(x)
+
+  if (identical(win, id_type)) {
+
+    res <- id_map(x, id_vars(cfg[id_type]), id_vars(cfg[win]), NULL, "end")
+
+    res <- res[, c("val_var", "end") := list(as_day(get("end")), NULL)]
+
+  } else {
+
+    res <- id_map(x, id_vars(cfg[id_type]), id_vars(cfg[win]), "start", "end")
+
+    res <- res[, c("val_var", "start", "end") := list(
+      as_day(get("end") - get("start")), NULL, NULL
+    )]
+
+    res <- rm_cols(res, id_vars(cfg[win]), by_ref = TRUE)
+
+    if (cfg[win] > cfg[id_type]) {
+      res <- unique(res)
+    }
+  }
+
+  merge_patid(res, patient_ids)
+}

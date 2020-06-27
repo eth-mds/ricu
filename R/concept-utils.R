@@ -162,17 +162,16 @@ init_itm.rgx_itm <- function(x, table, sub_var, regex, itm_vars = NULL,
   x
 }
 
-#' @param win_type Passed to [stay_windows()]
-#'
 #' @rdname data_items
 #' @export
-init_itm.los_itm <- function(x, win_type, ...) {
+init_itm.fun_itm <- function(x, callback, ...) {
 
-  warn_dots(...)
+  dots <- list(...)
 
-  assert_that(is.string(win_type))
+  assert_that(is_fun_name(callback), is_disjoint(names(x), names(dots)))
 
-  x[["win_type"]] <- win_type
+  x[["callback"]] <- callback
+  x[names(dots)] <- dots
 
   x
 }

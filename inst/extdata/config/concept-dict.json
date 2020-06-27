@@ -1865,26 +1865,30 @@
     "sources": {
       "eicu": [
         {
+          "callback": "los_callback",
           "win_type": "hadm",
-          "class": "los_itm"
+          "class": "fun_itm"
         }
       ],
       "eicu_demo": [
         {
+          "callback": "los_callback",
           "win_type": "hadm",
-          "class": "los_itm"
+          "class": "fun_itm"
         }
       ],
       "mimic": [
         {
+          "callback": "los_callback",
           "win_type": "hadm",
-          "class": "los_itm"
+          "class": "fun_itm"
         }
       ],
       "mimic_demo": [
         {
+          "callback": "los_callback",
           "win_type": "hadm",
-          "class": "los_itm"
+          "class": "fun_itm"
         }
       ]
     }
@@ -1896,32 +1900,37 @@
     "sources": {
       "eicu": [
         {
+          "callback": "los_callback",
           "win_type": "icustay",
-          "class": "los_itm"
+          "class": "fun_itm"
         }
       ],
       "eicu_demo": [
         {
+          "callback": "los_callback",
           "win_type": "icustay",
-          "class": "los_itm"
+          "class": "fun_itm"
         }
       ],
       "hirid": [
         {
+          "callback": "los_callback",
           "win_type": "icustay",
-          "class": "los_itm"
+          "class": "fun_itm"
         }
       ],
       "mimic": [
         {
+          "callback": "los_callback",
           "win_type": "icustay",
-          "class": "los_itm"
+          "class": "fun_itm"
         }
       ],
       "mimic_demo": [
         {
+          "callback": "los_callback",
           "win_type": "icustay",
-          "class": "los_itm"
+          "class": "fun_itm"
         }
       ]
     }

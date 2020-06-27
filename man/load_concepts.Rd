@@ -13,7 +13,7 @@
 \alias{load_concepts.sel_itm}
 \alias{load_concepts.rgx_itm}
 \alias{load_concepts.hrd_itm}
-\alias{load_concepts.los_itm}
+\alias{load_concepts.fun_itm}
 \alias{load_dictionary}
 \title{Load concept data}
 \usage{
@@ -80,7 +80,7 @@ load_concepts(x, ...)
   ...
 )
 
-\method{load_concepts}{los_itm}(
+\method{load_concepts}{fun_itm}(
   x,
   patient_ids = NULL,
   id_type = "icustay",
