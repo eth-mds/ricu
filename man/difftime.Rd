@@ -22,12 +22,14 @@ weeks(x)
 
 is_time(x, allow_neg = TRUE)
 
-is_time_vec(x, allow_neg = TRUE)
+is_time_vec(x, allow_neg = TRUE, interval = NULL)
 }
 \arguments{
 \item{x}{Object to test/coerce}
 
 \item{allow_neg}{Logical flag indicating whether to allow negative values}
+
+\item{interval}{NULL or an interval to check against}
 }
 \description{
 Utility functions for working with \code{\link[base:difftime]{base::difftime()}} objects.

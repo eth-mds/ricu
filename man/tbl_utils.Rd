@@ -3,6 +3,7 @@
 \name{id_vars}
 \alias{id_vars}
 \alias{id_vars.id_tbl}
+\alias{id_var}
 \alias{id_col}
 \alias{index_var}
 \alias{index_var.ts_tbl}
@@ -40,6 +41,8 @@
 id_vars(x)
 
 \method{id_vars}{id_tbl}(x)
+
+id_var(x)
 
 id_col(x)
 

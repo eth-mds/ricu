@@ -13,11 +13,15 @@ id_vars.id_tbl <- function(x) attr(x, "id_vars")
 
 #' @rdname tbl_utils
 #' @export
-id_col <- function(x) {
-  col <- id_vars(x)
-  assert_that(length(col) == 1L)
-  x[[col]]
+id_var <- function(x) {
+  res <- id_vars(x)
+  assert_that(is.string(res))
+  res
 }
+
+#' @rdname tbl_utils
+#' @export
+id_col <- function(x) x[[id_var(x)]]
 
 #' @rdname tbl_utils
 #' @export

@@ -81,7 +81,17 @@ id_windows <- function(x, copy = TRUE) {
               ifnotfound = NULL)
 
   if (is.null(res)) {
+
     res <- id_win_helper(x)
+    ids <- field(as_id_cfg(x), "id")
+
+    assert_that(
+      is_id_tbl(res), has_name(res, ids),
+      has_time_cols(res, c(paste0(ids, "_start"), paste0(ids, "_end")),
+                    interval = mins(1L)),
+      all_equal(range(res[[paste0(id_var(res), "_start")]]), mins(c(0, 0)))
+    )
+
     assign(key, res, id_win_env)
   }
 

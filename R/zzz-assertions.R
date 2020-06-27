@@ -78,18 +78,33 @@ on_failure(is_time) <- function(call, env) {
          "`difftime` object of length 1")
 }
 
+#' @param interval NULL or an interval to check against
+#'
 #' @rdname difftime
 #' @export
 #'
-is_time_vec <- function(x, allow_neg = TRUE) {
-  is_difftime(x) && (allow_neg || all(x >= 0))
+is_time_vec <- function(x, allow_neg = TRUE, interval = NULL) {
+  is_difftime(x) && (allow_neg || all(x >= 0)) && (
+    is.null(interval) || fits_interval(x, interval)
+  )
 }
 
 on_failure(is_time_vec) <- function(call, env) {
+
   pos <- !eval(call$allow_neg, env)
-  paste0(deparse(call$x), " is not a",
-         if (pos) " strictly positive " else " ",
-         "`difftime` object")
+  iva <- eval(is.null(call$interval), env)
+
+  if (iva) {
+    iva <- paste(" that conforms to an interval of",
+                 format(eval(call$interval, env)))
+  } else {
+    iva <- ""
+  }
+
+  paste0(
+    deparse(call$x), " is not a", if (pos) " strictly positive " else " ",
+    "`difftime` object", iva
+  )
 }
 
 same_time_unit <- function(x, y)
