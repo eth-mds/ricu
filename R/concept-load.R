@@ -15,12 +15,16 @@ load_concepts <- function(x, ...) UseMethod("load_concepts", x)
 #' @param src A character vector, used to subset the `concepts`; `NULL`
 #' means no subsetting
 #' @param concepts The concepts to be used or `NULL` in which case
-#' [read_dictionary()] is called
+#' [load_dictionary()] is called
+#' @param dict_name,dict_file In case not concepts are passed as `concepts`,
+#' these are forwarded to [load_dictionary()] as `name` and `file` arguments
 #'
 #' @rdname load_concepts
 #' @export
 #'
-load_concepts.character <- function(x, src = NULL, concepts = NULL, ...) {
+load_concepts.character <- function(x, src = NULL, concepts = NULL, ...,
+                                    dict_name = "concept-dict",
+                                    dict_file = NULL) {
 
   get_src <- function(x) x[names(x) == src]
 
@@ -28,7 +32,7 @@ load_concepts.character <- function(x, src = NULL, concepts = NULL, ...) {
 
     assert_that(not_null(src))
 
-    x <- read_dictionary(src, x)
+    x <- load_dictionary(src, x, name = dict_name, file = dict_file)
 
   } else {
 
@@ -434,21 +438,4 @@ merge_patid <- function(x, patid) {
   }
 
   merge(x, patid, by = id_col, all = FALSE)
-}
-
-#' @param concepts Character vector (or NULL, meaning everything) of concept
-#' names
-#' @param source Corresponds to `src`
-#' @param dictionary Corresponds to `concepts`
-#'
-#' @rdname load_concepts
-#' @export
-#'
-load_dictionary <- function(source = NULL, concepts = NULL,
-                            dictionary = read_dictionary(source), ...) {
-
-  message("`load_dictionary()` is deprecated, please use `load_concepts()` ",
-          "instead.")
-
-  load_concepts(concepts, source, dictionary, ...)
 }

@@ -577,8 +577,64 @@ n_tick.concept <- function(x) sum(int_ply(x, n_tick))
 #' @rdname data_concepts
 #'
 #' @export
-read_dictionary <- function(src = NULL, concepts = NULL,
-                            name = "concept-dict", file = NULL, ...) {
+load_dictionary <- function(src = NULL, concepts = NULL,
+                            name = "concept-dict", file = NULL) {
+
+  parse_dictionary(read_dictionary(name, file), src, concepts)
+}
+
+read_dictionary <- function(name = "data-sources", file = NULL) {
+
+  combine_sources <- function(x, y) {
+
+    assert_that(
+      !identical(x[["class"]], "rec_cncpt"), not_null(names(y[["sources"]])),
+      length(y) == 1L, has_name(y, "sources"), is.list(y[["sources"]])
+    )
+
+    new_sources    <- c(y[["sources"]], x[["sources"]])
+    x[["sources"]] <- new_sources[!duplicated(names(new_sources))]
+
+    x
+  }
+
+  if (is.null(file)) {
+
+    file <- paste0(name, ".json")
+
+    usr_file <- file.path(config_dir_path(), file)
+    usr_exst <- file.exists(usr_file)
+
+    if (usr_exst) {
+
+      usr_dict <- read_json(usr_file)
+
+      assert_that(is.list(usr_dict), not_null(names(usr_dict)))
+    }
+
+    res <- read_json(file.path(default_config_path(), file))
+
+    if (usr_exst) {
+
+      dups <- intersect(names(res), names(usr_dict))
+
+      if (has_length(dups)) {
+        res[dups] <- map(combine_sources, res[dups], usr_dict[dups])
+        usr_dict[dups] <- NULL
+      }
+
+      res <- c(usr_dict, res)
+    }
+
+  } else {
+
+    res <- read_json(file)
+  }
+
+  res
+}
+
+parse_dictionary <- function(dict, src = NULL, concepts = NULL) {
 
   do_itm <- function(sr, tr, x) {
     lapply(lapply(x, c, src = sr, target = tr), do_call, new_itm)
@@ -637,24 +693,13 @@ read_dictionary <- function(src = NULL, concepts = NULL,
     new_concept(lapply(Map(c, name = names(sub), sub), do_call, do_cncpt))
   }
 
-  if (is.null(file)) {
-
-    x <- get_config(name, ...)
-
-  } else {
-
-    assert_that(missing(name), file.exists(file))
-
-    x <- read_json(file, ...)
-  }
-
   assert_that(null_or(src, is.string))
 
   if (is.null(concepts)) {
-    concepts <- names(x)
+    concepts <- names(dict)
   }
 
-  do_new(concepts, x)
+  do_new(concepts, dict)
 }
 
 identity_callback <- function(x, ...) x

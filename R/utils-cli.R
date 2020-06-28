@@ -93,9 +93,11 @@ progress_tick <- function(info = NULL, progress_bar = NULL, length = 1L) {
   invisible(NULL)
 }
 
-progress_msg <- function(..., domain = NULL, append_lf = TRUE) {
+#' @rdname load_concepts
+#' @export
+progress_msg <- function(...) {
 
-  msg <- .makeMessage(..., domain = domain, appendLF = append_lf)
+  msg <- .makeMessage(...)
   call <- sys.call()
 
   msg <- simpleMessage(msg, call)

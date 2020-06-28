@@ -19,7 +19,7 @@
 \alias{concept}
 \alias{is_concept}
 \alias{n_tick.concept}
-\alias{read_dictionary}
+\alias{load_dictionary}
 \title{Data concept}
 \usage{
 item(...)
@@ -58,12 +58,11 @@ is_concept(x)
 
 \method{n_tick}{concept}(x)
 
-read_dictionary(
+load_dictionary(
   src = NULL,
   concepts = NULL,
   name = "concept-dict",
-  file = NULL,
-  ...
+  file = NULL
 )
 }
 \arguments{
