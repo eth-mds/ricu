@@ -5,7 +5,7 @@ progress_init <- function(lenth = NULL, msg = "loading", ...) {
 
     cb_fun <- function(x) {
 
-      out <- attr(x, "output")
+      out <- c(attr(x, "output"), combine_messages(x))
 
       if (has_length(out)) {
         lapply(out, message, appendLF = FALSE)
@@ -65,18 +65,10 @@ progress_tick <- function(info = NULL, progress_bar = NULL, length = 1L) {
     progress_bar$tick(len = length, tokens = list(what = info))
     attr(progress_bar, "token") <- info
 
-    cur_msgs <- attr(progress_bar, "messages")
 
-    if (has_length(cur_msgs)) {
-
-      cur_head <- attr(progress_bar, "header")
-
-      assert_that(has_length(cur_head))
-
-      msg <- paste(cur_head, paste(cur_msgs, collapse = ""), sep = "\n")
-
-      attr(progress_bar, "output") <- c(attr(progress_bar, "output"), msg)
-    }
+    attr(progress_bar, "output") <- c(
+      attr(progress_bar, "output"), combine_messages(progress_bar)
+    )
 
     attr(progress_bar, "header") <- header
     attr(progress_bar, "messages") <- character(0L)
@@ -93,11 +85,31 @@ progress_tick <- function(info = NULL, progress_bar = NULL, length = 1L) {
   invisible(NULL)
 }
 
+combine_messages <- function(x) {
+
+  cur_msgs <- attr(x, "messages")
+
+  if (has_length(cur_msgs)) {
+
+    cur_head <- attr(x, "header")
+
+    assert_that(has_length(cur_head))
+
+    paste(cur_head, paste(cur_msgs, collapse = ""), sep = "\n")
+
+  } else {
+
+    NULL
+  }
+}
+
+#' @param domain,append_lf Forwarded to [base::.makeMessage()]
+#'
 #' @rdname load_concepts
 #' @export
-progress_msg <- function(...) {
+progress_msg <- function(..., domain = NULL, append_lf = TRUE) {
 
-  msg <- .makeMessage(...)
+  msg <- .makeMessage(..., domain = domain, appendLF = append_lf)
   call <- sys.call()
 
   msg <- simpleMessage(msg, call)
