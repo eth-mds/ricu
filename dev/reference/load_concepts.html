@@ -137,7 +137,14 @@ of id and time-step and merged into wide format.</p>
     <pre class="usage"><span class='fu'>load_concepts</span>(<span class='kw'>x</span>, <span class='kw'>...</span>)
 
 <span class='co'># S3 method for character</span>
-<span class='fu'>load_concepts</span>(<span class='kw'>x</span>, src = <span class='kw'>NULL</span>, concepts = <span class='kw'>NULL</span>, <span class='kw'>...</span>)
+<span class='fu'>load_concepts</span>(
+  <span class='kw'>x</span>,
+  src = <span class='kw'>NULL</span>,
+  concepts = <span class='kw'>NULL</span>,
+  <span class='kw'>...</span>,
+  dict_name = <span class='st'>"concept-dict"</span>,
+  dict_file = <span class='kw'>NULL</span>
+)
 
 <span class='co'># S3 method for concept</span>
 <span class='fu'>load_concepts</span>(<span class='kw'>x</span>, aggregate = <span class='kw'>NULL</span>, merge_data = <span class='fl'>TRUE</span>, verbose = <span class='fl'>TRUE</span>, <span class='kw'>...</span>)
@@ -217,12 +224,7 @@ of id and time-step and merged into wide format.</p>
   <span class='kw'>...</span>
 )
 
-<span class='fu'>load_dictionary</span>(
-  source = <span class='kw'>NULL</span>,
-  concepts = <span class='kw'>NULL</span>,
-  dictionary = <span class='fu'>read_dictionary</span>(<span class='kw'>source</span>),
-  <span class='kw'>...</span>
-)</pre>
+<span class='fu'>progress_msg</span>(<span class='kw'>...</span>, domain = <span class='kw'>NULL</span>, append_lf = <span class='fl'>TRUE</span>)</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -242,8 +244,13 @@ means no subsetting</p></td>
     </tr>
     <tr>
       <th>concepts</th>
-      <td><p>Character vector (or NULL, meaning everything) of concept
-names</p></td>
+      <td><p>The concepts to be used or <code>NULL</code> in which case
+<code>load_dictionary()</code> is called</p></td>
+    </tr>
+    <tr>
+      <th>dict_name, dict_file</th>
+      <td><p>In case not concepts are passed as <code>concepts</code>,
+these are forwarded to <code>load_dictionary()</code> as <code>name</code> and <code>file</code> arguments</p></td>
     </tr>
     <tr>
       <th>aggregate</th>
@@ -278,12 +285,8 @@ with</p></td>
 specified as <code><a href='https://rdrr.io/r/base/difftime.html'>base::difftime()</a></code> object</p></td>
     </tr>
     <tr>
-      <th>source</th>
-      <td><p>Corresponds to <code>src</code></p></td>
-    </tr>
-    <tr>
-      <th>dictionary</th>
-      <td><p>Corresponds to <code>concepts</code></p></td>
+      <th>domain, append_lf</th>
+      <td><p>Forwarded to <code><a href='https://rdrr.io/r/base/message.html'>base::.makeMessage()</a></code></p></td>
     </tr>
     </table>
 

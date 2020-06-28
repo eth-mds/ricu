@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Data attach utilities — data • ICU data with R</title>
+<title>Load configuration for a data source — load_src_cfg • ICU data with R</title>
 
 
 <!-- jquery -->
@@ -39,9 +39,10 @@
 
 
 
-<meta property="og:title" content="Data attach utilities — data" />
-<meta property="og:description" content="Attaching a data source sets up an environment containing prt::new_prt()
-files using base::delayedAssign()." />
+<meta property="og:title" content="Load configuration for a data source — load_src_cfg" />
+<meta property="og:description" content="For a data source to become available to ricu, a JSON base configuration
+file is required which is parsed into a src_cfg object (see
+new_src_cfg())." />
 
 
 <meta name="robots" content="noindex">
@@ -124,83 +125,25 @@ files using base::delayedAssign()." />
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Data attach utilities</h1>
+    <h1>Load configuration for a data source</h1>
     
-    <div class="hidden name"><code>attach_src.Rd</code></div>
+    <div class="hidden name"><code>load_src_cfg.Rd</code></div>
     </div>
 
     <div class="ref-description">
-    <p>Attaching a data source sets up an environment containing <code><a href='https://rdrr.io/pkg/prt/man/new_prt.html'>prt::new_prt()</a></code>
-files using <code><a href='https://rdrr.io/r/base/delayedAssign.html'>base::delayedAssign()</a></code>.</p>
+    <p>For a data source to become available to ricu, a JSON base configuration
+file is required which is parsed into a <code>src_cfg</code> object (see
+<code>new_src_cfg()</code>).</p>
     </div>
 
-    <pre class="usage"><span class='kw'>data</span>
-
-<span class='fu'>as_src_tbl</span>(<span class='kw'>x</span>, <span class='kw'>...</span>)
-
-<span class='co'># S3 method for src_tbl</span>
-<span class='fu'>as_src_tbl</span>(<span class='kw'>x</span>, <span class='kw'>...</span>)
-
-<span class='co'># S3 method for src_env</span>
-<span class='fu'>as_src_tbl</span>(<span class='kw'>x</span>, <span class='kw'>tbl</span>, <span class='kw'>...</span>)
-
-<span class='co'># S3 method for character</span>
-<span class='fu'>as_src_tbl</span>(<span class='kw'>x</span>, <span class='kw'>env</span>, <span class='kw'>...</span>)
-
-<span class='fu'>as_src_env</span>(<span class='kw'>x</span>)
-
-<span class='co'># S3 method for src_env</span>
-<span class='fu'>as_src_env</span>(<span class='kw'>x</span>)
-
-<span class='co'># S3 method for character</span>
-<span class='fu'>as_src_env</span>(<span class='kw'>x</span>)
-
-<span class='co'># S3 method for default</span>
-<span class='fu'>as_src_env</span>(<span class='kw'>x</span>)
-
-<span class='co'># S3 method for src_tbl</span>
-<span class='fu'>as_src_env</span>(<span class='kw'>x</span>)
-
-<span class='fu'>attach_src</span>(<span class='kw'>x</span>, <span class='kw'>...</span>)
-
-<span class='co'># S3 method for src_cfg</span>
-<span class='fu'>attach_src</span>(<span class='kw'>x</span>, assign_env = <span class='kw'>.GlobalEnv</span>, dir = <span class='fu'>src_data_dir</span>(<span class='kw'>x</span>), <span class='kw'>...</span>)
-
-<span class='co'># S3 method for character</span>
-<span class='fu'>attach_src</span>(<span class='kw'>x</span>, name = <span class='st'>"data-sources"</span>, file = <span class='kw'>NULL</span>, assign_env = <span class='kw'>.GlobalEnv</span>, <span class='kw'>...</span>)
-
-<span class='fu'>setup_src_env</span>(<span class='kw'>x</span>, <span class='kw'>env</span>, dir = <span class='kw'>NULL</span>)
-
-<span class='co'># S3 method for src_cfg</span>
-<span class='fu'>setup_src_env</span>(<span class='kw'>x</span>, <span class='kw'>env</span>, dir = <span class='fu'>src_data_dir</span>(<span class='kw'>x</span>))</pre>
+    <pre class="usage"><span class='fu'>load_src_cfg</span>(src = <span class='kw'>NULL</span>, name = <span class='st'>"data-sources"</span>, file = <span class='kw'>NULL</span>)</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
-      <th>x</th>
-      <td><p>Data source to attach</p></td>
-    </tr>
-    <tr>
-      <th>...</th>
-      <td><p>Forwarded to further calls to <code>attach_src()</code></p></td>
-    </tr>
-    <tr>
-      <th>tbl</th>
-      <td><p>String valued table name</p></td>
-    </tr>
-    <tr>
-      <th>env</th>
-      <td><p>Environment where data proxy objects are created</p></td>
-    </tr>
-    <tr>
-      <th>assign_env</th>
-      <td><p>Environment in which the data source will become available</p></td>
-    </tr>
-    <tr>
-      <th>dir</th>
-      <td><p>Directory used to look for <code><a href='http://www.fstpackage.org/reference/fst.html'>fst::fst()</a></code> files; <code>NULL</code> calls
-<code>data_dir()</code> using the source name as <code>subdir</code> argument</p></td>
+      <th>src</th>
+      <td><p>(Optional) name(s) of data sources used for subsetting</p></td>
     </tr>
     <tr>
       <th>name</th>
@@ -213,9 +156,6 @@ the default config directors</p></td>
     </tr>
     </table>
 
-    <h2 class="hasAnchor" id="format"><a class="anchor" href="#format"></a>Format</h2>
-
-    <p>An object of class <code>environment</code> of length 5.</p>
 
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
