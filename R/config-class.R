@@ -250,8 +250,8 @@ read_src_cfg <- function(src = NULL, name = "data-sources", file = NULL) {
 
     file <- paste0(name, ".json")
 
-    usr_file <- file.path(config_dir_path(), file)
-    usr_exst <- file.exists(usr_file)
+    usr_file <- file.path(user_config_path(), file)
+    usr_exst <- isTRUE(file.exists(usr_file))
 
     if (usr_exst) {
 
@@ -278,7 +278,13 @@ read_src_cfg <- function(src = NULL, name = "data-sources", file = NULL) {
     res <- read_json(file)
   }
 
-  setNames(res, chr_xtr(res, "name"))[src]
+  res <- setNames(res, chr_xtr(res, "name"))
+
+  if (is.null(src)) {
+    res
+  } else {
+    res[src]
+  }
 }
 
 parse_src_cfg <- function(x) {

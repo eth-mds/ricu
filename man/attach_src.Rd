@@ -24,7 +24,7 @@
 \alias{setup_src_env.src_cfg}
 \title{Data attach utilities}
 \format{
-An object of class \code{environment} of length 6.
+An object of class \code{environment} of length 5.
 }
 \usage{
 data

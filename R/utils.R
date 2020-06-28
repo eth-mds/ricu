@@ -104,15 +104,15 @@ default_config_path <- function() {
   system.file("extdata", "config", package = methods::getPackageName())
 }
 
-config_dir_path <- function() {
+user_config_path <- function() {
 
   res <- Sys.getenv("RICU_CONFIG_PATH", unset = NA_character_)
 
   if (is.na(res)) {
-    res <- default_config_path()
+    NULL
+  } else {
+    res
   }
-
-  res
 }
 
 #' For configuration files, the default location is `extdata/config` and the
@@ -146,9 +146,9 @@ get_config <- function(name, dir = NULL, ...) {
 
   if (is.null(dir)) {
 
-    usr_file <- file.path(config_dir_path(), file)
+    usr_file <- file.path(user_config_path(), file)
 
-    if (file.exists(usr_file)) {
+    if (isTRUE(file.exists(usr_file))) {
       file <- usr_file
     } else {
       file <- file.path(default_config_path(), file)
