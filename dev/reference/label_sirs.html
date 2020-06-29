@@ -135,32 +135,59 @@ assessment tool used to track a patient's well-being in an ICU.</p>
     </div>
 
     <pre class="usage"><span class='fu'>sirs_score</span>(
-  <span class='kw'>temperature</span>,
-  <span class='kw'>heart_rate</span>,
   <span class='kw'>respiratory_rate</span>,
-  <span class='kw'>pa_co2</span>,
-  <span class='kw'>white_blood_cells</span>,
-  <span class='kw'>bands</span>,
+  <span class='kw'>...</span>,
   win_length = <span class='fu'>hours</span>(<span class='fl'>24L</span>),
-  interval = <span class='kw'>ricu</span>::<span class='fu'><a href='https://rdrr.io/pkg/ricu/man/tbl_utils.html'>interval</a></span>(<span class='kw'>temperature</span>)
+  keep_components = <span class='fl'>FALSE</span>,
+  interval = <span class='kw'>ricu</span>::<span class='fu'><a href='https://rdrr.io/pkg/ricu/man/tbl_utils.html'>interval</a></span>(<span class='kw'>respiratory_rate</span>)
+)
+
+<span class='fu'>supp_o2</span>(<span class='kw'>vent_ind</span>, <span class='kw'>fi_o2</span>, interval = <span class='kw'>ricu</span>::<span class='fu'><a href='https://rdrr.io/pkg/ricu/man/tbl_utils.html'>interval</a></span>(<span class='kw'>vent_ind</span>))
+
+<span class='fu'>avpu</span>(<span class='kw'>gcs</span>, interval = <span class='kw'>ricu</span>::<span class='fu'><a href='https://rdrr.io/pkg/ricu/man/tbl_utils.html'>interval</a></span>(<span class='kw'>gcs</span>), by_ref = <span class='fl'>TRUE</span>)
+
+<span class='fu'>news_score</span>(
+  <span class='kw'>respiratory_rate</span>,
+  <span class='kw'>...</span>,
+  win_length = <span class='fu'>hours</span>(<span class='fl'>24L</span>),
+  keep_components = <span class='fl'>FALSE</span>,
+  interval = <span class='kw'>ricu</span>::<span class='fu'><a href='https://rdrr.io/pkg/ricu/man/tbl_utils.html'>interval</a></span>(<span class='kw'>respiratory_rate</span>)
+)
+
+<span class='fu'>mews_score</span>(
+  <span class='kw'>respiratory_rate</span>,
+  <span class='kw'>...</span>,
+  win_length = <span class='fu'>hours</span>(<span class='fl'>24L</span>),
+  keep_components = <span class='fl'>FALSE</span>,
+  interval = <span class='kw'>ricu</span>::<span class='fu'><a href='https://rdrr.io/pkg/ricu/man/tbl_utils.html'>interval</a></span>(<span class='kw'>respiratory_rate</span>)
 )</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
-      <th>temperature, heart_rate, respiratory_rate, pa_co2, white_blood_cells, bands</th>
-      <td><p>Data input used
-for SIRS score evaluation</p></td>
+      <th>respiratory_rate, vent_ind, fi_o2, gcs, ...</th>
+      <td><p>Data input used for score
+evaluation</p></td>
     </tr>
     <tr>
       <th>win_length</th>
-      <td><p>Window used for carry forward imputation</p></td>
+      <td><p>Window used for carry forward</p></td>
+    </tr>
+    <tr>
+      <th>keep_components</th>
+      <td><p>Logical flag indicating whether to return the
+individual components alongside the aggregated score</p></td>
     </tr>
     <tr>
       <th>interval</th>
       <td><p>Time series interval (only used for checking consistency
 of input data)</p></td>
+    </tr>
+    <tr>
+      <th>by_ref</th>
+      <td><p>Logical flag indicating whether to change the input by
+reference</p></td>
     </tr>
     </table>
 
