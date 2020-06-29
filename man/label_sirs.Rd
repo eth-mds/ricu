@@ -2,27 +2,54 @@
 % Please edit documentation in R/label-sirs.R
 \name{sirs_score}
 \alias{sirs_score}
+\alias{supp_o2}
+\alias{avpu}
+\alias{news_score}
+\alias{mews_score}
 \title{SIRS score label}
 \usage{
 sirs_score(
-  temperature,
-  heart_rate,
   respiratory_rate,
-  pa_co2,
-  white_blood_cells,
-  bands,
+  ...,
   win_length = hours(24L),
-  interval = ricu::interval(temperature)
+  keep_components = FALSE,
+  interval = ricu::interval(respiratory_rate)
+)
+
+supp_o2(vent_ind, fi_o2, interval = ricu::interval(vent_ind))
+
+avpu(gcs, interval = ricu::interval(gcs), by_ref = TRUE)
+
+news_score(
+  respiratory_rate,
+  ...,
+  win_length = hours(24L),
+  keep_components = FALSE,
+  interval = ricu::interval(respiratory_rate)
+)
+
+mews_score(
+  respiratory_rate,
+  ...,
+  win_length = hours(24L),
+  keep_components = FALSE,
+  interval = ricu::interval(respiratory_rate)
 )
 }
 \arguments{
-\item{temperature, heart_rate, respiratory_rate, pa_co2, white_blood_cells, bands}{Data input used
-for SIRS score evaluation}
+\item{respiratory_rate, vent_ind, fi_o2, gcs, ...}{Data input used for score
+evaluation}
 
-\item{win_length}{Window used for carry forward imputation}
+\item{win_length}{Window used for carry forward}
+
+\item{keep_components}{Logical flag indicating whether to return the
+individual components alongside the aggregated score}
 
 \item{interval}{Time series interval (only used for checking consistency
 of input data)}
+
+\item{by_ref}{Logical flag indicating whether to change the input by
+reference}
 }
 \description{
 The SIRS (Systemic Inflammatory Response Syndrome) score is a commonly used

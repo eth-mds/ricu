@@ -325,6 +325,11 @@
       ]
     }
   },
+  "avpu": {
+    "concepts": "gcs",
+    "callback": "avpu",
+    "class": "rec_cncpt"
+  },
   "bands": {
     "sources": {
       "eicu": [
@@ -2241,6 +2246,11 @@
       ]
     }
   },
+  "mews_score": {
+    "concepts": ["systolic_bp", "heart_rate", "respiratory_rate", "temperature", "avpu"],
+    "callback": "mews_score",
+    "class": "rec_cncpt"
+  },
   "neutrophils": {
     "unit": "%",
     "min": 0,
@@ -2282,6 +2292,11 @@
         }
       ]
     }
+  },
+  "news_score": {
+    "concepts": ["respiratory_rate", "o2_saturation", "supp_o2", "temperature", "systolic_bp", "heart_rate", "avpu"],
+    "callback": "news_score",
+    "class": "rec_cncpt"
   },
   "norepinephrine": {
     "unit": "mcg/kg/min",
@@ -2997,6 +3012,11 @@
     "concepts": ["pa_fi", "vent_ind", "platelet_count", "bilirubin_total", "mean_bp", "norepinephrine", "epinephrine", "dopamine", "dobutamine", "gcs", "creatinine", "urine_24"],
     "aggregate": [null, null, "min", "max", "min", "max", "max", "max", "max", null, "max", null],
     "callback": "sofa_score",
+    "class": "rec_cncpt"
+  },
+  "supp_o2": {
+    "concepts": ["vent_ind", "fi_o2"],
+    "callback": "supp_o2",
     "class": "rec_cncpt"
   },
   "susp_inf": {

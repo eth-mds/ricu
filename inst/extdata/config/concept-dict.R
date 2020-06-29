@@ -1446,6 +1446,28 @@ cfg <- list(
                  "white_blood_cells", "bands"),
     callback = "sirs_score",
     class = "rec_cncpt"
+  ),
+  supp_o2 = list(
+    concepts = c("vent_ind", "fi_o2"),
+    callback = "supp_o2",
+    class = "rec_cncpt"
+  ),
+  avpu = list(
+    concepts = "gcs",
+    callback = "avpu",
+    class = "rec_cncpt"
+  ),
+  news_score = list(
+    concepts = c("respiratory_rate", "o2_saturation", "supp_o2", "temperature",
+                 "systolic_bp", "heart_rate", "avpu"),
+    callback = "news_score",
+    class = "rec_cncpt"
+  ),
+  mews_score = list(
+    concepts = c("systolic_bp", "heart_rate", "respiratory_rate",
+                 "temperature","avpu"),
+    callback = "mews_score",
+    class = "rec_cncpt"
   )
 )
 
