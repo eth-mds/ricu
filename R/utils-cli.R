@@ -8,7 +8,7 @@ progress_init <- function(lenth = NULL, msg = "loading", ...) {
       out <- c(attr(x, "output"), combine_messages(x))
 
       if (has_length(out)) {
-        lapply(out, message, appendLF = FALSE)
+        msg_ricu(out)
       }
     }
 
@@ -16,16 +16,14 @@ progress_init <- function(lenth = NULL, msg = "loading", ...) {
       format = ":what [:bar] :percent", total = lenth, callback = cb_fun, ...
     )
 
-    if (not_null(msg)) {
-      res$message(msg)
-    }
-
     attr(res, "output") <- character(0L)
 
   } else {
-
-    message(msg)
     res <- NULL
+  }
+
+  if (not_null(msg)) {
+    msg_ricu(paste0("\n", msg, "\n"))
   }
 
   res
@@ -38,13 +36,13 @@ progress_tick <- function(info = NULL, progress_bar = NULL, length = 1L) {
   }
 
   if (not_null(info)) {
-    header <- paste0("* `", info, "`")
+    header <- paste(symbol$bullet, info)
   }
 
   if (is.null(progress_bar)) {
 
     if (not_null(info)) {
-      message(header)
+      msg_ricu(header)
     }
 
     return(invisible(NULL))
@@ -57,7 +55,8 @@ progress_tick <- function(info = NULL, progress_bar = NULL, length = 1L) {
   if (not_null(info)) {
 
     if (nchar(info) > 15L) {
-      info <- paste0(substr(info, 1L, 15L - nchar(ellipsis())), ellipsis())
+      elli <- symbol$ellipsis
+      info <- paste0(substr(info, 1L, 15L - nchar(elli)), elli)
     } else {
       info <- sprintf("%-15s", info)
     }
@@ -95,7 +94,7 @@ combine_messages <- function(x) {
 
     assert_that(has_length(cur_head))
 
-    paste(cur_head, paste(cur_msgs, collapse = ""), sep = "\n")
+    paste(paste0(cur_head, ":"), paste(cur_msgs, collapse = ""), sep = "\n")
 
   } else {
 
@@ -103,20 +102,9 @@ combine_messages <- function(x) {
   }
 }
 
-#' @param domain,append_lf Forwarded to [base::.makeMessage()]
-#'
 #' @rdname load_concepts
 #' @export
-progress_msg <- function(..., domain = NULL, append_lf = TRUE) {
-
-  msg <- .makeMessage(..., domain = domain, appendLF = append_lf)
-  call <- sys.call()
-
-  msg <- simpleMessage(msg, call)
-  class(msg) <- c("progress_msg", class(msg))
-
-  message(msg)
-}
+progress_msg <- function(...) msg_ricu(..., class = "progress_msg")
 
 create_progress_handler <- function(progress_bar) {
 
@@ -165,22 +153,9 @@ with_progress <- function(expr, progress_bar = NULL) {
   }
 }
 
-cat_line <- function(...) {
-  line <- trimws(paste0(...), "right")
-  cat(paste0(line, "\n"), sep = "")
-}
-
 big_mark <- function(x, ...) {
   mark <- if (identical(getOption("OutDec"), ",")) "." else ","
   formatC(x, big.mark = mark, format = "d", ...)
-}
-
-times <- function(fancy = l10n_info()$`UTF-8`) if (fancy) "\u00d7" else "x"
-
-arrow <- function(fancy = l10n_info()$`UTF-8`) if (fancy) "\u2192" else "->"
-
-ellipsis <- function(fancy = l10n_info()$`UTF-8`) {
-  if (fancy) "\u2026" else "..."
 }
 
 quote_bt <- function(x) encodeString(x, quote = "`")
@@ -189,4 +164,48 @@ concat <- function(...) paste0(..., collapse = ", ")
 
 prcnt <- function(x, tot = sum(x)) {
   paste0(round(x / tot * 100, digits = 2), "%")
+}
+
+assert_that <- function(..., env = parent.frame(), msg = NULL) {
+
+  res <- see_if(..., env = env, msg = msg)
+  if (res) return(TRUE)
+
+  stop_ricu(attr(res, "msg"), "assertError")
+}
+
+#' @importFrom cli style_reset
+#' @importFrom rlang inform
+msg_ricu <- function(..., class = NULL, reset = TRUE) {
+
+  message <- paste(lapply(list(...), paste, collapse = ""), collapse = "")
+
+  if (reset) {
+    message <- style_reset(message)
+  }
+
+  inform(message = message, class = c(class, "ricu_msg"))
+}
+
+#' @importFrom rlang abort
+stop_ricu <- function(message = NULL, class = NULL, ...) {
+  abort(message, class = c(class, "ricu_error"), ...)
+}
+
+top_n <- function(x, n = 1L) head(order(x), n = n)
+
+suggest <- function(x, opts, n = 1L, fixed = FALSE, ...) {
+
+  dis <- adist(x, opts, fixed = fixed, ...)
+  res <- apply(dis, 1L, top_n, n = n)
+
+  if (is.null(nrow(res)) && all_equal(n, 1L)) {
+    res <- t(res)
+  }
+
+  res <- split(res, col(res))
+  res <- Map(`[`, list(opts), res)
+  names(res) <- x
+
+  res
 }

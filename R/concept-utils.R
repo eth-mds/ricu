@@ -550,7 +550,7 @@ is_concept <- function(x) inherits(x, "concept")
 format.concept <- function(x, ...) {
   paste0(
     "<", chr_xtr(lapply(x, "class"), 1L), "[",
-    int_ply(lst_xtr(x, "items"), length), "]> ", arrow(), " <",
+    int_ply(lst_xtr(x, "items"), length), "]> ", symbol$arrow_right, " <",
     chr_ply(x, target_class), ">"
   )
 }
@@ -679,7 +679,11 @@ parse_dictionary <- function(dict, src = NULL, concepts = NULL) {
 
   do_new <- function(sel, ful) {
 
-    assert_that(has_name(ful, sel))
+    if (is.null(sel)) {
+      return(sel)
+    }
+
+    assert_that(are_in(sel, names(ful)))
 
     sub <- ful[sel]
 

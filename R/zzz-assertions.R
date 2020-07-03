@@ -1,5 +1,5 @@
 
-#' @importFrom assertthat assert_that on_failure<- validate_that
+#' @importFrom assertthat see_if on_failure<- validate_that
 #' @importFrom assertthat is.string is.flag is.dir is.scalar is.count
 #' @importFrom assertthat has_name has_attr are_equal is.number
 NULL
@@ -330,4 +330,40 @@ all_equal <- function(x, y, ...) isTRUE(all.equal(x, y, ...))
 
 on_failure(all_equal) <- function(call, env) {
   paste0(deparse(call$x), " and ", deparse(call$x), " are not equal")
+}
+
+is_nz_chr <- function(x) is.character(x) && has_length(x)
+
+on_failure(is_nz_chr) <- function(call, env) {
+  paste0(deparse(call$x),
+         " is expected to be a character vector of non-zero length")
+}
+
+are_in <- function(x, y) {
+  assert_that(is_nz_chr(x), is_nz_chr(y))
+  all(x %in% y)
+}
+
+on_failure(are_in) <- function(call, env) {
+
+  x <- eval(call$x, env)
+  y <- eval(call$y, env)
+
+  hits <- x %in% y
+
+  if (any(hits)) {
+    msg <- "Some of the following strings could not be found"
+  } else {
+    msg <- "None of the following strings were found"
+  }
+
+  msg <- paste(msg, "among the provided options. Did you possibly mean:")
+  msg <- paste(strwrap(msg), collapse = "\n")
+
+  sug <- suggest(x, y)
+  sug <- paste0(symbol$bullet, " '", sug, "' instead of '", names(sug), "'",
+                collapse = "\n")
+  sug <- paste(strwrap(sug, exdent = 2L), collapse = "\n")
+
+  paste(msg, sug, sep = "\n")
 }

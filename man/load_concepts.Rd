@@ -95,7 +95,7 @@ load_concepts(x, ...)
   ...
 )
 
-progress_msg(..., domain = NULL, append_lf = TRUE)
+progress_msg(...)
 }
 \arguments{
 \item{x}{Object specifying the data to be loaded}
@@ -128,8 +128,6 @@ with}
 
 \item{interval}{The time interval used to discretize time stamps with,
 specified as \code{\link[base:difftime]{base::difftime()}} object}
-
-\item{domain, append_lf}{Forwarded to \code{\link[base:.makeMessage]{base::.makeMessage()}}}
 }
 \description{
 Data specified as \code{concept} objects is loaded, aggregated per combination

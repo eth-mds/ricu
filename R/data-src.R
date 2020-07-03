@@ -214,7 +214,7 @@ format.src_env <- function(x, ...) {
 }
 
 dim_desc <- function(x) {
-  paste0("[", big_mark(x[1L]), " ", times(), " ", big_mark(x[2L]), "]")
+  paste0("[", big_mark(x[1L]), " ", symbol$cross, " ", big_mark(x[2L]), "]")
 }
 
 #' @importFrom utils ls.str

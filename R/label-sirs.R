@@ -105,11 +105,11 @@ news_score <- function(respiratory_rate, ..., win_length = hours(24L),
                        keep_components = FALSE,
                        interval = ricu::interval(respiratory_rate)) {
 
-  resp   <- map_vals(c(3L, 1L, 0L, 2L, 3L),     c(8, 11, 20, 24))
-  o2_sat <- map_vals(c(3L, 2L, 1L, 0L),         c(91, 93, 95))
-  temp   <- map_vals(c(3L, 1L, 0L, 1L, 2L),     c(35, 36, 38, 39))
-  sys_bp <- map_vals(c(3L, 2L, 1L, 0L, 3L),     c(90, 100, 110, 219))
-  heart  <- map_vals(c(3L, 1L, 0L, 1L, 2L, 3L), c(40, 50, 90, 110, 130))
+  resp   <- map_vals(c(3L,     1L, 0L, 2L, 3L    ), c( 8,  11,  20,  24))
+  o2_sat <- map_vals(c(3L, 2L, 1L, 0L            ), c(91,  93,  95))
+  temp   <- map_vals(c(3L,     1L, 0L, 1L, 2L    ), c(35,  36,  38,  39))
+  sys_bp <- map_vals(c(3L, 2L, 1L, 0L,         3L), c(90, 100, 110, 219))
+  heart  <- map_vals(c(3L,     1L, 0L, 1L, 2L, 3L), c(40,  50,  90, 110, 130))
 
   supp_o2 <- function(x) fifelse(x, 2L, 0L)
   avpu    <- function(x) fifelse(x == "A", 0L, 3L)
@@ -156,10 +156,10 @@ mews_score <- function(respiratory_rate, ..., win_length = hours(24L),
                        keep_components = FALSE,
                        interval = ricu::interval(respiratory_rate)) {
 
-  sys_bp <- map_vals(c(3L, 2L, 1L, 0L, 2L),     c(70, 80, 100, 199))
-  heart  <- map_vals(c(2L, 1L, 0L, 1L, 2L, 3L), c(40, 50, 100, 110, 129))
-  resp   <- map_vals(c(2L, 0L, 1L, 2L, 3L),     c(9, 14, 20, 29))
-  temp   <- map_vals(c(2L, 0L, 2L),             c(35, 38.4))
+  sys_bp <- map_vals(c(3L, 2L, 1L, 0L,     2L    ), c(70, 80, 100, 199))
+  heart  <- map_vals(c(    2L, 1L, 0L, 1L, 2L, 3L), c(40, 50, 100, 110, 129))
+  resp   <- map_vals(c(    2L,     0L, 1L, 2L, 3L), c( 9, 14,  20,  29))
+  temp   <- map_vals(c(    2L,     0L,     2L    ), c(35, 38.4))
 
   avpu <- function(x) setNames(c(0L, 1L, 2L, 3L), c("A", "V", "P", "U"))[x]
 

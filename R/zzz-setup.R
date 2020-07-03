@@ -87,21 +87,21 @@
   srcs  <- paste0(srcs, ": ", stats[1L, ], " of ", stats[2L, ],
                   " tables available")
 
-  cli::cat_line(file = con)
-  cli::cat_rule(paste(pkg, ver), file = con)
+  cat_line(file = con)
+  cat_rule(paste(pkg, ver), file = con)
 
-  cli::cat_line(
+  cat_line(
     "\nThe following data sources are configured to be attached:\n",
     "(the environment variable `RICU_SRC_LOAD` controls this)\n",
     file = con
   )
 
-  Map(cli::cat_bullet, srcs, bullet = bull, bullet_col = color,
+  Map(cat_bullet, srcs, bullet = bull, bullet_col = color,
       MoreArgs = list(file = con))
 
-  cli::cat_line(file = con)
-  cli::cat_rule(file = con)
-  cli::cat_line(file = con)
+  cat_line(file = con)
+  cat_rule(file = con)
+  cat_line(file = con)
 
   packageStartupMessage(paste(out, collapse = "\n"))
 }
