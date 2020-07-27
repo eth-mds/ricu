@@ -16,12 +16,11 @@ test_that("rename_cols for id_tbl", {
                    c("d", "e"))
   expect_identical(data_vars(tbl), c("b", "c"))
 
-  expect_error(rename_cols(tbl, "e", "d"),
-               "does not contain the following columns: `d`")
+  expect_error(rename_cols(tbl, "e", "d"), class = "has_cols_assert")
   expect_identical(tbl, rename_cols(tbl, "e", "d", skip_absent = TRUE))
 
   expect_error(rename_cols(tbl, c("e", "e"), c("b", "c")),
-               "contains duplicate elements")
+               class = "is_unique_assert")
 })
 
 test_that("rm_cols for id_tbl", {
@@ -37,13 +36,13 @@ test_that("rm_cols for id_tbl", {
   expect_identical(colnames(rm_cols(tbl, c("a", "b"))), "c")
   expect_is(rm_cols(tbl, c("a", "b")), "data.table")
 
-  expect_error(rm_cols(tbl, "d"),
-               "x does not contain the following columns: `d`")
+  expect_error(rm_cols(tbl, "d"), class = "has_cols_assert")
+  expect_error(rm_cols(tbl, c("a", "a")), class = "is_unique_assert")
+
   expect_identical(rm_cols(tbl, "d", skip_absent = TRUE), tbl)
 
   expect_identical(rm_cols(tbl, c("a", "d"), skip_absent = TRUE),
                    rm_cols(tbl, "a"))
-  expect_identical(rm_cols(tbl, c("a", "a")), rm_cols(tbl, "a"))
 
   expect_identical(rm_cols(tbl, "c"), rm_cols(tbl, "c", by_ref = TRUE))
   expect_identical(colnames(tbl), c("a", "b"))
@@ -64,12 +63,11 @@ test_that("rename_cols for ts_tbl", {
   expect_identical(data_vars(rename_cols(tbl, c("d", "e"), c("b", "c"))),
                    "e")
 
-  expect_error(rename_cols(tbl, "e", "d"),
-               "does not contain the following columns: `d`")
+  expect_error(rename_cols(tbl, "e", "d"), class = "has_cols_assert")
   expect_identical(tbl, rename_cols(tbl, "e", "d", skip_absent = TRUE))
 
   expect_error(rename_cols(tbl, c("e", "e"), c("b", "c")),
-               "contains duplicate elements")
+               class = "is_unique_assert")
 })
 
 test_that("rm_cols for ts_tbl", {
@@ -83,13 +81,13 @@ test_that("rm_cols for ts_tbl", {
   expect_identical(colnames(rm_cols(tbl, c("a", "b"))), "c")
   expect_is(rm_cols(tbl, "a"), "data.table")
 
-  expect_error(rm_cols(tbl, "d"),
-               "x does not contain the following columns: `d`")
+  expect_error(rm_cols(tbl, "d"), class = "has_cols_assert")
+  expect_error(rm_cols(tbl, c("a", "a")), class = "is_unique_assert")
+
   expect_identical(rm_cols(tbl, "d", skip_absent = TRUE), tbl)
 
   expect_identical(rm_cols(tbl, c("a", "d"), skip_absent = TRUE),
                    rm_cols(tbl, "a"))
-  expect_identical(rm_cols(tbl, c("a", "a")), rm_cols(tbl, "a"))
 
   expect_identical(rm_cols(tbl, "c"), rm_cols(tbl, "c", by_ref = TRUE))
   expect_identical(colnames(tbl), c("a", "b"))

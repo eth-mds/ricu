@@ -57,8 +57,13 @@ as.data.table.id_tbl <- function(x, ...) warn_dot_ident(unclass_tbl(x), ...)
 #' @export
 as.data.frame.id_tbl <- function(x, row.names = NULL, optional = FALSE, ...) {
 
-  if (!is.null(row.names)) warning("Ignoring `row.names` argument.")
-  if (!isFALSE(optional)) warning("Ignoring `optional` argument.")
+  if (!is.null(row.names)) {
+    warn_arg("row.names")
+  }
+
+  if (!isFALSE(optional)) {
+    warn_arg("optional")
+  }
 
   setDF(as.data.table(x, ...))
 }
@@ -109,9 +114,9 @@ merge.id_tbl <- function(x, y, by = NULL, by.x = NULL, by.y = NULL, ...) {
 
     if (is_ts_tbl(x) && is_ts_tbl(y)) {
 
-      assert_that(same_interval(x, y))
+      assert_that(same_time(interval(x), interval(y)))
 
-      if (same_meta_vars(x, y)) {
+      if (setequal(meta_vars(x), meta_vars(y))) {
         if (is.null(by))   by   <- meta_vars(x)
       } else {
         if (is.null(by.x)) by.x <- meta_vars(x)
@@ -122,7 +127,7 @@ merge.id_tbl <- function(x, y, by = NULL, by.x = NULL, by.y = NULL, ...) {
 
     } else {
 
-      if (same_id(x, y)) {
+      if (setequal(id_vars(x), id_vars(y))) {
         if (is.null(by))   by   <- id_vars(x)
       } else {
         if (is.null(by.x)) by.x <- id_vars(x)

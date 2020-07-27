@@ -168,8 +168,9 @@ check_n_row <- function(x, n_row) {
   }
 
   if (!all_equal(expec, n_row)) {
-    warning("Table ", quote_bt(tbl_name(x)), " has ",
-            big_mark(n_row), " instead of ", big_mark(expec), " rows")
+    warn_ricu("Table {quote_bt(tbl_name(x))} has {big_mark(n_row)} instead of
+               {big_mark(expec)} {qty(expec)} row{?s}",
+              class = "src_tbl_row_mismatch")
   }
 
   invisible(n_row)

@@ -255,8 +255,8 @@ hirid_vaso <- function(x, val_var, unit_var, env, ...) {
   dif_row <- old_row - nrow(x)
 
   if (dif_row > 0) {
-    message("    lost ", dif_row, " (", prcnt(dif_row, old_row),
-            ") entries due to unexpected units")
+    progress_msg("    lost ", dif_row, " (", prcnt(dif_row, old_row),
+                 ") entries due to unexpected units")
   }
 
   sex <- load_id("general", env, cols = "sex", id_var = ids)

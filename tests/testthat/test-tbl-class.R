@@ -38,9 +38,9 @@ test_that("id_tbl constructors", {
   expect_is(as_id_tbl(as.matrix(dat)), "id_tbl")
   expect_error(as_id_tbl(as.matrix(dat), by_ref = TRUE), "should be a")
 
-  expect_error(as_id_tbl(dat, "d"), "contain the following columns: `d`")
+  expect_error(as_id_tbl(dat, "d"), class = "has_cols_assert")
   expect_error(id_tbl(a = 1:10, a = rnorm(10), id_vars = "a"),
-               "has some duplicated column")
+               class = "is_unique_assert")
 
   dat <- data.table::data.table(a = 1:10, b = hours(1:10), c = rnorm(10))
   tbl <- as_id_tbl(dat, by_ref = TRUE)
@@ -88,26 +88,26 @@ test_that("ts_tbl constructors", {
   expect_identical(nrow(ts_tbl(a = c(1:5, NA, 7:10), b = hours(c(1:10)))), 9L)
 
   expect_error(ts_tbl(a = 1:1, b = c(hours(1:9), mins(45))),
-               "failed to determine interval")
+               class = "obeys_interval_assert")
   expect_error(ts_tbl(a = 1:1, b = c(hours(1:9), mins(45)),
                       interval = hours(1L)),
-               "index does not conform to an interval of 1 hours")
+               class = "obeys_interval_assert")
 
   expect_identical(time_unit(ts_tbl(a = 1:10, b = mins(1:10),
                                     interval = mins(1L))), "mins")
   expect_error(ts_tbl(a = 1:10, b = hours(1:10),
                       interval = hours(2L)),
-               "does not conform to an interval of 2 hours")
+               class = "obeys_interval_assert")
 
   expect_error(as_ts_tbl(as.matrix(dat)))
   expect_error(as_ts_tbl(as.matrix(dat, by_ref = TRUE)))
 
   expect_error(as_ts_tbl(dat, index_var = "c"),
-               "x does not contain column `c` of class `difftime`")
+               class = "has_time_cols_assert")
   expect_error(as_ts_tbl(dat, index_var = "d"),
-               "x does not contain column `d` of class `difftime`")
+               class = "has_cols_assert")
   expect_error(as_ts_tbl(dat, id_vars = "b", index_var = "b"),
-               "nonempty intersection")
+               class = "is_disjoint_assert")
   expect_error(ts_tbl(a = 1:10, a = hours(1:10)),
-               "x does not contain column `a` of class `difftime`")
+               class = "has_time_cols_assert")
 })

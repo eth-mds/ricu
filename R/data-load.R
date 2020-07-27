@@ -237,13 +237,13 @@ load_ts.character <- function(x, src, ...) {
 #' @rdname load_src
 #' @export
 data_id <- function(source, table, ...) {
-  message("`data_id()` is deprecated, please use `load_id()` instead.")
+  msg_ricu("`data_id()` is deprecated, please use `load_id()` instead.")
   load_id(table, source, ...)
 }
 
 #' @rdname load_src
 #' @export
 data_ts <- function(source, table, ...) {
-  message("`data_ts()` is deprecated, please use `load_ts()` instead.")
+  msg_ricu("`data_ts()` is deprecated, please use `load_ts()` instead.")
   load_ts(table, source, ...)
 }

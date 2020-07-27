@@ -82,10 +82,7 @@ interval.difftime <- function(x) {
   dif <- diff(x)
   res <- min(dif[dif > 0], na.rm = TRUE)
 
-  assert_that(fits_interval(x, res), msg = paste(
-    "failed to determine interval from data: not all time steps are a",
-    "multiple of the minimal time step", format(res))
-  )
+  assert_that(obeys_interval(x, res))
 
   res
 }
@@ -111,6 +108,10 @@ rename <- function(x, new, old) {
   hits <- match(old, x)
   replace(x, hits[!is.na(hits)], new[!is.na(hits)])
 }
+
+is_dt <- function(x) data.table::is.data.table(x)
+
+on_failure(is_dt) <- fail_type("x", "data.table")
 
 #' @param new,old Replacement names and existing column names for renaming
 #' columns
@@ -226,7 +227,7 @@ rm_cols <- function(x, cols, skip_absent = FALSE, by_ref = FALSE) {
 change_interval <- function(x, new_interval, cols = time_vars(x),
                             by_ref = FALSE) {
 
-  assert_that(is_time(new_interval, allow_neg = FALSE))
+  assert_that(is_scalar(new_interval), is_interval(new_interval))
 
   if (!length(cols)) {
     return(x)
@@ -386,7 +387,7 @@ dt_gforce <- function(x,
   fun <- match.arg(fun)
 
   if (fun %in% c("first", "last") && isTRUE(na_rm)) {
-    warning("The argument `na_rm` is ignored for `first()` and `last()`")
+    warn_arg("na_rm")
   }
 
   assert_that(is.flag(na_rm), all(c(vars, by) %in% colnames(x)))
@@ -418,6 +419,11 @@ is_unique.default <- function(x, ...) identical(anyDuplicated(x, ...), 0L)
 #' @export
 is_unique.id_tbl <- function(x, by = meta_vars(x), ...) {
   identical(anyDuplicated(x, by = by, ...), 0L)
+}
+
+on_failure(is_unique) <- function(call, env) {
+  format_assert("{as_label(call$x)} contains duplicate elements",
+                "is_unique_assert")
 }
 
 #' @param expr Expression to apply over groups

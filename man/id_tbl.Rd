@@ -16,6 +16,7 @@
 \alias{as_ts_tbl.data.table}
 \alias{as_ts_tbl.default}
 \alias{unclass_tbl}
+\alias{unclass_tbl.data.frame}
 \alias{unclass_tbl.ts_tbl}
 \alias{unclass_tbl.id_tbl}
 \alias{reclass_tbl}
@@ -60,6 +61,8 @@ as_ts_tbl(x, id_vars = NULL, index_var = NULL, interval = NULL, by_ref = FALSE)
 \method{as_ts_tbl}{default}(x, id_vars = NULL, index_var = NULL, interval = NULL, by_ref = FALSE)
 
 unclass_tbl(x)
+
+\method{unclass_tbl}{data.frame}(x)
 
 \method{unclass_tbl}{ts_tbl}(x)
 

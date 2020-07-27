@@ -29,18 +29,11 @@ data_env <- function() get("data", envir = pkg_env(), mode = "environment")
 
 get_from_data_env <- function(source) {
 
-  err_fun <- function(err) {
-
-    if (!inherits(err, "miss_tbl_err")) stop(err)
-
-    invisible(NULL)
-  }
-
   warn_fun <- function(warn) {
 
-    msg <- warn[["message"]]
+    if (identical(conditionMessage(warn),
+                  "restarting interrupted promise evaluation")) {
 
-    if (identical(msg, "restarting interrupted promise evaluation")) {
       invokeRestart("muffleWarning")
     }
   }
@@ -55,7 +48,7 @@ get_from_data_env <- function(source) {
 
     tryCatch(
       withCallingHandlers(as_src_env(source), warning = warn_fun),
-      error = err_fun
+      miss_tbl_err = function(err) invisible(NULL)
     )
   }
 }
@@ -173,11 +166,11 @@ as_src_tbl.src_env <- function(x, tbl, ...) {
   res <- get0(tbl, envir = x, inherits = FALSE, ifnotfound = NULL)
 
   if (is.null(res)) {
-    stop("Table `", tbl, "` not found for `", src_name(x), "`. Available ",
-      "are:\n    * ", paste0("`", ls(envir = x), "`", collapse = "\n    * "),
-      "\n  For further information on how to set up a data source, refer to ",
-      "`?attach_src`."
-    )
+
+    stop_ricu({
+      cli_text("Table `{tbl}` not found for `{src_name(x)}`. Available are:")
+      cli_ul(quote_bt(ls(envir = x)))
+    }, class = "src_tbl_not_found")
   }
 
   res
@@ -243,9 +236,8 @@ as_src_env.character <- function(x) {
   res <- get0(x, envir = env, mode = "environment", ifnotfound = NULL)
 
   if (is.null(res)) {
-    stop("Source `", x, "` not found in ", format(env), ". For ",
-         "further information on how to set up a data source, refer to ",
-         "`?attach_src`.")
+    stop_ricu("Source `{x}` not found in {format(env)}",
+              class = "src_env_not_found")
   }
 
   res

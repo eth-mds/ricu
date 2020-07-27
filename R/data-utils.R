@@ -74,6 +74,8 @@ id_orig_helper.src_env <- function(x, id) {
 #' @export
 id_windows <- function(x, copy = TRUE) {
 
+  col_obeys_interval <- function(col, x, ival) obeys_interval(x[[col]], ival)
+
   x <- as_src_env(x)
 
   key <- src_name(x)
@@ -84,11 +86,11 @@ id_windows <- function(x, copy = TRUE) {
 
     res <- id_win_helper(x)
     ids <- field(as_id_cfg(x), "id")
+    sec <- c(paste0(ids, "_start"), paste0(ids, "_end"))
 
     assert_that(
       is_id_tbl(res), has_name(res, ids),
-      has_time_cols(res, c(paste0(ids, "_start"), paste0(ids, "_end")),
-                    interval = mins(1L)),
+      all_fun(sec, col_obeys_interval, res, mins(1L)),
       all_equal(range(res[[paste0(id_var(res), "_start")]]), mins(c(0, 0)))
     )
 
@@ -346,7 +348,8 @@ change_id <- function(x, target_id, src, ...) {
   } else if (isTRUE(ori > fin)) {
     downgrade_id(x, target_id, src, ...)
   } else {
-    stop("Cannot handle conversion of IDs with identical positions")
+    stop_ricu("Cannot handle conversion of IDs with identical positions",
+              class = "ident_pos_id_change")
   }
 }
 
@@ -386,8 +389,8 @@ upgrade_id.ts_tbl <- function(x, target_id, src, cols = time_vars(x), ...) {
   assert_that(index_var(x) %in% cols)
 
   if (!is_one_min(interval(x))) {
-    warning("Changing the ID of non-minute resolution data will change the ",
-            "interval to 1 minute")
+    warn_ricu("Changing the ID of non-minute resolution data will change the
+               interval to 1 minute", class = "non_min_id_change")
   }
 
   sft <- new_names(x)
@@ -421,8 +424,8 @@ downgrade_id.ts_tbl <- function(x, target_id, src, cols = time_vars(x),
   assert_that(index_var(x) %in% cols)
 
   if (!is_one_min(interval(x))) {
-    warning("Changing the ID of non-minute resolution data will change the ",
-            "interval to 1 minute")
+    warn_ricu("Changing the ID of non-minute resolution data will change the
+               interval to 1 minute", class = "non_min_id_change")
   }
 
   res <- change_id_helper(x, target_id, src, cols, "down", ...)

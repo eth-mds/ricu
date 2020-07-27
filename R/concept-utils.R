@@ -95,11 +95,12 @@ init_itm.sel_itm <- function(x, table, sub_var, ids, itm_vars = NULL,
   index_var <- idx_var_helper(x, index_var)
   cb_vars   <- cbk_var_helper(...)
 
-  tbl <- as_src_tbl(x)
+  cols <- colnames(as_src_tbl(x))
 
   assert_that(
-    is.string(table), is_fun_name(callback), both(ids, has_length, chr_or_int),
-    all_fun(c(list(sub_var, itm_vars), index_var, cb_vars), is_colname, tbl)
+    is.string(table), is_fun_name(callback), has_length(ids),
+    is.character(ids) || is.integer(ids),
+    all_fun(c(list(sub_var, itm_vars), index_var, cb_vars), is_in, cols)
   )
 
   todo <- c("ids", "sub_var", "itm_vars", "index_var", "cb_vars", "callback")
@@ -123,9 +124,11 @@ init_itm.col_itm <- function(x, table, itm_vars = NULL, index_var = NULL,
   index_var <- idx_var_helper(x, index_var)
   cb_vars   <- cbk_var_helper(...)
 
+  cols <- colnames(as_src_tbl(x))
+
   assert_that(
     is.string(table), is_fun_name(callback), null_or(unit_val, is.string),
-    all_fun(c(list(itm_vars), index_var, cb_vars), is_colname, as_src_tbl(x))
+    all_fun(c(list(itm_vars), index_var, cb_vars), is_in, cols)
   )
 
   todo <- c("itm_vars", "index_var", "cb_vars", "unit_val", "callback")
@@ -149,11 +152,11 @@ init_itm.rgx_itm <- function(x, table, sub_var, regex, itm_vars = NULL,
   index_var <- idx_var_helper(x, index_var)
   cb_vars   <- cbk_var_helper(...)
 
-  tbl <- as_src_tbl(x)
+  cols <- colnames(as_src_tbl(x))
 
   assert_that(
     all_fun(list(table, regex), is.string), is_fun_name(callback),
-    all_fun(c(list(sub_var, itm_vars), index_var, cb_vars), is_colname, tbl)
+    all_fun(c(list(sub_var, itm_vars), index_var, cb_vars), is_in, cols)
   )
 
   todo <- c("regex", "sub_var", "itm_vars", "index_var", "cb_vars", "callback")
@@ -516,7 +519,8 @@ aggregate.cncpt <- function(x, tbl, fun = NULL, ...) {
 #' @importFrom stats aggregate
 #' @export
 aggregate.rec_cncpt <- function(x, ...) {
-  stop("please use `callback` for aggregating within time-steps")
+  stop_ricu("please use `callback` for aggregating within time-steps",
+            class = "aggregate_rec_cncpt")
 }
 
 #' @rdname data_concepts

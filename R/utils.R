@@ -81,8 +81,11 @@ ensure_dirs <- function(paths) {
   is_no_dir <- lgl_ply(is_dir, identical, FALSE)
 
   if (any(is_no_dir)) {
-    stop("The following path(s) exist(s) but not as directory:\n  ",
-         paste(uq_paths[is_no_dir], collapse = "\n  "))
+    stop_ricu({
+      cli_text("The following {qty(sum(is_no_dir))} path{?s} {?exists/exist}
+                but not as director{?y/ies}:")
+      cli_ul(uq_paths[is_no_dir])
+    }, class = "path_exists_not_dir")
   }
 
   dirs_to_create <- uq_paths[is.na(is_dir)]
@@ -92,8 +95,11 @@ ensure_dirs <- function(paths) {
     res <- lgl_ply(dirs_to_create, dir.create, recursive = TRUE)
 
     if (!all(res)) {
-      stop("The following directorie(s) could not be created:\n  ",
-           paste(dirs_to_create[!res], collapse = "\n  "))
+      stop_ricu({
+        cli_text("The following {qty(sum(!res))} director{?y/ies} could not be
+                  created:")
+        cli_ul(dirs_to_create[!res])
+      }, class = "dir_create_fail")
     }
   }
 
@@ -259,8 +265,6 @@ days <- function(x) as.difftime(x, units = "days")
 #'
 weeks <- function(x) as.difftime(x, units = "weeks")
 
-is_difftime <- function(x) inherits(x, "difftime")
-
 is_one_min <- function(x) all_equal(x, mins(1L))
 
 re_time <- function(x, interval) {
@@ -306,8 +310,6 @@ last_elem <- function(x) x[length(x)]
 #' @export
 #'
 first_elem <- function(x) x[1L]
-
-str_in_vec_once <- function(str, vec) identical(sum(vec %in% str), 1L)
 
 null_or_subs <- function(x, where = parent.frame(1L)) {
   if (missing(x)) NULL else do.call("substitute", list(substitute(x), where))
@@ -375,6 +377,10 @@ dbl_ply <- function(x, fun, ..., length = 1L, use_names = FALSE) {
   vapply(x, fun, double(length), ..., USE.NAMES = use_names)
 }
 
+col_ply <- function(x, cols, fun, ply_fun = lgl_ply, ...) {
+  ply_fun(cols, function(y, ...) fun(x[[y]], ...), ...)
+}
+
 lst_xtr <- function(x, i) lapply(x, `[[`, i)
 
 chr_xtr <- function(x, i, length = 1L) chr_ply(x, `[[`, i, length = length)
@@ -415,22 +421,6 @@ map <- function(f, ...) Map(f, ..., USE.NAMES = FALSE)
 do_call <- function(x, fun, args = NULL) {
   if (is.null(args)) do.call(fun, x)
   else do.call(fun, unname(x[args]))
-}
-
-warn_dots <- function(...) {
-
-  if (...length() > 0L) {
-    warning("Not expecting any arguments passed as `...`")
-  }
-
-  invisible(NULL)
-}
-
-warn_dot_ident <- function(x, ...)  {
-
-  warn_dots(...)
-
-  x
 }
 
 wrap_null <- function(...) {
@@ -487,4 +477,8 @@ auto_load_src_names <- function() {
   } else {
     strsplit(res, ",")[[1L]]
   }
+}
+
+unlst <- function(x, recursive = FALSE, use_names = FALSE) {
+  unlist(x, recursive = recursive, use.names = use_names)
 }

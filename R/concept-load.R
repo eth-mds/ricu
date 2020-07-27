@@ -64,10 +64,18 @@ load_concepts.character <- function(x, src = NULL, concepts = NULL, ...,
 load_concepts.concept <- function(x, aggregate = NULL, merge_data = TRUE,
                                   verbose = TRUE, ...) {
 
-  assert_that(is.flag(merge_data), same_src(x), is.flag(verbose))
+  assert_that(is.flag(merge_data), is.flag(verbose))
+
+  srcs <- unlst(src_name(x), recursive = TRUE)
+
+  assert_that(
+    all_fun(srcs, identical, srcs[1L]), msg = "
+    Only concept data from a single data source can be loaded a the time.
+    Please choose one of {unique(srcs)}"
+  )
 
   if (verbose) {
-    pba <- progress_init(n_tick(x), paste("Loading", length(x), "concepts"))
+    pba <- progress_init(n_tick(x), "Loading {length(x)} concept{?s}")
   } else {
     pba <- FALSE
   }
@@ -75,7 +83,7 @@ load_concepts.concept <- function(x, aggregate = NULL, merge_data = TRUE,
   res <- with_progress(
     Map(load_one_concept_helper, x, rep_arg(aggregate, names(x)),
         MoreArgs = c(list(...), list(progress = pba))),
-    pba
+    progress_bar = pba
   )
 
   assert_that(all_fun(Map(inherits, res, chr_ply(x, target_class)), isTRUE))
@@ -134,12 +142,6 @@ load_concepts.cncpt <- function(x, aggregate = NULL, ..., progress = NULL) {
 load_concepts.num_cncpt <- function(x, aggregate = NULL, ...,
                                     progress = NULL) {
 
-  print_msg <- function(...) {
-    progress_msg(
-      paste(strwrap(paste0(...), indent = 2L, exdent = 4L), collapse = "\n")
-    )
-  }
-
   check_bound <- function(x, val, op) {
     vc  <- x[["val_var"]]
     nna <- !is.na(vc)
@@ -160,12 +162,12 @@ load_concepts.num_cncpt <- function(x, aggregate = NULL, ...,
         return(NULL)
       }
 
-      print_msg("not all units are in ", concat("[", unt, "]"), ": ",
-                concat(nm[!ok], " (", pct[!ok], ")"))
+      progress_msg("not all units are in ", concat("[", unt, "]"), ": ",
+                   concat(nm[!ok], " (", pct[!ok], ")"))
 
     } else if (length(nm) > 1L) {
 
-      print_msg("multiple units detected: ", concat(nm, " (", pct, ")"))
+      progress_msg("multiple units detected: ", concat(nm, " (", pct, ")"))
     }
   }
 
@@ -182,8 +184,8 @@ load_concepts.num_cncpt <- function(x, aggregate = NULL, ...,
 
     n_rm <- n_row - nrow(res)
 
-    print_msg("removed ", n_rm, " (", prcnt(n_rm, n_row), ") of rows ",
-              "due to out of range entries")
+    progress_msg("removed ", n_rm, " (", prcnt(n_rm, n_row), ") of rows ",
+                 "due to out of range entries")
   }
 
   unit <- x[["unit"]]

@@ -20,8 +20,9 @@ extend_ts <- function(x, min_col = "min", max_col = "max", step_size = 1L,
     as.difftime(unlist(Map(do_seq, min, max)), units = unit)
   }
 
-  assert_that(is_dt(x), has_time_col(x, min_col), has_time_col(x, max_col),
-              same_time_unit(x[[min_col]], x[[max_col]]))
+  assert_that(is_dt(x), is.string(min_col), is.string(max_col),
+              has_time_cols(x, c(min_col, max_col)),
+              same_unit(x[[min_col]], x[[max_col]]))
 
   unit <- units(x[[min_col]])
 
@@ -106,8 +107,8 @@ fill_gaps <- function(x, limits = NULL, ...) {
 #'
 slide <- function(x, expr, before, after = hours(0L), ...) {
 
-  assert_that(is_time(before, allow_neg = FALSE),
-              is_time(after, allow_neg = FALSE))
+  assert_that(is_scalar(before), is_interval(before),
+              is_scalar(after), is_interval(after))
 
   id_cols <- id_vars(x)
   ind_col <- index_var(x)
@@ -129,8 +130,9 @@ slide <- function(x, expr, before, after = hours(0L), ...) {
 #'
 slide_index <- function(x, expr, index, before, after = hours(0L), ...) {
 
-  assert_that(is_time_vec(index), is_time(before, allow_neg = FALSE),
-              is_time(after, allow_neg = FALSE))
+  assert_that(is_difftime(index), has_length(index),
+              is_scalar(before), is_interval(before),
+              is_scalar(after),  is_interval(after))
 
   join <- x[, list(min_time = index - before,
                    max_time = index + after), by = c(id_vars(x))]

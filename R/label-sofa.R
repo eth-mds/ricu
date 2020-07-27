@@ -163,7 +163,7 @@ sofa_vent <- function(vent_start, vent_end, win_length = hours(6L),
 
   } else {
 
-    assert_that(same_interval(vent_start, vent_end))
+    assert_that(same_time(interval(vent_start), interval(vent_end)))
 
     ind_start <- index_var(vent_start)
     ind_end   <- index_var(vent_end)
@@ -324,8 +324,7 @@ sofa_window <- function(tbl,
   need_cols <- c("pafi", "coag", "bili", "map", "dopa", "norepi", "dobu",
                  "epi", "gcs", "crea", "urine")
 
-  assert_that(is_ts_tbl(tbl), has_cols(tbl, need_cols),
-              is_time(worst_win_length, allow_neg = FALSE))
+  assert_that(is_ts_tbl(tbl), has_cols(tbl, need_cols))
 
   expr <- substitute(
     list(
@@ -355,6 +354,8 @@ sofa_window <- function(tbl,
 
     if (isTRUE(explicit_wins)) {
 
+      assert_that(is_scalar(worst_win_length), is_interval(worst_win_length))
+
       ind <- index_var(tbl)
 
       win <- tbl[, list(max_time = max(get(ind))), by = c(id_vars(tbl))]
@@ -363,8 +364,6 @@ sofa_window <- function(tbl,
       res <- hop(tbl, !!expr, win)
 
     } else {
-
-      assert_that(is_time_vec(explicit_wins))
 
       res <- slide_index(tbl, !!expr, explicit_wins,
                              before = worst_win_length, full_window = FALSE)

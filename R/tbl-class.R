@@ -19,6 +19,8 @@ id_tbl <- function(..., id_vars = 1L) {
 #' @export
 is_id_tbl <- function(x) inherits(x, "id_tbl")
 
+on_failure(is_id_tbl) <- fail_type("x", "id_tbl")
+
 #' @param by_ref Logical flag indicating whether to perform the operation by
 #' reference
 #'
@@ -106,6 +108,8 @@ ts_tbl <- function(..., id_vars = 1L, index_var = NULL, interval = NULL) {
 #' @export
 is_ts_tbl <- function(x) inherits(x, "ts_tbl")
 
+on_failure(is_ts_tbl) <- fail_type("x", "ts_tbl")
+
 #' @rdname id_tbl
 #' @export
 as_ts_tbl <- function(x, id_vars = NULL, index_var = NULL, interval = NULL,
@@ -188,7 +192,7 @@ new_ts_tbl <- function(x, id_vars, index_var = NULL, interval = NULL,
   }
 
   if (is.null(interval)) {
-    assert_that(has_time_col(x, index_var))
+    assert_that(is.string(index_var), has_time_cols(x, index_var))
     interval <- interval(x[[index_var]])
   }
 
@@ -198,7 +202,7 @@ new_ts_tbl <- function(x, id_vars, index_var = NULL, interval = NULL,
 
 new_tbl <- function(x, ..., class, by_ref = TRUE) {
 
-  assert_that(is.list(x), is.flag(by_ref))
+  assert_that(is.list(x), is.flag(by_ref), is_unique(names(x)))
 
   if (!by_ref) {
     x <- copy(x)
@@ -242,6 +246,10 @@ strip_class <- function(x, what) setdiff(class(x), what)
 #' @rdname id_tbl
 #' @export
 unclass_tbl <- function(x) UseMethod("unclass_tbl", x)
+
+#' @rdname id_tbl
+#' @export
+unclass_tbl.data.frame <- function(x) x
 
 #' @rdname id_tbl
 #' @export
@@ -319,7 +327,16 @@ as_ptype.ts_tbl <- function(x) {
 
 #' @rdname id_tbl
 #' @export
-validate_tbl <- function(x) UseMethod("validate_tbl", x)
+validate_tbl <- function(x) {
+
+  res <- validate_that(is_dt(x), is_unique(colnames(x)))
+
+  if (!isTRUE(res)) {
+    return(res)
+  }
+
+  UseMethod("validate_tbl", x)
+}
 
 #' @rdname id_tbl
 #' @export
@@ -338,8 +355,7 @@ validate_tbl.ts_tbl <- function(x) {
   inval <- interval(x)
 
   res <- validate_that(
-    is_disjoint(id_vars(x), index_var(x)),
-    is_time_vec(index, allow_neg = TRUE), fits_interval(index, inval)
+    is_disjoint(id_vars(x), index_var(x)), obeys_interval(index, inval)
   )
 
   if (isTRUE(res)) NextMethod() else res
@@ -364,7 +380,7 @@ validate_unclass <- function(new, old, by_ref) {
     unclass_tbl(old)
   }
 
-  stop(chk, call. = FALSE)
+  stop_ricu(chk, class = c("valid_unclass_fail", attr(chk, "assert_class")))
 }
 
 check_valid <- function(x, stop_on_fail = TRUE) {
@@ -374,7 +390,7 @@ check_valid <- function(x, stop_on_fail = TRUE) {
   if (isTRUE(res)) {
     x
   } else if (isTRUE(stop_on_fail)) {
-    stop(res, call. = FALSE)
+    stop_ricu(res, class = c("valid_check_fail", attr(res, "assert_class")))
   } else {
     unclass_tbl(x)
   }

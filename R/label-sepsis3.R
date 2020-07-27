@@ -192,8 +192,6 @@ si_abx <- function(x, count_win, min_count) {
 
   if (min_count > 1L) {
 
-    assert_that(is_time(count_win, allow_neg = FALSE))
-
     x <- slide(x, list(antibiotics = sum(get("antibiotics"), na.rm = TRUE)),
                before = hours(0L), after = count_win)
   }
@@ -231,7 +229,7 @@ si_windows <- function(tbl, si_mode = c("and", "or"), abx_win = hours(24L),
   win_args <- list(abx_win = abx_win, samp_win = samp_win, si_lwr = si_lwr,
                    si_upr = si_upr)
 
-  assert_that(all(lgl_ply(win_args, is_time, allow_neg = FALSE)),
+  assert_that(all(lgl_ply(win_args, is_interval)),
               has_name(tbl, c("abx", "samp")))
 
   win_args <- lapply(win_args, `units<-`, time_unit(tbl))

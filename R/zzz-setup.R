@@ -57,7 +57,8 @@
 
     src_env <- tryCatch(
       get0(src, envir = data_env(), inherits = FALSE),
-      message = function(msg) attr(msg, "tbl_ok"),
+      miss_tbl_msg = function(msg) attr(msg, "tbl_ok"),
+      message = function(msg) NULL,
       warning = function(warn) NULL,
       error = function(err) NULL
     )

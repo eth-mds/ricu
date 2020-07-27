@@ -38,8 +38,11 @@ attach_src.src_cfg <- function(x, assign_env = .GlobalEnv,
 
   }, error = function(err) {
 
-    warning("Failed to attach source `", src, "` with error\n  ",
-            conditionMessage(err))
+    warn_ricu({
+      cli_text("Failed to attach source `{src}` with error:")
+      cli_div(theme = list(body = list("margin-left" = 2)))
+      cli_verbatim(conditionMessage(err))
+    }, class = "src_attach_error")
 
     assign(src, NULL, envir = assign_env)
   })
@@ -55,9 +58,12 @@ attach_src.character <- function(x, name = "data-sources", file = NULL,
 
   cfgs <- tryCatch(read_src_cfg(x, name, file), error = function(err) {
 
-    warning("Failed to read source configuration \"",
-            basename(coalesce(file, name)), "\" with error:\n  ",
-            conditionMessage(err), call. = FALSE)
+    warn_ricu({
+      cli_text("Failed to read source configuration
+                \"{basename(coalesce(file, name))}\" with error:")
+      cli_div(theme = list(body = list("margin-left" = 2)))
+      cli_verbatim(conditionMessage(err))
+    }, class = "src_cfg_read_error")
 
     NULL
   })
@@ -66,8 +72,13 @@ attach_src.character <- function(x, name = "data-sources", file = NULL,
 
     cfg <- tryCatch(parse_src_cfg(cfgs[[src]]), error = function(err) {
 
-      warning("Failed to read source configuration for source `", src,
-              "` with error:\n  ", conditionMessage(err), call. = FALSE)
+      warn_ricu({
+        cli_text("Failed to parse source configuration for source `{src}`
+                  with error:")
+        cli_div(theme = list(body = list("margin-left" = 2)))
+        cli_verbatim(conditionMessage(err))
+      }, class = "src_cfg_parse_error")
+
 
       assign(src, NULL, envir = assign_env)
     })
@@ -112,27 +123,28 @@ setup_src_env.src_cfg <- function(x, env, dir = src_data_dir(x)) {
 
     todo <- tables[missing]
 
-    msg <- paste("\nThe following tables are missing from", dir,
-                 paste(todo, collapse = "\n  "), sep = "\n  ")
-
     if (interactive()) {
 
-      msg <- simpleMessage(msg)
-      attr(msg, "tbl_ok") <- setNames(!missing, tables)
+      msg_ricu({
+        cli_text("The following {qty(length(todo))} table{?s} {?is/are}
+                  missing from directory {dir}:")
+        cli_ul(quote_bt(todo))
+      }, "miss_tbl_msg", tbl_ok = setNames(!missing, tables))
 
-      message(msg)
       resp <- readline("Download now (Y/n)? ")
 
       if (!identical(resp, "Y")) {
-        stop("Cannot continue without missing tables for `", src_name(x), "`.")
+        stop_ricu("Cannot continue with missing tables for `{src_name(x)}`",
+                  class = "tbl_dl_abort")
       }
 
     } else {
 
-      err <- simpleError(msg)
-      class(err) <- c("miss_tbl_err", class(err))
-
-      stop(err)
+      stop_ricu({
+        cli_text("The following {qty(length(todo))} table{?s} {?is/are}
+                  missing from directory {dir}:")
+        cli_ul(quote_bt(todo))
+      }, class = "miss_tbl_err")
     }
 
     tmp <- ensure_dirs(tempfile())
@@ -143,18 +155,25 @@ setup_src_env.src_cfg <- function(x, env, dir = src_data_dir(x)) {
 
     done <- Map(file.rename, Map(file.path, tmp, fst_files[missing]),
                 fst_paths[missing])
+    done <- lgl_ply(done, all)
 
-    assert_that(all_fun(done, all), msg = paste0(
-      "The following tables could be moved to the required location: ",
-      concat(todo[!done]))
-    )
+    if (!all(done)) {
+      stop_ricu({
+        cli_text("The following {qty(sum(!done))} table{?s} could be moved to
+                  directory {dir}:")
+        cli_ul(quote_bt(todo[!done]))
+      }, class = "tbl_mv_err")
+    }
 
     done <- lgl_ply(fst_paths, all_fun, file.exists)
 
-    assert_that(all(done), msg = paste0(
-      "Not all required tables were successfully downloaded and imported: ",
-      concat(tables[!done])," are still missing")
-    )
+    if (!all(done)) {
+      stop_ricu({
+        cli_text("The following {qty(sum(!done))} table{?s} were not
+                  successfully downloaded and imported:")
+        cli_ul(quote_bt(todo[!done]))
+      }, class = "tbl_mv_err")
+    }
   }
 
   dat_tbls <- Map(new_src_tbl, fst_paths, as_col_cfg(x),

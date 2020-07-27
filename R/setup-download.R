@@ -112,7 +112,7 @@ download_src.src_cfg <- function(x, dir = src_data_dir(x), tables = NULL,
   }
 
   if (length(tables) == 0L) {
-    message("The requested tables have already been downloaded")
+    msg_ricu("The requested tables have already been downloaded")
     return(invisible(NULL))
   }
 
@@ -212,19 +212,23 @@ download_pysionet_file <- function(url, dest = NULL, user = NULL,
     }
 
     if (res[["status_code"]] == 304) {
-      message("Skipped download of ", basename(url))
+      msg_ricu("Skipped download of {basename(url)}")
       return(invisible(NULL))
     }
   }
 
-  if (res[["status_code"]] == 401) {
+  status <- res[["status_code"]]
 
-    stop("Access to the requested resource was denied. Please set up an ",
-         "account at https://physionet.org/ and apply for data access.")
+  if (status == 401) {
 
-  } else if (res[["status_code"]] != 200) {
+    stop_ricu("Access to the requested resource was denied. Please set up an
+               account at https://physionet.org/ and apply for data access.",
+              class = "physionet_401")
 
-    stop(rawToChar(res[["content"]]))
+  } else if (status != 200) {
+
+    stop_ricu(rawToChar(res[["content"]]),
+              class = paste0("physionet_", status))
   }
 
   if (head_only) {
@@ -296,10 +300,6 @@ get_file_size <- function(url, user, pass) {
 
 download_check_data <- function(dest_folder, files, url, user, pass, src) {
 
-  check_cred <- function(e) {
-    if (grepl("^Access.+access\\.$", conditionMessage(e))) NULL else stop(e)
-  }
-
   dl_one <- function(url, size, path, prog) {
 
     progress_tick(basename(url), prog, 0L)
@@ -309,7 +309,10 @@ download_check_data <- function(dest_folder, files, url, user, pass, src) {
     invisible(NULL)
   }
 
-  chksums <- tryCatch(get_sha256(url, user, pass), error = check_cred)
+  chksums <- tryCatch(
+    get_sha256(url, user, pass),
+    physionet_401 = function(err) NULL
+  )
 
   if (is.null(chksums)) {
 
@@ -335,29 +338,30 @@ download_check_data <- function(dest_folder, files, url, user, pass, src) {
   sizes <- dbl_ply(urls, get_file_size, user, pass)
 
   pba <- progress_init(sum(sizes),
-    paste0("Downloading ", length(files), " files for ", quote_bt(src))
+    msg = "Downloading {length(files)} file{?s} for {quote_bt(src)}"
   )
 
-  Map(dl_one, urls, sizes, paths, MoreArgs = list(prog = pba))
-
-  if (!(is.null(pba) || pba$finished)) {
-    pba$update(1)
-  }
+  with_progress(
+    Map(dl_one, urls, sizes, paths, MoreArgs = list(prog = pba)),
+    progress_bar = pba
+  )
 
   if (is_pkg_available("openssl")) {
 
-    message("Comparing checksums")
+    msg_ricu("Comparing checksums")
 
     checks <- mapply(check_file_sha256, paths, chksums)
 
     if (!all(checks)) {
-      warning("The following files have wrong checksums:\n  ",
-              paste(files[!checks], collapse = "\n  "))
+      warn_ricu({
+        cli_text("Checksum mismatch for {qty(sum(!checks))} file{?s}:")
+        cli_ul(files[!checks])
+      }, class = "checksum_mismatch")
     }
 
   } else {
 
-    message("The package openssl is required for comparing checksums.")
+    msg_ricu("The package openssl is required for comparing checksums.")
   }
 
   invisible(NULL)

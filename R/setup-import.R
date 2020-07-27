@@ -110,19 +110,19 @@ import_src.src_cfg <- function(x, dir = src_data_dir(x), force = FALSE, ...) {
   skip <- done & todo
 
   if (!force && any(skip)) {
-    message("Tables ", concat(quote_bt(names(tbl)[skip])), " have already ",
-            "been imported and will be skipped")
+    msg_ricu("Table{?s} {quote_bt(names(tbl)[skip])} ha{?s/ve} already been
+             imported and will be skipped")
     todo <- todo & !skip
   }
 
   if (!any(todo)) {
-    message("All required tables have already been imported")
+    msg_ricu("All required tables have already been imported")
     return(invisible(NULL))
   }
 
   tbl <- tbl[todo]
   pba <- progress_init(sum(int_ply(tbl, nrow)),
-    paste0("Importing ", length(tbl), " tables for ", quote_bt(src_name(x)))
+    msg = "Importing {length(tbl)} table{?s} for {quote_bt(src_name(x))}"
   )
 
   for(table in tbl) {
@@ -133,7 +133,7 @@ import_src.src_cfg <- function(x, dir = src_data_dir(x), force = FALSE, ...) {
     pba$update(1)
   }
 
-  message("Successfully imported ", length(tbl), " tables")
+  msg_ricu("Successfully imported {length(tbl)} table{?s}")
 
   invisible(NULL)
 }

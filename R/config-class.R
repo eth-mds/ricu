@@ -112,9 +112,10 @@ new_col_cfg <- function(table, src, id_var = NULL, index_var = NULL,
                         class_prefix = src) {
 
   assert_that(
-    is.string(table), is.string(src), null_or_str(id_var),
-    null_or_str(index_var), null_or_str(val_var), null_or_str(unit_var),
-    null_or(time_vars, is.character), is.character(class_prefix)
+    is.string(table), is.string(src), null_or(id_var, is.string),
+    null_or(index_var, is.string), null_or(val_var, is.string),
+    null_or(unit_var, is.string), null_or(time_vars, is.character),
+    is.character(class_prefix)
   )
 
   if (not_null(index_var)) {

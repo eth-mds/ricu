@@ -1,29 +1,32 @@
 
 progress_init <- function(lenth = NULL, msg = "loading", ...) {
 
-  if (interactive() && is_pkg_available("progress") && lenth > 1L) {
+  cb_fun <- function(x) {
 
-    cb_fun <- function(x) {
-
-      out <- c(attr(x, "output"), combine_messages(x))
-
-      if (has_length(out)) {
-        msg_ricu(out)
+    for (out in combine_messages(x)) {
+      if (has_length(out$msgs)) {
+        cli::cli_alert_warning(out$head)
+        cli_ul(out$msgs)
+      } else if (has_length(out$head)) {
+        cli::cli_alert_success(out$head)
       }
     }
+
+    cli::cli_rule()
+  }
+
+  if (interactive() && is_pkg_available("progress") && lenth > 1L) {
 
     res <- progress::progress_bar$new(
       format = ":what [:bar] :percent", total = lenth, callback = cb_fun, ...
     )
-
-    attr(res, "output") <- character(0L)
 
   } else {
     res <- NULL
   }
 
   if (not_null(msg)) {
-    msg_ricu(paste0("\n", msg, "\n"))
+    cli::cli_rule(msg, .envir = parent.frame())
   }
 
   res
@@ -35,14 +38,10 @@ progress_tick <- function(info = NULL, progress_bar = NULL, length = 1L) {
     return(invisible(NULL))
   }
 
-  if (not_null(info)) {
-    header <- paste(symbol$bullet, info)
-  }
-
   if (is.null(progress_bar)) {
 
     if (not_null(info)) {
-      msg_ricu(header)
+      msg_ricu(paste(symbol$bullet, info))
     }
 
     return(invisible(NULL))
@@ -55,21 +54,18 @@ progress_tick <- function(info = NULL, progress_bar = NULL, length = 1L) {
   if (not_null(info)) {
 
     if (nchar(info) > 15L) {
-      elli <- symbol$ellipsis
-      info <- paste0(substr(info, 1L, 15L - nchar(elli)), elli)
+      ellip <- symbol$ellipsis
+      token <- paste0(substr(info, 1L, 15L - nchar(ellip)), ellip)
     } else {
-      info <- sprintf("%-15s", info)
+      token <- sprintf("%-15s", info)
     }
 
-    progress_bar$tick(len = length, tokens = list(what = info))
-    attr(progress_bar, "token") <- info
+    progress_bar$tick(len = length, tokens = list(what = token))
+    attr(progress_bar, "token") <- token
 
 
-    attr(progress_bar, "output") <- c(
-      attr(progress_bar, "output"), combine_messages(progress_bar)
-    )
-
-    attr(progress_bar, "header") <- header
+    attr(progress_bar, "output")   <- combine_messages(progress_bar)
+    attr(progress_bar, "header")   <- info
     attr(progress_bar, "messages") <- character(0L)
 
   } else if (not_null(old_token)) {
@@ -86,71 +82,66 @@ progress_tick <- function(info = NULL, progress_bar = NULL, length = 1L) {
 
 combine_messages <- function(x) {
 
-  cur_msgs <- attr(x, "messages")
+  head <- attr(x, "header")
+  msgs <- attr(x, "messages")
+  prev <- attr(x, "output")
 
-  if (has_length(cur_msgs)) {
-
-    cur_head <- attr(x, "header")
-
-    assert_that(has_length(cur_head))
-
-    paste(paste0(cur_head, ":"), paste(cur_msgs, collapse = ""), sep = "\n")
-
+  if (is.null(head) && is.null(msgs)) {
+    prev
   } else {
-
-    NULL
+    c(prev, list(list(head = head, msgs = msgs)))
   }
 }
 
 #' @rdname load_concepts
 #' @export
-progress_msg <- function(...) msg_ricu(..., class = "progress_msg")
+progress_msg <- function(...) {
 
-create_progress_handler <- function(progress_bar) {
+  msg <- simpleMessage(.makeMessage(...))
+  class(msg) <- c("progress_msg", "ricu_msg", class(msg))
 
-  if (inherits(progress_bar, "progress_bar")) {
+  message(msg)
+}
 
-    function(msg) {
+create_progress_handler <- function(prog) {
 
-      if (inherits(msg, "progress_msg")) {
+  if (isFALSE(prog)) {
 
-        msgs <- c(attr(progress_bar, "messages"), conditionMessage(msg))
-        attr(progress_bar, "messages") <- msgs
+    function(msg) invokeRestart("muffleMessage")
 
-        invokeRestart("muffleMessage")
-      }
-    }
-
-  } else if (isFALSE(progress_bar)) {
+  } else if (is.null(prog)) {
 
     function(msg) {
-      if (inherits(msg, "progress_msg")) invokeRestart("muffleMessage")
+
+      cli_ul(conditionMessage(msg))
+      invokeRestart("muffleMessage")
     }
 
   } else {
 
-    stop("Cannot deal with progress_bar argument")
+    function(msg) {
+
+      msgs <- c(attr(prog, "messages"), conditionMessage(msg))
+      attr(prog, "messages") <- msgs
+
+      invokeRestart("muffleMessage")
+    }
   }
 }
 
 with_progress <- function(expr, progress_bar = NULL) {
 
-  if (is.null(progress_bar)) {
+  res <- withCallingHandlers(expr,
+    progress_msg = create_progress_handler(progress_bar)
+  )
 
-    expr
-
-  } else {
-
-    res <- withCallingHandlers(expr,
-      message = create_progress_handler(progress_bar)
-    )
-
-    if (inherits(progress_bar, "progress_bar") && !progress_bar$finished) {
-      progress_bar$update(1)
-    }
-
-    res
+  if (inherits(progress_bar, "progress_bar") && !progress_bar$finished) {
+    progress_bar$update(1)
+  } else if (is.null(progress_bar)) {
+    cli::cli_rule()
   }
+
+  res
 }
 
 big_mark <- function(x, ...) {
@@ -168,32 +159,63 @@ prcnt <- function(x, tot = sum(x)) {
 
 assert_that <- function(..., env = parent.frame(), msg = NULL) {
 
-  res <- see_if(..., env = env, msg = msg)
-  if (res) return(TRUE)
-
-  stop_ricu(attr(res, "msg"), "assertError")
-}
-
-#' @importFrom cli style_reset
-#' @importFrom rlang inform
-msg_ricu <- function(..., class = NULL, reset = TRUE) {
-
-  message <- paste(lapply(list(...), paste, collapse = ""), collapse = "")
-
-  if (reset) {
-    message <- style_reset(message)
+  if (not_null(msg)) {
+    msg <- cli_format( {{ msg }}, env)
   }
 
-  inform(message = message, class = c(class, "ricu_msg"))
+  res <- see_if(..., env = env, msg = msg)
+
+  if (isTRUE(res)) {
+    return(TRUE)
+  }
+
+  msg <- attr(res, "msg")
+  cls <- c(attr(msg, "assert_class"), "assertError", "ricu_err")
+
+  rlang::abort(msg, class = cls)
 }
 
-#' @importFrom rlang abort
-stop_ricu <- function(message = NULL, class = NULL, ...) {
-  abort(message, class = c(class, "ricu_error"), ...)
+cli_format <- function(message, envir) {
+
+  msg <- rlang::enquo(message)
+
+  if (rlang::quo_is_symbol(msg) || quo_is_syntactic_literal(msg)) {
+    msg <- cli::cli_format_method(cli_text(message, .envir = envir))
+  } else {
+    msg <- cli::cli_format_method(message)
+  }
+
+  paste(msg, collapse = "\n")
+}
+
+quo_is_syntactic_literal <- function(x) {
+  rlang::is_quosure(x) && rlang::is_syntactic_literal(rlang::quo_get_expr(x))
+}
+
+msg_ricu <- function(message = NULL, class = NULL, envir = parent.frame(),
+                     ...) {
+  rlang::inform(
+    cli_format( {{ message }}, envir), class = c(class, "ricu_msg"), ...
+  )
+}
+
+warn_ricu <- function(message = NULL, class = NULL, envir = parent.frame(),
+                     ...) {
+  rlang::warn(
+    cli_format( {{ message }}, envir), class = c(class, "ricu_warn"), ...
+  )
+}
+
+stop_ricu <- function(message = NULL, class = NULL, envir = parent.frame(),
+                      ...) {
+  rlang::abort(
+    cli_format( {{ message }}, envir), class = c(class, "ricu_err"), ...
+  )
 }
 
 top_n <- function(x, n = 1L) head(order(x), n = n)
 
+#' @importFrom utils adist
 suggest <- function(x, opts, n = 1L, fixed = FALSE, ...) {
 
   dis <- adist(x, opts, fixed = fixed, ...)
@@ -206,6 +228,36 @@ suggest <- function(x, opts, n = 1L, fixed = FALSE, ...) {
   res <- split(res, col(res))
   res <- Map(`[`, list(opts), res)
   names(res) <- x
+
+  res
+}
+
+warn_arg <- function(args) {
+  assert_that(is.character(args), has_length(args))
+  warn_ricu("Ignoring argument{?s} passed as {quote_bt(args)}",
+             class = "arg_ignored")
+}
+
+warn_dots <- function(...) {
+
+  if (...length() > 0L) {
+    warn_arg("...")
+  }
+
+  invisible(NULL)
+}
+
+warn_dot_ident <- function(x, ...)  {
+
+  warn_dots(...)
+
+  x
+}
+
+format_assert <- function(message, class, envir = parent.frame()) {
+
+  res <- cli_format( {{ message }}, envir)
+  attr(res, "assert_class") <- class
 
   res
 }
