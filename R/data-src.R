@@ -83,7 +83,7 @@ time_vars.src_tbl <- function(x) time_vars(as_col_cfg(x))
 #' @export
 tbl_sum.src_tbl <- function(x) {
 
-  out <- setNames(dim_desc(dim(x)), paste0("<", class(x)[2L], ">"))
+  out <- setNames(dim_brak(x), paste0("<", class(x)[2L], ">"))
 
   if (not_null(prt <- part_desc(x))) {
     out <- c(out, Partitions = prt)
@@ -203,12 +203,15 @@ print.src_env <- function(x, ...) {
 
 #' @export
 format.src_env <- function(x, ...) {
-  chr_ply(eapply(x, dim), dim_desc)
+  chr_ply(eapply(x, dim_brak), identity)
 }
 
 dim_desc <- function(x) {
-  paste0("[", big_mark(x[1L]), " ", symbol$cross, " ", big_mark(x[2L]), "]")
+  paste0(vapply(dim(x), big_mark, character(1L)),
+         collapse = paste0(" ", symbol$cross, " "))
 }
+
+dim_brak <- function(x) paste0("[", dim_desc(x), "]")
 
 #' @importFrom utils ls.str
 #' @export

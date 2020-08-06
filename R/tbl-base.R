@@ -32,7 +32,7 @@ format.id_tbl <- function(x, ..., n = NULL, width = NULL, n_extra = NULL) {
 tbl_sum.ts_tbl <- function(x) {
   ids <- id_vars(x)
   setNames(
-    c(prt::dim_desc(x), concat(quote_bt(ids)),
+    c(dim_desc(x), concat(quote_bt(ids)),
       paste0(quote_bt(index_var(x)), " (", format(interval(x)), ")")),
     c("A `ts_tbl`", paste0("Id var", if (length(ids) > 1L) "s"), "Index var")
   )
@@ -42,7 +42,7 @@ tbl_sum.ts_tbl <- function(x) {
 #' @export
 tbl_sum.id_tbl <- function(x) {
   ids <- id_vars(x)
-  setNames(c(prt::dim_desc(x), concat(quote_bt(ids))),
+  setNames(c(dim_desc(x), concat(quote_bt(ids))),
            c("An `id_tbl`", paste0("Id var", if (length(ids) > 1L) "s")))
 }
 

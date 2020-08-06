@@ -25,7 +25,9 @@ load_src.src_tbl <- function(x, rows, cols = colnames(x), ...) {
 
   assert_that(is.character(cols), length(cols) > 0L)
 
-  subset(x, {{ rows }}, unique(cols))
+  cols <- unique(cols)
+
+  subset(x, {{ rows }}, .env$cols, part_safe = TRUE)
 }
 
 #' @param src Passed to [as_src_tbl()] in order to determine the data source
