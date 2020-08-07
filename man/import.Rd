@@ -21,7 +21,8 @@ import_tbl(x, ...)
 \arguments{
 \item{x}{Object specifying the source configuration}
 
-\item{...}{Passed to downstream methods/generic consistency}
+\item{...}{Passed to downstream methods (finally to
+\link[readr:read_csv]{readr::read_csv}/\link[readr:read_csv_chunked]{readr::read_csv_chunked})/generic consistency}
 
 \item{dir}{The directory where the data was downloaded to (see
 \code{\link[=download_src]{download_src()}}).}

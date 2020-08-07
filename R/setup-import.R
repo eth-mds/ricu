@@ -67,7 +67,8 @@
 #' @param x Object specifying the source configuration
 #' @param dir The directory where the data was downloaded to (see
 #' [download_src()]).
-#' @param ... Passed to downstream methods/generic consistency
+#' @param ... Passed to downstream methods (finally to
+#' [readr::read_csv]/[readr::read_csv_chunked])/generic consistency
 #'
 #' @examples
 #' \dontrun{
@@ -163,14 +164,12 @@ import_tbl <- function(x, ...) UseMethod("import_tbl", x)
 import_tbl.tbl_cfg <- function(x, dir = src_data_dir(x), progress = NULL,
                                ...) {
 
-  warn_dots(...)
-
   assert_that(is.dir(dir))
 
   if (n_partitions(x) > 1L) {
-    partition_table(x, dir, progress)
+    partition_table(x, dir, progress, ...)
   } else {
-    csv_to_fst(x, dir, progress)
+    csv_to_fst(x, dir, progress, ...)
   }
 }
 
@@ -216,7 +215,8 @@ split_write <- function(x, part_fun, dir, chunk_no, prog, nme) {
   invisible(NULL)
 }
 
-partition_table <- function(x, dir, progress = NULL, chunk_length = 10 ^ 7) {
+partition_table <- function(x, dir, progress = NULL, chunk_length = 10 ^ 7,
+                            ...) {
 
   assert_that(n_partitions(x) > 1L)
 
@@ -238,13 +238,13 @@ partition_table <- function(x, dir, progress = NULL, chunk_length = 10 ^ 7) {
     }
 
     readr::read_csv_chunked(file, callback, chunk_length, col_types = spec,
-                            progress = FALSE)
+                            progress = FALSE, ...)
 
   } else {
 
     for (i in seq_along(file)) {
 
-      dat <- readr::read_csv(file[i], col_types = spec, progress = FALSE)
+      dat <- readr::read_csv(file[i], col_types = spec, progress = FALSE, ...)
       readr::stop_for_problems(dat)
 
       split_write(dat, pfun, tempdir, i, progress, name)
@@ -265,14 +265,14 @@ partition_table <- function(x, dir, progress = NULL, chunk_length = 10 ^ 7) {
   invisible(NULL)
 }
 
-csv_to_fst <- function(x, dir, progress = NULL) {
+csv_to_fst <- function(x, dir, progress = NULL, ...) {
 
   src <- file.path(dir, dst_files(x))
   dst <- file.path(dir, fst_names(x))
 
   assert_that(length(src) == 1L, length(dst) == 1L)
 
-  dat  <- readr::read_csv(src, col_types = col_spec(x), progress = FALSE)
+  dat  <- readr::read_csv(src, col_types = col_spec(x), progress = FALSE, ...)
   readr::stop_for_problems(dat)
 
   cols <- col_names(x)
