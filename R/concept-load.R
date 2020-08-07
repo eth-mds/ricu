@@ -362,7 +362,8 @@ load_concepts.hrd_itm <- function(x, patient_ids = NULL, id_type = "icustay",
 
     res <- do_itm_load(x, c(itm, sub, cbc), patient_ids, id_type, interval)
     unt <- load_src("variables", env, cols = c("id", "unit"))
-    res <- merge(res, unt, by.x = sub, by.y = "id", all.x = TRUE)
+    res <- merge(res, unt[!is.na(get("unit")), ], by.x = sub, by.y = "id",
+                 all.x = TRUE)
 
     if (!sub %in% cbc) {
       res <- rm_cols(res, sub, by_ref = TRUE)
