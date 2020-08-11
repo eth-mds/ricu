@@ -155,10 +155,7 @@ cox_time_mod <- coxph(
 ```
 We visualize the results of the model
 ```{r cox_plot, echo = FALSE, warning = FALSE, message = FALSE}
-forest_model(cox_time_mod,
-  format_options = list(colour = "black", shape = 15, text_size = 4,
-                        banded = TRUE)
-)
+forest_model(cox_time_mod)
 ```
 
 A simple exploration already shows that the increased values of lactate are associated with mortality, even after adjusting for the SOFA score.
