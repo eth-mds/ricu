@@ -13,6 +13,8 @@ sepsis_3(
   si_window = c("first", "last", "any"),
   delta_fun = delta_cummin,
   sofa_thresh = 2L,
+  si_lwr = hours(48L),
+  si_upr = hours(24L),
   interval = ricu::interval(sofa_score)
 )
 
@@ -35,6 +37,8 @@ window}
 
 \item{sofa_thresh}{Required SOFA increase to trigger Sepsis 3}
 
+\item{si_lwr, si_upr}{Lower/upper extent of SI windows}
+
 \item{interval}{Time series interval (only used for checking consistency
 of input data)}
 
@@ -48,7 +52,7 @@ The sepsis 3 label consists of a suspected infection combined with an acute
 increase in SOFA score.
 }
 \details{
-The Sepsis-3 Consensus (\href{https://jamanetwork.com/journals/jama/fullarticle/2492881}{Singer et. al. 2016.}) defined sepsis as an acute increase in the SOFA score (see \code{\link[=sofa_score]{sofa_score()}}) of > 2 points within the suspected infection (SI) window (see \code{\link[=si_windows]{si_windows()}}):
+The Sepsis-3 Consensus (\href{https://jamanetwork.com/journals/jama/fullarticle/2492881}{Singer et. al. 2016.}) defined sepsis as an acute increase in the SOFA score (see \code{\link[=sofa_score]{sofa_score()}}) of > 2 points within the suspected infection (SI) window (see \code{\link[=si_calc]{si_calc()}}):
 
 \figure{sep-3.png}
 

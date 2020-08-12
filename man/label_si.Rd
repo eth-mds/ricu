@@ -2,7 +2,7 @@
 % Please edit documentation in R/label-sepsis3.R
 \name{susp_inf}
 \alias{susp_inf}
-\alias{si_windows}
+\alias{si_calc}
 \title{Suspicion of infection label}
 \usage{
 susp_inf(
@@ -15,13 +15,11 @@ susp_inf(
   interval = ricu::interval(antibiotics)
 )
 
-si_windows(
+si_calc(
   tbl,
   si_mode = c("and", "or"),
   abx_win = hours(24L),
-  samp_win = hours(72L),
-  si_lwr = hours(48L),
-  si_upr = hours(24L)
+  samp_win = hours(72L)
 )
 }
 \arguments{
@@ -36,7 +34,7 @@ criterion}
 \item{positive_cultures}{Logical flag indicating whether to require
 cultures to be positive}
 
-\item{...}{Passed to \code{\link[=si_windows]{si_windows()}}}
+\item{...}{Passed to \code{\link[=si_calc]{si_calc()}}}
 
 \item{interval}{Time series interval (only used for checking consistency
 of input data)}
@@ -49,8 +47,6 @@ of input data)}
 
 \item{samp_win}{Time-span within which antibiotic administration has to
 occur}
-
-\item{si_lwr, si_upr}{Lower/upper extent of SI windows}
 }
 \description{
 Suspected infection is defined as co-occurrence of of antibiotic treatment

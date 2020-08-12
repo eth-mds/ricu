@@ -11,10 +11,11 @@
 #' @param delta_fun Function used to determine the SOFA increase during an SI
 #' window
 #' @param sofa_thresh Required SOFA increase to trigger Sepsis 3
+#' @param si_lwr,si_upr Lower/upper extent of SI windows
 #' @param interval Time series interval (only used for checking consistency
 #' of input data)
 #'
-#' @details The Sepsis-3 Consensus ([Singer et. al. 2016.](https://jamanetwork.com/journals/jama/fullarticle/2492881)) defined sepsis as an acute increase in the SOFA score (see [sofa_score()]) of &gt; 2 points within the suspected infection (SI) window (see [si_windows()]):
+#' @details The Sepsis-3 Consensus ([Singer et. al. 2016.](https://jamanetwork.com/journals/jama/fullarticle/2492881)) defined sepsis as an acute increase in the SOFA score (see [sofa_score()]) of &gt; 2 points within the suspected infection (SI) window (see [si_calc()]):
 #'
 #' \figure{sep-3.png}
 #'
@@ -30,6 +31,7 @@
 sepsis_3 <- function(sofa_score, susp_inf,
                      si_window = c("first", "last", "any"),
                      delta_fun = delta_cummin, sofa_thresh = 2L,
+                     si_lwr = hours(48L), si_upr = hours(24L),
                      interval = ricu::interval(sofa_score)) {
 
   assert_that(has_interval(sofa_score, interval),
@@ -46,11 +48,19 @@ sepsis_3 <- function(sofa_score, susp_inf,
 
   on.exit(rm_cols(sofa_score, c("join_time1", "join_time2"), by_ref = TRUE))
 
-  join_clause <- c(id, "join_time1 >= si_lwr", "join_time2 <= si_upr")
+  susp_inf <- susp_inf[is_true(get("susp_inf")), ]
+  susp_inf <- susp_inf[, c("susp_inf") := NULL]
+
+  susp_inf <- susp_inf[, c("si_lwr", "si_upr") := list(
+    get(index_var(susp_inf)) - si_lwr,
+    get(index_var(susp_inf)) + si_upr
+  )]
 
   if (si_window %in%  c("first", "last")) {
     susp_inf <- dt_gforce(susp_inf, si_window, id)
   }
+
+  join_clause <- c(id, "join_time1 >= si_lwr", "join_time2 <= si_upr")
 
   res <- sofa_score[susp_inf,
     c(list(delta_sofa = delta_fun(get("sofa_score"))), mget(ind)),
@@ -60,7 +70,8 @@ sepsis_3 <- function(sofa_score, susp_inf,
 
   res <- rm_cols(res, c("join_time1", "join_time2", "delta_sofa"),
                  by_ref = TRUE)
-  res <- rename_cols(res, "sepsis_3", index_var(res), by_ref = TRUE)
+  res <- res[, head(.SD, n = 1L), by = c(id_vars(res))]
+  res <- res[, c("sepsis_3") := TRUE]
 
   res
 }
@@ -104,7 +115,7 @@ delta_min <- function(x, shifts = seq.int(0L, 23L)) {
 #' @param abx_min_count Minimal number of antibiotic administrations
 #' @param positive_cultures Logical flag indicating whether to require
 #' cultures to be positive
-#' @param ... Passed to [si_windows()]
+#' @param ... Passed to [si_calc()]
 #' @param interval Time series interval (only used for checking consistency
 #' of input data)
 #'
@@ -185,7 +196,7 @@ susp_inf <- function(antibiotics, fluid_sampling, abx_count_win = hours(24L),
 
   res <- rename_cols(res, c("abx", "samp"), c("antibiotics", "fluid_sampling"))
 
-  si_windows(res, ...)
+  si_calc(res, ...)
 }
 
 si_abx <- function(x, count_win, min_count) {
@@ -208,14 +219,12 @@ si_samp <- function(x) {
 #' @param abx_win Time-span within which sampling has to occur
 #' @param samp_win Time-span within which antibiotic administration has to
 #' occur
-#' @param si_lwr,si_upr Lower/upper extent of SI windows
 #'
 #' @rdname label_si
 #' @export
 #'
-si_windows <- function(tbl, si_mode = c("and", "or"), abx_win = hours(24L),
-                       samp_win = hours(72L), si_lwr = hours(48L),
-                       si_upr = hours(24L)) {
+si_calc <- function(tbl, si_mode = c("and", "or"), abx_win = hours(24L),
+                    samp_win = hours(72L)) {
 
   span_win <- function(x, col, win) {
     x <- x[, c("win_end", "time_copy") := list(get(ind) + win, get(ind))]
@@ -226,14 +235,8 @@ si_windows <- function(tbl, si_mode = c("and", "or"), abx_win = hours(24L),
 
   si_mode <- match.arg(si_mode)
 
-  win_args <- list(abx_win = abx_win, samp_win = samp_win, si_lwr = si_lwr,
-                   si_upr = si_upr)
-
-  assert_that(all(lgl_ply(win_args, is_interval)),
+  assert_that(is_interval(abx_win), is_interval(samp_win),
               has_name(tbl, c("abx", "samp")))
-
-  win_args <- lapply(win_args, `units<-`, time_unit(tbl))
-  list2env(win_args, environment())
 
   id  <- id_vars(tbl)
   ind <- index_var(tbl)
@@ -241,7 +244,7 @@ si_windows <- function(tbl, si_mode = c("and", "or"), abx_win = hours(24L),
   if (identical(si_mode, "and")) {
 
     dat <- Map(span_win, unmerge(tbl), c("abx", "samp"),
-               win_args[c("abx_win", "samp_win")])
+               c(abx_win, samp_win))
 
     join_clause <- c(id, paste(c("win_end >=", "time_copy <="), ind))
 
@@ -252,20 +255,17 @@ si_windows <- function(tbl, si_mode = c("and", "or"), abx_win = hours(24L),
 
     res <- unique(rbind(abx_samp[, c(id, "susp_inf"), with = FALSE],
                         samp_abx[, c(id, "susp_inf"), with = FALSE]))
+    res <- rename_cols(res, index_var(tbl), "susp_inf", by_ref = TRUE)
+    res <- res[, c("susp_inf") := TRUE]
 
-    res <- as_ts_tbl(res, id, "susp_inf", interval(tbl))
+    res <- as_ts_tbl(res, id, index_var(tbl), interval(tbl), by_ref = TRUE)
 
   } else {
 
     res <- tbl[get("abx") | get("samp"), ]
     res <- rm_cols(res, data_vars(res))
-    res <- rename_cols(res, "susp_inf", ind)
+    res <- res[, c("susp_inf") := TRUE]
   }
-
-  res <- res[, c("si_lwr", "si_upr") := list(
-    get("susp_inf") - win_args[["si_lwr"]],
-    get("susp_inf") + win_args[["si_upr"]]
-  )]
 
   res
 }
