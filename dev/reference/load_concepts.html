@@ -164,7 +164,7 @@ of id and time-step and merged into wide format.</p>
   aggregate = <span class='kw'>NULL</span>,
   patient_ids = <span class='kw'>NULL</span>,
   id_type = <span class='st'>"icustay"</span>,
-  interval = <span class='fu'>hours</span>(<span class='fl'>1L</span>),
+  interval = <span class='fu'><a href='secs.html'>hours</a></span>(<span class='fl'>1L</span>),
   <span class='kw'>...</span>,
   progress = <span class='kw'>NULL</span>
 )
@@ -174,7 +174,7 @@ of id and time-step and merged into wide format.</p>
   <span class='kw'>x</span>,
   patient_ids = <span class='kw'>NULL</span>,
   id_type = <span class='st'>"icustay"</span>,
-  interval = <span class='fu'>hours</span>(<span class='fl'>1L</span>),
+  interval = <span class='fu'><a href='secs.html'>hours</a></span>(<span class='fl'>1L</span>),
   progress = <span class='kw'>NULL</span>,
   <span class='kw'>...</span>
 )
@@ -184,7 +184,7 @@ of id and time-step and merged into wide format.</p>
   <span class='kw'>x</span>,
   patient_ids = <span class='kw'>NULL</span>,
   id_type = <span class='st'>"icustay"</span>,
-  interval = <span class='fu'>hours</span>(<span class='fl'>1L</span>),
+  interval = <span class='fu'><a href='secs.html'>hours</a></span>(<span class='fl'>1L</span>),
   <span class='kw'>...</span>
 )
 
@@ -193,7 +193,7 @@ of id and time-step and merged into wide format.</p>
   <span class='kw'>x</span>,
   patient_ids = <span class='kw'>NULL</span>,
   id_type = <span class='st'>"icustay"</span>,
-  interval = <span class='fu'>hours</span>(<span class='fl'>1L</span>),
+  interval = <span class='fu'><a href='secs.html'>hours</a></span>(<span class='fl'>1L</span>),
   <span class='kw'>...</span>
 )
 
@@ -202,7 +202,7 @@ of id and time-step and merged into wide format.</p>
   <span class='kw'>x</span>,
   patient_ids = <span class='kw'>NULL</span>,
   id_type = <span class='st'>"icustay"</span>,
-  interval = <span class='fu'>hours</span>(<span class='fl'>1L</span>),
+  interval = <span class='fu'><a href='secs.html'>hours</a></span>(<span class='fl'>1L</span>),
   <span class='kw'>...</span>
 )
 
@@ -211,7 +211,7 @@ of id and time-step and merged into wide format.</p>
   <span class='kw'>x</span>,
   patient_ids = <span class='kw'>NULL</span>,
   id_type = <span class='st'>"icustay"</span>,
-  interval = <span class='fu'>hours</span>(<span class='fl'>1L</span>),
+  interval = <span class='fu'><a href='secs.html'>hours</a></span>(<span class='fl'>1L</span>),
   <span class='kw'>...</span>
 )
 
@@ -220,11 +220,11 @@ of id and time-step and merged into wide format.</p>
   <span class='kw'>x</span>,
   patient_ids = <span class='kw'>NULL</span>,
   id_type = <span class='st'>"icustay"</span>,
-  interval = <span class='fu'>hours</span>(<span class='fl'>1L</span>),
+  interval = <span class='fu'><a href='secs.html'>hours</a></span>(<span class='fl'>1L</span>),
   <span class='kw'>...</span>
 )
 
-<span class='fu'>progress_msg</span>(<span class='kw'>...</span>, domain = <span class='kw'>NULL</span>, append_lf = <span class='fl'>TRUE</span>)</pre>
+<span class='fu'>progress_msg</span>(<span class='kw'>...</span>)</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -245,12 +245,12 @@ means no subsetting</p></td>
     <tr>
       <th>concepts</th>
       <td><p>The concepts to be used or <code>NULL</code> in which case
-<code>load_dictionary()</code> is called</p></td>
+<code><a href='item.html'>load_dictionary()</a></code> is called</p></td>
     </tr>
     <tr>
       <th>dict_name, dict_file</th>
       <td><p>In case not concepts are passed as <code>concepts</code>,
-these are forwarded to <code>load_dictionary()</code> as <code>name</code> and <code>file</code> arguments</p></td>
+these are forwarded to <code><a href='item.html'>load_dictionary()</a></code> as <code>name</code> and <code>file</code> arguments</p></td>
     </tr>
     <tr>
       <th>aggregate</th>
@@ -283,10 +283,6 @@ with</p></td>
       <th>interval</th>
       <td><p>The time interval used to discretize time stamps with,
 specified as <code><a href='https://rdrr.io/r/base/difftime.html'>base::difftime()</a></code> object</p></td>
-    </tr>
-    <tr>
-      <th>domain, append_lf</th>
-      <td><p>Forwarded to <code><a href='https://rdrr.io/r/base/message.html'>base::.makeMessage()</a></code></p></td>
     </tr>
     </table>
 

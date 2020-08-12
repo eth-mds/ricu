@@ -138,21 +138,21 @@ id. This function allows for converting from one ID to another.</p>
 
     <pre class="usage"><span class='fu'>change_id</span>(<span class='kw'>x</span>, <span class='kw'>target_id</span>, <span class='kw'>src</span>, <span class='kw'>...</span>)
 
-<span class='fu'>upgrade_id</span>(<span class='kw'>x</span>, <span class='kw'>target_id</span>, <span class='kw'>src</span>, cols = <span class='fu'>time_vars</span>(<span class='kw'>x</span>), <span class='kw'>...</span>)
+<span class='fu'>upgrade_id</span>(<span class='kw'>x</span>, <span class='kw'>target_id</span>, <span class='kw'>src</span>, cols = <span class='fu'><a href='id_vars.html'>time_vars</a></span>(<span class='kw'>x</span>), <span class='kw'>...</span>)
 
-<span class='fu'>downgrade_id</span>(<span class='kw'>x</span>, <span class='kw'>target_id</span>, <span class='kw'>src</span>, cols = <span class='fu'>time_vars</span>(<span class='kw'>x</span>), <span class='kw'>...</span>)
-
-<span class='co'># S3 method for ts_tbl</span>
-<span class='fu'>upgrade_id</span>(<span class='kw'>x</span>, <span class='kw'>target_id</span>, <span class='kw'>src</span>, cols = <span class='fu'>time_vars</span>(<span class='kw'>x</span>), <span class='kw'>...</span>)
-
-<span class='co'># S3 method for id_tbl</span>
-<span class='fu'>upgrade_id</span>(<span class='kw'>x</span>, <span class='kw'>target_id</span>, <span class='kw'>src</span>, cols = <span class='fu'>time_vars</span>(<span class='kw'>x</span>), <span class='kw'>...</span>)
+<span class='fu'>downgrade_id</span>(<span class='kw'>x</span>, <span class='kw'>target_id</span>, <span class='kw'>src</span>, cols = <span class='fu'><a href='id_vars.html'>time_vars</a></span>(<span class='kw'>x</span>), <span class='kw'>...</span>)
 
 <span class='co'># S3 method for ts_tbl</span>
-<span class='fu'>downgrade_id</span>(<span class='kw'>x</span>, <span class='kw'>target_id</span>, <span class='kw'>src</span>, cols = <span class='fu'>time_vars</span>(<span class='kw'>x</span>), <span class='kw'>...</span>)
+<span class='fu'>upgrade_id</span>(<span class='kw'>x</span>, <span class='kw'>target_id</span>, <span class='kw'>src</span>, cols = <span class='fu'><a href='id_vars.html'>time_vars</a></span>(<span class='kw'>x</span>), <span class='kw'>...</span>)
 
 <span class='co'># S3 method for id_tbl</span>
-<span class='fu'>downgrade_id</span>(<span class='kw'>x</span>, <span class='kw'>target_id</span>, <span class='kw'>src</span>, cols = <span class='fu'>time_vars</span>(<span class='kw'>x</span>), <span class='kw'>...</span>)</pre>
+<span class='fu'>upgrade_id</span>(<span class='kw'>x</span>, <span class='kw'>target_id</span>, <span class='kw'>src</span>, cols = <span class='fu'><a href='id_vars.html'>time_vars</a></span>(<span class='kw'>x</span>), <span class='kw'>...</span>)
+
+<span class='co'># S3 method for ts_tbl</span>
+<span class='fu'>downgrade_id</span>(<span class='kw'>x</span>, <span class='kw'>target_id</span>, <span class='kw'>src</span>, cols = <span class='fu'><a href='id_vars.html'>time_vars</a></span>(<span class='kw'>x</span>), <span class='kw'>...</span>)
+
+<span class='co'># S3 method for id_tbl</span>
+<span class='fu'>downgrade_id</span>(<span class='kw'>x</span>, <span class='kw'>target_id</span>, <span class='kw'>src</span>, cols = <span class='fu'><a href='id_vars.html'>time_vars</a></span>(<span class='kw'>x</span>), <span class='kw'>...</span>)</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -167,7 +167,7 @@ id. This function allows for converting from one ID to another.</p>
     </tr>
     <tr>
       <th>src</th>
-      <td><p>Passed to <code>as_id_cfg()</code> and <code>as_src_env()</code></p></td>
+      <td><p>Passed to <code><a href='new_id_cfg.html'>as_id_cfg()</a></code> and <code><a href='data.html'>as_src_env()</a></code></p></td>
     </tr>
     <tr>
       <th>...</th>

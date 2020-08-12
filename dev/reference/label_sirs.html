@@ -137,29 +137,29 @@ assessment tool used to track a patient's well-being in an ICU.</p>
     <pre class="usage"><span class='fu'>sirs_score</span>(
   <span class='kw'>respiratory_rate</span>,
   <span class='kw'>...</span>,
-  win_length = <span class='fu'>hours</span>(<span class='fl'>24L</span>),
+  win_length = <span class='fu'><a href='secs.html'>hours</a></span>(<span class='fl'>24L</span>),
   keep_components = <span class='fl'>FALSE</span>,
-  interval = <span class='kw'>ricu</span>::<span class='fu'><a href='https://rdrr.io/pkg/ricu/man/tbl_utils.html'>interval</a></span>(<span class='kw'>respiratory_rate</span>)
+  interval = <span class='kw'>ricu</span>::<span class='fu'><a href='id_vars.html'>interval</a></span>(<span class='kw'>respiratory_rate</span>)
 )
 
-<span class='fu'>supp_o2</span>(<span class='kw'>vent_ind</span>, <span class='kw'>fi_o2</span>, interval = <span class='kw'>ricu</span>::<span class='fu'><a href='https://rdrr.io/pkg/ricu/man/tbl_utils.html'>interval</a></span>(<span class='kw'>vent_ind</span>))
+<span class='fu'>supp_o2</span>(<span class='kw'>vent_ind</span>, <span class='kw'>fi_o2</span>, interval = <span class='kw'>ricu</span>::<span class='fu'><a href='id_vars.html'>interval</a></span>(<span class='kw'>vent_ind</span>))
 
-<span class='fu'>avpu</span>(<span class='kw'>gcs</span>, interval = <span class='kw'>ricu</span>::<span class='fu'><a href='https://rdrr.io/pkg/ricu/man/tbl_utils.html'>interval</a></span>(<span class='kw'>gcs</span>), by_ref = <span class='fl'>TRUE</span>)
+<span class='fu'>avpu</span>(<span class='kw'>gcs</span>, interval = <span class='kw'>ricu</span>::<span class='fu'><a href='id_vars.html'>interval</a></span>(<span class='kw'>gcs</span>), by_ref = <span class='fl'>TRUE</span>)
 
 <span class='fu'>news_score</span>(
   <span class='kw'>respiratory_rate</span>,
   <span class='kw'>...</span>,
-  win_length = <span class='fu'>hours</span>(<span class='fl'>24L</span>),
+  win_length = <span class='fu'><a href='secs.html'>hours</a></span>(<span class='fl'>24L</span>),
   keep_components = <span class='fl'>FALSE</span>,
-  interval = <span class='kw'>ricu</span>::<span class='fu'><a href='https://rdrr.io/pkg/ricu/man/tbl_utils.html'>interval</a></span>(<span class='kw'>respiratory_rate</span>)
+  interval = <span class='kw'>ricu</span>::<span class='fu'><a href='id_vars.html'>interval</a></span>(<span class='kw'>respiratory_rate</span>)
 )
 
 <span class='fu'>mews_score</span>(
   <span class='kw'>respiratory_rate</span>,
   <span class='kw'>...</span>,
-  win_length = <span class='fu'>hours</span>(<span class='fl'>24L</span>),
+  win_length = <span class='fu'><a href='secs.html'>hours</a></span>(<span class='fl'>24L</span>),
   keep_components = <span class='fl'>FALSE</span>,
-  interval = <span class='kw'>ricu</span>::<span class='fu'><a href='https://rdrr.io/pkg/ricu/man/tbl_utils.html'>interval</a></span>(<span class='kw'>respiratory_rate</span>)
+  interval = <span class='kw'>ricu</span>::<span class='fu'><a href='id_vars.html'>interval</a></span>(<span class='kw'>respiratory_rate</span>)
 )</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>

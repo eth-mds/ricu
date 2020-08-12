@@ -140,7 +140,9 @@ increase in SOFA score.</p>
   si_window = <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"first"</span>, <span class='st'>"last"</span>, <span class='st'>"any"</span>),
   delta_fun = <span class='kw'>delta_cummin</span>,
   sofa_thresh = <span class='fl'>2L</span>,
-  interval = <span class='kw'>ricu</span>::<span class='fu'><a href='https://rdrr.io/pkg/ricu/man/tbl_utils.html'>interval</a></span>(<span class='kw'>sofa_score</span>)
+  si_lwr = <span class='fu'><a href='secs.html'>hours</a></span>(<span class='fl'>48L</span>),
+  si_upr = <span class='fu'><a href='secs.html'>hours</a></span>(<span class='fl'>24L</span>),
+  interval = <span class='kw'>ricu</span>::<span class='fu'><a href='id_vars.html'>interval</a></span>(<span class='kw'>sofa_score</span>)
 )
 
 <span class='fu'>delta_cummin</span>(<span class='kw'>x</span>)
@@ -175,6 +177,10 @@ window</p></td>
       <td><p>Required SOFA increase to trigger Sepsis 3</p></td>
     </tr>
     <tr>
+      <th>si_lwr, si_upr</th>
+      <td><p>Lower/upper extent of SI windows</p></td>
+    </tr>
+    <tr>
       <th>interval</th>
       <td><p>Time series interval (only used for checking consistency
 of input data)</p></td>
@@ -192,7 +198,7 @@ which <code><a href='https://rdrr.io/r/base/Extremes.html'>base::pmin()</a></cod
 
     <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
 
-    <p>The Sepsis-3 Consensus (<a href='https://jamanetwork.com/journals/jama/fullarticle/2492881'>Singer et. al. 2016.</a>) defined sepsis as an acute increase in the SOFA score (see <code>sofa_score()</code>) of &gt; 2 points within the suspected infection (SI) window (see <code>si_windows()</code>):</p>
+    <p>The Sepsis-3 Consensus (<a href='https://jamanetwork.com/journals/jama/fullarticle/2492881'>Singer et. al. 2016.</a>) defined sepsis as an acute increase in the SOFA score (see <code><a href='sofa_score.html'>sofa_score()</a></code>) of &gt; 2 points within the suspected infection (SI) window (see <code><a href='susp_inf.html'>si_calc()</a></code>):</p>
 <p><img src='figures/sep-3.png' alt='' /></p>
 <p>A patient can potentially have multiple SI windows. The argument <code>si_window</code> is used to control which SI window we focus on (options are <code>"first", "last", "any"</code>).</p>
 <p>Further, although a 2 or more point increase in the SOFA score is defined, it is not perfectly clear to which value the increase refers. For this the <code>delta_fun</code> argument is used. If the increase is required to happen with respect to the minimal SOFA value (within the SI window) up to the current time, the <code>delta_cummin</code> function should be used. If, however, we are looking for an increase with respect to the start of the SI window, then the <code>delta_start</code> function should be used. Lastly, the increase might be defined with respect to values of the previous 24 hours, in which case the <code>delta_min</code> function is used.</p>

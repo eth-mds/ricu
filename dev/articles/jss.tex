@@ -59,14 +59,14 @@ The abstract of the article.
 \hypertarget{introduction}{%
 \section{Introduction}\label{introduction}}
 
-Collection of health records has seen a significant rise in the recent
-years \cite{evans2016electronic}. This has opened an opportunity for a
-large body of data-driven research oriented towards improving patient
-care and outcomes, together with helping clinicians in decision-making
-\cite{jiang2017artificial}.
+Collection of electronic health records has seen a significant rise in
+the recent years \cite{evans2016electronic}, opening up an opportunities
+for a large body of data-driven research oriented towards improving
+patient care and outcomes, together with helping clinicians in
+decision-making \cite{jiang2017artificial}.
 
-For instance, an example of a problem that has received much attention
-from the machine learning community is early prediction of sepsis in ICU
+One example of a problem that has received much attention from the
+machine learning community is early prediction of sepsis in ICU
 \cite{desautels2016prediction, nemati2018interpretable, futoma2017improved, kam2017learning}.
 Interestingly, there is evidence that a large proportion of the
 publications are based on the same dataset \cite{fleuren2019machine},
@@ -75,14 +75,17 @@ the Medical Information Mart for Intensive Care (MIMIC)
 validation. Part of this problem might well be the lack of a
 computational infrastructure handling multiple datasets. The MIMIC-III
 dataset consists of 26 different tables containing about 20GB of data.
-Handling data of this form can require considerable technical
-profficiency and knowledge of different programming languages.
-Co-integrating multiple different datasets of this form is, naturally,
-even more demanding.
+While much work and care has gone into data preprocessing in order to
+provide a self-contained ready to use data resource with MIMIC,
+seemingly simple tasks such as computing a SOFA score for patients
+\citep{vincent1996sofa}, remains a non trivial effort. This is only
+exacerbated when aiming to co-integrate multiple different datasets of
+this form is, spanning hospitals and even countries in order to capture
+effects of differing practice and demographics.
 
-The aim of the \pkg{ricu} package is to provide the computational
-infrastructure which allows users to access complex research questions
-as easily as possible. The package also aims to enable users to write
+The aim of the \pkg{ricu} package is to provide computational
+infrastructure allowing users to access complex research questions as
+easily as possible. The package also aims to enable users to write
 dataset-agnostic code which can simplify implementation and shorten the
 necessary time for prototyping code to different datasets. In
 particular, the package handles three large, publicly available
@@ -175,6 +178,264 @@ R> source <- "mimic_demo"
 R> # data loading
 R> tbl <- load_concepts(c("lactate", "death", "sofa_score"), source,
 R+                      verbose = FALSE)
+\end{CodeInput}
+
+\begin{CodeOutput}
+Only concept data from a single data source can be loaded a the time. Please
+choose one of mimic_demo
+\end{CodeOutput}
+
+\begin{CodeOutput}
+No overlap between configured id var options and available columns for table
+`labevents` in mimic_demo
+\end{CodeOutput}
+
+\begin{CodeOutput}
+index is not compatible with an interval of 1 mins
+\end{CodeOutput}
+
+\begin{CodeOutput}
+cannot mix interval lengths when row-binding
+\end{CodeOutput}
+
+\begin{CodeOutput}
+For automatically determining an aggregation function, either all of or none of
+vars `lactate` are expected to be of numeric type
+\end{CodeOutput}
+
+\begin{CodeOutput}
+No overlap between configured id var options and available columns for table
+`admissions` in mimic_demo
+\end{CodeOutput}
+
+\begin{CodeOutput}
+No overlap between configured id var options and available columns for table
+`labevents` in mimic_demo
+\end{CodeOutput}
+
+\begin{CodeOutput}
+index is not compatible with an interval of 1 mins
+\end{CodeOutput}
+
+\begin{CodeOutput}
+cannot mix interval lengths when row-binding
+\end{CodeOutput}
+
+\begin{CodeOutput}
+No overlap between configured id var options and available columns for table
+`labevents` in mimic_demo
+\end{CodeOutput}
+
+\begin{CodeOutput}
+index is not compatible with an interval of 1 mins
+\end{CodeOutput}
+
+\begin{CodeOutput}
+cannot mix interval lengths when row-binding
+cannot mix interval lengths when row-binding
+cannot mix interval lengths when row-binding
+cannot mix interval lengths when row-binding
+\end{CodeOutput}
+
+\begin{CodeOutput}
+No overlap between configured id var options and available columns for table
+`labevents` in mimic_demo
+\end{CodeOutput}
+
+\begin{CodeOutput}
+index is not compatible with an interval of 1 mins
+\end{CodeOutput}
+
+\begin{CodeOutput}
+cannot mix interval lengths when row-binding
+\end{CodeOutput}
+
+\begin{CodeOutput}
+No overlap between configured id var options and available columns for table
+`labevents` in mimic_demo
+\end{CodeOutput}
+
+\begin{CodeOutput}
+index is not compatible with an interval of 1 mins
+\end{CodeOutput}
+
+\begin{CodeOutput}
+cannot mix interval lengths when row-binding
+\end{CodeOutput}
+
+\begin{CodeOutput}
+index is not compatible with an interval of 1 mins
+\end{CodeOutput}
+
+\begin{CodeOutput}
+cannot mix interval lengths when row-binding
+cannot mix interval lengths when row-binding
+cannot mix interval lengths when row-binding
+cannot mix interval lengths when row-binding
+cannot mix interval lengths when row-binding
+\end{CodeOutput}
+
+\begin{CodeOutput}
+index is not compatible with an interval of 1 mins
+\end{CodeOutput}
+
+\begin{CodeOutput}
+cannot mix interval lengths when row-binding
+\end{CodeOutput}
+
+\begin{CodeOutput}
+index is not compatible with an interval of 1 mins
+\end{CodeOutput}
+
+\begin{CodeOutput}
+cannot mix interval lengths when row-binding
+\end{CodeOutput}
+
+\begin{CodeOutput}
+index is not compatible with an interval of 1 mins
+\end{CodeOutput}
+
+\begin{CodeOutput}
+cannot mix interval lengths when row-binding
+\end{CodeOutput}
+
+\begin{CodeOutput}
+index is not compatible with an interval of 1 mins
+\end{CodeOutput}
+
+\begin{CodeOutput}
+cannot mix interval lengths when row-binding
+\end{CodeOutput}
+
+\begin{CodeOutput}
+index is not compatible with an interval of 1 mins
+\end{CodeOutput}
+
+\begin{CodeOutput}
+cannot mix interval lengths when row-binding
+\end{CodeOutput}
+
+\begin{CodeOutput}
+In order to automatically determine the index column, exactly one `difftime`
+column is required.
+\end{CodeOutput}
+
+\begin{CodeOutput}
+x does not contain column `icustay_id`
+\end{CodeOutput}
+
+\begin{CodeOutput}
+cannot mix interval lengths when row-binding
+\end{CodeOutput}
+
+\begin{CodeOutput}
+x does not contain column `icustay_id`
+\end{CodeOutput}
+
+\begin{CodeOutput}
+cannot mix interval lengths when row-binding
+\end{CodeOutput}
+
+\begin{CodeOutput}
+x does not contain column `icustay_id`
+\end{CodeOutput}
+
+\begin{CodeOutput}
+No overlap between configured id var options and available columns for table
+`labevents` in mimic_demo
+\end{CodeOutput}
+
+\begin{CodeOutput}
+index is not compatible with an interval of 1 mins
+\end{CodeOutput}
+
+\begin{CodeOutput}
+cannot mix interval lengths when row-binding
+\end{CodeOutput}
+
+\begin{CodeOutput}
+index is not compatible with an interval of 1 mins
+\end{CodeOutput}
+
+\begin{CodeOutput}
+cannot mix interval lengths when row-binding
+\end{CodeOutput}
+
+\begin{CodeOutput}
+x does not contain column `icustay_id`
+x does not contain column `icustay_id`
+\end{CodeOutput}
+
+\begin{CodeOutput}
+cannot mix interval lengths when row-binding
+\end{CodeOutput}
+
+\begin{CodeOutput}
+x does not contain column `icustay_id`
+\end{CodeOutput}
+
+\begin{CodeOutput}
+cannot mix interval lengths when row-binding
+\end{CodeOutput}
+
+\begin{CodeOutput}
+x does not contain column `icustay_id`
+\end{CodeOutput}
+
+\begin{CodeOutput}
+cannot mix interval lengths when row-binding
+\end{CodeOutput}
+
+\begin{CodeOutput}
+x does not contain column `icustay_id`
+\end{CodeOutput}
+
+\begin{CodeOutput}
+cannot mix interval lengths when row-binding
+\end{CodeOutput}
+
+\begin{CodeOutput}
+x does not contain column `icustay_id`
+\end{CodeOutput}
+
+\begin{CodeOutput}
+cannot mix interval lengths when row-binding
+\end{CodeOutput}
+
+\begin{CodeOutput}
+x does not contain column `icustay_id`
+\end{CodeOutput}
+
+\begin{CodeOutput}
+cannot mix interval lengths when row-binding
+\end{CodeOutput}
+
+\begin{CodeOutput}
+x does not contain column `icustay_id`
+\end{CodeOutput}
+
+\begin{CodeOutput}
+cannot mix interval lengths when row-binding
+\end{CodeOutput}
+
+\begin{CodeOutput}
+x does not contain column `icustay_id`
+\end{CodeOutput}
+
+\begin{CodeOutput}
+cannot mix interval lengths when row-binding
+\end{CodeOutput}
+
+\begin{CodeOutput}
+x does not contain column `icustay_id`
+x does not contain column `icustay_id`
+\end{CodeOutput}
+
+\begin{CodeOutput}
+cannot mix interval lengths when row-binding
+\end{CodeOutput}
+
+\begin{CodeInput}
 R> tbl <- tbl[, c(meta_vars(tbl), "lactate", "sofa_score", "death"), with = FALSE]
 R> tbl <- tbl[, lactate := nafill(lactate, "locf")]
 R> tbl <- tbl[, lactate := nafill(lactate, fill = 1)]
@@ -194,7 +455,7 @@ We visualize the results of the model
 \begin{CodeChunk}
 
 
-\begin{center}\includegraphics{/tmp/RtmphTTpR9/file50226c7e0e15/dev/articles/jss_files/figure-latex/cox_plot-1} \end{center}
+\begin{center}\includegraphics{/tmp/RtmpxbHdxe/file7c2f4c83b30d/dev/articles/jss_files/figure-latex/cox_plot-1} \end{center}
 
 \end{CodeChunk}
 
@@ -219,12 +480,37 @@ R> ins_breaks <- c(0.01, 10, 20, 30, 40)
 R> 
 R> cohort <- stay_windows(source)
 R> ins_treat <- load_concepts("insulin", source, verbose = FALSE)
+\end{CodeInput}
+
+\begin{CodeOutput}
+Only concept data from a single data source can be loaded a the time. Please
+choose one of mimic_demo
+\end{CodeOutput}
+
+\begin{CodeOutput}
+cannot mix interval lengths when row-binding
+\end{CodeOutput}
+
+\begin{CodeOutput}
+For automatically determining an aggregation function, either all of or none of
+vars `insulin` are expected to be of numeric type
+\end{CodeOutput}
+
+\begin{CodeInput}
 R> ins_treat <- ins_treat[get(index_var(ins_treat)) <= 24L]
 R> ins_treat <- ins_treat[, list(ins_sum = .bincode(sum(insulin), breaks = c(-Inf, ins_breaks, Inf))-1),
 R+   by = c(id_vars(ins_treat))]
 R> 
 R> cohort <- merge(cohort, ins_treat, by = id_vars(cohort), all.x = TRUE)
 R> cohort[, Diabetic := get(id_vars(cohort)) %in% diabetes(source)]
+\end{CodeInput}
+
+\begin{CodeOutput}
+No overlap between configured id var options and available columns for table
+`diagnoses_icd` in mimic_demo
+\end{CodeOutput}
+
+\begin{CodeInput}
 R> cohort[is.na(ins_sum), "ins_sum"] <- 0
 \end{CodeInput}
 \end{CodeChunk}
@@ -235,7 +521,7 @@ a histogram:
 \begin{CodeChunk}
 
 
-\begin{center}\includegraphics{/tmp/RtmphTTpR9/file50226c7e0e15/dev/articles/jss_files/figure-latex/diabetes_visualize-1} \end{center}
+\begin{center}\includegraphics{/tmp/RtmpxbHdxe/file7c2f4c83b30d/dev/articles/jss_files/figure-latex/diabetes_visualize-1} \end{center}
 
 \end{CodeChunk}
 

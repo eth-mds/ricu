@@ -153,8 +153,8 @@ mechanisms for loading data.</p>
   <span class='kw'>x</span>,
   <span class='kw'>rows</span>,
   cols = <span class='fu'><a href='https://rdrr.io/r/base/colnames.html'>colnames</a></span>(<span class='kw'>x</span>),
-  id_hint = <span class='fu'>id_vars</span>(<span class='kw'>x</span>),
-  time_vars = <span class='kw'>ricu</span>::<span class='fu'><a href='https://rdrr.io/pkg/ricu/man/tbl_utils.html'>time_vars</a></span>(<span class='kw'>x</span>),
+  id_hint = <span class='fu'><a href='id_vars.html'>id_vars</a></span>(<span class='kw'>x</span>),
+  time_vars = <span class='kw'>ricu</span>::<span class='fu'><a href='id_vars.html'>time_vars</a></span>(<span class='kw'>x</span>),
   <span class='kw'>...</span>
 )
 
@@ -163,8 +163,8 @@ mechanisms for loading data.</p>
   <span class='kw'>x</span>,
   <span class='kw'>rows</span>,
   cols = <span class='fu'><a href='https://rdrr.io/r/base/colnames.html'>colnames</a></span>(<span class='kw'>x</span>),
-  id_hint = <span class='fu'>id_vars</span>(<span class='kw'>x</span>),
-  time_vars = <span class='kw'>ricu</span>::<span class='fu'><a href='https://rdrr.io/pkg/ricu/man/tbl_utils.html'>time_vars</a></span>(<span class='kw'>x</span>),
+  id_hint = <span class='fu'><a href='id_vars.html'>id_vars</a></span>(<span class='kw'>x</span>),
+  time_vars = <span class='kw'>ricu</span>::<span class='fu'><a href='id_vars.html'>time_vars</a></span>(<span class='kw'>x</span>),
   <span class='kw'>...</span>
 )
 
@@ -173,8 +173,8 @@ mechanisms for loading data.</p>
   <span class='kw'>x</span>,
   <span class='kw'>rows</span>,
   cols = <span class='fu'><a href='https://rdrr.io/r/base/colnames.html'>colnames</a></span>(<span class='kw'>x</span>),
-  id_hint = <span class='fu'>id_vars</span>(<span class='kw'>x</span>),
-  time_vars = <span class='kw'>ricu</span>::<span class='fu'><a href='https://rdrr.io/pkg/ricu/man/tbl_utils.html'>time_vars</a></span>(<span class='kw'>x</span>),
+  id_hint = <span class='fu'><a href='id_vars.html'>id_vars</a></span>(<span class='kw'>x</span>),
+  time_vars = <span class='kw'>ricu</span>::<span class='fu'><a href='id_vars.html'>time_vars</a></span>(<span class='kw'>x</span>),
   <span class='kw'>...</span>
 )
 
@@ -188,9 +188,9 @@ mechanisms for loading data.</p>
   <span class='kw'>x</span>,
   <span class='kw'>rows</span>,
   cols = <span class='fu'><a href='https://rdrr.io/r/base/colnames.html'>colnames</a></span>(<span class='kw'>x</span>),
-  id_var = <span class='fu'>id_vars</span>(<span class='kw'>x</span>),
-  interval = <span class='fu'>hours</span>(<span class='fl'>1L</span>),
-  time_vars = <span class='kw'>ricu</span>::<span class='fu'><a href='https://rdrr.io/pkg/ricu/man/tbl_utils.html'>time_vars</a></span>(<span class='kw'>x</span>),
+  id_var = <span class='fu'><a href='id_vars.html'>id_vars</a></span>(<span class='kw'>x</span>),
+  interval = <span class='fu'><a href='secs.html'>hours</a></span>(<span class='fl'>1L</span>),
+  time_vars = <span class='kw'>ricu</span>::<span class='fu'><a href='id_vars.html'>time_vars</a></span>(<span class='kw'>x</span>),
   <span class='kw'>...</span>
 )
 
@@ -204,10 +204,10 @@ mechanisms for loading data.</p>
   <span class='kw'>x</span>,
   <span class='kw'>rows</span>,
   cols = <span class='fu'><a href='https://rdrr.io/r/base/colnames.html'>colnames</a></span>(<span class='kw'>x</span>),
-  id_var = <span class='fu'>id_vars</span>(<span class='kw'>x</span>),
-  index_var = <span class='kw'>ricu</span>::<span class='fu'><a href='https://rdrr.io/pkg/ricu/man/tbl_utils.html'>index_var</a></span>(<span class='kw'>x</span>),
-  interval = <span class='fu'>hours</span>(<span class='fl'>1L</span>),
-  time_vars = <span class='kw'>ricu</span>::<span class='fu'><a href='https://rdrr.io/pkg/ricu/man/tbl_utils.html'>time_vars</a></span>(<span class='kw'>x</span>),
+  id_var = <span class='fu'><a href='id_vars.html'>id_vars</a></span>(<span class='kw'>x</span>),
+  index_var = <span class='kw'>ricu</span>::<span class='fu'><a href='id_vars.html'>index_var</a></span>(<span class='kw'>x</span>),
+  interval = <span class='fu'><a href='secs.html'>hours</a></span>(<span class='fl'>1L</span>),
+  time_vars = <span class='kw'>ricu</span>::<span class='fu'><a href='id_vars.html'>time_vars</a></span>(<span class='kw'>x</span>),
   <span class='kw'>...</span>
 )
 
@@ -239,7 +239,7 @@ mechanisms for loading data.</p>
     </tr>
     <tr>
       <th>src</th>
-      <td><p>Passed to <code>as_src_tbl()</code> in order to determine the data source</p></td>
+      <td><p>Passed to <code><a href='data.html'>as_src_tbl()</a></code> in order to determine the data source</p></td>
     </tr>
     <tr>
       <th>id_hint</th>

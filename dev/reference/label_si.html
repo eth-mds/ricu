@@ -137,20 +137,18 @@ and body-fluid sampling.</p>
     <pre class="usage"><span class='fu'>susp_inf</span>(
   <span class='kw'>antibiotics</span>,
   <span class='kw'>fluid_sampling</span>,
-  abx_count_win = <span class='fu'>hours</span>(<span class='fl'>24L</span>),
+  abx_count_win = <span class='fu'><a href='secs.html'>hours</a></span>(<span class='fl'>24L</span>),
   abx_min_count = <span class='fl'>1L</span>,
   positive_cultures = <span class='fl'>FALSE</span>,
   <span class='kw'>...</span>,
-  interval = <span class='kw'>ricu</span>::<span class='fu'><a href='https://rdrr.io/pkg/ricu/man/tbl_utils.html'>interval</a></span>(<span class='kw'>antibiotics</span>)
+  interval = <span class='kw'>ricu</span>::<span class='fu'><a href='id_vars.html'>interval</a></span>(<span class='kw'>antibiotics</span>)
 )
 
-<span class='fu'>si_windows</span>(
+<span class='fu'>si_calc</span>(
   <span class='kw'>tbl</span>,
   si_mode = <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"and"</span>, <span class='st'>"or"</span>),
-  abx_win = <span class='fu'>hours</span>(<span class='fl'>24L</span>),
-  samp_win = <span class='fu'>hours</span>(<span class='fl'>72L</span>),
-  si_lwr = <span class='fu'>hours</span>(<span class='fl'>48L</span>),
-  si_upr = <span class='fu'>hours</span>(<span class='fl'>24L</span>)
+  abx_win = <span class='fu'><a href='secs.html'>hours</a></span>(<span class='fl'>24L</span>),
+  samp_win = <span class='fu'><a href='secs.html'>hours</a></span>(<span class='fl'>72L</span>)
 )</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
@@ -159,7 +157,7 @@ and body-fluid sampling.</p>
     <tr>
       <th>antibiotics, fluid_sampling</th>
       <td><p>Data input used for determining suspicion
-of infection (<code>ts_tbl</code> objects, as produced by <code>load_concepts()</code>)</p></td>
+of infection (<code>ts_tbl</code> objects, as produced by <code><a href='load_concepts.html'>load_concepts()</a></code>)</p></td>
     </tr>
     <tr>
       <th>abx_count_win</th>
@@ -177,7 +175,7 @@ cultures to be positive</p></td>
     </tr>
     <tr>
       <th>...</th>
-      <td><p>Passed to <code>si_windows()</code></p></td>
+      <td><p>Passed to <code>si_calc()</code></p></td>
     </tr>
     <tr>
       <th>interval</th>
@@ -200,10 +198,6 @@ of input data)</p></td>
       <th>samp_win</th>
       <td><p>Time-span within which antibiotic administration has to
 occur</p></td>
-    </tr>
-    <tr>
-      <th>si_lwr, si_upr</th>
-      <td><p>Lower/upper extent of SI windows</p></td>
     </tr>
     </table>
 
