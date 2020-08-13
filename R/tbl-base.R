@@ -103,7 +103,9 @@ cbind.id_tbl <- .cbind.id_tbl
 rbind.id_tbl <- .rbind.id_tbl
 
 #' @export
-split.id_tbl <- function(x, ...) lapply(NextMethod(), reclass_tbl, x)
+split.id_tbl <- function(x, ...) {
+  lapply(NextMethod(), reclass_tbl, x, stop_on_fail = FALSE)
+}
 
 #' @export
 merge.id_tbl <- function(x, y, by = NULL, by.x = NULL, by.y = NULL, ...) {

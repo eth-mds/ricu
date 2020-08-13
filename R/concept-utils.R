@@ -81,7 +81,7 @@ init_itm <- function(x, ...) UseMethod("init_itm", x)
 #' @param itm_vars Columns returned as [data_vars()]
 #' @param index_var Column used as index
 #' @param callback Name of a function to be called on the returned data used
-#' for data cleanup operations
+#' for data cleanup operations (or a string that evaluates to a function)
 #'
 #' @rdname data_items
 #' @export
@@ -98,7 +98,7 @@ init_itm.sel_itm <- function(x, table, sub_var, ids, itm_vars = NULL,
   cols <- colnames(as_src_tbl(x))
 
   assert_that(
-    is.string(table), is_fun_name(callback), has_length(ids),
+    is.string(table), evals_to_fun(callback), has_length(ids),
     is.character(ids) || is.integer(ids),
     all_fun(c(list(sub_var, itm_vars), index_var, cb_vars), is_in, cols)
   )
@@ -127,7 +127,7 @@ init_itm.col_itm <- function(x, table, itm_vars = NULL, index_var = NULL,
   cols <- colnames(as_src_tbl(x))
 
   assert_that(
-    is.string(table), is_fun_name(callback), null_or(unit_val, is.string),
+    is.string(table), evals_to_fun(callback), null_or(unit_val, is.string),
     all_fun(c(list(itm_vars), index_var, cb_vars), is_in, cols)
   )
 
@@ -155,7 +155,7 @@ init_itm.rgx_itm <- function(x, table, sub_var, regex, itm_vars = NULL,
   cols <- colnames(as_src_tbl(x))
 
   assert_that(
-    all_fun(list(table, regex), is.string), is_fun_name(callback),
+    all_fun(list(table, regex), is.string), evals_to_fun(callback),
     all_fun(c(list(sub_var, itm_vars), index_var, cb_vars), is_in, cols)
   )
 
@@ -171,7 +171,7 @@ init_itm.fun_itm <- function(x, callback, ...) {
 
   dots <- list(...)
 
-  assert_that(is_fun_name(callback), is_disjoint(names(x), names(dots)))
+  assert_that(evals_to_fun(callback), is_disjoint(names(x), names(dots)))
 
   x[c("callback", names(dots))] <- c(list(callback), dots)
 
@@ -374,6 +374,7 @@ need_idx <- function(x) identical(target_class(x), "ts_tbl")
 #'
 #' @param name The name of the concept
 #' @param items Zero or more `itm` objects
+#' @param description String-valued concept description
 #' @param aggregate NULL or a string denoting a function used to aggregate per
 #' id and if applicable per time step
 #' @param ... Further specification of the `cncpt` object (passed to
@@ -384,17 +385,18 @@ need_idx <- function(x) identical(target_class(x), "ts_tbl")
 #' @rdname data_concepts
 #'
 #' @export
-new_cncpt <- function(name, items, aggregate = NULL, ...,
+new_cncpt <- function(name, items, description = NULL, aggregate = NULL, ...,
                       class = "num_cncpt") {
 
-  assert_that(is.string(name), null_or(class, is.string))
+  assert_that(is.string(name), null_or(class, is.string),
+              null_or(description, is.string))
 
   if (!is_concept(items)) {
     items <- as_item(items)
   }
 
-  res <- structure(list(name = name, items = items, aggregate = aggregate),
-                   class = c(class, "cncpt"))
+  res <- structure(list(name = name, items = items, description = description,
+                        aggregate = aggregate), class = c(class, "cncpt"))
 
   init_cncpt(res, ...)
 }

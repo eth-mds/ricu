@@ -81,28 +81,18 @@ eicu_sampling <- function(x, val_var, ...) {
   x
 }
 
-multiply_by <- function(factor) {
-  factor <- force(factor)
+transform_fun <- function(fun) {
+  assert_that(is.function(fun))
   function(x, val_var, ...) {
-    x[, c(val_var) := get(val_var) * factor]
+    set(x, j = val_var, value = fun(x[[val_var]]))
   }
 }
 
-multiply_hirid_albu <- multiply_by(0.1)
-multiply_hirid_crea <- multiply_by(0.011312)
-multiply_hirid_calc <- multiply_by(4.008)
-multiply_hirid_fibr <- multiply_by(100)
-multiply_hirid_hemo <- multiply_by(0.1)
-multiply_hirid_magn <- multiply_by(2.431)
-multiply_hirid_gluc <- multiply_by(18.016)
-multiply_hirid_phos <- multiply_by(3.097521)
-multiply_hirid_urea <- multiply_by(2.8)
-multiply_hirid_bili <- multiply_by(0.058467)
-
-fahrenheit_to_celsius <- function(x, val_var, ...) {
-  x <- x[, c(val_var) := (get(val_var) - 32) * 5 / 9]
-  x
+multiply_by <- function(factor) {
+  transform_fun(function(x) x * factor)
 }
+
+fahr_to_cels <- function(x) (x - 32) * 5 / 9
 
 distribute_amount <- function(x, val_var, amount_var, end_var, ...) {
 

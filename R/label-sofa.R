@@ -4,7 +4,7 @@
 #' The SOFA (Sequential Organ Failure Assessment) score is a commonly used
 #' assessment tool used to track a patient's well-being in an ICU.
 #'
-#' @param pa_fi,vent_ind,platelet_count,bilirubin_total,mean_bp,norepinephrine,epinephrine,dopamine,dobutamine,gcs,creatinine,urine_24 Data input used for
+#' @param pa_fi,vent_ind,platelet_count,bilirubin_total,map,norepinephrine,epinephrine,dopamine,dobutamine,gcs,creatinine,urine_24 Data input used for
 #' sofa score evaluation (`ts_tbl` objects, as produced by [load_concepts()])
 #' @param ... Passed to `sofa_window()` or `sofa_compute()`
 #' @param interval Time series interval (only used for checking consistency
@@ -26,7 +26,7 @@
 #' @export
 #'
 sofa_score <- function(pa_fi, vent_ind, platelet_count, bilirubin_total,
-                       mean_bp, norepinephrine, epinephrine, dopamine,
+                       map, norepinephrine, epinephrine, dopamine,
                        dobutamine, gcs, creatinine, urine_24, ...,
                        interval = ricu::interval(pa_fi)) {
 
@@ -35,7 +35,7 @@ sofa_score <- function(pa_fi, vent_ind, platelet_count, bilirubin_total,
   assert_that(!has_name(args, c("tbl", "by_ref")))
 
   dat <- reduce(merge,
-    list(pa_fi, vent_ind, platelet_count, bilirubin_total, mean_bp,
+    list(pa_fi, vent_ind, platelet_count, bilirubin_total, map,
          norepinephrine, epinephrine, dopamine, dobutamine, gcs, creatinine,
          urine_24),
     all = TRUE)
@@ -48,7 +48,7 @@ sofa_score <- function(pa_fi, vent_ind, platelet_count, bilirubin_total,
   dat <- rm_cols(dat, "vent_ind", by_ref = TRUE)
 
   rename <- c(
-    platelet_count = "coag", bilirubin_total = "bili", mean_bp = "map",
+    platelet_count = "coag", bilirubin_total = "bili", map = "map",
     dopamine = "dopa", norepinephrine = "norepi", dobutamine = "dobu",
     epinephrine = "epi", creatinine = "crea", urine_24 = "urine",
     pa_fi = "pafi"

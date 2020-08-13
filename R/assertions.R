@@ -218,11 +218,11 @@ on_failure(null_or) <- function(call, env) {
   )
 }
 
-is_fun_name <- function(x) {
-  assert_that(is.string(x)) && exists(x, mode = "function")
+evals_to_fun <- function(x) {
+  assert_that(is.string(x)) && is.function(eval(parse(text = x)))
 }
 
-on_failure(is_fun_name) <- function(call, env) {
+on_failure(evals_to_fun) <- function(call, env) {
   format_assert(
     "{as_label(call$x)} is not the name of a discoverable function",
     "is_fun_name_assert"

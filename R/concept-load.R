@@ -381,7 +381,11 @@ load_concepts.hrd_itm <- function(x, patient_ids = NULL, id_type = "icustay",
 itm_cleanup <- function(x, itm, cbc, env, cbf) {
 
   arg <- c(list(x), as.list(c(itm, cbc)), list(env = env))
-  x <- do.call(cbf, arg)
+  fun <- eval(parse(text = cbf))
+
+  assert_that(is.function(fun))
+
+  x <- do.call(fun, arg)
 
   x <- rm_cols(x, setdiff(data_vars(x), itm), by_ref = TRUE)
   x <- rename_cols(x, names(itm), itm, by_ref = TRUE)

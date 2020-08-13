@@ -85,47 +85,6 @@
       ]
     }
   },
-  "alanine_aminotransferase": {
-    "unit": "IU/L",
-    "min": 0,
-    "sources": {
-      "eicu": [
-        {
-          "ids": "ALT (SGPT)",
-          "table": "lab",
-          "sub_var": "labname"
-        }
-      ],
-      "eicu_demo": [
-        {
-          "ids": "ALT (SGPT)",
-          "table": "lab",
-          "sub_var": "labname"
-        }
-      ],
-      "hirid": [
-        {
-          "ids": 20002600,
-          "table": "observations",
-          "sub_var": "variableid"
-        }
-      ],
-      "mimic": [
-        {
-          "ids": 50861,
-          "table": "labevents",
-          "sub_var": "itemid"
-        }
-      ],
-      "mimic_demo": [
-        {
-          "ids": 50861,
-          "table": "labevents",
-          "sub_var": "itemid"
-        }
-      ]
-    }
-  },
   "albumin": {
     "unit": "g/dL",
     "min": 0,
@@ -150,7 +109,7 @@
           "ids": 24000605,
           "table": "observations",
           "sub_var": "variableid",
-          "callback": "multiply_hirid_albu"
+          "callback": "multiply_by(0.1)"
         }
       ],
       "mimic": [
@@ -169,7 +128,7 @@
       ]
     }
   },
-  "alkaline_phosphatase": {
+  "alp": {
     "unit": "IU/L",
     "min": 0,
     "sources": {
@@ -204,6 +163,48 @@
       "mimic_demo": [
         {
           "ids": 50863,
+          "table": "labevents",
+          "sub_var": "itemid"
+        }
+      ]
+    }
+  },
+  "alt": {
+    "unit": "IU/L",
+    "min": 0,
+    "description": "alanine aminotransferase",
+    "sources": {
+      "eicu": [
+        {
+          "ids": "ALT (SGPT)",
+          "table": "lab",
+          "sub_var": "labname"
+        }
+      ],
+      "eicu_demo": [
+        {
+          "ids": "ALT (SGPT)",
+          "table": "lab",
+          "sub_var": "labname"
+        }
+      ],
+      "hirid": [
+        {
+          "ids": 20002600,
+          "table": "observations",
+          "sub_var": "variableid"
+        }
+      ],
+      "mimic": [
+        {
+          "ids": 50861,
+          "table": "labevents",
+          "sub_var": "itemid"
+        }
+      ],
+      "mimic_demo": [
+        {
+          "ids": 50861,
           "table": "labevents",
           "sub_var": "itemid"
         }
@@ -284,9 +285,10 @@
       ]
     }
   },
-  "asparate_aminotransferase": {
+  "ast": {
     "unit": "IU/L",
     "min": 0,
+    "description": "aspartate aminotransferase",
     "sources": {
       "eicu": [
         {
@@ -512,7 +514,7 @@
           "ids": 24000560,
           "table": "observations",
           "sub_var": "variableid",
-          "callback": "multiply_hirid_bili"
+          "callback": "multiply_by(0.058467)"
         }
       ],
       "mimic": [
@@ -555,7 +557,7 @@
           "ids": 20004300,
           "table": "observations",
           "sub_var": "variableid",
-          "callback": "multiply_hirid_bili"
+          "callback": "multiply_by(0.058467)"
         }
       ],
       "mimic": [
@@ -570,51 +572,6 @@
           "ids": 50885,
           "table": "labevents",
           "sub_var": "itemid"
-        }
-      ]
-    }
-  },
-  "c_reactive_protein": {
-    "unit": "mg/L",
-    "min": 0,
-    "sources": {
-      "eicu": [
-        {
-          "ids": "CRP",
-          "table": "lab",
-          "sub_var": "labname",
-          "callback": "crp_dl_to_l"
-        }
-      ],
-      "eicu_demo": [
-        {
-          "ids": "CRP",
-          "table": "lab",
-          "sub_var": "labname",
-          "callback": "crp_dl_to_l"
-        }
-      ],
-      "hirid": [
-        {
-          "ids": 20002200,
-          "table": "observations",
-          "sub_var": "variableid"
-        }
-      ],
-      "mimic": [
-        {
-          "ids": 50889,
-          "table": "labevents",
-          "sub_var": "itemid",
-          "callback": "crp_dl_to_l"
-        }
-      ],
-      "mimic_demo": [
-        {
-          "ids": 50889,
-          "table": "labevents",
-          "sub_var": "itemid",
-          "callback": "crp_dl_to_l"
         }
       ]
     }
@@ -645,7 +602,7 @@
           "ids": 20005100,
           "table": "observations",
           "sub_var": "variableid",
-          "callback": "multiply_hirid_calc"
+          "callback": "multiply_by(4.008)"
         }
       ],
       "mimic": [
@@ -916,7 +873,7 @@
           "ids": 20000600,
           "table": "observations",
           "sub_var": "variableid",
-          "callback": "multiply_hirid_crea"
+          "callback": "multiply_by(0.011312)"
         }
       ],
       "mimic": [
@@ -930,6 +887,95 @@
         {
           "ids": 50912,
           "table": "labevents",
+          "sub_var": "itemid"
+        }
+      ]
+    }
+  },
+  "crp": {
+    "unit": "mg/L",
+    "min": 0,
+    "description": "C-reactive protein",
+    "sources": {
+      "eicu": [
+        {
+          "ids": "CRP",
+          "table": "lab",
+          "sub_var": "labname",
+          "callback": "crp_dl_to_l"
+        }
+      ],
+      "eicu_demo": [
+        {
+          "ids": "CRP",
+          "table": "lab",
+          "sub_var": "labname",
+          "callback": "crp_dl_to_l"
+        }
+      ],
+      "hirid": [
+        {
+          "ids": 20002200,
+          "table": "observations",
+          "sub_var": "variableid"
+        }
+      ],
+      "mimic": [
+        {
+          "ids": 50889,
+          "table": "labevents",
+          "sub_var": "itemid",
+          "callback": "crp_dl_to_l"
+        }
+      ],
+      "mimic_demo": [
+        {
+          "ids": 50889,
+          "table": "labevents",
+          "sub_var": "itemid",
+          "callback": "crp_dl_to_l"
+        }
+      ]
+    }
+  },
+  "dbp": {
+    "unit": "mmHg",
+    "min": 0,
+    "max": 200,
+    "description": "diastolic blood pressure",
+    "sources": {
+      "eicu": [
+        {
+          "table": "vitalperiodic",
+          "itm_vars": "systemicdiastolic",
+          "class": "col_itm"
+        }
+      ],
+      "eicu_demo": [
+        {
+          "table": "vitalperiodic",
+          "itm_vars": "systemicdiastolic",
+          "class": "col_itm"
+        }
+      ],
+      "hirid": [
+        {
+          "ids": 120,
+          "table": "observations",
+          "sub_var": "variableid"
+        }
+      ],
+      "mimic": [
+        {
+          "ids": [8368, 8441, 8555, 220051, 220180],
+          "table": "chartevents",
+          "sub_var": "itemid"
+        }
+      ],
+      "mimic_demo": [
+        {
+          "ids": [8368, 8441, 8555, 220051, 220180],
+          "table": "chartevents",
           "sub_var": "itemid"
         }
       ]
@@ -977,48 +1023,6 @@
           "itm_vars": "hospital_expire_flag",
           "callback": "mimic_death",
           "class": "col_itm"
-        }
-      ]
-    }
-  },
-  "diastolic_bp": {
-    "unit": "mmHg",
-    "min": 0,
-    "max": 200,
-    "sources": {
-      "eicu": [
-        {
-          "table": "vitalperiodic",
-          "itm_vars": "systemicdiastolic",
-          "class": "col_itm"
-        }
-      ],
-      "eicu_demo": [
-        {
-          "table": "vitalperiodic",
-          "itm_vars": "systemicdiastolic",
-          "class": "col_itm"
-        }
-      ],
-      "hirid": [
-        {
-          "ids": 120,
-          "table": "observations",
-          "sub_var": "variableid"
-        }
-      ],
-      "mimic": [
-        {
-          "ids": [8368, 8441, 8555, 220051, 220180],
-          "table": "chartevents",
-          "sub_var": "itemid"
-        }
-      ],
-      "mimic_demo": [
-        {
-          "ids": [8368, 8441, 8555, 220051, 220180],
-          "table": "chartevents",
-          "sub_var": "itemid"
         }
       ]
     }
@@ -1245,6 +1249,7 @@
     "unit": "%",
     "min": 21,
     "max": 100,
+    "description": "fraction of inspired oxygen",
     "sources": {
       "eicu": [
         {
@@ -1321,7 +1326,7 @@
           "ids": 24000536,
           "table": "observations",
           "sub_var": "variableid",
-          "callback": "multiply_hirid_fibr"
+          "callback": "multiply_by(100)"
         }
       ],
       "mimic": [
@@ -1583,7 +1588,7 @@
           "ids": [20005110, 24000523, 24000585],
           "table": "observations",
           "sub_var": "variableid",
-          "callback": "multiply_hirid_gluc"
+          "callback": "multiply_by(18.016)"
         }
       ],
       "mimic": [
@@ -1597,48 +1602,6 @@
         {
           "ids": [50809, 50931],
           "table": "labevents",
-          "sub_var": "itemid"
-        }
-      ]
-    }
-  },
-  "heart_rate": {
-    "unit": ["bpm", "/min"],
-    "min": 0,
-    "max": 300,
-    "sources": {
-      "eicu": [
-        {
-          "table": "vitalperiodic",
-          "itm_vars": "heartrate",
-          "class": "col_itm"
-        }
-      ],
-      "eicu_demo": [
-        {
-          "table": "vitalperiodic",
-          "itm_vars": "heartrate",
-          "class": "col_itm"
-        }
-      ],
-      "hirid": [
-        {
-          "ids": 200,
-          "table": "observations",
-          "sub_var": "variableid"
-        }
-      ],
-      "mimic": [
-        {
-          "ids": [211, 220045],
-          "table": "chartevents",
-          "sub_var": "itemid"
-        }
-      ],
-      "mimic_demo": [
-        {
-          "ids": [211, 220045],
-          "table": "chartevents",
           "sub_var": "itemid"
         }
       ]
@@ -1703,7 +1666,7 @@
           "ids": [24000548, 24000836, 20000900],
           "table": "observations",
           "sub_var": "variableid",
-          "callback": "multiply_hirid_hemo"
+          "callback": "multiply_by(0.1)"
         }
       ],
       "mimic": [
@@ -1717,6 +1680,49 @@
         {
           "ids": 51222,
           "table": "labevents",
+          "sub_var": "itemid"
+        }
+      ]
+    }
+  },
+  "hr": {
+    "unit": ["bpm", "/min"],
+    "min": 0,
+    "max": 300,
+    "description": "heart rate",
+    "sources": {
+      "eicu": [
+        {
+          "table": "vitalperiodic",
+          "itm_vars": "heartrate",
+          "class": "col_itm"
+        }
+      ],
+      "eicu_demo": [
+        {
+          "table": "vitalperiodic",
+          "itm_vars": "heartrate",
+          "class": "col_itm"
+        }
+      ],
+      "hirid": [
+        {
+          "ids": 200,
+          "table": "observations",
+          "sub_var": "variableid"
+        }
+      ],
+      "mimic": [
+        {
+          "ids": [211, 220045],
+          "table": "chartevents",
+          "sub_var": "itemid"
+        }
+      ],
+      "mimic_demo": [
+        {
+          "ids": [211, 220045],
+          "table": "chartevents",
           "sub_var": "itemid"
         }
       ]
@@ -2008,7 +2014,7 @@
           "ids": 24000230,
           "table": "observations",
           "sub_var": "variableid",
-          "callback": "multiply_hirid_magn"
+          "callback": "multiply_by(2.431)"
         }
       ],
       "mimic": [
@@ -2022,6 +2028,59 @@
         {
           "ids": 50960,
           "table": "labevents",
+          "sub_var": "itemid"
+        }
+      ]
+    }
+  },
+  "map": {
+    "unit": "mmHg",
+    "min": 0,
+    "max": 250,
+    "description": "mean arterial pressure",
+    "sources": {
+      "eicu": [
+        {
+          "table": "vitalperiodic",
+          "itm_vars": "systemicmean",
+          "class": "col_itm"
+        },
+        {
+          "table": "vitalaperiodic",
+          "itm_vars": "noninvasivemean",
+          "class": "col_itm"
+        }
+      ],
+      "eicu_demo": [
+        {
+          "table": "vitalperiodic",
+          "itm_vars": "systemicmean",
+          "class": "col_itm"
+        },
+        {
+          "table": "vitalaperiodic",
+          "itm_vars": "noninvasivemean",
+          "class": "col_itm"
+        }
+      ],
+      "hirid": [
+        {
+          "ids": 110,
+          "table": "observations",
+          "sub_var": "variableid"
+        }
+      ],
+      "mimic": [
+        {
+          "ids": [52, 443, 456, 6072, 220052, 220181, 225312],
+          "table": "chartevents",
+          "sub_var": "itemid"
+        }
+      ],
+      "mimic_demo": [
+        {
+          "ids": [52, 443, 456, 6072, 220052, 220181, 225312],
+          "table": "chartevents",
           "sub_var": "itemid"
         }
       ]
@@ -2152,58 +2211,6 @@
       ]
     }
   },
-  "mean_bp": {
-    "unit": "mmHg",
-    "min": 0,
-    "max": 250,
-    "sources": {
-      "eicu": [
-        {
-          "table": "vitalperiodic",
-          "itm_vars": "systemicmean",
-          "class": "col_itm"
-        },
-        {
-          "table": "vitalaperiodic",
-          "itm_vars": "noninvasivemean",
-          "class": "col_itm"
-        }
-      ],
-      "eicu_demo": [
-        {
-          "table": "vitalperiodic",
-          "itm_vars": "systemicmean",
-          "class": "col_itm"
-        },
-        {
-          "table": "vitalaperiodic",
-          "itm_vars": "noninvasivemean",
-          "class": "col_itm"
-        }
-      ],
-      "hirid": [
-        {
-          "ids": 110,
-          "table": "observations",
-          "sub_var": "variableid"
-        }
-      ],
-      "mimic": [
-        {
-          "ids": [52, 443, 456, 6072, 220052, 220181, 225312],
-          "table": "chartevents",
-          "sub_var": "itemid"
-        }
-      ],
-      "mimic_demo": [
-        {
-          "ids": [52, 443, 456, 6072, 220052, 220181, 225312],
-          "table": "chartevents",
-          "sub_var": "itemid"
-        }
-      ]
-    }
-  },
   "methemoglobin": {
     "unit": "%",
     "min": 0,
@@ -2247,7 +2254,7 @@
     }
   },
   "mews_score": {
-    "concepts": ["systolic_bp", "heart_rate", "respiratory_rate", "temperature", "avpu"],
+    "concepts": ["sbp", "hr", "resp", "temperature", "avpu"],
     "callback": "mews_score",
     "class": "rec_cncpt"
   },
@@ -2294,7 +2301,7 @@
     }
   },
   "news_score": {
-    "concepts": ["respiratory_rate", "o2_saturation", "supp_o2", "temperature", "systolic_bp", "heart_rate", "avpu"],
+    "concepts": ["resp", "o2_sat", "supp_o2", "temperature", "sbp", "hr", "avpu"],
     "callback": "news_score",
     "class": "rec_cncpt"
   },
@@ -2357,10 +2364,11 @@
       ]
     }
   },
-  "o2_saturation": {
+  "o2_sat": {
     "unit": ["%", "% Sat."],
     "min": 70,
     "max": 100,
+    "description": "oxygen saturation",
     "sources": {
       "eicu": [
         {
@@ -2566,7 +2574,7 @@
           "ids": 20002500,
           "table": "observations",
           "sub_var": "variableid",
-          "callback": "multiply_hirid_phos"
+          "callback": "multiply_by(3.097521)"
         }
       ],
       "mimic": [
@@ -2841,10 +2849,11 @@
       ]
     }
   },
-  "respiratory_rate": {
+  "resp": {
     "unit": "insp/min",
     "min": 0,
     "max": 120,
+    "description": "respiratory rate",
     "sources": {
       "eicu": [
         {
@@ -2877,6 +2886,49 @@
       "mimic_demo": [
         {
           "ids": [618, 619, 220210, 224688, 224689, 224690],
+          "table": "chartevents",
+          "sub_var": "itemid"
+        }
+      ]
+    }
+  },
+  "sbp": {
+    "unit": "mmHg",
+    "min": 0,
+    "max": 300,
+    "description": "systolic blood pressure",
+    "sources": {
+      "eicu": [
+        {
+          "table": "vitalperiodic",
+          "itm_vars": "systemicsystolic",
+          "class": "col_itm"
+        }
+      ],
+      "eicu_demo": [
+        {
+          "table": "vitalperiodic",
+          "itm_vars": "systemicsystolic",
+          "class": "col_itm"
+        }
+      ],
+      "hirid": [
+        {
+          "ids": 100,
+          "table": "observations",
+          "sub_var": "variableid"
+        }
+      ],
+      "mimic": [
+        {
+          "ids": [51, 455, 6701, 220050, 220179],
+          "table": "chartevents",
+          "sub_var": "itemid"
+        }
+      ],
+      "mimic_demo": [
+        {
+          "ids": [51, 455, 6701, 220050, 220179],
           "table": "chartevents",
           "sub_var": "itemid"
         }
@@ -2962,7 +3014,7 @@
     }
   },
   "sirs_score": {
-    "concepts": ["temperature", "heart_rate", "respiratory_rate", "pa_co2", "white_blood_cells", "bands"],
+    "concepts": ["temperature", "hr", "resp", "pa_co2", "wbc", "bands"],
     "callback": "sirs_score",
     "class": "rec_cncpt"
   },
@@ -3009,7 +3061,7 @@
     }
   },
   "sofa_score": {
-    "concepts": ["pa_fi", "vent_ind", "platelet_count", "bilirubin_total", "mean_bp", "norepinephrine", "epinephrine", "dopamine", "dobutamine", "gcs", "creatinine", "urine_24"],
+    "concepts": ["pa_fi", "vent_ind", "platelet_count", "bilirubin_total", "map", "norepinephrine", "epinephrine", "dopamine", "dobutamine", "gcs", "creatinine", "urine_24"],
     "aggregate": [null, null, "min", "max", "min", "max", "max", "max", "max", null, "max", null],
     "callback": "sofa_score",
     "class": "rec_cncpt"
@@ -3031,48 +3083,6 @@
     ],
     "callback": "susp_inf",
     "class": "rec_cncpt"
-  },
-  "systolic_bp": {
-    "unit": "mmHg",
-    "min": 0,
-    "max": 300,
-    "sources": {
-      "eicu": [
-        {
-          "table": "vitalperiodic",
-          "itm_vars": "systemicsystolic",
-          "class": "col_itm"
-        }
-      ],
-      "eicu_demo": [
-        {
-          "table": "vitalperiodic",
-          "itm_vars": "systemicsystolic",
-          "class": "col_itm"
-        }
-      ],
-      "hirid": [
-        {
-          "ids": 100,
-          "table": "observations",
-          "sub_var": "variableid"
-        }
-      ],
-      "mimic": [
-        {
-          "ids": [51, 455, 6701, 220050, 220179],
-          "table": "chartevents",
-          "sub_var": "itemid"
-        }
-      ],
-      "mimic_demo": [
-        {
-          "ids": [51, 455, 6701, 220050, 220179],
-          "table": "chartevents",
-          "sub_var": "itemid"
-        }
-      ]
-    }
   },
   "temperature": {
     "unit": "C",
@@ -3110,7 +3120,7 @@
           "ids": [678, 679, 223761, 224027],
           "table": "chartevents",
           "sub_var": "itemid",
-          "callback": "fahrenheit_to_celsius"
+          "callback": "transform_fun(fahr_to_cels)"
         }
       ],
       "mimic_demo": [
@@ -3123,7 +3133,7 @@
           "ids": [678, 679, 223761, 224027],
           "table": "chartevents",
           "sub_var": "itemid",
-          "callback": "fahrenheit_to_celsius"
+          "callback": "transform_fun(fahr_to_cels)"
         }
       ]
     }
@@ -3255,7 +3265,7 @@
           "ids": 20004100,
           "table": "observations",
           "sub_var": "variableid",
-          "callback": "multiply_hirid_urea"
+          "callback": "multiply_by(2.8)"
         }
       ],
       "mimic": [
@@ -3533,29 +3543,7 @@
       ]
     }
   },
-  "weight": {
-    "unit": "kg",
-    "min": 0,
-    "max": 500,
-    "target": "id_tbl",
-    "sources": {
-      "eicu": [
-        {
-          "table": "patient",
-          "itm_vars": "admissionweight",
-          "class": "col_itm"
-        }
-      ],
-      "eicu_demo": [
-        {
-          "table": "patient",
-          "itm_vars": "admissionweight",
-          "class": "col_itm"
-        }
-      ]
-    }
-  },
-  "white_blood_cells": {
+  "wbc": {
     "unit": "K/uL",
     "min": 0,
     "sources": {
@@ -3592,6 +3580,28 @@
           "ids": 51301,
           "table": "labevents",
           "sub_var": "itemid"
+        }
+      ]
+    }
+  },
+  "weight": {
+    "unit": "kg",
+    "min": 0,
+    "max": 500,
+    "target": "id_tbl",
+    "sources": {
+      "eicu": [
+        {
+          "table": "patient",
+          "itm_vars": "admissionweight",
+          "class": "col_itm"
+        }
+      ],
+      "eicu_demo": [
+        {
+          "table": "patient",
+          "itm_vars": "admissionweight",
+          "class": "col_itm"
         }
       ]
     }

@@ -1,9 +1,10 @@
 
 cfg <- list(
-  heart_rate = list(
+  hr = list(
     unit = c("bpm", "/min"),
     min = 0,
     max = 300,
+    description = "heart rate",
     sources = list(
       mimic = list(
         list(ids = c(211L, 220045L), table = "chartevents", sub_var = "itemid")
@@ -17,10 +18,11 @@ cfg <- list(
       )
     )
   ),
-  systolic_bp = list(
+  sbp = list(
     unit = "mmHg",
     min = 0,
     max = 300,
+    description = "systolic blood pressure",
     sources = list(
       mimic = list(
         list(ids = c(51L, 455L, 6701L, 220050L, 220179L),
@@ -35,10 +37,11 @@ cfg <- list(
       )
     )
   ),
-  diastolic_bp = list(
+  dbp = list(
     unit = "mmHg",
     min = 0,
     max = 200,
+    description = "diastolic blood pressure",
     sources = list(
       mimic = list(
         list(ids = c(8368L, 8441L, 8555L, 220051L, 220180L),
@@ -53,10 +56,11 @@ cfg <- list(
       )
     )
   ),
-  mean_bp = list(
+  map = list(
     unit = "mmHg",
     min = 0,
     max = 250,
+    description = "mean arterial pressure",
     sources = list(
       mimic = list(
         list(ids = c(52L, 443L, 456L, 6072L, 220052L, 220181L, 225312L),
@@ -73,10 +77,11 @@ cfg <- list(
       )
     )
   ),
-  respiratory_rate = list(
+  resp = list(
     unit = "insp/min",
     min = 0,
     max = 120,
+    description = "respiratory rate",
     sources = list(
       mimic = list(
         list(ids = c(618L, 619L, 220210L, 224688L, 224689L, 224690L),
@@ -92,10 +97,11 @@ cfg <- list(
       )
     )
   ),
-  o2_saturation = list(
+  o2_sat = list(
     unit = c("%", "% Sat."),
     min = 70,
     max = 100,
+    description = "oxygen saturation",
     sources = list(
       mimic = list(
         list(ids = c(646L, 220277L, 226253L, 50817L), table = "chartevents",
@@ -116,6 +122,7 @@ cfg <- list(
     unit = "%",
     min = 21,
     max = 100,
+    description = "fraction of inspired oxygen",
     sources = list(
       mimic = list(
         list(ids = c(3420L, 50816L, 223835L), table = "labevents",
@@ -146,9 +153,10 @@ cfg <- list(
       )
   )
   ),
-  alanine_aminotransferase = list(
+  alt = list(
     unit = "IU/L",
     min = 0,
+    description = "alanine aminotransferase",
     sources = list(
       mimic = list(
         list(ids = 50861L, table = "labevents", sub_var = "itemid")
@@ -161,9 +169,10 @@ cfg <- list(
       )
     )
   ),
-  asparate_aminotransferase = list(
+  ast = list(
     unit = "IU/L",
     min = 0,
+    description = "aspartate aminotransferase",
     sources = list(
       mimic = list(
         list(ids = 50878L, table = "labevents", sub_var = "itemid")
@@ -189,7 +198,7 @@ cfg <- list(
       ),
       hirid = list(
         list(ids = 20002500L, table = "observations", sub_var = "variableid",
-             callback = "multiply_hirid_phos")
+             callback = "multiply_by(3.097521)")
       )
     )
   ),
@@ -206,7 +215,7 @@ cfg <- list(
       ),
       hirid = list(
         list(ids = 20004100L, table = "observations", sub_var = "variableid",
-             callback = "multiply_hirid_urea")
+             callback = "multiply_by(2.8)")
       )
     )
   ),
@@ -238,7 +247,7 @@ cfg <- list(
       ),
       hirid = list(
         list(ids = 20004300L, table = "observations", sub_var = "variableid",
-             callback = "multiply_hirid_bili")
+             callback = "multiply_by(0.058467)")
       )
     )
   ),
@@ -332,7 +341,7 @@ cfg <- list(
       ),
       hirid = list(
         list(ids = 20000600L, table = "observations", sub_var = "variableid",
-             callback = "multiply_hirid_crea")
+             callback = "multiply_by(0.011312)")
       )
     )
   ),
@@ -361,7 +370,7 @@ cfg <- list(
       )
   )
   ),
-  alkaline_phosphatase = list(
+  alp = list(
     unit = "IU/L",
     min = 0,
     sources = list(
@@ -376,7 +385,7 @@ cfg <- list(
       )
     )
   ),
-  white_blood_cells = list(
+  wbc = list(
     unit = "K/uL",
     min = 0,
     sources = list(
@@ -404,7 +413,7 @@ cfg <- list(
       ),
       hirid = list(
         list(ids = c(24000548L, 24000836L, 20000900L), table = "observations",
-             sub_var = "variableid", callback = "multiply_hirid_hemo")
+             sub_var = "variableid", callback = "multiply_by(0.1)")
       )
     )
   ),
@@ -529,7 +538,7 @@ cfg <- list(
       ),
       hirid = list(
         list(ids = 20005100L, table = "observations", sub_var = "variableid",
-             callback = "multiply_hirid_calc")
+             callback = "multiply_by(4.008)")
       )
     )
   ),
@@ -564,7 +573,7 @@ cfg <- list(
       ),
       hirid = list(
         list(ids = 24000230L, table = "observations", sub_var = "variableid",
-             callback = "multiply_hirid_magn")
+             callback = "multiply_by(2.431)")
       )
     )
   ),
@@ -658,7 +667,7 @@ cfg <- list(
       ),
       hirid = list(
         list(ids = c(20005110L, 24000523L, 24000585L), table = "observations",
-             sub_var = "variableid", callback = "multiply_hirid_gluc")
+             sub_var = "variableid", callback = "multiply_by(18.016)")
       )
     )
   ),
@@ -678,9 +687,10 @@ cfg <- list(
       )
     )
   ),
-  c_reactive_protein = list(
+  crp = list(
     unit = "mg/L",
     min = 0,
+    description = "C-reactive protein",
     sources = list(
       mimic = list(
         list(ids = 50889L, table = "labevents", sub_var = "itemid",
@@ -762,7 +772,7 @@ cfg <- list(
       ),
       hirid = list(
         list(ids = 24000605L, table = "observations", sub_var = "variableid",
-             callback = "multiply_hirid_albu")
+             callback = "multiply_by(0.1)")
       )
     )
   ),
@@ -779,7 +789,7 @@ cfg <- list(
       ),
       hirid = list(
         list(ids = 24000536L, table = "observations", sub_var = "variableid",
-             callback = "multiply_hirid_fibr")
+             callback = "multiply_by(100)")
       )
     )
   ),
@@ -1192,7 +1202,7 @@ cfg <- list(
       ),
       hirid = list(
         list(ids = 24000560L, table = "observations", sub_var = "variableid",
-             callback = "multiply_hirid_bili")
+             callback = "multiply_by(0.058467)")
       )
     )
   ),
@@ -1205,7 +1215,7 @@ cfg <- list(
         list(ids = c(676L, 677L, 223762L), table = "chartevents",
              sub_var = "itemid"),
         list(ids = c(678L, 679L, 223761L, 224027L), table = "chartevents",
-             sub_var = "itemid", callback = "fahrenheit_to_celsius")
+             sub_var = "itemid", callback = "transform_fun(fahr_to_cels)")
       ),
       eicu = list(
         list(table = "vitalperiodic", itm_vars = "temperature",
@@ -1410,7 +1420,7 @@ cfg <- list(
   ),
   sofa_score = list(
     concepts = c("pa_fi", "vent_ind", "platelet_count", "bilirubin_total",
-                 "mean_bp", "norepinephrine", "epinephrine", "dopamine",
+                 "map", "norepinephrine", "epinephrine", "dopamine",
                  "dobutamine", "gcs", "creatinine", "urine_24"),
     aggregate = c(NA, NA, "min", "max", "min", "max", "max", "max", "max", NA,
                   "max", NA),
@@ -1442,8 +1452,8 @@ cfg <- list(
     )
   ),
   sirs_score = list(
-    concepts = c("temperature", "heart_rate", "respiratory_rate", "pa_co2",
-                 "white_blood_cells", "bands"),
+    concepts = c("temperature", "hr", "resp", "pa_co2",
+                 "wbc", "bands"),
     callback = "sirs_score",
     class = "rec_cncpt"
   ),
@@ -1458,13 +1468,13 @@ cfg <- list(
     class = "rec_cncpt"
   ),
   news_score = list(
-    concepts = c("respiratory_rate", "o2_saturation", "supp_o2", "temperature",
-                 "systolic_bp", "heart_rate", "avpu"),
+    concepts = c("resp", "o2_sat", "supp_o2", "temperature",
+                 "sbp", "hr", "avpu"),
     callback = "news_score",
     class = "rec_cncpt"
   ),
   mews_score = list(
-    concepts = c("systolic_bp", "heart_rate", "respiratory_rate",
+    concepts = c("sbp", "hr", "resp",
                  "temperature","avpu"),
     callback = "mews_score",
     class = "rec_cncpt"

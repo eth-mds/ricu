@@ -15,7 +15,7 @@ sofa_score(
   vent_ind,
   platelet_count,
   bilirubin_total,
-  mean_bp,
+  map,
   norepinephrine,
   epinephrine,
   dopamine,
@@ -94,7 +94,7 @@ sofa_compute(
 )
 }
 \arguments{
-\item{pa_fi, vent_ind, platelet_count, bilirubin_total, mean_bp, norepinephrine, epinephrine, dopamine, dobutamine, gcs, creatinine, urine_24}{Data input used for
+\item{pa_fi, vent_ind, platelet_count, bilirubin_total, map, norepinephrine, epinephrine, dopamine, dobutamine, gcs, creatinine, urine_24}{Data input used for
 sofa score evaluation (\code{ts_tbl} objects, as produced by \code{\link[=load_concepts]{load_concepts()}})}
 
 \item{...}{Passed to \code{sofa_window()} or \code{sofa_compute()}}

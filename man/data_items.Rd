@@ -83,7 +83,7 @@ considered corresponding to the data item}
 \item{index_var}{Column used as index}
 
 \item{callback}{Name of a function to be called on the returned data used
-for data cleanup operations}
+for data cleanup operations (or a string that evaluates to a function)}
 
 \item{unit_val}{String valued unit to be used in case no \code{unit_var} is
 available for the given table}

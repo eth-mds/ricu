@@ -32,7 +32,14 @@ n_tick(x)
 
 \method{n_tick}{item}(x)
 
-new_cncpt(name, items, aggregate = NULL, ..., class = "num_cncpt")
+new_cncpt(
+  name,
+  items,
+  description = NULL,
+  aggregate = NULL,
+  ...,
+  class = "num_cncpt"
+)
 
 is_cncpt(x, ...)
 
@@ -74,6 +81,8 @@ load_dictionary(
 \item{name}{Name of the dictionary to be read}
 
 \item{items}{Zero or more \code{itm} objects}
+
+\item{description}{String-valued concept description}
 
 \item{aggregate}{NULL or a string denoting a function used to aggregate per
 id and if applicable per time step}
