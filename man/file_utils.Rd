@@ -23,7 +23,7 @@ directory}
 
 \item{dir}{(Optional) directory name where to look for the specified file}
 
-\item{...}{Passed to \code{\link[jsonlite:read_json]{jsonlite::read_json()}} or \code{\link[jsonlite:write_json]{jsonlite::write_json()}}}
+\item{...}{Passed to \code{\link[jsonlite:read_json]{jsonlite::read_json()}} or \code{\link[jsonlite:read_json]{jsonlite::write_json()}}}
 
 \item{x}{Object to be written}
 }

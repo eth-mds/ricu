@@ -554,10 +554,14 @@ is_concept <- function(x) inherits(x, "concept")
 
 #' @export
 format.concept <- function(x, ...) {
+
+  desc <- lst_xtr(x, "description")
+  desc[lgl_ply(desc, is.null)] <- ""
+
   paste0(
-    "<", chr_xtr(lapply(x, "class"), 1L), "[",
+    desc, " (<", chr_xtr(lapply(x, "class"), 1L), "[",
     int_ply(lst_xtr(x, "items"), length), "]> ", symbol$arrow_right, " <",
-    chr_ply(x, target_class), ">"
+    chr_ply(x, target_class), ">)"
   )
 }
 

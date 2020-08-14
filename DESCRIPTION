@@ -52,7 +52,7 @@ Suggests:
     survival,
     forestmodel
 Roxygen: list(markdown = TRUE)
-RoxygenNote: 7.1.0
+RoxygenNote: 7.1.1.9000
 Additional_repositories: https://septic-tank.github.io/physionet-demo
 Remotes: nbenn/prt
 VignetteBuilder: knitr

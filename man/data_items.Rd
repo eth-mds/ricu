@@ -89,7 +89,7 @@ for data cleanup operations (or a string that evaluates to a function)}
 available for the given table}
 
 \item{regex}{String-valued regular expression which will be evaluated by
-\code{\link[base:grepl]{base::grepl()}} with \code{ignore.case = TRUE}}
+\code{\link[base:grep]{base::grepl()}} with \code{ignore.case = TRUE}}
 }
 \description{
 In order to specify the location of data items in data sets, \code{item} objects

@@ -15,17 +15,65 @@
 #' @param interval Time series interval (only used for checking consistency
 #' of input data)
 #'
-#' @details The Sepsis-3 Consensus ([Singer et. al. 2016.](https://jamanetwork.com/journals/jama/fullarticle/2492881)) defined sepsis as an acute increase in the SOFA score (see [sofa_score()]) of &gt; 2 points within the suspected infection (SI) window (see [si_calc()]):
+#' @details The Sepsis-3 Consensus (Singer et. al.) defines sepsis as an acute
+#' increase in the SOFA score (see [sofa_score()]) of 2 points or more within
+#' the suspected infection (SI) window (see [si_calc()]):
 #'
-#' \figure{sep-3.png}
+#' ```{tikz sofa-sep-3, echo = FALSE}
+#' \begin{tikzpicture}
+#'   \draw (-6,0) -- (3,0);
+#'   \draw (-6,-0.25) -- (-6,0.25);
+#'   \draw (3,-0.25) -- (3,0.25);
+#'   \draw (0,-0.25) -- (0,0.25);
+#'   \node[align = center] at (0,-0.75) {SI time};
+#'   \node[align = center] at (3,-0.75) {SI window\\ end};
+#'   \node[align = center] at (-6,-0.75) {SI window\\ start};
+#'   \filldraw  (-6, 1) circle (2pt);
+#'   \draw (-6,1) -- (-5.5, 1);
+#'   \filldraw (-5.5, 1) circle (2pt);
+#'   \draw (-5.5,1) -- (-5, 1);
+#'   \node at (-4.25, 1) {$\dots$} ;
+#'   \filldraw (-5, 1) circle (2pt);
+#'   \filldraw (-3.5, 1) circle (2pt);
+#'   \filldraw (-3, 1.5) circle (2pt);
+#'   \filldraw (-2.5, 1.5) circle (2pt);
+#'   \filldraw (-2, 2.5) circle (2pt);
+#'   \draw (-3.5,1) -- (-3, 1.5);
+#'   \draw (-3,1.5) -- (-2.5, 1.5);
+#'   \draw (-2.5,1.5) -- (-2, 2.5);
+#'   \node [black] at (-0.25, 1.75) {$\Delta$SOFA $\geq 2$};
+#'   \draw (-6.5, 1) -- (-6.5, 2.5) ;
+#'   \node at (-6.5, 3) {SOFA} ;
+#'   \draw (-6.5,1)--(-6.6,1) node[left,font=\small]{$0$};
+#'   \draw (-6.5,1.5)--(-6.6,1.5) node[left,font=\small]{$1$};
+#'   \draw (-6.5,2)--(-6.6,2) node[left,font=\small]{$2$};
+#'   \draw (-6.5,2.5)--(-6.6, 2.5) node[left,font=\small]{$3$};
+#'   \draw[red] (-2,-0.25) -- (-2,0.25);
+#'   \draw[dashed,red] (-2, 2.35) -- (-2, 0) ;
+#'   \node[red] at (-2, -0.75) {Sepsis-3 time};
+#' \end{tikzpicture}
+#' ```
 #'
-#' A patient can potentially have multiple SI windows. The argument `si_window` is used to control which SI window we focus on (options are `"first", "last", "any"`).
+#' A patient can potentially have multiple SI windows. The argument
+#' `si_window` is used to control which SI window we focus on (options are
+#' `"first", "last", "any"`).
 #'
-#' Further, although a 2 or more point increase in the SOFA score is defined, it is not perfectly clear to which value the increase refers. For this the `delta_fun` argument is used. If the increase is required to happen with respect to the minimal SOFA value (within the SI window) up to the current time, the `delta_cummin` function should be used. If, however, we are looking for an increase with respect to the start of the SI window, then the `delta_start` function should be used. Lastly, the increase might be defined with respect to values of the previous 24 hours, in which case the `delta_min` function is used.
+#' Further, although a 2 or more point increase in the SOFA score is defined,
+#' it is not perfectly clear to which value the increase refers. For this the
+#' `delta_fun` argument is used. If the increase is required to happen with
+#' respect to the minimal SOFA value (within the SI window) up to the current
+#' time, the `delta_cummin` function should be used. If, however, we are
+#' looking for an increase with respect to the start of the SI window, then
+#' the `delta_start` function should be used. Lastly, the increase might be
+#' defined with respect to values of the previous 24 hours, in which case the
+#' `delta_min` function is used.
 #'
-#' @seealso [Sepsis-3 Consensus, Singer et. al.](https://jamanetwork.com/journals/jama/fullarticle/2492881).
+#' @references
+#' Singer M, Deutschman CS, Seymour CW, et al. The Third International
+#' Consensus Definitions for Sepsis and Septic Shock (Sepsis-3). JAMA.
+#' 2016;315(8):801–810. doi:10.1001/jama.2016.0287
 #'
-#' @rdname sepsis_3
+#' @rdname sep3_label
 #' @export
 #'
 sepsis_3 <- function(sofa_score, susp_inf,
@@ -78,14 +126,14 @@ sepsis_3 <- function(sofa_score, susp_inf,
 
 #' @param x Vector of SOFA scores
 #'
-#' @rdname sepsis_3
+#' @rdname sep3_label
 #' @export
 #'
 delta_cummin <- function(x) {
   x - cummin(ifelse(is.na(x), .Machine$integer.max, x))
 }
 
-#' @rdname sepsis_3
+#' @rdname sep3_label
 #' @export
 #'
 delta_start <- function(x) x - x[!is.na(x)][1L]
@@ -93,7 +141,7 @@ delta_start <- function(x) x - x[!is.na(x)][1L]
 #' @param shifts Vector of time shifts (multiples of the current interval) over
 #' which [base::pmin()] is evaluated
 #'
-#' @rdname sepsis_3
+#' @rdname sep3_label
 #' @export
 #'
 delta_min <- function(x, shifts = seq.int(0L, 23L)) {

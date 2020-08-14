@@ -71,7 +71,7 @@ Physionet credentials can either be entered in an interactive session,
 passed as function arguments \code{user}/\code{pass} or as environment
 variables \code{RICU_PHYSIONET_USER}/\code{RICU_PHYSIONET_PASS}. If the openssl
 package is available, SHA256 hashes of downloaded files are verified using
-\code{\link[openssl:sha256]{openssl::sha256()}}.
+\code{\link[openssl:hash]{openssl::sha256()}}.
 }
 \examples{
 \dontrun{
