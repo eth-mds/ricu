@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Data item — new_itm • ICU data with R</title>
+<title>Sepsis 3 label — sepsis_3 • ICU data with R</title>
 
 
 <!-- jquery -->
@@ -39,9 +39,9 @@
 
 
 
-<meta property="og:title" content="Data item — new_itm" />
-<meta property="og:description" content="In order to specify the location of data items in data sets, item objects
-are used." />
+<meta property="og:title" content="Sepsis 3 label — sepsis_3" />
+<meta property="og:description" content="The sepsis 3 label consists of a suspected infection combined with an acute
+increase in SOFA score." />
 
 
 <meta name="robots" content="noindex">
@@ -124,129 +124,101 @@ are used." />
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Data item</h1>
+    <h1>Sepsis 3 label</h1>
     
-    <div class="hidden name"><code>data_items.Rd</code></div>
+    <div class="hidden name"><code>sep3_label.Rd</code></div>
     </div>
 
     <div class="ref-description">
-    <p>In order to specify the location of data items in data sets, <code>item</code> objects
-are used.</p>
+    <p>The sepsis 3 label consists of a suspected infection combined with an acute
+increase in SOFA score.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>new_itm</span>(<span class='kw'>src</span>, <span class='kw'>...</span>, target = <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"ts_tbl"</span>, <span class='st'>"id_tbl"</span>), class = <span class='st'>"sel_itm"</span>)
-
-<span class='fu'>is_itm</span>(<span class='kw'>x</span>)
-
-<span class='fu'>init_itm</span>(<span class='kw'>x</span>, <span class='kw'>...</span>)
-
-<span class='co'># S3 method for sel_itm</span>
-<span class='fu'>init_itm</span>(
-  <span class='kw'>x</span>,
-  <span class='kw'>table</span>,
-  <span class='kw'>sub_var</span>,
-  <span class='kw'>ids</span>,
-  itm_vars = <span class='kw'>NULL</span>,
-  index_var = <span class='kw'>NULL</span>,
-  callback = <span class='st'>"identity_callback"</span>,
-  <span class='kw'>...</span>
+    <pre class="usage"><span class='fu'>sepsis_3</span>(
+  <span class='kw'>sofa_score</span>,
+  <span class='kw'>susp_inf</span>,
+  si_window = <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"first"</span>, <span class='st'>"last"</span>, <span class='st'>"any"</span>),
+  delta_fun = <span class='kw'>delta_cummin</span>,
+  sofa_thresh = <span class='fl'>2L</span>,
+  si_lwr = <span class='fu'><a href='secs.html'>hours</a></span>(<span class='fl'>48L</span>),
+  si_upr = <span class='fu'><a href='secs.html'>hours</a></span>(<span class='fl'>24L</span>),
+  interval = <span class='kw'>ricu</span>::<span class='fu'><a href='id_vars.html'>interval</a></span>(<span class='kw'>sofa_score</span>)
 )
 
-<span class='co'># S3 method for col_itm</span>
-<span class='fu'>init_itm</span>(
-  <span class='kw'>x</span>,
-  <span class='kw'>table</span>,
-  itm_vars = <span class='kw'>NULL</span>,
-  index_var = <span class='kw'>NULL</span>,
-  unit_val = <span class='kw'>NULL</span>,
-  callback = <span class='st'>"identity_callback"</span>,
-  <span class='kw'>...</span>
-)
+<span class='fu'>delta_cummin</span>(<span class='kw'>x</span>)
 
-<span class='co'># S3 method for rgx_itm</span>
-<span class='fu'>init_itm</span>(
-  <span class='kw'>x</span>,
-  <span class='kw'>table</span>,
-  <span class='kw'>sub_var</span>,
-  <span class='kw'>regex</span>,
-  itm_vars = <span class='kw'>NULL</span>,
-  index_var = <span class='kw'>NULL</span>,
-  callback = <span class='st'>"identity_callback"</span>,
-  <span class='kw'>...</span>
-)
+<span class='fu'>delta_start</span>(<span class='kw'>x</span>)
 
-<span class='co'># S3 method for fun_itm</span>
-<span class='fu'>init_itm</span>(<span class='kw'>x</span>, <span class='kw'>callback</span>, <span class='kw'>...</span>)
-
-<span class='co'># S3 method for itm</span>
-<span class='fu'>init_itm</span>(<span class='kw'>x</span>, <span class='kw'>...</span>)
-
-<span class='fu'>new_item</span>(<span class='kw'>x</span>, target = <span class='kw'>NULL</span>)
-
-<span class='fu'>is_item</span>(<span class='kw'>x</span>)</pre>
+<span class='fu'>delta_min</span>(<span class='kw'>x</span>, shifts = <span class='fu'><a href='https://rdrr.io/r/base/seq.html'>seq.int</a></span>(<span class='fl'>0L</span>, <span class='fl'>23L</span>))</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
-      <th>src</th>
-      <td><p>The data source name</p></td>
+      <th>sofa_score</th>
+      <td><p><code>ts_tbl</code> with a column <code>sofa_score</code></p></td>
     </tr>
     <tr>
-      <th>...</th>
-      <td><p>Further specification of the <code>itm</code> object (passed to
-<code>init_itm()</code>)</p></td>
+      <th>susp_inf</th>
+      <td><p><code>ts_tbl</code> with columns <code>si_lwr</code> and <code>si_upr</code> defining windows for
+which a suspected infection is valid</p></td>
     </tr>
     <tr>
-      <th>target</th>
-      <td><p>The target object yielded by loading</p></td>
+      <th>si_window</th>
+      <td><p>Switch that can be used to filter SI windows</p></td>
     </tr>
     <tr>
-      <th>class</th>
-      <td><p>Sub class for customizing <code>itm</code> behavior</p></td>
+      <th>delta_fun</th>
+      <td><p>Function used to determine the SOFA increase during an SI
+window</p></td>
+    </tr>
+    <tr>
+      <th>sofa_thresh</th>
+      <td><p>Required SOFA increase to trigger Sepsis 3</p></td>
+    </tr>
+    <tr>
+      <th>si_lwr, si_upr</th>
+      <td><p>Lower/upper extent of SI windows</p></td>
+    </tr>
+    <tr>
+      <th>interval</th>
+      <td><p>Time series interval (only used for checking consistency
+of input data)</p></td>
     </tr>
     <tr>
       <th>x</th>
-      <td><p>Object to query/dispatch on</p></td>
+      <td><p>Vector of SOFA scores</p></td>
     </tr>
     <tr>
-      <th>table</th>
-      <td><p>Name of the table containing the data</p></td>
-    </tr>
-    <tr>
-      <th>sub_var</th>
-      <td><p>Column name used for subsetting</p></td>
-    </tr>
-    <tr>
-      <th>ids</th>
-      <td><p>Vector of ids used to subset table rows. If <code>NULL</code>, all rows are
-considered corresponding to the data item</p></td>
-    </tr>
-    <tr>
-      <th>itm_vars</th>
-      <td><p>Columns returned as <code><a href='id_vars.html'>data_vars()</a></code></p></td>
-    </tr>
-    <tr>
-      <th>index_var</th>
-      <td><p>Column used as index</p></td>
-    </tr>
-    <tr>
-      <th>callback</th>
-      <td><p>Name of a function to be called on the returned data used
-for data cleanup operations (or a string that evaluates to a function)</p></td>
-    </tr>
-    <tr>
-      <th>unit_val</th>
-      <td><p>String valued unit to be used in case no <code>unit_var</code> is
-available for the given table</p></td>
-    </tr>
-    <tr>
-      <th>regex</th>
-      <td><p>String-valued regular expression which will be evaluated by
-<code><a href='https://rdrr.io/r/base/grep.html'>base::grepl()</a></code> with <code>ignore.case = TRUE</code></p></td>
+      <th>shifts</th>
+      <td><p>Vector of time shifts (multiples of the current interval) over
+which <code><a href='https://rdrr.io/r/base/Extremes.html'>base::pmin()</a></code> is evaluated</p></td>
     </tr>
     </table>
 
+    <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
+
+    <p>The Sepsis-3 Consensus (Singer et. al.) defines sepsis as an acute
+increase in the SOFA score (see <code><a href='sofa_score.html'>sofa_score()</a></code>) of 2 points or more within
+the suspected infection (SI) window (see <code><a href='susp_inf.html'>si_calc()</a></code>):
+<img src='figures/man/figures/sofa-sep-3-1.png' alt='' /></p>
+<p>A patient can potentially have multiple SI windows. The argument
+<code>si_window</code> is used to control which SI window we focus on (options are
+<code>"first", "last", "any"</code>).</p>
+<p>Further, although a 2 or more point increase in the SOFA score is defined,
+it is not perfectly clear to which value the increase refers. For this the
+<code>delta_fun</code> argument is used. If the increase is required to happen with
+respect to the minimal SOFA value (within the SI window) up to the current
+time, the <code>delta_cummin</code> function should be used. If, however, we are
+looking for an increase with respect to the start of the SI window, then
+the <code>delta_start</code> function should be used. Lastly, the increase might be
+defined with respect to values of the previous 24 hours, in which case the
+<code>delta_min</code> function is used.</p>
+    <h2 class="hasAnchor" id="references"><a class="anchor" href="#references"></a>References</h2>
+
+    <p>Singer M, Deutschman CS, Seymour CW, et al. The Third International
+Consensus Definitions for Sepsis and Septic Shock (Sepsis-3). JAMA.
+2016;315(8):801–810. doi:10.1001/jama.2016.0287</p>
 
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">

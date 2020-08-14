@@ -144,7 +144,14 @@
 <span class='co'># S3 method for item</span>
 <span class='fu'>n_tick</span>(<span class='kw'>x</span>)
 
-<span class='fu'>new_cncpt</span>(<span class='kw'>name</span>, <span class='kw'>items</span>, aggregate = <span class='kw'>NULL</span>, <span class='kw'>...</span>, class = <span class='st'>"num_cncpt"</span>)
+<span class='fu'>new_cncpt</span>(
+  <span class='kw'>name</span>,
+  <span class='kw'>items</span>,
+  description = <span class='kw'>NULL</span>,
+  aggregate = <span class='kw'>NULL</span>,
+  <span class='kw'>...</span>,
+  class = <span class='st'>"num_cncpt"</span>
+)
 
 <span class='fu'>is_cncpt</span>(<span class='kw'>x</span>, <span class='kw'>...</span>)
 
@@ -203,6 +210,10 @@
     <tr>
       <th>items</th>
       <td><p>Zero or more <code>itm</code> objects</p></td>
+    </tr>
+    <tr>
+      <th>description</th>
+      <td><p>String-valued concept description</p></td>
     </tr>
     <tr>
       <th>aggregate</th>

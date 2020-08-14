@@ -139,7 +139,7 @@ assessment tool used to track a patient's well-being in an ICU.</p>
   <span class='kw'>vent_ind</span>,
   <span class='kw'>platelet_count</span>,
   <span class='kw'>bilirubin_total</span>,
-  <span class='kw'>mean_bp</span>,
+  <span class='kw'>map</span>,
   <span class='kw'>norepinephrine</span>,
   <span class='kw'>epinephrine</span>,
   <span class='kw'>dopamine</span>,
@@ -221,7 +221,7 @@ assessment tool used to track a patient's well-being in an ICU.</p>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
-      <th>pa_fi, vent_ind, platelet_count, bilirubin_total, mean_bp, norepinephrine, epinephrine, dopamine, dobutamine, gcs, creatinine, urine_24</th>
+      <th>pa_fi, vent_ind, platelet_count, bilirubin_total, map, norepinephrine, epinephrine, dopamine, dobutamine, gcs, creatinine, urine_24</th>
       <td><p>Data input used for
 sofa score evaluation (<code>ts_tbl</code> objects, as produced by <code><a href='load_concepts.html'>load_concepts()</a></code>)</p></td>
     </tr>
@@ -236,7 +236,7 @@ of input data)</p></td>
     </tr>
     <tr>
       <th>pa_o2, fi_o2</th>
-      <td><p>Data input used for pafi evaluation</p></td>
+      <td><p>Data input used for PaO₂/FiO₂ evaluation</p></td>
     </tr>
     <tr>
       <th>win_length</th>
@@ -245,11 +245,11 @@ if no newer measurement is available</p></td>
     </tr>
     <tr>
       <th>mode</th>
-      <td><p>Method for matching PaO2 and FiO2 values</p></td>
+      <td><p>Method for matching PaO₂ and FiO₂ values</p></td>
     </tr>
     <tr>
       <th>fix_na_fio2</th>
-      <td><p>Logical flag indicating whether to impute missing FiO2
+      <td><p>Logical flag indicating whether to impute missing FiO₂
 values with 21</p></td>
     </tr>
     <tr>
@@ -322,12 +322,38 @@ reference</p></td>
 
     <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
 
-    <p>The SOFA score (<a href='https://www.researchgate.net/profile/Rui_Moreno/publication/14361654_The_SOFA_Sepsis-related_Organ_Failure_Assessment_score_to_describe_organ_dysfunctionfailure_On_behalf_of_the_Working_Group_on_Sepsis-Related_Problems_of_the_European_Society_of_Intensive_Care_Medicine/links/0c960536cf4f20aef4000000.pdf'>Vincent et. al.</a>) is evaluated as follows:</p>
-<p><img src='figures/SOFA_table.png' alt='' /></p>
-<p>For each component, the worst value over a window of length <code>worst_win_length</code> (default <code><a href='secs.html'>hours(24L)</a></code>) is taken.</p>
-<p>The respiratory component of the SOFA score requires the evaluation of the PaO2/FiO2 ratio. Often, however, both measures are not available at the same time point. Therefore, PaO2 and FiO2 measurements are matched within a window of size <code>pafi_win_length</code> (default <code><a href='secs.html'>hours(2L)</a></code>).</p>
-<p>The renal component of the SOFA score assigns scores of 3 and 4 in case of a very low urine output. Since the information on urine output is not very reliable at the start of the ICU stay, we do not evaluate urine outputs before a time window of <code>urine_min_win</code> (default <code><a href='secs.html'>hours(12L)</a></code>).</p>
-<p>Mechanical ventilation is also part of the SOFA score. In some datasets, ventilation start events are given, which cannot be matched to ventilation end events specifically. In these cases, the duration of the ventilation window is taken to be <code>vent_win_length</code> (default <code><a href='secs.html'>hours(6L)</a></code>).</p>
+    <p>The SOFA score (Vincent et. al.) is evaluated as follows:</p><table class='table'>
+<tr><td><strong>SOFA score</strong></td><td>1</td><td>2</td><td>3</td><td>4</td></tr>
+<tr><td><strong>Respiration</strong> PaO₂/FiO₂ [mmHg]</td><td>&lt; 400</td><td>&lt; 300</td><td>&lt; 200 (with mech. vent.)</td><td>&lt; 100 (with mech. vent.)</td></tr>
+<tr><td><strong>Coagulation</strong> Platelets [⨉10³/mm³]</td><td>&lt; 150</td><td>&lt; 100</td><td>&lt; 50</td><td>&lt; 20</td></tr>
+<tr><td><strong>Liver</strong> Bilirubin [mg/dl] ([μmol/μl])</td><td>1.2-1.9 (20-32)</td><td>2.0-5.9 (33-101)</td><td>6.0-11.9 (102-204)</td><td>&gt; 12.0 (&gt; 204)</td></tr>
+<tr><td><strong>Cardiovascular</strong> Hypotension</td><td>MAP &lt; 70 mmHg</td><td>Dopamine ≤ 5 or dobutamine (any dose)ª</td><td>Dopamine &gt; 5 or epinephrine ≤ 0.1 or norepinephrine ≤ 0.1</td><td>Dopamine &gt; 15 or epinephrine &gt; 0.1 or norepinephrine &gt; 0.1</td></tr>
+<tr><td><strong>Central nervous system</strong> Glasgow Coma Score</td><td>13-14</td><td>10-12</td><td>6-9</td><td>&lt; 6</td></tr>
+<tr><td><strong>Renal</strong> Creatinine [mg/dl] ([μmol/μl]) or urine output [ml/day]</td><td>1.2-1.9 (110-170)</td><td>2.0-3.4 (171-299)</td><td>3.5-4.9 (300-440) &lt; 500</td><td>&gt; 5.0 (&lt; 440) &lt; 200</td></tr>
+</table>
+
+
+
+<p>ªAdrenergic agents administered for at least 1h (doses given are in [μg/kg ⋅ min])</p>
+<p>For each component, the worst value over a window of length
+<code>worst_win_length</code> (default <code><a href='secs.html'>hours(24L)</a></code>) is taken.</p>
+<p>The respiratory component of the SOFA score requires the evaluation of the
+PaO₂/FiO₂ ratio. Often, however, both measures are not available at the
+same time point. Therefore, PaO₂ and FiO₂ measurements are matched within a
+window of size <code>pafi_win_length</code> (default <code><a href='secs.html'>hours(2L)</a></code>).</p>
+<p>The renal component of the SOFA score assigns scores of 3 and 4 in case of
+a very low urine output. Since the information on urine output is not very
+reliable at the start of the ICU stay, we do not evaluate urine outputs
+before a time window of <code>urine_min_win</code> (default <code><a href='secs.html'>hours(12L)</a></code>).</p>
+<p>Mechanical ventilation is also part of the SOFA score. In some datasets,
+ventilation start events are given, which cannot be matched to ventilation
+end events specifically. In these cases, the duration of the ventilation
+window is taken to be <code>vent_win_length</code> (default <code><a href='secs.html'>hours(6L)</a></code>).</p>
+    <h2 class="hasAnchor" id="references"><a class="anchor" href="#references"></a>References</h2>
+
+    <p>Vincent, J.-L., Moreno, R., Takala, J. et al. The SOFA (Sepsis-related Organ
+Failure Assessment) score to describe organ dysfunction/failure. Intensive
+Care Med 22, 707–710 (1996). https://doi.org/10.1007/BF01709751</p>
 
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
