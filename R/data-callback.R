@@ -1,7 +1,7 @@
 
-all_flag <- function(x, val_var, ...) {
-  set(x, j = val_var, value = rep(TRUE, nrow(x)))
-}
+set_true <- function(x) rep(TRUE, length(x))
+
+set_na <- function(x) rep(NA, length(x))
 
 vent_flag <- function(x, val_var, ...) {
   x <- x[as.logical(get(val_var)), ]
@@ -9,35 +9,19 @@ vent_flag <- function(x, val_var, ...) {
       value = list(x[[val_var]], rep(TRUE, nrow(x))))
 }
 
-percent_as_numeric <- function(x, val_var, ...) {
-  set(x, j = val_var, value = as.numeric(sub("%", "", x[[val_var]])))
-}
+percent_as_numeric <- function(x) as.numeric(sub("%", "", x))
 
-force_numeric <- function(x) {
-  res <- suppressWarnings(as.numeric(x))
-  new_na <- sum(is.na(res) & !is.na(x))
-  if (new_na > 0L) {
-    progress_msg("  lost ", new_na, " (", prcnt(new_na, length(x)),
-                 ") entries due to `force_numeric()`")
+force_type <- function(type) {
+  assert_that(is.string(type))
+  function(x) {
+    res <- suppressWarnings(as(x, type))
+    new_na <- sum(is.na(res) & !is.na(x))
+    if (new_na > 0L) {
+      progress_msg("  lost ", new_na, " (", prcnt(new_na, length(x)),
+                   ") entries due to coercion to ", type, ".")
+    }
+    res
   }
-  res
-}
-
-force_numeric_var <- function(x, col) {
-  set(x, j = col, value = force_numeric(x[[col]]))
-}
-
-force_numeric_vars <- function(x, cols) {
-
-  for (col in cols) {
-    x <- force_numeric_var(x, col)
-  }
-
-  x
-}
-
-force_numeric_val_var <- function(x, val_var, ...) {
-  force_numeric_var(x, val_var)
 }
 
 eicu_body_weight <- function(x, val_var, weight_var, env, ...) {
@@ -49,7 +33,10 @@ eicu_body_weight <- function(x, val_var, weight_var, env, ...) {
   weight <- load_id("patient", env, cols = "admissionweight", id_var = idc)
 
   x <- merge(x, weight, all.x = TRUE, by = idc)
-  x <- force_numeric_vars(x, c(val_var, weight_var))
+
+  x <- set(x, j = val_var, value = force_numeric(x[[val_var]]))
+  x <- set(x, j = weight_var, value = force_numeric(x[[weight_var]]))
+
   x <- x[, c(val_var) := do_calc(get(val_var), get(weight_var),
                                  get("admissionweight"))]
 
@@ -68,7 +55,7 @@ shift_all_date <- function(x, shift = hours(12L), ...) {
 }
 
 mimic_abx_shift_flag <- function(x, val_var, ...) {
-  all_flag(shift_all_date(x, hours(12L)), val_var)
+  transform_fun(set_true)(shift_all_date(x, hours(12L)), val_var)
 }
 
 mimic_sampling <- function(x, val_var, aux_time, ...) {
@@ -76,23 +63,38 @@ mimic_sampling <- function(x, val_var, aux_time, ...) {
   set(x, j = val_var, value = !is.na(x[[val_var]]))
 }
 
-eicu_sampling <- function(x, val_var, ...) {
-  x <- set(x, j = val_var, value = not_val(x[[val_var]], "no growth"))
-  x
-}
+#' Callback utilities
+#'
+#' Utilities for creating callback functions to be used for concept loading.
+#'
+#' @param fun Function to be used for data transformation
+#' @param ... Further arguments passed to downstream function
+#'
+#' @rdname callback_utils
+#' @export
+transform_fun <- function(fun, ...) {
 
-transform_fun <- function(fun) {
   assert_that(is.function(fun))
+
+  dots <- list(...)
+
   function(x, val_var, ...) {
-    set(x, j = val_var, value = fun(x[[val_var]]))
+    set(x, j = val_var, value = do.call(fun, c(list(x[[val_var]]), dots)))
   }
 }
 
-multiply_by <- function(factor) {
-  transform_fun(function(x) x * factor)
-}
-
 fahr_to_cels <- function(x) (x - 32) * 5 / 9
+
+#' @param op Function taking two arguments, such as `+`
+#' @param y Value passed as second argument to function `op`
+#'
+#' @rdname callback_utils
+#' @export
+binary_op <- function(op, y) function(x) op(x, y)
+
+#' @rdname callback_utils
+#' @export
+comp_na <- function(op, y) function(x) !is.na(x) & op(x, y)
 
 distribute_amount <- function(x, val_var, amount_var, end_var, ...) {
 
@@ -135,26 +137,6 @@ eicu_age <- function(x, val_var, ...) {
   x
 }
 
-hirid_vent_start <- function(x, val_var, ...) {
-  all_flag(x[get(val_var) == 1, ], val_var)
-}
-
-hirid_vent_end <- function(x, val_var, ...) {
-  all_flag(x[get(val_var) > 2, ], val_var)
-}
-
-hirid_trach <- function(x, val_var, ...) {
-  all_flag(x[get(val_var) == 2, ], val_var)
-}
-
-mimic_death <- function(x, val_var, ...) {
-  set(x, j = val_var, value = x[[val_var]] == 1L)
-}
-
-eicu_death <- function(x, val_var, ...) {
-  set(x, j = val_var, value = x[[val_var]] == "Expired")
-}
-
 hirid_death <- function(x, val_var, item_var, ...) {
 
   threshold <- function(x, col, thresh) {
@@ -174,44 +156,48 @@ hirid_death <- function(x, val_var, item_var, ...) {
   rename_cols(res, val_var, "V1", by_ref = TRUE)
 }
 
-mf_sex <- function(x, val_var, ...) {
-  x <- x[get(val_var) == "M", c(val_var) := "Male"]
-  x <- x[get(val_var) == "F", c(val_var) := "Female"]
-  x
+#' @param map Named atomic vector used for mapping a set of values (the names
+#' of `map`) to a different set (the values of `map`)
+#'
+#' @rdname callback_utils
+#' @export
+apply_map <- function(map) {
+
+  assert_that(is.atomic(map), !is.null(names(map)), has_length(map))
+
+  function(x, val_var, ...) {
+    set(x, j = val_var, value = map[x[[val_var]]])
+  }
 }
 
-crp_dl_to_l <- function(x, val_var, unit_var, ...) {
-  x[grepl("mg/dl", get(unit_var), ignore.case = TRUE),
-    c(val_var, unit_var) := list(get(val_var) * 10, "mg/L")]
-}
+#' @param rgx Regular expression(s) used for identifying observations based on their current unit of measurement
+#' @param fun Function(s) used for transforming matching values
+#' @param new Name(s) of transformed units
+#' @param ignore_case Forwarded to [base::grep()]
+#'
+#' @rdname callback_utils
+#' @export
+convert_unit <- function(rgx, fun, new, ignore_case = TRUE, ...) {
 
-eicu_total_co2 <- function(x, val_var, unit_var, ...) {
-  x[get(unit_var) != "mm(hg)", ]
-}
+  if (is.function(fun)) {
+    fun <- list(fun)
+  }
 
-eicu_calcium <- function(x, val_var, unit_var, ...) {
-  x[grepl("mmol/l", get(unit_var), ignore.case = TRUE),
-    c(val_var, unit_var) := list(get(val_var) * 4, "mg/dL")]
-}
+  assert_that(all(lgl_ply(fun, is.function)))
 
-eicu_fio2 <- function(x, val_var, unit_var, ...) {
-  x[get(unit_var) != "lpm", ]
-}
+  len <- vctrs::vec_size_common(rgx, fun, new)
+  xtr <- c(list(ignore.case = ignore_case), list(...))
 
-eicu_magnesium <- function(x, val_var, unit_var, ...) {
-  x[grepl("meq/l", get(unit_var), ignore.case = TRUE),
-    c(val_var, unit_var) := list(get(val_var) / 1.215, "mEq/L")]
-}
+  function(x, val_var, unit_var, ...) {
 
-mimic_adx <- function(x, val_var, ...) {
+    for (i in seq_len(len)) {
+      set(x, i = do.call(grep, c(list(rgx[[i]], x[[unit_var]]), xtr)),
+          j = c(val_var, unit_var),
+          value = list(fun[[i]](x[[val_var]]), new[[i]]))
+    }
 
-  map <- c(MED   = "med",   SURG  = "surg", CMED = "med",  CSURG  = "surg",
-           VSURG = "surg",  NSURG = "surg", NB   = "other", NMED  = "med",
-           ORTHO = "surg",  TRAUM = "surg", OMED = "med",   GU    = "other",
-           NBB   = "other", TSURG = "surg", GYN  = "other", PSURG = "surg",
-           OBS   = "other", ENT   = "surg", DENT = "surg",  PSYCH = "other")
-
-  set(x, j = val_var, value = map[x[[val_var]]])
+    x
+  }
 }
 
 eicu_adx <- function(x, val_var, ...) {
@@ -262,8 +248,6 @@ hirid_vaso <- function(x, val_var, unit_var, env, ...) {
     frac * get(val_var) / get("weight"), "mcg/kg/min", NULL)
   ]
 }
-
-hirid_insulin <- function(x, ...) dt_gforce(x, "sum")
 
 hirid_urine <- function(x, val_var, unit_var, ...) {
 

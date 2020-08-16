@@ -219,13 +219,14 @@ on_failure(null_or) <- function(call, env) {
 }
 
 evals_to_fun <- function(x) {
-  assert_that(is.string(x)) && is.function(eval(parse(text = x)))
+  assert_that(is.string(x)) &&
+    is.function(tryCatch(eval(parse(text = x)), error = function(e) NULL))
 }
 
 on_failure(evals_to_fun) <- function(call, env) {
   format_assert(
-    "{as_label(call$x)} is not the name of a discoverable function",
-    "is_fun_name_assert"
+    "{as_label(call$x)} does not evaluate to a function",
+    "evals_fun_assert"
   )
 }
 
