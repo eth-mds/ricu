@@ -10,6 +10,8 @@
 \alias{init_itm.fun_itm}
 \alias{init_itm.itm}
 \alias{new_item}
+\alias{item}
+\alias{as_item}
 \alias{is_item}
 \title{Data item}
 \usage{
@@ -56,6 +58,10 @@ init_itm(x, ...)
 \method{init_itm}{itm}(x, ...)
 
 new_item(x, target = NULL)
+
+item(...)
+
+as_item(x)
 
 is_item(x)
 }

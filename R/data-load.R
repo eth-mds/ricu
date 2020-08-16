@@ -161,15 +161,19 @@ load_eicu <- function(x, rows, cols, id_hint, time_vars) {
   as_id_tbl(dat, id_vars = id_col, by_ref = TRUE)
 }
 
+#' Load data as `id_tbl` or `ts_tbl` objects
+#'
+#' @inheritParams load_difftime
+#'
 #' @param id_var The column defining the id of `ts_tbl` and `id_tbl` objects
 #' @param interval The time interval used to discretize time stamps with,
 #' specified as [base::difftime()] object
 #'
-#' @rdname load_src
+#' @rdname load_tbl
 #' @export
 load_id <- function(x, ...) UseMethod("load_id", x)
 
-#' @rdname load_src
+#' @rdname load_tbl
 #' @export
 load_id.src_tbl <- function(x, rows, cols = colnames(x),
                             id_var = id_vars(x), interval = hours(1L),
@@ -190,7 +194,7 @@ load_id.src_tbl <- function(x, rows, cols = colnames(x),
   res
 }
 
-#' @rdname load_src
+#' @rdname load_tbl
 #' @export
 load_id.character <- function(x, src, ...) {
   load_id(as_src_tbl(x, src), ...)
@@ -198,11 +202,11 @@ load_id.character <- function(x, src, ...) {
 
 #' @param index_var The column defining the index of `ts_tbl` objects
 #'
-#' @rdname load_src
+#' @rdname load_tbl
 #' @export
 load_ts <- function(x, ...) UseMethod("load_ts", x)
 
-#' @rdname load_src
+#' @rdname load_tbl
 #' @export
 load_ts.src_tbl <- function(x, rows, cols = colnames(x), id_var = id_vars(x),
                             index_var = ricu::index_var(x),
@@ -227,25 +231,8 @@ load_ts.src_tbl <- function(x, rows, cols = colnames(x), id_var = id_vars(x),
   change_interval(res, interval, time_vars, by_ref = TRUE)
 }
 
-#' @rdname load_src
+#' @rdname load_tbl
 #' @export
 load_ts.character <- function(x, src, ...) {
   load_ts(as_src_tbl(x, src), ...)
-}
-
-#' @param source String specifying the data source
-#' @param table String specifying the table from which to load data
-#'
-#' @rdname load_src
-#' @export
-data_id <- function(source, table, ...) {
-  msg_ricu("`data_id()` is deprecated, please use `load_id()` instead.")
-  load_id(table, source, ...)
-}
-
-#' @rdname load_src
-#' @export
-data_ts <- function(source, table, ...) {
-  msg_ricu("`data_ts()` is deprecated, please use `load_ts()` instead.")
-  load_ts(table, source, ...)
 }

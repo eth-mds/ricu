@@ -3,12 +3,15 @@
 \name{prepare_query}
 \alias{prepare_query}
 \alias{add_unit_var}
+\alias{n_tick}
 \alias{target_class}
 \title{Internal utilities for \code{item}/\code{concept} objects}
 \usage{
 prepare_query(x)
 
 add_unit_var(x)
+
+n_tick(x)
 
 target_class(x)
 }

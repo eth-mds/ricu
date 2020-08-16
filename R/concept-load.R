@@ -9,7 +9,6 @@
 #'
 #' @rdname load_concepts
 #' @export
-#'
 load_concepts <- function(x, ...) UseMethod("load_concepts", x)
 
 #' @param src A character vector, used to subset the `concepts`; `NULL`
@@ -21,7 +20,6 @@ load_concepts <- function(x, ...) UseMethod("load_concepts", x)
 #'
 #' @rdname load_concepts
 #' @export
-#'
 load_concepts.character <- function(x, src = NULL, concepts = NULL, ...,
                                     dict_name = "concept-dict",
                                     dict_file = NULL) {
@@ -60,7 +58,6 @@ load_concepts.character <- function(x, src = NULL, concepts = NULL, ...,
 #'
 #' @rdname load_concepts
 #' @export
-#'
 load_concepts.concept <- function(x, aggregate = NULL, merge_data = TRUE,
                                   verbose = TRUE, ...) {
 

@@ -73,7 +73,7 @@
 #' Consensus Definitions for Sepsis and Septic Shock (Sepsis-3). JAMA.
 #' 2016;315(8):801–810. doi:10.1001/jama.2016.0287
 #'
-#' @rdname sep3_label
+#' @rdname label_sep3
 #' @export
 #'
 sepsis_3 <- function(sofa_score, susp_inf,
@@ -126,14 +126,14 @@ sepsis_3 <- function(sofa_score, susp_inf,
 
 #' @param x Vector of SOFA scores
 #'
-#' @rdname sep3_label
+#' @rdname label_sep3
 #' @export
 #'
 delta_cummin <- function(x) {
   x - cummin(ifelse(is.na(x), .Machine$integer.max, x))
 }
 
-#' @rdname sep3_label
+#' @rdname label_sep3
 #' @export
 #'
 delta_start <- function(x) x - x[!is.na(x)][1L]
@@ -141,7 +141,7 @@ delta_start <- function(x) x - x[!is.na(x)][1L]
 #' @param shifts Vector of time shifts (multiples of the current interval) over
 #' which [base::pmin()] is evaluated
 #'
-#' @rdname sep3_label
+#' @rdname label_sep3
 #' @export
 #'
 delta_min <- function(x, shifts = seq.int(0L, 23L)) {

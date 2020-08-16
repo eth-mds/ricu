@@ -11,6 +11,7 @@ vent_flag <- function(x, val_var, ...) {
 
 percent_as_numeric <- function(x) as.numeric(sub("%", "", x))
 
+#' @importFrom methods as
 force_type <- function(type) {
   assert_that(is.string(type))
   function(x) {
@@ -34,8 +35,10 @@ eicu_body_weight <- function(x, val_var, weight_var, env, ...) {
 
   x <- merge(x, weight, all.x = TRUE, by = idc)
 
-  x <- set(x, j = val_var, value = force_numeric(x[[val_var]]))
-  x <- set(x, j = weight_var, value = force_numeric(x[[weight_var]]))
+  force_num <- force_type("numeric")
+
+  x <- set(x, j = val_var, value = force_num(x[[val_var]]))
+  x <- set(x, j = weight_var, value = force_num(x[[weight_var]]))
 
   x <- x[, c(val_var) := do_calc(get(val_var), get(weight_var),
                                  get("admissionweight"))]

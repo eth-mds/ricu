@@ -14,3 +14,85 @@ repo:
   url:
     home: https://github.com/septic-tank/ricu
     issue: https://github.com/septic-tank/ricu/issues
+
+reference:
+- title: Data loading
+  desc: >
+    Data can be loaded from cofigured datasources, either in the form of data
+    concepts or by directly querying one of the underlying tables. Depending on
+    what route is taken for loading, data is returned either as `data.table` or
+    as one of the `ricu`-provided tabular data types `id_tbl` or `ts_tbl`.
+- subtitle: Concept loading
+  desc: >
+    Data concepts in `ricu` provide an abstraction that allows to define how
+    a clinical concept (such as heart rate) can be retrieved from a data
+    source. Once defined, concepts can be loaded in a data source agnostic
+    and concise manner.
+  contents:
+  - load_concepts
+  - concept
+  - item
+  - load_dictionary
+- subtitle: Callback functions
+  desc: >
+    To provided the required flexibility for defining data concepts,
+    individual items can specify callback functions that are used for
+    post-processing steps for loaded data. Some function fatories are provided
+    for creating simple callback functions and more involved scenarios, such as
+    a SOFA score concept require specialized functions, which might even expose
+    function arguments which can be used to fine-tune the concept bahavior.
+  contents:
+    - transform_fun
+    - sofa_score
+    - sirs_score
+    - news_score
+    - mews_score
+    - susp_inf
+    - sepsis_3
+- subtitle: Query loading
+  desc: >
+    Tables can be queried directly by creating an R expression that evaluates
+    to a logical vector indicating which rows to load. The expression is
+    evaluated within the data context, powered by the non-standard evaluation
+    framework provided by `rlang`.
+  contents:
+    - load_id
+    - load_ts
+    - load_difftime
+    - load_src
+- title: Tabular ICU data
+  desc: >
+    Inheriting from `data.table`, `ricu` provides classes intended to simplify
+    handling of tabular ICU data. For dynamic (i.e. time-varying) data (such
+    as vital sign data), `ts_tbl` is used and for static data (for example an
+    admission diagnonsis), `id_tbl` objects are used. Alongside these data
+    structures, several utility functions are provided.
+  contents:
+    - id_tbl
+    - ts_tbl
+    - id_vars
+    - extend_ts
+    - change_id
+    - stay_windows
+- title: Data source setup
+  desc: >
+    For a data source to be usable via `ricu`, a JSON-based configuration is
+    required and some preprocessing is carried out by `ricu` as an initial
+    setup step by [import_src()] and for data sets hosted on
+    [Physionet](https://physionet.org), a downloader is available as
+    [download_src()]. As a final step, making data available to `ricu`,
+    [attach_src()] is automatically called for configured data sources  at
+    package loading.
+  contents:
+    - download_src
+    - import_src
+    - attach_src
+    - load_src_cfg
+    - data_dir
+    - data
+    - src_name
+- title: Utilities
+  contents:
+    - secs
+    - min_or_na
+    - write_psv

@@ -9,14 +9,6 @@
 \alias{load_difftime.eicu_tbl}
 \alias{load_difftime.hirid_tbl}
 \alias{load_difftime.character}
-\alias{load_id}
-\alias{load_id.src_tbl}
-\alias{load_id.character}
-\alias{load_ts}
-\alias{load_ts.src_tbl}
-\alias{load_ts.character}
-\alias{data_id}
-\alias{data_ts}
 \title{Low level functions for loading data}
 \usage{
 load_src(x, ...)
@@ -55,39 +47,6 @@ load_difftime(x, ...)
 )
 
 \method{load_difftime}{character}(x, src, ...)
-
-load_id(x, ...)
-
-\method{load_id}{src_tbl}(
-  x,
-  rows,
-  cols = colnames(x),
-  id_var = id_vars(x),
-  interval = hours(1L),
-  time_vars = ricu::time_vars(x),
-  ...
-)
-
-\method{load_id}{character}(x, src, ...)
-
-load_ts(x, ...)
-
-\method{load_ts}{src_tbl}(
-  x,
-  rows,
-  cols = colnames(x),
-  id_var = id_vars(x),
-  index_var = ricu::index_var(x),
-  interval = hours(1L),
-  time_vars = ricu::time_vars(x),
-  ...
-)
-
-\method{load_ts}{character}(x, src, ...)
-
-data_id(source, table, ...)
-
-data_ts(source, table, ...)
 }
 \arguments{
 \item{x}{Object for which to load data}
@@ -104,17 +63,6 @@ data_ts(source, table, ...)
 
 \item{time_vars}{Character vector enumerating the columns to be treated as
 timestamps and thus returned as \code{\link[base:difftime]{base::difftime()}} vectors}
-
-\item{id_var}{The column defining the id of \code{ts_tbl} and \code{id_tbl} objects}
-
-\item{interval}{The time interval used to discretize time stamps with,
-specified as \code{\link[base:difftime]{base::difftime()}} object}
-
-\item{index_var}{The column defining the index of \code{ts_tbl} objects}
-
-\item{source}{String specifying the data source}
-
-\item{table}{String specifying the table from which to load data}
 }
 \description{
 Depending on the desired return type (\code{ts_tbl}, \code{id_tbl} or plain

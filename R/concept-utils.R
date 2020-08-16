@@ -300,13 +300,13 @@ new_item <- function(x, target = NULL) {
   new_vctr(x, target = target, class = "item")
 }
 
-#' @rdname data_concepts
+#' @rdname data_items
 #' @export
 item <- function(...) {
   new_item(do.call(Map, c(list(new_itm), vec_recycle_common(...))))
 }
 
-#' @rdname data_concepts
+#' @rdname data_items
 #' @export
 as_item <- function(x) UseMethod("as_item", x)
 
@@ -337,15 +337,14 @@ is_item <- function(x) inherits(x, "item")
 #' @export
 src_name.item <- function(x) names(x)
 
-#' @rdname data_concepts
+#' @rdname item_utils
+#' @keywords internal
 #' @export
 n_tick <- function(x) UseMethod("n_tick", x)
 
-#' @rdname data_concepts
 #' @export
 n_tick.itm <- function(x) 1L
 
-#' @rdname data_concepts
 #' @export
 n_tick.item <- function(x) length(x)
 
@@ -501,7 +500,6 @@ init_cncpt.rec_cncpt <- function(x, callback, target = c("ts_tbl", "id_tbl"),
   x
 }
 
-#' @rdname data_concepts
 #' @export
 src_name.cncpt <- function(x) src_name(x[["items"]])
 
@@ -518,14 +516,12 @@ aggregate.cncpt <- function(x, tbl, fun = NULL, ...) {
   tbl
 }
 
-#' @importFrom stats aggregate
 #' @export
 aggregate.rec_cncpt <- function(x, ...) {
   stop_ricu("please use `callback` for aggregating within time-steps",
             class = "aggregate_rec_cncpt")
 }
 
-#' @rdname data_concepts
 #' @export
 n_tick.cncpt <- function(x) sum(int_ply(x[["items"]], n_tick)) + 1L
 
@@ -574,17 +570,20 @@ as.list.concept <- function(x, ...) vec_data(x)
 #' @export
 src_name.concept <- function(x) lapply(x, src_name)
 
-#' @rdname data_concepts
 #' @export
 n_tick.concept <- function(x) sum(int_ply(x, n_tick))
 
+#' Load concept dictionaries
+#'
+#' Data can be specified in JSON format and parsed into `concept` objects.
+#'
 #' @param src `NULL` or the name of a data source
 #' @param concepts A character vector used to subset the concept dictionary or
 #' `NULL` indicating no subsetting
 #' @param name Name of the dictionary to be read
 #' @param file File name of the dictionary
 #'
-#' @rdname data_concepts
+#' @rdname concept_dictionary
 #'
 #' @export
 load_dictionary <- function(src = NULL, concepts = NULL,
