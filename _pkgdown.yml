@@ -18,7 +18,7 @@ repo:
 reference:
 - title: Data loading
   desc: >
-    Data can be loaded from cofigured datasources, either in the form of data
+    Data can be loaded from cofigured data sources, either in the form of data
     concepts or by directly querying one of the underlying tables. Depending on
     what route is taken for loading, data is returned either as `data.table` or
     as one of the `ricu`-provided tabular data types `id_tbl` or `ts_tbl`.
@@ -43,6 +43,7 @@ reference:
     function arguments which can be used to fine-tune the concept bahavior.
   contents:
     - transform_fun
+    - msg_progress
     - sofa_score
     - sirs_score
     - news_score
@@ -78,10 +79,10 @@ reference:
   desc: >
     For a data source to be usable via `ricu`, a JSON-based configuration is
     required and some preprocessing is carried out by `ricu` as an initial
-    setup step by [import_src()] and for data sets hosted on
+    setup step by `import_src()` and for data sets hosted on
     [Physionet](https://physionet.org), a downloader is available as
-    [download_src()]. As a final step, making data available to `ricu`,
-    [attach_src()] is automatically called for configured data sources  at
+    `download_src()`. As a final step, making data available to `ricu`,
+    `attach_src()` is automatically called for configured data sources  at
     package loading.
   contents:
     - download_src

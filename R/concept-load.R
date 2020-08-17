@@ -1,11 +1,119 @@
 
 #' Load concept data
 #'
-#' Data specified as `concept` objects is loaded, aggregated per combination
-#' of id and time-step and merged into wide format.
+#' Concept objects are used in `ricu` as a way to specify how a clinical
+#' concept, such as heart rate can be loaded from a data source. Building on
+#' this abstraction, `load_concepts()` powers concise loading of data with
+#' data source specific pre-processing hidden away from the user, thereby
+#' providing a data source agnostic interface to data loading. At default
+#' value of the argument `merge_data`, a tabular data structure (either a
+#' [`ts_tbl`][ts_tbl()] or an [`id_tbl`][id_tbl()], depending on what kind of
+#' concepts are requested), inheriting from
+#' [`data.table`][data.table::data.table], is returned, representing the data
+#' in wide format (i.e. returning concepts as columns).
+#'
+#' @section Details:
+#' In order to allow for a large degree of flexibility (and extensibility),
+#' which is much needed owing to considerable heterogeneity presented by
+#' different data sources, several nested S3 classes are involved in
+#' representing a concept and `load_concepts()` follows this hierarchy of
+#' classes recursively when
+#' resolving a concept. An outline of this hierarchy can be described as
+#'
+#' * `concept`: contains many `cncpt` objects (of potentially differing
+#'   sub-types), each comprising of some meta-data and an `item` object
+#' * `item`: contains many `itm` objects (of potentially differing
+#'   sub-types), each encoding how to retrieve a data item.
+#'
+#' The design choice for wrapping a vector of `cncpt` objects with a container
+#' class `concept` is motivated by the requirement of having several different
+#' sub-types of `cncpt` objects (all inheriting from the parent type `cncpt`),
+#' while retaining control over how this homogeneous w.r.t. parent type, but
+#' heterogeneous w.r.t. sub-type vector of objects behaves in terms of S3
+#' generic functions.
+#'
+#' @section Concept:
+#' Top-level entry points are either a character vector, which is used to
+#' subset a `concept` object or an entire [concept
+#' dictionary][load_dictionary()], or a `concept` object. When passing a
+#' character vector as first argument, the most important further arguments at
+#' that level control from where the dictionary is taken (`dict_name` or
+#' `dict_file`). At `concept` level, the most important additional arguments
+#' control the result structure: data merging can be disabled using
+#' `merge_data` and data aggregation is governed by the `aggregate` argument.
+#'
+#' Data aggregation is important for merging several concepts into a
+#' wide-format table, as this requires data to be unique per observation (i.e.
+#' by either id or combination of id and index). Several value types are
+#' acceptable as `aggregate` argument, the most important being `FALSE`, which
+#' disables aggregation, NULL, which auto-determines a suitable aggregation
+#' function or a string which is ultimately passed to [dt_gforce()] where it
+#' identifies a function such as `sum()`, `mean()`, `min()` or `max()`. More
+#' information on aggregation is available as [make_unique()]. If the object
+#' passed as `aggregate` is scalar, it is applied to all requested concepts in
+#' the same way. In order to customize aggregation per concept, a named object
+#' (with names corresponding to concepts) of the same length as the number of
+#' requested concepts may be passed.
+#'
+#' Under the hood, a `concept` object comprises of several `cncpt` objects
+#' with varying sub-types (for example `num_cncpt`, representing continuous
+#' numeric data or `fct_cncpt` representing categorical data). This
+#' implementation detail is of no further importance for understanding concept
+#' loading and for more information, please refer to the
+#' [`concept`][concept()] documentation. The only argument that is introduced
+#' at `cncpt` level is `progress`, which controls progress reporting. If
+#' called directly, the default value of `NULL` yields messages, sent to the
+#' terminal. Internally, if called from `load_concepts()` at `concept` level
+#' (with `verbose` set to `TRUE`), a [progress::progress_bar] is set up in a
+#' way that allows nested messages to be captured and not interrupt progress
+#' reporting (see [msg_progress()]).
+#'
+#' @section Item:
+#' A single `cncpt` object contains an `item` object, which in turn is
+#' composed of several `itm` objects with varying sub-types, the relationship
+#' `item` to `itm` being that of `concept` to `cncpt` and the rationale for
+#' this implementation choice is the same as previously: a container class
+#' used representing a vector of objects of varying sub-types, all inheriting
+#' form a common super-type. For more information on the `item` class, please
+#' refer to the [relevant documentation][item]. Arguments introduced at `item`
+#' level include `patient_ids`, `id_type` and `interval`. Acceptable values for
+#' `interval` are scalar-valued `base::difftime()` objects (see also helper
+#' functions such as [hours()]) and this argument essentially controls the
+#' time-resolution of the returned time-series. Of course, the limiting factor
+#' raw time resolution which is on the order of hours for data sets like
+#' [MIMIC-III](https://physionet.org/content/mimiciii/) or
+#' [eICU](https://physionet.org/content/eicu-crd) but can be much higher for a
+#' data set like [HiRID](https://physionet.org/content/hirid/). The argument
+#' `id_type` is used to specify what kind of id system should be used to
+#' identify different time series in the returned data. A data set like
+#' MIMIC-III, for example, makes possible the resolution of data to 3 nested
+#' ID systems:
+#'
+#' * `patient` (`subject_id`): identifies a person
+#' * `hadm` (`hadm_id`): identifies a hospital admission (several of which are
+#'    possible for a given person)
+#' * `icustay` (`icustay_id`): identifies an admission to an ICU and again has
+#'    a one-to-many relationship to `hadm`.
+#'
+#' Acceptable argument values are strings that match ID systems as specified
+#' by the [data source configuration][load_src_cfg()]. Finally, `patient_ids`
+#' is used to define a patient cohort for which data can be requested. Values
+#' may either be a vector of IDs (which are assumed to be of the same type as
+#' specified by the `id_type` argument) or a tabular object inheriting from
+#' `data.frame`, which must contain a column named after the data set-specific
+#' ID system identifier (for MIIMIC-III and an `id_type` argument of `hadm`,
+#' for example, that would be `hadm_id`).
+#'
+#' @section Extensions:
+#' The presented hierarchy of S3 classes is designed with extensibility in
+#' mind: while the current range of functionality should cover the range of
+#' settings encountered when dealing with a broad range of concepts for the
 #'
 #' @param x Object specifying the data to be loaded
 #' @param ... Passed to downstream methods
+#'
+#' @examples
+#' dat <- load_concepts("hr", "mimic_demo")
 #'
 #' @rdname load_concepts
 #' @export
@@ -30,25 +138,15 @@ load_concepts.character <- function(x, src = NULL, concepts = NULL, ...,
 
     assert_that(not_null(src))
 
-    x <- load_dictionary(src, x, name = dict_name, file = dict_file)
+    load_concepts(
+      load_dictionary(src, x, name = dict_name, file = dict_file),
+      src = NULL, ...
+    )
 
   } else {
 
-    assert_that(is_concept(concepts), length(x) > 0L)
-
-    x <- concepts[x]
-
-    if (not_null(src)) {
-
-      assert_that(is.string(src))
-
-      x <- new_concept(
-        Map(`[[<-`, x, "items", lapply(lst_xtr(x, "items"), get_src))
-      )
-    }
+    load_concepts(concepts[x], src, ...)
   }
-
-  load_concepts(x, ...)
 }
 
 #' @param aggregate Controls how data within concepts is aggregated
@@ -58,10 +156,19 @@ load_concepts.character <- function(x, src = NULL, concepts = NULL, ...,
 #'
 #' @rdname load_concepts
 #' @export
-load_concepts.concept <- function(x, aggregate = NULL, merge_data = TRUE,
-                                  verbose = TRUE, ...) {
+load_concepts.concept <- function(x, src = NULL, aggregate = NULL,
+                                  merge_data = TRUE, verbose = TRUE, ...) {
 
   assert_that(is.flag(merge_data), is.flag(verbose))
+
+  if (is.null(src)) {
+
+    assert_that(is.string(src))
+
+    x <- new_concept(
+      Map(`[[<-`, x, "items", lapply(lst_xtr(x, "items"), get_src))
+    )
+  }
 
   srcs <- unlst(src_name(x), recursive = TRUE)
 
@@ -71,6 +178,16 @@ load_concepts.concept <- function(x, aggregate = NULL, merge_data = TRUE,
     Please choose one of {unique(srcs)}"
   )
 
+  aggregate <- rep_arg(aggregate, names(x))
+
+  if (isTRUE(merge_data)) {
+    assert_that(
+      !any(lgl_ply(aggregate, isFALSE)), msg = "
+      Data aggregation cannot be disabled (i.e. passing an `aggregate` value
+      of `FALSE` for at least one concept) when data merging is enabled."
+    )
+  }
+
   if (verbose) {
     pba <- progress_init(n_tick(x), "Loading {length(x)} concept{?s}")
   } else {
@@ -78,7 +195,7 @@ load_concepts.concept <- function(x, aggregate = NULL, merge_data = TRUE,
   }
 
   res <- with_progress(
-    Map(load_one_concept_helper, x, rep_arg(aggregate, names(x)),
+    Map(load_one_concept_helper, x, aggregate,
         MoreArgs = c(list(...), list(progress = pba))),
     progress_bar = pba
   )
@@ -159,12 +276,12 @@ load_concepts.num_cncpt <- function(x, aggregate = NULL, ...,
         return(NULL)
       }
 
-      progress_msg("not all units are in ", concat("[", unt, "]"), ": ",
+      msg_progress("not all units are in ", concat("[", unt, "]"), ": ",
                    concat(nm[!ok], " (", pct[!ok], ")"))
 
     } else if (length(nm) > 1L) {
 
-      progress_msg("multiple units detected: ", concat(nm, " (", pct, ")"))
+      msg_progress("multiple units detected: ", concat(nm, " (", pct, ")"))
     }
   }
 
@@ -181,7 +298,7 @@ load_concepts.num_cncpt <- function(x, aggregate = NULL, ...,
 
     n_rm <- n_row - nrow(res)
 
-    progress_msg("removed ", n_rm, " (", prcnt(n_rm, n_row), ") of rows ",
+    msg_progress("removed ", n_rm, " (", prcnt(n_rm, n_row), ") of rows ",
                  "due to out of range entries")
   }
 
@@ -225,7 +342,7 @@ load_concepts.fct_cncpt <- function(x, aggregate = NULL, ...,
 
     n_rm <- n_row - nrow(res)
 
-    progress_msg("  removed ", n_rm, " (", prcnt(n_rm, n_row), ") of rows ",
+    msg_progress("  removed ", n_rm, " (", prcnt(n_rm, n_row), ") of rows ",
                  "due to level mismatch")
   }
 

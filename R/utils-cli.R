@@ -93,14 +93,28 @@ combine_messages <- function(x) {
   }
 }
 
-#' @rdname load_concepts
+#' Message signaling nested with progress reporting
+#'
+#' In order to not interrupt progress reporting by a [progress::progress_bar],
+#' messages are wrapped with class `msg_progress` which causes them to be
+#' captured printed after progress bar completion. This function is intended to
+#' be used when signaling messages in callback functions.
+#'
+#' @param ... Passed to [base::.makeMessage()]
+#'
+#' @examples
+#' msg_progress("Foo", "bar")
+#'
+#' capt_fun <- function(x) {
+#'   rlang::inform(paste("captured:", conditionMessage(x)))
+#' }
+#'
+#' tryCatch(msg_progress("Foo", "bar"), msg_progress = capt_fun)
+#'
 #' @export
-progress_msg <- function(...) {
-
-  msg <- simpleMessage(.makeMessage(...))
-  class(msg) <- c("progress_msg", "ricu_msg", class(msg))
-
-  message(msg)
+msg_progress <- function(...) {
+  msg <- .makeMessage(...)
+  msg_ricu(msg, "msg_progress")
 }
 
 create_progress_handler <- function(prog) {
@@ -132,7 +146,7 @@ create_progress_handler <- function(prog) {
 with_progress <- function(expr, progress_bar = NULL) {
 
   res <- withCallingHandlers(expr,
-    progress_msg = create_progress_handler(progress_bar)
+    msg_progress = create_progress_handler(progress_bar)
   )
 
   if (inherits(progress_bar, "progress_bar") && !progress_bar$finished) {

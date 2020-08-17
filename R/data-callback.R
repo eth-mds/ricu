@@ -18,7 +18,7 @@ force_type <- function(type) {
     res <- suppressWarnings(as(x, type))
     new_na <- sum(is.na(res) & !is.na(x))
     if (new_na > 0L) {
-      progress_msg("  lost ", new_na, " (", prcnt(new_na, length(x)),
+      msg_progress("  lost ", new_na, " (", prcnt(new_na, length(x)),
                    ") entries due to coercion to ", type, ".")
     }
     res
@@ -234,7 +234,7 @@ hirid_vaso <- function(x, val_var, unit_var, env, ...) {
   dif_row <- old_row - nrow(x)
 
   if (dif_row > 0) {
-    progress_msg("    lost ", dif_row, " (", prcnt(dif_row, old_row),
+    msg_progress("    lost ", dif_row, " (", prcnt(dif_row, old_row),
                  ") entries due to unexpected units")
   }
 
