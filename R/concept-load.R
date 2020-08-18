@@ -106,8 +106,25 @@
 #'
 #' @section Extensions:
 #' The presented hierarchy of S3 classes is designed with extensibility in
-#' mind: while the current range of functionality should cover the range of
-#' settings encountered when dealing with a broad range of concepts for the
+#' mind: while the current range of functionality covers settings encountered
+#' when dealing with the included concepts and datasets, further data sets
+#' and/or clinical concepts might necessitate different behavior for data
+#' loading. For this reason, various parts in the cascade of calls to
+#' `load_concepts()` can be adapted for new requirements by defining new sub-
+#' classes to `cncpt` or `itm` and  providing methods for the generic function
+#' `load_concepts()`specific to these new classes. If no class-specific method
+#' is provided, method dispatch defaults to `load_concepts.cncpt()` and
+#' `load_concepts.itm()`. Roughly speaking, the semantics for the two
+#' functions are as follows:
+#'
+#' * `cncpt`: Called with arguments `x` (the current `cncpt` object),
+#' `aggregate` (controlling how aggregation per time-point and ID is handled),
+#' `...` (further arguments passed to downstream methods) and `progress`
+#' (controlling progress reporting), this function should be able to load and
+#' aggregate data for the given concept. Usually this involves extracting the
+#' `item` object and calling `load_concepts()` again, dispatching on the `item`
+#' class with arguments `x` (the given `item`), arguments passed as `...`, as
+#' well as `progress`.
 #'
 #' @param x Object specifying the data to be loaded
 #' @param ... Passed to downstream methods
@@ -161,7 +178,7 @@ load_concepts.concept <- function(x, src = NULL, aggregate = NULL,
 
   assert_that(is.flag(merge_data), is.flag(verbose))
 
-  if (is.null(src)) {
+  if (!is.null(src)) {
 
     assert_that(is.string(src))
 

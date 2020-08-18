@@ -247,8 +247,26 @@ for example, that would be \code{hadm_id}).
 \section{Extensions}{
 
 The presented hierarchy of S3 classes is designed with extensibility in
-mind: while the current range of functionality should cover the range of
-settings encountered when dealing with a broad range of concepts for the
+mind: while the current range of functionality covers settings encountered
+when dealing with the included concepts and datasets, further data sets
+and/or clinical concepts might necessitate different behavior for data
+loading. For this reason, various parts in the cascade of calls to
+\code{load_concepts()} can be adapted for new requirements by defining new sub-
+classes to \code{cncpt} or \code{itm} and  providing methods for the generic function
+\code{load_concepts()}specific to these new classes. If no class-specific method
+is provided, method dispatch defaults to \code{load_concepts.cncpt()} and
+\code{load_concepts.itm()}. Roughly speaking, the semantics for the two
+functions are as follows:
+\itemize{
+\item \code{cncpt}: Called with arguments \code{x} (the current \code{cncpt} object),
+\code{aggregate} (controlling how aggregation per time-point and ID is handled),
+\code{...} (further arguments passed to downstream methods) and \code{progress}
+(controlling progress reporting), this function should be able to load and
+aggregate data for the given concept. Usually this involves extracting the
+\code{item} object and calling \code{load_concepts()} again, dispatching on the \code{item}
+class with arguments \code{x} (the given \code{item}), arguments passed as \code{...}, as
+well as \code{progress}.
+}
 }
 
 \examples{
