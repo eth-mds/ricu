@@ -10,7 +10,11 @@ Authors@R: c(
     person(given = "Drago",
            family = "Plecko",
            role = c("aut"),
-           email = "drago.plecko@stat.math.ethz.ch")
+           email = "drago.plecko@stat.math.ethz.ch"),
+    person(given = "Ida-Fong",
+           family = "Ukor",
+           role = c("ctb"),
+           email = "dr.ukor@gmail.com")
     )
 License: GPL-3
 Encoding: UTF-8
