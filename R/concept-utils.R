@@ -1,8 +1,55 @@
 
-#' Data item
+#' Data items
 #'
-#' In order to specify the location of data items in data sets, `item` objects
-#' are used.
+#' Item objects are used in `ricu` as a way to specify how individual data
+#' items corresponding to clinical concepts (see also [concept()]), such as
+#' heart rate can be loaded from a data source. Several functions are
+#' available for constructing `item` (and related auxillary) objects either
+#' from code or by parsing a JSON formatted concept dictionary using
+#' [load_dicionary()].
+#'
+#' @details
+#' In order to allow for a large degree of flexibility (and extensibility),
+#' which is much needed owing to considerable heterogeneity presented by
+#' different data sources, several nested S3 classes are involved in
+#' representing a concept. An outline of this hierarchy can be described as
+#'
+#' * `concept`: contains many `cncpt` objects (of potentially differing
+#'   sub-types), each comprising of some meta-data and an `item` object
+#' * `item`: contains many `itm` objects (of potentially differing
+#'   sub-types), each encoding how to retrieve a data item.
+#'
+#' The design choice for wrapping a vector of `itm` objects with a container
+#' class `item` is motivated by the requirement of having several different
+#' sub-types of `itm` objects (all inheriting from the parent type `itm`),
+#' while retaining control over how this homogeneous w.r.t. parent type, but
+#' heterogeneous w.r.t. sub-type vector of objects behaves in terms of S3
+#' generic functions.
+#'
+#' The following sub-classes to `itm` are available, each representing a
+#' different data-scenario:
+#'
+#' * `sel_itm`: The most widely used item class is intended for the situation
+#' where rows of interest can be identified by looking for occurrences of a
+#' set of IDs (`ids`) in a column (`sub_var`). An example for this is heart
+#' rate `hr` on mimic, where the IDs `211` and 220045` are looked up in the
+#' `itemid` column of `chartevents`.
+#' * `col_itm`: This item class can be used if no row-subsetting is required.
+#' An example for this is heart rate (`hr`) on `eicu`, where the table
+#' `vitalperiodic` contains an entire column dedicated to heart rate
+#' measurements.
+#' * `rgx_itm`: As alternative to the value-matching approach of `sel_itm`
+#' objects, this class identifies rows using regular expressions. Used for
+#' example for insulin in `eicu`, where the regular expression `^insulin
+#' (250.+)?\\(((ml|units)/hr)?\\)$` is matched against the `drugname` column
+#' of `infusiondrug`. The regular expression is evaluated by [base::grepl()]
+#' with `ignore.case = TRUE`.
+#' * `fun_itm`: Intended for the scenario where data of interest is not
+#' directly available from a table, this `itm` class offers most flexbility. A
+#' function can be specified as `callback` and this function will be called
+#' with arguments `x` (the object itself), `patient_ids`, `id_type` and
+#' `interval` (see [load_concepts()]) and is expected to return an object as
+#' specified by the `target` entry.
 #'
 #' @param src The data source name
 #' @param ... Further specification of the `itm` object (passed to
@@ -367,9 +414,31 @@ target_class.rec_cncpt <- function(x) x[["target"]]
 
 need_idx <- function(x) identical(target_class(x), "ts_tbl")
 
-#' Data concept
+#' Data items
 #'
-#' Clinical concepts are represented by `concept` objects.
+#' Concept objects are used in `ricu` as a way to specify how a clinical
+#' concept, such as heart rate can be loaded from a data source and are mainly
+#' consumed by [load_concepts()]. Several functions are avialable for
+#' constructing `concept` (and related auxillary) objects either from code or
+#' by parsing a JSON formatted concept dictionary using [load_dicionary()].
+#'
+#' @details:
+#' In order to allow for a large degree of flexibility (and extensibility),
+#' which is much needed owing to considerable heterogeneity presented by
+#' different data sources, several nested S3 classes are involved in
+#' representing a concept. An outline of this hierarchy can be described as
+#'
+#' * `concept`: contains many `cncpt` objects (of potentially differing
+#'   sub-types), each comprising of some meta-data and an `item` object
+#' * `item`: contains many `itm` objects (of potentially differing
+#'   sub-types), each encoding how to retrieve a data item.
+#'
+#' The design choice for wrapping a vector of `cncpt` objects with a container
+#' class `concept` is motivated by the requirement of having several different
+#' sub-types of `cncpt` objects (all inheriting from the parent type `cncpt`),
+#' while retaining control over how this homogeneous w.r.t. parent type, but
+#' heterogeneous w.r.t. sub-type vector of objects behaves in terms of S3
+#' generic functions.
 #'
 #' @param name The name of the concept
 #' @param items Zero or more `itm` objects

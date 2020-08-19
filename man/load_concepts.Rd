@@ -145,8 +145,7 @@ concepts are requested), inheriting from
 \code{\link[data.table:data.table]{data.table}}, is returned, representing the data
 in wide format (i.e. returning concepts as columns).
 }
-\section{Details}{
-
+\details{
 In order to allow for a large degree of flexibility (and extensibility),
 which is much needed owing to considerable heterogeneity presented by
 different data sources, several nested S3 classes are involved in
@@ -167,7 +166,6 @@ while retaining control over how this homogeneous w.r.t. parent type, but
 heterogeneous w.r.t. sub-type vector of objects behaves in terms of S3
 generic functions.
 }
-
 \section{Concept}{
 
 Top-level entry points are either a character vector, which is used to
@@ -253,10 +251,12 @@ and/or clinical concepts might necessitate different behavior for data
 loading. For this reason, various parts in the cascade of calls to
 \code{load_concepts()} can be adapted for new requirements by defining new sub-
 classes to \code{cncpt} or \code{itm} and  providing methods for the generic function
-\code{load_concepts()}specific to these new classes. If no class-specific method
-is provided, method dispatch defaults to \code{load_concepts.cncpt()} and
-\code{load_concepts.itm()}. Roughly speaking, the semantics for the two
-functions are as follows:
+\code{load_concepts()}specific to these new classes. At \code{cncpt} level, method
+dispatch defaults to \code{load_concepts.cncpt()} if no method specific to the
+new class is provided, while at \code{itm} level, no default function is
+available.
+
+Roughly speaking, the semantics for the two functions are as follows:
 \itemize{
 \item \code{cncpt}: Called with arguments \code{x} (the current \code{cncpt} object),
 \code{aggregate} (controlling how aggregation per time-point and ID is handled),
@@ -266,10 +266,29 @@ aggregate data for the given concept. Usually this involves extracting the
 \code{item} object and calling \code{load_concepts()} again, dispatching on the \code{item}
 class with arguments \code{x} (the given \code{item}), arguments passed as \code{...}, as
 well as \code{progress}.
+\item \code{itm}: Called with arguments \code{x} (the current object inheriting from
+\code{itm}, \code{patient_ids} (\code{NULL} or a patient ID selection), \code{id_type} (a
+string specifying what ID system to retrieve), and \code{interval} (the time
+series interval), this function actually carries out the loading of
+individual data items, using the specified ID system, rounding times to the
+correct interval and subsetting on patient IDs. As return value, on object
+of class as specified by the \code{target} entry is expected and all
+\code{\link[=data_vars]{data_vars()}} should be named consistently, as data corresponding to
+multiple \code{itm} objects concatenated in row-wise fashion as in
+\code{\link[base:cbind]{base::rbind()}}.
 }
 }
 
 \examples{
-dat <- load_concepts("hr", "mimic_demo")
+dat <- load_concepts("glucose", "mimic_demo")
+
+gluc <- concept("gluc",
+  item("mimic_demo", "labevents", "itemid", list(c(50809L, 50931L)))
+)
+
+identical(load_concepts(gluc), dat)
+
+class(dat)
+class(load_concepts(c("sex", "age"), "mimic_demo"))
 
 }

@@ -11,7 +11,7 @@
 \alias{new_concept}
 \alias{concept}
 \alias{is_concept}
-\title{Data concept}
+\title{Data items}
 \usage{
 new_cncpt(
   name,
@@ -75,5 +75,29 @@ for data cleanup operations}
 interval passed as argument to \code{\link[=load_concepts]{load_concepts()}} is taken}
 }
 \description{
-Clinical concepts are represented by \code{concept} objects.
+Concept objects are used in \code{ricu} as a way to specify how a clinical
+concept, such as heart rate can be loaded from a data source and are mainly
+consumed by \code{\link[=load_concepts]{load_concepts()}}. Several functions are avialable for
+constructing \code{concept} (and related auxillary) objects either from code or
+by parsing a JSON formatted concept dictionary using \code{\link[=load_dicionary]{load_dicionary()}}.
+}
+\details{
+:
+In order to allow for a large degree of flexibility (and extensibility),
+which is much needed owing to considerable heterogeneity presented by
+different data sources, several nested S3 classes are involved in
+representing a concept. An outline of this hierarchy can be described as
+\itemize{
+\item \code{concept}: contains many \code{cncpt} objects (of potentially differing
+sub-types), each comprising of some meta-data and an \code{item} object
+\item \code{item}: contains many \code{itm} objects (of potentially differing
+sub-types), each encoding how to retrieve a data item.
+}
+
+The design choice for wrapping a vector of \code{cncpt} objects with a container
+class \code{concept} is motivated by the requirement of having several different
+sub-types of \code{cncpt} objects (all inheriting from the parent type \code{cncpt}),
+while retaining control over how this homogeneous w.r.t. parent type, but
+heterogeneous w.r.t. sub-type vector of objects behaves in terms of S3
+generic functions.
 }

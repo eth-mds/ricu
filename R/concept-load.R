@@ -12,7 +12,7 @@
 #' [`data.table`][data.table::data.table], is returned, representing the data
 #' in wide format (i.e. returning concepts as columns).
 #'
-#' @section Details:
+#' @details
 #' In order to allow for a large degree of flexibility (and extensibility),
 #' which is much needed owing to considerable heterogeneity presented by
 #' different data sources, several nested S3 classes are involved in
@@ -112,10 +112,12 @@
 #' loading. For this reason, various parts in the cascade of calls to
 #' `load_concepts()` can be adapted for new requirements by defining new sub-
 #' classes to `cncpt` or `itm` and  providing methods for the generic function
-#' `load_concepts()`specific to these new classes. If no class-specific method
-#' is provided, method dispatch defaults to `load_concepts.cncpt()` and
-#' `load_concepts.itm()`. Roughly speaking, the semantics for the two
-#' functions are as follows:
+#' `load_concepts()`specific to these new classes. At `cncpt` level, method
+#' dispatch defaults to `load_concepts.cncpt()` if no method specific to the
+#' new class is provided, while at `itm` level, no default function is
+#' available.
+#'
+#' Roughly speaking, the semantics for the two functions are as follows:
 #'
 #' * `cncpt`: Called with arguments `x` (the current `cncpt` object),
 #' `aggregate` (controlling how aggregation per time-point and ID is handled),
@@ -125,12 +127,31 @@
 #' `item` object and calling `load_concepts()` again, dispatching on the `item`
 #' class with arguments `x` (the given `item`), arguments passed as `...`, as
 #' well as `progress`.
+#' * `itm`: Called with arguments `x` (the current object inheriting from
+#' `itm`, `patient_ids` (`NULL` or a patient ID selection), `id_type` (a
+#' string specifying what ID system to retrieve), and `interval` (the time
+#' series interval), this function actually carries out the loading of
+#' individual data items, using the specified ID system, rounding times to the
+#' correct interval and subsetting on patient IDs. As return value, on object
+#' of class as specified by the `target` entry is expected and all
+#' [data_vars()] should be named consistently, as data corresponding to
+#' multiple `itm` objects concatenated in row-wise fashion as in
+#' [base::rbind()].
 #'
 #' @param x Object specifying the data to be loaded
 #' @param ... Passed to downstream methods
 #'
 #' @examples
-#' dat <- load_concepts("hr", "mimic_demo")
+#' dat <- load_concepts("glucose", "mimic_demo")
+#'
+#' gluc <- concept("gluc",
+#'   item("mimic_demo", "labevents", "itemid", list(c(50809L, 50931L)))
+#' )
+#'
+#' identical(load_concepts(gluc), dat)
+#'
+#' class(dat)
+#' class(load_concepts(c("sex", "age"), "mimic_demo"))
 #'
 #' @rdname load_concepts
 #' @export
@@ -438,6 +459,9 @@ load_concepts.item <- function(x, patient_ids = NULL, id_type = "icustay",
 #' @export
 load_concepts.col_itm <- function(x, patient_ids = NULL, id_type = "icustay",
                                   interval = hours(1L), ...) {
+
+
+  warn_dots(...)
 
   itm <- x[["itm_vars"]]
   cbc <- x[["cb_vars"]]
