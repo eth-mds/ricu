@@ -6,38 +6,42 @@
 #' windows bounds
 #' @param step_size Controls the step size used to interpolate between
 #' `min_col` and `max_col`
-#' @param id_vars Names of the id columns
-#' @param new_col Name of the new index column
+#' @param new_index Name of the new index column
+#' @param keep_vars Names of the columns to hold onto
 #'
 #' @rdname ts_utils
 #' @export
 #'
-extend_ts <- function(x, min_col = "min", max_col = "max", step_size = 1L,
-                      id_vars = NULL, new_col = "hadm_time") {
+expand <- function(x, min_col, max_col, step_size = time_step(x),
+                   new_index = index_var(x), keep_vars = id_vars(x)) {
 
-  seq_time <- function(min, max, step, unit) {
-    do_seq <- function(min, max) seq(min, max, step)
-    as.difftime(unlist(Map(do_seq, min, max)), units = unit)
+  do_seq <- function(min, max) seq(min, max, step_size)
+
+  seq_expand <- function(min, max, unit, extra) {
+    lst <- Map(do_seq, min, max)
+    ind <- rep(seq_along(lst), lengths(lst))
+    set(extra[ind, ], j = new_index,
+        value = as.difftime(unlist(lst), units = unit))
   }
 
-  assert_that(is_dt(x), is.string(min_col), is.string(max_col),
+  assert_that(is_id_tbl(x), is.string(min_col), is.string(max_col),
               has_time_cols(x, c(min_col, max_col)),
               same_unit(x[[min_col]], x[[max_col]]))
 
   unit <- units(x[[min_col]])
 
-  x <- rm_na(x, c(id_vars, min_col, max_col), "any")
+  x <- rm_na(x, c(min_col, max_col), "any")
   x <- x[get(min_col) <= get(max_col), ]
 
-  res <- x[, lapply(.SD, as.double), .SDcols = c(min_col, max_col),
-           by = id_vars]
-  res <- res[, seq_time(get(min_col), get(max_col), step_size, unit),
-           by = id_vars]
+  res <- x[, c(keep_vars, min_col, max_col), with = FALSE]
+  res <- res[, c(min_col, max_col) := lapply(.SD, as.double),
+             .SDcols = c(min_col, max_col)]
 
-  res <- rename_cols(res, c(id_vars, new_col), by_ref = TRUE)
+  res <- res[, seq_expand(get(min_col), get(max_col), unit, .SD),
+             .SDcols = keep_vars]
 
-  as_ts_tbl(res, id_vars, new_col, as.difftime(step_size, units = unit),
-            by_ref = TRUE)
+  as_ts_tbl(res, index_var = new_index,
+            interval = as.difftime(step_size, units = unit), by_ref = TRUE)
 }
 
 #' @rdname ts_utils
@@ -83,15 +87,14 @@ fill_gaps <- function(x, limits = NULL, ...) {
     limits <- x[, list(min = min(get(time_col)), max = max(get(time_col))),
                 by = c(id_vars(x))]
 
-    join <- extend_ts(limits, "min", "max", time_step(x), id_vars(x),
-                      time_col)
+    join <- expand(limits, "min", "max", time_step(x), new_index = time_col)
 
   } else {
 
     id <- if (is_id_tbl(limits)) id_vars(limits) else id_vars(x)
 
-    join <- extend_ts(limits, ..., step_size = time_step(x),
-                      id_vars = id, new_col = time_col)
+    join <- expand(limits, ..., step_size = time_step(x),
+                   new_index = time_col, keep_vars = id)
   }
 
   x[unique(join), on = paste(meta_vars(x), "==", meta_vars(join))]

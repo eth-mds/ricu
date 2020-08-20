@@ -215,8 +215,7 @@ sofa_vent <- function(vent_start, vent_end, win_length = hours(6L),
   )]
 
   res <- unique(
-    extend_ts(merged, min_col = "start_time", max_col = "stop_time",
-              step_size = as.double(interval), id_vars = id_vars(merged))
+    expand(merged, min_col = "start_time", max_col = "stop_time")
   )
   res <- res[, c("vent_ind") := TRUE]
 
