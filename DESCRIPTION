@@ -13,7 +13,7 @@ Authors@R: c(
            email = "drago.plecko@stat.math.ethz.ch"),
     person(given = "Ida-Fong",
            family = "Ukor",
-           role = c("ctb"),
+           role = c("aut"),
            email = "dr.ukor@gmail.com")
     )
 License: GPL-3
