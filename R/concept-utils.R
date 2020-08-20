@@ -443,6 +443,7 @@ need_idx <- function(x) identical(target_class(x), "ts_tbl")
 #' @param name The name of the concept
 #' @param items Zero or more `itm` objects
 #' @param description String-valued concept description
+#' @param category String-valued category
 #' @param aggregate NULL or a string denoting a function used to aggregate per
 #' id and if applicable per time step
 #' @param ... Further specification of the `cncpt` object (passed to
@@ -453,18 +454,20 @@ need_idx <- function(x) identical(target_class(x), "ts_tbl")
 #' @rdname data_concepts
 #'
 #' @export
-new_cncpt <- function(name, items, description = NULL, aggregate = NULL, ...,
+new_cncpt <- function(name, items, description = NA_character_,
+                      category = NA_character_, aggregate = NULL, ...,
                       class = "num_cncpt") {
 
   assert_that(is.string(name), null_or(class, is.string),
-              null_or(description, is.string))
+              is.string(description), is.string(category))
 
   if (!is_concept(items)) {
     items <- as_item(items)
   }
 
-  res <- structure(list(name = name, items = items, description = description,
-                        aggregate = aggregate), class = c(class, "cncpt"))
+  res <- list(name = name, items = items, description = description,
+              category = category, aggregate = aggregate)
+  res <- structure(res, class = c(class, "cncpt"))
 
   init_cncpt(res, ...)
 }

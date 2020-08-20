@@ -9,35 +9,32 @@
 \title{SIRS score label}
 \usage{
 sirs_score(
-  respiratory_rate,
   ...,
   win_length = hours(24L),
   keep_components = FALSE,
-  interval = ricu::interval(respiratory_rate)
+  interval = NULL
 )
 
-supp_o2(vent_ind, fi_o2, interval = ricu::interval(vent_ind))
+supp_o2(vent, fio2, interval = NULL)
 
-avpu(gcs, interval = ricu::interval(gcs), by_ref = TRUE)
+avpu(gcs, interval = NULL, by_ref = TRUE)
 
 news_score(
-  respiratory_rate,
   ...,
   win_length = hours(24L),
   keep_components = FALSE,
-  interval = ricu::interval(respiratory_rate)
+  interval = NULL
 )
 
 mews_score(
-  respiratory_rate,
   ...,
   win_length = hours(24L),
   keep_components = FALSE,
-  interval = ricu::interval(respiratory_rate)
+  interval = NULL
 )
 }
 \arguments{
-\item{respiratory_rate, vent_ind, fi_o2, gcs, ...}{Data input used for score
+\item{...}{Data input used for score
 evaluation}
 
 \item{win_length}{Window used for carry forward}

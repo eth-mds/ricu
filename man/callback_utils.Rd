@@ -30,7 +30,8 @@ convert_unit(rgx, fun, new, ignore_case = TRUE, ...)
 \item{map}{Named atomic vector used for mapping a set of values (the names
 of \code{map}) to a different set (the values of \code{map})}
 
-\item{rgx}{Regular expression(s) used for identifying observations based on their current unit of measurement}
+\item{rgx}{Regular expression(s) used for identifying observations based on
+their current unit of measurement}
 
 \item{new}{Name(s) of transformed units}
 

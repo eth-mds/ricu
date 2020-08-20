@@ -5,6 +5,7 @@ cfg <- list(
     min = 0,
     max = 300,
     description = "heart rate",
+    category = "routine vital signs",
     sources = list(
       mimic = list(
         list(ids = c(211L, 220045L), table = "chartevents", sub_var = "itemid")
@@ -23,6 +24,7 @@ cfg <- list(
     min = 0,
     max = 300,
     description = "systolic blood pressure",
+    category = "routine vital signs",
     sources = list(
       mimic = list(
         list(ids = c(51L, 455L, 6701L, 220050L, 220179L),
@@ -42,6 +44,7 @@ cfg <- list(
     min = 0,
     max = 200,
     description = "diastolic blood pressure",
+    category = "routine vital signs",
     sources = list(
       mimic = list(
         list(ids = c(8368L, 8441L, 8555L, 220051L, 220180L),
@@ -61,6 +64,7 @@ cfg <- list(
     min = 0,
     max = 250,
     description = "mean arterial pressure",
+    category = "routine vital signs",
     sources = list(
       mimic = list(
         list(ids = c(52L, 443L, 456L, 6072L, 220052L, 220181L, 225312L),
@@ -82,6 +86,7 @@ cfg <- list(
     min = 0,
     max = 120,
     description = "respiratory rate",
+    category = "respiratory",
     sources = list(
       mimic = list(
         list(ids = c(618L, 619L, 220210L, 224688L, 224689L, 224690L),
@@ -97,11 +102,12 @@ cfg <- list(
       )
     )
   ),
-  o2_sat = list(
+  o2sat = list(
     unit = c("%", "% Sat."),
     min = 70,
     max = 100,
     description = "oxygen saturation",
+    category = "respiratory",
     sources = list(
       mimic = list(
         list(ids = c(646L, 220277L, 226253L, 50817L), table = "chartevents",
@@ -118,11 +124,12 @@ cfg <- list(
       )
     )
   ),
-  fi_o2 = list(
+  fio2 = list(
     unit = "%",
     min = 21,
     max = 100,
     description = "fraction of inspired oxygen",
+    category = "blood gas",
     sources = list(
       mimic = list(
         list(ids = c(3420L, 50816L, 223835L), table = "labevents",
@@ -140,10 +147,12 @@ cfg <- list(
       )
     )
   ),
-  calculated_total_co2 = list(
+  tco2 = list(
     unit = "mEq/L",
     min = 5,
     max = 60,
+    description = "totcal CO2",
+    category = "blood gas",
     sources = list(
       mimic = list(
         list(ids = 50804L, table = "labevents", sub_var = "itemid")
@@ -158,6 +167,7 @@ cfg <- list(
     unit = "IU/L",
     min = 0,
     description = "alanine aminotransferase",
+    category = "chemistry",
     sources = list(
       mimic = list(
         list(ids = 50861L, table = "labevents", sub_var = "itemid")
@@ -174,6 +184,7 @@ cfg <- list(
     unit = "IU/L",
     min = 0,
     description = "aspartate aminotransferase",
+    category = "chemistry",
     sources = list(
       mimic = list(
         list(ids = 50878L, table = "labevents", sub_var = "itemid")
@@ -186,10 +197,12 @@ cfg <- list(
       )
     )
   ),
-  phosphate = list(
+  phos = list(
     unit = "mg/dL",
     min = 0,
     max = 40,
+    description = "phosphate",
+    category = "chemistry",
     sources = list(
       mimic = list(
         list(ids = 50970L, table = "labevents", sub_var = "itemid")
@@ -203,10 +216,12 @@ cfg <- list(
       )
     )
   ),
-  urea_nitrogen = list(
+  bun = list(
     unit = "mg/dL",
     min = 0,
     max = 200,
+    description = "blood urea nitrogen",
+    category = "chemistry",
     sources = list(
       mimic = list(
         list(ids = 51006L, table = "labevents", sub_var = "itemid")
@@ -223,6 +238,8 @@ cfg <- list(
   ph = list(
     min = 6.8,
     max = 8,
+    description = "pH of blood",
+    category = "blood gas",
     sources = list(
       mimic = list(
         list(ids = 50820L, table = "labevents", sub_var = "itemid")
@@ -235,10 +252,12 @@ cfg <- list(
       )
     )
   ),
-  bilirubin_total = list(
+  bili = list(
     unit = "mg/dL",
     min = 0,
     max = 100,
+    description = "total bilirubin",
+    category = "chemistry",
     sources = list(
       mimic = list(
         list(ids = 50885L, table = "labevents", sub_var = "itemid")
@@ -253,6 +272,8 @@ cfg <- list(
     )
   ),
   inr_pt = list(
+    description = "prothrombin time/international normalized ratio",
+    category = "hematology",
     sources = list(
       mimic = list(
         list(ids = 51237L, table = "labevents", sub_var = "itemid")
@@ -265,10 +286,12 @@ cfg <- list(
       )
     )
   ),
-  platelet_count = list(
+  plt = list(
     unit = "K/uL",
     min = 5,
     max = 1200,
+    description = "platelet count",
+    category = "hematology",
     sources = list(
       mimic = list(
         list(ids = 51265L, table = "labevents", sub_var = "itemid")
@@ -281,10 +304,12 @@ cfg <- list(
       )
     )
   ),
-  lactate = list(
+  lact = list(
     unit = "mmol/L",
     min = 0,
     max = 50,
+    description = "lactate",
+    category = "blood gas",
     sources = list(
       mimic = list(
         list(ids = 50813L, table = "labevents", sub_var = "itemid")
@@ -297,10 +322,12 @@ cfg <- list(
       )
     )
   ),
-  lymphocytes = list(
+  lymph = list(
     unit = "%",
     min = 0,
     max = 100,
+    description = "lymphocytes",
+    category = "hematology",
     sources = list(
       mimic = list(
         list(ids = 51244L, table = "labevents", sub_var = "itemid")
@@ -313,10 +340,12 @@ cfg <- list(
       )
     )
   ),
-  bicarbonate = list(
+  bicar = list(
     unit = "mEq/L",
     min = 5,
     max = 50,
+    description = "bicarbonate",
+    category = "chemistry",
     sources = list(
       mimic = list(
         list(ids = 50882L, table = "labevents", sub_var = "itemid")
@@ -329,10 +358,12 @@ cfg <- list(
       )
     )
   ),
-  creatinine = list(
+  crea = list(
     unit = "mg/dL",
     min = 0,
     max = 15,
+    description = "creatinine",
+    category = "chemistry",
     sources = list(
       mimic = list(
         list(ids = 50912L, table = "labevents", sub_var = "itemid")
@@ -346,9 +377,11 @@ cfg <- list(
       )
     )
   ),
-  prothrombine_time = list(
+  pt = list(
     unit = "sec",
     min = 0,
+    description = "prothrombine time",
+    category = "hematology",
     sources = list(
       mimic = list(
         list(ids = 51274L, table = "labevents", sub_var = "itemid")
@@ -362,6 +395,8 @@ cfg <- list(
     unit = "%",
     min = 0,
     max = 100,
+    description = "erythrocyte distribution width",
+    category = "hematology",
     sources = list(
       mimic = list(
         list(ids = 51277L, table = "labevents", sub_var = "itemid")
@@ -374,6 +409,8 @@ cfg <- list(
   alp = list(
     unit = "IU/L",
     min = 0,
+    description = "alkaline phosphatase",
+    category = "chemistry",
     sources = list(
       mimic = list(
         list(ids = 50863L, table = "labevents", sub_var = "itemid")
@@ -389,6 +426,8 @@ cfg <- list(
   wbc = list(
     unit = "K/uL",
     min = 0,
+    description = "white blood cell count",
+    category = "hematology",
     sources = list(
       mimic = list(
         list(ids = 51301L, table = "labevents", sub_var = "itemid")
@@ -401,10 +440,12 @@ cfg <- list(
       )
     )
   ),
-  hemoglobin = list(
+  hgb = list(
     unit = "g/dL",
     min = 4,
     max = 18,
+    description = "hemoglobin",
+    category = "hematology",
     sources = list(
       mimic = list(
         list(ids = 51222L, table = "labevents", sub_var = "itemid")
@@ -419,10 +460,12 @@ cfg <- list(
       )
     )
   ),
-  hematocrit = list(
+  hct = list(
     unit = "%",
     min = 15,
     max = 60,
+    description = "hematocrit",
+    category = "hematology",
     sources = list(
       mimic = list(
         list(ids = 51221L, table = "labevents", sub_var = "itemid")
@@ -432,10 +475,12 @@ cfg <- list(
       )
     )
   ),
-  pa_co2 = list(
+  pco2 = list(
     unit = "mmHg",
     min = 10,
     max = 150,
+    description = "CO2 partial pressure",
+    category = "blood gas",
     sources = list(
       mimic = list(
         list(ids = 50818L, table = "labevents", sub_var = "itemid")
@@ -448,10 +493,12 @@ cfg <- list(
       )
     )
   ),
-  pa_o2 = list(
+  po2 = list(
     unit = "mmHg",
     min = 40,
     max = 600,
+    description = "O2 partial pressure",
+    category = "blood gas",
     sources = list(
       mimic = list(
         list(ids = 50821L, table = "labevents", sub_var = "itemid")
@@ -467,6 +514,8 @@ cfg <- list(
   mch = list(
     unit = "pg",
     min = 0,
+    description = "mean cell hemoglobin",
+    category = "hematology",
     sources = list(
       mimic = list(
         list(ids = 51248L, table = "labevents", sub_var = "itemid")
@@ -483,6 +532,8 @@ cfg <- list(
     unit = "%",
     min = 20,
     max = 50,
+    description = "mean corpuscular hemoglobin concentration",
+    category = "hematology",
     sources = list(
       mimic = list(
         list(ids = 51249L, table = "labevents", sub_var = "itemid")
@@ -499,6 +550,8 @@ cfg <- list(
     unit = "fL",
     min = 50,
     max = 150,
+    description = "mean corpuscular volume",
+    category = "hematology",
     sources = list(
       mimic = list(
         list(ids = 51250L, table = "labevents", sub_var = "itemid")
@@ -514,6 +567,8 @@ cfg <- list(
   ptt = list(
     unit = "sec",
     min = 0,
+    description = "partial thromboplastin time",
+    category = "hematology",
     sources = list(
       mimic = list(
         list(ids = 51275L, table = "labevents", sub_var = "itemid")
@@ -526,10 +581,12 @@ cfg <- list(
       )
     )
   ),
-  calcium = list(
+  ca = list(
     unit = "mg/dL",
     min = 4,
     max = 20,
+    description = "calcium",
+    category = "chemistry",
     sources = list(
       mimic = list(
         list(ids = 50893L, table = "labevents", sub_var = "itemid")
@@ -544,10 +601,12 @@ cfg <- list(
       )
     )
   ),
-  chloride = list(
+  cl = list(
     unit = "mEq/L",
     min = 80,
     max = 130,
+    description = "chloride",
+    category = "chemistry",
     sources = list(
       mimic = list(
         list(ids = 50902L, table = "labevents", sub_var = "itemid")
@@ -561,10 +620,12 @@ cfg <- list(
       )
     )
   ),
-  magnesium = list(
+  mg = list(
     unit = "mg/dL",
     min = 0.5,
     max = 5,
+    description = "magnesium",
+    category = "chemistry",
     sources = list(
       mimic = list(
         list(ids = 50960L, table = "labevents", sub_var = "itemid")
@@ -580,10 +641,12 @@ cfg <- list(
       )
     )
   ),
-  potassium = list(
+  k = list(
     unit = "mEq/L",
     min = 0,
     max = 10,
+    description = "potassium",
+    category = "chemistry",
     sources = list(
       mimic = list(
         list(ids = 50971L, table = "labevents", sub_var = "itemid")
@@ -597,10 +660,12 @@ cfg <- list(
       )
     )
   ),
-  sodium = list(
+  na = list(
     unit = "mEq/L",
     min = 110,
     max = 165,
+    description = "sodium",
+    category = "chemistry",
     sources = list(
       mimic = list(
         list(ids = 50983L, table = "labevents", sub_var = "itemid")
@@ -614,10 +679,12 @@ cfg <- list(
       )
     )
   ),
-  basophils = list(
+  basos = list(
     unit = "%",
     min = 0,
     max = 50,
+    description = "basophils",
+    category = "hematology",
     sources = list(
       mimic = list(
         list(ids = 51146L, table = "labevents", sub_var = "itemid")
@@ -627,10 +694,12 @@ cfg <- list(
       )
   )
   ),
-  eosinophils = list(
+  eos = list(
     unit = "%",
     min = 0,
     max = 50,
+    description = "eosinophils",
+    category = "hematology",
     sources = list(
       mimic = list(
         list(ids = 51200L, table = "labevents", sub_var = "itemid")
@@ -640,10 +709,12 @@ cfg <- list(
       )
   )
   ),
-  neutrophils = list(
+  neut = list(
     unit = "%",
     min = 0,
     max = 100,
+    description = "neutrophils",
+    category = "hematology",
     sources = list(
       mimic = list(
         list(ids = 51256L, table = "labevents", sub_var = "itemid")
@@ -656,10 +727,12 @@ cfg <- list(
       )
     )
   ),
-  glucose = list(
+  glu = list(
     unit = "mg/dL",
     min = 0,
     max = 1000,
+    description = "glucose",
+    category = "chemistry",
     sources = list(
       mimic = list(
         list(ids = c(50809L, 50931L), table = "labevents", sub_var = "itemid")
@@ -675,10 +748,12 @@ cfg <- list(
       )
     )
   ),
-  calcium_ionized = list(
+  cai = list(
     unit = "mmol/L",
     min = 0.5,
     max = 2,
+    description = "calcium ionized",
+    category = "blood gas",
     sources = list(
       mimic = list(
         list(ids = 50808L, table = "labevents", sub_var = "itemid")
@@ -695,6 +770,7 @@ cfg <- list(
     unit = "mg/L",
     min = 0,
     description = "C-reactive protein",
+    category = "chemistry",
     sources = list(
       mimic = list(
         list(ids = 50889L, table = "labevents", sub_var = "itemid",
@@ -709,10 +785,12 @@ cfg <- list(
       )
     )
   ),
-  sedimentation_rate = list(
+  esr = list(
     unit = "mm/hr",
     min = 0,
     max = 200,
+    description = "erythrocyte sedimentation rate",
+    category = "hematology",
     sources = list(
       mimic = list(
         list(ids = 51288L, table = "labevents", sub_var = "itemid")
@@ -722,7 +800,9 @@ cfg <- list(
       )
     )
   ),
-  carboxyhemoglobin = list(
+  hbco = list(
+    description = "carboxyhemoglobin",
+    category = "blood gas",
     sources = list(
       eicu = list(
         list(ids = "Carboxyhemoglobin", table = "lab", sub_var = "labname")
@@ -732,10 +812,12 @@ cfg <- list(
       )
     )
   ),
-  methemoglobin = list(
+  methb = list(
     unit = "%",
     min = 0,
     max = 100,
+    description = "methemoglobin",
+    category = "blood gas",
     sources = list(
       mimic = list(
         list(ids = 50814L, table = "labevents", sub_var = "itemid")
@@ -748,9 +830,11 @@ cfg <- list(
       )
     )
   ),
-  troponin_t = list(
+  tnt = list(
     unit = "ng/mL",
     min = 0,
+    description = "troponin t",
+    category = "chemistry",
     sources = list(
       mimic = list(
         list(ids = 51003L, table = "labevents", sub_var = "itemid")
@@ -763,10 +847,12 @@ cfg <- list(
       )
     )
   ),
-  albumin = list(
+  alb = list(
     unit = "g/dL",
     min = 0,
     max = 6,
+    description = "albumin",
+    category = "chemistry",
     sources = list(
       mimic = list(
         list(ids = 50862L, table = "labevents", sub_var = "itemid")
@@ -780,10 +866,12 @@ cfg <- list(
       )
     )
   ),
-  fibrinogen = list(
+  fgn = list(
     unit = "mg/dL",
     min = 0,
     max = 15,
+    description = "fibrinogen",
+    category = "hematology",
     sources = list(
       mimic = list(
         list(ids = 51214L, table = "labevents", sub_var = "itemid")
@@ -797,10 +885,12 @@ cfg <- list(
       )
     )
   ),
-  base_excess = list(
+  be = list(
     unit = "mEq/L",
     min = -25,
     max = 25,
+    description = "base excess",
+    category = "blood gas",
     sources = list(
       mimic = list(
         list(ids = 50802L, table = "labevents", sub_var = "itemid")
@@ -813,10 +903,12 @@ cfg <- list(
       )
     )
   ),
-  red_blood_cells = list(
+  rbc = list(
     unit = "m/uL",
     min = 0,
     max = 20,
+    description = "red blood cell count",
+    category = "hematology",
     sources = list(
       mimic = list(
         list(ids = 51279L, table = "labevents", sub_var = "itemid")
@@ -826,9 +918,11 @@ cfg <- list(
       )
   )
   ),
-  creatine_kinase = list(
+  ck = list(
     unit = "IU/L",
     min = 0,
+    description = "creatine kinase",
+    category = "chemistry",
     sources = list(
       mimic = list(
         list(ids = 50910L, table = "labevents", sub_var = "itemid")
@@ -841,9 +935,11 @@ cfg <- list(
       )
     )
   ),
-  creatine_kinase_mb = list(
+  ckmb = list(
     unit = "ng/mL",
     min = 0,
+    description = "creatine kinase MB",
+    category = "chemistry",
     sources = list(
       mimic = list(
         list(ids = 50911L, table = "labevents", sub_var = "itemid")
@@ -856,9 +952,11 @@ cfg <- list(
       )
     )
   ),
-  gcs_eye = list(
+  egcs = list(
     min = 1,
     max = 4,
+    description = "GCS eye",
+    category = "neurological",
     sources = list(
       mimic = list(
         list(ids = c(184L, 220739L), table = "chartevents", sub_var = "itemid")
@@ -873,9 +971,11 @@ cfg <- list(
       )
     )
   ),
-  gcs_verbal = list(
+  vgcs = list(
     min = 1,
     max = 5,
+    description = "GCS verbal",
+    category = "neurological",
     sources = list(
       mimic = list(
         list(ids = c(723L, 223900L), table = "chartevents", sub_var = "itemid")
@@ -890,9 +990,11 @@ cfg <- list(
       )
     )
   ),
-  gcs_motor = list(
+  mgcs = list(
     min = 1,
     max = 6,
+    description = "GCS motor",
+    category = "neurological",
     sources = list(
       mimic = list(
         list(ids = c(454L, 223901L), table = "chartevents", sub_var = "itemid")
@@ -907,9 +1009,11 @@ cfg <- list(
       )
     )
   ),
-  gcs_total = list(
+  tgcs = list(
     min = 3,
     max = 15,
+    description = "GCS total",
+    category = "neurological",
     sources = list(
       mimic = list(
         list(ids = 198L, table = "chartevents", sub_var = "itemid")
@@ -921,11 +1025,13 @@ cfg <- list(
       )
   )
   ),
-  urine_out = list(
+  urine = list(
     unit = "mL",
     min = 0,
     max = 2000,
     aggregate = "sum",
+    description = "urine output",
+    category = "output",
     sources = list(
       mimic = list(
         list(ids = c(40055L,   40056L,  40057L,  40065L,  40069L,  40085L,
@@ -947,10 +1053,12 @@ cfg <- list(
       )
     )
   ),
-  dobutamine = list(
+  dobu = list(
     unit = "mcg/kg/min",
     min = 0,
     max = 50,
+    description = "dobutamine",
+    category = "medications",
     sources = list(
       mimic = list(
         list(ids = c(30042L, 30306L, 221653L), table = "inputevents_mv",
@@ -970,10 +1078,12 @@ cfg <- list(
       )
     )
   ),
-  dopamine = list(
+  dopa = list(
     unit = "mcg/kg/min",
     min = 0,
     max = 50,
+    description = "dopamine",
+    category = "medications",
     sources = list(
       mimic = list(
         list(ids = c(30043L, 30125L, 30307L, 221662L),
@@ -986,10 +1096,12 @@ cfg <- list(
       )
   )
   ),
-  norepinephrine = list(
+  norepi = list(
     unit = "mcg/kg/min",
     min = 0,
     max = 3,
+    description = "norepinephrine",
+    category = "medications",
     sources = list(
       mimic = list(
         list(ids = c(30047L, 30120L, 221906L), table = "inputevents_mv",
@@ -1009,10 +1121,12 @@ cfg <- list(
       )
     )
   ),
-  epinephrine = list(
+  epi = list(
     unit = "mcg/kg/min",
     min = 0,
     max = 1.5,
+    description = "epinephrine",
+    category = "medications",
     sources = list(
       mimic = list(
         list(ids = c(30044L, 30119L, 30309L, 221289L),
@@ -1033,6 +1147,8 @@ cfg <- list(
     )
   ),
   vent_start = list(
+    description = "ventilation start",
+    category = "respiratory",
     sources = list(
       mimic = list(
         list(
@@ -1066,6 +1182,8 @@ cfg <- list(
     )
   ),
   vent_end = list(
+    description = "ventilation end",
+    category = "respiratory",
     sources = list(
       mimic = list(
         list(ids = c(225468L, 225477L, 227194L), table = "procedureevents_mv",
@@ -1087,7 +1205,9 @@ cfg <- list(
       )
     )
   ),
-  tracheostomy = list(
+  trach = list(
+    description = "tracheostomy",
+    category = "respiratory",
     sources = list(
       mimic = list(
         list(ids = c("1.0 ET/Trach", "No Response-ETT"), table = "chartevents",
@@ -1099,7 +1219,9 @@ cfg <- list(
       )
     )
   ),
-  rass_scale = list(
+  rass = list(
+    description = "Richmond agitation sedation scale",
+    category = "neurological",
     sources = list(
       eicu = list(
         list(ids = "Sedation Score", table = "nursecharting",
@@ -1111,7 +1233,9 @@ cfg <- list(
       )
     )
   ),
-  antibiotics = list(
+  abx = list(
+    description = "antibiotics",
+    category = "medication",
     sources = list(
       mimic = list(
         list(regex = paste(
@@ -1174,7 +1298,8 @@ cfg <- list(
       )
     )
   ),
-  fluid_sampling = list(
+  samp = list(
+    description = "fluid sampling",
     sources = list(
       mimic = list(
         list(table = "microbiologyevents", itm_vars = "org_itemid",
@@ -1188,9 +1313,11 @@ cfg <- list(
       )
     )
   ),
-  troponin_i = list(
+  tri = list(
     unit = "ng/mL",
     min = 0,
+    description = "troponin I",
+    category = "chemistry",
     sources = list(
       mimic = list(
         list(ids = 51002L, table = "labevents", sub_var = "itemid")
@@ -1200,10 +1327,12 @@ cfg <- list(
       )
     )
   ),
-  bilirubin_direct = list(
+  bili_dir = list(
     unit = "mg/dL",
     min = 0,
     max = 50,
+    description = "bilirubin direct",
+    category = "chemistry",
     sources = list(
       mimic = list(
         list(ids = 50883L, table = "labevents", sub_var = "itemid")
@@ -1217,10 +1346,12 @@ cfg <- list(
       )
     )
   ),
-  temperature = list(
+  temp = list(
     unit = "C",
     min = 32,
     max = 42,
+    description = "temperature",
+    category = "routine vital signs",
     sources = list(
       mimic = list(
         list(ids = c(676L, 677L, 223762L), table = "chartevents",
@@ -1238,10 +1369,12 @@ cfg <- list(
       )
     )
   ),
-  et_co2 = list(
+  etco2 = list(
     unit = "mmHg",
     min = 10,
     max = 60,
+    description = "endtidal CO2",
+    category = "routine vital signs",
     sources = list(
       mimic = list(
         list(ids = c(1817L, 228640L), table = "chartevents",
@@ -1253,13 +1386,16 @@ cfg <- list(
       )
     )
   ),
-  insulin = list(
+  ins = list(
+    unit = "units/hr",
+    description = "insulin administration per hour",
+    category = "medications",
     sources = list(
       mimic = list(
         list(ids = c(30045L, 30100L), table = "inputevents_cv",
              sub_var = "itemid"),
         list(ids = c(223258L, 223260L), table = "inputevents_mv",
-             sub_var = "itemid", amount_var = "amount", end_var = "endtime",
+             sub_var = "itemid", itm_vars = "amount", end_var = "endtime",
              callback = "distribute_amount")
       ),
       eicu = list(
@@ -1278,6 +1414,8 @@ cfg <- list(
     target = "id_tbl",
     levels = c("Female", "Male"),
     class = "fct_cncpt",
+    description = "patient sex",
+    category = "demographics",
     sources = list(
       mimic = list(
         list(table = "patients", itm_vars = "gender",
@@ -1299,6 +1437,8 @@ cfg <- list(
     min = 0,
     max = 100,
     target = "id_tbl",
+    description = "patient age",
+    category = "demographics",
     sources = list(
       mimic = list(
         list(table = "patients", itm_vars = "dob", callback = "mimic_age",
@@ -1318,6 +1458,8 @@ cfg <- list(
     min = 0,
     max = 500,
     target = "id_tbl",
+    description = "patient weight",
+    category = "demographics",
     sources = list(
       eicu = list(
         list(table = "patient", itm_vars = "admissionweight",
@@ -1325,8 +1467,10 @@ cfg <- list(
       )
     )
   ),
-  vasopressin = list(
+  adh = list(
     unit = "mcg/kg/min",
+    description = "vasopressin",
+    category = "medications",
     sources = list(
       mimic = list(
         list(ids = c(30051L, 222315L), table = "inputevents_mv",
@@ -1345,6 +1489,8 @@ cfg <- list(
   ),
   death = list(
     target = "id_tbl",
+    description = "patient mortality",
+    category = "outcome",
     sources = list(
       mimic = list(
         list(table = "admissions", itm_vars = "hospital_expire_flag",
@@ -1362,10 +1508,12 @@ cfg <- list(
       )
     )
   ),
-  admission_type = list(
+  adm = list(
     target = "id_tbl",
     levels = c("med", "surg", "other"),
     class = "fct_cncpt",
+    description = "patient admission type",
+    category = "demographics",
     sources = list(
       mimic = list(
         list(table = "services", itm_vars = "curr_service",
@@ -1389,6 +1537,8 @@ cfg <- list(
     unit = "days",
     min = 0,
     target = "id_tbl",
+    description = "ICU length of stay",
+    category = "outcome",
     sources = list(
       mimic = list(
         list(callback = "los_callback", win_type = "icustay",
@@ -1408,6 +1558,8 @@ cfg <- list(
     unit = "days",
     min = 0,
     target = "id_tbl",
+    description = "hospital length of stay",
+    category = "outcome",
     sources = list(
       mimic = list(
         list(callback = "los_callback", win_type = "hadm", class = "fun_itm")
@@ -1417,51 +1569,65 @@ cfg <- list(
       )
     )
   ),
-  pa_fi = list(
-    concepts = c("pa_o2", "fi_o2"),
+  pafi = list(
+    concepts = c("po2", "fio2"),
+    description = "Horowitz index",
+    category = "respiratory",
     aggregate = c("min", "max"),
     callback = "sofa_pafi",
     class = "rec_cncpt"
   ),
-  vent_ind = list(
+  vent = list(
     concepts = c("vent_start", "vent_end"),
+    description = "ventilation status",
+    category = "respiratory",
     interval = "00:01:00",
     callback = "sofa_vent",
     class = "rec_cncpt"
   ),
   gcs = list(
-    concepts = c("gcs_eye", "gcs_motor", "gcs_verbal", "gcs_total",
-                 "tracheostomy", "rass_scale"),
+    concepts = c("egcs", "mgcs", "vgcs", "tgcs", "trach", "rass"),
+    description = "Glasgow coma scale (non-sedated)",
+    category = "neurological",
     aggregate = c("min", "min", "min", "min", NA, "min"),
     callback = "sofa_gcs",
     class = "rec_cncpt"
   ),
-  urine_24 = list(
-    concepts = "urine_out",
+  urine24 = list(
+    concepts = "urine",
+    description = "urine output per 24h",
+    category = "output",
     callback = "sofa_urine",
     class = "rec_cncpt"
   ),
-  sofa_score = list(
-    concepts = c("pa_fi", "vent_ind", "platelet_count", "bilirubin_total",
-                 "map", "norepinephrine", "epinephrine", "dopamine",
-                 "dobutamine", "gcs", "creatinine", "urine_24"),
+  sofa = list(
+    concepts = c("pafi", "vent", "plt", "bili", "map", "norepi", "epi", "dopa",
+                 "dobu", "gcs", "crea", "urine24"),
+    description = "sequential organ failure assessment score",
+    category = "outcome",
     aggregate = c(NA, NA, "min", "max", "min", "max", "max", "max", "max", NA,
                   "max", NA),
     callback = "sofa_score",
     class = "rec_cncpt"
   ),
   susp_inf = list(
-    concepts = c("antibiotics", "fluid_sampling"),
+    concepts = c("abx", "samp"),
+    description = "suspected infection",
+    category = "outcome",
     aggregate = lapply(list("sum", FALSE), list),
     callback = "susp_inf",
     class = "rec_cncpt"
   ),
-  sepsis_3 = list(
-    concepts = c("sofa_score", "susp_inf"),
+  sep3 = list(
+    concepts = c("sofa", "susp_inf"),
+    description = "sepsis-3 criterion",
+    category = "outcome",
     callback = "sepsis_3",
     class = "rec_cncpt"
   ),
-  bands = list(
+  bnd = list(
+    description = "band form neutrophils",
+    category = "hematology",
     sources = list(
       mimic = list(
         list(ids = 51144L, table = "labevents", sub_var = "itemid")
@@ -1474,31 +1640,38 @@ cfg <- list(
       )
     )
   ),
-  sirs_score = list(
-    concepts = c("temperature", "hr", "resp", "pa_co2",
-                 "wbc", "bands"),
+  sirs = list(
+    concepts = c("temp", "hr", "resp", "pco2", "wbc", "bnd"),
+    description = "systemic inflammatory response syndrome score",
+    category = "outcome",
     callback = "sirs_score",
     class = "rec_cncpt"
   ),
   supp_o2 = list(
-    concepts = c("vent_ind", "fi_o2"),
+    concepts = c("vent", "fio2"),
+    description = "supplemental oxygen",
+    category = "respiratory",
     callback = "supp_o2",
     class = "rec_cncpt"
   ),
   avpu = list(
     concepts = "gcs",
+    description = "AVPU scale",
+    category = "neurological",
     callback = "avpu",
     class = "rec_cncpt"
   ),
-  news_score = list(
-    concepts = c("resp", "o2_sat", "supp_o2", "temperature",
-                 "sbp", "hr", "avpu"),
+  news = list(
+    concepts = c("resp", "o2sat", "supp_o2", "temp", "sbp", "hr", "avpu"),
+    description = "national early warning score",
+    category = "outcome",
     callback = "news_score",
     class = "rec_cncpt"
   ),
-  mews_score = list(
-    concepts = c("sbp", "hr", "resp",
-                 "temperature","avpu"),
+  mews = list(
+    concepts = c("sbp", "hr", "resp", "temp","avpu"),
+    description = "modified early warning score",
+    category = "outcome",
     callback = "mews_score",
     class = "rec_cncpt"
   )

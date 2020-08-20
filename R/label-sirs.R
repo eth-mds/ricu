@@ -4,7 +4,7 @@
 #' The SIRS (Systemic Inflammatory Response Syndrome) score is a commonly used
 #' assessment tool used to track a patient's well-being in an ICU.
 #'
-#' @param respiratory_rate,vent_ind,fi_o2,gcs,... Data input used for score
+#' @param ... Data input used for score
 #' evaluation
 #' @param win_length Window used for carry forward
 #' @param keep_components Logical flag indicating whether to return the
@@ -15,44 +15,48 @@
 #' @rdname label_sirs
 #' @export
 #'
-sirs_score <- function(respiratory_rate, ..., win_length = hours(24L),
-                       keep_components = FALSE,
-                       interval = ricu::interval(respiratory_rate)) {
+sirs_score <- function(..., win_length = hours(24L), keep_components = FALSE,
+                       interval = NULL) {
 
-  temp <- function(x) fifelse(x < 36 | x > 38, 1L, 0L)
+  tmpe <- function(x) fifelse(x < 36 | x > 38, 1L, 0L)
   hrat <- function(x) fifelse(x > 90, 1L, 0L)
 
-  resp <- function(re, pa) fifelse(re > 20 | pa < 32, 1L, 0L)
+  rspi <- function(re, pa) fifelse(re > 20 | pa < 32, 1L, 0L)
   wbcn <- function(wb, ba) fifelse(wb < 4 | wb > 12 | ba > 10, 1L, 0L)
 
-  res <- reduce(merge, c(list(respiratory_rate), list(...)),
-                all = TRUE)
+  res <- list(...)
 
-  comps <- c("temperature", "heart_rate", "respiratory_rate", "pa_co2",
-             "white_blood_cells", "bands")
+  if (is.null(interval)) {
+    interval <- interval(res[[1L]])
+  }
 
-  assert_that(has_interval(res, interval), is_interval(win_length),
-              is.flag(keep_components), has_name(res, comps))
+  assert_that(all_fun(res, has_interval, interval), is.flag(keep_components),
+              is_interval(win_length))
+
+  res <- reduce(merge, res, all = TRUE)
+
+  comps <- c("temp", "hr", "resp", "pco2", "wbc", "bnd")
+
+  assert_that(has_name(res, comps))
 
   expr <- substitute(
-    list(temperature = fun(temperature), heart_rate = fun(heart_rate),
-         respiratory_rate = fun(respiratory_rate), pa_co2 = fun(pa_co2),
-         white_blood_cells = fun(white_blood_cells), bands = fun(bands)),
+    list(temp = fun(temp), hr = fun(hr), resp = fun(resp), pco2 = fun(pco2),
+         wbc = fun(wbc), bnd = fun(bnd)),
     list(fun = locf)
   )
 
   res <- slide(res, !!expr, before = win_length)
 
   res <- res[, c(comps) := list(
-    temp(get("temperature")), hrat(get("heart_rate")),
-    resp(get("respiratory_rate"), get("pa_co2")), NULL,
-    wbcn(get("white_blood_cells"), get("bands")), NULL)
+    tmpe(get("temp")), hrat(get("hr")),
+    rspi(get("resp"), get("pco2")), NULL,
+    wbcn(get("wbc"), get("bnd")), NULL)
   ]
 
   comps <- data_vars(res)
 
   res <- setnafill(res, fill = 0L, cols = comps)
-  res <- res[, c("sirs_score") := rowSums(.SD), .SDcols = comps]
+  res <- res[, c("sirs") := rowSums(.SD), .SDcols = comps]
 
   if (!keep_components) {
     res <- rm_cols(res, comps, by_ref = TRUE)
@@ -63,14 +67,18 @@ sirs_score <- function(respiratory_rate, ..., win_length = hours(24L),
 
 #' @rdname label_sirs
 #' @export
-supp_o2 <- function(vent_ind, fi_o2, interval = ricu::interval(vent_ind)) {
+supp_o2 <- function(vent, fio2, interval = NULL) {
 
-  res <- merge(vent_ind, fi_o2, all = TRUE)
+  if (is.null(interval)) {
+    interval <- interval(vent)
+  }
 
-  assert_that(has_interval(res, interval))
+  assert_that(has_interval(vent, interval), has_interval(fio2, interval))
 
-  res <- res[, c("supp_o2", "vent_ind", "fi_o2") := list(
-    get("vent_ind") | get("fi_o2") > 21, NULL, NULL
+  res <- merge(vent, fio2, all = TRUE)
+
+  res <- res[, c("supp_o2", "vent", "fio2") := list(
+    get("vent") | get("fio2") > 21, NULL, NULL
   )]
 
   res
@@ -84,9 +92,13 @@ map_vals <- function(pts, vals) {
 #' reference
 #' @rdname label_sirs
 #' @export
-avpu <- function(gcs, interval = ricu::interval(gcs), by_ref = TRUE) {
+avpu <- function(gcs, interval = NULL, by_ref = TRUE) {
 
   avpu_map <- map_vals(c(NA, "U", "P", "V", "A", NA), c(2, 3, 9, 13, 15))
+
+  if (is.null(interval)) {
+    interval <- interval(gcs)
+  }
 
   assert_that(has_interval(gcs, interval))
 
@@ -101,9 +113,8 @@ avpu <- function(gcs, interval = ricu::interval(gcs), by_ref = TRUE) {
 
 #' @rdname label_sirs
 #' @export
-news_score <- function(respiratory_rate, ..., win_length = hours(24L),
-                       keep_components = FALSE,
-                       interval = ricu::interval(respiratory_rate)) {
+news_score <- function(..., win_length = hours(24L), keep_components = FALSE,
+                       interval = NULL) {
 
   resp   <- map_vals(c(3L,     1L, 0L, 2L, 3L    ), c( 8,  11,  20,  24))
   o2_sat <- map_vals(c(3L, 2L, 1L, 0L            ), c(91,  93,  95))
@@ -111,36 +122,42 @@ news_score <- function(respiratory_rate, ..., win_length = hours(24L),
   sys_bp <- map_vals(c(3L, 2L, 1L, 0L,         3L), c(90, 100, 110, 219))
   heart  <- map_vals(c(3L,     1L, 0L, 1L, 2L, 3L), c(40,  50,  90, 110, 130))
 
-  supp_o2 <- function(x) fifelse(x, 2L, 0L)
-  avpu    <- function(x) fifelse(x == "A", 0L, 3L)
+  suppo2 <- function(x) fifelse(x, 2L, 0L)
+  avpu   <- function(x) fifelse(x == "A", 0L, 3L)
 
-  res <- reduce(merge, c(list(respiratory_rate), list(...)),
-                all = TRUE)
+  res <- list(...)
+
+  if (is.null(interval)) {
+    interval <- interval(res[[1L]])
+  }
+
+  assert_that(all_fun(res, has_interval, interval), is_interval(win_length),
+              is.flag(keep_components))
+
+  res <- reduce(merge, res, all = TRUE)
   res <- res[is.na(get("supp_o2")), c("supp_o2") := FALSE]
 
-  comps <- c("heart_rate", "avpu", "supp_o2", "o2_saturation", "temperature",
-             "systolic_bp", "respiratory_rate")
+  comps <- c("hr", "avpu", "supp_o2", "o2sat", "temp", "sbp", "resp")
 
-  assert_that(has_interval(res, interval), is_interval(win_length),
-              is.flag(keep_components), has_name(res, comps))
+  assert_that(has_name(res, comps))
 
   expr <- substitute(
-    list(respiratory_rate = fun(respiratory_rate), avpu = fun(avpu),
-         o2_saturation = fun(o2_saturation), supp_o2 = fun(supp_o2),
-         temperature = fun(temperature), heart_rate = fun(heart_rate),
-         systolic_bp = fun(systolic_bp)), list(fun = locf)
+    list(resp = fun(resp), avpu = fun(avpu),
+         o2sat = fun(o2sat), supp_o2 = fun(supp_o2),
+         temp = fun(temp), hr = fun(hr),
+         sbp = fun(sbp)), list(fun = locf)
   )
 
   res <- slide(res, !!expr, before = win_length)
 
   res <- res[, c(comps) := list(
-    heart(get("heart_rate")), avpu(get("avpu")), supp_o2(get("supp_o2")),
-    o2_sat(get("o2_saturation")), temp(get("temperature")),
-    sys_bp(get("systolic_bp")), resp(get("respiratory_rate")))
+    heart(get("hr")), avpu(get("avpu")), suppo2(get("supp_o2")),
+    o2_sat(get("o2sat")), temp(get("temp")),
+    sys_bp(get("sbp")), resp(get("resp")))
   ]
 
   res <- setnafill(res, fill = 0L, cols = comps)
-  res <- res[, c("news_score") := rowSums(.SD), .SDcols = comps]
+  res <- res[, c("news") := rowSums(.SD), .SDcols = comps]
 
   if (!keep_components) {
     res <- rm_cols(res, comps, by_ref = TRUE)
@@ -152,9 +169,8 @@ news_score <- function(respiratory_rate, ..., win_length = hours(24L),
 #' @importFrom data.table setnafill
 #' @rdname label_sirs
 #' @export
-mews_score <- function(respiratory_rate, ..., win_length = hours(24L),
-                       keep_components = FALSE,
-                       interval = ricu::interval(respiratory_rate)) {
+mews_score <- function(..., win_length = hours(24L), keep_components = FALSE,
+                       interval = NULL) {
 
   sys_bp <- map_vals(c(3L, 2L, 1L, 0L,     2L    ), c(70, 80, 100, 199))
   heart  <- map_vals(c(    2L, 1L, 0L, 1L, 2L, 3L), c(40, 50, 100, 110, 129))
@@ -163,29 +179,36 @@ mews_score <- function(respiratory_rate, ..., win_length = hours(24L),
 
   avpu <- function(x) setNames(c(0L, 1L, 2L, 3L), c("A", "V", "P", "U"))[x]
 
-  res <- reduce(merge, c(list(respiratory_rate), list(...)), all = TRUE)
+  res <- list(...)
 
-  comps <- c("heart_rate", "avpu", "temperature", "systolic_bp",
-             "respiratory_rate")
+  if (is.null(interval)) {
+    interval <- interval(res[[1L]])
+  }
 
-  assert_that(has_interval(res, interval), is_interval(win_length),
-              is.flag(keep_components), has_name(res, comps))
+  assert_that(all_fun(res, has_interval, interval), is_interval(win_length),
+              is.flag(keep_components))
+
+  res <- reduce(merge, res, all = TRUE)
+
+  comps <- c("hr", "avpu", "temp", "sbp", "resp")
+
+  assert_that(has_name(res, comps))
+
 
   expr <- substitute(
-    list(heart_rate = fun(heart_rate), avpu = fun(avpu),
-         temperature = fun(temperature), systolic_bp = fun(systolic_bp),
-         respiratory_rate = fun(respiratory_rate)), list(fun = locf)
+    list(hr = fun(hr), avpu = fun(avpu), temp = fun(temp), sbp = fun(sbp),
+         resp = fun(resp)), list(fun = locf)
   )
 
   res <- slide(res, !!expr, before = win_length)
 
   res <- res[, c(comps) := list(
-    heart(get("heart_rate")), avpu(get("avpu")), temp(get("temperature")),
-    sys_bp(get("systolic_bp")), resp(get("respiratory_rate")))
+    heart(get("hr")), avpu(get("avpu")), temp(get("temp")), sys_bp(get("sbp")),
+    resp(get("resp")))
   ]
 
   res <- setnafill(res, fill = 0L, cols = comps)
-  res <- res[, c("mews_score") := rowSums(.SD), .SDcols = comps]
+  res <- res[, c("mews") := rowSums(.SD), .SDcols = comps]
 
   if (!keep_components) {
     res <- rm_cols(res, comps, by_ref = TRUE)

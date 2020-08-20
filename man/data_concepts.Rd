@@ -16,7 +16,8 @@
 new_cncpt(
   name,
   items,
-  description = NULL,
+  description = NA_character_,
+  category = NA_character_,
   aggregate = NULL,
   ...,
   class = "num_cncpt"
@@ -46,6 +47,8 @@ is_concept(x)
 \item{items}{Zero or more \code{itm} objects}
 
 \item{description}{String-valued concept description}
+
+\item{category}{String-valued category}
 
 \item{aggregate}{NULL or a string denoting a function used to aggregate per
 id and if applicable per time step}

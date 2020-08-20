@@ -99,32 +99,20 @@ binary_op <- function(op, y) function(x) op(x, y)
 #' @export
 comp_na <- function(op, y) function(x) !is.na(x) & op(x, y)
 
-distribute_amount <- function(x, val_var, amount_var, end_var, ...) {
+distribute_amount <- function(x, val_var, unit_var, end_var, ...) {
 
-  unit <- time_unit(x)
-  step <- time_step(x)
-  inte <- as.double(hours(1L), units = unit)
-
-  orig_cols <- colnames(x)
-
-  idc <- id_vars(x)
+  hr  <- `units<-`(hours(1L), time_unit(x))
   idx <- index_var(x)
 
-  expand <- function(start, end, id, amount, rate) {
-    seq <- seq(as.numeric(start), as.numeric(end), inte)
-    tim <- as.difftime(round_to(seq, step), units = unit)
-    res <- list(id, tim, amount / length(seq))
-    names(res) <- c(idc, idx, val_var)
-    res
-  }
-
   x <- x[get(end_var) - get(idx) >= 0, ]
-  x <- x[, expand(get(idx), get(end_var), get(idc), get(amount_var),
-                  get(val_var)),
-         by = seq_len(nrow(x))]
-  x <- x[, c(setdiff(colnames(x), orig_cols)) := NULL]
+  x <- x[get(end_var) - get(idx) == 0, c(end_var) := get(idx) + hr]
+  x <- x[, c(val_var) := get(val_var) / as.numeric(get(end_var) - get(idx)) *
+                            as.numeric(hr)]
 
-  x
+  res <- expand(x, idx, end_var, keep = c(id_vars(x), val_var))
+  res <- res[, c(unit_var) := "units/hr"]
+
+  res
 }
 
 mimic_age <- function(x, val_var, ...) {
@@ -173,7 +161,8 @@ apply_map <- function(map) {
   }
 }
 
-#' @param rgx Regular expression(s) used for identifying observations based on their current unit of measurement
+#' @param rgx Regular expression(s) used for identifying observations based on
+#' their current unit of measurement
 #' @param fun Function(s) used for transforming matching values
 #' @param new Name(s) of transformed units
 #' @param ignore_case Forwarded to [base::grep()]

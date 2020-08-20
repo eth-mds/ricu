@@ -139,17 +139,17 @@ The first example we look at is the association of lactate levels and mortality.
 ```{r time_cox_model}
 source <- "mimic_demo"
 # data loading
-tbl <- load_concepts(c("lactate", "death", "sofa_score"), source,
+tbl <- load_concepts(c("lact", "death", "sofa"), source,
                      verbose = FALSE)
-tbl <- tbl[, c(meta_vars(tbl), "lactate", "sofa_score", "death"), with = FALSE]
-tbl <- tbl[, lactate := nafill(lactate, "locf")]
-tbl <- tbl[, lactate := nafill(lactate, fill = 1)]
+tbl <- tbl[, c(meta_vars(tbl), "lact", "sofa", "death"), with = FALSE]
+tbl <- tbl[, lact := nafill(lact, "locf")]
+tbl <- tbl[, lact := nafill(lact, fill = 1)]
 tbl[, event := as.integer(sum(death, na.rm = TRUE) > 0), by = c(id_vars(tbl))]
 tbl[, event := last_event(event), by = c(id_vars(tbl))]
 tbl[, next_charttime := charttime+1L]
 # model fitting
 cox_time_mod <- coxph(
-  Surv(charttime, next_charttime, event) ~ lactate + sofa_score,
+  Surv(charttime, next_charttime, event) ~ lact + sofa,
   data = tbl
 )
 ```
@@ -167,10 +167,13 @@ source <- "mimic_demo"
 ins_breaks <- c(0.01, 10, 20, 30, 40)
 
 cohort <- stay_windows(source)
-ins_treat <- load_concepts("insulin", source, verbose = FALSE)
+ins_treat <- load_concepts("ins", source, verbose = FALSE)
 ins_treat <- ins_treat[get(index_var(ins_treat)) <= 24L]
-ins_treat <- ins_treat[, list(ins_sum = .bincode(sum(insulin), breaks = c(-Inf, ins_breaks, Inf))-1),
-  by = c(id_vars(ins_treat))]
+
+ins_treat <- ins_treat[,
+  list(ins_sum = .bincode(sum(ins), breaks = c(-Inf, ins_breaks, Inf)) - 1),
+  by = c(id_vars(ins_treat))
+]
 
 cohort <- merge(cohort, ins_treat, by = id_vars(cohort), all.x = TRUE)
 cohort[, Diabetic := get(id_vars(cohort)) %in% diabetes(source)]

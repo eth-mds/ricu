@@ -1,217 +1,7 @@
 {
-  "admission_type": {
-    "target": "id_tbl",
-    "levels": ["med", "surg", "other"],
-    "class": "fct_cncpt",
-    "sources": {
-      "eicu": [
-        {
-          "table": "admissiondx",
-          "itm_vars": "admitdxpath",
-          "callback": "eicu_adx",
-          "class": "col_itm"
-        }
-      ],
-      "eicu_demo": [
-        {
-          "table": "admissiondx",
-          "itm_vars": "admitdxpath",
-          "callback": "eicu_adx",
-          "class": "col_itm"
-        }
-      ],
-      "mimic": [
-        {
-          "table": "services",
-          "itm_vars": "curr_service",
-          "callback": "apply_map(\n            c(MED   = 'med',   SURG  = 'surg', CMED = 'med',  CSURG  = 'surg',\n              VSURG = 'surg',  NSURG = 'surg', NB   = 'other', NMED  = 'med',\n              ORTHO = 'surg',  TRAUM = 'surg', OMED = 'med',   GU    = 'other',\n              NBB   = 'other', TSURG = 'surg', GYN  = 'other', PSURG = 'surg',\n              OBS   = 'other', ENT   = 'surg', DENT = 'surg',  PSYCH = 'other')\n          )",
-          "class": "col_itm"
-        }
-      ],
-      "mimic_demo": [
-        {
-          "table": "services",
-          "itm_vars": "curr_service",
-          "callback": "apply_map(\n            c(MED   = 'med',   SURG  = 'surg', CMED = 'med',  CSURG  = 'surg',\n              VSURG = 'surg',  NSURG = 'surg', NB   = 'other', NMED  = 'med',\n              ORTHO = 'surg',  TRAUM = 'surg', OMED = 'med',   GU    = 'other',\n              NBB   = 'other', TSURG = 'surg', GYN  = 'other', PSURG = 'surg',\n              OBS   = 'other', ENT   = 'surg', DENT = 'surg',  PSYCH = 'other')\n          )",
-          "class": "col_itm"
-        }
-      ]
-    }
-  },
-  "age": {
-    "unit": "years",
-    "min": 0,
-    "max": 100,
-    "target": "id_tbl",
-    "sources": {
-      "eicu": [
-        {
-          "table": "patient",
-          "itm_vars": "age",
-          "callback": "eicu_age",
-          "class": "col_itm"
-        }
-      ],
-      "eicu_demo": [
-        {
-          "table": "patient",
-          "itm_vars": "age",
-          "callback": "eicu_age",
-          "class": "col_itm"
-        }
-      ],
-      "hirid": [
-        {
-          "table": "general",
-          "itm_vars": "age",
-          "class": "col_itm"
-        }
-      ],
-      "mimic": [
-        {
-          "table": "patients",
-          "itm_vars": "dob",
-          "callback": "mimic_age",
-          "class": "col_itm"
-        }
-      ],
-      "mimic_demo": [
-        {
-          "table": "patients",
-          "itm_vars": "dob",
-          "callback": "mimic_age",
-          "class": "col_itm"
-        }
-      ]
-    }
-  },
-  "albumin": {
-    "unit": "g/dL",
-    "min": 0,
-    "max": 6,
-    "sources": {
-      "eicu": [
-        {
-          "ids": "albumin",
-          "table": "lab",
-          "sub_var": "labname"
-        }
-      ],
-      "eicu_demo": [
-        {
-          "ids": "albumin",
-          "table": "lab",
-          "sub_var": "labname"
-        }
-      ],
-      "hirid": [
-        {
-          "ids": 24000605,
-          "table": "observations",
-          "sub_var": "variableid",
-          "callback": "transform_fun(binary_op(`*`, 0.1))"
-        }
-      ],
-      "mimic": [
-        {
-          "ids": 50862,
-          "table": "labevents",
-          "sub_var": "itemid"
-        }
-      ],
-      "mimic_demo": [
-        {
-          "ids": 50862,
-          "table": "labevents",
-          "sub_var": "itemid"
-        }
-      ]
-    }
-  },
-  "alp": {
-    "unit": "IU/L",
-    "min": 0,
-    "sources": {
-      "eicu": [
-        {
-          "ids": "alkaline phos.",
-          "table": "lab",
-          "sub_var": "labname"
-        }
-      ],
-      "eicu_demo": [
-        {
-          "ids": "alkaline phos.",
-          "table": "lab",
-          "sub_var": "labname"
-        }
-      ],
-      "hirid": [
-        {
-          "ids": 20002700,
-          "table": "observations",
-          "sub_var": "variableid"
-        }
-      ],
-      "mimic": [
-        {
-          "ids": 50863,
-          "table": "labevents",
-          "sub_var": "itemid"
-        }
-      ],
-      "mimic_demo": [
-        {
-          "ids": 50863,
-          "table": "labevents",
-          "sub_var": "itemid"
-        }
-      ]
-    }
-  },
-  "alt": {
-    "unit": "IU/L",
-    "min": 0,
-    "description": "alanine aminotransferase",
-    "sources": {
-      "eicu": [
-        {
-          "ids": "ALT (SGPT)",
-          "table": "lab",
-          "sub_var": "labname"
-        }
-      ],
-      "eicu_demo": [
-        {
-          "ids": "ALT (SGPT)",
-          "table": "lab",
-          "sub_var": "labname"
-        }
-      ],
-      "hirid": [
-        {
-          "ids": 20002600,
-          "table": "observations",
-          "sub_var": "variableid"
-        }
-      ],
-      "mimic": [
-        {
-          "ids": 50861,
-          "table": "labevents",
-          "sub_var": "itemid"
-        }
-      ],
-      "mimic_demo": [
-        {
-          "ids": 50861,
-          "table": "labevents",
-          "sub_var": "itemid"
-        }
-      ]
-    }
-  },
-  "antibiotics": {
+  "abx": {
+    "description": "antibiotics",
+    "category": "medication",
     "sources": {
       "eicu": [
         {
@@ -285,10 +75,278 @@
       ]
     }
   },
+  "adh": {
+    "unit": "mcg/kg/min",
+    "description": "vasopressin",
+    "category": "medications",
+    "sources": {
+      "eicu": [
+        {
+          "ids": ["Vasopressin (ml/hr)", "Vasopressin (units/min)", "Vasopressin ()"],
+          "table": "infusiondrug",
+          "sub_var": "drugname",
+          "callback": "eicu_body_weight",
+          "weight_var": "patientweight"
+        }
+      ],
+      "eicu_demo": [
+        {
+          "ids": ["Vasopressin (ml/hr)", "Vasopressin (units/min)", "Vasopressin ()"],
+          "table": "infusiondrug",
+          "sub_var": "drugname",
+          "callback": "eicu_body_weight",
+          "weight_var": "patientweight"
+        }
+      ],
+      "hirid": [
+        {
+          "ids": [112, 113],
+          "table": "pharma",
+          "sub_var": "pharmaid"
+        }
+      ],
+      "mimic": [
+        {
+          "ids": [30051, 222315],
+          "table": "inputevents_mv",
+          "sub_var": "itemid"
+        }
+      ],
+      "mimic_demo": [
+        {
+          "ids": [30051, 222315],
+          "table": "inputevents_mv",
+          "sub_var": "itemid"
+        }
+      ]
+    }
+  },
+  "adm": {
+    "target": "id_tbl",
+    "levels": ["med", "surg", "other"],
+    "class": "fct_cncpt",
+    "description": "patient admission type",
+    "category": "demographics",
+    "sources": {
+      "eicu": [
+        {
+          "table": "admissiondx",
+          "itm_vars": "admitdxpath",
+          "callback": "eicu_adx",
+          "class": "col_itm"
+        }
+      ],
+      "eicu_demo": [
+        {
+          "table": "admissiondx",
+          "itm_vars": "admitdxpath",
+          "callback": "eicu_adx",
+          "class": "col_itm"
+        }
+      ],
+      "mimic": [
+        {
+          "table": "services",
+          "itm_vars": "curr_service",
+          "callback": "apply_map(\n            c(MED   = 'med',   SURG  = 'surg', CMED = 'med',  CSURG  = 'surg',\n              VSURG = 'surg',  NSURG = 'surg', NB   = 'other', NMED  = 'med',\n              ORTHO = 'surg',  TRAUM = 'surg', OMED = 'med',   GU    = 'other',\n              NBB   = 'other', TSURG = 'surg', GYN  = 'other', PSURG = 'surg',\n              OBS   = 'other', ENT   = 'surg', DENT = 'surg',  PSYCH = 'other')\n          )",
+          "class": "col_itm"
+        }
+      ],
+      "mimic_demo": [
+        {
+          "table": "services",
+          "itm_vars": "curr_service",
+          "callback": "apply_map(\n            c(MED   = 'med',   SURG  = 'surg', CMED = 'med',  CSURG  = 'surg',\n              VSURG = 'surg',  NSURG = 'surg', NB   = 'other', NMED  = 'med',\n              ORTHO = 'surg',  TRAUM = 'surg', OMED = 'med',   GU    = 'other',\n              NBB   = 'other', TSURG = 'surg', GYN  = 'other', PSURG = 'surg',\n              OBS   = 'other', ENT   = 'surg', DENT = 'surg',  PSYCH = 'other')\n          )",
+          "class": "col_itm"
+        }
+      ]
+    }
+  },
+  "age": {
+    "unit": "years",
+    "min": 0,
+    "max": 100,
+    "target": "id_tbl",
+    "description": "patient age",
+    "category": "demographics",
+    "sources": {
+      "eicu": [
+        {
+          "table": "patient",
+          "itm_vars": "age",
+          "callback": "eicu_age",
+          "class": "col_itm"
+        }
+      ],
+      "eicu_demo": [
+        {
+          "table": "patient",
+          "itm_vars": "age",
+          "callback": "eicu_age",
+          "class": "col_itm"
+        }
+      ],
+      "hirid": [
+        {
+          "table": "general",
+          "itm_vars": "age",
+          "class": "col_itm"
+        }
+      ],
+      "mimic": [
+        {
+          "table": "patients",
+          "itm_vars": "dob",
+          "callback": "mimic_age",
+          "class": "col_itm"
+        }
+      ],
+      "mimic_demo": [
+        {
+          "table": "patients",
+          "itm_vars": "dob",
+          "callback": "mimic_age",
+          "class": "col_itm"
+        }
+      ]
+    }
+  },
+  "alb": {
+    "unit": "g/dL",
+    "min": 0,
+    "max": 6,
+    "description": "albumin",
+    "category": "chemistry",
+    "sources": {
+      "eicu": [
+        {
+          "ids": "albumin",
+          "table": "lab",
+          "sub_var": "labname"
+        }
+      ],
+      "eicu_demo": [
+        {
+          "ids": "albumin",
+          "table": "lab",
+          "sub_var": "labname"
+        }
+      ],
+      "hirid": [
+        {
+          "ids": 24000605,
+          "table": "observations",
+          "sub_var": "variableid",
+          "callback": "transform_fun(binary_op(`*`, 0.1))"
+        }
+      ],
+      "mimic": [
+        {
+          "ids": 50862,
+          "table": "labevents",
+          "sub_var": "itemid"
+        }
+      ],
+      "mimic_demo": [
+        {
+          "ids": 50862,
+          "table": "labevents",
+          "sub_var": "itemid"
+        }
+      ]
+    }
+  },
+  "alp": {
+    "unit": "IU/L",
+    "min": 0,
+    "description": "alkaline phosphatase",
+    "category": "chemistry",
+    "sources": {
+      "eicu": [
+        {
+          "ids": "alkaline phos.",
+          "table": "lab",
+          "sub_var": "labname"
+        }
+      ],
+      "eicu_demo": [
+        {
+          "ids": "alkaline phos.",
+          "table": "lab",
+          "sub_var": "labname"
+        }
+      ],
+      "hirid": [
+        {
+          "ids": 20002700,
+          "table": "observations",
+          "sub_var": "variableid"
+        }
+      ],
+      "mimic": [
+        {
+          "ids": 50863,
+          "table": "labevents",
+          "sub_var": "itemid"
+        }
+      ],
+      "mimic_demo": [
+        {
+          "ids": 50863,
+          "table": "labevents",
+          "sub_var": "itemid"
+        }
+      ]
+    }
+  },
+  "alt": {
+    "unit": "IU/L",
+    "min": 0,
+    "description": "alanine aminotransferase",
+    "category": "chemistry",
+    "sources": {
+      "eicu": [
+        {
+          "ids": "ALT (SGPT)",
+          "table": "lab",
+          "sub_var": "labname"
+        }
+      ],
+      "eicu_demo": [
+        {
+          "ids": "ALT (SGPT)",
+          "table": "lab",
+          "sub_var": "labname"
+        }
+      ],
+      "hirid": [
+        {
+          "ids": 20002600,
+          "table": "observations",
+          "sub_var": "variableid"
+        }
+      ],
+      "mimic": [
+        {
+          "ids": 50861,
+          "table": "labevents",
+          "sub_var": "itemid"
+        }
+      ],
+      "mimic_demo": [
+        {
+          "ids": 50861,
+          "table": "labevents",
+          "sub_var": "itemid"
+        }
+      ]
+    }
+  },
   "ast": {
     "unit": "IU/L",
     "min": 0,
     "description": "aspartate aminotransferase",
+    "category": "chemistry",
     "sources": {
       "eicu": [
         {
@@ -329,52 +387,54 @@
   },
   "avpu": {
     "concepts": "gcs",
+    "description": "AVPU scale",
+    "category": "neurological",
     "callback": "avpu",
     "class": "rec_cncpt"
   },
-  "bands": {
+  "basos": {
+    "unit": "%",
+    "min": 0,
+    "max": 50,
+    "description": "basophils",
+    "category": "hematology",
     "sources": {
       "eicu": [
         {
-          "ids": "-bands",
+          "ids": "-basos",
           "table": "lab",
           "sub_var": "labname"
         }
       ],
       "eicu_demo": [
         {
-          "ids": "-bands",
+          "ids": "-basos",
           "table": "lab",
           "sub_var": "labname"
         }
       ],
-      "hirid": [
-        {
-          "ids": 24000557,
-          "table": "observations",
-          "sub_var": "variableid"
-        }
-      ],
       "mimic": [
         {
-          "ids": 51144,
+          "ids": 51146,
           "table": "labevents",
           "sub_var": "itemid"
         }
       ],
       "mimic_demo": [
         {
-          "ids": 51144,
+          "ids": 51146,
           "table": "labevents",
           "sub_var": "itemid"
         }
       ]
     }
   },
-  "base_excess": {
+  "be": {
     "unit": "mEq/L",
     "min": -25,
     "max": 25,
+    "description": "base excess",
+    "category": "blood gas",
     "sources": {
       "eicu": [
         {
@@ -413,45 +473,12 @@
       ]
     }
   },
-  "basophils": {
-    "unit": "%",
-    "min": 0,
-    "max": 50,
-    "sources": {
-      "eicu": [
-        {
-          "ids": "-basos",
-          "table": "lab",
-          "sub_var": "labname"
-        }
-      ],
-      "eicu_demo": [
-        {
-          "ids": "-basos",
-          "table": "lab",
-          "sub_var": "labname"
-        }
-      ],
-      "mimic": [
-        {
-          "ids": 51146,
-          "table": "labevents",
-          "sub_var": "itemid"
-        }
-      ],
-      "mimic_demo": [
-        {
-          "ids": 51146,
-          "table": "labevents",
-          "sub_var": "itemid"
-        }
-      ]
-    }
-  },
-  "bicarbonate": {
+  "bicar": {
     "unit": "mEq/L",
     "min": 5,
     "max": 50,
+    "description": "bicarbonate",
+    "category": "chemistry",
     "sources": {
       "eicu": [
         {
@@ -490,53 +517,12 @@
       ]
     }
   },
-  "bilirubin_direct": {
-    "unit": "mg/dL",
-    "min": 0,
-    "max": 50,
-    "sources": {
-      "eicu": [
-        {
-          "ids": "direct bilirubin",
-          "table": "lab",
-          "sub_var": "labname"
-        }
-      ],
-      "eicu_demo": [
-        {
-          "ids": "direct bilirubin",
-          "table": "lab",
-          "sub_var": "labname"
-        }
-      ],
-      "hirid": [
-        {
-          "ids": 24000560,
-          "table": "observations",
-          "sub_var": "variableid",
-          "callback": "transform_fun(binary_op(`*`, 0.058467))"
-        }
-      ],
-      "mimic": [
-        {
-          "ids": 50883,
-          "table": "labevents",
-          "sub_var": "itemid"
-        }
-      ],
-      "mimic_demo": [
-        {
-          "ids": 50883,
-          "table": "labevents",
-          "sub_var": "itemid"
-        }
-      ]
-    }
-  },
-  "bilirubin_total": {
+  "bili": {
     "unit": "mg/dL",
     "min": 0,
     "max": 100,
+    "description": "total bilirubin",
+    "category": "chemistry",
     "sources": {
       "eicu": [
         {
@@ -576,10 +562,143 @@
       ]
     }
   },
-  "calcium": {
+  "bili_dir": {
+    "unit": "mg/dL",
+    "min": 0,
+    "max": 50,
+    "description": "bilirubin direct",
+    "category": "chemistry",
+    "sources": {
+      "eicu": [
+        {
+          "ids": "direct bilirubin",
+          "table": "lab",
+          "sub_var": "labname"
+        }
+      ],
+      "eicu_demo": [
+        {
+          "ids": "direct bilirubin",
+          "table": "lab",
+          "sub_var": "labname"
+        }
+      ],
+      "hirid": [
+        {
+          "ids": 24000560,
+          "table": "observations",
+          "sub_var": "variableid",
+          "callback": "transform_fun(binary_op(`*`, 0.058467))"
+        }
+      ],
+      "mimic": [
+        {
+          "ids": 50883,
+          "table": "labevents",
+          "sub_var": "itemid"
+        }
+      ],
+      "mimic_demo": [
+        {
+          "ids": 50883,
+          "table": "labevents",
+          "sub_var": "itemid"
+        }
+      ]
+    }
+  },
+  "bnd": {
+    "description": "band form neutrophils",
+    "category": "hematology",
+    "sources": {
+      "eicu": [
+        {
+          "ids": "-bands",
+          "table": "lab",
+          "sub_var": "labname"
+        }
+      ],
+      "eicu_demo": [
+        {
+          "ids": "-bands",
+          "table": "lab",
+          "sub_var": "labname"
+        }
+      ],
+      "hirid": [
+        {
+          "ids": 24000557,
+          "table": "observations",
+          "sub_var": "variableid"
+        }
+      ],
+      "mimic": [
+        {
+          "ids": 51144,
+          "table": "labevents",
+          "sub_var": "itemid"
+        }
+      ],
+      "mimic_demo": [
+        {
+          "ids": 51144,
+          "table": "labevents",
+          "sub_var": "itemid"
+        }
+      ]
+    }
+  },
+  "bun": {
+    "unit": "mg/dL",
+    "min": 0,
+    "max": 200,
+    "description": "blood urea nitrogen",
+    "category": "chemistry",
+    "sources": {
+      "eicu": [
+        {
+          "ids": "BUN",
+          "table": "lab",
+          "sub_var": "labname"
+        }
+      ],
+      "eicu_demo": [
+        {
+          "ids": "BUN",
+          "table": "lab",
+          "sub_var": "labname"
+        }
+      ],
+      "hirid": [
+        {
+          "ids": 20004100,
+          "table": "observations",
+          "sub_var": "variableid",
+          "callback": "transform_fun(binary_op(`*`, 2.8))"
+        }
+      ],
+      "mimic": [
+        {
+          "ids": 51006,
+          "table": "labevents",
+          "sub_var": "itemid"
+        }
+      ],
+      "mimic_demo": [
+        {
+          "ids": 51006,
+          "table": "labevents",
+          "sub_var": "itemid"
+        }
+      ]
+    }
+  },
+  "ca": {
     "unit": "mg/dL",
     "min": 4,
     "max": 20,
+    "description": "calcium",
+    "category": "chemistry",
     "sources": {
       "eicu": [
         {
@@ -621,10 +740,12 @@
       ]
     }
   },
-  "calcium_ionized": {
+  "cai": {
     "unit": "mmol/L",
     "min": 0.5,
     "max": 2,
+    "description": "calcium ionized",
+    "category": "blood gas",
     "sources": {
       "eicu": [
         {
@@ -663,113 +784,11 @@
       ]
     }
   },
-  "calculated_total_co2": {
-    "unit": "mEq/L",
-    "min": 5,
-    "max": 60,
-    "sources": {
-      "eicu": [
-        {
-          "ids": "Total CO2",
-          "table": "lab",
-          "sub_var": "labname",
-          "callback": "convert_unit('lpm', set_na, NA)"
-        }
-      ],
-      "eicu_demo": [
-        {
-          "ids": "Total CO2",
-          "table": "lab",
-          "sub_var": "labname",
-          "callback": "convert_unit('lpm', set_na, NA)"
-        }
-      ],
-      "mimic": [
-        {
-          "ids": 50804,
-          "table": "labevents",
-          "sub_var": "itemid"
-        }
-      ],
-      "mimic_demo": [
-        {
-          "ids": 50804,
-          "table": "labevents",
-          "sub_var": "itemid"
-        }
-      ]
-    }
-  },
-  "carboxyhemoglobin": {
-    "sources": {
-      "eicu": [
-        {
-          "ids": "Carboxyhemoglobin",
-          "table": "lab",
-          "sub_var": "labname"
-        }
-      ],
-      "eicu_demo": [
-        {
-          "ids": "Carboxyhemoglobin",
-          "table": "lab",
-          "sub_var": "labname"
-        }
-      ],
-      "hirid": [
-        {
-          "ids": 24000526,
-          "table": "observations",
-          "sub_var": "variableid"
-        }
-      ]
-    }
-  },
-  "chloride": {
-    "unit": "mEq/L",
-    "min": 80,
-    "max": 130,
-    "sources": {
-      "eicu": [
-        {
-          "ids": "chloride",
-          "table": "lab",
-          "sub_var": "labname"
-        }
-      ],
-      "eicu_demo": [
-        {
-          "ids": "chloride",
-          "table": "lab",
-          "sub_var": "labname"
-        }
-      ],
-      "hirid": [
-        {
-          "ids": [24000439, 24000521],
-          "table": "observations",
-          "sub_var": "variableid"
-        }
-      ],
-      "mimic": [
-        {
-          "ids": 50902,
-          "table": "labevents",
-          "sub_var": "itemid"
-        }
-      ],
-      "mimic_demo": [
-        {
-          "ids": 50902,
-          "table": "labevents",
-          "sub_var": "itemid"
-        }
-      ]
-    }
-  },
-  "creatine_kinase": {
+  "ck": {
     "unit": "IU/L",
     "min": 0,
+    "description": "creatine kinase",
+    "category": "chemistry",
     "sources": {
       "eicu": [
         {
@@ -808,9 +827,11 @@
       ]
     }
   },
-  "creatine_kinase_mb": {
+  "ckmb": {
     "unit": "ng/mL",
     "min": 0,
+    "description": "creatine kinase MB",
+    "category": "chemistry",
     "sources": {
       "eicu": [
         {
@@ -849,10 +870,56 @@
       ]
     }
   },
-  "creatinine": {
+  "cl": {
+    "unit": "mEq/L",
+    "min": 80,
+    "max": 130,
+    "description": "chloride",
+    "category": "chemistry",
+    "sources": {
+      "eicu": [
+        {
+          "ids": "chloride",
+          "table": "lab",
+          "sub_var": "labname"
+        }
+      ],
+      "eicu_demo": [
+        {
+          "ids": "chloride",
+          "table": "lab",
+          "sub_var": "labname"
+        }
+      ],
+      "hirid": [
+        {
+          "ids": [24000439, 24000521],
+          "table": "observations",
+          "sub_var": "variableid"
+        }
+      ],
+      "mimic": [
+        {
+          "ids": 50902,
+          "table": "labevents",
+          "sub_var": "itemid"
+        }
+      ],
+      "mimic_demo": [
+        {
+          "ids": 50902,
+          "table": "labevents",
+          "sub_var": "itemid"
+        }
+      ]
+    }
+  },
+  "crea": {
     "unit": "mg/dL",
     "min": 0,
     "max": 15,
+    "description": "creatinine",
+    "category": "chemistry",
     "sources": {
       "eicu": [
         {
@@ -896,6 +963,7 @@
     "unit": "mg/L",
     "min": 0,
     "description": "C-reactive protein",
+    "category": "chemistry",
     "sources": {
       "eicu": [
         {
@@ -943,6 +1011,7 @@
     "min": 0,
     "max": 200,
     "description": "diastolic blood pressure",
+    "category": "routine vital signs",
     "sources": {
       "eicu": [
         {
@@ -983,6 +1052,8 @@
   },
   "death": {
     "target": "id_tbl",
+    "description": "patient mortality",
+    "category": "outcome",
     "sources": {
       "eicu": [
         {
@@ -1027,10 +1098,12 @@
       ]
     }
   },
-  "dobutamine": {
+  "dobu": {
     "unit": "mcg/kg/min",
     "min": 0,
     "max": 50,
+    "description": "dobutamine",
+    "category": "medications",
     "sources": {
       "eicu": [
         {
@@ -1086,10 +1159,12 @@
       ]
     }
   },
-  "dopamine": {
+  "dopa": {
     "unit": "mcg/kg/min",
     "min": 0,
     "max": 50,
+    "description": "dopamine",
+    "category": "medications",
     "sources": {
       "eicu": [
         {
@@ -1123,10 +1198,57 @@
       ]
     }
   },
-  "eosinophils": {
+  "egcs": {
+    "min": 1,
+    "max": 4,
+    "description": "GCS eye",
+    "category": "neurological",
+    "sources": {
+      "eicu": [
+        {
+          "ids": "Eyes",
+          "table": "nursecharting",
+          "sub_var": "nursingchartcelltypevalname",
+          "callback": "transform_fun(force_type('numeric'))"
+        }
+      ],
+      "eicu_demo": [
+        {
+          "ids": "Eyes",
+          "table": "nursecharting",
+          "sub_var": "nursingchartcelltypevalname",
+          "callback": "transform_fun(force_type('numeric'))"
+        }
+      ],
+      "hirid": [
+        {
+          "ids": 10000300,
+          "table": "observations",
+          "sub_var": "variableid"
+        }
+      ],
+      "mimic": [
+        {
+          "ids": [184, 220739],
+          "table": "chartevents",
+          "sub_var": "itemid"
+        }
+      ],
+      "mimic_demo": [
+        {
+          "ids": [184, 220739],
+          "table": "chartevents",
+          "sub_var": "itemid"
+        }
+      ]
+    }
+  },
+  "eos": {
     "unit": "%",
     "min": 0,
     "max": 50,
+    "description": "eosinophils",
+    "category": "hematology",
     "sources": {
       "eicu": [
         {
@@ -1158,10 +1280,12 @@
       ]
     }
   },
-  "epinephrine": {
+  "epi": {
     "unit": "mcg/kg/min",
     "min": 0,
     "max": 1.5,
+    "description": "epinephrine",
+    "category": "medications",
     "sources": {
       "eicu": [
         {
@@ -1217,10 +1341,42 @@
       ]
     }
   },
-  "et_co2": {
+  "esr": {
+    "unit": "mm/hr",
+    "min": 0,
+    "max": 200,
+    "description": "erythrocyte sedimentation rate",
+    "category": "hematology",
+    "sources": {
+      "hirid": [
+        {
+          "ids": 24000668,
+          "table": "observations",
+          "sub_var": "variableid"
+        }
+      ],
+      "mimic": [
+        {
+          "ids": 51288,
+          "table": "labevents",
+          "sub_var": "itemid"
+        }
+      ],
+      "mimic_demo": [
+        {
+          "ids": 51288,
+          "table": "labevents",
+          "sub_var": "itemid"
+        }
+      ]
+    }
+  },
+  "etco2": {
     "unit": "mmHg",
     "min": 10,
     "max": 60,
+    "description": "endtidal CO2",
+    "category": "routine vital signs",
     "sources": {
       "hirid": [
         {
@@ -1245,11 +1401,57 @@
       ]
     }
   },
-  "fi_o2": {
+  "fgn": {
+    "unit": "mg/dL",
+    "min": 0,
+    "max": 15,
+    "description": "fibrinogen",
+    "category": "hematology",
+    "sources": {
+      "eicu": [
+        {
+          "ids": "fibrinogen",
+          "table": "lab",
+          "sub_var": "labname"
+        }
+      ],
+      "eicu_demo": [
+        {
+          "ids": "fibrinogen",
+          "table": "lab",
+          "sub_var": "labname"
+        }
+      ],
+      "hirid": [
+        {
+          "ids": 24000536,
+          "table": "observations",
+          "sub_var": "variableid",
+          "callback": "transform_fun(binary_op(`*`, 100))"
+        }
+      ],
+      "mimic": [
+        {
+          "ids": 51214,
+          "table": "labevents",
+          "sub_var": "itemid"
+        }
+      ],
+      "mimic_demo": [
+        {
+          "ids": 51214,
+          "table": "labevents",
+          "sub_var": "itemid"
+        }
+      ]
+    }
+  },
+  "fio2": {
     "unit": "%",
     "min": 21,
     "max": 100,
     "description": "fraction of inspired oxygen",
+    "category": "blood gas",
     "sources": {
       "eicu": [
         {
@@ -1302,262 +1504,20 @@
       ]
     }
   },
-  "fibrinogen": {
-    "unit": "mg/dL",
-    "min": 0,
-    "max": 15,
-    "sources": {
-      "eicu": [
-        {
-          "ids": "fibrinogen",
-          "table": "lab",
-          "sub_var": "labname"
-        }
-      ],
-      "eicu_demo": [
-        {
-          "ids": "fibrinogen",
-          "table": "lab",
-          "sub_var": "labname"
-        }
-      ],
-      "hirid": [
-        {
-          "ids": 24000536,
-          "table": "observations",
-          "sub_var": "variableid",
-          "callback": "transform_fun(binary_op(`*`, 100))"
-        }
-      ],
-      "mimic": [
-        {
-          "ids": 51214,
-          "table": "labevents",
-          "sub_var": "itemid"
-        }
-      ],
-      "mimic_demo": [
-        {
-          "ids": 51214,
-          "table": "labevents",
-          "sub_var": "itemid"
-        }
-      ]
-    }
-  },
-  "fluid_sampling": {
-    "sources": {
-      "eicu": [
-        {
-          "table": "microlab",
-          "itm_vars": "organism",
-          "callback": "transform_fun(comp_na(`!=`, 'no growth'))",
-          "class": "col_itm"
-        }
-      ],
-      "eicu_demo": [
-        {
-          "table": "microlab",
-          "itm_vars": "organism",
-          "callback": "transform_fun(comp_na(`!=`, 'no growth'))",
-          "class": "col_itm"
-        }
-      ],
-      "mimic": [
-        {
-          "table": "microbiologyevents",
-          "itm_vars": "org_itemid",
-          "callback": "mimic_sampling",
-          "aux_time": "charttime",
-          "class": "col_itm"
-        }
-      ],
-      "mimic_demo": [
-        {
-          "table": "microbiologyevents",
-          "itm_vars": "org_itemid",
-          "callback": "mimic_sampling",
-          "aux_time": "charttime",
-          "class": "col_itm"
-        }
-      ]
-    }
-  },
   "gcs": {
-    "concepts": ["gcs_eye", "gcs_motor", "gcs_verbal", "gcs_total", "tracheostomy", "rass_scale"],
+    "concepts": ["egcs", "mgcs", "vgcs", "tgcs", "trach", "rass"],
+    "description": "Glasgow coma scale (non-sedated)",
+    "category": "neurological",
     "aggregate": ["min", "min", "min", "min", null, "min"],
     "callback": "sofa_gcs",
     "class": "rec_cncpt"
   },
-  "gcs_eye": {
-    "min": 1,
-    "max": 4,
-    "sources": {
-      "eicu": [
-        {
-          "ids": "Eyes",
-          "table": "nursecharting",
-          "sub_var": "nursingchartcelltypevalname",
-          "callback": "transform_fun(force_type('numeric'))"
-        }
-      ],
-      "eicu_demo": [
-        {
-          "ids": "Eyes",
-          "table": "nursecharting",
-          "sub_var": "nursingchartcelltypevalname",
-          "callback": "transform_fun(force_type('numeric'))"
-        }
-      ],
-      "hirid": [
-        {
-          "ids": 10000300,
-          "table": "observations",
-          "sub_var": "variableid"
-        }
-      ],
-      "mimic": [
-        {
-          "ids": [184, 220739],
-          "table": "chartevents",
-          "sub_var": "itemid"
-        }
-      ],
-      "mimic_demo": [
-        {
-          "ids": [184, 220739],
-          "table": "chartevents",
-          "sub_var": "itemid"
-        }
-      ]
-    }
-  },
-  "gcs_motor": {
-    "min": 1,
-    "max": 6,
-    "sources": {
-      "eicu": [
-        {
-          "ids": "Motor",
-          "table": "nursecharting",
-          "sub_var": "nursingchartcelltypevalname",
-          "callback": "transform_fun(force_type('numeric'))"
-        }
-      ],
-      "eicu_demo": [
-        {
-          "ids": "Motor",
-          "table": "nursecharting",
-          "sub_var": "nursingchartcelltypevalname",
-          "callback": "transform_fun(force_type('numeric'))"
-        }
-      ],
-      "hirid": [
-        {
-          "ids": 10000200,
-          "table": "observations",
-          "sub_var": "variableid"
-        }
-      ],
-      "mimic": [
-        {
-          "ids": [454, 223901],
-          "table": "chartevents",
-          "sub_var": "itemid"
-        }
-      ],
-      "mimic_demo": [
-        {
-          "ids": [454, 223901],
-          "table": "chartevents",
-          "sub_var": "itemid"
-        }
-      ]
-    }
-  },
-  "gcs_total": {
-    "min": 3,
-    "max": 15,
-    "sources": {
-      "eicu": [
-        {
-          "ids": "GCS Total",
-          "table": "nursecharting",
-          "sub_var": "nursingchartcelltypevalname",
-          "callback": "transform_fun(force_type('numeric'))"
-        }
-      ],
-      "eicu_demo": [
-        {
-          "ids": "GCS Total",
-          "table": "nursecharting",
-          "sub_var": "nursingchartcelltypevalname",
-          "callback": "transform_fun(force_type('numeric'))"
-        }
-      ],
-      "mimic": [
-        {
-          "ids": 198,
-          "table": "chartevents",
-          "sub_var": "itemid"
-        }
-      ],
-      "mimic_demo": [
-        {
-          "ids": 198,
-          "table": "chartevents",
-          "sub_var": "itemid"
-        }
-      ]
-    }
-  },
-  "gcs_verbal": {
-    "min": 1,
-    "max": 5,
-    "sources": {
-      "eicu": [
-        {
-          "ids": "Verbal",
-          "table": "nursecharting",
-          "sub_var": "nursingchartcelltypevalname",
-          "callback": "transform_fun(force_type('numeric'))"
-        }
-      ],
-      "eicu_demo": [
-        {
-          "ids": "Verbal",
-          "table": "nursecharting",
-          "sub_var": "nursingchartcelltypevalname",
-          "callback": "transform_fun(force_type('numeric'))"
-        }
-      ],
-      "hirid": [
-        {
-          "ids": 10000100,
-          "table": "observations",
-          "sub_var": "variableid"
-        }
-      ],
-      "mimic": [
-        {
-          "ids": [723, 223900],
-          "table": "chartevents",
-          "sub_var": "itemid"
-        }
-      ],
-      "mimic_demo": [
-        {
-          "ids": [723, 223900],
-          "table": "chartevents",
-          "sub_var": "itemid"
-        }
-      ]
-    }
-  },
-  "glucose": {
+  "glu": {
     "unit": "mg/dL",
     "min": 0,
     "max": 1000,
+    "description": "glucose",
+    "category": "chemistry",
     "sources": {
       "eicu": [
         {
@@ -1607,10 +1567,39 @@
       ]
     }
   },
-  "hematocrit": {
+  "hbco": {
+    "description": "carboxyhemoglobin",
+    "category": "blood gas",
+    "sources": {
+      "eicu": [
+        {
+          "ids": "Carboxyhemoglobin",
+          "table": "lab",
+          "sub_var": "labname"
+        }
+      ],
+      "eicu_demo": [
+        {
+          "ids": "Carboxyhemoglobin",
+          "table": "lab",
+          "sub_var": "labname"
+        }
+      ],
+      "hirid": [
+        {
+          "ids": 24000526,
+          "table": "observations",
+          "sub_var": "variableid"
+        }
+      ]
+    }
+  },
+  "hct": {
     "unit": "%",
     "min": 15,
     "max": 60,
+    "description": "hematocrit",
+    "category": "hematology",
     "sources": {
       "eicu": [
         {
@@ -1642,10 +1631,12 @@
       ]
     }
   },
-  "hemoglobin": {
+  "hgb": {
     "unit": "g/dL",
     "min": 4,
     "max": 18,
+    "description": "hemoglobin",
+    "category": "hematology",
     "sources": {
       "eicu": [
         {
@@ -1690,6 +1681,7 @@
     "min": 0,
     "max": 300,
     "description": "heart rate",
+    "category": "routine vital signs",
     "sources": {
       "eicu": [
         {
@@ -1729,6 +1721,8 @@
     }
   },
   "inr_pt": {
+    "description": "prothrombin time/international normalized ratio",
+    "category": "hematology",
     "sources": {
       "eicu": [
         {
@@ -1767,7 +1761,11 @@
       ]
     }
   },
-  "insulin": {
+  "ins": {
+    "unit": "units/hr",
+    "min": 0,
+    "description": "insulin",
+    "category": "medications",
     "sources": {
       "eicu": [
         {
@@ -1805,7 +1803,7 @@
           "ids": [223258, 223260],
           "table": "inputevents_mv",
           "sub_var": "itemid",
-          "amount_var": "amount",
+          "itm_vars": "amount",
           "end_var": "endtime",
           "callback": "distribute_amount"
         }
@@ -1820,17 +1818,63 @@
           "ids": [223258, 223260],
           "table": "inputevents_mv",
           "sub_var": "itemid",
-          "amount_var": "amount",
+          "itm_vars": "amount",
           "end_var": "endtime",
           "callback": "distribute_amount"
         }
       ]
     }
   },
-  "lactate": {
+  "k": {
+    "unit": "mEq/L",
+    "min": 0,
+    "max": 10,
+    "description": "potassium",
+    "category": "chemistry",
+    "sources": {
+      "eicu": [
+        {
+          "ids": "potassium",
+          "table": "lab",
+          "sub_var": "labname"
+        }
+      ],
+      "eicu_demo": [
+        {
+          "ids": "potassium",
+          "table": "lab",
+          "sub_var": "labname"
+        }
+      ],
+      "hirid": [
+        {
+          "ids": [20000500, 24000520, 24000833, 24000867],
+          "table": "observations",
+          "sub_var": "variableid"
+        }
+      ],
+      "mimic": [
+        {
+          "ids": 50971,
+          "table": "labevents",
+          "sub_var": "itemid"
+        }
+      ],
+      "mimic_demo": [
+        {
+          "ids": 50971,
+          "table": "labevents",
+          "sub_var": "itemid"
+        }
+      ]
+    }
+  },
+  "lact": {
     "unit": "mmol/L",
     "min": 0,
     "max": 50,
+    "description": "lactate",
+    "category": "blood gas",
     "sources": {
       "eicu": [
         {
@@ -1873,6 +1917,8 @@
     "unit": "days",
     "min": 0,
     "target": "id_tbl",
+    "description": "hospital length of stay",
+    "category": "outcome",
     "sources": {
       "eicu": [
         {
@@ -1908,6 +1954,8 @@
     "unit": "days",
     "min": 0,
     "target": "id_tbl",
+    "description": "ICU length of stay",
+    "category": "outcome",
     "sources": {
       "eicu": [
         {
@@ -1946,10 +1994,12 @@
       ]
     }
   },
-  "lymphocytes": {
+  "lymph": {
     "unit": "%",
     "min": 0,
     "max": 100,
+    "description": "lymphocytes",
+    "category": "hematology",
     "sources": {
       "eicu": [
         {
@@ -1988,56 +2038,12 @@
       ]
     }
   },
-  "magnesium": {
-    "unit": "mg/dL",
-    "min": 0.5,
-    "max": 5,
-    "sources": {
-      "eicu": [
-        {
-          "ids": "magnesium",
-          "table": "lab",
-          "sub_var": "labname",
-          "callback": "convert_unit('meq/l', binary_op(`/`, 1.215), 'mEq/L')"
-        }
-      ],
-      "eicu_demo": [
-        {
-          "ids": "magnesium",
-          "table": "lab",
-          "sub_var": "labname",
-          "callback": "convert_unit('meq/l', binary_op(`/`, 1.215), 'mEq/L')"
-        }
-      ],
-      "hirid": [
-        {
-          "ids": 24000230,
-          "table": "observations",
-          "sub_var": "variableid",
-          "callback": "transform_fun(binary_op(`*`, 2.431))"
-        }
-      ],
-      "mimic": [
-        {
-          "ids": 50960,
-          "table": "labevents",
-          "sub_var": "itemid"
-        }
-      ],
-      "mimic_demo": [
-        {
-          "ids": 50960,
-          "table": "labevents",
-          "sub_var": "itemid"
-        }
-      ]
-    }
-  },
   "map": {
     "unit": "mmHg",
     "min": 0,
     "max": 250,
     "description": "mean arterial pressure",
+    "category": "routine vital signs",
     "sources": {
       "eicu": [
         {
@@ -2089,6 +2095,8 @@
   "mch": {
     "unit": "pg",
     "min": 0,
+    "description": "mean cell hemoglobin",
+    "category": "hematology",
     "sources": {
       "eicu": [
         {
@@ -2131,6 +2139,8 @@
     "unit": "%",
     "min": 20,
     "max": 50,
+    "description": "mean corpuscular hemoglobin concentration",
+    "category": "hematology",
     "sources": {
       "eicu": [
         {
@@ -2173,6 +2183,8 @@
     "unit": "fL",
     "min": 50,
     "max": 150,
+    "description": "mean corpuscular volume",
+    "category": "hematology",
     "sources": {
       "eicu": [
         {
@@ -2211,10 +2223,12 @@
       ]
     }
   },
-  "methemoglobin": {
+  "methb": {
     "unit": "%",
     "min": 0,
     "max": 100,
+    "description": "methemoglobin",
+    "category": "blood gas",
     "sources": {
       "eicu": [
         {
@@ -2253,15 +2267,155 @@
       ]
     }
   },
-  "mews_score": {
-    "concepts": ["sbp", "hr", "resp", "temperature", "avpu"],
+  "mews": {
+    "concepts": ["sbp", "hr", "resp", "temp", "avpu"],
+    "description": "modified early warning score",
+    "category": "outcome",
     "callback": "mews_score",
     "class": "rec_cncpt"
   },
-  "neutrophils": {
+  "mg": {
+    "unit": "mg/dL",
+    "min": 0.5,
+    "max": 5,
+    "description": "magnesium",
+    "category": "chemistry",
+    "sources": {
+      "eicu": [
+        {
+          "ids": "magnesium",
+          "table": "lab",
+          "sub_var": "labname",
+          "callback": "convert_unit('meq/l', binary_op(`/`, 1.215), 'mEq/L')"
+        }
+      ],
+      "eicu_demo": [
+        {
+          "ids": "magnesium",
+          "table": "lab",
+          "sub_var": "labname",
+          "callback": "convert_unit('meq/l', binary_op(`/`, 1.215), 'mEq/L')"
+        }
+      ],
+      "hirid": [
+        {
+          "ids": 24000230,
+          "table": "observations",
+          "sub_var": "variableid",
+          "callback": "transform_fun(binary_op(`*`, 2.431))"
+        }
+      ],
+      "mimic": [
+        {
+          "ids": 50960,
+          "table": "labevents",
+          "sub_var": "itemid"
+        }
+      ],
+      "mimic_demo": [
+        {
+          "ids": 50960,
+          "table": "labevents",
+          "sub_var": "itemid"
+        }
+      ]
+    }
+  },
+  "mgcs": {
+    "min": 1,
+    "max": 6,
+    "description": "GCS motor",
+    "category": "neurological",
+    "sources": {
+      "eicu": [
+        {
+          "ids": "Motor",
+          "table": "nursecharting",
+          "sub_var": "nursingchartcelltypevalname",
+          "callback": "transform_fun(force_type('numeric'))"
+        }
+      ],
+      "eicu_demo": [
+        {
+          "ids": "Motor",
+          "table": "nursecharting",
+          "sub_var": "nursingchartcelltypevalname",
+          "callback": "transform_fun(force_type('numeric'))"
+        }
+      ],
+      "hirid": [
+        {
+          "ids": 10000200,
+          "table": "observations",
+          "sub_var": "variableid"
+        }
+      ],
+      "mimic": [
+        {
+          "ids": [454, 223901],
+          "table": "chartevents",
+          "sub_var": "itemid"
+        }
+      ],
+      "mimic_demo": [
+        {
+          "ids": [454, 223901],
+          "table": "chartevents",
+          "sub_var": "itemid"
+        }
+      ]
+    }
+  },
+  "na": {
+    "unit": "mEq/L",
+    "min": 110,
+    "max": 165,
+    "description": "sodium",
+    "category": "chemistry",
+    "sources": {
+      "eicu": [
+        {
+          "ids": "sodium",
+          "table": "lab",
+          "sub_var": "labname"
+        }
+      ],
+      "eicu_demo": [
+        {
+          "ids": "sodium",
+          "table": "lab",
+          "sub_var": "labname"
+        }
+      ],
+      "hirid": [
+        {
+          "ids": [20000400, 24000519, 24000658, 24000835, 24000866],
+          "table": "observations",
+          "sub_var": "variableid"
+        }
+      ],
+      "mimic": [
+        {
+          "ids": 50983,
+          "table": "labevents",
+          "sub_var": "itemid"
+        }
+      ],
+      "mimic_demo": [
+        {
+          "ids": 50983,
+          "table": "labevents",
+          "sub_var": "itemid"
+        }
+      ]
+    }
+  },
+  "neut": {
     "unit": "%",
     "min": 0,
     "max": 100,
+    "description": "neutrophils",
+    "category": "hematology",
     "sources": {
       "eicu": [
         {
@@ -2300,15 +2454,19 @@
       ]
     }
   },
-  "news_score": {
-    "concepts": ["resp", "o2_sat", "supp_o2", "temperature", "sbp", "hr", "avpu"],
+  "news": {
+    "concepts": ["resp", "o2sat", "supp_o2", "temp", "sbp", "hr", "avpu"],
+    "description": "national early warning score",
+    "category": "outcome",
     "callback": "news_score",
     "class": "rec_cncpt"
   },
-  "norepinephrine": {
+  "norepi": {
     "unit": "mcg/kg/min",
     "min": 0,
     "max": 3,
+    "description": "norepinephrine",
+    "category": "medications",
     "sources": {
       "eicu": [
         {
@@ -2364,11 +2522,12 @@
       ]
     }
   },
-  "o2_sat": {
+  "o2sat": {
     "unit": ["%", "% Sat."],
     "min": 70,
     "max": 100,
     "description": "oxygen saturation",
+    "category": "respiratory",
     "sources": {
       "eicu": [
         {
@@ -2419,10 +2578,20 @@
       ]
     }
   },
-  "pa_co2": {
+  "pafi": {
+    "concepts": ["po2", "fio2"],
+    "description": "Horowitz index",
+    "category": "respiratory",
+    "aggregate": ["min", "max"],
+    "callback": "sofa_pafi",
+    "class": "rec_cncpt"
+  },
+  "pco2": {
     "unit": "mmHg",
     "min": 10,
     "max": 150,
+    "description": "CO2 partial pressure",
+    "category": "blood gas",
     "sources": {
       "eicu": [
         {
@@ -2461,57 +2630,11 @@
       ]
     }
   },
-  "pa_fi": {
-    "concepts": ["pa_o2", "fi_o2"],
-    "aggregate": ["min", "max"],
-    "callback": "sofa_pafi",
-    "class": "rec_cncpt"
-  },
-  "pa_o2": {
-    "unit": "mmHg",
-    "min": 40,
-    "max": 600,
-    "sources": {
-      "eicu": [
-        {
-          "ids": "paO2",
-          "table": "lab",
-          "sub_var": "labname"
-        }
-      ],
-      "eicu_demo": [
-        {
-          "ids": "paO2",
-          "table": "lab",
-          "sub_var": "labname"
-        }
-      ],
-      "hirid": [
-        {
-          "ids": 20000200,
-          "table": "observations",
-          "sub_var": "variableid"
-        }
-      ],
-      "mimic": [
-        {
-          "ids": 50821,
-          "table": "labevents",
-          "sub_var": "itemid"
-        }
-      ],
-      "mimic_demo": [
-        {
-          "ids": 50821,
-          "table": "labevents",
-          "sub_var": "itemid"
-        }
-      ]
-    }
-  },
   "ph": {
     "min": 6.8,
     "max": 8,
+    "description": "pH of blood",
+    "category": "blood gas",
     "sources": {
       "eicu": [
         {
@@ -2550,10 +2673,12 @@
       ]
     }
   },
-  "phosphate": {
+  "phos": {
     "unit": "mg/dL",
     "min": 0,
     "max": 40,
+    "description": "phosphate",
+    "category": "chemistry",
     "sources": {
       "eicu": [
         {
@@ -2593,10 +2718,12 @@
       ]
     }
   },
-  "platelet_count": {
+  "plt": {
     "unit": "K/uL",
     "min": 5,
     "max": 1200,
+    "description": "platelet count",
+    "category": "hematology",
     "sources": {
       "eicu": [
         {
@@ -2635,51 +2762,55 @@
       ]
     }
   },
-  "potassium": {
-    "unit": "mEq/L",
-    "min": 0,
-    "max": 10,
+  "po2": {
+    "unit": "mmHg",
+    "min": 40,
+    "max": 600,
+    "description": "O2 partial pressure",
+    "category": "blood gas",
     "sources": {
       "eicu": [
         {
-          "ids": "potassium",
+          "ids": "paO2",
           "table": "lab",
           "sub_var": "labname"
         }
       ],
       "eicu_demo": [
         {
-          "ids": "potassium",
+          "ids": "paO2",
           "table": "lab",
           "sub_var": "labname"
         }
       ],
       "hirid": [
         {
-          "ids": [20000500, 24000520, 24000833, 24000867],
+          "ids": 20000200,
           "table": "observations",
           "sub_var": "variableid"
         }
       ],
       "mimic": [
         {
-          "ids": 50971,
+          "ids": 50821,
           "table": "labevents",
           "sub_var": "itemid"
         }
       ],
       "mimic_demo": [
         {
-          "ids": 50971,
+          "ids": 50821,
           "table": "labevents",
           "sub_var": "itemid"
         }
       ]
     }
   },
-  "prothrombine_time": {
+  "pt": {
     "unit": "sec",
     "min": 0,
+    "description": "prothrombine time",
+    "category": "hematology",
     "sources": {
       "eicu": [
         {
@@ -2714,6 +2845,8 @@
   "ptt": {
     "unit": "sec",
     "min": 0,
+    "description": "partial thromboplastin time",
+    "category": "hematology",
     "sources": {
       "eicu": [
         {
@@ -2752,7 +2885,9 @@
       ]
     }
   },
-  "rass_scale": {
+  "rass": {
+    "description": "Richmond agitation sedation scale",
+    "category": "neurological",
     "sources": {
       "eicu": [
         {
@@ -2779,70 +2914,74 @@
       ]
     }
   },
-  "rdw": {
-    "unit": "%",
+  "rbc": {
+    "unit": "m/uL",
     "min": 0,
-    "max": 100,
+    "max": 20,
+    "description": "red blood cell count",
+    "category": "hematology",
     "sources": {
       "eicu": [
         {
-          "ids": "RDW",
+          "ids": "RBC",
           "table": "lab",
           "sub_var": "labname"
         }
       ],
       "eicu_demo": [
         {
-          "ids": "RDW",
+          "ids": "RBC",
           "table": "lab",
           "sub_var": "labname"
         }
       ],
       "mimic": [
         {
-          "ids": 51277,
+          "ids": 51279,
           "table": "labevents",
           "sub_var": "itemid"
         }
       ],
       "mimic_demo": [
         {
-          "ids": 51277,
+          "ids": 51279,
           "table": "labevents",
           "sub_var": "itemid"
         }
       ]
     }
   },
-  "red_blood_cells": {
-    "unit": "m/uL",
+  "rdw": {
+    "unit": "%",
     "min": 0,
-    "max": 20,
+    "max": 100,
+    "description": "erythrocyte distribution width",
+    "category": "hematology",
     "sources": {
       "eicu": [
         {
-          "ids": "RBC",
+          "ids": "RDW",
           "table": "lab",
           "sub_var": "labname"
         }
       ],
       "eicu_demo": [
         {
-          "ids": "RBC",
+          "ids": "RDW",
           "table": "lab",
           "sub_var": "labname"
         }
       ],
       "mimic": [
         {
-          "ids": 51279,
+          "ids": 51277,
           "table": "labevents",
           "sub_var": "itemid"
         }
       ],
       "mimic_demo": [
         {
-          "ids": 51279,
+          "ids": 51277,
           "table": "labevents",
           "sub_var": "itemid"
         }
@@ -2854,6 +2993,7 @@
     "min": 0,
     "max": 120,
     "description": "respiratory rate",
+    "category": "respiratory",
     "sources": {
       "eicu": [
         {
@@ -2892,11 +3032,51 @@
       ]
     }
   },
+  "samp": {
+    "description": "fluid sampling",
+    "sources": {
+      "eicu": [
+        {
+          "table": "microlab",
+          "itm_vars": "organism",
+          "callback": "transform_fun(comp_na(`!=`, 'no growth'))",
+          "class": "col_itm"
+        }
+      ],
+      "eicu_demo": [
+        {
+          "table": "microlab",
+          "itm_vars": "organism",
+          "callback": "transform_fun(comp_na(`!=`, 'no growth'))",
+          "class": "col_itm"
+        }
+      ],
+      "mimic": [
+        {
+          "table": "microbiologyevents",
+          "itm_vars": "org_itemid",
+          "callback": "mimic_sampling",
+          "aux_time": "charttime",
+          "class": "col_itm"
+        }
+      ],
+      "mimic_demo": [
+        {
+          "table": "microbiologyevents",
+          "itm_vars": "org_itemid",
+          "callback": "mimic_sampling",
+          "aux_time": "charttime",
+          "class": "col_itm"
+        }
+      ]
+    }
+  },
   "sbp": {
     "unit": "mmHg",
     "min": 0,
     "max": 300,
     "description": "systolic blood pressure",
+    "category": "routine vital signs",
     "sources": {
       "eicu": [
         {
@@ -2935,36 +3115,10 @@
       ]
     }
   },
-  "sedimentation_rate": {
-    "unit": "mm/hr",
-    "min": 0,
-    "max": 200,
-    "sources": {
-      "hirid": [
-        {
-          "ids": 24000668,
-          "table": "observations",
-          "sub_var": "variableid"
-        }
-      ],
-      "mimic": [
-        {
-          "ids": 51288,
-          "table": "labevents",
-          "sub_var": "itemid"
-        }
-      ],
-      "mimic_demo": [
-        {
-          "ids": 51288,
-          "table": "labevents",
-          "sub_var": "itemid"
-        }
-      ]
-    }
-  },
-  "sepsis_3": {
-    "concepts": ["sofa_score", "susp_inf"],
+  "sep3": {
+    "concepts": ["sofa", "susp_inf"],
+    "description": "sepsis-3 criterion",
+    "category": "outcome",
     "callback": "sepsis_3",
     "class": "rec_cncpt"
   },
@@ -2972,6 +3126,8 @@
     "target": "id_tbl",
     "levels": ["Female", "Male"],
     "class": "fct_cncpt",
+    "description": "patient sex",
+    "category": "demographics",
     "sources": {
       "eicu": [
         {
@@ -3013,66 +3169,32 @@
       ]
     }
   },
-  "sirs_score": {
-    "concepts": ["temperature", "hr", "resp", "pa_co2", "wbc", "bands"],
+  "sirs": {
+    "concepts": ["temp", "hr", "resp", "pco2", "wbc", "bnd"],
+    "description": "systemic inflammatory response syndrome score",
+    "category": "outcome",
     "callback": "sirs_score",
     "class": "rec_cncpt"
   },
-  "sodium": {
-    "unit": "mEq/L",
-    "min": 110,
-    "max": 165,
-    "sources": {
-      "eicu": [
-        {
-          "ids": "sodium",
-          "table": "lab",
-          "sub_var": "labname"
-        }
-      ],
-      "eicu_demo": [
-        {
-          "ids": "sodium",
-          "table": "lab",
-          "sub_var": "labname"
-        }
-      ],
-      "hirid": [
-        {
-          "ids": [20000400, 24000519, 24000658, 24000835, 24000866],
-          "table": "observations",
-          "sub_var": "variableid"
-        }
-      ],
-      "mimic": [
-        {
-          "ids": 50983,
-          "table": "labevents",
-          "sub_var": "itemid"
-        }
-      ],
-      "mimic_demo": [
-        {
-          "ids": 50983,
-          "table": "labevents",
-          "sub_var": "itemid"
-        }
-      ]
-    }
-  },
-  "sofa_score": {
-    "concepts": ["pa_fi", "vent_ind", "platelet_count", "bilirubin_total", "map", "norepinephrine", "epinephrine", "dopamine", "dobutamine", "gcs", "creatinine", "urine_24"],
+  "sofa": {
+    "concepts": ["pafi", "vent", "plt", "bili", "map", "norepi", "epi", "dopa", "dobu", "gcs", "crea", "urine24"],
+    "description": "sequential organ failure assessment score",
+    "category": "outcome",
     "aggregate": [null, null, "min", "max", "min", "max", "max", "max", "max", null, "max", null],
     "callback": "sofa_score",
     "class": "rec_cncpt"
   },
   "supp_o2": {
-    "concepts": ["vent_ind", "fi_o2"],
+    "concepts": ["vent", "fio2"],
+    "description": "supplemental oxygen",
+    "category": "respiratory",
     "callback": "supp_o2",
     "class": "rec_cncpt"
   },
   "susp_inf": {
-    "concepts": ["antibiotics", "fluid_sampling"],
+    "concepts": ["abx", "samp"],
+    "description": "suspected infection",
+    "category": "outcome",
     "aggregate": [
       [
         "sum"
@@ -3084,10 +3206,51 @@
     "callback": "susp_inf",
     "class": "rec_cncpt"
   },
-  "temperature": {
+  "tco2": {
+    "unit": "mEq/L",
+    "min": 5,
+    "max": 60,
+    "description": "totcal CO2",
+    "category": "blood gas",
+    "sources": {
+      "eicu": [
+        {
+          "ids": "Total CO2",
+          "table": "lab",
+          "sub_var": "labname",
+          "callback": "convert_unit('lpm', set_na, NA)"
+        }
+      ],
+      "eicu_demo": [
+        {
+          "ids": "Total CO2",
+          "table": "lab",
+          "sub_var": "labname",
+          "callback": "convert_unit('lpm', set_na, NA)"
+        }
+      ],
+      "mimic": [
+        {
+          "ids": 50804,
+          "table": "labevents",
+          "sub_var": "itemid"
+        }
+      ],
+      "mimic_demo": [
+        {
+          "ids": 50804,
+          "table": "labevents",
+          "sub_var": "itemid"
+        }
+      ]
+    }
+  },
+  "temp": {
     "unit": "C",
     "min": 32,
     "max": 42,
+    "description": "temperature",
+    "category": "routine vital signs",
     "sources": {
       "eicu": [
         {
@@ -3138,71 +3301,49 @@
       ]
     }
   },
-  "tracheostomy": {
-    "sources": {
-      "hirid": [
-        {
-          "ids": 15001552,
-          "table": "observations",
-          "sub_var": "variableid",
-          "callback": "transform_fun(comp_na(`==`, 2))"
-        }
-      ],
-      "mimic": [
-        {
-          "ids": ["1.0 ET/Trach", "No Response-ETT"],
-          "table": "chartevents",
-          "sub_var": "value",
-          "callback": "transform_fun(set_true)"
-        }
-      ],
-      "mimic_demo": [
-        {
-          "ids": ["1.0 ET/Trach", "No Response-ETT"],
-          "table": "chartevents",
-          "sub_var": "value",
-          "callback": "transform_fun(set_true)"
-        }
-      ]
-    }
-  },
-  "troponin_i": {
-    "unit": "ng/mL",
-    "min": 0,
+  "tgcs": {
+    "min": 3,
+    "max": 15,
+    "description": "GCS total",
+    "category": "neurological",
     "sources": {
       "eicu": [
         {
-          "ids": "troponin - I",
-          "table": "lab",
-          "sub_var": "labname"
+          "ids": "GCS Total",
+          "table": "nursecharting",
+          "sub_var": "nursingchartcelltypevalname",
+          "callback": "transform_fun(force_type('numeric'))"
         }
       ],
       "eicu_demo": [
         {
-          "ids": "troponin - I",
-          "table": "lab",
-          "sub_var": "labname"
+          "ids": "GCS Total",
+          "table": "nursecharting",
+          "sub_var": "nursingchartcelltypevalname",
+          "callback": "transform_fun(force_type('numeric'))"
         }
       ],
       "mimic": [
         {
-          "ids": 51002,
-          "table": "labevents",
+          "ids": 198,
+          "table": "chartevents",
           "sub_var": "itemid"
         }
       ],
       "mimic_demo": [
         {
-          "ids": 51002,
-          "table": "labevents",
+          "ids": 198,
+          "table": "chartevents",
           "sub_var": "itemid"
         }
       ]
     }
   },
-  "troponin_t": {
+  "tnt": {
     "unit": "ng/mL",
     "min": 0,
+    "description": "troponin t",
+    "category": "chemistry",
     "sources": {
       "eicu": [
         {
@@ -3241,59 +3382,79 @@
       ]
     }
   },
-  "urea_nitrogen": {
-    "unit": "mg/dL",
+  "trach": {
+    "description": "tracheostomy",
+    "category": "respiratory",
+    "sources": {
+      "hirid": [
+        {
+          "ids": 15001552,
+          "table": "observations",
+          "sub_var": "variableid",
+          "callback": "transform_fun(comp_na(`==`, 2))"
+        }
+      ],
+      "mimic": [
+        {
+          "ids": ["1.0 ET/Trach", "No Response-ETT"],
+          "table": "chartevents",
+          "sub_var": "value",
+          "callback": "transform_fun(set_true)"
+        }
+      ],
+      "mimic_demo": [
+        {
+          "ids": ["1.0 ET/Trach", "No Response-ETT"],
+          "table": "chartevents",
+          "sub_var": "value",
+          "callback": "transform_fun(set_true)"
+        }
+      ]
+    }
+  },
+  "tri": {
+    "unit": "ng/mL",
     "min": 0,
-    "max": 200,
+    "description": "troponin I",
+    "category": "chemistry",
     "sources": {
       "eicu": [
         {
-          "ids": "BUN",
+          "ids": "troponin - I",
           "table": "lab",
           "sub_var": "labname"
         }
       ],
       "eicu_demo": [
         {
-          "ids": "BUN",
+          "ids": "troponin - I",
           "table": "lab",
           "sub_var": "labname"
         }
       ],
-      "hirid": [
-        {
-          "ids": 20004100,
-          "table": "observations",
-          "sub_var": "variableid",
-          "callback": "transform_fun(binary_op(`*`, 2.8))"
-        }
-      ],
       "mimic": [
         {
-          "ids": 51006,
+          "ids": 51002,
           "table": "labevents",
           "sub_var": "itemid"
         }
       ],
       "mimic_demo": [
         {
-          "ids": 51006,
+          "ids": 51002,
           "table": "labevents",
           "sub_var": "itemid"
         }
       ]
     }
   },
-  "urine_24": {
-    "concepts": "urine_out",
-    "callback": "sofa_urine",
-    "class": "rec_cncpt"
-  },
-  "urine_out": {
+  "urine": {
     "unit": "mL",
     "min": 0,
     "max": 2000,
     "aggregate": "sum",
+    "description": "urine output",
+    "category": "output",
     "sources": {
       "eicu": [
         {
@@ -3345,51 +3506,24 @@
       ]
     }
   },
-  "vasopressin": {
-    "unit": "mcg/kg/min",
-    "sources": {
-      "eicu": [
-        {
-          "ids": ["Vasopressin (ml/hr)", "Vasopressin (units/min)", "Vasopressin ()"],
-          "table": "infusiondrug",
-          "sub_var": "drugname",
-          "callback": "eicu_body_weight",
-          "weight_var": "patientweight"
-        }
-      ],
-      "eicu_demo": [
-        {
-          "ids": ["Vasopressin (ml/hr)", "Vasopressin (units/min)", "Vasopressin ()"],
-          "table": "infusiondrug",
-          "sub_var": "drugname",
-          "callback": "eicu_body_weight",
-          "weight_var": "patientweight"
-        }
-      ],
-      "hirid": [
-        {
-          "ids": [112, 113],
-          "table": "pharma",
-          "sub_var": "pharmaid"
-        }
-      ],
-      "mimic": [
-        {
-          "ids": [30051, 222315],
-          "table": "inputevents_mv",
-          "sub_var": "itemid"
-        }
-      ],
-      "mimic_demo": [
-        {
-          "ids": [30051, 222315],
-          "table": "inputevents_mv",
-          "sub_var": "itemid"
-        }
-      ]
-    }
+  "urine24": {
+    "concepts": "urine",
+    "description": "urine output per 24h",
+    "category": "output",
+    "callback": "sofa_urine",
+    "class": "rec_cncpt"
+  },
+  "vent": {
+    "concepts": ["vent_start", "vent_end"],
+    "description": "ventilation status",
+    "category": "respiratory",
+    "interval": "00:01:00",
+    "callback": "sofa_vent",
+    "class": "rec_cncpt"
   },
   "vent_end": {
+    "description": "ventilation end",
+    "category": "respiratory",
     "sources": {
       "eicu": [
         {
@@ -3469,13 +3603,9 @@
       ]
     }
   },
-  "vent_ind": {
-    "concepts": ["vent_start", "vent_end"],
-    "interval": "00:01:00",
-    "callback": "sofa_vent",
-    "class": "rec_cncpt"
-  },
   "vent_start": {
+    "description": "ventilation start",
+    "category": "respiratory",
     "sources": {
       "eicu": [
         {
@@ -3543,9 +3673,56 @@
       ]
     }
   },
+  "vgcs": {
+    "min": 1,
+    "max": 5,
+    "description": "GCS verbal",
+    "category": "neurological",
+    "sources": {
+      "eicu": [
+        {
+          "ids": "Verbal",
+          "table": "nursecharting",
+          "sub_var": "nursingchartcelltypevalname",
+          "callback": "transform_fun(force_type('numeric'))"
+        }
+      ],
+      "eicu_demo": [
+        {
+          "ids": "Verbal",
+          "table": "nursecharting",
+          "sub_var": "nursingchartcelltypevalname",
+          "callback": "transform_fun(force_type('numeric'))"
+        }
+      ],
+      "hirid": [
+        {
+          "ids": 10000100,
+          "table": "observations",
+          "sub_var": "variableid"
+        }
+      ],
+      "mimic": [
+        {
+          "ids": [723, 223900],
+          "table": "chartevents",
+          "sub_var": "itemid"
+        }
+      ],
+      "mimic_demo": [
+        {
+          "ids": [723, 223900],
+          "table": "chartevents",
+          "sub_var": "itemid"
+        }
+      ]
+    }
+  },
   "wbc": {
     "unit": "K/uL",
     "min": 0,
+    "description": "white blood cell count",
+    "category": "hematology",
     "sources": {
       "eicu": [
         {
@@ -3589,6 +3766,8 @@
     "min": 0,
     "max": 500,
     "target": "id_tbl",
+    "description": "patient weight",
+    "category": "demographics",
     "sources": {
       "eicu": [
         {

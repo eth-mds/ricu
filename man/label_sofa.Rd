@@ -12,29 +12,29 @@
 \title{SOFA score label}
 \usage{
 sofa_score(
-  pa_fi,
-  vent_ind,
-  platelet_count,
-  bilirubin_total,
+  pafi,
+  vent,
+  plt,
+  bili,
   map,
-  norepinephrine,
-  epinephrine,
-  dopamine,
-  dobutamine,
+  norepi,
+  epi,
+  dopa,
+  dobu,
   gcs,
-  creatinine,
-  urine_24,
+  crea,
+  urine24,
   ...,
-  interval = ricu::interval(pa_fi)
+  interval = NULL
 )
 
 sofa_pafi(
-  pa_o2,
-  fi_o2,
+  po2,
+  fio2,
   win_length = hours(2L),
   mode = c("match_vals", "extreme_vals", "fill_gaps"),
   fix_na_fio2 = TRUE,
-  interval = ricu::interval(pa_o2)
+  interval = NULL
 )
 
 sofa_vent(
@@ -42,32 +42,28 @@ sofa_vent(
   vent_end,
   win_length = hours(6L),
   min_length = mins(10L),
-  interval = ricu::interval(vent_start)
+  interval = NULL
 )
 
 sofa_gcs(
-  gcs_eye,
-  gcs_motor,
-  gcs_verbal,
-  gcs_total,
-  tracheostomy,
-  rass_scale,
+  egcs,
+  mgcs,
+  vgcs,
+  tgcs,
+  trach,
+  rass,
   win_length = hours(6L),
   set_sed_max = TRUE,
   set_na_max = TRUE,
-  interval = ricu::interval(gcs_eye)
+  interval = NULL
 )
 
-sofa_urine(
-  urine_out,
-  min_win = hours(12L),
-  interval = ricu::interval(urine_out)
-)
+sofa_urine(urine, min_win = hours(12L), interval = NULL)
 
 sofa_window(
   tbl,
   pafi_win_fun = min_or_na,
-  coag_win_fun = min_or_na,
+  plt_win_fun = min_or_na,
   bili_win_fun = max_or_na,
   map_win_fun = min_or_na,
   dopa_win_fun = max_or_na,
@@ -85,25 +81,27 @@ sofa_compute(
   tbl,
   na_val = 0L,
   na_val_resp = na_val,
-  na_val_coag = na_val,
+  na_val_plt = na_val,
   na_val_liver = na_val,
   na_val_cardio = na_val,
   na_val_cns = na_val,
   na_val_renal = na_val,
   impute_fun = NULL,
+  keep_components = FALSE,
   by_ref = FALSE
 )
 }
 \arguments{
-\item{pa_fi, vent_ind, platelet_count, bilirubin_total, map, norepinephrine, epinephrine, dopamine, dobutamine, gcs, creatinine, urine_24}{Data input used for
-sofa score evaluation (\code{ts_tbl} objects, as produced by \code{\link[=load_concepts]{load_concepts()}})}
+\item{pafi, vent, plt, bili, map, norepi, epi, dopa, dobu, gcs, crea, urine24}{Data
+input used for sofa score evaluation (\code{ts_tbl} objects, as produced by
+\code{\link[=load_concepts]{load_concepts()}})}
 
 \item{...}{Passed to \code{sofa_window()} or \code{sofa_compute()}}
 
 \item{interval}{Time series interval (only used for checking consistency
-of input data)}
+of input data, \code{NULL} will use the interval of the first data object)}
 
-\item{pa_o2, fi_o2}{Data input used for PaO₂/FiO₂ evaluation}
+\item{po2, fio2}{Data input used for PaO₂/FiO₂ evaluation}
 
 \item{win_length}{Maximal time window for which a GCS value is valid
 if no newer measurement is available}
@@ -118,21 +116,20 @@ values with 21}
 \item{min_length}{Minimal time span between a ventilation start and end
 time}
 
-\item{gcs_eye, gcs_motor, gcs_verbal, gcs_total, tracheostomy, rass_scale}{Data
-input used for gcs evaluation}
+\item{egcs, mgcs, vgcs, tgcs, trach, rass}{Data input used for gcs evaluation}
 
 \item{set_sed_max}{Logical flag for considering sedation}
 
 \item{set_na_max}{Logical flag controlling imputation of missing GCS values
 with the respective maximum values}
 
-\item{urine_out}{Data input used for urine/24h evaluation}
+\item{urine}{Data input used for urine/24h evaluation}
 
 \item{min_win}{Minimal time span required for calculation of urine/24h}
 
 \item{tbl}{Table holding SOFA covariates}
 
-\item{pafi_win_fun, coag_win_fun, bili_win_fun, map_win_fun, dopa_win_fun, norepi_win_fun, dobu_win_fun, epi_win_fun, gcs_win_fun, crea_win_fun, urine_win_fun}{functions used to calculate worst values over windows}
+\item{pafi_win_fun, plt_win_fun, bili_win_fun, map_win_fun, dopa_win_fun, norepi_win_fun, dobu_win_fun, epi_win_fun, gcs_win_fun, crea_win_fun, urine_win_fun}{functions used to calculate worst values over windows}
 
 \item{explicit_wins}{The default \code{FALSE} iterates over all time steps,
 \code{TRUE} uses only the last time step per patient and a vector of times will
@@ -142,9 +139,12 @@ iterate over these explicit time points}
 
 \item{na_val}{Value to use for missing data}
 
-\item{na_val_resp, na_val_coag, na_val_liver, na_val_cardio, na_val_cns, na_val_renal}{Feature-specific values to use in case of missing data; default is \code{na_val}}
+\item{na_val_resp, na_val_plt, na_val_liver, na_val_cardio, na_val_cns, na_val_renal}{Feature-specific values to use in case of missing data; default is \code{na_val}}
 
 \item{impute_fun}{Function used to impute missing data; default is NULL}
+
+\item{keep_components}{Logical flag indicating whether to return individual
+SOFA components as columns}
 
 \item{by_ref}{Logical flag indicating whether to perform the operation by
 reference}
@@ -159,13 +159,15 @@ The SOFA score (Vincent et. al.) is evaluated as follows:\tabular{lllll}{
    \strong{Respiration} PaO₂/FiO₂ [mmHg] \tab < 400 \tab < 300 \tab < 200 (with mech. vent.) \tab < 100 (with mech. vent.) \cr
    \strong{Coagulation} Platelets [⨉10³/mm³] \tab < 150 \tab < 100 \tab < 50 \tab < 20 \cr
    \strong{Liver} Bilirubin [mg/dl] ([μmol/μl]) \tab 1.2-1.9 (20-32) \tab 2.0-5.9 (33-101) \tab 6.0-11.9 (102-204) \tab > 12.0 (> 204) \cr
-   \strong{Cardiovascular} Hypotension \tab MAP < 70 mmHg \tab Dopamine ≤ 5 or dobutamine (any dose)ª \tab Dopamine > 5 or epinephrine ≤ 0.1 or norepinephrine ≤ 0.1 \tab Dopamine > 15 or epinephrine > 0.1 or norepinephrine > 0.1 \cr
+   \strong{Cardiovascular} Hypotension \tab MAP < 70 mmHg \tab Dopa ≤ 5 or dobu (any dose)ª \tab Dopa > 5 or epi ≤ 0.1 or norepi ≤ 0.1 \tab Dopa > 15 or epi > 0.1 or norepi > 0.1 \cr
    \strong{Central nervous system} Glasgow Coma Score \tab 13-14 \tab 10-12 \tab 6-9 \tab < 6 \cr
    \strong{Renal} Creatinine [mg/dl] ([μmol/μl]) or urine output [ml/day] \tab 1.2-1.9 (110-170) \tab 2.0-3.4 (171-299) \tab 3.5-4.9 (300-440) < 500 \tab > 5.0 (< 440) < 200 \cr
 }
 
 
-ªAdrenergic agents administered for at least 1h (doses given are in [μg/kg ⋅ min])
+ªAdrenergic agents administered for at least 1h (doses given are in [μg/kg
+⋅ min]; dopa: dopamine, dobu: dobutamine, epi: epinephrine, norepi:
+norepinephrine)
 
 For each component, the worst value over a window of length
 \code{worst_win_length} (default \code{hours(24L)}) is taken.
