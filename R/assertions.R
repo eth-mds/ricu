@@ -10,10 +10,9 @@ fail_type <- function(arg_name, class) {
   assertthat::assert_that(is.string(arg_name), is.string(class))
 
   function(call, env) {
-    format_assert(
-      paste0("{as_label(call$", arg_name, ")} is not a `{class}` object"),
-      paste0("is_", class, "_assert")
-    )
+    msg <- paste0("{as_label(call$", arg_name, ")} is not a `", class,
+                  "` object")
+    format_assert(msg, paste0("is_", class, "_assert"))
   }
 }
 
