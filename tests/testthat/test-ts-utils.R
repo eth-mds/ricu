@@ -26,7 +26,7 @@ test_that("slide", {
 
   res <- hop(tbl, sum(z), wins)
 
-  expect_is(res, "ts_tbl")
+  expect_is(res, "id_tbl")
 
   expect_identical(res, hop(tbl, fun(z), wins))
 

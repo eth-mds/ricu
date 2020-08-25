@@ -115,17 +115,29 @@ slide <- function(x, expr, before, after = hours(0L), ...) {
 
   id_cols <- id_vars(x)
   ind_col <- index_var(x)
+  interva <- interval(x)
+  time_ut <- time_unit(x)
 
-  units(before) <- time_unit(x)
-  units(after)  <- time_unit(x)
+  units(before) <- time_ut
+  units(after)  <- time_ut
 
   join <- x[,
     c(mget(id_cols), list(min_time = get(ind_col) - before,
                           max_time = get(ind_col) + after))
   ]
 
-  hop(x, {{ expr }}, join, lwr_col = "min_time", upr_col = "max_time", ...,
-      nomatch = NA)
+  res <- hop(x, {{ expr }}, join, lwr_col = "min_time", upr_col = "max_time",
+             ..., nomatch = NA)
+
+  if (!is_ts_tbl(res)) {
+    res <- rename_cols(res, ind_col, "min_time", by_ref = TRUE)
+    res <- rm_cols(res, "max_time", by_ref = TRUE)
+    res <- as_ts_tbl(res, index_var = ind_col, interval = interva,
+                     by_ref = TRUE)
+    res <- set(res, j = ind_col, value = index_col(res) + before)
+  }
+
+  res
 }
 
 #' @param index A vector of times around which windows are spanned (relative
@@ -136,17 +148,33 @@ slide <- function(x, expr, before, after = hours(0L), ...) {
 #'
 slide_index <- function(x, expr, index, before, after = hours(0L), ...) {
 
-  assert_that(is_difftime(index), has_length(index),
+  assert_that(is_difftime(index), has_length(index), is_unique(index),
               is_scalar(before), is_interval(before),
               is_scalar(after),  is_interval(after))
 
-  units(before) <- time_unit(x)
-  units(after)  <- time_unit(x)
+  id_cols <- id_vars(x)
+  ind_col <- index_var(x)
+  interva <- interval(x)
+  time_ut <- time_unit(x)
+
+  units(before) <- time_ut
+  units(after)  <- time_ut
 
   join <- x[, list(min_time = index - before,
-                   max_time = index + after), by = c(id_vars(x))]
+                   max_time = index + after), by = c(id_cols)]
 
-  hop(x, {{ expr }}, join, lwr_col = "min_time", upr_col = "max_time", ...)
+  res <- hop(x, {{ expr }}, join, lwr_col = "min_time", upr_col = "max_time",
+             ...)
+
+  if (!is_ts_tbl(res)) {
+    res <- rename_cols(res, ind_col, "min_time", by_ref = TRUE)
+    res <- rm_cols(res, "max_time", by_ref = TRUE)
+    res <- as_ts_tbl(res, index_var = ind_col, interval = interva,
+                     by_ref = TRUE)
+    res <- set(res, j = ind_col, value = index_col(res) + before)
+  }
+
+  res
 }
 
 #' @param windows An `icu_tbl` defining the windows to span
@@ -198,13 +226,13 @@ hop <- function(x, expr, windows, full_window = FALSE,
 
   tbl_ind <- index_var(x)
 
-  tmp_col <- new_names(x)
-  x <- x[, c(tmp_col) := get(tbl_ind)]
+  tmp_col <- new_names(x, n = 2L)
+  x <- x[, c(tmp_col) := list(get(tbl_ind), get(tbl_ind))]
   on.exit(rm_cols(x, tmp_col, skip_absent = TRUE, by_ref = TRUE))
 
   join <- c(paste(tbl_id, "==", win_id),
-            paste(tbl_ind, if (right_closed) "<=" else "<", upr_col),
-            paste(tmp_col, if (left_closed)  ">=" else ">", lwr_col))
+            paste(tmp_col[2L], if (right_closed) "<=" else "<", upr_col),
+            paste(tmp_col[1L], if (left_closed)  ">=" else ">", lwr_col))
 
   quo <- enexpr(expr)
 
@@ -230,9 +258,7 @@ hop <- function(x, expr, windows, full_window = FALSE,
     parent = env
   ))
 
-  assert_that(is_unique(res))
-
-  rm_cols(res, tmp_col, skip_absent = TRUE, by_ref = TRUE)
+  rename_cols(res, win_cols, tmp_col, by_ref = TRUE)
 }
 
 locf <- function(x) {
