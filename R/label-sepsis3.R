@@ -4,7 +4,7 @@
 #' The sepsis 3 label consists of a suspected infection combined with an acute
 #' increase in SOFA score.
 #'
-#' @param sofa_score `ts_tbl` with a column `sofa_score`
+#' @param sofa `ts_tbl` with a column `sofa`
 #' @param susp_inf `ts_tbl` with columns `si_lwr` and `si_upr` defining windows for
 #' which a suspected infection is valid
 #' @param si_window Switch that can be used to filter SI windows
@@ -76,25 +76,28 @@
 #' @rdname label_sep3
 #' @export
 #'
-sepsis_3 <- function(sofa_score, susp_inf,
-                     si_window = c("first", "last", "any"),
+sepsis_3 <- function(sofa, susp_inf, si_window = c("first", "last", "any"),
                      delta_fun = delta_cummin, sofa_thresh = 2L,
                      si_lwr = hours(48L), si_upr = hours(24L),
-                     interval = ricu::interval(sofa_score)) {
+                     interval = NULL) {
 
-  assert_that(has_interval(sofa_score, interval),
+  if (is.null(interval)) {
+    interval <- interval(sofa)
+  }
+
+  assert_that(has_interval(sofa, interval),
               has_interval(susp_inf, interval), is.count(sofa_thresh))
 
   si_window <- match.arg(si_window)
 
-  id <- id_vars(sofa_score)
-  ind <- index_var(sofa_score)
+  id <- id_vars(sofa)
+  ind <- index_var(sofa)
 
-  sofa_score <- sofa_score[, c("join_time1", "join_time2") := list(
+  sofa <- sofa[, c("join_time1", "join_time2") := list(
     get(ind), get(ind)
   )]
 
-  on.exit(rm_cols(sofa_score, c("join_time1", "join_time2"), by_ref = TRUE))
+  on.exit(rm_cols(sofa, c("join_time1", "join_time2"), by_ref = TRUE))
 
   susp_inf <- susp_inf[is_true(get("susp_inf")), ]
   susp_inf <- susp_inf[, c("susp_inf") := NULL]
@@ -110,8 +113,8 @@ sepsis_3 <- function(sofa_score, susp_inf,
 
   join_clause <- c(id, "join_time1 >= si_lwr", "join_time2 <= si_upr")
 
-  res <- sofa_score[susp_inf,
-    c(list(delta_sofa = delta_fun(get("sofa_score"))), mget(ind)),
+  res <- sofa[susp_inf,
+    c(list(delta_sofa = delta_fun(get("sofa"))), mget(ind)),
     on = join_clause, by = .EACHI, nomatch = NULL]
 
   res <- res[is_true(get("delta_sofa") >= sofa_thresh), ]
@@ -156,8 +159,8 @@ delta_min <- function(x, shifts = seq.int(0L, 23L)) {
 #' Suspected infection is defined as co-occurrence of of antibiotic treatment
 #' and body-fluid sampling.
 #'
-#' @param antibiotics,fluid_sampling Data input used for determining suspicion
-#' of infection (`ts_tbl` objects, as produced by [load_concepts()])
+#' @param abx,samp Data input used for determining suspicion of infection
+#' (`ts_tbl` objects, as produced by [load_concepts()])
 #' @param abx_count_win Time span during which to apply the `abx_min_count`
 #' criterion
 #' @param abx_min_count Minimal number of antibiotic administrations
@@ -224,25 +227,28 @@ delta_min <- function(x, shifts = seq.int(0L, 23L)) {
 #' @rdname label_si
 #' @export
 #'
-susp_inf <- function(antibiotics, fluid_sampling, abx_count_win = hours(24L),
+susp_inf <- function(abx, samp, abx_count_win = hours(24L),
                      abx_min_count = 1L, positive_cultures = FALSE, ...,
-                     interval = ricu::interval(antibiotics)) {
+                     interval = NULL) {
 
-  assert_that(is.count(abx_min_count), is.flag(positive_cultures))
+  if (is.null(interval)) {
+    interval <- interval(abx)
+  }
+
+  assert_that(has_interval(abx, interval), has_interval(samp, interval),
+              is.count(abx_min_count), is.flag(positive_cultures))
 
   if (positive_cultures) {
     samp_fun <- "sum"
   } else {
-    samp_fun <- quote(list(fluid_sampling = .N))
+    samp_fun <- quote(list(samp = .N))
   }
 
   res <- merge(
-    si_abx(antibiotics, abx_count_win, abx_min_count),
-    si_samp(make_unique(fluid_sampling, samp_fun)),
+    si_abx(abx, abx_count_win, abx_min_count),
+    si_samp(make_unique(samp, samp_fun)),
     all = TRUE
   )
-
-  res <- rename_cols(res, c("abx", "samp"), c("antibiotics", "fluid_sampling"))
 
   si_calc(res, ...)
 }
@@ -251,15 +257,15 @@ si_abx <- function(x, count_win, min_count) {
 
   if (min_count > 1L) {
 
-    x <- slide(x, list(antibiotics = sum(get("antibiotics"), na.rm = TRUE)),
+    x <- slide(x, list(abx = sum(get("abx"), na.rm = TRUE)),
                before = hours(0L), after = count_win)
   }
 
-  set(x, j = "antibiotics", value = x[["antibiotics"]] >= min_count)
+  set(x, j = "abx", value = x[["abx"]] >= min_count)
 }
 
 si_samp <- function(x) {
-  set(x, j = "fluid_sampling", value = x[["fluid_sampling"]] > 0L)
+  set(x, j = "samp", value = x[["samp"]] > 0L)
 }
 
 #' @param tbl `ts_tbl` object to use for label computations

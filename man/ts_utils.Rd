@@ -12,12 +12,11 @@
 \usage{
 expand(
   x,
-  min_col = "min",
-  max_col = "max",
-  id_vars = id_vars(x),
+  min_col,
+  max_col,
   step_size = time_step(x),
   new_index = index_var(x),
-  keep = meta_vars(x)
+  keep_vars = id_vars(x)
 )
 
 has_no_gaps(x)
@@ -37,6 +36,8 @@ hop(
   full_window = FALSE,
   lwr_col = "min_time",
   upr_col = "max_time",
+  left_closed = TRUE,
+  right_closed = TRUE,
   nomatch = NULL,
   eval_env = NULL
 )
@@ -47,12 +48,12 @@ hop(
 \item{min_col, max_col}{Name of the columns that represent lower and upper
 windows bounds}
 
-\item{id_vars}{Names of the id columns}
-
 \item{step_size}{Controls the step size used to interpolate between
 \code{min_col} and \code{max_col}}
 
 \item{new_index}{Name of the new index column}
+
+\item{keep_vars}{Names of the columns to hold onto}
 
 \item{...}{Passed to \code{hop_quo()}}
 
@@ -73,6 +74,9 @@ where the sliding window extends beyond available data}
 
 \item{lwr_col, upr_col}{Names of columns (in \code{windows}) of lower/upper
 window bounds}
+
+\item{left_closed, right_closed}{Logical flag indicating whether intervals
+are closed (default) or open.}
 
 \item{nomatch}{Forwarded to \code{\link[=data.table]{data.table::[()}}}
 

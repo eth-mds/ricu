@@ -120,29 +120,29 @@
 #' Roughly speaking, the semantics for the two functions are as follows:
 #'
 #' * `cncpt`: Called with arguments `x` (the current `cncpt` object),
-#' `aggregate` (controlling how aggregation per time-point and ID is handled),
-#' `...` (further arguments passed to downstream methods) and `progress`
-#' (controlling progress reporting), this function should be able to load and
-#' aggregate data for the given concept. Usually this involves extracting the
-#' `item` object and calling `load_concepts()` again, dispatching on the `item`
-#' class with arguments `x` (the given `item`), arguments passed as `...`, as
-#' well as `progress`.
+#'   `aggregate` (controlling how aggregation per time-point and ID is
+#'   handled), `...` (further arguments passed to downstream methods) and
+#'   `progress` (controlling progress reporting), this function should be able
+#'   to load and aggregate data for the given concept. Usually this involves
+#'   extracting the `item` object and calling `load_concepts()` again,
+#'   dispatching on the `item` class with arguments `x` (the given `item`),
+#'   arguments passed as `...`, as well as `progress`.
 #' * `itm`: Called with arguments `x` (the current object inheriting from
-#' `itm`, `patient_ids` (`NULL` or a patient ID selection), `id_type` (a
-#' string specifying what ID system to retrieve), and `interval` (the time
-#' series interval), this function actually carries out the loading of
-#' individual data items, using the specified ID system, rounding times to the
-#' correct interval and subsetting on patient IDs. As return value, on object
-#' of class as specified by the `target` entry is expected and all
-#' [data_vars()] should be named consistently, as data corresponding to
-#' multiple `itm` objects concatenated in row-wise fashion as in
-#' [base::rbind()].
+#'   `itm`, `patient_ids` (`NULL` or a patient ID selection), `id_type` (a
+#'   string specifying what ID system to retrieve), and `interval` (the time
+#'   series interval), this function actually carries out the loading of
+#'   individual data items, using the specified ID system, rounding times to
+#'   the correct interval and subsetting on patient IDs. As return value, on
+#'   object of class as specified by the `target` entry is expected and all
+#'   [data_vars()] should be named consistently, as data corresponding to
+#'   multiple `itm` objects concatenated in row-wise fashion as in
+#'   [base::rbind()].
 #'
 #' @param x Object specifying the data to be loaded
 #' @param ... Passed to downstream methods
 #'
 #' @examples
-#' dat <- load_concepts("glucose", "mimic_demo")
+#' dat <- load_concepts("glu", "mimic_demo")
 #'
 #' gluc <- concept("gluc",
 #'   item("mimic_demo", "labevents", "itemid", list(c(50809L, 50931L)))
@@ -170,8 +170,6 @@ load_concepts.character <- function(x, src = NULL, concepts = NULL, ...,
                                     dict_name = "concept-dict",
                                     dict_file = NULL) {
 
-  get_src <- function(x) x[names(x) == src]
-
   if (is.null(concepts)) {
 
     assert_that(not_null(src))
@@ -196,6 +194,8 @@ load_concepts.character <- function(x, src = NULL, concepts = NULL, ...,
 #' @export
 load_concepts.concept <- function(x, src = NULL, aggregate = NULL,
                                   merge_data = TRUE, verbose = TRUE, ...) {
+
+  get_src <- function(x) x[names(x) == src]
 
   assert_that(is.flag(merge_data), is.flag(verbose))
 
@@ -238,8 +238,6 @@ load_concepts.concept <- function(x, src = NULL, aggregate = NULL,
     progress_bar = pba
   )
 
-  assert_that(all_fun(Map(inherits, res, chr_ply(x, target_class)), isTRUE))
-
   if (isFALSE(merge_data)) {
     return(res)
   }
@@ -263,11 +261,23 @@ load_concepts.concept <- function(x, src = NULL, aggregate = NULL,
 
 load_one_concept_helper <- function(x, aggregate, ..., progress) {
 
-  progress_tick(x[["name"]], progress, 0L)
+  name <- x[["name"]]
+  targ <- target_class(x)
+  type <- is_type(targ)
 
-  res <- load_concepts(x, aggregate, ..., progress = progress)
+  progress_tick(name, progress, 0L)
 
-  assert_that(has_name(res, x[["name"]]))
+  if (has_length(as_item(x))) {
+
+    res <- load_concepts(x, aggregate, ..., progress = progress)
+
+    assert_that(has_name(res, name), type(res))
+
+  } else {
+
+    res <- setNames(list(integer(), numeric()), c("id_var", name))
+    res <- as_id_tbl(res, by_ref = TRUE)
+  }
 
   progress_tick(progress_bar = progress)
 
@@ -281,10 +291,11 @@ load_one_concept_helper <- function(x, aggregate, ..., progress) {
 #' @export
 load_concepts.cncpt <- function(x, aggregate = NULL, ..., progress = NULL) {
 
-  res <- load_concepts(x[["items"]], ..., progress = progress)
+  res <- load_concepts(as_item(x), ..., progress = progress)
   res <- rm_na(res)
 
-  res <- rename_cols(res, x[["name"]], data_vars(res), by_ref = TRUE)
+  res <- rm_cols(res, setdiff(data_vars(res), "val_var"), by_ref = TRUE)
+  res <- rename_cols(res, x[["name"]], "val_var", by_ref = TRUE)
 
   stats::aggregate(x, res, aggregate)
 }
@@ -323,7 +334,8 @@ load_concepts.num_cncpt <- function(x, aggregate = NULL, ...,
     }
   }
 
-  res <- load_concepts(x[["items"]], ..., progress = progress)
+  res <- load_concepts(try_add_vars(as_item(x), unit_var = NULL), ...,
+                       progress = progress)
 
   keep <- check_bound(res, x[["min"]], `>=`) &
           check_bound(res, x[["max"]], `<=`)
@@ -346,12 +358,11 @@ load_concepts.num_cncpt <- function(x, aggregate = NULL, ...,
     report_unit(res, unit)
   }
 
-  res <- rm_cols(res, "unit_var", skip_absent = TRUE, by_ref = TRUE)
-
   if (not_null(unit)) {
     setattr(res[["val_var"]], "units", unit[1L])
   }
 
+  res <- rm_cols(res, setdiff(data_vars(res), "val_var"), by_ref = TRUE)
   res <- rename_cols(res, x[["name"]], "val_var", by_ref = TRUE)
 
   stats::aggregate(x, res, aggregate)
@@ -364,7 +375,7 @@ load_concepts.fct_cncpt <- function(x, aggregate = NULL, ...,
 
   lvl <- x[["levels"]]
 
-  res <- load_concepts(x[["items"]], ..., progress = progress)
+  res <- load_concepts(as_item(x), ..., progress = progress)
 
   if (is.character(lvl)) {
     keep <- res[["val_var"]] %chin% lvl
@@ -384,6 +395,7 @@ load_concepts.fct_cncpt <- function(x, aggregate = NULL, ...,
                  "due to level mismatch")
   }
 
+  res <- rm_cols(res, setdiff(data_vars(res), "val_var"), by_ref = TRUE)
   res <- rename_cols(res, x[["name"]], "val_var", by_ref = TRUE)
 
   stats::aggregate(x, res, aggregate)
@@ -399,16 +411,14 @@ load_concepts.rec_cncpt <- function(x, aggregate = NULL, patient_ids = NULL,
               interval = coalesce(x[["interval"]], interval),
               progress = progress)
 
+  itm <- as_item(x)
   agg <- x[["aggregate"]]
   agg <- Map(coalesce, rep_arg(aggregate, names(agg)), agg)
-  agg <- agg[names(x[["items"]])]
+  agg <- agg[names(itm)]
 
-  dat <- Map(load_one_concept_helper, x[["items"]], agg, MoreArgs = ext)
-  dat <- do.call(x[["callback"]], c(dat, list(...), list(interval = interval)))
+  dat <- Map(load_one_concept_helper, itm, agg, MoreArgs = ext)
 
-  assert_that(inherits(dat, target_class(x)))
-
-  dat
+  do.call(get_itm_callback(x), c(dat, list(...), list(interval = interval)))
 }
 
 #' @param patient_ids Optional vector of patient ids to subset the fetched data
@@ -426,28 +436,15 @@ load_concepts.item <- function(x, patient_ids = NULL, id_type = "icustay",
 
     progress_tick(progress_bar = prog)
 
-    res <- load_concepts(x, ...)
-
-    assert_that(inherits(res, target_class(x)))
-
-    res
+    load_concepts(x, ...)
   }
 
   warn_dots(...)
 
-  if (length(x) == 0L) {
+  assert_that(has_length(x))
 
-    if (need_idx(x)) {
-      res <- setNames(list(integer(), interval[-1L], numeric()),
-                      c("id_var", "index_var", "val_var"))
-      res <- as_ts_tbl(res, interval = interval, by_ref = TRUE)
-    } else {
-      res <- setNames(list(integer(), numeric()), c("id_var", "val_var"))
-      res <- as_id_tbl(res, by_ref = TRUE)
-    }
-
-    return(res)
-  }
+  # slightly inefficient, as cols might get filled which were only relevant
+  # during callback
 
   rbind_lst(
     lapply(x, load_one, progress, patient_ids, id_type, interval),
@@ -463,22 +460,19 @@ load_concepts.col_itm <- function(x, patient_ids = NULL, id_type = "icustay",
 
   warn_dots(...)
 
-  itm <- x[["itm_vars"]]
-  cbc <- x[["cb_vars"]]
+  res <- do_itm_load(x, patient_ids, id_type, interval)
 
-  res <- do_itm_load(x, c(itm, cbc), patient_ids, id_type, interval)
-
-  if (!"unit_var" %in% names(itm)) {
+  if (is.null(get_itm_var(x, "unit_var"))) {
 
     unt <- x[["unit_val"]]
 
     if (not_null(unt)) {
-      res[, c("unit") := unt]
-      itm <- c(itm, unit_var = "unit")
+      res <- res[, c("measurement_unit") := unt]
+        x <- try_add_vars(x, unit_var = "measurement_unit")
     }
   }
 
-  itm_cleanup(res, itm, cbc, as_src_env(x), x[["callback"]])
+  itm_post_proc(x, res)
 }
 
 #' @rdname load_concepts
@@ -487,7 +481,10 @@ load_concepts.sel_itm <- function(x, patient_ids = NULL, id_type = "icustay",
                                   interval = hours(1L), ...) {
 
   warn_dots(...)
-  load_sub_itm(x, patient_ids, id_type, interval)
+
+  res <- do_itm_load(x, patient_ids, id_type, interval)
+
+  itm_post_proc(x, res)
 }
 
 #' @rdname load_concepts
@@ -496,7 +493,10 @@ load_concepts.rgx_itm <- function(x, patient_ids = NULL, id_type = "icustay",
                                   interval = hours(1L), ...) {
 
   warn_dots(...)
-  load_sub_itm(x, patient_ids, id_type, interval)
+
+  res <- do_itm_load(x, patient_ids, id_type, interval)
+
+  itm_post_proc(x, res)
 }
 
 #' @rdname load_concepts
@@ -506,71 +506,15 @@ load_concepts.hrd_itm <- function(x, patient_ids = NULL, id_type = "icustay",
 
   warn_dots(...)
 
-  itm <- x[["itm_vars"]]
-  cbc <- x[["cb_vars"]]
-  sub <- x[["sub_var"]]
+  res <- do_itm_load(x, patient_ids, id_type, interval)
 
-  adu <- !"unit_var" %in% names(itm)
-  env <- as_src_env(x)
-
-  if (adu) {
-
-    res <- do_itm_load(x, c(itm, sub, cbc), patient_ids, id_type, interval)
-    unt <- load_src("variables", env, cols = c("id", "unit"))
-    res <- merge(res, unt[!is.na(get("unit")), ], by.x = sub, by.y = "id",
-                 all.x = TRUE)
-
-    if (!sub %in% cbc) {
-      res <- rm_cols(res, sub, by_ref = TRUE)
-    }
-
-    itm <- c(itm, unit_var = "unit")
-
-  } else {
-    res <- do_itm_load(x, c(itm, cbc), patient_ids, id_type, interval)
+  if (is.null(get_itm_var(x, "unit_var"))) {
+    unt <- x[["units"]]
+    res <- merge(res, unt, by = get_itm_var(x, "sub_var"), all.x = TRUE)
+      x <- try_add_vars(x, unit_var = data_vars(unt))
   }
 
-  itm_cleanup(res, itm, cbc, env, x[["callback"]])
-}
-
-itm_cleanup <- function(x, itm, cbc, env, cbf) {
-
-  arg <- c(list(x), as.list(c(itm, cbc)), list(env = env))
-  fun <- eval(parse(text = cbf))
-
-  assert_that(is.function(fun))
-
-  x <- do.call(fun, arg)
-
-  x <- rm_cols(x, setdiff(data_vars(x), itm), by_ref = TRUE)
-  x <- rename_cols(x, names(itm), itm, by_ref = TRUE)
-
-  x
-}
-
-do_itm_load <- function(x, cols, patient_ids, id_type, interval) {
-
-  tbl <- as_src_tbl(x)
-  qry <- prepare_query(x)
-  id  <- id_vars(as_id_cfg(tbl)[id_type])
-
-  if (need_idx(x)) {
-    res <- load_ts(tbl, !!qry, cols, id, x[["index_var"]], interval)
-  } else {
-    res <- load_id(tbl, !!qry, cols, id, interval)
-  }
-
-  merge_patid(res, patient_ids)
-}
-
-load_sub_itm <- function(x, patient_ids, id_type, interval) {
-
-  itm <- x[["itm_vars"]]
-  cbc <- x[["cb_vars"]]
-
-  res <- do_itm_load(x, c(itm, cbc), patient_ids, id_type, interval)
-
-  itm_cleanup(res, itm, cbc, as_src_env(x), x[["callback"]])
+  itm_post_proc(x, res)
 }
 
 #' @rdname load_concepts
@@ -580,10 +524,25 @@ load_concepts.fun_itm <- function(x, patient_ids = NULL, id_type = "icustay",
 
   warn_dots(...)
 
-  args <- list(x = x, patient_ids = patient_ids, id_type = id_type,
-               interval = interval)
+  cb <- get_itm_callback(x)
 
-  do.call(x[["callback"]], args)
+  cb(x = x, patient_ids = patient_ids, id_type = id_type, interval = interval)
+}
+
+do_itm_load <- function(x, patient_ids, id_type, interval) {
+
+  ide <- unname(lookup_id_type(x, id_type))
+  idx <- get_itm_var(x, "index_var")
+  qry <- prepare_query(x)
+  col <- get_itm_var(x)
+
+  if (is.null(idx)) {
+    res <- load_id(x, !!qry, col, ide, interval)
+  } else {
+    res <- load_ts(x, !!qry, col, ide, idx, interval)
+  }
+
+  merge_patid(res, patient_ids)
 }
 
 merge_patid <- function(x, patid) {
@@ -600,4 +559,16 @@ merge_patid <- function(x, patid) {
   }
 
   merge(x, patid, by = id_col, all = FALSE)
+}
+
+itm_post_proc <- function(x, dat) {
+
+  var <- get_itm_var(x)
+
+  arg <- c(list(dat), as.list(var), list(env = as_src_env(x)))
+  dat <- do.call(get_itm_callback(x), arg)
+
+  dat <- rename_cols(dat, names(var), var, skip_absent = TRUE, by_ref = TRUE)
+
+  dat
 }

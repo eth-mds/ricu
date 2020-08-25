@@ -163,7 +163,9 @@ rename_cols.id_tbl <- function(x, new, old = colnames(x),
     old <- old[hits]
   }
 
-  new_id_tbl(NextMethod(), rename(id_vars(x), new, old))
+  res <- NextMethod()
+
+  new_id_tbl(res, rename(id_vars(x), new, old))
 }
 
 #' @method rename_cols data.table
@@ -247,7 +249,9 @@ change_interval.ts_tbl <- function(x, new_interval, cols = time_vars(x), ...) {
   id_nms <- id_vars(x)
   idx_nm <- index_var(x)
 
-  new_ts_tbl(NextMethod(), id_nms, idx_nm, new_interval, by_ref = TRUE)
+  res <- NextMethod()
+
+  new_ts_tbl(res, id_nms, idx_nm, new_interval, by_ref = TRUE)
 }
 
 #' @method change_interval data.table

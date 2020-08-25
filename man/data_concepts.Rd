@@ -20,10 +20,11 @@ new_cncpt(
   category = NA_character_,
   aggregate = NULL,
   ...,
+  target = "ts_tbl",
   class = "num_cncpt"
 )
 
-is_cncpt(x, ...)
+is_cncpt(x)
 
 init_cncpt(x, ...)
 
@@ -56,6 +57,8 @@ id and if applicable per time step}
 \item{...}{Further specification of the \code{cncpt} object (passed to
 \code{\link[=init_cncpt]{init_cncpt()}})}
 
+\item{target}{The target object yielded by loading}
+
 \item{class}{\code{NULL} or a string-valued sub-class name used for customizing
 concept behavior}
 
@@ -72,8 +75,6 @@ numeric concept}
 \item{callback}{Name of a function to be called on the returned data used
 for data cleanup operations}
 
-\item{target}{The target object yielded by loading}
-
 \item{interval}{Time interval used for data loading; if NULL, the respective
 interval passed as argument to \code{\link[=load_concepts]{load_concepts()}} is taken}
 }
@@ -82,7 +83,7 @@ Concept objects are used in \code{ricu} as a way to specify how a clinical
 concept, such as heart rate can be loaded from a data source and are mainly
 consumed by \code{\link[=load_concepts]{load_concepts()}}. Several functions are avialable for
 constructing \code{concept} (and related auxillary) objects either from code or
-by parsing a JSON formatted concept dictionary using \code{\link[=load_dicionary]{load_dicionary()}}.
+by parsing a JSON formatted concept dictionary using \code{\link[=load_dictionary]{load_dictionary()}}.
 }
 \details{
 :

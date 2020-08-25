@@ -109,9 +109,26 @@ distribute_amount <- function(x, val_var, unit_var, end_var, ...) {
   x <- x[, c(val_var) := get(val_var) / as.numeric(get(end_var) - get(idx)) *
                             as.numeric(hr)]
 
-  res <- expand(x, idx, end_var, keep = c(id_vars(x), val_var))
+  res <- expand(x, idx, end_var, keep_vars = c(id_vars(x), val_var))
   res <- res[, c(unit_var) := "units/hr"]
 
+  res
+}
+
+aggregate_fun <- function(fun, new_unit) {
+
+  assert_that(is.string(fun), is.string(new_unit))
+
+  function(x, val_var, unit_var, ...) {
+    res <- dt_gforce(set(x, j = unit_var, value = NULL), fun)
+    res <- res[, c(unit_var) := new_unit]
+    res
+  }
+}
+
+aggregate_amount <- function(x, val_var, unit_var, ...) {
+  res <- dt_gforce(set(x, j = unit_var, value = NULL), "sum")
+  res <- res[, c(unit_var) := "units"]
   res
 }
 

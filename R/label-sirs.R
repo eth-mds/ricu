@@ -65,6 +65,9 @@ sirs_score <- function(..., win_length = hours(24L), keep_components = FALSE,
   res
 }
 
+#' @param vent,fio2,gcs Data as returned by [load_concepts()] used for score
+#' calculation
+#'
 #' @rdname label_sirs
 #' @export
 supp_o2 <- function(vent, fio2, interval = NULL) {

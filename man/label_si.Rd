@@ -6,13 +6,13 @@
 \title{Suspicion of infection label}
 \usage{
 susp_inf(
-  antibiotics,
-  fluid_sampling,
+  abx,
+  samp,
   abx_count_win = hours(24L),
   abx_min_count = 1L,
   positive_cultures = FALSE,
   ...,
-  interval = ricu::interval(antibiotics)
+  interval = NULL
 )
 
 si_calc(
@@ -23,8 +23,8 @@ si_calc(
 )
 }
 \arguments{
-\item{antibiotics, fluid_sampling}{Data input used for determining suspicion
-of infection (\code{ts_tbl} objects, as produced by \code{\link[=load_concepts]{load_concepts()}})}
+\item{abx, samp}{Data input used for determining suspicion of infection
+(\code{ts_tbl} objects, as produced by \code{\link[=load_concepts]{load_concepts()}})}
 
 \item{abx_count_win}{Time span during which to apply the \code{abx_min_count}
 criterion}

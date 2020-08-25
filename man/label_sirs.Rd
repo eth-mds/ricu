@@ -45,6 +45,9 @@ individual components alongside the aggregated score}
 \item{interval}{Time series interval (only used for checking consistency
 of input data)}
 
+\item{vent, fio2, gcs}{Data as returned by \code{\link[=load_concepts]{load_concepts()}} used for score
+calculation}
+
 \item{by_ref}{Logical flag indicating whether to change the input by
 reference}
 }

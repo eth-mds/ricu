@@ -5,6 +5,7 @@
 \alias{is_itm}
 \alias{init_itm}
 \alias{init_itm.sel_itm}
+\alias{init_itm.hrd_itm}
 \alias{init_itm.col_itm}
 \alias{init_itm.rgx_itm}
 \alias{init_itm.fun_itm}
@@ -15,49 +16,25 @@
 \alias{is_item}
 \title{Data items}
 \usage{
-new_itm(src, ..., target = c("ts_tbl", "id_tbl"), class = "sel_itm")
+new_itm(src, ..., class = "sel_itm")
 
 is_itm(x)
 
 init_itm(x, ...)
 
-\method{init_itm}{sel_itm}(
-  x,
-  table,
-  sub_var,
-  ids,
-  itm_vars = NULL,
-  index_var = NULL,
-  callback = "identity_callback",
-  ...
-)
+\method{init_itm}{sel_itm}(x, table, sub_var, ids, callback = "identity_callback", ...)
 
-\method{init_itm}{col_itm}(
-  x,
-  table,
-  itm_vars = NULL,
-  index_var = NULL,
-  unit_val = NULL,
-  callback = "identity_callback",
-  ...
-)
+\method{init_itm}{hrd_itm}(x, table, sub_var, ids, callback = "identity_callback", ...)
 
-\method{init_itm}{rgx_itm}(
-  x,
-  table,
-  sub_var,
-  regex,
-  itm_vars = NULL,
-  index_var = NULL,
-  callback = "identity_callback",
-  ...
-)
+\method{init_itm}{col_itm}(x, table, unit_val = NULL, callback = "identity_callback", ...)
+
+\method{init_itm}{rgx_itm}(x, table, sub_var, regex, callback = "identity_callback", ...)
 
 \method{init_itm}{fun_itm}(x, callback, ...)
 
 \method{init_itm}{itm}(x, ...)
 
-new_item(x, target = NULL)
+new_item(x)
 
 item(...)
 
@@ -71,8 +48,6 @@ is_item(x)
 \item{...}{Further specification of the \code{itm} object (passed to
 \code{\link[=init_itm]{init_itm()}})}
 
-\item{target}{The target object yielded by loading}
-
 \item{class}{Sub class for customizing \code{itm} behavior}
 
 \item{x}{Object to query/dispatch on}
@@ -83,10 +58,6 @@ is_item(x)
 
 \item{ids}{Vector of ids used to subset table rows. If \code{NULL}, all rows are
 considered corresponding to the data item}
-
-\item{itm_vars}{Columns returned as \code{\link[=data_vars]{data_vars()}}}
-
-\item{index_var}{Column used as index}
 
 \item{callback}{Name of a function to be called on the returned data used
 for data cleanup operations (or a string that evaluates to a function)}
@@ -103,7 +74,7 @@ items corresponding to clinical concepts (see also \code{\link[=concept]{concept
 heart rate can be loaded from a data source. Several functions are
 available for constructing \code{item} (and related auxillary) objects either
 from code or by parsing a JSON formatted concept dictionary using
-\code{\link[=load_dicionary]{load_dicionary()}}.
+\code{\link[=load_dictionary]{load_dictionary()}}.
 }
 \details{
 In order to allow for a large degree of flexibility (and extensibility),
@@ -111,8 +82,9 @@ which is much needed owing to considerable heterogeneity presented by
 different data sources, several nested S3 classes are involved in
 representing a concept. An outline of this hierarchy can be described as
 \itemize{
-\item \code{concept}: contains many \code{cncpt} objects (of potentially differing
-sub-types), each comprising of some meta-data and an \code{item} object
+\item \code{\link[=concept]{concept}}: contains many \code{cncpt} objects (of potentially
+differing sub-types), each comprising of some meta-data and an \code{item}
+object
 \item \code{item}: contains many \code{itm} objects (of potentially differing
 sub-types), each encoding how to retrieve a data item.
 }
@@ -141,10 +113,21 @@ example for insulin in \code{eicu}, where the regular expression \verb{^insulin 
 of \code{infusiondrug}. The regular expression is evaluated by \code{\link[base:grep]{base::grepl()}}
 with \code{ignore.case = TRUE}.
 \item \code{fun_itm}: Intended for the scenario where data of interest is not
-directly available from a table, this \code{itm} class offers most flexbility. A
-function can be specified as \code{callback} and this function will be called
+directly available from a table, this \code{itm} class offers most flexbility.
+A function can be specified as \code{callback} and this function will be called
 with arguments \code{x} (the object itself), \code{patient_ids}, \code{id_type} and
 \code{interval} (see \code{\link[=load_concepts]{load_concepts()}}) and is expected to return an object as
 specified by the \code{target} entry.
 }
+
+All \code{itm} objects have to specify a data source (\code{src}) and a target type
+(\code{target}), which specifies the expected object
+}
+\examples{
+gluc <- item("mimic_demo", "labevents", "itemid", list(c(50809L, 50931L)))
+
+is_item(gluc)
+
+identical(gluc, as_item(load_dictionary("mimic_demo", "glu")))
+
 }

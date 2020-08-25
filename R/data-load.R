@@ -200,6 +200,10 @@ load_id.character <- function(x, src, ...) {
   load_id(as_src_tbl(x, src), ...)
 }
 
+#' @rdname load_tbl
+#' @export
+load_id.default <- function(x, ...) load_id(as_src_tbl(x), ...)
+
 #' @param index_var The column defining the index of `ts_tbl` objects
 #'
 #' @rdname load_tbl
@@ -236,3 +240,7 @@ load_ts.src_tbl <- function(x, rows, cols = colnames(x), id_var = id_vars(x),
 load_ts.character <- function(x, src, ...) {
   load_ts(as_src_tbl(x, src), ...)
 }
+
+#' @rdname load_tbl
+#' @export
+load_ts.default <- function(x, ...) load_ts(as_src_tbl(x), ...)

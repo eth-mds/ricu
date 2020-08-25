@@ -91,7 +91,7 @@ new_id_tbl <- function(x, id_vars, ..., class = character()) {
 
   assert_that(is.character(id_vars), has_length(id_vars))
 
-  new_tbl(x, id_vars = id_vars, ..., class = c(class, "id_tbl"))
+  new_tbl(x, id_vars = unname(id_vars), ..., class = c(class, "id_tbl"))
 }
 
 #' @param index_var Column name of the index column
@@ -196,8 +196,8 @@ new_ts_tbl <- function(x, id_vars, index_var = NULL, interval = NULL,
     interval <- interval(x[[index_var]])
   }
 
-  new_id_tbl(x, id_vars, index_var = index_var, interval = interval, ...,
-             class = c(class, "ts_tbl"))
+  new_id_tbl(x, id_vars, index_var = unname(index_var), interval = interval,
+             ..., class = c(class, "ts_tbl"))
 }
 
 new_tbl <- function(x, ..., class, by_ref = TRUE) {
@@ -208,11 +208,15 @@ new_tbl <- function(x, ..., class, by_ref = TRUE) {
     x <- copy(x)
   }
 
+  # dots need evaluating before stripping of class in case of by-ref operation
+
+  dots <- list(...)
+
   if (is_id_tbl(x)) {
     x <- unclass_tbl(x)
   }
 
-  attrs <- c(list(...), list(class = c(class, class(x))))
+  attrs <- c(dots, list(class = c(class, class(x))))
 
   x <- set_attributes(x, attrs)
 

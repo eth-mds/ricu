@@ -16,10 +16,27 @@ fail_type <- function(arg_name, class) {
   }
 }
 
+is_type <- function(type) {
+
+  res <- function(x) inherits(x, type)
+
+  on_failure(res) <- fail_type("x", type)
+
+  res
+}
+
 is_scalar <- function(x) is.atomic(x) && length(x) == 1L
 
 on_failure(is_scalar) <- function(call, env) {
   format_assert("{as_label(call$x)} is not a scalar", "is_scalar_assert")
+}
+
+is_intish <- function(x) {
+  is.integer(x) || (is.numeric(x) && all(x == trunc(x)) && !is.na(x))
+}
+
+on_failure(is_intish) <- function(call, env) {
+  format_assert("{as_label(call$x)} integer-values", "is_intish_assert")
 }
 
 has_length <- function(x) length(x) > 0L
@@ -79,6 +96,11 @@ on_failure(has_cols) <- function(call, env) {
 }
 
 has_interval <- function(x, interval) {
+
+  if (is_id_tbl(x) && !is_ts_tbl(x)) {
+    return(TRUE)
+  }
+
   assert_that(is_ts_tbl(x), is_interval(interval)) &&
     same_time(interval(x), interval)
 }

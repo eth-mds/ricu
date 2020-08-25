@@ -259,20 +259,20 @@ available.
 Roughly speaking, the semantics for the two functions are as follows:
 \itemize{
 \item \code{cncpt}: Called with arguments \code{x} (the current \code{cncpt} object),
-\code{aggregate} (controlling how aggregation per time-point and ID is handled),
-\code{...} (further arguments passed to downstream methods) and \code{progress}
-(controlling progress reporting), this function should be able to load and
-aggregate data for the given concept. Usually this involves extracting the
-\code{item} object and calling \code{load_concepts()} again, dispatching on the \code{item}
-class with arguments \code{x} (the given \code{item}), arguments passed as \code{...}, as
-well as \code{progress}.
+\code{aggregate} (controlling how aggregation per time-point and ID is
+handled), \code{...} (further arguments passed to downstream methods) and
+\code{progress} (controlling progress reporting), this function should be able
+to load and aggregate data for the given concept. Usually this involves
+extracting the \code{item} object and calling \code{load_concepts()} again,
+dispatching on the \code{item} class with arguments \code{x} (the given \code{item}),
+arguments passed as \code{...}, as well as \code{progress}.
 \item \code{itm}: Called with arguments \code{x} (the current object inheriting from
 \code{itm}, \code{patient_ids} (\code{NULL} or a patient ID selection), \code{id_type} (a
 string specifying what ID system to retrieve), and \code{interval} (the time
 series interval), this function actually carries out the loading of
-individual data items, using the specified ID system, rounding times to the
-correct interval and subsetting on patient IDs. As return value, on object
-of class as specified by the \code{target} entry is expected and all
+individual data items, using the specified ID system, rounding times to
+the correct interval and subsetting on patient IDs. As return value, on
+object of class as specified by the \code{target} entry is expected and all
 \code{\link[=data_vars]{data_vars()}} should be named consistently, as data corresponding to
 multiple \code{itm} objects concatenated in row-wise fashion as in
 \code{\link[base:cbind]{base::rbind()}}.
@@ -280,7 +280,7 @@ multiple \code{itm} objects concatenated in row-wise fashion as in
 }
 
 \examples{
-dat <- load_concepts("glucose", "mimic_demo")
+dat <- load_concepts("glu", "mimic_demo")
 
 gluc <- concept("gluc",
   item("mimic_demo", "labevents", "itemid", list(c(50809L, 50931L)))

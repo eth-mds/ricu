@@ -131,7 +131,7 @@
       "eicu": [
         {
           "table": "admissiondx",
-          "itm_vars": "admitdxpath",
+          "val_var": "admitdxpath",
           "callback": "eicu_adx",
           "class": "col_itm"
         }
@@ -139,7 +139,7 @@
       "eicu_demo": [
         {
           "table": "admissiondx",
-          "itm_vars": "admitdxpath",
+          "val_var": "admitdxpath",
           "callback": "eicu_adx",
           "class": "col_itm"
         }
@@ -147,7 +147,7 @@
       "mimic": [
         {
           "table": "services",
-          "itm_vars": "curr_service",
+          "val_var": "curr_service",
           "callback": "apply_map(\n            c(MED   = 'med',   SURG  = 'surg', CMED = 'med',  CSURG  = 'surg',\n              VSURG = 'surg',  NSURG = 'surg', NB   = 'other', NMED  = 'med',\n              ORTHO = 'surg',  TRAUM = 'surg', OMED = 'med',   GU    = 'other',\n              NBB   = 'other', TSURG = 'surg', GYN  = 'other', PSURG = 'surg',\n              OBS   = 'other', ENT   = 'surg', DENT = 'surg',  PSYCH = 'other')\n          )",
           "class": "col_itm"
         }
@@ -155,7 +155,7 @@
       "mimic_demo": [
         {
           "table": "services",
-          "itm_vars": "curr_service",
+          "val_var": "curr_service",
           "callback": "apply_map(\n            c(MED   = 'med',   SURG  = 'surg', CMED = 'med',  CSURG  = 'surg',\n              VSURG = 'surg',  NSURG = 'surg', NB   = 'other', NMED  = 'med',\n              ORTHO = 'surg',  TRAUM = 'surg', OMED = 'med',   GU    = 'other',\n              NBB   = 'other', TSURG = 'surg', GYN  = 'other', PSURG = 'surg',\n              OBS   = 'other', ENT   = 'surg', DENT = 'surg',  PSYCH = 'other')\n          )",
           "class": "col_itm"
         }
@@ -173,7 +173,7 @@
       "eicu": [
         {
           "table": "patient",
-          "itm_vars": "age",
+          "val_var": "age",
           "callback": "eicu_age",
           "class": "col_itm"
         }
@@ -181,7 +181,7 @@
       "eicu_demo": [
         {
           "table": "patient",
-          "itm_vars": "age",
+          "val_var": "age",
           "callback": "eicu_age",
           "class": "col_itm"
         }
@@ -189,14 +189,14 @@
       "hirid": [
         {
           "table": "general",
-          "itm_vars": "age",
+          "val_var": "age",
           "class": "col_itm"
         }
       ],
       "mimic": [
         {
           "table": "patients",
-          "itm_vars": "dob",
+          "val_var": "dob",
           "callback": "mimic_age",
           "class": "col_itm"
         }
@@ -204,7 +204,7 @@
       "mimic_demo": [
         {
           "table": "patients",
-          "itm_vars": "dob",
+          "val_var": "dob",
           "callback": "mimic_age",
           "class": "col_itm"
         }
@@ -237,7 +237,8 @@
           "ids": 24000605,
           "table": "observations",
           "sub_var": "variableid",
-          "callback": "transform_fun(binary_op(`*`, 0.1))"
+          "callback": "transform_fun(binary_op(`*`, 0.1))",
+          "class": "hrd_itm"
         }
       ],
       "mimic": [
@@ -280,7 +281,8 @@
         {
           "ids": 20002700,
           "table": "observations",
-          "sub_var": "variableid"
+          "sub_var": "variableid",
+          "class": "hrd_itm"
         }
       ],
       "mimic": [
@@ -323,7 +325,8 @@
         {
           "ids": 20002600,
           "table": "observations",
-          "sub_var": "variableid"
+          "sub_var": "variableid",
+          "class": "hrd_itm"
         }
       ],
       "mimic": [
@@ -366,7 +369,8 @@
         {
           "ids": 24000330,
           "table": "observations",
-          "sub_var": "variableid"
+          "sub_var": "variableid",
+          "class": "hrd_itm"
         }
       ],
       "mimic": [
@@ -454,7 +458,8 @@
         {
           "ids": 20001300,
           "table": "observations",
-          "sub_var": "variableid"
+          "sub_var": "variableid",
+          "class": "hrd_itm"
         }
       ],
       "mimic": [
@@ -498,7 +503,8 @@
         {
           "ids": 20004200,
           "table": "observations",
-          "sub_var": "variableid"
+          "sub_var": "variableid",
+          "class": "hrd_itm"
         }
       ],
       "mimic": [
@@ -543,7 +549,8 @@
           "ids": 20004300,
           "table": "observations",
           "sub_var": "variableid",
-          "callback": "transform_fun(binary_op(`*`, 0.058467))"
+          "callback": "transform_fun(binary_op(`*`, 0.058467))",
+          "class": "hrd_itm"
         }
       ],
       "mimic": [
@@ -588,7 +595,8 @@
           "ids": 24000560,
           "table": "observations",
           "sub_var": "variableid",
-          "callback": "transform_fun(binary_op(`*`, 0.058467))"
+          "callback": "transform_fun(binary_op(`*`, 0.058467))",
+          "class": "hrd_itm"
         }
       ],
       "mimic": [
@@ -629,7 +637,8 @@
         {
           "ids": 24000557,
           "table": "observations",
-          "sub_var": "variableid"
+          "sub_var": "variableid",
+          "class": "hrd_itm"
         }
       ],
       "mimic": [
@@ -674,7 +683,8 @@
           "ids": 20004100,
           "table": "observations",
           "sub_var": "variableid",
-          "callback": "transform_fun(binary_op(`*`, 2.8))"
+          "callback": "transform_fun(binary_op(`*`, 2.8))",
+          "class": "hrd_itm"
         }
       ],
       "mimic": [
@@ -721,7 +731,8 @@
           "ids": 20005100,
           "table": "observations",
           "sub_var": "variableid",
-          "callback": "transform_fun(binary_op(`*`, 4.008))"
+          "callback": "transform_fun(binary_op(`*`, 4.008))",
+          "class": "hrd_itm"
         }
       ],
       "mimic": [
@@ -765,7 +776,8 @@
         {
           "ids": 24000522,
           "table": "observations",
-          "sub_var": "variableid"
+          "sub_var": "variableid",
+          "class": "hrd_itm"
         }
       ],
       "mimic": [
@@ -808,7 +820,8 @@
         {
           "ids": 24000210,
           "table": "observations",
-          "sub_var": "variableid"
+          "sub_var": "variableid",
+          "class": "hrd_itm"
         }
       ],
       "mimic": [
@@ -851,7 +864,8 @@
         {
           "ids": 24000220,
           "table": "observations",
-          "sub_var": "variableid"
+          "sub_var": "variableid",
+          "class": "hrd_itm"
         }
       ],
       "mimic": [
@@ -895,7 +909,8 @@
         {
           "ids": [24000439, 24000521],
           "table": "observations",
-          "sub_var": "variableid"
+          "sub_var": "variableid",
+          "class": "hrd_itm"
         }
       ],
       "mimic": [
@@ -940,7 +955,8 @@
           "ids": 20000600,
           "table": "observations",
           "sub_var": "variableid",
-          "callback": "transform_fun(binary_op(`*`, 0.011312))"
+          "callback": "transform_fun(binary_op(`*`, 0.011312))",
+          "class": "hrd_itm"
         }
       ],
       "mimic": [
@@ -985,7 +1001,8 @@
         {
           "ids": 20002200,
           "table": "observations",
-          "sub_var": "variableid"
+          "sub_var": "variableid",
+          "class": "hrd_itm"
         }
       ],
       "mimic": [
@@ -1016,14 +1033,14 @@
       "eicu": [
         {
           "table": "vitalperiodic",
-          "itm_vars": "systemicdiastolic",
+          "val_var": "systemicdiastolic",
           "class": "col_itm"
         }
       ],
       "eicu_demo": [
         {
           "table": "vitalperiodic",
-          "itm_vars": "systemicdiastolic",
+          "val_var": "systemicdiastolic",
           "class": "col_itm"
         }
       ],
@@ -1031,7 +1048,8 @@
         {
           "ids": 120,
           "table": "observations",
-          "sub_var": "variableid"
+          "sub_var": "variableid",
+          "class": "hrd_itm"
         }
       ],
       "mimic": [
@@ -1058,7 +1076,7 @@
       "eicu": [
         {
           "table": "patient",
-          "itm_vars": "hospitaldischargestatus",
+          "val_var": "hospitaldischargestatus",
           "callback": "transform_fun(comp_na(`==`, 'Expired'))",
           "class": "col_itm"
         }
@@ -1066,7 +1084,7 @@
       "eicu_demo": [
         {
           "table": "patient",
-          "itm_vars": "hospitaldischargestatus",
+          "val_var": "hospitaldischargestatus",
           "callback": "transform_fun(comp_na(`==`, 'Expired'))",
           "class": "col_itm"
         }
@@ -1077,13 +1095,14 @@
           "table": "observations",
           "sub_var": "variableid",
           "item_var": "variableid",
-          "callback": "hirid_death"
+          "callback": "hirid_death",
+          "class": "hrd_itm"
         }
       ],
       "mimic": [
         {
           "table": "admissions",
-          "itm_vars": "hospital_expire_flag",
+          "val_var": "hospital_expire_flag",
           "callback": "transform_fun(comp_na(`==`, 1L))",
           "class": "col_itm"
         }
@@ -1091,7 +1110,7 @@
       "mimic_demo": [
         {
           "table": "admissions",
-          "itm_vars": "hospital_expire_flag",
+          "val_var": "hospital_expire_flag",
           "callback": "transform_fun(comp_na(`==`, 1L))",
           "class": "col_itm"
         }
@@ -1224,7 +1243,8 @@
         {
           "ids": 10000300,
           "table": "observations",
-          "sub_var": "variableid"
+          "sub_var": "variableid",
+          "class": "hrd_itm"
         }
       ],
       "mimic": [
@@ -1352,7 +1372,8 @@
         {
           "ids": 24000668,
           "table": "observations",
-          "sub_var": "variableid"
+          "sub_var": "variableid",
+          "class": "hrd_itm"
         }
       ],
       "mimic": [
@@ -1382,7 +1403,8 @@
         {
           "ids": [2200, 8290, 30010009],
           "table": "observations",
-          "sub_var": "variableid"
+          "sub_var": "variableid",
+          "class": "hrd_itm"
         }
       ],
       "mimic": [
@@ -1427,7 +1449,8 @@
           "ids": 24000536,
           "table": "observations",
           "sub_var": "variableid",
-          "callback": "transform_fun(binary_op(`*`, 100))"
+          "callback": "transform_fun(binary_op(`*`, 100))",
+          "class": "hrd_itm"
         }
       ],
       "mimic": [
@@ -1485,7 +1508,8 @@
         {
           "ids": 2010,
           "table": "observations",
-          "sub_var": "variableid"
+          "sub_var": "variableid",
+          "class": "hrd_itm"
         }
       ],
       "mimic": [
@@ -1548,7 +1572,8 @@
           "ids": [20005110, 24000523, 24000585],
           "table": "observations",
           "sub_var": "variableid",
-          "callback": "transform_fun(binary_op(`*`, 18.016))"
+          "callback": "transform_fun(binary_op(`*`, 18.016))",
+          "class": "hrd_itm"
         }
       ],
       "mimic": [
@@ -1589,7 +1614,8 @@
         {
           "ids": 24000526,
           "table": "observations",
-          "sub_var": "variableid"
+          "sub_var": "variableid",
+          "class": "hrd_itm"
         }
       ]
     }
@@ -1657,7 +1683,8 @@
           "ids": [24000548, 24000836, 20000900],
           "table": "observations",
           "sub_var": "variableid",
-          "callback": "transform_fun(binary_op(`*`, 0.1))"
+          "callback": "transform_fun(binary_op(`*`, 0.1))",
+          "class": "hrd_itm"
         }
       ],
       "mimic": [
@@ -1686,14 +1713,14 @@
       "eicu": [
         {
           "table": "vitalperiodic",
-          "itm_vars": "heartrate",
+          "val_var": "heartrate",
           "class": "col_itm"
         }
       ],
       "eicu_demo": [
         {
           "table": "vitalperiodic",
-          "itm_vars": "heartrate",
+          "val_var": "heartrate",
           "class": "col_itm"
         }
       ],
@@ -1701,7 +1728,8 @@
         {
           "ids": 200,
           "table": "observations",
-          "sub_var": "variableid"
+          "sub_var": "variableid",
+          "class": "hrd_itm"
         }
       ],
       "mimic": [
@@ -1742,7 +1770,8 @@
         {
           "ids": 24000567,
           "table": "observations",
-          "sub_var": "variableid"
+          "sub_var": "variableid",
+          "class": "hrd_itm"
         }
       ],
       "mimic": [
@@ -1762,8 +1791,6 @@
     }
   },
   "ins": {
-    "unit": "units/hr",
-    "min": 0,
     "description": "insulin",
     "category": "medications",
     "sources": {
@@ -1790,7 +1817,7 @@
           "ids": [15, 1000724],
           "table": "pharma",
           "sub_var": "pharmaid",
-          "callback": "function(x, ...) dt_gforce(x, 'sum')"
+          "callback": "aggregate_fun('sum', 'units')"
         }
       ],
       "mimic": [
@@ -1803,7 +1830,7 @@
           "ids": [223258, 223260],
           "table": "inputevents_mv",
           "sub_var": "itemid",
-          "itm_vars": "amount",
+          "val_var": "amount",
           "end_var": "endtime",
           "callback": "distribute_amount"
         }
@@ -1818,7 +1845,7 @@
           "ids": [223258, 223260],
           "table": "inputevents_mv",
           "sub_var": "itemid",
-          "itm_vars": "amount",
+          "val_var": "amount",
           "end_var": "endtime",
           "callback": "distribute_amount"
         }
@@ -1850,7 +1877,8 @@
         {
           "ids": [20000500, 24000520, 24000833, 24000867],
           "table": "observations",
-          "sub_var": "variableid"
+          "sub_var": "variableid",
+          "class": "hrd_itm"
         }
       ],
       "mimic": [
@@ -1894,7 +1922,8 @@
         {
           "ids": 24000524,
           "table": "observations",
-          "sub_var": "variableid"
+          "sub_var": "variableid",
+          "class": "hrd_itm"
         }
       ],
       "mimic": [
@@ -2019,7 +2048,8 @@
         {
           "ids": 24000480,
           "table": "observations",
-          "sub_var": "variableid"
+          "sub_var": "variableid",
+          "class": "hrd_itm"
         }
       ],
       "mimic": [
@@ -2048,24 +2078,24 @@
       "eicu": [
         {
           "table": "vitalperiodic",
-          "itm_vars": "systemicmean",
+          "val_var": "systemicmean",
           "class": "col_itm"
         },
         {
           "table": "vitalaperiodic",
-          "itm_vars": "noninvasivemean",
+          "val_var": "noninvasivemean",
           "class": "col_itm"
         }
       ],
       "eicu_demo": [
         {
           "table": "vitalperiodic",
-          "itm_vars": "systemicmean",
+          "val_var": "systemicmean",
           "class": "col_itm"
         },
         {
           "table": "vitalaperiodic",
-          "itm_vars": "noninvasivemean",
+          "val_var": "noninvasivemean",
           "class": "col_itm"
         }
       ],
@@ -2073,7 +2103,8 @@
         {
           "ids": 110,
           "table": "observations",
-          "sub_var": "variableid"
+          "sub_var": "variableid",
+          "class": "hrd_itm"
         }
       ],
       "mimic": [
@@ -2116,7 +2147,8 @@
         {
           "ids": 24000160,
           "table": "observations",
-          "sub_var": "variableid"
+          "sub_var": "variableid",
+          "class": "hrd_itm"
         }
       ],
       "mimic": [
@@ -2160,7 +2192,8 @@
         {
           "ids": 24000170,
           "table": "observations",
-          "sub_var": "variableid"
+          "sub_var": "variableid",
+          "class": "hrd_itm"
         }
       ],
       "mimic": [
@@ -2204,7 +2237,8 @@
         {
           "ids": 24000150,
           "table": "observations",
-          "sub_var": "variableid"
+          "sub_var": "variableid",
+          "class": "hrd_itm"
         }
       ],
       "mimic": [
@@ -2248,7 +2282,8 @@
         {
           "ids": 24000549,
           "table": "observations",
-          "sub_var": "variableid"
+          "sub_var": "variableid",
+          "class": "hrd_itm"
         }
       ],
       "mimic": [
@@ -2302,7 +2337,8 @@
           "ids": 24000230,
           "table": "observations",
           "sub_var": "variableid",
-          "callback": "transform_fun(binary_op(`*`, 2.431))"
+          "callback": "transform_fun(binary_op(`*`, 2.431))",
+          "class": "hrd_itm"
         }
       ],
       "mimic": [
@@ -2347,7 +2383,8 @@
         {
           "ids": 10000200,
           "table": "observations",
-          "sub_var": "variableid"
+          "sub_var": "variableid",
+          "class": "hrd_itm"
         }
       ],
       "mimic": [
@@ -2391,7 +2428,8 @@
         {
           "ids": [20000400, 24000519, 24000658, 24000835, 24000866],
           "table": "observations",
-          "sub_var": "variableid"
+          "sub_var": "variableid",
+          "class": "hrd_itm"
         }
       ],
       "mimic": [
@@ -2435,7 +2473,8 @@
         {
           "ids": 24000550,
           "table": "observations",
-          "sub_var": "variableid"
+          "sub_var": "variableid",
+          "class": "hrd_itm"
         }
       ],
       "mimic": [
@@ -2532,7 +2571,7 @@
       "eicu": [
         {
           "table": "vitalperiodic",
-          "itm_vars": "sao2",
+          "val_var": "sao2",
           "unit_val": "%",
           "class": "col_itm"
         },
@@ -2545,7 +2584,7 @@
       "eicu_demo": [
         {
           "table": "vitalperiodic",
-          "itm_vars": "sao2",
+          "val_var": "sao2",
           "unit_val": "%",
           "class": "col_itm"
         },
@@ -2559,7 +2598,8 @@
         {
           "ids": [4000, 8280, 20000800],
           "table": "observations",
-          "sub_var": "variableid"
+          "sub_var": "variableid",
+          "class": "hrd_itm"
         }
       ],
       "mimic": [
@@ -2611,7 +2651,8 @@
         {
           "ids": 20001200,
           "table": "observations",
-          "sub_var": "variableid"
+          "sub_var": "variableid",
+          "class": "hrd_itm"
         }
       ],
       "mimic": [
@@ -2654,7 +2695,8 @@
         {
           "ids": 20000300,
           "table": "observations",
-          "sub_var": "variableid"
+          "sub_var": "variableid",
+          "class": "hrd_itm"
         }
       ],
       "mimic": [
@@ -2699,7 +2741,8 @@
           "ids": 20002500,
           "table": "observations",
           "sub_var": "variableid",
-          "callback": "transform_fun(binary_op(`*`, 3.097521))"
+          "callback": "transform_fun(binary_op(`*`, 3.097521))",
+          "class": "hrd_itm"
         }
       ],
       "mimic": [
@@ -2743,7 +2786,8 @@
         {
           "ids": 20000110,
           "table": "observations",
-          "sub_var": "variableid"
+          "sub_var": "variableid",
+          "class": "hrd_itm"
         }
       ],
       "mimic": [
@@ -2787,7 +2831,8 @@
         {
           "ids": 20000200,
           "table": "observations",
-          "sub_var": "variableid"
+          "sub_var": "variableid",
+          "class": "hrd_itm"
         }
       ],
       "mimic": [
@@ -2866,7 +2911,8 @@
         {
           "ids": 20004410,
           "table": "observations",
-          "sub_var": "variableid"
+          "sub_var": "variableid",
+          "class": "hrd_itm"
         }
       ],
       "mimic": [
@@ -2909,7 +2955,8 @@
         {
           "ids": 15001565,
           "table": "observations",
-          "sub_var": "variableid"
+          "sub_var": "variableid",
+          "class": "hrd_itm"
         }
       ]
     }
@@ -2998,14 +3045,14 @@
       "eicu": [
         {
           "table": "vitalperiodic",
-          "itm_vars": "respiration",
+          "val_var": "respiration",
           "class": "col_itm"
         }
       ],
       "eicu_demo": [
         {
           "table": "vitalperiodic",
-          "itm_vars": "respiration",
+          "val_var": "respiration",
           "class": "col_itm"
         }
       ],
@@ -3013,7 +3060,8 @@
         {
           "ids": [300, 310],
           "table": "observations",
-          "sub_var": "variableid"
+          "sub_var": "variableid",
+          "class": "hrd_itm"
         }
       ],
       "mimic": [
@@ -3038,7 +3086,7 @@
       "eicu": [
         {
           "table": "microlab",
-          "itm_vars": "organism",
+          "val_var": "organism",
           "callback": "transform_fun(comp_na(`!=`, 'no growth'))",
           "class": "col_itm"
         }
@@ -3046,7 +3094,7 @@
       "eicu_demo": [
         {
           "table": "microlab",
-          "itm_vars": "organism",
+          "val_var": "organism",
           "callback": "transform_fun(comp_na(`!=`, 'no growth'))",
           "class": "col_itm"
         }
@@ -3054,7 +3102,7 @@
       "mimic": [
         {
           "table": "microbiologyevents",
-          "itm_vars": "org_itemid",
+          "val_var": "org_itemid",
           "callback": "mimic_sampling",
           "aux_time": "charttime",
           "class": "col_itm"
@@ -3063,7 +3111,7 @@
       "mimic_demo": [
         {
           "table": "microbiologyevents",
-          "itm_vars": "org_itemid",
+          "val_var": "org_itemid",
           "callback": "mimic_sampling",
           "aux_time": "charttime",
           "class": "col_itm"
@@ -3081,14 +3129,14 @@
       "eicu": [
         {
           "table": "vitalperiodic",
-          "itm_vars": "systemicsystolic",
+          "val_var": "systemicsystolic",
           "class": "col_itm"
         }
       ],
       "eicu_demo": [
         {
           "table": "vitalperiodic",
-          "itm_vars": "systemicsystolic",
+          "val_var": "systemicsystolic",
           "class": "col_itm"
         }
       ],
@@ -3096,7 +3144,8 @@
         {
           "ids": 100,
           "table": "observations",
-          "sub_var": "variableid"
+          "sub_var": "variableid",
+          "class": "hrd_itm"
         }
       ],
       "mimic": [
@@ -3132,21 +3181,21 @@
       "eicu": [
         {
           "table": "patient",
-          "itm_vars": "gender",
+          "val_var": "gender",
           "class": "col_itm"
         }
       ],
       "eicu_demo": [
         {
           "table": "patient",
-          "itm_vars": "gender",
+          "val_var": "gender",
           "class": "col_itm"
         }
       ],
       "hirid": [
         {
           "table": "general",
-          "itm_vars": "sex",
+          "val_var": "sex",
           "callback": "apply_map(c(M = 'Male', F = 'Female'))",
           "class": "col_itm"
         }
@@ -3154,7 +3203,7 @@
       "mimic": [
         {
           "table": "patients",
-          "itm_vars": "gender",
+          "val_var": "gender",
           "callback": "apply_map(c(M = 'Male', F = 'Female'))",
           "class": "col_itm"
         }
@@ -3162,7 +3211,7 @@
       "mimic_demo": [
         {
           "table": "patients",
-          "itm_vars": "gender",
+          "val_var": "gender",
           "callback": "apply_map(c(M = 'Male', F = 'Female'))",
           "class": "col_itm"
         }
@@ -3255,14 +3304,14 @@
       "eicu": [
         {
           "table": "vitalperiodic",
-          "itm_vars": "temperature",
+          "val_var": "temperature",
           "class": "col_itm"
         }
       ],
       "eicu_demo": [
         {
           "table": "vitalperiodic",
-          "itm_vars": "temperature",
+          "val_var": "temperature",
           "class": "col_itm"
         }
       ],
@@ -3270,7 +3319,8 @@
         {
           "ids": [410, 400, 7100],
           "table": "observations",
-          "sub_var": "variableid"
+          "sub_var": "variableid",
+          "class": "hrd_itm"
         }
       ],
       "mimic": [
@@ -3363,7 +3413,8 @@
         {
           "ids": 24000806,
           "table": "observations",
-          "sub_var": "variableid"
+          "sub_var": "variableid",
+          "class": "hrd_itm"
         }
       ],
       "mimic": [
@@ -3391,7 +3442,8 @@
           "ids": 15001552,
           "table": "observations",
           "sub_var": "variableid",
-          "callback": "transform_fun(comp_na(`==`, 2))"
+          "callback": "transform_fun(comp_na(`==`, 2))",
+          "class": "hrd_itm"
         }
       ],
       "mimic": [
@@ -3487,7 +3539,8 @@
           "ids": 30005110,
           "table": "observations",
           "sub_var": "variableid",
-          "callback": "hirid_urine"
+          "callback": "hirid_urine",
+          "class": "hrd_itm"
         }
       ],
       "mimic": [
@@ -3528,13 +3581,13 @@
       "eicu": [
         {
           "table": "respiratorycare",
-          "itm_vars": "ventendoffset",
+          "val_var": "ventendoffset",
           "callback": "vent_flag",
           "class": "col_itm"
         },
         {
           "table": "respiratorycare",
-          "itm_vars": "priorventendoffset",
+          "val_var": "priorventendoffset",
           "callback": "vent_flag",
           "class": "col_itm"
         },
@@ -3542,19 +3595,20 @@
           "ids": ["off", "Off", "Suspended"],
           "table": "respiratorycharting",
           "sub_var": "respchartvalue",
+          "val_var": "respchartvaluelabel",
           "callback": "transform_fun(set_true)"
         }
       ],
       "eicu_demo": [
         {
           "table": "respiratorycare",
-          "itm_vars": "ventendoffset",
+          "val_var": "ventendoffset",
           "callback": "vent_flag",
           "class": "col_itm"
         },
         {
           "table": "respiratorycare",
-          "itm_vars": "priorventendoffset",
+          "val_var": "priorventendoffset",
           "callback": "vent_flag",
           "class": "col_itm"
         },
@@ -3562,6 +3616,7 @@
           "ids": ["off", "Off", "Suspended"],
           "table": "respiratorycharting",
           "sub_var": "respchartvalue",
+          "val_var": "respchartvaluelabel",
           "callback": "transform_fun(set_true)"
         }
       ],
@@ -3570,7 +3625,8 @@
           "ids": 15001552,
           "table": "observations",
           "sub_var": "variableid",
-          "callback": "transform_fun(comp_na(`>`, 2))"
+          "callback": "transform_fun(comp_na(`>`, 2))",
+          "class": "hrd_itm"
         }
       ],
       "mimic": [
@@ -3610,13 +3666,13 @@
       "eicu": [
         {
           "table": "respiratorycare",
-          "itm_vars": "ventstartoffset",
+          "val_var": "ventstartoffset",
           "callback": "vent_flag",
           "class": "col_itm"
         },
         {
           "table": "respiratorycare",
-          "itm_vars": "priorventstartoffset",
+          "val_var": "priorventstartoffset",
           "callback": "vent_flag",
           "class": "col_itm"
         },
@@ -3630,13 +3686,13 @@
       "eicu_demo": [
         {
           "table": "respiratorycare",
-          "itm_vars": "ventstartoffset",
+          "val_var": "ventstartoffset",
           "callback": "vent_flag",
           "class": "col_itm"
         },
         {
           "table": "respiratorycare",
-          "itm_vars": "priorventstartoffset",
+          "val_var": "priorventstartoffset",
           "callback": "vent_flag",
           "class": "col_itm"
         },
@@ -3652,7 +3708,8 @@
           "ids": 15001552,
           "table": "observations",
           "sub_var": "variableid",
-          "callback": "transform_fun(comp_na(`==`, 1))"
+          "callback": "transform_fun(comp_na(`==`, 1))",
+          "class": "hrd_itm"
         }
       ],
       "mimic": [
@@ -3699,7 +3756,8 @@
         {
           "ids": 10000100,
           "table": "observations",
-          "sub_var": "variableid"
+          "sub_var": "variableid",
+          "class": "hrd_itm"
         }
       ],
       "mimic": [
@@ -3742,7 +3800,8 @@
         {
           "ids": 20000700,
           "table": "observations",
-          "sub_var": "variableid"
+          "sub_var": "variableid",
+          "class": "hrd_itm"
         }
       ],
       "mimic": [
@@ -3772,14 +3831,14 @@
       "eicu": [
         {
           "table": "patient",
-          "itm_vars": "admissionweight",
+          "val_var": "admissionweight",
           "class": "col_itm"
         }
       ],
       "eicu_demo": [
         {
           "table": "patient",
-          "itm_vars": "admissionweight",
+          "val_var": "admissionweight",
           "class": "col_itm"
         }
       ]

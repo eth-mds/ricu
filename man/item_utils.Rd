@@ -2,14 +2,29 @@
 % Please edit documentation in R/concept-utils.R
 \name{prepare_query}
 \alias{prepare_query}
-\alias{add_unit_var}
+\alias{try_add_vars}
+\alias{get_itm_var}
+\alias{set_itm_callback}
+\alias{get_itm_callback}
+\alias{set_id_opts}
+\alias{lookup_id_type}
 \alias{n_tick}
 \alias{target_class}
 \title{Internal utilities for \code{item}/\code{concept} objects}
 \usage{
 prepare_query(x)
 
-add_unit_var(x)
+try_add_vars(x, ...)
+
+get_itm_var(x, var = NULL)
+
+set_itm_callback(x, fun)
+
+get_itm_callback(x)
+
+set_id_opts(x)
+
+lookup_id_type(x, ...)
 
 n_tick(x)
 
@@ -17,6 +32,10 @@ target_class(x)
 }
 \arguments{
 \item{x}{Object defining the row-subsetting}
+
+\item{...}{Variable name}
+
+\item{fun}{Callback function (passed as string)}
 }
 \description{
 Internal utilities for \code{item}/\code{concept} objects

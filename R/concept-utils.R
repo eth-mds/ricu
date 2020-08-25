@@ -6,7 +6,7 @@
 #' heart rate can be loaded from a data source. Several functions are
 #' available for constructing `item` (and related auxillary) objects either
 #' from code or by parsing a JSON formatted concept dictionary using
-#' [load_dicionary()].
+#' [load_dictionary()].
 #'
 #' @details
 #' In order to allow for a large degree of flexibility (and extensibility),
@@ -14,8 +14,9 @@
 #' different data sources, several nested S3 classes are involved in
 #' representing a concept. An outline of this hierarchy can be described as
 #'
-#' * `concept`: contains many `cncpt` objects (of potentially differing
-#'   sub-types), each comprising of some meta-data and an `item` object
+#' * [`concept`][concept()]: contains many `cncpt` objects (of potentially
+#'   differing sub-types), each comprising of some meta-data and an `item`
+#'   object
 #' * `item`: contains many `itm` objects (of potentially differing
 #'   sub-types), each encoding how to retrieve a data item.
 #'
@@ -30,91 +31,72 @@
 #' different data-scenario:
 #'
 #' * `sel_itm`: The most widely used item class is intended for the situation
-#' where rows of interest can be identified by looking for occurrences of a
-#' set of IDs (`ids`) in a column (`sub_var`). An example for this is heart
-#' rate `hr` on mimic, where the IDs `211` and 220045` are looked up in the
-#' `itemid` column of `chartevents`.
+#'   where rows of interest can be identified by looking for occurrences of a
+#'   set of IDs (`ids`) in a column (`sub_var`). An example for this is heart
+#'   rate `hr` on mimic, where the IDs `211` and 220045` are looked up in the
+#'   `itemid` column of `chartevents`.
 #' * `col_itm`: This item class can be used if no row-subsetting is required.
-#' An example for this is heart rate (`hr`) on `eicu`, where the table
-#' `vitalperiodic` contains an entire column dedicated to heart rate
-#' measurements.
+#'   An example for this is heart rate (`hr`) on `eicu`, where the table
+#'   `vitalperiodic` contains an entire column dedicated to heart rate
+#'   measurements.
 #' * `rgx_itm`: As alternative to the value-matching approach of `sel_itm`
-#' objects, this class identifies rows using regular expressions. Used for
-#' example for insulin in `eicu`, where the regular expression `^insulin
-#' (250.+)?\\(((ml|units)/hr)?\\)$` is matched against the `drugname` column
-#' of `infusiondrug`. The regular expression is evaluated by [base::grepl()]
-#' with `ignore.case = TRUE`.
+#'   objects, this class identifies rows using regular expressions. Used for
+#'   example for insulin in `eicu`, where the regular expression `^insulin
+#'   (250.+)?\\(((ml|units)/hr)?\\)$` is matched against the `drugname` column
+#'   of `infusiondrug`. The regular expression is evaluated by [base::grepl()]
+#'   with `ignore.case = TRUE`.
 #' * `fun_itm`: Intended for the scenario where data of interest is not
-#' directly available from a table, this `itm` class offers most flexbility. A
-#' function can be specified as `callback` and this function will be called
-#' with arguments `x` (the object itself), `patient_ids`, `id_type` and
-#' `interval` (see [load_concepts()]) and is expected to return an object as
-#' specified by the `target` entry.
+#'   directly available from a table, this `itm` class offers most flexbility.
+#'   A function can be specified as `callback` and this function will be called
+#'   with arguments `x` (the object itself), `patient_ids`, `id_type` and
+#'   `interval` (see [load_concepts()]) and is expected to return an object as
+#'   specified by the `target` entry.
+#'
+#' All `itm` objects have to specify a data source (`src`) and a target type
+#' (`target`), which specifies the expected object
 #'
 #' @param src The data source name
 #' @param ... Further specification of the `itm` object (passed to
 #' [init_itm()])
-#' @param target The target object yielded by loading
 #' @param class Sub class for customizing `itm` behavior
 #'
 #' @rdname data_items
 #'
+#' @examples
+#' gluc <- item("mimic_demo", "labevents", "itemid", list(c(50809L, 50931L)))
+#'
+#' is_item(gluc)
+#'
+#' identical(gluc, as_item(load_dictionary("mimic_demo", "glu")))
+#'
 #' @export
 #'
-new_itm <- function(src, ..., target = c("ts_tbl", "id_tbl"),
-                    class = "sel_itm") {
+new_itm <- function(src, ..., class = "sel_itm") {
 
   assert_that(is.string(src), is.character(class), has_length(class))
 
-  target <- match.arg(target)
-
-  init_itm(
-    structure(list(src = src, target = target), class = c(class, "itm")), ...
-  )
+  init_itm(structure(list(src = src), class = c(class, "itm")), ...)
 }
 
 #' @param x Object to query/dispatch on
 #'
 #' @rdname data_items
 #' @export
-is_itm <- function(x) inherits(x, "itm")
+is_itm <- is_type("itm")
 
 #' @export
 src_name.itm <- function(x) x[["src"]]
 
 #' @export
-tbl_name.sel_itm <- function(x) x[["table"]]
-
-#' @export
-tbl_name.col_itm <- function(x) x[["table"]]
-
-#' @export
-tbl_name.rgx_itm <- function(x) x[["table"]]
+tbl_name.itm <- function(x) {
+  res <- x[["table"]]
+  assert_that(is.string(res))
+  res
+}
 
 #' @export
 as_src_tbl.itm <- function(x, ...) {
   as_src_tbl(tbl_name(x), src_name(x), ...)
-}
-
-itm_var_helper <- function(x, col) {
-
-  res <- coalesce(col, val_var(as_src_tbl(x)))
-
-  if (is.string(res)) {
-    res <- c(val_var = res)
-  }
-
-  assert_that(has_name(res, "val_var"))
-
-  res
-}
-
-idx_var_helper <- function(x, col) {
-  if (need_idx(x)) coalesce(col, index_var(as_src_tbl(x))) else NULL
-}
-
-cbk_var_helper <- function(...) {
-  if (...length()) unlist(list(...), recursive = FALSE) else NULL
 }
 
 #' @rdname data_items
@@ -125,35 +107,41 @@ init_itm <- function(x, ...) UseMethod("init_itm", x)
 #' @param sub_var Column name used for subsetting
 #' @param ids Vector of ids used to subset table rows. If `NULL`, all rows are
 #' considered corresponding to the data item
-#' @param itm_vars Columns returned as [data_vars()]
-#' @param index_var Column used as index
 #' @param callback Name of a function to be called on the returned data used
 #' for data cleanup operations (or a string that evaluates to a function)
 #'
 #' @rdname data_items
 #' @export
-init_itm.sel_itm <- function(x, table, sub_var, ids, itm_vars = NULL,
-                             index_var = NULL,
+init_itm.sel_itm <- function(x, table, sub_var, ids,
                              callback = "identity_callback", ...) {
+
+  assert_that(is.string(table), has_length(ids),
+              is.character(ids) || is_intish(ids))
+
+  todo <- c("table", "ids")
+  x[todo] <- mget(todo)
+
+  complete_tbl_itm(x, callback, sub_var, ...)
+}
+
+#' @rdname data_items
+#' @export
+init_itm.hrd_itm <- function(x, table, sub_var, ids,
+                             callback = "identity_callback", ...) {
+
+  assert_that(is.string(table), has_length(ids),
+              is.character(ids) || is_intish(ids))
 
   x[["table"]] <- table
 
-  itm_vars  <- itm_var_helper(x, itm_vars)
-  index_var <- idx_var_helper(x, index_var)
-  cb_vars   <- cbk_var_helper(...)
+  units <- load_id(as_src_tbl("variables", x), .data$id %in% .env$ids,
+                   cols = "unit", id_var = "id")
+  units <- rename_cols(rm_na(units), sub_var, "id")
 
-  cols <- colnames(as_src_tbl(x))
-
-  assert_that(
-    is.string(table), evals_to_fun(callback), has_length(ids),
-    is.character(ids) || is.integer(ids),
-    all_fun(c(list(sub_var, itm_vars), index_var, cb_vars), is_in, cols)
-  )
-
-  todo <- c("ids", "sub_var", "itm_vars", "index_var", "cb_vars", "callback")
+  todo <- c("ids", "units")
   x[todo] <- mget(todo)
 
-  x
+  complete_tbl_itm(x, callback, sub_var, ...)
 }
 
 #' @param unit_val String valued unit to be used in case no `unit_var` is
@@ -161,27 +149,15 @@ init_itm.sel_itm <- function(x, table, sub_var, ids, itm_vars = NULL,
 #'
 #' @rdname data_items
 #' @export
-init_itm.col_itm <- function(x, table, itm_vars = NULL, index_var = NULL,
-                             unit_val = NULL, callback = "identity_callback",
-                             ...) {
+init_itm.col_itm <- function(x, table, unit_val = NULL,
+                             callback = "identity_callback", ...) {
 
-  x[["table"]] <- table
+  assert_that(is.string(table), null_or(unit_val, is.string))
 
-  itm_vars  <- itm_var_helper(x, itm_vars)
-  index_var <- idx_var_helper(x, index_var)
-  cb_vars   <- cbk_var_helper(...)
-
-  cols <- colnames(as_src_tbl(x))
-
-  assert_that(
-    is.string(table), evals_to_fun(callback), null_or(unit_val, is.string),
-    all_fun(c(list(itm_vars), index_var, cb_vars), is_in, cols)
-  )
-
-  todo <- c("itm_vars", "index_var", "cb_vars", "unit_val", "callback")
+  todo <- c("table", "unit_val")
   x[todo] <- mget(todo)
 
-  x
+  complete_tbl_itm(x, callback, FALSE, ...)
 }
 
 #' @param regex String-valued regular expression which will be evaluated by
@@ -189,40 +165,28 @@ init_itm.col_itm <- function(x, table, itm_vars = NULL, index_var = NULL,
 #'
 #' @rdname data_items
 #' @export
-init_itm.rgx_itm <- function(x, table, sub_var, regex, itm_vars = NULL,
-                             index_var = NULL,
+init_itm.rgx_itm <- function(x, table, sub_var, regex,
                              callback = "identity_callback", ...) {
 
-  x[["table"]] <- table
+  assert_that(is.string(table), is.string(regex))
 
-  itm_vars  <- itm_var_helper(x, itm_vars)
-  index_var <- idx_var_helper(x, index_var)
-  cb_vars   <- cbk_var_helper(...)
-
-  cols <- colnames(as_src_tbl(x))
-
-  assert_that(
-    all_fun(list(table, regex), is.string), evals_to_fun(callback),
-    all_fun(c(list(sub_var, itm_vars), index_var, cb_vars), is_in, cols)
-  )
-
-  todo <- c("regex", "sub_var", "itm_vars", "index_var", "cb_vars", "callback")
+  todo <- c("table", "regex")
   x[todo] <- mget(todo)
 
-  x
+  complete_tbl_itm(x, callback, sub_var, ...)
+}
+
+complete_tbl_itm <- function(x, callback, sub_var, ...) {
+  res <- set_itm_callback(x, callback)
+  res <- try_add_vars(res, sub_var = sub_var, ...)
+  res <- try_add_vars(res, val_var = NULL)
+  set_id_opts(res)
 }
 
 #' @rdname data_items
 #' @export
 init_itm.fun_itm <- function(x, callback, ...) {
-
-  dots <- list(...)
-
-  assert_that(evals_to_fun(callback), is_disjoint(names(x), names(dots)))
-
-  x[c("callback", names(dots))] <- c(list(callback), dots)
-
-  x
+  init_itm.itm(set_itm_callback(x, callback), ...)
 }
 
 #' @rdname data_items
@@ -252,7 +216,7 @@ prepare_query <- function(x) UseMethod("prepare_query", x)
 prepare_query.sel_itm <- function(x) {
 
   ids <- x[["ids"]]
-  lst <- list(col = as.name(x[["sub_var"]]), id = ids)
+  lst <- list(col = as.name(get_itm_var(x, "sub_var")), id = ids)
 
   if (length(ids) == 1L) {
     substitute(is_fun(col, id), c(lst, list(is_fun = is_val)))
@@ -267,7 +231,7 @@ prepare_query.sel_itm <- function(x) {
 #' @export
 prepare_query.rgx_itm <- function(x) {
   substitute(grepl(rgx, col, ignore.case = TRUE),
-    list(col = as.name(x[["sub_var"]]), rgx = x[["regex"]])
+    list(col = as.name(get_itm_var(x, "sub_var")), rgx = x[["regex"]])
   )
 }
 
@@ -275,76 +239,160 @@ prepare_query.rgx_itm <- function(x) {
 #' @export
 prepare_query.col_itm <- function(x) rlang::quo(NULL)
 
-unt_col_helper <- function(x) {
+#' @param ... Variable specification
+#'
+#' @rdname item_utils
+#' @keywords internal
+#' @export
+try_add_vars <- function(x, ...) {
 
-  itm <- x[["itm_vars"]]
-  cbc <- x[["cb_vars"]]
-
-  assert_that(is.string(itm))
-
-  if (has_name(cbc, "unit_var")) {
-
-    unt <- cbc[["unit_var"]]
-
-    if (length(cbc) == 1L) {
-      x["cb_vars"] <- list(NULL)
-    } else {
-      x[["cb_vars"]] <- cbc[setdiff(names(cbc), "unit_var")]
-    }
-
-  } else {
-
-    unt <- unit_var(as_src_tbl(x))
+  if (...length() == 0L) {
+    return(x)
   }
 
-  x[["itm_vars"]] <- c(val_var = unname(itm), unit_var = unname(unt))
+  UseMethod("try_add_vars", x)
+}
+
+#' @keywords internal
+#' @export
+try_add_vars.itm <- function(x, ...) {
+
+  vars <- list(...)
+
+  for (var in names(vars)) {
+    x[["vars"]][[var]] <- if (isFALSE(vars[[var]])) {
+      NULL
+    } else {
+      coalesce(x[["vars"]][[var]], vars[[var]], as_col_cfg(x)[[var]])
+    }
+  }
+
+  assert_that(is_unique(unlist(x[["vars"]])))
 
   x
+}
+
+#' @keywords internal
+#' @export
+try_add_vars.item <- function(x, ...) {
+
+  vars <- list(...)
+
+  for (i in names(vars)) {
+    vars[[i]] <- vec_recycle(
+      if (is.null(vars[[i]])) list(NULL) else vars[[i]], length(x), x_arg = i
+    )
+  }
+
+  new_item(do.call(Map, c(list(try_add_vars, x), vars)))
+}
+
+#' @keywords internal
+#' @export
+try_add_vars.cncpt <- function(x, ...) {
+  x[["items"]] <- try_add_vars(x[["items"]], ...)
+  x
+}
+
+#' @keywords internal
+#' @export
+try_add_vars.rec_cncpt <- function(x, ...) x
+
+#' @param ... Variable name
+#'
+#' @rdname item_utils
+#' @keywords internal
+#' @export
+get_itm_var <- function(x, var = NULL) UseMethod("get_itm_var", x)
+
+#' @keywords internal
+#' @export
+get_itm_var.itm <- function(x, var = NULL) {
+
+  res <- x[["vars"]]
+
+  if (is.null(var)) {
+    unlist(res[setdiff(names(res), "index_var")], recursive = FALSE)
+  } else {
+    res[[var]]
+  }
+}
+
+#' @param fun Callback function (passed as string)
+#'
+#' @rdname item_utils
+#' @keywords internal
+#' @export
+set_itm_callback <- function(x, fun) UseMethod("set_itm_callback", x)
+
+#' @keywords internal
+#' @export
+set_itm_callback.itm <- function(x, fun) {
+
+  assert_that(evals_to_fun(fun))
+
+  x[["callback"]] <- fun
+
+  x
+}
+
+str_to_fun <- function(x) {
+  res <- eval(parse(text = x))
+  assert_that(is.function(res))
+  res
 }
 
 #' @rdname item_utils
 #' @keywords internal
 #' @export
-add_unit_var <- function(x) UseMethod("add_unit_var", x)
+get_itm_callback <- function(x) UseMethod("get_itm_callback", x)
 
+#' @keywords internal
 #' @export
-add_unit_var.sel_itm <- function(x) {
+get_itm_callback.itm <- function(x) str_to_fun(x[["callback"]])
 
-  if (identical(src_name(x), "hirid") &&
-      identical(tbl_name(x), "observations")) {
+#' @keywords internal
+#' @export
+get_itm_callback.rec_cncpt <- function(x) str_to_fun(x[["callback"]])
 
-    class(x) <- unique(c("hrd_itm", class(x)))
+#' @rdname item_utils
+#' @keywords internal
+#' @export
+set_id_opts <- function(x) UseMethod("set_id_opts", x)
 
-  } else {
-
-    x <- unt_col_helper(x)
-  }
-
-  x
+#' @keywords internal
+#' @export
+set_id_opts.itm <- function(x) {
+  x[["id_opts"]] <- coalesce(get_itm_var(x, "id_var"),
+                             as.character(as_id_cfg(x)))
+  try_add_vars(x, id_var = FALSE)
 }
 
+#' @rdname item_utils
+#' @keywords internal
 #' @export
-add_unit_var.col_itm <- function(x) unt_col_helper(x)
+lookup_id_type <- function(x, ...) UseMethod("lookup_id_type", x)
 
+#' @keywords internal
 #' @export
-add_unit_var.rgx_itm <- function(x) unt_col_helper(x)
+lookup_id_type.itm <- function(x, id_type = NULL, ...) {
 
-#' @export
-add_unit_var.itm <- function(x) x
+  res <- x[["id_opts"]]
+
+  if (!is.null(id_type)) {
+    res <- res[id_type]
+  }
+
+  res
+}
 
 #' @rdname data_items
 #' @export
-new_item <- function(x, target = NULL) {
+new_item <- function(x) {
 
-  trg <- chr_ply(x, target_class)
+  assert_that(is.list(x), all_fun(x, is_itm))
 
-  if (is.null(target)) {
-    target <- trg[1L]
-  }
-
-  assert_that(is.list(x), all_fun(x, is_itm), all_fun(trg, identical, target))
-
-  new_vctr(x, target = target, class = "item")
+  new_vctr(x, class = "item")
 }
 
 #' @rdname data_items
@@ -367,6 +415,12 @@ as_item.list <- function(x) new_item(x)
 as_item.itm <- function(x) as_item(list(x))
 
 #' @export
+as_item.cncpt <- function(x) x[["items"]]
+
+#' @export
+as_item.concept <- function(x) do.call(c, unname(lapply(x, as_item)))
+
+#' @export
 format.item <- function(x, ...) {
   paste0("<", chr_xtr(lapply(x, class), 1L), ">")
 }
@@ -379,7 +433,7 @@ as.list.item <- function(x, ...) vec_data(x)
 
 #' @rdname data_items
 #' @export
-is_item <- function(x) inherits(x, "item")
+is_item <- is_type("item")
 
 #' @export
 src_name.item <- function(x) names(x)
@@ -401,18 +455,7 @@ n_tick.item <- function(x) length(x)
 target_class <- function(x) UseMethod("target_class", x)
 
 #' @export
-target_class.itm <- function(x) x[["target"]]
-
-#' @export
-target_class.item <- function(x) attr(x, "target")
-
-#' @export
-target_class.cncpt <- function(x) target_class(x[["items"]])
-
-#' @export
-target_class.rec_cncpt <- function(x) x[["target"]]
-
-need_idx <- function(x) identical(target_class(x), "ts_tbl")
+target_class.cncpt <- function(x) x[["target"]]
 
 #' Data items
 #'
@@ -420,7 +463,7 @@ need_idx <- function(x) identical(target_class(x), "ts_tbl")
 #' concept, such as heart rate can be loaded from a data source and are mainly
 #' consumed by [load_concepts()]. Several functions are avialable for
 #' constructing `concept` (and related auxillary) objects either from code or
-#' by parsing a JSON formatted concept dictionary using [load_dicionary()].
+#' by parsing a JSON formatted concept dictionary using [load_dictionary()].
 #'
 #' @details:
 #' In order to allow for a large degree of flexibility (and extensibility),
@@ -448,6 +491,7 @@ need_idx <- function(x) identical(target_class(x), "ts_tbl")
 #' id and if applicable per time step
 #' @param ... Further specification of the `cncpt` object (passed to
 #' [init_cncpt()])
+#' @param target The target object yielded by loading
 #' @param class `NULL` or a string-valued sub-class name used for customizing
 #' concept behavior
 #'
@@ -456,9 +500,9 @@ need_idx <- function(x) identical(target_class(x), "ts_tbl")
 #' @export
 new_cncpt <- function(name, items, description = NA_character_,
                       category = NA_character_, aggregate = NULL, ...,
-                      class = "num_cncpt") {
+                      target = "ts_tbl", class = "num_cncpt") {
 
-  assert_that(is.string(name), null_or(class, is.string),
+  assert_that(is.string(name), null_or(class, is.string), is.string(target),
               is.string(description), is.string(category))
 
   if (!is_concept(items)) {
@@ -466,17 +510,21 @@ new_cncpt <- function(name, items, description = NA_character_,
   }
 
   res <- list(name = name, items = items, description = description,
-              category = category, aggregate = aggregate)
-  res <- structure(res, class = c(class, "cncpt"))
+              category = category, aggregate = aggregate, target = target)
+  res <- init_cncpt(structure(res, class = c(class, "cncpt")), ...)
 
-  init_cncpt(res, ...)
+  if (identical(target, "ts_tbl")) {
+    res <- try_add_vars(res, index_var = NULL)
+  }
+
+  res
 }
 
 #' @param x Object to query/dispatch on
 #'
 #' @rdname data_concepts
 #' @export
-is_cncpt <- function(x, ...) inherits(x, "cncpt")
+is_cncpt <- is_type("cncpt")
 
 #' @rdname data_concepts
 #' @export
@@ -499,10 +547,6 @@ init_cncpt.num_cncpt <- function(x, unit = NULL, min = NULL, max = NULL, ...) {
 
   todo <- c("unit", "min", "max")
   x[todo] <- mget(todo)
-
-  targ <- attr(x[["items"]], "target")
-
-  x[["items"]] <- new_item(lapply(x[["items"]], add_unit_var), targ)
 
   x
 }
@@ -618,7 +662,7 @@ concept <- function(...) {
 
 #' @rdname data_concepts
 #' @export
-is_concept <- function(x) inherits(x, "concept")
+is_concept <- is_type("concept")
 
 #' @export
 format.concept <- function(x, ...) {
@@ -626,11 +670,8 @@ format.concept <- function(x, ...) {
   desc <- lst_xtr(x, "description")
   desc[lgl_ply(desc, is.null)] <- ""
 
-  paste0(
-    desc, " (<", chr_xtr(lapply(x, "class"), 1L), "[",
-    int_ply(lst_xtr(x, "items"), length), "]> ", symbol$arrow_right, " <",
-    chr_ply(x, target_class), ">)"
-  )
+  paste0(desc, " <", chr_xtr(lapply(x, "class"), 1L), "[",
+         int_ply(lst_xtr(x, "items"), length), "]>")
 }
 
 #' @export
@@ -717,9 +758,7 @@ read_dictionary <- function(name = "data-sources", file = NULL) {
 
 parse_dictionary <- function(dict, src = NULL, concepts = NULL) {
 
-  do_itm <- function(sr, tr, x) {
-    lapply(lapply(x, c, src = sr, target = tr), do_call, new_itm)
-  }
+  do_itm <- function(sr, x) lapply(lapply(x, c, src = sr), do_call, new_itm)
 
   do_cncpt <- function(name, sources, target = "ts_tbl", ...) {
 
@@ -736,25 +775,22 @@ parse_dictionary <- function(dict, src = NULL, concepts = NULL) {
         sources <- sources[src]
       }
 
-      itms <- new_item(
-        do.call(c, Map(do_itm, names(sources), target, sources)),
-        target
-      )
+      itms <- new_item(do.call(c, Map(do_itm, names(sources), sources)))
     }
+
+    cncpt_info <- list(name = name, items = itms, target = target)
 
     if (has_length(lst)) {
 
       if ("rec_cncpt" %in% lst[["class"]]) {
 
-        do.call(new_cncpt,
-          c(list(name = name, items = itms, target = target), lst)
-        )
+        do.call(new_cncpt, c(cncpt_info, lst))
 
       } else {
-        do.call(new_cncpt, c(list(name = name, items = itms), lst))
+        do.call(new_cncpt, c(cncpt_info, lst))
       }
     } else {
-      do.call(new_cncpt, c(list(name = name, items = itms, class = NULL)))
+      do.call(new_cncpt, c(cncpt_info, list(class = NULL)))
     }
   }
 

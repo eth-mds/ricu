@@ -42,14 +42,17 @@ the default config directors}
 \item{file}{Full file name to load}
 }
 \description{
-The \href{https://lcp.mit.edu/index.html}{Laboratory for Computational Physiology } (LCP) at MIT hosts two large-scale
-databases of hospital intensive care units (ICUs), both of which can be
-either downloaded in full or as demo subsets. While both databases are
-publicly available, full download requires credentialed access which can be
-gained by applying for up an account with \href{https://physionet.org}{PhysioNet }.
+The \href{https://lcp.mit.edu/index.html}{Laboratory for Computational Physiology } (LCP) at MIT hosts several large-scale
+databases of hospital intensive care units (ICUs), two of which can be
+either downloaded in full or as demo subsets using utilities provided by
+\code{ricu}, while a third data set is available only in full. While demo data
+sets are publicly available, full download requires credentialed access
+which can be gained by applying for up an account with \href{https://physionet.org}{PhysioNet }.
 }
-\details{
-The Medical Information Mart for Intensive Care (MIMIC) database holds
+\section{MIMIC-III}{
+
+The Medical Information Mart for Intensive Care
+(\href{https://physionet.org/content/mimiciii/}{MIMIC}) database holds
 detailed clinical data from roughly 60,000 patient stays in Beth Israel
 Deaconess Medical Center (BIDMC) intensive care units between 2001 and 2012.
 The database includes information such as demographics, vital sign
@@ -57,6 +60,13 @@ measurements made at the bedside (~1 data point per hour), laboratory test
 results, procedures, medications, caregiver notes, imaging reports, and
 mortality (both in and out of hospital). For further information, please
 refer to the \href{https://mimic.physionet.org/about/mimic}{MIMIC-III documentation }.
+
+The corresponding
+\href{https://physionet.org/content/mimiciii-demo}{demo dataset}
+contains the full data of a randomly selected subset of 100 patients from
+the patient cohort with conformed in-hospital mortality. The only notable
+data omission is the \code{noteevents} table, which unstructured text reports on
+patients.
 
 More recently, Philips Healthcare and LCP began assembling the eICU
 Collaborative Research Database as a multi-center resource for ICU data.
@@ -73,6 +83,7 @@ variables \code{RICU_PHYSIONET_USER}/\code{RICU_PHYSIONET_PASS}. If the openssl
 package is available, SHA256 hashes of downloaded files are verified using
 \code{\link[openssl:hash]{openssl::sha256()}}.
 }
+
 \examples{
 \dontrun{
 

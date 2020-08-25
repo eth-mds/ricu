@@ -7,6 +7,7 @@
 \alias{as_col_cfg.col_cfg}
 \alias{as_col_cfg.src_cfg}
 \alias{as_col_cfg.src_tbl}
+\alias{as_col_cfg.default}
 \title{Default columns}
 \usage{
 new_col_cfg(
@@ -29,6 +30,8 @@ as_col_cfg(x)
 \method{as_col_cfg}{src_cfg}(x)
 
 \method{as_col_cfg}{src_tbl}(x)
+
+\method{as_col_cfg}{default}(x)
 }
 \arguments{
 \item{table}{Table name (string)}

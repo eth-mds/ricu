@@ -37,6 +37,12 @@ as.list.id_cfg <- function(x, ...) {
   vec_chop(x)
 }
 
+#' @method as.character id_cfg
+#' @export
+as.character.id_cfg <- function(x, ...) {
+  setNames(id_var_opts(x), names(x))
+}
+
 #' @rdname id_cfg
 #' @keywords internal
 #' @export
@@ -95,6 +101,12 @@ as_col_cfg.src_cfg <- function(x) x[["col_cfg"]]
 #' @export
 #'
 as_col_cfg.src_tbl <- function(x) attr(x, "col_cfg")
+
+#' @rdname col_cfg
+#' @keywords internal
+#' @export
+#'
+as_col_cfg.default <- function(x) as_col_cfg(as_src_tbl(x))
 
 val_var <- function(x) as_col_cfg(x)[["val_var"]]
 
@@ -262,4 +274,3 @@ tbl_name.col_cfg <- function(x) x[["table"]]
 #' @rdname cfg_utils
 #' @export
 tbl_name.tbl_cfg <- function(x) x[["table"]]
-

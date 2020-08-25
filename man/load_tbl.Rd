@@ -4,9 +4,11 @@
 \alias{load_id}
 \alias{load_id.src_tbl}
 \alias{load_id.character}
+\alias{load_id.default}
 \alias{load_ts}
 \alias{load_ts.src_tbl}
 \alias{load_ts.character}
+\alias{load_ts.default}
 \title{Load data as \code{id_tbl} or \code{ts_tbl} objects}
 \usage{
 load_id(x, ...)
@@ -23,6 +25,8 @@ load_id(x, ...)
 
 \method{load_id}{character}(x, src, ...)
 
+\method{load_id}{default}(x, ...)
+
 load_ts(x, ...)
 
 \method{load_ts}{src_tbl}(
@@ -37,6 +41,8 @@ load_ts(x, ...)
 )
 
 \method{load_ts}{character}(x, src, ...)
+
+\method{load_ts}{default}(x, ...)
 }
 \arguments{
 \item{x}{Object for which to load data}

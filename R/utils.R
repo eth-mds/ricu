@@ -435,7 +435,10 @@ wrap_null <- function(...) {
 }
 
 coalesce <- function(...) {
-  for (x in list(...)) if (is.null(x)) next else return(x)
+  for (i in seq_len(...length())) {
+    x <- ...elt(i)
+    if (is.null(x)) next else return(x)
+  }
 }
 
 rep_arg <- function(arg, names) {

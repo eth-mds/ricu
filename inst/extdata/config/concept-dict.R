@@ -11,11 +11,12 @@ cfg <- list(
         list(ids = c(211L, 220045L), table = "chartevents", sub_var = "itemid")
       ),
       eicu = list(
-        list(table = "vitalperiodic", itm_vars = "heartrate",
+        list(table = "vitalperiodic", val_var = "heartrate",
              class = "col_itm")
       ),
       hirid = list(
-        list(ids = 200L, table = "observations", sub_var = "variableid")
+        list(ids = 200L, table = "observations", sub_var = "variableid",
+             class = "hrd_itm")
       )
     )
   ),
@@ -31,11 +32,12 @@ cfg <- list(
              table = "chartevents", sub_var = "itemid")
       ),
       eicu = list(
-        list(table = "vitalperiodic", itm_vars = "systemicsystolic",
+        list(table = "vitalperiodic", val_var = "systemicsystolic",
              class = "col_itm")
       ),
       hirid = list(
-        list(ids = 100L, table = "observations", sub_var = "variableid")
+        list(ids = 100L, table = "observations", sub_var = "variableid",
+             class = "hrd_itm")
       )
     )
   ),
@@ -51,11 +53,12 @@ cfg <- list(
              table = "chartevents", sub_var = "itemid")
       ),
       eicu = list(
-        list(table = "vitalperiodic", itm_vars = "systemicdiastolic",
+        list(table = "vitalperiodic", val_var = "systemicdiastolic",
              class = "col_itm")
       ),
       hirid = list(
-        list(ids = 120L, table = "observations", sub_var = "variableid")
+        list(ids = 120L, table = "observations", sub_var = "variableid",
+             class = "hrd_itm")
       )
     )
   ),
@@ -71,13 +74,14 @@ cfg <- list(
              table = "chartevents", sub_var = "itemid")
       ),
       eicu = list(
-        list(table = "vitalperiodic", itm_vars = "systemicmean",
+        list(table = "vitalperiodic", val_var = "systemicmean",
              class = "col_itm"),
-        list(table = "vitalaperiodic", itm_vars = "noninvasivemean",
+        list(table = "vitalaperiodic", val_var = "noninvasivemean",
              class = "col_itm")
       ),
       hirid = list(
-        list(ids = 110L, table = "observations", sub_var = "variableid")
+        list(ids = 110L, table = "observations", sub_var = "variableid",
+             class = "hrd_itm")
       )
     )
   ),
@@ -93,12 +97,12 @@ cfg <- list(
              table = "chartevents", sub_var = "itemid")
       ),
       eicu = list(
-        list(table = "vitalperiodic", itm_vars = "respiration",
+        list(table = "vitalperiodic", val_var = "respiration",
              class = "col_itm")
       ),
       hirid = list(
         list(ids = c(300L, 310L), table = "observations",
-             sub_var = "variableid")
+             sub_var = "variableid", class = "hrd_itm")
       )
     )
   ),
@@ -114,13 +118,13 @@ cfg <- list(
              sub_var = "itemid")
       ),
       eicu = list(
-        list(table = "vitalperiodic", itm_vars = "sao2", unit_val = "%",
+        list(table = "vitalperiodic", val_var = "sao2", unit_val = "%",
              class = "col_itm"),
         list(ids = "O2 Sat (%)", table = "lab", sub_var = "labname")
       ),
       hirid = list(
         list(ids = c(4000L, 8280L, 20000800L), table = "observations",
-             sub_var = "variableid")
+             sub_var = "variableid", class = "hrd_itm")
       )
     )
   ),
@@ -143,7 +147,8 @@ cfg <- list(
              callback = "convert_unit('mm(hg)', set_na, NA)")
       ),
       hirid = list(
-        list(ids = 2010L, table = "observations", sub_var = "variableid")
+        list(ids = 2010L, table = "observations", sub_var = "variableid",
+             class = "hrd_itm")
       )
     )
   ),
@@ -176,7 +181,8 @@ cfg <- list(
         list(ids = "ALT (SGPT)", table = "lab", sub_var = "labname")
       ),
       hirid = list(
-        list(ids = 20002600L, table = "observations", sub_var = "variableid")
+        list(ids = 20002600L, table = "observations", sub_var = "variableid",
+             class = "hrd_itm")
       )
     )
   ),
@@ -193,7 +199,8 @@ cfg <- list(
         list(ids = "AST (SGOT)", table = "lab", sub_var = "labname")
       ),
       hirid = list(
-        list(ids = 24000330L, table = "observations", sub_var = "variableid")
+        list(ids = 24000330L, table = "observations", sub_var = "variableid",
+             class = "hrd_itm")
       )
     )
   ),
@@ -212,7 +219,8 @@ cfg <- list(
       ),
       hirid = list(
         list(ids = 20002500L, table = "observations", sub_var = "variableid",
-             callback = "transform_fun(binary_op(`*`, 3.097521))")
+             callback = "transform_fun(binary_op(`*`, 3.097521))",
+             class = "hrd_itm")
       )
     )
   ),
@@ -231,7 +239,8 @@ cfg <- list(
       ),
       hirid = list(
         list(ids = 20004100L, table = "observations", sub_var = "variableid",
-             callback = "transform_fun(binary_op(`*`, 2.8))")
+             callback = "transform_fun(binary_op(`*`, 2.8))",
+             class = "hrd_itm")
       )
     )
   ),
@@ -248,7 +257,8 @@ cfg <- list(
         list(ids = "pH", table = "lab", sub_var = "labname")
       ),
       hirid = list(
-        list(ids = 20000300L, table = "observations", sub_var = "variableid")
+        list(ids = 20000300L, table = "observations", sub_var = "variableid",
+             class = "hrd_itm")
       )
     )
   ),
@@ -267,7 +277,8 @@ cfg <- list(
       ),
       hirid = list(
         list(ids = 20004300L, table = "observations", sub_var = "variableid",
-             callback = "transform_fun(binary_op(`*`, 0.058467))")
+             callback = "transform_fun(binary_op(`*`, 0.058467))",
+             class = "hrd_itm")
       )
     )
   ),
@@ -282,7 +293,8 @@ cfg <- list(
         list(ids = "PT - INR", table = "lab", sub_var = "labname")
       ),
       hirid = list(
-        list(ids = 24000567L, table = "observations", sub_var = "variableid")
+        list(ids = 24000567L, table = "observations", sub_var = "variableid",
+             class = "hrd_itm")
       )
     )
   ),
@@ -300,7 +312,8 @@ cfg <- list(
         list(ids = "platelets x 1000", table = "lab", sub_var = "labname")
       ),
       hirid = list(
-        list(ids = 20000110L, table = "observations", sub_var = "variableid")
+        list(ids = 20000110L, table = "observations", sub_var = "variableid",
+             class = "hrd_itm")
       )
     )
   ),
@@ -318,7 +331,8 @@ cfg <- list(
         list(ids = "lactate", table = "lab", sub_var = "labname")
       ),
       hirid = list(
-        list(ids = 24000524L, table = "observations", sub_var = "variableid")
+        list(ids = 24000524L, table = "observations", sub_var = "variableid",
+             class = "hrd_itm")
       )
     )
   ),
@@ -336,7 +350,8 @@ cfg <- list(
         list(ids = "-lymphs", table = "lab", sub_var = "labname")
       ),
       hirid = list(
-        list(ids = 24000480L, table = "observations", sub_var = "variableid")
+        list(ids = 24000480L, table = "observations", sub_var = "variableid",
+             class = "hrd_itm")
       )
     )
   ),
@@ -354,7 +369,8 @@ cfg <- list(
         list(ids = "bicarbonate", table = "lab", sub_var = "labname")
       ),
       hirid = list(
-        list(ids = 20004200L, table = "observations", sub_var = "variableid")
+        list(ids = 20004200L, table = "observations", sub_var = "variableid",
+             class = "hrd_itm")
       )
     )
   ),
@@ -373,7 +389,8 @@ cfg <- list(
       ),
       hirid = list(
         list(ids = 20000600L, table = "observations", sub_var = "variableid",
-             callback = "transform_fun(binary_op(`*`, 0.011312))")
+             callback = "transform_fun(binary_op(`*`, 0.011312))",
+             class = "hrd_itm")
       )
     )
   ),
@@ -419,7 +436,8 @@ cfg <- list(
         list(ids = "alkaline phos.", table = "lab", sub_var = "labname")
       ),
       hirid = list(
-        list(ids = 20002700L, table = "observations", sub_var = "variableid")
+        list(ids = 20002700L, table = "observations", sub_var = "variableid",
+             class = "hrd_itm")
       )
     )
   ),
@@ -436,7 +454,8 @@ cfg <- list(
         list(ids = "WBC x 1000", table = "lab", sub_var = "labname")
       ),
       hirid = list(
-        list(ids = 20000700L, table = "observations", sub_var = "variableid")
+        list(ids = 20000700L, table = "observations", sub_var = "variableid",
+             class = "hrd_itm")
       )
     )
   ),
@@ -456,7 +475,8 @@ cfg <- list(
       hirid = list(
         list(ids = c(24000548L, 24000836L, 20000900L), table = "observations",
              sub_var = "variableid",
-             callback = "transform_fun(binary_op(`*`, 0.1))")
+             callback = "transform_fun(binary_op(`*`, 0.1))",
+             class = "hrd_itm")
       )
     )
   ),
@@ -489,7 +509,8 @@ cfg <- list(
         list(ids = "paCO2", table = "lab", sub_var = "labname")
       ),
       hirid = list(
-        list(ids = 20001200L, table = "observations", sub_var = "variableid")
+        list(ids = 20001200L, table = "observations", sub_var = "variableid",
+             class = "hrd_itm")
       )
     )
   ),
@@ -507,7 +528,8 @@ cfg <- list(
         list(ids = "paO2", table = "lab", sub_var = "labname")
       ),
       hirid = list(
-        list(ids = 20000200L, table = "observations", sub_var = "variableid")
+        list(ids = 20000200L, table = "observations", sub_var = "variableid",
+             class = "hrd_itm")
       )
     )
   ),
@@ -524,7 +546,8 @@ cfg <- list(
         list(ids = "MCH", table = "lab", sub_var = "labname")
       ),
       hirid = list(
-        list(ids = 24000160L, table = "observations", sub_var = "variableid")
+        list(ids = 24000160L, table = "observations", sub_var = "variableid",
+             class = "hrd_itm")
       )
     )
   ),
@@ -542,7 +565,8 @@ cfg <- list(
         list(ids = "MCHC", table = "lab", sub_var = "labname")
       ),
       hirid = list(
-        list(ids = 24000170L, table = "observations", sub_var = "variableid")
+        list(ids = 24000170L, table = "observations", sub_var = "variableid",
+             class = "hrd_itm")
       )
     )
   ),
@@ -560,7 +584,8 @@ cfg <- list(
         list(ids = "MCV", table = "lab", sub_var = "labname")
       ),
       hirid = list(
-        list(ids = 24000150L, table = "observations", sub_var = "variableid")
+        list(ids = 24000150L, table = "observations", sub_var = "variableid",
+             class = "hrd_itm")
       )
     )
   ),
@@ -577,7 +602,8 @@ cfg <- list(
         list(ids = "PTT", table = "lab", sub_var = "labname")
       ),
       hirid = list(
-        list(ids = 20004410L, table = "observations", sub_var = "variableid")
+        list(ids = 20004410L, table = "observations", sub_var = "variableid",
+             class = "hrd_itm")
       )
     )
   ),
@@ -597,7 +623,8 @@ cfg <- list(
       ),
       hirid = list(
         list(ids = 20005100L, table = "observations", sub_var = "variableid",
-             callback = "transform_fun(binary_op(`*`, 4.008))")
+             callback = "transform_fun(binary_op(`*`, 4.008))",
+             class = "hrd_itm")
       )
     )
   ),
@@ -616,7 +643,7 @@ cfg <- list(
       ),
       hirid = list(
         list(ids = c(24000439L, 24000521L), table = "observations",
-             sub_var = "variableid")
+             sub_var = "variableid", class = "hrd_itm")
       )
     )
   ),
@@ -637,7 +664,8 @@ cfg <- list(
       ),
       hirid = list(
         list(ids = 24000230L, table = "observations", sub_var = "variableid",
-             callback = "transform_fun(binary_op(`*`, 2.431))")
+             callback = "transform_fun(binary_op(`*`, 2.431))",
+             class = "hrd_itm")
       )
     )
   ),
@@ -656,7 +684,7 @@ cfg <- list(
       ),
       hirid = list(
         list(ids = c(20000500L, 24000520L, 24000833L, 24000867L),
-             table = "observations", sub_var = "variableid")
+             table = "observations", sub_var = "variableid", class = "hrd_itm")
       )
     )
   ),
@@ -675,7 +703,7 @@ cfg <- list(
       ),
       hirid = list(
         list(ids = c(20000400L, 24000519L, 24000658L, 24000835L, 24000866L),
-             table = "observations", sub_var = "variableid")
+             table = "observations", sub_var = "variableid", class = "hrd_itm")
       )
     )
   ),
@@ -723,7 +751,8 @@ cfg <- list(
         list(ids = "-polys", table = "lab", sub_var = "labname")
       ),
       hirid = list(
-        list(ids = 24000550L, table = "observations", sub_var = "variableid")
+        list(ids = 24000550L, table = "observations", sub_var = "variableid",
+             class = "hrd_itm")
       )
     )
   ),
@@ -744,7 +773,8 @@ cfg <- list(
       hirid = list(
         list(ids = c(20005110L, 24000523L, 24000585L), table = "observations",
              sub_var = "variableid",
-             callback = "transform_fun(binary_op(`*`, 18.016))")
+             callback = "transform_fun(binary_op(`*`, 18.016))",
+             class = "hrd_itm")
       )
     )
   ),
@@ -762,7 +792,8 @@ cfg <- list(
         list(ids = "ionized calcium", table = "lab", sub_var = "labname")
       ),
       hirid = list(
-        list(ids = 24000522L, table = "observations", sub_var = "variableid")
+        list(ids = 24000522L, table = "observations", sub_var = "variableid",
+             class = "hrd_itm")
       )
     )
   ),
@@ -781,7 +812,8 @@ cfg <- list(
              callback = "convert_unit('mg/dl', binary_op(`*`, 10), 'mg/L')")
       ),
       hirid = list(
-        list(ids = 20002200L, table = "observations", sub_var = "variableid")
+        list(ids = 20002200L, table = "observations", sub_var = "variableid",
+             class = "hrd_itm")
       )
     )
   ),
@@ -796,7 +828,8 @@ cfg <- list(
         list(ids = 51288L, table = "labevents", sub_var = "itemid")
       ),
       hirid = list(
-        list(ids = 24000668L, table = "observations", sub_var = "variableid")
+        list(ids = 24000668L, table = "observations", sub_var = "variableid",
+             class = "hrd_itm")
       )
     )
   ),
@@ -808,7 +841,8 @@ cfg <- list(
         list(ids = "Carboxyhemoglobin", table = "lab", sub_var = "labname")
       ),
       hirid = list(
-        list(ids = 24000526L, table = "observations", sub_var = "variableid")
+        list(ids = 24000526L, table = "observations", sub_var = "variableid",
+             class = "hrd_itm")
       )
     )
   ),
@@ -826,7 +860,8 @@ cfg <- list(
         list(ids = "Methemoglobin", table = "lab", sub_var = "labname")
       ),
       hirid = list(
-        list(ids = 24000549L, table = "observations", sub_var = "variableid")
+        list(ids = 24000549L, table = "observations", sub_var = "variableid",
+             class = "hrd_itm")
       )
     )
   ),
@@ -843,7 +878,8 @@ cfg <- list(
         list(ids = "troponin - T", table = "lab", sub_var = "labname")
       ),
       hirid = list(
-        list(ids = 24000806L, table = "observations", sub_var = "variableid")
+        list(ids = 24000806L, table = "observations", sub_var = "variableid",
+             class = "hrd_itm")
       )
     )
   ),
@@ -862,7 +898,8 @@ cfg <- list(
       ),
       hirid = list(
         list(ids = 24000605L, table = "observations", sub_var = "variableid",
-             callback = "transform_fun(binary_op(`*`, 0.1))")
+             callback = "transform_fun(binary_op(`*`, 0.1))",
+             class = "hrd_itm")
       )
     )
   ),
@@ -881,7 +918,8 @@ cfg <- list(
       ),
       hirid = list(
         list(ids = 24000536L, table = "observations", sub_var = "variableid",
-             callback = "transform_fun(binary_op(`*`, 100))")
+             callback = "transform_fun(binary_op(`*`, 100))",
+             class = "hrd_itm")
       )
     )
   ),
@@ -899,7 +937,8 @@ cfg <- list(
         list(ids = "Base Excess", table = "lab", sub_var = "labname")
       ),
       hirid = list(
-        list(ids = 20001300L, table = "observations", sub_var = "variableid")
+        list(ids = 20001300L, table = "observations", sub_var = "variableid",
+             class = "hrd_itm")
       )
     )
   ),
@@ -931,7 +970,8 @@ cfg <- list(
         list(ids = "CPK", table = "lab", sub_var = "labname")
       ),
       hirid = list(
-        list(ids = 24000210L, table = "observations", sub_var = "variableid")
+        list(ids = 24000210L, table = "observations", sub_var = "variableid",
+             class = "hrd_itm")
       )
     )
   ),
@@ -948,7 +988,8 @@ cfg <- list(
         list(ids = "CPK-MB", table = "lab", sub_var = "labname")
       ),
       hirid = list(
-        list(ids = 24000220L, table = "observations", sub_var = "variableid")
+        list(ids = 24000220L, table = "observations", sub_var = "variableid",
+             class = "hrd_itm")
       )
     )
   ),
@@ -967,7 +1008,8 @@ cfg <- list(
              callback = "transform_fun(force_type('numeric'))")
       ),
       hirid = list(
-        list(ids = 10000300L, table = "observations", sub_var = "variableid")
+        list(ids = 10000300L, table = "observations", sub_var = "variableid",
+             class = "hrd_itm")
       )
     )
   ),
@@ -986,7 +1028,8 @@ cfg <- list(
              callback = "transform_fun(force_type('numeric'))")
       ),
       hirid = list(
-        list(ids = 10000100L, table = "observations", sub_var = "variableid")
+        list(ids = 10000100L, table = "observations", sub_var = "variableid",
+             class = "hrd_itm")
       )
     )
   ),
@@ -1005,7 +1048,8 @@ cfg <- list(
              callback = "transform_fun(force_type('numeric'))")
       ),
       hirid = list(
-        list(ids = 10000200L, table = "observations", sub_var = "variableid")
+        list(ids = 10000200L, table = "observations", sub_var = "variableid",
+             class = "hrd_itm")
       )
     )
   ),
@@ -1049,7 +1093,7 @@ cfg <- list(
       ),
       hirid = list(
         list(ids = 30005110L, table = "observations", sub_var = "variableid",
-             callback = "hirid_urine")
+             callback = "hirid_urine", class = "hrd_itm")
       )
     )
   ),
@@ -1167,9 +1211,9 @@ cfg <- list(
         )
       ),
       eicu = list(
-        list(table = "respiratorycare", itm_vars = "ventstartoffset",
+        list(table = "respiratorycare", val_var = "ventstartoffset",
              callback = "vent_flag", class = "col_itm"),
-        list(table = "respiratorycare", itm_vars = "priorventstartoffset",
+        list(table = "respiratorycare", val_var = "priorventstartoffset",
              callback = "vent_flag", class = "col_itm"),
         list(ids = c("Start", "Continued", "respFlowPtVentData"),
              table = "respiratorycharting", sub_var = "respcharttypecat",
@@ -1177,7 +1221,7 @@ cfg <- list(
       ),
       hirid = list(
         list(ids = 15001552L, table = "observations", sub_var = "variableid",
-             callback = "transform_fun(comp_na(`==`, 1))")
+             callback = "transform_fun(comp_na(`==`, 1))", class = "hrd_itm")
       )
     )
   ),
@@ -1192,16 +1236,17 @@ cfg <- list(
              sub_var = "itemid", callback = "transform_fun(set_true)")
       ),
       eicu = list(
-        list(table = "respiratorycare", itm_vars = "ventendoffset",
+        list(table = "respiratorycare", val_var = "ventendoffset",
              callback = "vent_flag", class = "col_itm"),
-        list(table = "respiratorycare", itm_vars = "priorventendoffset",
+        list(table = "respiratorycare", val_var = "priorventendoffset",
              callback = "vent_flag", class = "col_itm"),
         list(ids = c("off", "Off", "Suspended"), table = "respiratorycharting",
-             sub_var = "respchartvalue", callback = "transform_fun(set_true)")
+             sub_var = "respchartvalue", val_var = "respchartvaluelabel",
+             callback = "transform_fun(set_true)")
       ),
       hirid = list(
         list(ids = 15001552L, table = "observations", sub_var = "variableid",
-             callback = "transform_fun(comp_na(`>`, 2))")
+             callback = "transform_fun(comp_na(`>`, 2))", class = "hrd_itm")
       )
     )
   ),
@@ -1215,7 +1260,7 @@ cfg <- list(
       ),
       hirid = list(
         list(ids = 15001552L, table = "observations", sub_var = "variableid",
-             callback = "transform_fun(comp_na(`==`, 2))")
+             callback = "transform_fun(comp_na(`==`, 2))", class = "hrd_itm")
       )
     )
   ),
@@ -1229,7 +1274,8 @@ cfg <- list(
              callback = "transform_fun(force_type('numeric'))")
       ),
       hirid = list(
-        list(ids = 15001565L, table = "observations", sub_var = "variableid")
+        list(ids = 15001565L, table = "observations", sub_var = "variableid",
+             class = "hrd_itm")
       )
     )
   ),
@@ -1302,12 +1348,12 @@ cfg <- list(
     description = "fluid sampling",
     sources = list(
       mimic = list(
-        list(table = "microbiologyevents", itm_vars = "org_itemid",
+        list(table = "microbiologyevents", val_var = "org_itemid",
              callback = "mimic_sampling", aux_time = "charttime",
              class = "col_itm")
       ),
       eicu = list(
-        list(table = "microlab", itm_vars = "organism",
+        list(table = "microlab", val_var = "organism",
              callback = "transform_fun(comp_na(`!=`, 'no growth'))",
              class = "col_itm")
       )
@@ -1342,7 +1388,8 @@ cfg <- list(
       ),
       hirid = list(
         list(ids = 24000560L, table = "observations", sub_var = "variableid",
-             callback = "transform_fun(binary_op(`*`, 0.058467))")
+             callback = "transform_fun(binary_op(`*`, 0.058467))",
+             class = "hrd_itm")
       )
     )
   ),
@@ -1360,12 +1407,12 @@ cfg <- list(
              sub_var = "itemid", callback = "transform_fun(fahr_to_cels)")
       ),
       eicu = list(
-        list(table = "vitalperiodic", itm_vars = "temperature",
+        list(table = "vitalperiodic", val_var = "temperature",
              class = "col_itm")
       ),
       hirid = list(
         list(ids = c(410L, 400L, 7100L), table = "observations",
-             sub_var = "variableid")
+             sub_var = "variableid", class = "hrd_itm")
       )
     )
   ),
@@ -1382,20 +1429,19 @@ cfg <- list(
       ),
       hirid = list(
         list(ids = c(2200L, 8290L, 30010009L), table = "observations",
-             sub_var = "variableid")
+             sub_var = "variableid", class = "hrd_itm")
       )
     )
   ),
   ins = list(
-    unit = "units/hr",
-    description = "insulin administration per hour",
+    description = "insulin",
     category = "medications",
     sources = list(
       mimic = list(
         list(ids = c(30045L, 30100L), table = "inputevents_cv",
              sub_var = "itemid"),
         list(ids = c(223258L, 223260L), table = "inputevents_mv",
-             sub_var = "itemid", itm_vars = "amount", end_var = "endtime",
+             sub_var = "itemid", val_var = "amount", end_var = "endtime",
              callback = "distribute_amount")
       ),
       eicu = list(
@@ -1406,7 +1452,7 @@ cfg <- list(
       ),
       hirid = list(
         list(ids = c(15L, 1000724L), table = "pharma", sub_var = "pharmaid",
-             callback = "function(x, ...) dt_gforce(x, 'sum')")
+             callback = "aggregate_fun('sum', 'units')")
       )
     )
   ),
@@ -1418,15 +1464,15 @@ cfg <- list(
     category = "demographics",
     sources = list(
       mimic = list(
-        list(table = "patients", itm_vars = "gender",
+        list(table = "patients", val_var = "gender",
              callback = "apply_map(c(M = 'Male', F = 'Female'))",
              class = "col_itm")
       ),
       eicu = list(
-        list(table = "patient", itm_vars = "gender", class = "col_itm")
+        list(table = "patient", val_var = "gender", class = "col_itm")
       ),
       hirid = list(
-        list(table = "general", itm_vars = "sex",
+        list(table = "general", val_var = "sex",
              callback = "apply_map(c(M = 'Male', F = 'Female'))",
              class = "col_itm")
       )
@@ -1441,15 +1487,15 @@ cfg <- list(
     category = "demographics",
     sources = list(
       mimic = list(
-        list(table = "patients", itm_vars = "dob", callback = "mimic_age",
+        list(table = "patients", val_var = "dob", callback = "mimic_age",
              class = "col_itm")
       ),
       eicu = list(
-        list(table = "patient", itm_vars = "age", callback = "eicu_age",
+        list(table = "patient", val_var = "age", callback = "eicu_age",
              class = "col_itm")
       ),
       hirid = list(
-        list(table = "general", itm_vars = "age", class = "col_itm")
+        list(table = "general", val_var = "age", class = "col_itm")
       )
     )
   ),
@@ -1462,7 +1508,7 @@ cfg <- list(
     category = "demographics",
     sources = list(
       eicu = list(
-        list(table = "patient", itm_vars = "admissionweight",
+        list(table = "patient", val_var = "admissionweight",
              class = "col_itm")
       )
     )
@@ -1493,18 +1539,18 @@ cfg <- list(
     category = "outcome",
     sources = list(
       mimic = list(
-        list(table = "admissions", itm_vars = "hospital_expire_flag",
+        list(table = "admissions", val_var = "hospital_expire_flag",
              callback = "transform_fun(comp_na(`==`, 1L))", class = "col_itm")
       ),
       eicu = list(
-        list(table = "patient", itm_vars = "hospitaldischargestatus",
+        list(table = "patient", val_var = "hospitaldischargestatus",
              callback = "transform_fun(comp_na(`==`, 'Expired'))",
              class = "col_itm")
       ),
       hirid = list(
         list(ids = c(110L, 200L), table = "observations",
              sub_var = "variableid", item_var = "variableid",
-             callback = "hirid_death")
+             callback = "hirid_death", class = "hrd_itm")
       )
     )
   ),
@@ -1516,7 +1562,7 @@ cfg <- list(
     category = "demographics",
     sources = list(
       mimic = list(
-        list(table = "services", itm_vars = "curr_service",
+        list(table = "services", val_var = "curr_service",
           callback = "apply_map(
             c(MED   = 'med',   SURG  = 'surg', CMED = 'med',  CSURG  = 'surg',
               VSURG = 'surg',  NSURG = 'surg', NB   = 'other', NMED  = 'med',
@@ -1528,7 +1574,7 @@ cfg <- list(
         )
       ),
       eicu = list(
-        list(table = "admissiondx", itm_vars = "admitdxpath",
+        list(table = "admissiondx", val_var = "admitdxpath",
              callback = "eicu_adx", class = "col_itm")
       )
     )
@@ -1636,7 +1682,8 @@ cfg <- list(
         list(ids = "-bands", table = "lab", sub_var = "labname")
       ),
       hirid = list(
-        list(ids = 24000557L, table = "observations", sub_var = "variableid")
+        list(ids = 24000557L, table = "observations", sub_var = "variableid",
+             class = "hrd_itm")
       )
     )
   ),

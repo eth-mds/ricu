@@ -8,14 +8,14 @@
 \title{Sepsis 3 label}
 \usage{
 sepsis_3(
-  sofa_score,
+  sofa,
   susp_inf,
   si_window = c("first", "last", "any"),
   delta_fun = delta_cummin,
   sofa_thresh = 2L,
   si_lwr = hours(48L),
   si_upr = hours(24L),
-  interval = ricu::interval(sofa_score)
+  interval = NULL
 )
 
 delta_cummin(x)
@@ -25,7 +25,7 @@ delta_start(x)
 delta_min(x, shifts = seq.int(0L, 23L))
 }
 \arguments{
-\item{sofa_score}{\code{ts_tbl} with a column \code{sofa_score}}
+\item{sofa}{\code{ts_tbl} with a column \code{sofa}}
 
 \item{susp_inf}{\code{ts_tbl} with columns \code{si_lwr} and \code{si_upr} defining windows for
 which a suspected infection is valid}

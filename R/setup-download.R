@@ -2,14 +2,17 @@
 #' Data download utilities
 #'
 #' The [Laboratory for Computational Physiology
-#' ](https://lcp.mit.edu/index.html) (LCP) at MIT hosts two large-scale
-#' databases of hospital intensive care units (ICUs), both of which can be
-#' either downloaded in full or as demo subsets. While both databases are
-#' publicly available, full download requires credentialed access which can be
-#' gained by applying for up an account with [PhysioNet
+#' ](https://lcp.mit.edu/index.html) (LCP) at MIT hosts several large-scale
+#' databases of hospital intensive care units (ICUs), two of which can be
+#' either downloaded in full or as demo subsets using utilities provided by
+#' `ricu`, while a third data set is available only in full. While demo data
+#' sets are publicly available, full download requires credentialed access
+#' which can be gained by applying for up an account with [PhysioNet
 #' ](https://physionet.org).
 #'
-#' The Medical Information Mart for Intensive Care (MIMIC) database holds
+#' @section MIMIC-III:
+#' The Medical Information Mart for Intensive Care
+#' ([MIMIC](https://physionet.org/content/mimiciii/)) database holds
 #' detailed clinical data from roughly 60,000 patient stays in Beth Israel
 #' Deaconess Medical Center (BIDMC) intensive care units between 2001 and 2012.
 #' The database includes information such as demographics, vital sign
@@ -18,6 +21,13 @@
 #' mortality (both in and out of hospital). For further information, please
 #' refer to the [MIMIC-III documentation
 #' ](https://mimic.physionet.org/about/mimic).
+#'
+#' The corresponding
+#' [demo dataset](https://physionet.org/content/mimiciii-demo)
+#' contains the full data of a randomly selected subset of 100 patients from
+#' the patient cohort with conformed in-hospital mortality. The only notable
+#' data omission is the `noteevents` table, which unstructured text reports on
+#' patients.
 #'
 #' More recently, Philips Healthcare and LCP began assembling the eICU
 #' Collaborative Research Database as a multi-center resource for ICU data.

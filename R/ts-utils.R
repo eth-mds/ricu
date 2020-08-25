@@ -116,6 +116,9 @@ slide <- function(x, expr, before, after = hours(0L), ...) {
   id_cols <- id_vars(x)
   ind_col <- index_var(x)
 
+  units(before) <- time_unit(x)
+  units(after)  <- time_unit(x)
+
   join <- x[,
     c(mget(id_cols), list(min_time = get(ind_col) - before,
                           max_time = get(ind_col) + after))
@@ -137,6 +140,9 @@ slide_index <- function(x, expr, index, before, after = hours(0L), ...) {
               is_scalar(before), is_interval(before),
               is_scalar(after),  is_interval(after))
 
+  units(before) <- time_unit(x)
+  units(after)  <- time_unit(x)
+
   join <- x[, list(min_time = index - before,
                    max_time = index + after), by = c(id_vars(x))]
 
@@ -148,6 +154,8 @@ slide_index <- function(x, expr, index, before, after = hours(0L), ...) {
 #' where the sliding window extends beyond available data
 #' @param lwr_col,upr_col Names of columns (in `windows`) of lower/upper
 #' window bounds
+#' @param left_closed,right_closed Logical flag indicating whether intervals
+#' are closed (default) or open.
 #' @param nomatch Forwarded to [`data.table::[()`][data.table]
 #' @param eval_env Environment in which `expr` is substituted; `NULL` resolves
 #' to the environment in which `expr` was created
@@ -159,6 +167,7 @@ slide_index <- function(x, expr, index, before, after = hours(0L), ...) {
 #'
 hop <- function(x, expr, windows, full_window = FALSE,
                 lwr_col = "min_time", upr_col = "max_time",
+                left_closed = TRUE, right_closed = TRUE,
                 nomatch = NULL, eval_env = NULL) {
 
   assert_that(is_ts_tbl(x), is_unique(x), is.flag(full_window),
@@ -166,6 +175,12 @@ hop <- function(x, expr, windows, full_window = FALSE,
 
   win_id <- id_vars(windows)
   tbl_id <- id_vars(x)
+
+  orig_unit <- time_unit(x)
+  win_cols  <- c(lwr_col, upr_col)
+
+  windows <- windows[, c(win_cols) := lapply(.SD, `units<-`, orig_unit),
+                     .SDcols = win_cols]
 
   if (full_window) {
 
@@ -187,8 +202,9 @@ hop <- function(x, expr, windows, full_window = FALSE,
   x <- x[, c(tmp_col) := get(tbl_ind)]
   on.exit(rm_cols(x, tmp_col, skip_absent = TRUE, by_ref = TRUE))
 
-  join <- c(paste(tbl_id, "==", win_id), paste(tbl_ind, "<=", upr_col),
-                                         paste(tmp_col, ">=", lwr_col))
+  join <- c(paste(tbl_id, "==", win_id),
+            paste(tbl_ind, if (right_closed) "<=" else "<", upr_col),
+            paste(tmp_col, if (left_closed)  ">=" else ">", lwr_col))
 
   quo <- enexpr(expr)
 
