@@ -20,7 +20,7 @@
       body(fun) <- fun_body
 
       (unlockBinding)(fun_name, baseenv())
-      assign(fun_name, fun, envir = asNamespace("base"), inherits=FALSE)
+      assign(fun_name, fun, envir = asNamespace("base"), inherits = FALSE)
       lockBinding(fun_name, baseenv())
     }
 

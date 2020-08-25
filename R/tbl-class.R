@@ -1,8 +1,8 @@
 
 #' Tabular ICU data
-#' 
+#'
 #' In order to simplify handling or tabular ICU data, `ricu` provides two
-#' S3 classes, `id_tbl` and `ts_tbl`. The two classes essentially 
+#' S3 classes, `id_tbl` and `ts_tbl`. The two classes essentially
 #' consist of a `data.table` object, alongside some meta data and S3 dispatch
 #' is used to enable more natural behavior for some data manipulation tasks.
 #' For example, when merging two tables, a default for the `by` argument can
@@ -46,9 +46,7 @@ id_tbl <- function(..., id_vars = 1L) {
 #'
 #' @rdname id_tbl
 #' @export
-is_id_tbl <- function(x) inherits(x, "id_tbl")
-
-on_failure(is_id_tbl) <- fail_type("x", "id_tbl")
+is_id_tbl <- is_type("id_tbl")
 
 #' @param by_ref Logical flag indicating whether to perform the operation by
 #' reference
@@ -135,9 +133,7 @@ ts_tbl <- function(..., id_vars = 1L, index_var = NULL, interval = NULL) {
 
 #' @rdname id_tbl
 #' @export
-is_ts_tbl <- function(x) inherits(x, "ts_tbl")
-
-on_failure(is_ts_tbl) <- fail_type("x", "ts_tbl")
+is_ts_tbl <- is_type("ts_tbl")
 
 #' @rdname id_tbl
 #' @export

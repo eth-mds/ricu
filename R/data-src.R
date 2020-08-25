@@ -66,7 +66,7 @@ new_src_tbl <- function(files, col_cfg, prefix, src_env) {
   res
 }
 
-is_src_tbl <- function(x) inherits(x, "src_tbl")
+is_src_tbl <- is_type("src_tbl")
 
 #' @export
 id_vars.src_tbl <- function(x) {
@@ -192,7 +192,7 @@ new_src_env <- function(x, env = new.env(parent = data_env())) {
             src_name = src_name(x), id_cfg = as_id_cfg(x))
 }
 
-is_src_env <- function(x) inherits(x, "src_env")
+is_src_env <- is_type("src_env")
 
 #' @export
 print.src_env <- function(x, ...) {

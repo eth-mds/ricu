@@ -115,9 +115,7 @@ on_failure(has_interval) <- function(call, env) {
   )
 }
 
-is_difftime <- function(x) inherits(x, "difftime")
-
-on_failure(is_difftime) <- fail_type("x", "difftime")
+is_difftime <- is_type("difftime")
 
 is_interval <- function(x) {
   assert_that(is_difftime(x), has_length(x)) && all(x >= 0)

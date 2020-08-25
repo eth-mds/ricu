@@ -109,9 +109,7 @@ rename <- function(x, new, old) {
   replace(x, hits[!is.na(hits)], new[!is.na(hits)])
 }
 
-is_dt <- function(x) data.table::is.data.table(x)
-
-on_failure(is_dt) <- fail_type("x", "data.table")
+is_dt <- is_type("data.table")
 
 #' @param new,old Replacement names and existing column names for renaming
 #' columns

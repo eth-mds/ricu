@@ -111,6 +111,32 @@ reference}
 object validation as error}
 }
 \description{
-Two objects central to \code{ricu}, \code{id_tbl} and \code{ts_tbl} (both inheriting
-from \code{id_tbl}) are used to represent tabular data.
+In order to simplify handling or tabular ICU data, \code{ricu} provides two
+S3 classes, \code{id_tbl} and \code{ts_tbl}. The two classes essentially
+consist of a \code{data.table} object, alongside some meta data and S3 dispatch
+is used to enable more natural behavior for some data manipulation tasks.
+For example, when merging two tables, a default for the \code{by} argument can
+be chosen more sensibly if columns representing patient ID and timestamp
+information can be identified.
+}
+\details{
+The two classes are designed for two often encoutered data scenatios:
+\itemize{
+\item \code{id_tbl} objects can be used to represent static (with repspect to
+relevant time scales) patient data such as patient age and such an object
+is simply a \code{data.table} combined with a non-zero length character vector
+valued attribute marking the columns tracking patient ID information
+(\link[=id_vars]{id_vars}). All further columns are considered as
+\link[=data_vars]{data_vars}.
+\item \code{ts_tbl} objects are used for grouped time series data. A \code{data.table}
+object again is augmented by attributes, including a non-zero length
+character vector identifying patient ID columns (\link[=id_vars]{id_vars}),
+a string, tracking the column holding time-stamps
+(\link[=index_var]{index_var}) and a scalar \code{difftime} object determining
+the time-series step size \link[=interval]{interval}. Again, all further
+columns are treated as \link[=data_vars]{data_vars}.
+Owing to the nested structure of required meta data, \code{ts_tbl} inherits from
+ìd_tbl\verb{. Furthermore, both classes inherit from }data.table\verb{. As such, }data.table\verb{[reference semantics][data.table::reference] are available for some operations, indicated by presence of a}by_ref\verb{argument. At default, value,}by_ref\verb{is disabled as this is inline with base R behavior at the cost of potentially incurring unnecessary data copies. Some care has to be taken when passing}by_ref = TRUE` and enabling by reference operations as
+this can have side effects (see examples).
+}
 }

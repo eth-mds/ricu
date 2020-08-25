@@ -41,7 +41,7 @@ new_src_cfg <- function(name, id_cfg, col_cfg, tbl_cfg = NULL, url = NULL,
 #' @rdname src_cfg
 #' @keywords internal
 #'
-is_src_cfg <- function(x) inherits(x, "src_cfg")
+is_src_cfg <- is_type("src_cfg")
 
 #' ID columns
 #'
@@ -85,7 +85,7 @@ new_id_cfg <- function(name, src, id, pos, start = NA_character_,
 #' @rdname id_cfg
 #' @keywords internal
 #'
-is_id_cfg <- function(x) inherits(x, "id_cfg")
+is_id_cfg <- is_type("id_cfg")
 
 #' Default columns
 #'
@@ -141,7 +141,7 @@ new_col_cfg <- function(table, src, id_var = NULL, index_var = NULL,
 #' @rdname col_cfg
 #' @keywords internal
 #'
-is_col_cfg <- function(x) inherits(x, "col_cfg")
+is_col_cfg <- is_type("col_cfg")
 
 #' Table specification
 #'
@@ -214,7 +214,7 @@ new_tbl_cfg <- function(table, src, files, cols, num_rows = NULL,
 #' @rdname tbl_cfg
 #' @keywords internal
 #'
-is_tbl_cfg <- function(x) inherits(x, "tbl_cfg")
+is_tbl_cfg <- is_type("tbl_cfg")
 
 #' Load configuration for a data source
 #'
