@@ -1,8 +1,37 @@
 
 #' Tabular ICU data
+#' 
+#' In order to simplify handling or tabular ICU data, `ricu` provides two
+#' S3 classes, `id_tbl` and `ts_tbl`. The two classes essentially 
+#' consist of a `data.table` object, alongside some meta data and S3 dispatch
+#' is used to enable more natural behavior for some data manipulation tasks.
+#' For example, when merging two tables, a default for the `by` argument can
+#' be chosen more sensibly if columns representing patient ID and timestamp
+#' information can be identified.
 #'
-#' Two objects central to `ricu`, `id_tbl` and `ts_tbl` (both inheriting
-#' from `id_tbl`) are used to represent tabular data.
+#' @details
+#' The two classes are designed for two often encoutered data scenatios:
+#' * `id_tbl` objects can be used to represent static (with repspect to
+#'   relevant time scales) patient data such as patient age and such an object
+#'   is simply a `data.table` combined with a non-zero length character vector
+#'   valued attribute marking the columns tracking patient ID information
+#'   ([id_vars][id_vars()]). All further columns are considered as
+#'   [data_vars][data_vars()].
+#' * `ts_tbl` objects are used for grouped time series data. A `data.table`
+#'   object again is augmented by attributes, including a non-zero length
+#'   character vector identifying patient ID columns ([id_vars][id_vars()]),
+#'   a string, tracking the column holding time-stamps
+#'   ([index_var][index_var()]) and a scalar `difftime` object determining
+#'   the time-series step size [interval][interval()]. Again, all further
+#'   columns are treated as [data_vars][data_vars()].
+#' Owing to the nested structure of required meta data, `ts_tbl` inherits from
+#' ìd_tbl`. Furthermore, both classes inherit from `data.table`. As such,
+#' `data.table` [reference semantics][data.table::reference] are available for
+#' some operations, indicated by presence of a `by_ref` argument. At default,
+#' value, `by_ref` is disabled as this is inline with base R behavior at the
+#' cost of potentially incurring unnecessary data copies. Some care has to be
+#' taken when passing `by_ref = TRUE` and enabling by reference operations as
+#' this can have side effects (see examples).
 #'
 #' @param ... forwarded to [data.table::data.table()] or generic consistency
 #' @param id_vars Column name(s) to be used as `id` column(s)
@@ -123,15 +152,13 @@ as_ts_tbl <- function(x, id_vars = NULL, index_var = NULL, interval = NULL,
 as_ts_tbl.ts_tbl <- function(x, id_vars = NULL, index_var = NULL,
                              interval = NULL, by_ref = FALSE) {
 
-  repl_if_null <- function(x, how) if (is.null(x)) how else x
-
   if (is.null(id_vars) && is.null(index_var) && is.null(interval)) {
     return(x)
   }
 
-  id_vars   <- repl_if_null(id_vars,   id_vars(x))
-  index_var <- repl_if_null(index_var, index_var(x))
-  interval  <- repl_if_null(interval,  interval(x))
+  id_vars   <- coalesce(id_vars,   id_vars(x))
+  index_var <- coalesce(index_var, index_var(x))
+  interval  <- coalesce(interval,  interval(x))
 
   NextMethod()
 }
@@ -141,9 +168,7 @@ as_ts_tbl.ts_tbl <- function(x, id_vars = NULL, index_var = NULL,
 as_ts_tbl.id_tbl <- function(x, id_vars = NULL, index_var = NULL,
                              interval = NULL, by_ref = FALSE) {
 
-  if (is.null(id_vars)) {
-    id_vars <- id_vars(x)
-  }
+  id_vars <- coalesce(id_vars, id_vars(x))
 
   NextMethod()
 }
