@@ -295,16 +295,16 @@ try_add_vars.itm <- function(x, ...) {
     } else {
 
       if (isTRUE(curr)) {
-        new <- as_col_cfg(x)[[var]]
-      } else {
-        new <- coalesce(x[["vars"]][[var]], curr)
+        curr <- as_col_cfg(x)[[var]]
       }
 
-      if (is.null(new)) next
+      curr <- coalesce(x[["vars"]][[var]], curr)
 
-      assert_that(null_or(new, is.string))
+      if (is.null(curr)) next
 
-      x[["vars"]][[var]] <- new
+      assert_that(is.string(curr))
+
+      x[["vars"]][[var]] <- curr
     }
   }
 
