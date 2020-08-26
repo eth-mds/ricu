@@ -334,8 +334,7 @@ load_concepts.num_cncpt <- function(x, aggregate = NULL, ...,
     }
   }
 
-  res <- load_concepts(try_add_vars(as_item(x), unit_var = NULL), ...,
-                       progress = progress)
+  res <- load_concepts(as_item(x), ..., progress = progress)
 
   keep <- check_bound(res, x[["min"]], `>=`) &
           check_bound(res, x[["max"]], `<=`)

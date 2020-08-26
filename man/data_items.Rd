@@ -118,16 +118,38 @@ A function can be specified as \code{callback} and this function will be called
 with arguments \code{x} (the object itself), \code{patient_ids}, \code{id_type} and
 \code{interval} (see \code{\link[=load_concepts]{load_concepts()}}) and is expected to return an object as
 specified by the \code{target} entry.
+\item \code{hrd_itm}: A special case of \code{sel_itm} for HiRID data where measurement
+units are not available as separate column, but as separate table with
+units fixed per concept.
 }
 
-All \code{itm} objects have to specify a data source (\code{src}) and a target type
-(\code{target}), which specifies the expected object
+All \code{itm} objects have to specify a data source (\code{src}) as well as a
+sub-class. Further arguments then are specific to the selected sub-class
+and the S3 generic function \code{init_itm()} is responsible for input
+validation of class-specific arguments as well as class initialization. A
+list of \code{itm} objects can be passed to \code{new_item} in order to instantiate
+an \code{item} object. An alternative constructor for \code{item} objects is given
+by \code{item()} which
 }
 \examples{
-gluc <- item("mimic_demo", "labevents", "itemid", list(c(50809L, 50931L)))
+gluc <- item("mimic_demo", "labevents", "itemid", list(c(50809L, 50931L)),
+             unit_var = TRUE, index_var = TRUE)
 
 is_item(gluc)
 
 identical(gluc, as_item(load_dictionary("mimic_demo", "glu")))
+
+hr1 <- new_itm(src = "mimic_demo", table = "chartevents",
+               sub_var = "itemid", ids = c(211L, 220045L))
+
+hr2 <- item(src = c("mimic_demo", "eicu_demo"),
+            table = c("chartevents", "vitalperiodic"),
+            sub_var = list("itemid", NULL),
+            val_var = list(NULL, "heartrate"),
+            ids = list(c(211L, 220045L), NULL),
+            class = c("sel_itm", "col_itm"))
+
+identical(as_item(hr1), hr2[1])
+identical(new_item(list(hr1)), hr2[1])
 
 }

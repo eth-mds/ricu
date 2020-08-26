@@ -51,9 +51,17 @@
 #'   with arguments `x` (the object itself), `patient_ids`, `id_type` and
 #'   `interval` (see [load_concepts()]) and is expected to return an object as
 #'   specified by the `target` entry.
+#' * `hrd_itm`: A special case of `sel_itm` for HiRID data where measurement
+#'    units are not available as separate column, but as separate table with
+#'    units fixed per concept.
 #'
-#' All `itm` objects have to specify a data source (`src`) and a target type
-#' (`target`), which specifies the expected object
+#' All `itm` objects have to specify a data source (`src`) as well as a
+#' sub-class. Further arguments then are specific to the selected sub-class
+#' and the S3 generic function `init_itm()` is responsible for input
+#' validation of class-specific arguments as well as class initialization. A
+#' list of `itm` objects can be passed to `new_item` in order to instantiate
+#' an `item` object. An alternative constructor for `item` objects is given
+#' by `item()` which
 #'
 #' @param src The data source name
 #' @param ... Further specification of the `itm` object (passed to
@@ -63,11 +71,25 @@
 #' @rdname data_items
 #'
 #' @examples
-#' gluc <- item("mimic_demo", "labevents", "itemid", list(c(50809L, 50931L)))
+#' gluc <- item("mimic_demo", "labevents", "itemid", list(c(50809L, 50931L)),
+#'              unit_var = TRUE, index_var = TRUE)
 #'
 #' is_item(gluc)
 #'
 #' identical(gluc, as_item(load_dictionary("mimic_demo", "glu")))
+#'
+#' hr1 <- new_itm(src = "mimic_demo", table = "chartevents",
+#'                sub_var = "itemid", ids = c(211L, 220045L))
+#'
+#' hr2 <- item(src = c("mimic_demo", "eicu_demo"),
+#'             table = c("chartevents", "vitalperiodic"),
+#'             sub_var = list("itemid", NULL),
+#'             val_var = list(NULL, "heartrate"),
+#'             ids = list(c(211L, 220045L), NULL),
+#'             class = c("sel_itm", "col_itm"))
+#'
+#' identical(as_item(hr1), hr2[1])
+#' identical(new_item(list(hr1)), hr2[1])
 #'
 #' @export
 #'
@@ -179,7 +201,7 @@ init_itm.rgx_itm <- function(x, table, sub_var, regex,
 complete_tbl_itm <- function(x, callback, sub_var, ...) {
   res <- set_itm_callback(x, callback)
   res <- try_add_vars(res, sub_var = sub_var, ...)
-  res <- try_add_vars(res, val_var = NULL)
+  res <- try_add_vars(res, val_var = TRUE)
   set_id_opts(res)
 }
 
@@ -258,13 +280,25 @@ try_add_vars <- function(x, ...) {
 try_add_vars.itm <- function(x, ...) {
 
   vars <- list(...)
+  nmes <- names(vars)
 
-  for (var in names(vars)) {
-    x[["vars"]][[var]] <- if (isFALSE(vars[[var]])) {
-      NULL
+  assert_that(same_length(nmes, vars), is_unique(nmes))
+
+  for (var in nmes) {
+
+    curr <- vars[[var]]
+
+    if (isFALSE(curr)) {
+      new <- NULL
+    } else if (isTRUE(curr)) {
+      new <- as_col_cfg(x)[[var]]
     } else {
-      coalesce(x[["vars"]][[var]], vars[[var]], as_col_cfg(x)[[var]])
+      new <- coalesce(x[["vars"]][[var]], curr)
     }
+
+    assert_that(null_or(new, is.string))
+
+    x[["vars"]][[var]] <- new
   }
 
   assert_that(is_unique(unlist(x[["vars"]])))
@@ -390,6 +424,10 @@ lookup_id_type.itm <- function(x, id_type = NULL, ...) {
 #' @export
 new_item <- function(x) {
 
+  if (is_itm(x)) {
+    return(as_item(x))
+  }
+
   assert_that(is.list(x), all_fun(x, is_itm))
 
   new_vctr(x, class = "item")
@@ -398,7 +436,7 @@ new_item <- function(x) {
 #' @rdname data_items
 #' @export
 item <- function(...) {
-  new_item(do.call(Map, c(list(new_itm), vec_recycle_common(...))))
+  new_item(do.call(map, c(list(new_itm), vec_recycle_common(...))))
 }
 
 #' @rdname data_items
@@ -514,7 +552,7 @@ new_cncpt <- function(name, items, description = NA_character_,
   res <- init_cncpt(structure(res, class = c(class, "cncpt")), ...)
 
   if (identical(target, "ts_tbl")) {
-    res <- try_add_vars(res, index_var = NULL)
+    res <- try_add_vars(res, index_var = TRUE)
   }
 
   res
@@ -548,7 +586,7 @@ init_cncpt.num_cncpt <- function(x, unit = NULL, min = NULL, max = NULL, ...) {
   todo <- c("unit", "min", "max")
   x[todo] <- mget(todo)
 
-  x
+  try_add_vars(x, unit_var = TRUE)
 }
 
 #' @param levels A vector of possible values a categorical concept may take on
