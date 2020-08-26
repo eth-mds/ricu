@@ -286,25 +286,26 @@ try_add_vars.itm <- function(x, ...) {
 
   for (var in nmes) {
 
-    curr <- vars[[var]]
+    cur <- vars[[var]]
 
-    if (isFALSE(curr)) {
+    if (isFALSE(cur)) {
 
-      x[["vars"]] <- x[["vars"]][setdiff(names(x[["vars"]]), curr)]
+      x[["vars"]] <- x[["vars"]][setdiff(names(x[["vars"]]), cur)]
 
     } else {
 
-      if (isTRUE(curr)) {
-        curr <- as_col_cfg(x)[[var]]
+      if (isTRUE(cur)) {
+        cur <- as_col_cfg(x)[[var]]
       }
 
-      curr <- coalesce(x[["vars"]][[var]], curr)
+      old <- if (has_name(x[["vars"]], var)) x[["vars"]][[var]] else NULL
+      cur <- coalesce(old, cur)
 
-      if (is.null(curr)) next
+      if (is.null(cur)) next
 
-      assert_that(is.string(curr))
+      assert_that(is.string(cur))
 
-      x[["vars"]][[var]] <- curr
+      x[["vars"]][[var]] <- cur
     }
   }
 
