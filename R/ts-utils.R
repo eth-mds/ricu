@@ -127,15 +127,17 @@ slide <- function(x, expr, before, after = hours(0L), ...) {
   ]
 
   res <- hop(x, {{ expr }}, join, lwr_col = "min_time", upr_col = "max_time",
-             ..., nomatch = NA)
+             ...)
 
   if (!is_ts_tbl(res)) {
     res <- rename_cols(res, ind_col, "min_time", by_ref = TRUE)
-    res <- rm_cols(res, "max_time", by_ref = TRUE)
     res <- as_ts_tbl(res, index_var = ind_col, interval = interva,
                      by_ref = TRUE)
     res <- set(res, j = ind_col, value = index_col(res) + before)
   }
+
+  res <- rm_cols(res, c("min_time", "max_time"), skip_absent = TRUE,
+                 by_ref = TRUE)
 
   res
 }
@@ -168,11 +170,13 @@ slide_index <- function(x, expr, index, before, after = hours(0L), ...) {
 
   if (!is_ts_tbl(res)) {
     res <- rename_cols(res, ind_col, "min_time", by_ref = TRUE)
-    res <- rm_cols(res, "max_time", by_ref = TRUE)
     res <- as_ts_tbl(res, index_var = ind_col, interval = interva,
                      by_ref = TRUE)
     res <- set(res, j = ind_col, value = index_col(res) + before)
   }
+
+  res <- rm_cols(res, c("min_time", "max_time"), skip_absent = TRUE,
+                 by_ref = TRUE)
 
   res
 }
