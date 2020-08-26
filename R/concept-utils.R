@@ -289,16 +289,23 @@ try_add_vars.itm <- function(x, ...) {
     curr <- vars[[var]]
 
     if (isFALSE(curr)) {
-      new <- NULL
-    } else if (isTRUE(curr)) {
-      new <- as_col_cfg(x)[[var]]
+
+      x[["vars"]] <- x[["vars"]][setdiff(names(x[["vars"]]), curr)]
+
     } else {
-      new <- coalesce(x[["vars"]][[var]], curr)
+
+      if (isTRUE(curr)) {
+        new <- as_col_cfg(x)[[var]]
+      } else {
+        new <- coalesce(x[["vars"]][[var]], curr)
+      }
+
+      if (is.null(new)) next
+
+      assert_that(null_or(new, is.string))
+
+      x[["vars"]][[var]] <- new
     }
-
-    assert_that(null_or(new, is.string))
-
-    x[["vars"]][[var]] <- new
   }
 
   assert_that(is_unique(unlist(x[["vars"]])))
@@ -348,7 +355,7 @@ get_itm_var.itm <- function(x, var = NULL) {
   if (is.null(var)) {
     unlist(res[setdiff(names(res), "index_var")], recursive = FALSE)
   } else {
-    res[[var]]
+    if (has_name(res, var)) res[[var]] else NULL
   }
 }
 

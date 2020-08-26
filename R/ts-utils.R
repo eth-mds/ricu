@@ -127,7 +127,7 @@ slide <- function(x, expr, before, after = hours(0L), ...) {
   ]
 
   res <- hop(x, {{ expr }}, join, lwr_col = "min_time", upr_col = "max_time",
-             ...)
+             ..., nomatch = NA)
 
   if (!is_ts_tbl(res)) {
     res <- rename_cols(res, ind_col, "min_time", by_ref = TRUE)
