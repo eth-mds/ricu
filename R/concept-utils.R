@@ -233,9 +233,7 @@ init_itm.itm <- function(x, ...) {
 #' @export
 prepare_query <- function(x) UseMethod("prepare_query", x)
 
-#' @keywords internal
-#' @export
-prepare_query.sel_itm <- function(x) {
+prep_sel <- function(x) {
 
   ids <- x[["ids"]]
   lst <- list(col = as.name(get_itm_var(x, "sub_var")), id = ids)
@@ -248,6 +246,14 @@ prepare_query.sel_itm <- function(x) {
     substitute(col %in% id, lst)
   }
 }
+
+#' @keywords internal
+#' @export
+prepare_query.sel_itm <- prep_sel
+
+#' @keywords internal
+#' @export
+prepare_query.hrd_itm <- prep_sel
 
 #' @keywords internal
 #' @export
