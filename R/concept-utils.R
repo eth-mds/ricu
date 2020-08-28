@@ -56,12 +56,18 @@
 #'    units fixed per concept.
 #'
 #' All `itm` objects have to specify a data source (`src`) as well as a
-#' sub-class. Further arguments then are specific to the selected sub-class
-#' and the S3 generic function `init_itm()` is responsible for input
+#' sub-class. Further arguments then are specific to the respective sub-class
+#' and encode information that define data loading, such as the table to
+#' query, the column name and values to use for idenfifying relevant rows,
+#' etc. The S3 generic function `init_itm()` is responsible for input
 #' validation of class-specific arguments as well as class initialization. A
-#' list of `itm` objects can be passed to `new_item` in order to instantiate
-#' an `item` object. An alternative constructor for `item` objects is given
-#' by `item()` which
+#' list of `itm` objects, created by calls to `new_itm()` can be passed to
+#' `new_item` in order to instantiate an `item` object. An alternative
+#' constructor for `item` objects is given by `item()` which calls `new_itm()`
+#' on the passed arguments (see examples). Finally `as_item()` can be used
+#' for coercion of related objects such as `list`, `concept`, and the like.
+#' Several additional S3 generic functions exist for manipulation of
+#' `item`-like objects but are marked `internal` (see [item_utils]).
 #'
 #' @param src The data source name
 #' @param ... Further specification of the `itm` object (passed to
@@ -76,7 +82,7 @@
 #'
 #' is_item(gluc)
 #'
-#' identical(gluc, as_item(load_dictionary("mimic_demo", "glu")))
+#' all.equal(gluc, as_item(load_dictionary("mimic_demo", "glu")))
 #'
 #' hr1 <- new_itm(src = "mimic_demo", table = "chartevents",
 #'                sub_var = "itemid", ids = c(211L, 220045L))
@@ -115,6 +121,9 @@ tbl_name.itm <- function(x) {
   assert_that(is.string(res))
   res
 }
+
+#' @export
+tbl_name.fun_itm <- function(x) NULL
 
 #' @export
 as_src_tbl.itm <- function(x, ...) {
@@ -301,6 +310,7 @@ try_add_vars.itm <- function(x, ...) {
     } else {
 
       if (isTRUE(cur)) {
+        if (is.null(tbl_name(x))) next
         cur <- as_col_cfg(x)[[var]]
       }
 
@@ -315,7 +325,10 @@ try_add_vars.itm <- function(x, ...) {
     }
   }
 
-  assert_that(is_unique(unlist(x[["vars"]])))
+  if (has_length(x[["vars"]])) {
+    assert_that(is_unique(unlist(x[["vars"]])))
+    x[["vars"]] <- x[["vars"]][order(names(x[["vars"]]))]
+  }
 
   x
 }

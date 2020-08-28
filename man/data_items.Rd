@@ -124,12 +124,18 @@ units fixed per concept.
 }
 
 All \code{itm} objects have to specify a data source (\code{src}) as well as a
-sub-class. Further arguments then are specific to the selected sub-class
-and the S3 generic function \code{init_itm()} is responsible for input
+sub-class. Further arguments then are specific to the respective sub-class
+and encode information that define data loading, such as the table to
+query, the column name and values to use for idenfifying relevant rows,
+etc. The S3 generic function \code{init_itm()} is responsible for input
 validation of class-specific arguments as well as class initialization. A
-list of \code{itm} objects can be passed to \code{new_item} in order to instantiate
-an \code{item} object. An alternative constructor for \code{item} objects is given
-by \code{item()} which
+list of \code{itm} objects, created by calls to \code{new_itm()} can be passed to
+\code{new_item} in order to instantiate an \code{item} object. An alternative
+constructor for \code{item} objects is given by \code{item()} which calls \code{new_itm()}
+on the passed arguments (see examples). Finally \code{as_item()} can be used
+for coercion of related objects such as \code{list}, \code{concept}, and the like.
+Several additional S3 generic functions exist for manipulation of
+\code{item}-like objects but are marked \code{internal} (see \link{item_utils}).
 }
 \examples{
 gluc <- item("mimic_demo", "labevents", "itemid", list(c(50809L, 50931L)),
@@ -137,7 +143,7 @@ gluc <- item("mimic_demo", "labevents", "itemid", list(c(50809L, 50931L)),
 
 is_item(gluc)
 
-identical(gluc, as_item(load_dictionary("mimic_demo", "glu")))
+all.equal(gluc, as_item(load_dictionary("mimic_demo", "glu")))
 
 hr1 <- new_itm(src = "mimic_demo", table = "chartevents",
                sub_var = "itemid", ids = c(211L, 220045L))
