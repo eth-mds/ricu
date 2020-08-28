@@ -14,12 +14,29 @@ test_that("slide", {
 
   expect_identical(res, slide(tbl, fun(z), before = hours(3L)))
 
+  tmp <- data.table::copy(tbl)
+
+  expect_identical(
+    slide(tmp, list(zz = sum(z)), before = hours(0L), after = hours(3L)),
+    slide(tmp, zz := sum(z), before = hours(0L), after = hours(3L))[,
+      c("z") := NULL]
+  )
+
+  tmp <- data.table::copy(tbl)
+
+  expect_warning(slide(tmp, zz := sum(z), before = hours(3L)),
+                 class = "by_ref_slide")
+
   res <- slide_index(tbl, sum(z), hours(c(2L, 6L)), before = hours(3L))
 
   expect_is(res, "ts_tbl")
 
   expect_identical(res, slide_index(tbl, fun(z), hours(c(2L, 6L)),
                                     before = hours(3L)))
+
+  expect_warning(slide_index(tbl, zz := sum(z), hours(c(2L, 6L)),
+                             before = hours(3L)),
+                 class = "by_ref_slide")
 
   wins <- id_tbl(x = rep(1:3, each = 2), min_time = hours(rep(c(2, 4), 3)),
                  max_time = hours(rep(c(6, 5), 3)))
@@ -29,6 +46,10 @@ test_that("slide", {
   expect_is(res, "id_tbl")
 
   expect_identical(res, hop(tbl, fun(z), wins))
+
+  tmp <- data.table::copy(tbl)
+
+  expect_warning(hop(tmp, zz := sum(z), wins), class = "by_ref_slide")
 
   expect_error(hop(tbl, fun(z), wins, sub_env = emptyenv()))
 })

@@ -126,14 +126,20 @@ slide <- function(x, expr, before, after = hours(0L), ...) {
                           max_time = get(ind_col) + after))
   ]
 
-  res <- hop(x, {{ expr }}, join, lwr_col = "min_time", upr_col = "max_time",
-             ..., nomatch = NA)
+  if (before == 0) {
+    msg <- NULL
+  } else {
+    msg <- "Using 'by reference' syntax in expressions passed to `slide()`
+            might yield undesired results if `before` > 0."
+  }
+
+  res <- hopper(x, {{ expr }}, join, lwr_col = "min_time",
+                upr_col = "max_time", ..., nomatch = NA, warn_msg = msg)
 
   if (!is_ts_tbl(res)) {
-    res <- rename_cols(res, ind_col, "min_time", by_ref = TRUE)
+    res <- set(res, j = ind_col, value = res[["min_time"]] + before)
     res <- as_ts_tbl(res, index_var = ind_col, interval = interva,
                      by_ref = TRUE)
-    res <- set(res, j = ind_col, value = index_col(res) + before)
   }
 
   res <- rm_cols(res, c("min_time", "max_time"), skip_absent = TRUE,
@@ -165,14 +171,16 @@ slide_index <- function(x, expr, index, before, after = hours(0L), ...) {
   join <- x[, list(min_time = index - before,
                    max_time = index + after), by = c(id_cols)]
 
-  res <- hop(x, {{ expr }}, join, lwr_col = "min_time", upr_col = "max_time",
-             ...)
+  res <- hopper(x, {{ expr }}, join, lwr_col = "min_time",
+                upr_col = "max_time", ..., warn_msg = "
+                Using 'by reference' syntax in expressions passed to
+                `slide_index()` most likely will not yield the desired
+                results.")
 
   if (!is_ts_tbl(res)) {
-    res <- rename_cols(res, ind_col, "min_time", by_ref = TRUE)
+    res <- set(res, j = ind_col, value = res[["min_time"]] + before)
     res <- as_ts_tbl(res, index_var = ind_col, interval = interva,
                      by_ref = TRUE)
-    res <- set(res, j = ind_col, value = index_col(res) + before)
   }
 
   res <- rm_cols(res, c("min_time", "max_time"), skip_absent = TRUE,
@@ -201,6 +209,18 @@ hop <- function(x, expr, windows, full_window = FALSE,
                 lwr_col = "min_time", upr_col = "max_time",
                 left_closed = TRUE, right_closed = TRUE,
                 nomatch = NULL, eval_env = NULL) {
+
+  msg <- "Using 'by reference' syntax in expressions passed to `hop()` most
+          likely will not yield the desired results."
+
+  hopper(x, {{ expr }}, windows, full_window, lwr_col, upr_col,
+         left_closed, right_closed, nomatch, eval_env, msg)
+}
+
+hopper <- function(x, expr, windows, full_window = FALSE,
+                   lwr_col = "min_time", upr_col = "max_time",
+                   left_closed = TRUE, right_closed = TRUE,
+                   nomatch = NULL, eval_env = NULL, warn_msg = FALSE) {
 
   assert_that(is_ts_tbl(x), is_unique(x), is.flag(full_window),
               is_id_tbl(windows), has_name(windows, c(lwr_col, upr_col)))
@@ -244,8 +264,12 @@ hop <- function(x, expr, windows, full_window = FALSE,
     env <- coalesce(eval_env, quo_get_env(quo))
     exp <- quo_get_expr(quo)
   } else {
-    env <- coalesce(eval_env, caller_env())
+    env <- coalesce(eval_env, caller_env(2))
     exp <- quo
+  }
+
+  if (not_null(warn_msg) && identical(exp[[1L]], as.symbol(":="))) {
+    warn_ricu(warn_msg, class = "by_ref_slide")
   }
 
   .x_ <- .win_ <- .expr_ <- .join_ <- .nomatch_ <- NULL
