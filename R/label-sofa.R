@@ -179,6 +179,9 @@ sofa_vent <- function(vent_start, vent_end, win_length = hours(6L),
   units(win_length) <- time_unit(vent_start)
   units(min_length) <- time_unit(vent_start)
 
+  vent_start <- vent_start[is_true(get("vent_start"))]
+  vent_end   <- vent_end[is_true(get("vent_end"))]
+
   if (is.null(vent_end)) {
 
     ind <- index_var(vent_start)
