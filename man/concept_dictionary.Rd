@@ -22,5 +22,68 @@ load_dictionary(
 \item{file}{File name of the dictionary}
 }
 \description{
-Data can be specified in JSON format and parsed into \code{concept} objects.
+Data concepts can be specified in JSON format as a concept dictionary which
+can be read and parsed into \code{concept}/\code{item} objects. Dictionary loading
+can either be performed on the default included dictionary or on a user-
+specified custom dictionary. Furthermore, a mechanism is provided for adding
+concepts and/or data sources to the existing dictionary (see the Details
+section).
+}
+\details{
+A default dictionary is provided at\preformatted{system.file(
+  file.path("extdata", "config", "concept-dict.json"),
+  package = "ricu"
+)
+}
+
+and can be loaded in to an R session by calling
+\code{get_config("concept-dict")}. The default dictionary can be extended by
+adding a file \code{concept-dict.json} to the path specified by the environment
+variable \code{RICU_CONFIG_PATH}. New concepts can be added to this file and
+existing concepts can be extended (by adding new data sources).
+Alternatively, \code{load_dictionary()} can be called on non-default
+dictionaries using the \code{file} argument.
+
+In order to specify a concept as JSON object, for example the numeric
+concept for glucose, is given by\preformatted{\{
+  "glu": \{
+    "unit": "mg/dL",
+    "min": 0,
+    "max": 1000,
+    "description": "glucose",
+    "category": "chemistry",
+    "sources": \{
+      "mimic_demo": [
+        \{
+          "ids": [50809, 50931],
+          "table": "labevents",
+          "sub_var": "itemid"
+        \}
+      ]
+    \}
+  \}
+\}
+}
+
+Using such a specification, constructors for \code{\link[=new_cncpt]{cncpt}} and
+\code{\link[=new_itm]{itm}} objects are called either using default arguments or as
+specified by the JSON object, with the above corresponding to a call like\preformatted{concept(
+  name = "glu",
+  items = item(
+    src = "mimic_demo", table = "labevents", sub_var = "itemid",
+    ids = list(c(50809L, 50931L))
+  ),
+  description = "glucose", category = "chemistry",
+  unit = "mg/dL", min = 0, max = 1000
+)
+}
+
+The arguments \code{src} and \code{concepts} can be used to only load a subset of a
+dictionary by specifying a character vector of data sources and/or concept
+names.
+}
+\examples{
+length(load_dictionary())
+load_dictionary("mimic_demo", c("glu", "lact"))
+
 }

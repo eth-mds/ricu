@@ -11,6 +11,7 @@
 #'
 #' @details
 #' The two classes are designed for two often encoutered data scenatios:
+#'
 #' * `id_tbl` objects can be used to represent static (with repspect to
 #'   relevant time scales) patient data such as patient age and such an object
 #'   is simply a `data.table` combined with a non-zero length character vector
@@ -24,6 +25,7 @@
 #'   ([index_var][index_var()]) and a scalar `difftime` object determining
 #'   the time-series step size [interval][interval()]. Again, all further
 #'   columns are treated as [data_vars][data_vars()].
+#'
 #' Owing to the nested structure of required meta data, `ts_tbl` inherits from
 #' ìd_tbl`. Furthermore, both classes inherit from `data.table`. As such,
 #' `data.table` [reference semantics][data.table::reference] are available for

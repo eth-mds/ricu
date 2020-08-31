@@ -1094,7 +1094,6 @@
           "ids": [110, 200],
           "table": "observations",
           "sub_var": "variableid",
-          "item_var": "variableid",
           "callback": "hirid_death",
           "class": "hrd_itm"
         }

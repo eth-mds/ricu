@@ -135,7 +135,8 @@ constructor for \code{item} objects is given by \code{item()} which calls \code{
 on the passed arguments (see examples). Finally \code{as_item()} can be used
 for coercion of related objects such as \code{list}, \code{concept}, and the like.
 Several additional S3 generic functions exist for manipulation of
-\code{item}-like objects but are marked \code{internal} (see \link{item_utils}).
+\code{item}-like objects but are marked \code{internal} (see
+\link[=prepare_query]{item/concept utilities}).
 }
 \examples{
 gluc <- item("mimic_demo", "labevents", "itemid", list(c(50809L, 50931L)),

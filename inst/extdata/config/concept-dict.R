@@ -1549,8 +1549,8 @@ cfg <- list(
       ),
       hirid = list(
         list(ids = c(110L, 200L), table = "observations",
-             sub_var = "variableid", item_var = "variableid",
-             callback = "hirid_death", class = "hrd_itm")
+             sub_var = "variableid", callback = "hirid_death",
+             class = "hrd_itm")
       )
     )
   ),

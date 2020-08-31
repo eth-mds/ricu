@@ -67,7 +67,8 @@
 #' on the passed arguments (see examples). Finally `as_item()` can be used
 #' for coercion of related objects such as `list`, `concept`, and the like.
 #' Several additional S3 generic functions exist for manipulation of
-#' `item`-like objects but are marked `internal` (see [item_utils]).
+#' `item`-like objects but are marked `internal` (see
+#' [item/concept utilities][prepare_query()]).
 #'
 #' @param src The data source name
 #' @param ... Further specification of the `itm` object (passed to
@@ -530,7 +531,7 @@ target_class.cncpt <- function(x) x[["target"]]
 #' constructing `concept` (and related auxillary) objects either from code or
 #' by parsing a JSON formatted concept dictionary using [load_dictionary()].
 #'
-#' @details:
+#' @details
 #' In order to allow for a large degree of flexibility (and extensibility),
 #' which is much needed owing to considerable heterogeneity presented by
 #' different data sources, several nested S3 classes are involved in
@@ -548,6 +549,37 @@ target_class.cncpt <- function(x) x[["target"]]
 #' heterogeneous w.r.t. sub-type vector of objects behaves in terms of S3
 #' generic functions.
 #'
+#' Each individual `cncpt` object contains the following information: a string-
+#' valued name, an [`item`][new_itm()] vector containing [`itm`][new_itm()]
+#' objects, a string-valued description (can be missing), a string-valued
+#' category designation (can be missing), a character vector-valued
+#' specification for an aggregation function and a target class specification
+#' (e.g. [`id_tbl`][id_tbl()] or [`ts_tbl`][id_tbl()]). Additionally, a sub-
+#' class to `cncpt` has to be specified, each representing a different
+#' data-scenario and holding further class-specific information. The following
+#' sub-classes to `cncpt` are available:
+#'
+#' * `num_cncpt`: The most widely used concept type is indented for concepts
+#'   representing numerical measurements. Additional information that can be
+#'   specified includes a string-valued unit specification, alongside a
+#'   plausible range which can be used during data loading.
+#' * `fct_cncpt`: In case of categorical concepts, such as `sex`, a set of
+#'   factor levels can be specified, against which the loaded data is checked.
+#' * `rec_cncpt`: More involved concepts, such as a [SOFA score][sofa_score()]
+#'   can pull in other concepts. Recursive concepts can build on other
+#'   recursive concepts up to arbitrary recursion depth. Owing to the more
+#'   complicated nature of such concepts, a `callback` function can be
+#'   specified which is used in data loading for concept-specific post-
+#'   processing steps.
+#'
+#' Class instatiation is organized in the same fashion as for
+#' [`item`/`itm`][new_itm()] objects: `concept()` maps vector-valued arguments
+#' to `new_cncpt()`, which internally calls the S3 generic function
+#' `init_cncpt()`, while `new_concept()` instantiates a `concept` object from
+#' a list of `cncpt` objects (created by calls to `new_cncpt()`). Coercion is
+#' only possible from `list` and `cncpt`, by calling `as_concept()` and
+#' inheritance can be checked using `is_concept()` or `is_cncpt()`.
+#'
 #' @param name The name of the concept
 #' @param items Zero or more `itm` objects
 #' @param description String-valued concept description
@@ -562,7 +594,39 @@ target_class.cncpt <- function(x) x[["target"]]
 #'
 #' @rdname data_concepts
 #'
+#' @examples
+#' gluc <- concept("glu",
+#'   item("mimic_demo", "labevents", "itemid", list(c(50809L, 50931L))),
+#'   description = "glucose", category = "chemistry",
+#'   unit = "mg/dL", min = 0, max = 1000
+#' )
+#'
+#' is_concept(gluc)
+#'
+#' identical(gluc, load_dictionary("mimic_demo", "glu"))
+#'
+#' gl1 <- new_cncpt("glu",
+#'   item("mimic_demo", "labevents", "itemid", list(c(50809L, 50931L))),
+#'   description = "glucose"
+#' )
+#'
+#' is_cncpt(gl1)
+#' is_concept(gl1)
+#'
+#' conc <- concept(c("glu", "lact"),
+#'   list(
+#'     item("mimic_demo", "labevents", "itemid", list(c(50809L, 50931L))),
+#'     item("mimic_demo", "labevents", "itemid", 50813L)
+#'   ),
+#'   description = c("glucose", "lactate")
+#' )
+#'
+#' conc
+#'
+#' identical(as_concept(gl1), conc[1L])
+#'
 #' @export
+#'
 new_cncpt <- function(name, items, description = NA_character_,
                       category = NA_character_, aggregate = NULL, ...,
                       target = "ts_tbl", class = "num_cncpt") {
@@ -648,20 +712,17 @@ init_cncpt.cncpt <- function(x, ...) {
 
 #' @param callback Name of a function to be called on the returned data used
 #' for data cleanup operations
-#' @param target The target object yielded by loading
 #' @param interval Time interval used for data loading; if NULL, the respective
 #' interval passed as argument to [load_concepts()] is taken
 #'
 #' @rdname data_concepts
 #' @export
-init_cncpt.rec_cncpt <- function(x, callback, target = c("ts_tbl", "id_tbl"),
+init_cncpt.rec_cncpt <- function(x, callback = "identity_callback",
                                  interval = NULL, ...) {
 
   really_na <- function(x) not_null(x) && is.na(x)
 
   warn_dots(...)
-
-  target <- match.arg(target)
 
   assert_that(is_concept(x[["items"]]), is.string(callback),
               null_or(interval, is.string))
@@ -675,7 +736,7 @@ init_cncpt.rec_cncpt <- function(x, callback, target = c("ts_tbl", "id_tbl"),
 
   x[["aggregate"]] <- agg
 
-  todo <- c("callback", "target", "interval")
+  todo <- c("callback", "interval")
   x[todo] <- mget(todo)
 
   x
@@ -729,6 +790,19 @@ concept <- function(...) {
 #' @export
 is_concept <- is_type("concept")
 
+#' @rdname data_concepts
+#' @export
+as_concept <- function(x) UseMethod("as_concept", x)
+
+#' @export
+as_concept.concept <- function(x) x
+
+#' @export
+as_concept.list <- function(x) new_concept(x)
+
+#' @export
+as_concept.cncpt <- function(x) new_concept(list(x))
+
 #' @export
 format.concept <- function(x, ...) {
 
@@ -753,7 +827,74 @@ n_tick.concept <- function(x) sum(int_ply(x, n_tick))
 
 #' Load concept dictionaries
 #'
-#' Data can be specified in JSON format and parsed into `concept` objects.
+#' Data concepts can be specified in JSON format as a concept dictionary which
+#' can be read and parsed into `concept`/`item` objects. Dictionary loading
+#' can either be performed on the default included dictionary or on a user-
+#' specified custom dictionary. Furthermore, a mechanism is provided for adding
+#' concepts and/or data sources to the existing dictionary (see the Details
+#' section).
+#'
+#' @details
+#' A default dictionary is provided at
+#'
+#' ```
+#' system.file(
+#'   file.path("extdata", "config", "concept-dict.json"),
+#'   package = "ricu"
+#' )
+#' ```
+#'
+#' and can be loaded in to an R session by calling
+#' `get_config("concept-dict")`. The default dictionary can be extended by
+#' adding a file `concept-dict.json` to the path specified by the environment
+#' variable `RICU_CONFIG_PATH`. New concepts can be added to this file and
+#' existing concepts can be extended (by adding new data sources).
+#' Alternatively, `load_dictionary()` can be called on non-default
+#' dictionaries using the `file` argument.
+#'
+#' In order to specify a concept as JSON object, for example the numeric
+#' concept for glucose, is given by
+#'
+#' ```
+#' {
+#'   "glu": {
+#'     "unit": "mg/dL",
+#'     "min": 0,
+#'     "max": 1000,
+#'     "description": "glucose",
+#'     "category": "chemistry",
+#'     "sources": {
+#'       "mimic_demo": [
+#'         {
+#'           "ids": [50809, 50931],
+#'           "table": "labevents",
+#'           "sub_var": "itemid"
+#'         }
+#'       ]
+#'     }
+#'   }
+#' }
+#' ```
+#'
+#' Using such a specification, constructors for [`cncpt`][new_cncpt()] and
+#' [`itm`][new_itm()] objects are called either using default arguments or as
+#' specified by the JSON object, with the above corresponding to a call like
+#'
+#' ```
+#' concept(
+#'   name = "glu",
+#'   items = item(
+#'     src = "mimic_demo", table = "labevents", sub_var = "itemid",
+#'     ids = list(c(50809L, 50931L))
+#'   ),
+#'   description = "glucose", category = "chemistry",
+#'   unit = "mg/dL", min = 0, max = 1000
+#' )
+#' ```
+#'
+#' The arguments `src` and `concepts` can be used to only load a subset of a
+#' dictionary by specifying a character vector of data sources and/or concept
+#' names.
 #'
 #' @param src `NULL` or the name of a data source
 #' @param concepts A character vector used to subset the concept dictionary or
@@ -762,6 +903,10 @@ n_tick.concept <- function(x) sum(int_ply(x, n_tick))
 #' @param file File name of the dictionary
 #'
 #' @rdname concept_dictionary
+#'
+#' @examples
+#' length(load_dictionary())
+#' load_dictionary("mimic_demo", c("glu", "lact"))
 #'
 #' @export
 load_dictionary <- function(src = NULL, concepts = NULL,

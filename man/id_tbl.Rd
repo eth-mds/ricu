@@ -135,8 +135,9 @@ a string, tracking the column holding time-stamps
 (\link[=index_var]{index_var}) and a scalar \code{difftime} object determining
 the time-series step size \link[=interval]{interval}. Again, all further
 columns are treated as \link[=data_vars]{data_vars}.
+}
+
 Owing to the nested structure of required meta data, \code{ts_tbl} inherits from
 ìd_tbl\verb{. Furthermore, both classes inherit from }data.table\verb{. As such, }data.table\verb{[reference semantics][data.table::reference] are available for some operations, indicated by presence of a}by_ref\verb{argument. At default, value,}by_ref\verb{is disabled as this is inline with base R behavior at the cost of potentially incurring unnecessary data copies. Some care has to be taken when passing}by_ref = TRUE` and enabling by reference operations as
 this can have side effects (see examples).
-}
 }
