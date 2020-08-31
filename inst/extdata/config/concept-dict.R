@@ -1631,11 +1631,19 @@ cfg <- list(
     callback = "sofa_vent",
     class = "rec_cncpt"
   ),
+  sed = list(
+    concepts = c("trach", "rass"),
+    description = "Sedation status",
+    category = "neurological",
+    aggregate = c(NA, "min"),
+    callback = "sofa_sed",
+    class = "rec_cncpt"
+  ),
   gcs = list(
-    concepts = c("egcs", "mgcs", "vgcs", "tgcs", "trach", "rass"),
+    concepts = c("egcs", "mgcs", "vgcs", "tgcs", "sed"),
     description = "Glasgow coma scale (non-sedated)",
     category = "neurological",
-    aggregate = c("min", "min", "min", "min", NA, "min"),
+    aggregate = c("min", "min", "min", "min", NA),
     callback = "sofa_gcs",
     class = "rec_cncpt"
   ),

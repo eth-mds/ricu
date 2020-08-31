@@ -5,6 +5,7 @@
 \alias{sofa_score}
 \alias{sofa_pafi}
 \alias{sofa_vent}
+\alias{sofa_sed}
 \alias{sofa_gcs}
 \alias{sofa_urine}
 \alias{sofa_window}
@@ -45,13 +46,14 @@ sofa_vent(
   interval = NULL
 )
 
+sofa_sed(trach, rass, interval = NULL)
+
 sofa_gcs(
   egcs,
   mgcs,
   vgcs,
   tgcs,
-  trach,
-  rass,
+  sed,
   win_length = hours(6L),
   set_sed_max = TRUE,
   set_na_max = TRUE,
@@ -116,7 +118,9 @@ values with 21}
 \item{min_length}{Minimal time span between a ventilation start and end
 time}
 
-\item{egcs, mgcs, vgcs, tgcs, trach, rass}{Data input used for gcs evaluation}
+\item{trach, rass}{Data input used for sed evaluation}
+
+\item{egcs, mgcs, vgcs, tgcs, sed}{Data input used for gcs evaluation}
 
 \item{set_sed_max}{Logical flag for considering sedation}
 

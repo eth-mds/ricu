@@ -1529,10 +1529,10 @@
     }
   },
   "gcs": {
-    "concepts": ["egcs", "mgcs", "vgcs", "tgcs", "trach", "rass"],
+    "concepts": ["egcs", "mgcs", "vgcs", "tgcs", "sed"],
     "description": "Glasgow coma scale (non-sedated)",
     "category": "neurological",
-    "aggregate": ["min", "min", "min", "min", null, "min"],
+    "aggregate": ["min", "min", "min", "min", null],
     "callback": "sofa_gcs",
     "class": "rec_cncpt"
   },
@@ -3163,6 +3163,14 @@
         }
       ]
     }
+  },
+  "sed": {
+    "concepts": ["trach", "rass"],
+    "description": "Sedation status",
+    "category": "neurological",
+    "aggregate": [null, "min"],
+    "callback": "sofa_sed",
+    "class": "rec_cncpt"
   },
   "sep3": {
     "concepts": ["sofa", "susp_inf"],

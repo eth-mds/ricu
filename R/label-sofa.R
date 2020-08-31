@@ -226,7 +226,35 @@ sofa_vent <- function(vent_start, vent_end, win_length = hours(6L),
   res
 }
 
-#' @param egcs,mgcs,vgcs,tgcs,trach,rass Data input used for gcs evaluation
+#' @param trach,rass Data input used for sed evaluation
+#'
+#' @rdname label_sofa
+#' @export
+#'
+sofa_sed <- function(trach, rass, interval = NULL) {
+
+  if (is.null(interval)) {
+    if (is_ts_tbl(trach)) {
+      interval <- interval(trach)
+      assert_that(has_interval(rass, interval))
+    } else {
+      interval <- interval(rass)
+      assert_that(has_interval(trach, interval))
+    }
+  }
+
+  tra_var <- data_var(trach)
+  ras_var <- data_var(rass)
+
+  sed <- merge(trach, rass, all = TRUE)
+  sed <- sed[, c("sed", tra_var, ras_var) := list(
+    get(tra_var) | get(ras_var) <= -2, NULL, NULL)
+  ]
+
+  sed
+}
+
+#' @param egcs,mgcs,vgcs,tgcs,sed Data input used for gcs evaluation
 #' @param win_length Maximal time window for which a GCS value is valid
 #' if no newer measurement is available
 #' @param set_sed_max Logical flag for considering sedation
@@ -236,9 +264,8 @@ sofa_vent <- function(vent_start, vent_end, win_length = hours(6L),
 #' @rdname label_sofa
 #' @export
 #'
-sofa_gcs <- function(egcs, mgcs, vgcs, tgcs, trach, rass,
-                     win_length = hours(6L), set_sed_max = TRUE,
-                     set_na_max = TRUE, interval = NULL) {
+sofa_gcs <- function(egcs, mgcs, vgcs, tgcs, sed, win_length = hours(6L),
+                     set_sed_max = TRUE, set_na_max = TRUE, interval = NULL) {
 
   if (is.null(interval)) {
     interval <- interval(egcs)
@@ -247,24 +274,15 @@ sofa_gcs <- function(egcs, mgcs, vgcs, tgcs, trach, rass,
   assert_that(
     has_interval(egcs, interval), has_interval(mgcs, interval),
     has_interval(vgcs, interval), has_interval(tgcs, interval),
-    has_interval(trach, interval), has_interval(rass, interval),
-    is_interval(win_length), win_length > interval, is.flag(set_sed_max),
-    is.flag(set_na_max)
+    has_interval(sed, interval), is_interval(win_length),
+    win_length > interval, is.flag(set_sed_max), is.flag(set_na_max)
   )
-
-  tra_var <- data_var(trach)
-  ras_var <- data_var(rass)
-
-  sed <- merge(trach, rass, all = TRUE)
-  sed <- sed[, c("is_sed", tra_var, ras_var) := list(
-    get(tra_var) | get(ras_var) <= -2, NULL, NULL)
-  ]
 
   dat <- reduce(merge, list(egcs, mgcs, vgcs, tgcs, sed),
                 all = TRUE)
 
   if (set_sed_max) {
-    dat <- dat[is_true(get("is_sed")),
+    dat <- dat[is_true(get("sed")),
       c("egcs", "vgcs", "mgcs", "tgcs") := list(4, 5, 6, 15)
     ]
   }
