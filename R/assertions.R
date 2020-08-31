@@ -45,6 +45,12 @@ on_failure(has_length) <- function(call, env) {
   format_assert("{as_label(call$x)} has zero length", "has_length_assert")
 }
 
+has_rows <- function(x) nrow(x) > 0L
+
+on_failure(has_rows) <- function(call, env) {
+  format_assert("{as_label(call$x)} has zero rows", "has_rows_assert")
+}
+
 are_in <- function(x, opts, na_rm = FALSE) {
   assert_that(
     has_length(x), has_length(opts), is.character(x), is.character(opts)
