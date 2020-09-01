@@ -218,7 +218,7 @@ eicu_age <- function(x, val_var, ...) {
   x
 }
 
-hirid_death <- function(x, val_var, item_var, ...) {
+hirid_death <- function(x, val_var, sub_var, ...) {
 
   threshold <- function(x, col, thresh) {
     set(x, j = col, value = x[[col]] <= thresh)
@@ -228,7 +228,7 @@ hirid_death <- function(x, val_var, item_var, ...) {
 
   idc <- id_vars(x)
 
-  tmp <- split(x, by = item_var, keep.by = FALSE)
+  tmp <- split(x, by = sub_var, keep.by = FALSE)
   tmp <- lapply(tmp, threshold, val_var, 40)
   tmp <- lapply(tmp, score, idc, val_var)
   res <- rbind_lst(tmp)
