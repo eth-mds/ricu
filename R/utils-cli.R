@@ -106,7 +106,7 @@ combine_messages <- function(x) {
 #' msg_progress("Foo", "bar")
 #'
 #' capt_fun <- function(x) {
-#'   rlang::inform(paste("captured:", conditionMessage(x)))
+#'   message("captured: ", conditionMessage(x))
 #' }
 #'
 #' tryCatch(msg_progress("Foo", "bar"), msg_progress = capt_fun)
