@@ -6,7 +6,7 @@
 \alias{comp_na}
 \alias{apply_map}
 \alias{convert_unit}
-\title{Callback utilities}
+\title{Item callback utilities}
 \usage{
 transform_fun(fun, ...)
 
@@ -38,5 +38,72 @@ their current unit of measurement}
 \item{ignore_case}{Forwarded to \code{\link[base:grep]{base::grep()}}}
 }
 \description{
-Utilities for creating callback functions to be used for concept loading.
+For concept loading, item callback functions are used in order to handle
+item-specific post-processing steps, such as converting measurement units,
+mapping a set of values to another or for more involved data
+transformations, like turning absolute drug administration rates into rates
+that are relative to body weight. Item callback functions are called by
+\code{\link[=load_concepts]{load_concepts()}} with arguments \code{x} (the data), a variable number of name/
+string pairs specifying roles of columns for the given item, followed by
+\code{env}, the data source environment as \code{\link[=new_src_env]{src_env}} object.
+Item callback functions can be specified by their name or using function
+factories such as \code{transform_fun()}, \code{apply_map()} or \code{convert_unit()}.
+}
+\details{
+The most forward setting is where a function is simply referred to by its
+name. For example in eICU, age is available as character vector due to
+ages 90 and above being represented by the string "> 89". A function such
+as the following turns this into a numeric vector, replacing occurrences of
+"> 89" by the number 90.\preformatted{eicu_age <- function(x, val_var, ...) \{
+  data.table::set(
+    data.table::set(x, which(x[[val_var]] == "> 89"), j = val_var,
+                    value = 90),
+    j = val_var,
+    value = as.numeric(x[[val_var]])
+  )
+\}
+}
+
+This function then is specified as item callback function for items
+corresponding to eICU data sources of the \code{age} concept as\preformatted{item(src = "eicu_demo", table = "patient", val_var = "age",
+     callback = "eicu_age", class = "col_itm")
+}
+
+The string passed as \code{callback} argument is evaluated, meaning that an
+expression can be passed which evaluates to a function that in turn can be
+used as callback. Several function factories are provided which return
+functions suitable for use as item callbacks: \code{transform_fun()} creates a
+function that transforms the \code{val_var} column using the function supplied
+as \code{fun} argument, \code{apply_map()} can be used to map one set of values to
+another (again using the \code{val_var} column) and \code{convert_unit()} is intended
+for converting a subset of rows (identified by matching \code{rgx} against the
+\code{unit_var} column) by applying \code{fun} to the \code{val_var} column and setting
+\code{new} as the transformed unit name (arguments are not limited to scalar
+values). As transformations require unary functions, two utility function,
+\code{binary_op()} and \code{comp_na()} are provided which can be used to fix the
+second argument of binary functions such as \code{*} or \code{==}. Taking all this
+together, an item callback function for dividing the \code{val_var} column by 2
+could be specified as \verb{"transform_fun(binary_op(}/\verb{, 2))"}. The supplied
+function factories create functions that operate on the data using
+\link[data.table:assign]{by-reference semantics}. Furthermore, during concept
+loading, progress is reported by a \link[progress:progress_bar]{progress::progress_bar}. In order to
+signal a message without disrupting the current loading status, see
+\code{\link[=msg_progress]{msg_progress()}}.
+}
+\examples{
+dat <- ts_tbl(x = rep(1:2, each = 5), y = hours(rep(1:5, 2)), z = 1:10)
+
+subtract_3 <- transform_fun(binary_op(`-`, 3))
+subtract_3(data.table::copy(dat), val_var = "z")
+
+gte_4 <- transform_fun(comp_na(`>=`, 4))
+gte_4(data.table::copy(dat), val_var = "z")
+
+map_letters <- apply_map(setNames(letters[1:9], 1:9))
+res <- map_letters(data.table::copy(dat), val_var = "z")
+res
+
+not_b <- transform_fun(comp_na(`!=`, "b"))
+not_b(res, val_var = "z")
+
 }

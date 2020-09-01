@@ -184,6 +184,10 @@ as_src_tbl.character <- function(x, env, ...) {
   as_src_tbl(as_src_env(env), x, ...)
 }
 
+#' @param x A `src_cfg` object for which to instantiate a `src_env` object.
+#'
+#' @rdname attach_src
+#' @export
 new_src_env <- function(x, env = new.env(parent = data_env())) {
 
   assert_that(is_src_cfg(x), is.environment(env))

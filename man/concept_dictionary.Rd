@@ -83,7 +83,7 @@ dictionary by specifying a character vector of data sources and/or concept
 names.
 }
 \examples{
-length(load_dictionary())
+head(load_dictionary())
 load_dictionary("mimic_demo", c("glu", "lact"))
 
 }

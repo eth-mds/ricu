@@ -12,6 +12,7 @@
 \alias{as_src_tbl.src_tbl}
 \alias{as_src_tbl.src_env}
 \alias{as_src_tbl.character}
+\alias{new_src_env}
 \alias{as_src_env}
 \alias{as_src_env.src_env}
 \alias{as_src_env.character}
@@ -36,6 +37,8 @@ as_src_tbl(x, ...)
 \method{as_src_tbl}{src_env}(x, tbl, ...)
 
 \method{as_src_tbl}{character}(x, env, ...)
+
+new_src_env(x, env = new.env(parent = data_env()))
 
 as_src_env(x)
 

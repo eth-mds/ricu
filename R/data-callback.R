@@ -66,12 +66,84 @@ mimic_sampling <- function(x, val_var, aux_time, ...) {
   set(x, j = val_var, value = !is.na(x[[val_var]]))
 }
 
-#' Callback utilities
+#' Item callback utilities
 #'
-#' Utilities for creating callback functions to be used for concept loading.
+#' For concept loading, item callback functions are used in order to handle
+#' item-specific post-processing steps, such as converting measurement units,
+#' mapping a set of values to another or for more involved data
+#' transformations, like turning absolute drug administration rates into rates
+#' that are relative to body weight. Item callback functions are called by
+#' [load_concepts()] with arguments `x` (the data), a variable number of name/
+#' string pairs specifying roles of columns for the given item, followed by
+#' `env`, the data source environment as [`src_env`][new_src_env()] object.
+#' Item callback functions can be specified by their name or using function
+#' factories such as `transform_fun()`, `apply_map()` or `convert_unit()`.
+#'
+#' @details
+#' The most forward setting is where a function is simply referred to by its
+#' name. For example in eICU, age is available as character vector due to
+#' ages 90 and above being represented by the string "> 89". A function such
+#' as the following turns this into a numeric vector, replacing occurrences of
+#' "> 89" by the number 90.
+#'
+#' ```
+#' eicu_age <- function(x, val_var, ...) {
+#'   data.table::set(
+#'     data.table::set(x, which(x[[val_var]] == "> 89"), j = val_var,
+#'                     value = 90),
+#'     j = val_var,
+#'     value = as.numeric(x[[val_var]])
+#'   )
+#' }
+#' ```
+#'
+#' This function then is specified as item callback function for items
+#' corresponding to eICU data sources of the `age` concept as
+#'
+#' ```
+#' item(src = "eicu_demo", table = "patient", val_var = "age",
+#'      callback = "eicu_age", class = "col_itm")
+#' ```
+#'
+#' The string passed as `callback` argument is evaluated, meaning that an
+#' expression can be passed which evaluates to a function that in turn can be
+#' used as callback. Several function factories are provided which return
+#' functions suitable for use as item callbacks: `transform_fun()` creates a
+#' function that transforms the `val_var` column using the function supplied
+#' as `fun` argument, `apply_map()` can be used to map one set of values to
+#' another (again using the `val_var` column) and `convert_unit()` is intended
+#' for converting a subset of rows (identified by matching `rgx` against the
+#' `unit_var` column) by applying `fun` to the `val_var` column and setting
+#' `new` as the transformed unit name (arguments are not limited to scalar
+#' values). As transformations require unary functions, two utility function,
+#' `binary_op()` and `comp_na()` are provided which can be used to fix the
+#' second argument of binary functions such as `*` or `==`. Taking all this
+#' together, an item callback function for dividing the `val_var` column by 2
+#' could be specified as `"transform_fun(binary_op(`/`, 2))"`. The supplied
+#' function factories create functions that operate on the data using
+#' [by-reference semantics][data.table::set()]. Furthermore, during concept
+#' loading, progress is reported by a [progress::progress_bar]. In order to
+#' signal a message without disrupting the current loading status, see
+#' [msg_progress()].
 #'
 #' @param fun Function to be used for data transformation
 #' @param ... Further arguments passed to downstream function
+#'
+#' @examples
+#' dat <- ts_tbl(x = rep(1:2, each = 5), y = hours(rep(1:5, 2)), z = 1:10)
+#'
+#' subtract_3 <- transform_fun(binary_op(`-`, 3))
+#' subtract_3(data.table::copy(dat), val_var = "z")
+#'
+#' gte_4 <- transform_fun(comp_na(`>=`, 4))
+#' gte_4(data.table::copy(dat), val_var = "z")
+#'
+#' map_letters <- apply_map(setNames(letters[1:9], 1:9))
+#' res <- map_letters(data.table::copy(dat), val_var = "z")
+#' res
+#'
+#' not_b <- transform_fun(comp_na(`!=`, "b"))
+#' not_b(res, val_var = "z")
 #'
 #' @rdname callback_utils
 #' @export
@@ -83,6 +155,7 @@ transform_fun <- function(fun, ...) {
 
   function(x, val_var, ...) {
     set(x, j = val_var, value = do.call(fun, c(list(x[[val_var]]), dots)))
+    x
   }
 }
 
@@ -175,6 +248,7 @@ apply_map <- function(map) {
 
   function(x, val_var, ...) {
     set(x, j = val_var, value = map[x[[val_var]]])
+    x
   }
 }
 
