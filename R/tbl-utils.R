@@ -1,17 +1,88 @@
 
-#' Utilities for working with id_tbl and ts_tbl objects
+#' ICU class meta data utilities
 #'
-#' @param x Object to query/operate on
+#' The two data classes `id_tbl` and `ts_tbl`, used by `ricu` to represent ICU
+#' patient data, consist of a `data.table` alongside some meta data. This
+#' includes marking columns that have special meaning and for data
+#' representing measurements ordered in time, the step size. The following
+#' utility functions can be used to extract columns and column names with
+#' special meaning, as well as query a `ts_tbl` object regarding its time
+#' series related meta data.
 #'
-#' @rdname tbl_utils
+#' @details
+#' The following functions can be used to query an object for columns or
+#' column names that represent a distinct aspect of the data:
+#'
+#' * `id_vars()`: ID variables are one or more column names with the
+#'   interaction of corresponding columns identifying a grouping of the data.
+#'   Most commonly this is some sort of patient identifier.
+#' * `id_var()`: This function either fails or returns a string and can
+#'   therefore be used in case only a single column provides grouping
+#'   information.
+#' * `id_col()`: Again, in case only a single column provides grouping
+#'   information, this column can be extracted using this function.
+#' * `index_var()`: Suitable for use as index variable is a column that encodes
+#'   a temporal ordering of observations as [`difftime`][base::difftime()]
+#'   vector. Only a single column can be marked as index variable and this
+#'   function queries a `ts_tbl` object for its name.
+#' * `index_col()`: similarly to `id_col()`, this function extracts the column
+#'   with the given designation. As a `ts_tbl` object is required to have
+#'   exactly one column marked as index, this function always returns for
+#'   `ts_tbl` objects (and fails for `id_tbl` objects).
+#' * `meta_vars()`: For `ts_tbl` objects, meta variables represent the union
+#'   of ID and index variables, while for `id_tbl` objects meta variables
+#'   consist pf ID variables.
+#' * `data_vars()`: Data variables on the other hand are all columns that are
+#'   not meta variables.
+#' * `data_var()`: Similarly to `id_var()`, this function either returns the
+#'   name of a single data variable or fails.
+#' * `data_col()`: Building on `data_var()`, in situations where only a single
+#'   data variable is present, it is returned or if multiple data column
+#'   exists, an error is thrown.
+#' * `time_vars()`: Time variables are all columns in an object inheriting
+#'   from [`data.frame`][base::data.frame()] that are of type
+#'   [`difftime`][base::difftime()]. Therefore in a `ts_tbl` object the index
+#'   column is one of (potentially) several time variables.
+#' * `interval()`: The time series interval length is represented a scalar
+#'   valued [`difftime`][base::difftime()] object.
+#' * `time_unit()`: The time unit of the time series interval, represented by
+#'   a string such as "hours" or "mins" (see [`difftime`][base::difftime()]).
+#' * `time_step()`: The time series step size represented by a nuemric value
+#'   in the unit as returned by `time_unit()`.
+#'
+#' @param x Object to query
+#'
+#' @examples
+#' tbl <- id_tbl(a = rep(1:2, each = 5), b = rep(1:5, 2), c = rnorm(10),
+#'               id_vars = c("a", "b"))
+#'
+#' id_vars(tbl)
+#' tryCatch(id_col(tbl), error = function(...) "no luck")
+#' data_vars(tbl)
+#' data_col(tbl)
+#'
+#' tmp <- as_id_tbl(tbl, id_vars = "a")
+#' id_vars(tmp)
+#' id_col(tmp)
+#'
+#' tbl <- ts_tbl(a = rep(1:2, each = 5), b = hours(rep(1:5, 2)), c = rnorm(10))
+#' index_var(tbl)
+#' index_col(tbl)
+#'
+#' identical(index_var(tbl), time_vars(tbl))
+#'
+#' interval(tbl)
+#' time_unit(tbl)
+#' time_step(tbl)
+#'
+#' @rdname tbl_meta
 #' @export
 id_vars <- function(x) UseMethod("id_vars", x)
 
-#' @rdname tbl_utils
 #' @export
 id_vars.id_tbl <- function(x) attr(x, "id_vars")
 
-#' @rdname tbl_utils
+#' @rdname tbl_meta
 #' @export
 id_var <- function(x) {
   res <- id_vars(x)
@@ -19,39 +90,36 @@ id_var <- function(x) {
   res
 }
 
-#' @rdname tbl_utils
+#' @rdname tbl_meta
 #' @export
 id_col <- function(x) x[[id_var(x)]]
 
-#' @rdname tbl_utils
+#' @rdname tbl_meta
 #' @export
 index_var <- function(x) UseMethod("index_var", x)
 
-#' @rdname tbl_utils
 #' @export
 index_var.ts_tbl <- function(x) attr(x, "index_var")
 
-#' @rdname tbl_utils
+#' @rdname tbl_meta
 #' @export
 index_col <- function(x) x[[index_var(x)]]
 
-#' @rdname tbl_utils
+#' @rdname tbl_meta
 #' @export
 meta_vars <- function(x) UseMethod("meta_vars", x)
 
-#' @rdname tbl_utils
 #' @export
 meta_vars.id_tbl <- function(x) id_vars(x)
 
-#' @rdname tbl_utils
 #' @export
 meta_vars.ts_tbl <- function(x) c(id_vars(x), index_var(x))
 
-#' @rdname tbl_utils
+#' @rdname tbl_meta
 #' @export
 data_vars <- function(x) setdiff(colnames(x), meta_vars(x))
 
-#' @rdname tbl_utils
+#' @rdname tbl_meta
 #' @export
 data_var <- function(x) {
   res <- data_vars(x)
@@ -59,23 +127,23 @@ data_var <- function(x) {
   res
 }
 
-#' @rdname tbl_utils
+#' @rdname tbl_meta
 #' @export
-data_col <- function(x) {
-  col <- data_vars(x)
-  assert_that(length(col) == 1L)
-  x[[col]]
-}
+data_col <- function(x) x[[data_var(x)]]
 
-#' @rdname tbl_utils
+#' ICU class temporal utilities
+#'
+#' Utilities for retrieving/modifying temporal metadata from `ts_tbl` objects.
+#'
+#' @param x Object to query/operate on
+#'
+#' @rdname tbl_meta
 #' @export
 interval <- function(x) UseMethod("interval", x)
 
-#' @rdname tbl_utils
 #' @export
 interval.ts_tbl <- function(x) attr(x, "interval")
 
-#' @rdname tbl_utils
 #' @export
 interval.difftime <- function(x) {
 
@@ -87,22 +155,21 @@ interval.difftime <- function(x) {
   res
 }
 
-#' @rdname tbl_utils
+#' @rdname tbl_meta
 #' @export
 time_unit <- function(x) units(interval(x))
 
-#' @rdname tbl_utils
+#' @rdname tbl_meta
 #' @export
 time_step <- function(x) as.double(interval(x))
 
-#' @rdname tbl_utils
+#' @rdname tbl_meta
 #' @export
 time_vars <- function(x) UseMethod("time_vars", x)
 
-#' @method time_vars data.table
-#' @rdname tbl_utils
+#' @method time_vars data.frame
 #' @export
-time_vars.data.table <- function(x) colnames(x)[lgl_ply(x, is_difftime)]
+time_vars.data.frame <- function(x) colnames(x)[lgl_ply(x, is_difftime)]
 
 rename <- function(x, new, old) {
   hits <- match(old, x)
@@ -129,7 +196,6 @@ rename_cols <- function(x, new, old = colnames(x), skip_absent = FALSE,
   UseMethod("rename_cols", x)
 }
 
-#' @rdname tbl_utils
 #' @export
 rename_cols.ts_tbl <- function(x, new, old = colnames(x),
                                skip_absent = FALSE, ...) {
@@ -146,7 +212,6 @@ rename_cols.ts_tbl <- function(x, new, old = colnames(x),
   new_ts_tbl(res, id_vars(res), new_ind, intval)
 }
 
-#' @rdname tbl_utils
 #' @export
 rename_cols.id_tbl <- function(x, new, old = colnames(x),
                                skip_absent = FALSE, ...) {
@@ -167,7 +232,6 @@ rename_cols.id_tbl <- function(x, new, old = colnames(x),
 }
 
 #' @method rename_cols data.table
-#' @rdname tbl_utils
 #' @export
 rename_cols.data.table <- function(x, new, old = colnames(x),
                                    skip_absent = FALSE, by_ref = FALSE) {
@@ -236,7 +300,6 @@ change_interval <- function(x, new_interval, cols = time_vars(x),
   UseMethod("change_interval", x)
 }
 
-#' @rdname tbl_utils
 #' @export
 change_interval.ts_tbl <- function(x, new_interval, cols = time_vars(x), ...) {
 
@@ -253,7 +316,6 @@ change_interval.ts_tbl <- function(x, new_interval, cols = time_vars(x), ...) {
 }
 
 #' @method change_interval data.table
-#' @rdname tbl_utils
 #' @export
 change_interval.data.table <- function(x, new_interval, cols = time_vars(x),
                                        by_ref = FALSE) {

@@ -1,5 +1,5 @@
 
-#' Tabular ICU data
+#' Tabular ICU data classes
 #'
 #' In order to simplify handling or tabular ICU data, `ricu` provides two
 #' S3 classes, `id_tbl` and `ts_tbl`. The two classes essentially
@@ -10,13 +10,13 @@
 #' information can be identified.
 #'
 #' @details
-#' The two classes are designed for two often encoutered data scenatios:
+#' The two classes are designed for two often encountered data scenarios:
 #'
 #' * `id_tbl` objects can be used to represent static (with repspect to
 #'   relevant time scales) patient data such as patient age and such an object
 #'   is simply a `data.table` combined with a non-zero length character vector
 #'   valued attribute marking the columns tracking patient ID information
-#'   ([id_vars][id_vars()]). All further columns are considered as
+#'   ([`id_vars`][id_vars()]). All further columns are considered as
 #'   [data_vars][data_vars()].
 #' * `ts_tbl` objects are used for grouped time series data. A `data.table`
 #'   object again is augmented by attributes, including a non-zero length
@@ -27,13 +27,57 @@
 #'   columns are treated as [data_vars][data_vars()].
 #'
 #' Owing to the nested structure of required meta data, `ts_tbl` inherits from
-#' ìd_tbl`. Furthermore, both classes inherit from `data.table`. As such,
-#' `data.table` [reference semantics][data.table::reference] are available for
+#' `id_tbl`. Furthermore, both classes inherit from `data.table`. As such,
+#' `data.table` [reference semantics][data.table::set()] are available for
 #' some operations, indicated by presence of a `by_ref` argument. At default,
-#' value, `by_ref` is disabled as this is inline with base R behavior at the
-#' cost of potentially incurring unnecessary data copies. Some care has to be
-#' taken when passing `by_ref = TRUE` and enabling by reference operations as
-#' this can have side effects (see examples).
+#' value, `by_ref` is set to `FALSE` as this is in line with base R behavior
+#' at the cost of potentially incurring unnecessary data copies. Some care has
+#' to be taken when passing `by_ref = TRUE` and enabling by reference
+#' operations as this can have side effects (see examples).
+#'
+#' For instantiating `ts_tbl` objects, both `index_var` and `interval` can be
+#' automatically determined if not specified. For the index column, the only
+#' requirement is that a single [`difftime`][base::difftime()] column is
+#' present, while for the time step, the minimal difference between two
+#' consecutive observations is chosen (and all differences are therefore
+#' required to be multiples of the minimum difference).
+#'
+#' Coercion between `id_tbl` and `ts_tbl` by default keeps intersecting
+#' attributes fixed and new attributes are by default inferred as for class
+#' instantiation. Each class comes with a class-specific implementation of the
+#' S3 generic function `validate_tbl()` which returns `TRUE` if the ibject is
+#' considered valid or a string outlining the type of validation failure that
+#' was encountered. Validity requires
+#'
+#' 1. inheriting from `data.table` and unique column names
+#' 1. for `id_tbl` that all columns specified by the non-zero length character
+#'    vector holding onto the `id_vars` specification are available
+#' 1. for `ts_tbl` that the string-valued `index_var` column is available and
+#'    does not intersect with `id_vars` and that the index column obeys the
+#'    specified interval.
+#'
+#' Finally, inheritance can be checked by calling `is_id_tbl()` and
+#' `is_ts_tbl()`. Note that due to `ts_tbl` inheriting from `id_tbl`,
+#' `is_id_tbl()` returns `TRUE` for both `id_tbl` and `ts_tbl` objects, while
+#' `is_ts_tbl()` only returns `TRUE` for `ts_tbl` objects.
+#'
+#' @examples
+#' tbl <- id_tbl(a = 1:10, b = rnorm(10))
+#' is_id_tbl(tbl)
+#' is_ts_tbl(tbl)
+#'
+#' dat <- data.frame(a = 1:10, b = hours(1:10), c = rnorm(10))
+#' tbl <- as_ts_tbl(dat, "a")
+#' is_id_tbl(tbl)
+#' is_ts_tbl(tbl)
+#'
+#' tmp <- as_id_tbl(tbl)
+#' is_ts_tbl(tbl)
+#' is_ts_tbl(tmp)
+#'
+#' tmp <- as_id_tbl(tbl, by_ref = TRUE)
+#' is_ts_tbl(tbl)
+#' is_ts_tbl(tmp)
 #'
 #' @param ... forwarded to [data.table::data.table()] or generic consistency
 #' @param id_vars Column name(s) to be used as `id` column(s)
@@ -59,18 +103,14 @@ as_id_tbl <- function(x, id_vars = NULL, by_ref = FALSE) {
   UseMethod("as_id_tbl", x)
 }
 
-#' @rdname id_tbl
 #' @export
 as_id_tbl.ts_tbl <- function(x, id_vars = NULL, by_ref = FALSE) {
 
-  if (is.null(id_vars)) {
-    id_vars <- id_vars(x)
-  }
+  id_vars <- coalesce(id_vars, id_vars(x))
 
-  NextMethod()
+  as_id_tbl.id_tbl(x, id_vars, by_ref)
 }
 
-#' @rdname id_tbl
 #' @export
 as_id_tbl.id_tbl <- function(x, id_vars = NULL, by_ref = FALSE) {
 
@@ -78,10 +118,9 @@ as_id_tbl.id_tbl <- function(x, id_vars = NULL, by_ref = FALSE) {
     return(x)
   }
 
-  NextMethod()
+  as_id_tbl.data.table(x, id_vars, by_ref)
 }
 
-#' @rdname id_tbl
 #' @method as_id_tbl data.table
 #' @export
 as_id_tbl.data.table <- function(x, id_vars = NULL, by_ref = FALSE) {
@@ -91,7 +130,6 @@ as_id_tbl.data.table <- function(x, id_vars = NULL, by_ref = FALSE) {
   )
 }
 
-#' @rdname id_tbl
 #' @export
 as_id_tbl.default <- function(x, id_vars = NULL, by_ref = FALSE) {
 
@@ -145,7 +183,6 @@ as_ts_tbl <- function(x, id_vars = NULL, index_var = NULL, interval = NULL,
   UseMethod("as_ts_tbl", x)
 }
 
-#' @rdname id_tbl
 #' @export
 as_ts_tbl.ts_tbl <- function(x, id_vars = NULL, index_var = NULL,
                              interval = NULL, by_ref = FALSE) {
@@ -158,20 +195,18 @@ as_ts_tbl.ts_tbl <- function(x, id_vars = NULL, index_var = NULL,
   index_var <- coalesce(index_var, index_var(x))
   interval  <- coalesce(interval,  interval(x))
 
-  NextMethod()
+  as_ts_tbl.id_tbl(x, id_vars, index_var, interval, by_ref)
 }
 
-#' @rdname id_tbl
 #' @export
 as_ts_tbl.id_tbl <- function(x, id_vars = NULL, index_var = NULL,
                              interval = NULL, by_ref = FALSE) {
 
   id_vars <- coalesce(id_vars, id_vars(x))
 
-  NextMethod()
+  as_ts_tbl.data.table(x, id_vars, index_var, interval, by_ref)
 }
 
-#' @rdname id_tbl
 #' @method as_ts_tbl data.table
 #' @export
 as_ts_tbl.data.table <- function(x, id_vars = NULL, index_var = NULL,
@@ -182,7 +217,6 @@ as_ts_tbl.data.table <- function(x, id_vars = NULL, index_var = NULL,
   )
 }
 
-#' @rdname id_tbl
 #' @export
 as_ts_tbl.default <- function(x, id_vars = NULL, index_var = NULL,
                               interval = NULL, by_ref = FALSE) {
@@ -270,15 +304,19 @@ set_attributes <- function(x, attributes) {
 
 strip_class <- function(x, what) setdiff(class(x), what)
 
-#' @rdname id_tbl
+#' ICU class data utilities
+#'
+#' Utilities for working with `id_tbl` and `ts_tbl` objects.
+#'
+#' @param x Object to modify/query
+#'
+#' @rdname tbl_utils
 #' @export
 unclass_tbl <- function(x) UseMethod("unclass_tbl", x)
 
-#' @rdname id_tbl
 #' @export
 unclass_tbl.data.frame <- function(x) x
 
-#' @rdname id_tbl
 #' @export
 unclass_tbl.ts_tbl <- function(x) {
   unclass_tbl(
@@ -287,7 +325,6 @@ unclass_tbl.ts_tbl <- function(x) {
   )
 }
 
-#' @rdname id_tbl
 #' @export
 unclass_tbl.id_tbl <- function(x) {
   set_attributes(x, list(id_vars = NULL, class = strip_class(x, "id_tbl")))
@@ -297,16 +334,14 @@ unclass_tbl.id_tbl <- function(x) {
 #' @param stop_on_fail Logical flag indicating whether to consider failed
 #' object validation as error
 #'
-#' @rdname id_tbl
+#' @rdname tbl_utils
 #' @export
 reclass_tbl <- function(x, template, stop_on_fail = TRUE)
   UseMethod("reclass_tbl", template)
 
-#' @rdname id_tbl
 #' @export
 reclass_tbl.NULL <- function(x, template, stop_on_fail = TRUE) x
 
-#' @rdname id_tbl
 #' @export
 reclass_tbl.id_tbl <- function(x, template, stop_on_fail = TRUE) {
 
@@ -315,7 +350,6 @@ reclass_tbl.id_tbl <- function(x, template, stop_on_fail = TRUE) {
   check_valid(new_id_tbl(x, id_nms), stop_on_fail)
 }
 
-#' @rdname id_tbl
 #' @export
 reclass_tbl.ts_tbl <- function(x, template, stop_on_fail = TRUE) {
 
@@ -336,17 +370,15 @@ try_reclass <- function(x, template) {
   reclass_tbl(x, template, stop_on_fail = FALSE)
 }
 
-#' @rdname id_tbl
+#' @rdname tbl_utils
 #' @export
 as_ptype <- function(x) UseMethod("as_ptype", x)
 
-#' @rdname id_tbl
 #' @export
 as_ptype.id_tbl <- function(x) {
   new_id_tbl(list(), id_vars(x))
 }
 
-#' @rdname id_tbl
 #' @export
 as_ptype.ts_tbl <- function(x) {
   new_ts_tbl(list(), id_vars(x), index_var(x), interval(x))
@@ -365,30 +397,29 @@ validate_tbl <- function(x) {
   UseMethod("validate_tbl", x)
 }
 
-#' @rdname id_tbl
 #' @export
 validate_tbl.id_tbl <- function(x) {
 
-  res <- validate_that(has_length(id_vars(x)))
+  res <- validate_that(has_cols(x, id_vars(x)))
 
   if (isTRUE(res)) NextMethod() else res
 }
 
-#' @rdname id_tbl
 #' @export
 validate_tbl.ts_tbl <- function(x) {
 
   index <- index_col(x)
   inval <- interval(x)
+  invar <- index_var(x)
 
   res <- validate_that(
-    is_disjoint(id_vars(x), index_var(x)), obeys_interval(index, inval)
+    is.string(invar), has_cols(x, invar), is_disjoint(id_vars(x), invar),
+    obeys_interval(index, inval)
   )
 
   if (isTRUE(res)) NextMethod() else res
 }
 
-#' @rdname id_tbl
 #' @method validate_tbl data.table
 #' @export
 validate_tbl.data.table <- function(x) {

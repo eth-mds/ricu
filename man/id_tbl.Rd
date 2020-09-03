@@ -4,33 +4,11 @@
 \alias{id_tbl}
 \alias{is_id_tbl}
 \alias{as_id_tbl}
-\alias{as_id_tbl.ts_tbl}
-\alias{as_id_tbl.id_tbl}
-\alias{as_id_tbl.data.table}
-\alias{as_id_tbl.default}
 \alias{ts_tbl}
 \alias{is_ts_tbl}
 \alias{as_ts_tbl}
-\alias{as_ts_tbl.ts_tbl}
-\alias{as_ts_tbl.id_tbl}
-\alias{as_ts_tbl.data.table}
-\alias{as_ts_tbl.default}
-\alias{unclass_tbl}
-\alias{unclass_tbl.data.frame}
-\alias{unclass_tbl.ts_tbl}
-\alias{unclass_tbl.id_tbl}
-\alias{reclass_tbl}
-\alias{reclass_tbl.NULL}
-\alias{reclass_tbl.id_tbl}
-\alias{reclass_tbl.ts_tbl}
-\alias{as_ptype}
-\alias{as_ptype.id_tbl}
-\alias{as_ptype.ts_tbl}
 \alias{validate_tbl}
-\alias{validate_tbl.id_tbl}
-\alias{validate_tbl.ts_tbl}
-\alias{validate_tbl.data.table}
-\title{Tabular ICU data}
+\title{Tabular ICU data classes}
 \usage{
 id_tbl(..., id_vars = 1L)
 
@@ -38,57 +16,13 @@ is_id_tbl(x)
 
 as_id_tbl(x, id_vars = NULL, by_ref = FALSE)
 
-\method{as_id_tbl}{ts_tbl}(x, id_vars = NULL, by_ref = FALSE)
-
-\method{as_id_tbl}{id_tbl}(x, id_vars = NULL, by_ref = FALSE)
-
-\method{as_id_tbl}{data.table}(x, id_vars = NULL, by_ref = FALSE)
-
-\method{as_id_tbl}{default}(x, id_vars = NULL, by_ref = FALSE)
-
 ts_tbl(..., id_vars = 1L, index_var = NULL, interval = NULL)
 
 is_ts_tbl(x)
 
 as_ts_tbl(x, id_vars = NULL, index_var = NULL, interval = NULL, by_ref = FALSE)
 
-\method{as_ts_tbl}{ts_tbl}(x, id_vars = NULL, index_var = NULL, interval = NULL, by_ref = FALSE)
-
-\method{as_ts_tbl}{id_tbl}(x, id_vars = NULL, index_var = NULL, interval = NULL, by_ref = FALSE)
-
-\method{as_ts_tbl}{data.table}(x, id_vars = NULL, index_var = NULL, interval = NULL, by_ref = FALSE)
-
-\method{as_ts_tbl}{default}(x, id_vars = NULL, index_var = NULL, interval = NULL, by_ref = FALSE)
-
-unclass_tbl(x)
-
-\method{unclass_tbl}{data.frame}(x)
-
-\method{unclass_tbl}{ts_tbl}(x)
-
-\method{unclass_tbl}{id_tbl}(x)
-
-reclass_tbl(x, template, stop_on_fail = TRUE)
-
-\method{reclass_tbl}{`NULL`}(x, template, stop_on_fail = TRUE)
-
-\method{reclass_tbl}{id_tbl}(x, template, stop_on_fail = TRUE)
-
-\method{reclass_tbl}{ts_tbl}(x, template, stop_on_fail = TRUE)
-
-as_ptype(x)
-
-\method{as_ptype}{id_tbl}(x)
-
-\method{as_ptype}{ts_tbl}(x)
-
 validate_tbl(x)
-
-\method{validate_tbl}{id_tbl}(x)
-
-\method{validate_tbl}{ts_tbl}(x)
-
-\method{validate_tbl}{data.table}(x)
 }
 \arguments{
 \item{...}{forwarded to \code{\link[data.table:data.table]{data.table::data.table()}} or generic consistency}
@@ -104,11 +38,6 @@ reference}
 
 \item{interval}{Time series interval length specified as scalar-valued
 \code{difftime} object}
-
-\item{template}{Object after which to model the object in question}
-
-\item{stop_on_fail}{Logical flag indicating whether to consider failed
-object validation as error}
 }
 \description{
 In order to simplify handling or tabular ICU data, \code{ricu} provides two
@@ -120,13 +49,13 @@ be chosen more sensibly if columns representing patient ID and timestamp
 information can be identified.
 }
 \details{
-The two classes are designed for two often encoutered data scenatios:
+The two classes are designed for two often encountered data scenarios:
 \itemize{
 \item \code{id_tbl} objects can be used to represent static (with repspect to
 relevant time scales) patient data such as patient age and such an object
 is simply a \code{data.table} combined with a non-zero length character vector
 valued attribute marking the columns tracking patient ID information
-(\link[=id_vars]{id_vars}). All further columns are considered as
+(\code{\link[=id_vars]{id_vars}}). All further columns are considered as
 \link[=data_vars]{data_vars}.
 \item \code{ts_tbl} objects are used for grouped time series data. A \code{data.table}
 object again is augmented by attributes, including a non-zero length
@@ -138,6 +67,57 @@ columns are treated as \link[=data_vars]{data_vars}.
 }
 
 Owing to the nested structure of required meta data, \code{ts_tbl} inherits from
-ìd_tbl\verb{. Furthermore, both classes inherit from }data.table\verb{. As such, }data.table\verb{[reference semantics][data.table::reference] are available for some operations, indicated by presence of a}by_ref\verb{argument. At default, value,}by_ref\verb{is disabled as this is inline with base R behavior at the cost of potentially incurring unnecessary data copies. Some care has to be taken when passing}by_ref = TRUE` and enabling by reference operations as
-this can have side effects (see examples).
+\code{id_tbl}. Furthermore, both classes inherit from \code{data.table}. As such,
+\code{data.table} \link[data.table:assign]{reference semantics} are available for
+some operations, indicated by presence of a \code{by_ref} argument. At default,
+value, \code{by_ref} is set to \code{FALSE} as this is in line with base R behavior
+at the cost of potentially incurring unnecessary data copies. Some care has
+to be taken when passing \code{by_ref = TRUE} and enabling by reference
+operations as this can have side effects (see examples).
+
+For instantiating \code{ts_tbl} objects, both \code{index_var} and \code{interval} can be
+automatically determined if not specified. For the index column, the only
+requirement is that a single \code{\link[base:difftime]{difftime}} column is
+present, while for the time step, the minimal difference between two
+consecutive observations is chosen (and all differences are therefore
+required to be multiples of the minimum difference).
+
+Coercion between \code{id_tbl} and \code{ts_tbl} by default keeps intersecting
+attributes fixed and new attributes are by default inferred as for class
+instantiation. Each class comes with a class-specific implementation of the
+S3 generic function \code{validate_tbl()} which returns \code{TRUE} if the ibject is
+considered valid or a string outlining the type of validation failure that
+was encountered. Validity requires
+\enumerate{
+\item inheriting from \code{data.table} and unique column names
+\item for \code{id_tbl} that all columns specified by the non-zero length character
+vector holding onto the \code{id_vars} specification are available
+\item for \code{ts_tbl} that the string-valued \code{index_var} column is available and
+does not intersect with \code{id_vars} and that the index column obeys the
+specified interval.
+}
+
+Finally, inheritance can be checked by calling \code{is_id_tbl()} and
+\code{is_ts_tbl()}. Note that due to \code{ts_tbl} inheriting from \code{id_tbl},
+\code{is_id_tbl()} returns \code{TRUE} for both \code{id_tbl} and \code{ts_tbl} objects, while
+\code{is_ts_tbl()} only returns \code{TRUE} for \code{ts_tbl} objects.
+}
+\examples{
+tbl <- id_tbl(a = 1:10, b = rnorm(10))
+is_id_tbl(tbl)
+is_ts_tbl(tbl)
+
+dat <- data.frame(a = 1:10, b = hours(1:10), c = rnorm(10))
+tbl <- as_ts_tbl(dat, "a")
+is_id_tbl(tbl)
+is_ts_tbl(tbl)
+
+tmp <- as_id_tbl(tbl)
+is_ts_tbl(tbl)
+is_ts_tbl(tmp)
+
+tmp <- as_id_tbl(tbl, by_ref = TRUE)
+is_ts_tbl(tbl)
+is_ts_tbl(tmp)
+
 }

@@ -70,9 +70,9 @@ reference:
     structures, several utility functions are provided.
   contents:
     - id_tbl
-    - ts_tbl
     - id_vars
-    - extend_ts
+    - unclass_tbl
+    - expand
     - change_id
     - stay_windows
 - title: Data source setup
