@@ -24,15 +24,15 @@ expand <- function(x, min_col, max_col, step_size = time_step(x),
         value = as.difftime(unlist(lst), units = unit))
   }
 
-  if (identical(nrow(x), 0L)) {
-    return(x)
-  }
-
   assert_that(
     is_id_tbl(x), is.string(min_col), is.string(max_col),
     has_time_cols(x, c(min_col, max_col)),
     same_unit(x[[min_col]], x[[max_col]])
   )
+
+  if (identical(nrow(x), 0L)) {
+    return(x)
+  }
 
   unit <- units(x[[min_col]])
 
@@ -231,6 +231,10 @@ hopper <- function(x, expr, windows, full_window = FALSE,
   assert_that(is_ts_tbl(x), is_unique(x), is.flag(full_window),
               is_id_tbl(windows), has_name(windows, c(lwr_col, upr_col)))
 
+  if (identical(nrow(x), 0L)) {
+    return(x)
+  }
+
   win_id <- id_vars(windows)
   tbl_id <- id_vars(x)
 
@@ -293,20 +297,4 @@ hopper <- function(x, expr, windows, full_window = FALSE,
   ))
 
   rename_cols(res, win_cols, tmp_col, by_ref = TRUE)
-}
-
-locf <- function(x) {
-
-  res <- last_elem(x)
-
-  if (is.na(res)) {
-
-    no_na <- !is.na(x)
-
-    if (any(no_na)) {
-      res <- last_elem(x[no_na])
-    }
-  }
-
-  res
 }

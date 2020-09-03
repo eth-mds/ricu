@@ -18,7 +18,7 @@
 #' Challenge 2019 (version 1.0.0). PhysioNet.
 #' https://doi.org/10.13026/v64v-d857.
 #'
-#' @rdname tbl_meta
+#' @rdname data_export
 #' @export
 #'
 write_psv <- function(x, dir, na_rows = NULL) {
@@ -42,7 +42,7 @@ write_psv <- function(x, dir, na_rows = NULL) {
 #' @param col_spec A column specification as created by [readr::cols()]
 #' @param id_var Name of the id column (IDs are generated from file names)
 #'
-#' @rdname tbl_meta
+#' @rdname data_export
 #' @export
 #'
 read_psv <- function(dir, col_spec = NULL, id_var = "stay_id") {

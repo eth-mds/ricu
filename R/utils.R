@@ -485,3 +485,19 @@ auto_load_src_names <- function() {
 unlst <- function(x, recursive = FALSE, use_names = FALSE) {
   unlist(x, recursive = recursive, use.names = use_names)
 }
+
+locf <- function(x) {
+
+  res <- last_elem(x)
+
+  if (is.na(res)) {
+
+    no_na <- !is.na(x)
+
+    if (any(no_na)) {
+      res <- last_elem(x[no_na])
+    }
+  }
+
+  res
+}
