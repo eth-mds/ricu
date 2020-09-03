@@ -24,8 +24,12 @@ expand <- function(x, min_col, max_col, step_size = time_step(x),
         value = as.difftime(unlist(lst), units = unit))
   }
 
+  if (identical(nrow(x), 0L)) {
+    return(x)
+  }
+
   assert_that(
-    is_id_tbl(x), has_rows(x), is.string(min_col), is.string(max_col),
+    is_id_tbl(x), is.string(min_col), is.string(max_col),
     has_time_cols(x, c(min_col, max_col)),
     same_unit(x[[min_col]], x[[max_col]])
   )
