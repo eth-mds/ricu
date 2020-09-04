@@ -45,7 +45,7 @@
 #' Coercion between `id_tbl` and `ts_tbl` by default keeps intersecting
 #' attributes fixed and new attributes are by default inferred as for class
 #' instantiation. Each class comes with a class-specific implementation of the
-#' S3 generic function `validate_tbl()` which returns `TRUE` if the ibject is
+#' S3 generic function `validate_tbl()` which returns `TRUE` if the object is
 #' considered valid or a string outlining the type of validation failure that
 #' was encountered. Validity requires
 #'
@@ -60,6 +60,35 @@
 #' `is_ts_tbl()`. Note that due to `ts_tbl` inheriting from `id_tbl`,
 #' `is_id_tbl()` returns `TRUE` for both `id_tbl` and `ts_tbl` objects, while
 #' `is_ts_tbl()` only returns `TRUE` for `ts_tbl` objects.
+#'
+#' @section Relationship to `data.table`:
+#' Both `id_tbl` and `ts_tbl` inherit from `data.table` and as such, functions
+#' intended for use with `data.table` objects can be applied to `id_tbl` and
+#' `ts_tbl` as well. But there are some caveats: Many functions introduced by
+#' `data.table` are not S3 generic and therefore they would have to be masked
+#' in order to retain control over how they operate on objects inheriting form
+#' `data.table`. Take for example the function [data.table::setnames()], which
+#' changes column names by reference. Using this function, the name of an
+#' index column of an `id_tbl` object can me changed without updating the
+#' attribute marking the column as such and thusly leaving the object in an
+#' inconsistent state. Instead of masking the function `setnames()`, an
+#' alternative is provided as [rename_cols()]. In places where it is possible
+#' to seamlessly insert the appropriate function (such as
+#' [base::`names<-`()][base::names()] or
+#' [base::`colnames<-`()][base::colnames()]) and the responsibility for not
+#' using [data.table::setnames()] in a way that breaks the `id_tbl` object is
+#' left to the user.
+#'
+#' Owing to `data.table` heritage, one of the functions that is often called
+#' on `id_tbl` and `ts_tbl` objects is base S3 generic [base::`[`()]. As this
+#' function is capable of modifying the object in a way that makes it
+#' incompatible with attached meta data, an attempt is made at preserving as
+#' much as possible and if all fails, a `data.table` object is returned
+#' instead of an object inheriting form `id_tbl`. If for example the index
+#' column is removed (or modified in a way that makes it incompatible with the
+#' interval specification) from a `ts_tbl`, an `id_tbl` is returned. If
+#' however the ID column is removed the only sensible thing to return is a
+#' `data.table` (see examples).
 #'
 #' @examples
 #' tbl <- id_tbl(a = 1:10, b = rnorm(10))
@@ -78,6 +107,21 @@
 #' tmp <- as_id_tbl(tbl, by_ref = TRUE)
 #' is_ts_tbl(tbl)
 #' is_ts_tbl(tmp)
+#'
+#' tbl <- id_tbl(a = 1:10, b = rnorm(10))
+#' names(tbl) <- c("c", "b")
+#' tbl
+#'
+#' tbl <- id_tbl(a = 1:10, b = rnorm(10))
+#' validate_tbl(data.table::setnames(tbl, c("c", "b")))
+#'
+#' tbl <- id_tbl(a = 1:10, b = rnorm(10))
+#' validate_tbl(rename_cols(tbl, c("c", "b")))
+#'
+#' tbl <- ts_tbl(a = rep(1:2, each = 5), b = hours(rep(1:5, 2)), c = rnorm(10))
+#' tbl[, c("a", "c"), with = FALSE]
+#' tbl[, c("b", "c"), with = FALSE]
+#' tbl[, list(a, b = as.double(b), c)]
 #'
 #' @param ... forwarded to [data.table::data.table()] or generic consistency
 #' @param id_vars Column name(s) to be used as `id` column(s)
@@ -304,13 +348,23 @@ set_attributes <- function(x, attributes) {
 
 strip_class <- function(x, what) setdiff(class(x), what)
 
-#' ICU class data utilities
+#' Internal utilities for ICU data objects
 #'
-#' Utilities for working with `id_tbl` and `ts_tbl` objects.
+#' In order to remove all `id_tbl`/`ts_tbl`-related attributes, as well as
+#' extra class-labels, the exported but marked internal function
+#' `unclass_tbl()` can be used. This function provides what one might expect
+#' from an `id_tbl`/`ts_tbl`-specific implementation of the S3 generic
+#' function [data.table::as.data.table()]. The inverse functionality if
+#' provided by `reclass_tbl()` which attempts to add attributes as seen in
+#' `template` to the object passed as `x`. The logical flag `stop_on_fail`
+#' controls how to proceed if the attributes of `template` are incompatible
+#' with the object `x`. Finally, in order to generate a template, `as_ptype()`
+#' creates an empty object with the appropriate attributes.
 #'
 #' @param x Object to modify/query
 #'
-#' @rdname tbl_utils
+#' @rdname tbl_internal
+#' @keywords internal
 #' @export
 unclass_tbl <- function(x) UseMethod("unclass_tbl", x)
 
@@ -334,7 +388,8 @@ unclass_tbl.id_tbl <- function(x) {
 #' @param stop_on_fail Logical flag indicating whether to consider failed
 #' object validation as error
 #'
-#' @rdname tbl_utils
+#' @rdname tbl_internal
+#' @keywords internal
 #' @export
 reclass_tbl <- function(x, template, stop_on_fail = TRUE)
   UseMethod("reclass_tbl", template)
@@ -370,7 +425,8 @@ try_reclass <- function(x, template) {
   reclass_tbl(x, template, stop_on_fail = FALSE)
 }
 
-#' @rdname tbl_utils
+#' @rdname tbl_internal
+#' @keywords internal
 #' @export
 as_ptype <- function(x) UseMethod("as_ptype", x)
 

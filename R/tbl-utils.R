@@ -131,12 +131,6 @@ data_var <- function(x) {
 #' @export
 data_col <- function(x) x[[data_var(x)]]
 
-#' ICU class temporal utilities
-#'
-#' Utilities for retrieving/modifying temporal metadata from `ts_tbl` objects.
-#'
-#' @param x Object to query/operate on
-#'
 #' @rdname tbl_meta
 #' @export
 interval <- function(x) UseMethod("interval", x)
@@ -178,6 +172,26 @@ rename <- function(x, new, old) {
 
 is_dt <- is_type("data.table")
 
+#' ICU class data utilities
+#'
+#' Several utility functions for working with `id_tbl` and `ts_tbl` objects
+#' are available, including functions for changing column names, removing
+#' columns, as well as aggregating or removing rows. An important thing to
+#' note is that as `id_tbl` (and consequently `ts_tbl`) inherits from
+#' `data.table`, there are several functions provided by the `data.table`
+#' package that are capable of modifying `id_tbl` in a way that results in an
+#' object with inconsistent state. An example for this is
+#' [data.table::setnames()]: if an ID column or the index column name is
+#' modified without updating the attribute marking the column as such, this
+#' leads to an invalid object. As [data.table::setnames()] is not an S3
+#' generic function, the only way to control its behavior with respect to
+#' `id_tbl` objects is masking the function. As such an approach has its own
+#' down-sides, a separate function, `rename_cols()` is provided, which is able
+#' to handle column renaming correctly.
+#'
+#' @details
+#' yada yada
+#'
 #' @param new,old Replacement names and existing column names for renaming
 #' columns
 #' @param skip_absent Logical flag for ignoring non-existent column names
@@ -329,55 +343,6 @@ change_interval.data.table <- function(x, new_interval, cols = time_vars(x),
   x[, c(cols) := lapply(.SD, change_time), .SDcols = cols]
 }
 
-#' @rdname tbl_utils
-#' @export
-#'
-rbind_lst <- function(x, ...) {
-
-  cond_as <- function(x) if (is.list(x)) x else as.data.table(x)
-
-  dt_rbl <- function(x, ...) rbindlist(lapply(x, cond_as), ...)
-
-  do_rename <- function(x, new) {
-    fun <- if (is_ts_tbl(x) && is_ts_tbl(new)) meta_vars else id_vars
-    rename_cols(x, fun(new), fun(x), by_ref = TRUE)
-  }
-
-  id_tbl <- lgl_ply(x, is_id_tbl)
-  ts_tbl <- lgl_ply(x, is_ts_tbl)
-  id_tbl <- id_tbl & !ts_tbl
-
-  if (any(id_tbl)) {
-
-    ptyp <- as_ptype(x[[which(id_tbl)[1L]]])
-
-  } else if (any(ts_tbl)) {
-
-    ptyp <- as_ptype(x[[which(ts_tbl)[1L]]])
-
-    assert_that(
-      all_fun(lapply(x[ts_tbl], interval), all_equal, interval(ptyp)),
-      msg = "cannot mix interval lengths when row-binding"
-    )
-
-  } else {
-
-    ptyp <- NULL
-  }
-
-  if (not_null(ptyp)) {
-
-    id_tbls <- lgl_ply(x, is_id_tbl)
-    old_ptp <- lapply(x[id_tbls], as_ptype)
-
-    x[id_tbls] <- lapply(x[id_tbls], do_rename, ptyp)
-
-    on.exit(Map(do_rename, x[id_tbls], old_ptp))
-  }
-
-  reclass_tbl(dt_rbl(x, ...), ptyp)
-}
-
 #' @param cols Column names of columns to consider
 #' @param mode Switch between `all` where all entries of a row have to be
 #' missing (for the selected columns) or `any`, where a single missing entry
@@ -403,37 +368,6 @@ rm_na <- function(x, cols = data_vars(x), mode = c("all", "any")) {
   }
 
   x[!drop, ]
-}
-
-#' @param col_groups A list of character vectors defining the grouping of
-#' non-by columns
-#' @param by Columns that will be present in every one of the resulting tables
-#' @param na_rm Logical flag indicating whether to remove rows that have all
-#' missing entries in the respective `col_groups` group
-#'
-#' @rdname tbl_utils
-#' @export
-#'
-unmerge <- function(x, col_groups = as.list(data_vars(x)), by = meta_vars(x),
-                    na_rm = TRUE) {
-
-  name_has <- function(name, x) has_name(x, name)
-
-  assert_that(has_name(x, by), all_fun(col_groups, name_has, x),
-              is.flag(na_rm))
-
-  extract_col <- function(col, x) {
-
-    y <- x[, c(by, col), with = FALSE]
-
-    if (na_rm) {
-      y <- rm_na(y, col)
-    }
-
-    y
-  }
-
-  lapply(col_groups, extract_col, x)
 }
 
 #' @param fun Function name (as string) to apply over groups

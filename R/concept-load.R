@@ -77,7 +77,7 @@
 #' form a common super-type. For more information on the `item` class, please
 #' refer to the [relevant documentation][item]. Arguments introduced at `item`
 #' level include `patient_ids`, `id_type` and `interval`. Acceptable values for
-#' `interval` are scalar-valued `base::difftime()` objects (see also helper
+#' `interval` are scalar-valued [base::difftime()] objects (see also helper
 #' functions such as [hours()]) and this argument essentially controls the
 #' time-resolution of the returned time-series. Of course, the limiting factor
 #' raw time resolution which is on the order of hours for data sets like

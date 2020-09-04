@@ -85,7 +85,7 @@ required to be multiples of the minimum difference).
 Coercion between \code{id_tbl} and \code{ts_tbl} by default keeps intersecting
 attributes fixed and new attributes are by default inferred as for class
 instantiation. Each class comes with a class-specific implementation of the
-S3 generic function \code{validate_tbl()} which returns \code{TRUE} if the ibject is
+S3 generic function \code{validate_tbl()} which returns \code{TRUE} if the object is
 considered valid or a string outlining the type of validation failure that
 was encountered. Validity requires
 \enumerate{
@@ -102,6 +102,37 @@ Finally, inheritance can be checked by calling \code{is_id_tbl()} and
 \code{is_id_tbl()} returns \code{TRUE} for both \code{id_tbl} and \code{ts_tbl} objects, while
 \code{is_ts_tbl()} only returns \code{TRUE} for \code{ts_tbl} objects.
 }
+\section{Relationship to \code{data.table}}{
+
+Both \code{id_tbl} and \code{ts_tbl} inherit from \code{data.table} and as such, functions
+intended for use with \code{data.table} objects can be applied to \code{id_tbl} and
+\code{ts_tbl} as well. But there are some caveats: Many functions introduced by
+\code{data.table} are not S3 generic and therefore they would have to be masked
+in order to retain control over how they operate on objects inheriting form
+\code{data.table}. Take for example the function \code{\link[data.table:setattr]{data.table::setnames()}}, which
+changes column names by reference. Using this function, the name of an
+index column of an \code{id_tbl} object can me changed without updating the
+attribute marking the column as such and thusly leaving the object in an
+inconsistent state. Instead of masking the function \code{setnames()}, an
+alternative is provided as \code{\link[=rename_cols]{rename_cols()}}. In places where it is possible
+to seamlessly insert the appropriate function (such as
+\link[base:names]{base::\verb{names<-}()} or
+\link[base:colnames]{base::\verb{colnames<-}()}) and the responsibility for not
+using \code{\link[data.table:setattr]{data.table::setnames()}} in a way that breaks the \code{id_tbl} object is
+left to the user.
+
+Owing to \code{data.table} heritage, one of the functions that is often called
+on \code{id_tbl} and \code{ts_tbl} objects is base S3 generic [base::\code{[}()]. As this
+function is capable of modifying the object in a way that makes it
+incompatible with attached meta data, an attempt is made at preserving as
+much as possible and if all fails, a \code{data.table} object is returned
+instead of an object inheriting form \code{id_tbl}. If for example the index
+column is removed (or modified in a way that makes it incompatible with the
+interval specification) from a \code{ts_tbl}, an \code{id_tbl} is returned. If
+however the ID column is removed the only sensible thing to return is a
+\code{data.table} (see examples).
+}
+
 \examples{
 tbl <- id_tbl(a = 1:10, b = rnorm(10))
 is_id_tbl(tbl)
@@ -119,5 +150,20 @@ is_ts_tbl(tmp)
 tmp <- as_id_tbl(tbl, by_ref = TRUE)
 is_ts_tbl(tbl)
 is_ts_tbl(tmp)
+
+tbl <- id_tbl(a = 1:10, b = rnorm(10))
+names(tbl) <- c("c", "b")
+tbl
+
+tbl <- id_tbl(a = 1:10, b = rnorm(10))
+validate_tbl(data.table::setnames(tbl, c("c", "b")))
+
+tbl <- id_tbl(a = 1:10, b = rnorm(10))
+validate_tbl(rename_cols(tbl, c("c", "b")))
+
+tbl <- ts_tbl(a = rep(1:2, each = 5), b = hours(rep(1:5, 2)), c = rnorm(10))
+tbl[, c("a", "c"), with = FALSE]
+tbl[, c("b", "c"), with = FALSE]
+tbl[, list(a, b = as.double(b), c)]
 
 }

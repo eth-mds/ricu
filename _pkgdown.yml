@@ -71,7 +71,7 @@ reference:
   contents:
     - id_tbl
     - id_vars
-    - unclass_tbl
+    - rename_cols
     - expand
     - change_id
     - stay_windows

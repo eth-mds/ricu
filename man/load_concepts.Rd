@@ -213,7 +213,7 @@ used representing a vector of objects of varying sub-types, all inheriting
 form a common super-type. For more information on the \code{item} class, please
 refer to the \link[=item]{relevant documentation}. Arguments introduced at \code{item}
 level include \code{patient_ids}, \code{id_type} and \code{interval}. Acceptable values for
-\code{interval} are scalar-valued \code{base::difftime()} objects (see also helper
+\code{interval} are scalar-valued \code{\link[base:difftime]{base::difftime()}} objects (see also helper
 functions such as \code{\link[=hours]{hours()}}) and this argument essentially controls the
 time-resolution of the returned time-series. Of course, the limiting factor
 raw time resolution which is on the order of hours for data sets like

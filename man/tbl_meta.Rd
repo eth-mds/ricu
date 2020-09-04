@@ -43,7 +43,7 @@ time_step(x)
 time_vars(x)
 }
 \arguments{
-\item{x}{Object to query/operate on}
+\item{x}{Object to query}
 }
 \description{
 The two data classes \code{id_tbl} and \code{ts_tbl}, used by \code{ricu} to represent ICU
@@ -53,8 +53,6 @@ representing measurements ordered in time, the step size. The following
 utility functions can be used to extract columns and column names with
 special meaning, as well as query a \code{ts_tbl} object regarding its time
 series related meta data.
-
-Utilities for retrieving/modifying temporal metadata from \code{ts_tbl} objects.
 }
 \details{
 The following functions can be used to query an object for columns or
