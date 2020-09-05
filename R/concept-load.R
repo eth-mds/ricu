@@ -49,11 +49,11 @@
 #' disables aggregation, NULL, which auto-determines a suitable aggregation
 #' function or a string which is ultimately passed to [dt_gforce()] where it
 #' identifies a function such as `sum()`, `mean()`, `min()` or `max()`. More
-#' information on aggregation is available as [make_unique()]. If the object
-#' passed as `aggregate` is scalar, it is applied to all requested concepts in
-#' the same way. In order to customize aggregation per concept, a named object
-#' (with names corresponding to concepts) of the same length as the number of
-#' requested concepts may be passed.
+#' information on aggregation is available as [aggregate()][rename_cols()].
+#' If the object passed as `aggregate` is scalar, it is applied to all
+#' requested concepts in the same way. In order to customize aggregation per
+#' concept, a named object (with names corresponding to concepts) of the same
+#' length as the number of requested concepts may be passed.
 #'
 #' Under the hood, a `concept` object comprises of several `cncpt` objects
 #' with varying sub-types (for example `num_cncpt`, representing continuous

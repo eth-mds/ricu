@@ -6,9 +6,11 @@
 \alias{change_interval}
 \alias{rm_na}
 \alias{dt_gforce}
+\alias{duplicated.id_tbl}
+\alias{anyDuplicated.id_tbl}
+\alias{unique.id_tbl}
 \alias{is_unique}
-\alias{is_unique.default}
-\alias{make_unique}
+\alias{aggregate.id_tbl}
 \title{ICU class data utilities}
 \usage{
 rename_cols(x, new, old = colnames(x), skip_absent = FALSE, by_ref = FALSE)
@@ -27,11 +29,15 @@ dt_gforce(
   na_rm = !fun \%in\% c("first", "last")
 )
 
+\method{duplicated}{id_tbl}(x, incomparables = FALSE, by = meta_vars(x), ...)
+
+\method{anyDuplicated}{id_tbl}(x, incomparables = FALSE, by = meta_vars(x), ...)
+
+\method{unique}{id_tbl}(x, incomparables = FALSE, by = meta_vars(x), ...)
+
 is_unique(x, ...)
 
-\method{is_unique}{default}(x, ...)
-
-make_unique(
+\method{aggregate}{id_tbl}(
   x,
   expr = NULL,
   by = meta_vars(x),

@@ -404,20 +404,52 @@ dt_gforce <- function(x,
   )
 }
 
-#' @rdname tbl_utils
-#' @export
-#'
-is_unique <- function(x, ...) UseMethod("is_unique", x)
-
-#' @rdname tbl_utils
-#' @export
-#'
-is_unique.default <- function(x, ...) identical(anyDuplicated(x, ...), 0L)
-
-#' @export
-is_unique.id_tbl <- function(x, by = meta_vars(x), ...) {
-  identical(anyDuplicated(x, by = by, ...), 0L)
+temp_unclass <- function(x, expr) {
+  ptyp <- as_ptype(x)
+  unclass_tbl(x)
+  on.exit(reclass_tbl(x, ptyp))
+  expr
 }
+
+#' @rdname tbl_utils
+#' @export
+duplicated.id_tbl <- function(x, incomparables = FALSE,
+                              by = meta_vars(x), ...) {
+
+  by <- force(by)
+
+  temp_unclass(x,
+    duplicated(x, incomparables = incomparables, by = by, ...)
+  )
+}
+
+#' @rdname tbl_utils
+#' @export
+anyDuplicated.id_tbl <- function(x, incomparables = FALSE,
+                                 by = meta_vars(x), ...) {
+
+  by <- force(by)
+
+  temp_unclass(x,
+    anyDuplicated(x, incomparables = incomparables, by = by, ...)
+  )
+}
+
+#' @rdname tbl_utils
+#' @export
+unique.id_tbl <- function(x, incomparables = FALSE, by = meta_vars(x), ...) {
+
+  by <- force(by)
+
+  temp_unclass(x,
+    unique(x, incomparables = incomparables, by = by, ...)
+  )
+}
+
+#' @rdname tbl_utils
+#' @export
+#'
+is_unique <- function(x, ...) identical(anyDuplicated(x, ...), 0L)
 
 on_failure(is_unique) <- function(call, env) {
   format_assert("{as_label(call$x)} contains duplicate elements",
@@ -432,8 +464,8 @@ on_failure(is_unique) <- function(call, env) {
 #' @rdname tbl_utils
 #' @export
 #'
-make_unique <- function(x, expr = NULL, by = meta_vars(x), vars = data_vars(x),
-                        env = NULL, ...) {
+aggregate.id_tbl <- function(x, expr = NULL, by = meta_vars(x),
+                             vars = data_vars(x), env = NULL, ...) {
 
   is_num <- function(col) is.numeric(x[[col]])
 
@@ -441,7 +473,7 @@ make_unique <- function(x, expr = NULL, by = meta_vars(x), vars = data_vars(x),
     env <- caller_env()
   }
 
-  assert_that(is_id_tbl(x), is.environment(env))
+  assert_that(is.environment(env))
 
   if (nrow(x) == 0) {
     return(x)

@@ -183,11 +183,11 @@ acceptable as \code{aggregate} argument, the most important being \code{FALSE}, 
 disables aggregation, NULL, which auto-determines a suitable aggregation
 function or a string which is ultimately passed to \code{\link[=dt_gforce]{dt_gforce()}} where it
 identifies a function such as \code{sum()}, \code{mean()}, \code{min()} or \code{max()}. More
-information on aggregation is available as \code{\link[=make_unique]{make_unique()}}. If the object
-passed as \code{aggregate} is scalar, it is applied to all requested concepts in
-the same way. In order to customize aggregation per concept, a named object
-(with names corresponding to concepts) of the same length as the number of
-requested concepts may be passed.
+information on aggregation is available as \link[=rename_cols]{aggregate()}.
+If the object passed as \code{aggregate} is scalar, it is applied to all
+requested concepts in the same way. In order to customize aggregation per
+concept, a named object (with names corresponding to concepts) of the same
+length as the number of requested concepts may be passed.
 
 Under the hood, a \code{concept} object comprises of several \code{cncpt} objects
 with varying sub-types (for example \code{num_cncpt}, representing continuous

@@ -1,9 +1,19 @@
 
 #' @export
-`[.id_tbl` <- function(x, ...) {
+`[.id_tbl` <- function(x, ...) wrap_ptype(as_ptype(x), NextMethod())
 
-  ptyp <- as_ptype(x)
-  res  <- NextMethod()
+#' @export
+`[<-.id_tbl` <- function(x, ...) wrap_ptype(as_ptype(x), NextMethod())
+
+#' @export
+`[[<-.id_tbl` <- function(x, ...) wrap_ptype(as_ptype(x), NextMethod())
+
+#' @export
+`$<-.id_tbl` <- function(x, ...) wrap_ptype(as_ptype(x), NextMethod())
+
+wrap_ptype <- function(ptyp, res) {
+
+  ptyp <- force(ptyp)
 
   if (is_dt(res)) {
     reclass_tbl(res, ptyp, FALSE)
@@ -12,14 +22,15 @@
   }
 }
 
+#' @method row.names id_tbl
 #' @export
-dimnames.id_tbl <- function(x) list(NULL, colnames(x))
+row.names.id_tbl <- function(x) NULL
 
+#' @method row.names<- id_tbl
 #' @export
-`dimnames<-.id_tbl` <- function(x, value) {
-  assert_that(is.list(value), identical(length(value), 2L),
-              is.null(value[[1L]]))
-  rename_cols(x, value[[2L]])
+`row.names<-.id_tbl` <- function(x, value) {
+  warn_arg("value")
+  x
 }
 
 #' @export

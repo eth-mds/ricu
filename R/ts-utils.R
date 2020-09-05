@@ -106,6 +106,10 @@ fill_gaps <- function(x, limits = NULL, ...) {
   x[unique(join), on = paste(meta_vars(x), "==", meta_vars(join))]
 }
 
+#' @rdname ts_utils
+#' @export
+remove_gaps <- function(x) rm_na(x, data_vars(x), "all")
+
 #' @param expr Expression (quoted for `*_quo` and unquoted otherwise) to be
 #' evaluated over each window
 #' @param before,after Time span to look back/forward

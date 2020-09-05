@@ -82,6 +82,16 @@ present, while for the time step, the minimal difference between two
 consecutive observations is chosen (and all differences are therefore
 required to be multiples of the minimum difference).
 
+Upon instantiation, the data might be rearranged: columns are reordered
+such that ID columns are moved to the front, followed by the index column
+and a \code{\link[data.table:setkey]{data.table::key()}} is set on meta columns, causing rows to be sorted
+accordingly. Moving meta columns to the front is done for reasons of
+convenience for printing, while setting a key on meta columns is done to
+improve efficiency of subsequent transformations such as merging or grouped
+operations. Furthermore, \code{NA} values in either ID or index columns are not
+allowed and therefore corresponding rows are removed entirely (with a
+warning thrown).
+
 Coercion between \code{id_tbl} and \code{ts_tbl} by default keeps intersecting
 attributes fixed and new attributes are by default inferred as for class
 instantiation. Each class comes with a class-specific implementation of the

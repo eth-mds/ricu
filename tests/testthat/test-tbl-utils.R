@@ -140,18 +140,18 @@ test_that("unique", {
 
   expect_false(is_unique(tbl))
 
-  res <- make_unique(tbl, NULL)
+  res <- aggregate(tbl, NULL)
 
   expect_is(res, "ts_tbl")
   expect_true(is_unique(res))
 
-  res <- make_unique(tbl, "sum")
+  res <- aggregate(tbl, "sum")
 
   expect_is(res, "ts_tbl")
   expect_true(is_unique(res))
 
-  expect_identical(res, make_unique(tbl, sum))
-  expect_identical(res, make_unique(tbl, fun))
-  expect_identical(res, make_unique(tbl, list(z = sum(z))))
-  expect_identical(res, make_unique(tbl, list(z = fun(z))))
+  expect_identical(res, aggregate(tbl, sum))
+  expect_identical(res, aggregate(tbl, fun))
+  expect_identical(res, aggregate(tbl, list(z = sum(z))))
+  expect_identical(res, aggregate(tbl, list(z = fun(z))))
 })

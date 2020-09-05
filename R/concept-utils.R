@@ -752,7 +752,7 @@ aggregate.cncpt <- function(x, tbl, fun = NULL, ...) {
   fun <- coalesce(fun, x[["aggregate"]])
 
   if (!isFALSE(fun)) {
-    tbl <- make_unique(tbl, fun)
+    tbl <- aggregate(tbl, fun)
   }
 
   tbl

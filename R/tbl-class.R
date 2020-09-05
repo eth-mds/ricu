@@ -42,6 +42,16 @@
 #' consecutive observations is chosen (and all differences are therefore
 #' required to be multiples of the minimum difference).
 #'
+#' Upon instantiation, the data might be rearranged: columns are reordered
+#' such that ID columns are moved to the front, followed by the index column
+#' and a [data.table::key()] is set on meta columns, causing rows to be sorted
+#' accordingly. Moving meta columns to the front is done for reasons of
+#' convenience for printing, while setting a key on meta columns is done to
+#' improve efficiency of subsequent transformations such as merging or grouped
+#' operations. Furthermore, `NA` values in either ID or index columns are not
+#' allowed and therefore corresponding rows are removed entirely (with a
+#' warning thrown).
+#'
 #' Coercion between `id_tbl` and `ts_tbl` by default keeps intersecting
 #' attributes fixed and new attributes are by default inferred as for class
 #' instantiation. Each class comes with a class-specific implementation of the
@@ -129,7 +139,7 @@
 #' @rdname id_tbl
 #' @export
 id_tbl <- function(..., id_vars = 1L) {
-  as_id_tbl(data.table(...), id_vars, by_ref = TRUE)
+  as_id_tbl(list(...), id_vars, by_ref = TRUE)
 }
 
 #' @param x Object to query/operate on
@@ -212,7 +222,7 @@ new_id_tbl <- function(x, id_vars, ..., class = character()) {
 #' @rdname id_tbl
 #' @export
 ts_tbl <- function(..., id_vars = 1L, index_var = NULL, interval = NULL) {
-  as_ts_tbl(data.table(...), id_vars, index_var, interval, by_ref = TRUE)
+  as_ts_tbl(list(...), id_vars, index_var, interval, by_ref = TRUE)
 }
 
 #' @rdname id_tbl
@@ -325,7 +335,16 @@ new_tbl <- function(x, ..., class, by_ref = TRUE) {
 
   if (has_name(x, cols)) {
 
-    x <- na.omit(x, cols)
+    nrows <- nrow(x)
+
+    x <- rm_na(x, cols, "any")
+
+    n_rm <- nrows - nrow(x)
+
+    if (n_rm > 0L) {
+      warn_ricu("removed {n_rm} rows due to `NA` values in meta columns",
+                "meta_na_rm")
+    }
 
     x <- setkeyv(x, cols)
     x <- setcolorder(x, c(cols, setdiff(colnames(x), cols)))

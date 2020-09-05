@@ -246,7 +246,7 @@ susp_inf <- function(abx, samp, abx_count_win = hours(24L),
 
   res <- merge(
     si_abx(abx, abx_count_win, abx_min_count),
-    si_samp(make_unique(samp, samp_fun)),
+    si_samp(aggregate(samp, samp_fun)),
     all = TRUE
   )
 

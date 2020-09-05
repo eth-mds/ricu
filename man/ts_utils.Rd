@@ -5,6 +5,7 @@
 \alias{has_no_gaps}
 \alias{has_gaps}
 \alias{fill_gaps}
+\alias{remove_gaps}
 \alias{slide}
 \alias{slide_index}
 \alias{hop}
@@ -24,6 +25,8 @@ has_no_gaps(x)
 has_gaps(...)
 
 fill_gaps(x, limits = NULL, ...)
+
+remove_gaps(x)
 
 slide(x, expr, before, after = hours(0L), ...)
 
