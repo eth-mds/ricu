@@ -1163,14 +1163,24 @@
       ],
       "mimic": [
         {
-          "ids": [30042, 30306, 221653],
+          "ids": [30042, 30306],
+          "table": "inputevents_cv",
+          "sub_var": "itemid"
+        },
+        {
+          "ids": 221653,
           "table": "inputevents_mv",
           "sub_var": "itemid"
         }
       ],
       "mimic_demo": [
         {
-          "ids": [30042, 30306, 221653],
+          "ids": [30042, 30306],
+          "table": "inputevents_cv",
+          "sub_var": "itemid"
+        },
+        {
+          "ids": 221653,
           "table": "inputevents_mv",
           "sub_var": "itemid"
         }
@@ -1202,14 +1212,24 @@
       ],
       "mimic": [
         {
-          "ids": [30043, 30125, 30307, 221662],
+          "ids": [30043, 30125, 30307],
+          "table": "inputevents_cv",
+          "sub_var": "itemid"
+        },
+        {
+          "ids": 221662,
           "table": "inputevents_mv",
           "sub_var": "itemid"
         }
       ],
       "mimic_demo": [
         {
-          "ids": [30043, 30125, 30307, 221662],
+          "ids": [30043, 30125, 30307],
+          "table": "inputevents_cv",
+          "sub_var": "itemid"
+        },
+        {
+          "ids": 221662,
           "table": "inputevents_mv",
           "sub_var": "itemid"
         }
@@ -1346,14 +1366,24 @@
       ],
       "mimic": [
         {
-          "ids": [30044, 30119, 30309, 221289],
+          "ids": [30044, 30119, 30309],
+          "table": "inputevents_cv",
+          "sub_var": "itemid"
+        },
+        {
+          "ids": 221289,
           "table": "inputevents_mv",
           "sub_var": "itemid"
         }
       ],
       "mimic_demo": [
         {
-          "ids": [30044, 30119, 30309, 221289],
+          "ids": [30044, 30119, 30309],
+          "table": "inputevents_cv",
+          "sub_var": "itemid"
+        },
+        {
+          "ids": 221289,
           "table": "inputevents_mv",
           "sub_var": "itemid"
         }
@@ -2546,14 +2576,24 @@
       ],
       "mimic": [
         {
-          "ids": [30047, 30120, 221906],
+          "ids": [30047, 30120],
+          "table": "inputevents_cv",
+          "sub_var": "itemid"
+        },
+        {
+          "ids": 221906,
           "table": "inputevents_mv",
           "sub_var": "itemid"
         }
       ],
       "mimic_demo": [
         {
-          "ids": [30047, 30120, 221906],
+          "ids": [30047, 30120],
+          "table": "inputevents_cv",
+          "sub_var": "itemid"
+        },
+        {
+          "ids": 221906,
           "table": "inputevents_mv",
           "sub_var": "itemid"
         }

@@ -1105,7 +1105,9 @@ cfg <- list(
     category = "medications",
     sources = list(
       mimic = list(
-        list(ids = c(30042L, 30306L, 221653L), table = "inputevents_mv",
+        list(ids = c(30042L, 30306L), table = "inputevents_cv",
+             sub_var = "itemid"),
+        list(ids = 221653L, table = "inputevents_mv",
              sub_var = "itemid")
       ),
       eicu = list(
@@ -1130,8 +1132,9 @@ cfg <- list(
     category = "medications",
     sources = list(
       mimic = list(
-        list(ids = c(30043L, 30125L, 30307L, 221662L),
-             table = "inputevents_mv", sub_var = "itemid")
+        list(ids = c(30043L, 30125L, 30307L), table = "inputevents_cv",
+             sub_var = "itemid"),
+        list(ids = 221662L, table = "inputevents_mv", sub_var = "itemid")
       ),
       eicu = list(
         list(ids = "Dopamine (mcg/kg/min)", table = "infusiondrug",
@@ -1148,7 +1151,9 @@ cfg <- list(
     category = "medications",
     sources = list(
       mimic = list(
-        list(ids = c(30047L, 30120L, 221906L), table = "inputevents_mv",
+        list(ids = c(30047L, 30120L), table = "inputevents_cv",
+             sub_var = "itemid"),
+        list(ids = 221906L, table = "inputevents_mv",
              sub_var = "itemid")
       ),
       eicu = list(
@@ -1173,8 +1178,9 @@ cfg <- list(
     category = "medications",
     sources = list(
       mimic = list(
-        list(ids = c(30044L, 30119L, 30309L, 221289L),
-             table = "inputevents_mv", sub_var = "itemid")
+        list(ids = c(30044L, 30119L, 30309L), table = "inputevents_cv",
+             sub_var = "itemid"),
+        list(ids = 221289L, table = "inputevents_mv", sub_var = "itemid")
       ),
       eicu = list(
         list(ids = "Epinephrine (mcg/kg/min)", table = "infusiondrug",
