@@ -202,6 +202,17 @@ on_failure(all_fun) <- function(call, env) {
   )
 }
 
+all_map <- function(fun, ...) {
+  assert_that(is.function(fun)) && all(lgl_ply(map(fun, ...), isTRUE))
+}
+
+on_failure(all_map) <- function(call, env) {
+  format_assert(
+    "some invocations of `{as_label(call$fun)}` do not evaluate to `TRUE`",
+    "all_map_assert"
+  )
+}
+
 all_null <- function(x) all_fun(x, is.null)
 
 on_failure(all_null) <- function(call, env) {

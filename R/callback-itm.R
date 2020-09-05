@@ -145,7 +145,7 @@ mimic_sampling <- function(x, val_var, aux_time, ...) {
 #' not_b <- transform_fun(comp_na(`!=`, "b"))
 #' not_b(res, val_var = "z")
 #'
-#' @rdname callback_utils
+#' @rdname callback_itm
 #' @export
 transform_fun <- function(fun, ...) {
 
@@ -164,11 +164,11 @@ fahr_to_cels <- function(x) (x - 32) * 5 / 9
 #' @param op Function taking two arguments, such as `+`
 #' @param y Value passed as second argument to function `op`
 #'
-#' @rdname callback_utils
+#' @rdname callback_itm
 #' @export
 binary_op <- function(op, y) function(x) op(x, y)
 
-#' @rdname callback_utils
+#' @rdname callback_itm
 #' @export
 comp_na <- function(op, y) function(x) !is.na(x) & op(x, y)
 
@@ -240,7 +240,7 @@ hirid_death <- function(x, val_var, sub_var, ...) {
 #' @param map Named atomic vector used for mapping a set of values (the names
 #' of `map`) to a different set (the values of `map`)
 #'
-#' @rdname callback_utils
+#' @rdname callback_itm
 #' @export
 apply_map <- function(map) {
 
@@ -258,7 +258,7 @@ apply_map <- function(map) {
 #' @param new Name(s) of transformed units
 #' @param ignore_case Forwarded to [base::grep()]
 #'
-#' @rdname callback_utils
+#' @rdname callback_itm
 #' @export
 convert_unit <- function(rgx, fun, new, ignore_case = TRUE, ...) {
 

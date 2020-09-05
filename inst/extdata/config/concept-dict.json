@@ -1532,7 +1532,7 @@
     "description": "Glasgow coma scale (non-sedated)",
     "category": "neurological",
     "aggregate": ["min", "min", "min", "min", null],
-    "callback": "sofa_gcs",
+    "callback": "cb_gcs",
     "class": "rec_cncpt"
   },
   "glu": {
@@ -2622,7 +2622,7 @@
     "description": "Horowitz index",
     "category": "respiratory",
     "aggregate": ["min", "max"],
-    "callback": "sofa_pafi",
+    "callback": "cb_pafi",
     "class": "rec_cncpt"
   },
   "pco2": {
@@ -3165,10 +3165,10 @@
   },
   "sed": {
     "concepts": ["trach", "rass"],
-    "description": "Sedation status",
+    "description": "sedation status",
     "category": "neurological",
     "aggregate": [null, "min"],
-    "callback": "sofa_sed",
+    "callback": "cb_sed",
     "class": "rec_cncpt"
   },
   "sep3": {
@@ -3570,7 +3570,7 @@
     "concepts": "urine",
     "description": "urine output per 24h",
     "category": "output",
-    "callback": "sofa_urine",
+    "callback": "cb_urine24",
     "class": "rec_cncpt"
   },
   "vent": {
@@ -3578,7 +3578,7 @@
     "description": "ventilation status",
     "category": "respiratory",
     "interval": "00:01:00",
-    "callback": "sofa_vent",
+    "callback": "cb_vent",
     "class": "rec_cncpt"
   },
   "vent_end": {

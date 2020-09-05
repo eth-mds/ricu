@@ -12,8 +12,8 @@
 #' @rdname ts_utils
 #' @export
 #'
-expand <- function(x, min_col, max_col, step_size = time_step(x),
-                   new_index = index_var(x), keep_vars = id_vars(x)) {
+expand <- function(x, min_col, max_col, step_size = NULL, new_index = NULL,
+                   keep_vars = id_vars(x)) {
 
   do_seq <- function(min, max) seq(min, max, step_size)
 
@@ -32,6 +32,12 @@ expand <- function(x, min_col, max_col, step_size = time_step(x),
 
   if (identical(nrow(x), 0L)) {
     return(x)
+  }
+
+  if (is.null(step_size) || is.null(new_index)) {
+    assert_that(is_ts_tbl(x))
+    step_size <- coalesce(step_size, time_step(x))
+    new_index <- coalesce(new_index, index_var(x))
   }
 
   unit <- units(x[[min_col]])

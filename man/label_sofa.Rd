@@ -3,11 +3,6 @@
 \encoding{UTF-8}
 \name{sofa_score}
 \alias{sofa_score}
-\alias{sofa_pafi}
-\alias{sofa_vent}
-\alias{sofa_sed}
-\alias{sofa_gcs}
-\alias{sofa_urine}
 \alias{sofa_window}
 \alias{sofa_compute}
 \title{SOFA score label}
@@ -28,39 +23,6 @@ sofa_score(
   ...,
   interval = NULL
 )
-
-sofa_pafi(
-  po2,
-  fio2,
-  win_length = hours(2L),
-  mode = c("match_vals", "extreme_vals", "fill_gaps"),
-  fix_na_fio2 = TRUE,
-  interval = NULL
-)
-
-sofa_vent(
-  vent_start,
-  vent_end,
-  win_length = hours(6L),
-  min_length = mins(10L),
-  interval = NULL
-)
-
-sofa_sed(trach, rass, interval = NULL)
-
-sofa_gcs(
-  egcs,
-  mgcs,
-  vgcs,
-  tgcs,
-  sed,
-  win_length = hours(6L),
-  set_sed_max = TRUE,
-  set_na_max = TRUE,
-  interval = NULL
-)
-
-sofa_urine(urine, min_win = hours(12L), interval = NULL)
 
 sofa_window(
   tbl,
@@ -102,34 +64,6 @@ input used for sofa score evaluation (\code{ts_tbl} objects, as produced by
 
 \item{interval}{Time series interval (only used for checking consistency
 of input data, \code{NULL} will use the interval of the first data object)}
-
-\item{po2, fio2}{Data input used for PaO₂/FiO₂ evaluation}
-
-\item{win_length}{Maximal time window for which a GCS value is valid
-if no newer measurement is available}
-
-\item{mode}{Method for matching PaO₂ and FiO₂ values}
-
-\item{fix_na_fio2}{Logical flag indicating whether to impute missing FiO₂
-values with 21}
-
-\item{vent_start, vent_end}{Data input used for vent evaluation}
-
-\item{min_length}{Minimal time span between a ventilation start and end
-time}
-
-\item{trach, rass}{Data input used for sed evaluation}
-
-\item{egcs, mgcs, vgcs, tgcs, sed}{Data input used for gcs evaluation}
-
-\item{set_sed_max}{Logical flag for considering sedation}
-
-\item{set_na_max}{Logical flag controlling imputation of missing GCS values
-with the respective maximum values}
-
-\item{urine}{Data input used for urine/24h evaluation}
-
-\item{min_win}{Minimal time span required for calculation of urine/24h}
 
 \item{tbl}{Table holding SOFA covariates}
 

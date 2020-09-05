@@ -324,6 +324,12 @@ change_interval.ts_tbl <- function(x, new_interval, cols = time_vars(x), ...) {
   id_nms <- id_vars(x)
   idx_nm <- index_var(x)
 
+  if (!idx_nm %in% cols) {
+    warn_ricu("when changing the `ts_tbl` interval the index variable is
+               automatically included")
+    cols <- unique(c(idx_nm, cols))
+  }
+
   res <- NextMethod()
 
   new_ts_tbl(res, id_nms, idx_nm, new_interval, by_ref = TRUE)
@@ -441,9 +447,11 @@ unique.id_tbl <- function(x, incomparables = FALSE, by = meta_vars(x), ...) {
 
   by <- force(by)
 
-  temp_unclass(x,
+  res <- temp_unclass(x,
     unique(x, incomparables = incomparables, by = by, ...)
   )
+
+  reclass_tbl(res, x)
 }
 
 #' @rdname tbl_utils
