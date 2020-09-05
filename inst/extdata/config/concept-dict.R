@@ -1540,16 +1540,17 @@ cfg <- list(
     )
   ),
   death = list(
-    target = "id_tbl",
     description = "patient mortality",
     category = "outcome",
     sources = list(
       mimic = list(
-        list(table = "admissions", val_var = "hospital_expire_flag",
+        list(table = "admissions", index_var = "deathtime",
+             val_var = "hospital_expire_flag",
              callback = "transform_fun(comp_na(`==`, 1L))", class = "col_itm")
       ),
       eicu = list(
-        list(table = "patient", val_var = "hospitaldischargestatus",
+        list(table = "patient", index_var = "unitdischargeoffset",
+             val_var = "hospitaldischargestatus",
              callback = "transform_fun(comp_na(`==`, 'Expired'))",
              class = "col_itm")
       ),

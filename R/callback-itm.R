@@ -220,21 +220,14 @@ eicu_age <- function(x, val_var, ...) {
 
 hirid_death <- function(x, val_var, sub_var, ...) {
 
-  threshold <- function(x, col, thresh) {
-    set(x, j = col, value = x[[col]] <= thresh)
-  }
-
-  score <- function(x, id, val) x[, data.table::last(get(val)), by = c(id)]
-
+  idx <- index_var(x)
   idc <- id_vars(x)
 
-  tmp <- split(x, by = sub_var, keep.by = FALSE)
-  tmp <- lapply(tmp, threshold, val_var, 40)
-  tmp <- lapply(tmp, score, idc, val_var)
-  res <- rbind_lst(tmp)
-  res <- res[, any(get("V1")), by = idc]
+  tmp <- dt_gforce(x, "last", by = c(idc, sub_var), vars = c(idx, val_var))
+  tmp <- tmp[, list(max(get(idx)), any(get(val_var) <= 40)), by = c(idc)]
+  tmp <- rename_cols(tmp, c(idc, idx, val_var), by_ref = TRUE)
 
-  rename_cols(res, val_var, "V1", by_ref = TRUE)
+  as_ts_tbl(tmp, index_var = idx, interval = interval(x), by_ref = TRUE)
 }
 
 #' @param map Named atomic vector used for mapping a set of values (the names

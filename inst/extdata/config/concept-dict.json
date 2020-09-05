@@ -1069,13 +1069,13 @@
     }
   },
   "death": {
-    "target": "id_tbl",
     "description": "patient mortality",
     "category": "outcome",
     "sources": {
       "eicu": [
         {
           "table": "patient",
+          "index_var": "unitdischargeoffset",
           "val_var": "hospitaldischargestatus",
           "callback": "transform_fun(comp_na(`==`, 'Expired'))",
           "class": "col_itm"
@@ -1084,6 +1084,7 @@
       "eicu_demo": [
         {
           "table": "patient",
+          "index_var": "unitdischargeoffset",
           "val_var": "hospitaldischargestatus",
           "callback": "transform_fun(comp_na(`==`, 'Expired'))",
           "class": "col_itm"
@@ -1101,6 +1102,7 @@
       "mimic": [
         {
           "table": "admissions",
+          "index_var": "deathtime",
           "val_var": "hospital_expire_flag",
           "callback": "transform_fun(comp_na(`==`, 1L))",
           "class": "col_itm"
@@ -1109,6 +1111,7 @@
       "mimic_demo": [
         {
           "table": "admissions",
+          "index_var": "deathtime",
           "val_var": "hospital_expire_flag",
           "callback": "transform_fun(comp_na(`==`, 1L))",
           "class": "col_itm"
