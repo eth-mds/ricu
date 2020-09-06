@@ -5,6 +5,8 @@
 \alias{rm_cols}
 \alias{change_interval}
 \alias{rm_na}
+\alias{sort.id_tbl}
+\alias{is_sorted}
 \alias{dt_gforce}
 \alias{duplicated.id_tbl}
 \alias{anyDuplicated.id_tbl}
@@ -20,6 +22,10 @@ rm_cols(x, cols, skip_absent = FALSE, by_ref = FALSE)
 change_interval(x, new_interval, cols = time_vars(x), by_ref = FALSE)
 
 rm_na(x, cols = data_vars(x), mode = c("all", "any"))
+
+\method{sort}{id_tbl}(x, decreasing = FALSE, by = meta_vars(x), by_ref = FALSE, ...)
+
+is_sorted(x)
 
 dt_gforce(
   x,
@@ -47,6 +53,8 @@ is_unique(x, ...)
 )
 }
 \arguments{
+\item{x}{Object to query}
+
 \item{new, old}{Replacement names and existing column names for renaming
 columns}
 
@@ -64,11 +72,20 @@ reference}
 missing (for the selected columns) or \code{any}, where a single missing entry
 suffices}
 
+\item{decreasing}{Logical flag indicating the sort order}
+
+\item{by}{Character vector indicating which combinations of columns from
+\code{x} to use for uniqueness checks}
+
+\item{...}{Ignored}
+
 \item{fun}{Function name (as string) to apply over groups}
 
 \item{vars}{Column names to apply the function to}
 
-\item{...}{Ignored}
+\item{na_rm}{Logical flag indicating how to treat \code{NA} values}
+
+\item{incomparables}{Not used. Here for S3 method consistency}
 
 \item{expr}{Expression to apply over groups}
 

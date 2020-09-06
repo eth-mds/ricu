@@ -87,9 +87,9 @@ test_that("ts_tbl constructors", {
   expect_identical(nrow(ts_tbl(a = 1:10, b = hours(c(1:5, NA, 7:10)))), 9L)
   expect_identical(nrow(ts_tbl(a = c(1:5, NA, 7:10), b = hours(c(1:10)))), 9L)
 
-  expect_error(ts_tbl(a = 1:1, b = c(hours(1:9), mins(45))),
+  expect_error(ts_tbl(a = 1:10, b = c(hours(1:9), mins(45))),
                class = "obeys_interval_assert")
-  expect_error(ts_tbl(a = 1:1, b = c(hours(1:9), mins(45)),
+  expect_error(ts_tbl(a = 1:10, b = c(hours(1:9), mins(45)),
                       interval = hours(1L)),
                class = "obeys_interval_assert")
 

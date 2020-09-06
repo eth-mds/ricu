@@ -1069,7 +1069,7 @@
     }
   },
   "death": {
-    "description": "patient mortality",
+    "description": "in hospital mortality",
     "category": "outcome",
     "sources": {
       "eicu": [

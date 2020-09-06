@@ -1540,7 +1540,7 @@ cfg <- list(
     )
   ),
   death = list(
-    description = "patient mortality",
+    description = "in hospital mortality",
     category = "outcome",
     sources = list(
       mimic = list(

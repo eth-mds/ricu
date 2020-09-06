@@ -1,4 +1,6 @@
 
+skip_on_cran()
+
 so_mi <- load_concepts("sofa", "mimic_demo")
 so_ei <- load_concepts("sofa", "eicu_demo")
 
@@ -14,7 +16,7 @@ test_that("sofa", {
   expect_is(so_ei, "ts_tbl")
   expect_true(is_ts_tbl(so_ei))
   expect_identical(id_vars(so_ei), "patientunitstayid")
-  expect_identical(index_var(so_ei), "respchartoffset")
+  expect_identical(index_var(so_ei), "labresultoffset")
   expect_equal(interval(so_ei), hours(1L))
   expect_identical(data_vars(so_ei), "sofa")
 })

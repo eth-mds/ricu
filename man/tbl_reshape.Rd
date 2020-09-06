@@ -37,15 +37,13 @@ unmerge(x, col_groups = as.list(data_vars(x)), by = meta_vars(x), na_rm = TRUE)
 
 \item{x, y}{Objects to combine}
 
-\item{by, by.x, by.y}{Column names used fro combining data}
+\item{by, by.x, by.y}{Column names used for combining data}
 
 \item{col_groups}{A list of character vectors defining the grouping of
 non-by columns}
 
 \item{na_rm}{Logical flag indicating whether to remove rows that have all
 missing entries in the respective \code{col_groups} group}
-
-\item{by}{Columns that will be present in every one of the resulting tables}
 }
 \description{
 Utilities for reshaping \code{id_tbl} and \code{ts_tbl} objects.

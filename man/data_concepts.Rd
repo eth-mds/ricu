@@ -132,7 +132,7 @@ processing steps.
 }
 
 Class instatiation is organized in the same fashion as for
-\link[=new_itm]{\code{item}/\code{itm}} objects: \code{concept()} maps vector-valued arguments
+\code{\link[=new_itm]{item}} objects: \code{concept()} maps vector-valued arguments
 to \code{new_cncpt()}, which internally calls the S3 generic function
 \code{init_cncpt()}, while \code{new_concept()} instantiates a \code{concept} object from
 a list of \code{cncpt} objects (created by calls to \code{new_cncpt()}). Coercion is

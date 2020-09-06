@@ -89,8 +89,7 @@ accordingly. Moving meta columns to the front is done for reasons of
 convenience for printing, while setting a key on meta columns is done to
 improve efficiency of subsequent transformations such as merging or grouped
 operations. Furthermore, \code{NA} values in either ID or index columns are not
-allowed and therefore corresponding rows are removed entirely (with a
-warning thrown).
+allowed and therefore corresponding rows are silently removed.
 
 Coercion between \code{id_tbl} and \code{ts_tbl} by default keeps intersecting
 attributes fixed and new attributes are by default inferred as for class
@@ -126,8 +125,7 @@ attribute marking the column as such and thusly leaving the object in an
 inconsistent state. Instead of masking the function \code{setnames()}, an
 alternative is provided as \code{\link[=rename_cols]{rename_cols()}}. In places where it is possible
 to seamlessly insert the appropriate function (such as
-\link[base:names]{base::\verb{names<-}()} or
-\link[base:colnames]{base::\verb{colnames<-}()}) and the responsibility for not
+\code{\link[base:names]{base::names<-()}} or \code{\link[base:colnames]{base::colnames<-()}}) and the responsibility for not
 using \code{\link[data.table:setattr]{data.table::setnames()}} in a way that breaks the \code{id_tbl} object is
 left to the user.
 

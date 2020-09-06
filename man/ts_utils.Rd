@@ -15,8 +15,8 @@ expand(
   x,
   min_col,
   max_col,
-  step_size = time_step(x),
-  new_index = index_var(x),
+  step_size = NULL,
+  new_index = NULL,
   keep_vars = id_vars(x)
 )
 

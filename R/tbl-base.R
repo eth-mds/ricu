@@ -3,13 +3,13 @@
 `[.id_tbl` <- function(x, ...) wrap_ptype(as_ptype(x), NextMethod())
 
 #' @export
-`[<-.id_tbl` <- function(x, ...) wrap_ptype(as_ptype(x), NextMethod())
+`[<-.id_tbl` <- function(x, ..., value) wrap_ptype(as_ptype(x), NextMethod())
 
 #' @export
-`[[<-.id_tbl` <- function(x, ...) wrap_ptype(as_ptype(x), NextMethod())
+`[[<-.id_tbl` <- function(x, ..., value) wrap_ptype(as_ptype(x), NextMethod())
 
 #' @export
-`$<-.id_tbl` <- function(x, ...) wrap_ptype(as_ptype(x), NextMethod())
+`$<-.id_tbl` <- function(x, ..., value) wrap_ptype(as_ptype(x), NextMethod())
 
 wrap_ptype <- function(ptyp, res) {
 
@@ -138,7 +138,7 @@ cbind.id_tbl <- .cbind.id_tbl
 rbind.id_tbl <- .rbind.id_tbl
 
 #' @param x,y Objects to combine
-#' @param by,by.x,by.y Column names used fro combining data
+#' @param by,by.x,by.y Column names used for combining data
 #'
 #' @rdname tbl_reshape
 #' @export
@@ -171,7 +171,8 @@ merge.id_tbl <- function(x, y, by = NULL, by.x = NULL, by.y = NULL, ...) {
       }
 
       if (is_ts_tbl(y)) {
-        targ <- new_ts_tbl(list(), id_vars(x), index_var(y), interval(y))
+        targ <- as_ptype(y)
+        targ <- rename_cols(targ, id_vars(x), id_vars(targ))
       } else {
         targ <- as_ptype(x)
       }
@@ -201,7 +202,9 @@ merge.id_tbl <- function(x, y, by = NULL, by.x = NULL, by.y = NULL, ...) {
     res <- data.table::merge.data.table(x, y, by, ...)
   }
 
-  reclass_tbl(res, targ)
+  res <- reclass_tbl(res, targ)
+
+  sort(res, by_ref = TRUE)
 }
 
 #' @rdname tbl_reshape
@@ -256,12 +259,13 @@ rbind_lst <- function(x, ...) {
     on.exit(Map(do_rename, x[id_tbls], old_ptp))
   }
 
-  reclass_tbl(dt_rbl(x, ...), ptyp)
+  res <- reclass_tbl(dt_rbl(x, ...), ptyp)
+
+  sort(res, by_ref = TRUE)
 }
 
 #' @param col_groups A list of character vectors defining the grouping of
 #' non-by columns
-#' @param by Columns that will be present in every one of the resulting tables
 #' @param na_rm Logical flag indicating whether to remove rows that have all
 #' missing entries in the respective `col_groups` group
 #'

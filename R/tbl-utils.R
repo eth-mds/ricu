@@ -115,6 +115,10 @@ meta_vars.id_tbl <- function(x) id_vars(x)
 #' @export
 meta_vars.ts_tbl <- function(x) c(id_vars(x), index_var(x))
 
+#' @method meta_vars data.table
+#' @export
+meta_vars.data.table <- function(x) character(0L)
+
 #' @rdname tbl_meta
 #' @export
 data_vars <- function(x) setdiff(colnames(x), meta_vars(x))
@@ -207,6 +211,10 @@ rename_cols <- function(x, new, old = colnames(x), skip_absent = FALSE,
               is.flag(skip_absent), is.flag(by_ref),
               is_unique(rename(colnames(x), new, old)))
 
+  if (setequal(new, old)) {
+    return(x)
+  }
+
   UseMethod("rename_cols", x)
 }
 
@@ -221,9 +229,9 @@ rename_cols.ts_tbl <- function(x, new, old = colnames(x),
     new_ind <- new[old %in% new_ind]
   }
 
-  res <- NextMethod()
+  x <- set_attributes(x, index_var = unname(new_ind))
 
-  new_ts_tbl(res, id_vars(res), new_ind, intval)
+  NextMethod()
 }
 
 #' @export
@@ -240,9 +248,11 @@ rename_cols.id_tbl <- function(x, new, old = colnames(x),
     old <- old[hits]
   }
 
-  res <- NextMethod()
+  new_id <- rename(id_vars(x), new, old)
 
-  new_id_tbl(res, rename(id_vars(x), new, old))
+  x <- set_attributes(x, id_vars = unname(new_id))
+
+  NextMethod()
 }
 
 #' @method rename_cols data.table
@@ -260,7 +270,7 @@ rename_cols.data.table <- function(x, new, old = colnames(x),
 
   x <- setnames(x, old, new, skip_absent)
 
-  x
+  check_valid(x)
 }
 
 #' @rdname tbl_utils
@@ -330,9 +340,11 @@ change_interval.ts_tbl <- function(x, new_interval, cols = time_vars(x), ...) {
     cols <- unique(c(idx_nm, cols))
   }
 
-  res <- NextMethod()
+  x <- NextMethod()
 
-  new_ts_tbl(res, id_nms, idx_nm, new_interval, by_ref = TRUE)
+  check_valid(
+    set_attributes(x, interval = new_interval)
+  )
 }
 
 #' @method change_interval data.table
@@ -340,13 +352,15 @@ change_interval.ts_tbl <- function(x, new_interval, cols = time_vars(x), ...) {
 change_interval.data.table <- function(x, new_interval, cols = time_vars(x),
                                        by_ref = FALSE) {
 
-  change_time <- function(x) re_time(x, new_interval)
-
   if (!by_ref) {
     x <- copy(x)
   }
 
-  x[, c(cols) := lapply(.SD, change_time), .SDcols = cols]
+  for (col in cols) {
+    set(x, j = col, value = re_time(x[[col]], new_interval))
+  }
+
+  x
 }
 
 #' @param cols Column names of columns to consider
@@ -361,23 +375,63 @@ rm_na <- function(x, cols = data_vars(x), mode = c("all", "any")) {
 
   mode <- match.arg(mode)
 
+  if (length(cols) == 0L) {
+    return(x)
+  }
+
   assert_that(has_cols(x, cols))
 
-  if (identical(mode, "any")) {
+  if (identical(mode, "any") || length(cols) == 1L) {
     return(na.omit(x, cols))
   }
 
-  if (length(cols) == 1L) {
-    drop <- is.na(x[[cols]])
-  } else {
-    drop <- Reduce(`&`, lapply(x[, cols, with = FALSE], is.na))
-  }
+  drop <- Reduce(`&`, lapply(x[, cols, with = FALSE], is.na))
 
   x[!drop, ]
 }
 
+#' @param decreasing Logical flag indicating the sort order
+#'
+#' @rdname tbl_utils
+#' @export
+sort.id_tbl <- function(x, decreasing = FALSE, by = meta_vars(x),
+                        by_ref = FALSE, ...) {
+
+  warn_dots(...)
+
+  assert_that(has_cols(x, by), is.flag(decreasing), is.flag(by_ref))
+
+  if (!by_ref) {
+    x <- copy(x)
+  }
+
+  if (decreasing) {
+    x <- data.table::setorderv(x, by, order = -1L)
+  } else {
+    x <- data.table::setkeyv(x, by, physical = TRUE)
+  }
+
+  x
+}
+
+#' @rdname tbl_utils
+#' @export
+is_sorted <- function(x) {
+
+  meta <- meta_vars(x)
+
+  identical(head(data.table::key(x), n = length(meta)), meta)
+}
+
+on_failure(is_sorted) <- function(call, env) {
+  cols <- meta_vars(eval(call$x, env))
+  format_assert("{as_label(call$x)} is not sored by {quote_bt(cols)} in
+                 increasing order", "is_sorted_assert")
+}
+
 #' @param fun Function name (as string) to apply over groups
 #' @param vars Column names to apply the function to
+#' @param na_rm Logical flag indicating how to treat `NA` values
 #'
 #' @rdname tbl_utils
 #' @export
@@ -417,6 +471,11 @@ temp_unclass <- function(x, expr) {
   expr
 }
 
+#' @param x Object to query
+#' @param incomparables Not used. Here for S3 method consistency
+#' @param by Character vector indicating which combinations of columns from
+#' `x` to use for uniqueness checks
+#'
 #' @rdname tbl_utils
 #' @export
 duplicated.id_tbl <- function(x, incomparables = FALSE,

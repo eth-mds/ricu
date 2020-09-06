@@ -49,8 +49,7 @@
 #' convenience for printing, while setting a key on meta columns is done to
 #' improve efficiency of subsequent transformations such as merging or grouped
 #' operations. Furthermore, `NA` values in either ID or index columns are not
-#' allowed and therefore corresponding rows are removed entirely (with a
-#' warning thrown).
+#' allowed and therefore corresponding rows are silently removed.
 #'
 #' Coercion between `id_tbl` and `ts_tbl` by default keeps intersecting
 #' attributes fixed and new attributes are by default inferred as for class
@@ -84,8 +83,7 @@
 #' inconsistent state. Instead of masking the function `setnames()`, an
 #' alternative is provided as [rename_cols()]. In places where it is possible
 #' to seamlessly insert the appropriate function (such as
-#' [base::`names<-`()][base::names()] or
-#' [base::`colnames<-`()][base::colnames()]) and the responsibility for not
+#' [base::names<-()] or [base::colnames<-()]) and the responsibility for not
 #' using [data.table::setnames()] in a way that breaks the `id_tbl` object is
 #' left to the user.
 #'
@@ -158,42 +156,26 @@ as_id_tbl <- function(x, id_vars = NULL, by_ref = FALSE) {
 }
 
 #' @export
-as_id_tbl.ts_tbl <- function(x, id_vars = NULL, by_ref = FALSE) {
-
-  id_vars <- coalesce(id_vars, id_vars(x))
-
-  as_id_tbl.id_tbl(x, id_vars, by_ref)
-}
-
-#' @export
-as_id_tbl.id_tbl <- function(x, id_vars = NULL, by_ref = FALSE) {
-
-  if (is.null(id_vars)) {
-    return(x)
-  }
-
-  as_id_tbl.data.table(x, id_vars, by_ref)
+as_id_tbl.id_tbl <- function(x, id_vars = NULL, ...) {
+  as_id_tbl.data.table(x, coalesce(id_vars, id_vars(x)), ...)
 }
 
 #' @method as_id_tbl data.table
 #' @export
 as_id_tbl.data.table <- function(x, id_vars = NULL, by_ref = FALSE) {
-
-  validate_unclass(
-    new_id_tbl(x, id_vars, by_ref = by_ref), x, by_ref
-  )
+  new_id_tbl(x, id_vars, by_ref = by_ref)
 }
 
 #' @export
 as_id_tbl.default <- function(x, id_vars = NULL, by_ref = FALSE) {
 
-  if (by_ref) {
+  if (isTRUE(by_ref)) {
     setDT(x)
   } else {
     x <- as.data.table(x)
   }
 
-  as_id_tbl(x, id_vars = id_vars, by_ref = TRUE)
+  as_id_tbl(x, id_vars = id_vars, by_ref = by_ref)
 }
 
 new_id_tbl <- function(x, id_vars, ..., class = character()) {
@@ -231,34 +213,23 @@ is_ts_tbl <- is_type("ts_tbl")
 
 #' @rdname id_tbl
 #' @export
-as_ts_tbl <- function(x, id_vars = NULL, index_var = NULL, interval = NULL,
-                      by_ref = FALSE) {
+as_ts_tbl <- function(x, id_vars = NULL, index_var = NULL,
+                      interval = NULL, by_ref = FALSE) {
 
   UseMethod("as_ts_tbl", x)
 }
 
 #' @export
 as_ts_tbl.ts_tbl <- function(x, id_vars = NULL, index_var = NULL,
-                             interval = NULL, by_ref = FALSE) {
+                             interval = NULL, ...) {
 
-  if (is.null(id_vars) && is.null(index_var) && is.null(interval)) {
-    return(x)
-  }
-
-  id_vars   <- coalesce(id_vars,   id_vars(x))
-  index_var <- coalesce(index_var, index_var(x))
-  interval  <- coalesce(interval,  interval(x))
-
-  as_ts_tbl.id_tbl(x, id_vars, index_var, interval, by_ref)
+  as_ts_tbl.id_tbl(x, id_vars, coalesce(index_var, index_var(x)),
+                   coalesce(interval, interval(x)), ...)
 }
 
 #' @export
-as_ts_tbl.id_tbl <- function(x, id_vars = NULL, index_var = NULL,
-                             interval = NULL, by_ref = FALSE) {
-
-  id_vars <- coalesce(id_vars, id_vars(x))
-
-  as_ts_tbl.data.table(x, id_vars, index_var, interval, by_ref)
+as_ts_tbl.id_tbl <- function(x, id_vars = NULL, ...) {
+  as_ts_tbl.data.table(x, coalesce(id_vars, id_vars(x)), ...)
 }
 
 #' @method as_ts_tbl data.table
@@ -266,23 +237,21 @@ as_ts_tbl.id_tbl <- function(x, id_vars = NULL, index_var = NULL,
 as_ts_tbl.data.table <- function(x, id_vars = NULL, index_var = NULL,
                                  interval = NULL, by_ref = FALSE) {
 
-  validate_unclass(
-    new_ts_tbl(x, id_vars, index_var, interval, by_ref = by_ref), x, by_ref
-  )
+  new_ts_tbl(x, id_vars, index_var, interval, by_ref = by_ref)
 }
 
 #' @export
 as_ts_tbl.default <- function(x, id_vars = NULL, index_var = NULL,
                               interval = NULL, by_ref = FALSE) {
 
-  if (by_ref) {
+  if (isTRUE(by_ref)) {
     x <- setDT(x)
   } else {
     x <- as.data.table(x)
   }
 
   as_ts_tbl(x, id_vars = id_vars, index_var = index_var, interval = interval,
-            by_ref = TRUE)
+            by_ref = by_ref)
 }
 
 new_ts_tbl <- function(x, id_vars, index_var = NULL, interval = NULL,
@@ -315,7 +284,9 @@ new_tbl <- function(x, ..., class, by_ref = TRUE) {
 
   assert_that(is.list(x), is.flag(by_ref), is_unique(names(x)))
 
-  if (!by_ref) {
+  if (isTRUE(by_ref)) {
+    ptyp <- as_ptype(x)
+  } else {
     x <- copy(x)
   }
 
@@ -323,49 +294,46 @@ new_tbl <- function(x, ..., class, by_ref = TRUE) {
 
   dots <- list(...)
 
-  if (is_id_tbl(x)) {
-    x <- unclass_tbl(x)
-  }
+  x <- unclass_tbl(x)
 
   attrs <- c(dots, list(class = c(class, class(x))))
 
-  x <- set_attributes(x, attrs)
+  x <- do.call(set_attributes, c(list(x), attrs))
 
-  cols <- unique(meta_vars(x))
+  chk <- validate_tbl(x)
 
-  if (has_name(x, cols)) {
+  if (isTRUE(chk)) {
 
+    mcols <- meta_vars(x)
     nrows <- nrow(x)
 
-    x <- rm_na(x, cols, "any")
+    x <- rm_na(x, mcols, "any")
+    x <- sort(x, by = mcols, by_ref = TRUE)
+    x <- setcolorder(x, c(mcols, setdiff(colnames(x), mcols)))
 
-    n_rm <- nrows - nrow(x)
-
-    if (n_rm > 0L) {
-      warn_ricu("removed {n_rm} rows due to `NA` values in meta columns",
-                "meta_na_rm")
-    }
-
-    x <- setkeyv(x, cols)
-    x <- setcolorder(x, c(cols, setdiff(colnames(x), cols)))
+    return(x)
   }
 
+  if (isTRUE(by_ref)) {
+    reclass_tbl(x, ptyp, TRUE)
+  }
+
+  stop_ricu(chk, class = c("valid_unclass_fail", attr(chk, "assert_class")))
+}
+
+set_attributes <- function(x, ...) {
+
+  dot <- list(...)
+  nms <- names(dot)
+
+  assert_that(is.list(dot), has_length(dot), not_null(nms), is_unique(nms))
+
+  Map(setattr, list(x), nms, dot)
+
   x
 }
 
-set_attributes <- function(x, attributes) {
-
-  nms <- names(attributes)
-
-  assert_that(is.list(attributes), has_length(attributes),
-              not_null(nms), is_unique(nms))
-
-  Map(setattr, list(x), nms, attributes)
-
-  x
-}
-
-strip_class <- function(x, what) setdiff(class(x), what)
+strip_class <- function(x, what = class(x)[1L]) setdiff(class(x), what)
 
 #' Internal utilities for ICU data objects
 #'
@@ -393,14 +361,14 @@ unclass_tbl.data.frame <- function(x) x
 #' @export
 unclass_tbl.ts_tbl <- function(x) {
   unclass_tbl(
-    set_attributes(x, list(index_var = NULL, interval = NULL,
-                           class = strip_class(x, "ts_tbl")))
+    set_attributes(x, index_var = NULL, interval = NULL,
+                   class = strip_class(x))
   )
 }
 
 #' @export
 unclass_tbl.id_tbl <- function(x) {
-  set_attributes(x, list(id_vars = NULL, class = strip_class(x, "id_tbl")))
+  set_attributes(x, id_vars = NULL, class = strip_class(x))
 }
 
 #' @param template Object after which to model the object in question
@@ -410,8 +378,9 @@ unclass_tbl.id_tbl <- function(x) {
 #' @rdname tbl_internal
 #' @keywords internal
 #' @export
-reclass_tbl <- function(x, template, stop_on_fail = TRUE)
+reclass_tbl <- function(x, template, stop_on_fail = TRUE) {
   UseMethod("reclass_tbl", template)
+}
 
 #' @export
 reclass_tbl.NULL <- function(x, template, stop_on_fail = TRUE) x
@@ -419,25 +388,31 @@ reclass_tbl.NULL <- function(x, template, stop_on_fail = TRUE) x
 #' @export
 reclass_tbl.id_tbl <- function(x, template, stop_on_fail = TRUE) {
 
-  id_nms <- id_vars(template)
+  x <- NextMethod(object = template)
 
-  check_valid(new_id_tbl(x, id_nms), stop_on_fail)
+  check_valid(set_attributes(x, id_vars = id_vars(template), class = .Class),
+              stop_on_fail)
 }
 
 #' @export
 reclass_tbl.ts_tbl <- function(x, template, stop_on_fail = TRUE) {
 
-  id_nms <- id_vars(template)
-  idx_nm <- index_var(template)
-  intval <- interval(template)
+  x <- NextMethod(object = template)
 
-  res <- new_ts_tbl(x, id_nms, idx_nm, intval)
+  x <- set_attributes(x, index_var = index_var(template),
+                      interval = interval(template), class = .Class)
 
-  if (isTRUE(validate_tbl(res))) {
-    return(res)
+  if (isTRUE(validate_tbl(x))) {
+    return(x)
   }
 
-  check_valid(new_id_tbl(x, id_nms), stop_on_fail)
+  NextMethod(object = template)
+}
+
+#' @method reclass_tbl data.table
+#' @export
+reclass_tbl.data.table <- function(x, template, stop_on_fail = TRUE) {
+  check_valid(unclass_tbl(x), stop_on_fail)
 }
 
 try_reclass <- function(x, template) {
@@ -447,23 +422,17 @@ try_reclass <- function(x, template) {
 #' @rdname tbl_internal
 #' @keywords internal
 #' @export
-as_ptype <- function(x) UseMethod("as_ptype", x)
-
-#' @export
-as_ptype.id_tbl <- function(x) {
-  new_id_tbl(list(), id_vars(x))
-}
-
-#' @export
-as_ptype.ts_tbl <- function(x) {
-  new_ts_tbl(list(), id_vars(x), index_var(x), interval(x))
+as_ptype <- function(x) {
+  reclass_tbl(as.data.table(lapply(x, `[`, 0L)[meta_vars(x)]), x)
 }
 
 #' @rdname id_tbl
 #' @export
 validate_tbl <- function(x) {
 
-  res <- validate_that(is_dt(x), is_unique(colnames(x)))
+  res <- validate_that(
+    is_dt(x), is_unique(colnames(x))
+  )
 
   if (!isTRUE(res)) {
     return(res)
@@ -475,7 +444,8 @@ validate_tbl <- function(x) {
 #' @export
 validate_tbl.id_tbl <- function(x) {
 
-  res <- validate_that(has_cols(x, id_vars(x)))
+  idv <- id_vars(x)
+  res <- validate_that(has_cols(x, idv), is_unique(idv))
 
   if (isTRUE(res)) NextMethod() else res
 }
@@ -489,7 +459,7 @@ validate_tbl.ts_tbl <- function(x) {
 
   res <- validate_that(
     is.string(invar), has_cols(x, invar), is_disjoint(id_vars(x), invar),
-    obeys_interval(index, inval)
+    obeys_interval(index, inval), same_unit(index, inval)
   )
 
   if (isTRUE(res)) NextMethod() else res
@@ -497,24 +467,7 @@ validate_tbl.ts_tbl <- function(x) {
 
 #' @method validate_tbl data.table
 #' @export
-validate_tbl.data.table <- function(x) {
-  validate_that(has_cols(x, meta_vars(x)), is_unique(colnames(x)))
-}
-
-validate_unclass <- function(new, old, by_ref) {
-
-  chk <- validate_tbl(new)
-
-  if (isTRUE(chk)) {
-    return(new)
-  }
-
-  if (by_ref) {
-    unclass_tbl(old)
-  }
-
-  stop_ricu(chk, class = c("valid_unclass_fail", attr(chk, "assert_class")))
-}
+validate_tbl.data.table <- function(x) TRUE
 
 check_valid <- function(x, stop_on_fail = TRUE) {
 
@@ -540,6 +493,6 @@ set_id_vars <- function(x, new_id_vars) {
   assert_that(is.character(new_id_vars), has_length(new_id_vars))
 
   check_valid(
-    set_attributes(x, list(id_vars = new_id_vars))
+    set_attributes(x, id_vars = unname(new_id_vars))
   )
 }

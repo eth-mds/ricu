@@ -573,7 +573,7 @@ target_class.cncpt <- function(x) x[["target"]]
 #'   processing steps.
 #'
 #' Class instatiation is organized in the same fashion as for
-#' [`item`/`itm`][new_itm()] objects: `concept()` maps vector-valued arguments
+#' [`item`][new_itm()] objects: `concept()` maps vector-valued arguments
 #' to `new_cncpt()`, which internally calls the S3 generic function
 #' `init_cncpt()`, while `new_concept()` instantiates a `concept` object from
 #' a list of `cncpt` objects (created by calls to `new_cncpt()`). Coercion is
