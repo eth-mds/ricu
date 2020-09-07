@@ -8,11 +8,11 @@ test_that("id_tbl constructors", {
   expect_identical(id_vars(tbl), "a")
   expect_identical(data_vars(tbl), "b")
   expect_identical(meta_vars(tbl), "a")
-  expect_error(index_var(tbl), "no applicable method")
-  expect_error(index_col(tbl), "no applicable method")
-  expect_error(interval(tbl), "no applicable method")
-  expect_error(time_step(tbl), "no applicable method")
-  expect_error(time_unit(tbl), "no applicable method")
+  expect_error(index_var(tbl), class = "generic_no_fun")
+  expect_error(index_col(tbl), class = "generic_no_fun")
+  expect_error(interval(tbl), class = "generic_no_fun")
+  expect_error(time_step(tbl), class = "generic_no_fun")
+  expect_error(time_unit(tbl), class = "generic_no_fun")
 
   dat <- data.frame(a = 1:10, b = hours(1:10), c = rnorm(10))
   tbl <- as_id_tbl(dat)
@@ -27,11 +27,11 @@ test_that("id_tbl constructors", {
   ptyp <- as_ptype(tbl)
 
   expect_identical(id_vars(ptyp), "a")
-  expect_error(index_var(ptyp), "no applicable method")
-  expect_error(index_col(ptyp), "no applicable method")
-  expect_error(interval(ptyp), "no applicable method")
-  expect_error(time_step(ptyp), "no applicable method")
-  expect_error(time_unit(ptyp), "no applicable method")
+  expect_error(index_var(ptyp), class = "generic_no_fun")
+  expect_error(index_col(ptyp), class = "generic_no_fun")
+  expect_error(interval(ptyp), class = "generic_no_fun")
+  expect_error(time_step(ptyp), class = "generic_no_fun")
+  expect_error(time_unit(ptyp), class = "generic_no_fun")
 
   expect_identical(nrow(id_tbl(a = c(1:5, NA, 7:10), b = rnorm(10))), 9L)
 

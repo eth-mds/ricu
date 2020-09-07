@@ -23,7 +23,14 @@ change_interval(x, new_interval, cols = time_vars(x), by_ref = FALSE)
 
 rm_na(x, cols = data_vars(x), mode = c("all", "any"))
 
-\method{sort}{id_tbl}(x, decreasing = FALSE, by = meta_vars(x), by_ref = FALSE, ...)
+\method{sort}{id_tbl}(
+  x,
+  decreasing = FALSE,
+  by = meta_vars(x),
+  reorder_cols = TRUE,
+  by_ref = FALSE,
+  ...
+)
 
 is_sorted(x)
 
@@ -77,6 +84,9 @@ suffices}
 \item{by}{Character vector indicating which combinations of columns from
 \code{x} to use for uniqueness checks}
 
+\item{reorder_cols}{Logical flag indicating whether to move the \code{by}
+columns to the front.}
+
 \item{...}{Ignored}
 
 \item{fun}{Function name (as string) to apply over groups}
@@ -108,5 +118,34 @@ down-sides, a separate function, \code{rename_cols()} is provided, which is able
 to handle column renaming correctly.
 }
 \details{
-yada yada
+Apart from a function for renaming columns while respecting attributes
+marking columns a index or ID columns, several other utility functions are
+provided to make handling of \code{id_tbl} and \code{ts_tbl} objects more convenient.
+\subsection{Sorting}{
+
+An \code{id_tbl} or \code{ts_tbl} object is considered sorted when rows are in
+ascending order according to column as specified by \code{\link[=meta_vars]{meta_vars()}}. This
+means that for an \code{id_tbl} object rows have to be ordered by \code{\link[=id_vars]{id_vars()}}
+and for a \code{ts_tbl} object rows have to be ordered first by \code{\link[=id_vars]{id_vars()}},
+followed by the \code{\link[=index_var]{index_var()}}. Calling the S3 generic function
+\code{\link[base:sort]{base::sort()}} on an object that inherits form \code{id_tbl} using default
+arguments yields an object that is considered sorted. For convenience
+(mostly in printing), the column by which the table was sorted are moved to
+the front (this can be disabled by passing \code{FALSE} as \code{reorder_cols}
+argument). Internally, sorting is handled by either setting a
+\code{\link[data.table:setkey]{data.table::key()}} in case \code{decreasing = FALSE} or be calling
+\code{\link[data.table:setorder]{data.table::setorder()}} in case \code{decreasing = TRUE}.
+}
+
+\subsection{Uniqueness}{
+
+On object inheriting form \code{ts_tbl} is considered unique if it is unique in
+terms of the columns as specified by \code{\link[=meta_vars]{meta_vars()}}.
+}
+
+\subsection{Aggregating}{
+
+In order to turn a non-unique \code{id_tbl} or \code{ts_tbl} object into a unique
+one, the S3 generic function \code{\link[stats:aggregate]{stats::aggregate()}} is available.
+}
 }

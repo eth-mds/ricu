@@ -152,6 +152,9 @@ import_src.character <- function(x, name = "data-sources", file = NULL,
   invisible(NULL)
 }
 
+#' @export
+import_src.default <- function(x, ...) stop_generic(x, .Generic)
+
 #' @param progress Either `NULL` or a progress bar as created by
 #' [progress::progress_bar()]
 #'
@@ -172,6 +175,9 @@ import_tbl.tbl_cfg <- function(x, dir = src_data_dir(x), progress = NULL,
     csv_to_fst(x, dir, progress, ...)
   }
 }
+
+#' @export
+import_tbl.default <- function(x, ...) stop_generic(x, .Generic)
 
 merge_fst_chunks <- function(src_dir, targ_dir, cols, sort_col, prog, nme) {
 

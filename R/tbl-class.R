@@ -309,13 +309,12 @@ new_tbl <- function(x, ..., class, by_ref = TRUE) {
 
     x <- rm_na(x, mcols, "any")
     x <- sort(x, by = mcols, by_ref = TRUE)
-    x <- setcolorder(x, c(mcols, setdiff(colnames(x), mcols)))
 
     return(x)
   }
 
   if (isTRUE(by_ref)) {
-    reclass_tbl(x, ptyp, TRUE)
+    reclass_tbl(x, ptyp)
   }
 
   stop_ricu(chk, class = c("valid_unclass_fail", attr(chk, "assert_class")))
@@ -371,6 +370,9 @@ unclass_tbl.id_tbl <- function(x) {
   set_attributes(x, id_vars = NULL, class = strip_class(x))
 }
 
+#' @export
+unclass_tbl.default <- function(x) stop_generic(x, .Generic)
+
 #' @param template Object after which to model the object in question
 #' @param stop_on_fail Logical flag indicating whether to consider failed
 #' object validation as error
@@ -415,6 +417,17 @@ reclass_tbl.data.table <- function(x, template, stop_on_fail = TRUE) {
   check_valid(unclass_tbl(x), stop_on_fail)
 }
 
+#' @method reclass_tbl data.frame
+#' @export
+reclass_tbl.data.frame <- function(x, template, stop_on_fail = TRUE) {
+  check_valid(setDF(unclass_tbl(x)), stop_on_fail)
+}
+
+#' @export
+reclass_tbl.default <- function(x, template, ...) {
+  stop_generic(template, .Generic)
+}
+
 try_reclass <- function(x, template) {
   reclass_tbl(x, template, stop_on_fail = FALSE)
 }
@@ -422,9 +435,23 @@ try_reclass <- function(x, template) {
 #' @rdname tbl_internal
 #' @keywords internal
 #' @export
-as_ptype <- function(x) {
+as_ptype <- function(x) UseMethod("as_ptype", x)
+
+#' @export
+as_ptype.id_tbl <- function(x) {
   reclass_tbl(as.data.table(lapply(x, `[`, 0L)[meta_vars(x)]), x)
 }
+
+#' @method reclass_tbl data.table
+#' @export
+as_ptype.data.table <- function(x) data.table()
+
+#' @method reclass_tbl data.frame
+#' @export
+as_ptype.data.frame <- function(x) data.frame()
+
+#' @export
+as_ptype.default <- function(x) stop_generic(x, .Generic)
 
 #' @rdname id_tbl
 #' @export
@@ -465,9 +492,12 @@ validate_tbl.ts_tbl <- function(x) {
   if (isTRUE(res)) NextMethod() else res
 }
 
-#' @method validate_tbl data.table
+#' @method validate_tbl data.frame
 #' @export
-validate_tbl.data.table <- function(x) TRUE
+validate_tbl.data.frame <- function(x) TRUE
+
+#' @export
+validate_tbl.default <- function(x) stop_generic(x, .Generic)
 
 check_valid <- function(x, stop_on_fail = TRUE) {
 

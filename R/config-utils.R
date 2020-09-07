@@ -131,6 +131,9 @@ as_tbl_cfg.tbl_cfg <- function(x) x
 as_tbl_cfg.src_cfg <- function(x) x[["tbl_cfg"]]
 
 #' @export
+as_tbl_cfg.default <- function(x) stop_generic(x, .Generic)
+
+#' @export
 dim.tbl_cfg <- function(x) {
   c(x[["nrow"]], length(x[["cols"]]))
 }
@@ -263,6 +266,9 @@ src_name.col_cfg <- function(x) x[["src"]]
 #' @export
 src_name.tbl_cfg <- function(x) x[["src"]]
 
+#' @export
+src_name.default <- function(x) stop_generic(x, .Generic)
+
 #' @rdname cfg_utils
 #' @export
 tbl_name <- function(x) UseMethod("tbl_name", x)
@@ -274,3 +280,6 @@ tbl_name.col_cfg <- function(x) x[["table"]]
 #' @rdname cfg_utils
 #' @export
 tbl_name.tbl_cfg <- function(x) x[["table"]]
+
+#' @export
+tbl_name.default <- function(x) stop_generic(x, .Generic)

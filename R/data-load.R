@@ -38,6 +38,9 @@ load_src.character <- function(x, src, ...) {
   load_src(as_src_tbl(x, src), ...)
 }
 
+#' @export
+load_src.default <- function(x, ...) stop_generic(x, .Generic)
+
 #' @rdname load_src
 #' @export
 load_difftime <- function(x, ...) UseMethod("load_difftime", x)
@@ -84,6 +87,9 @@ load_difftime.hirid_tbl <- function(x, rows, cols = colnames(x),
 load_difftime.character <- function(x, src, ...) {
   load_difftime(as_src_tbl(x, src), ...)
 }
+
+#' @export
+load_difftime.default <- function(x, ...) stop_generic(x, .Generic)
 
 resolve_id_hint <- function(tbl, hint) {
 

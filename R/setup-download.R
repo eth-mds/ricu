@@ -167,6 +167,9 @@ download_src.character <- function(x, name = "data-sources", file = NULL,
   invisible(NULL)
 }
 
+#' @export
+download_src.default <- function(x, ...) stop_generic(x, .Generic)
+
 download_pysionet_file <- function(url, dest = NULL, user = NULL,
                                    pass = NULL, head_only = FALSE,
                                    progress = NULL) {

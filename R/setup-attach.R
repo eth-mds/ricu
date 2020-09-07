@@ -91,6 +91,9 @@ attach_src.character <- function(x, name = "data-sources", file = NULL,
   invisible(NULL)
 }
 
+#' @export
+attach_src.default <- function(x, ...) stop_generic(x, .Generic)
+
 #' @param env Environment where data proxy objects are created
 #'
 #' @rdname attach_src
@@ -182,6 +185,9 @@ setup_src_env.src_cfg <- function(x, env, dir = src_data_dir(x)) {
 
   list2env(dat_tbls, envir = env)
 }
+
+#' @export
+setup_src_env.default <- function(x, ...) stop_generic(x, .Generic)
 
 src_data_dir <- function(source) {
 

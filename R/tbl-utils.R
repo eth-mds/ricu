@@ -82,6 +82,9 @@ id_vars <- function(x) UseMethod("id_vars", x)
 #' @export
 id_vars.id_tbl <- function(x) attr(x, "id_vars")
 
+#' @export
+id_vars.default <- function(x) stop_generic(x, .Generic)
+
 #' @rdname tbl_meta
 #' @export
 id_var <- function(x) {
@@ -101,6 +104,9 @@ index_var <- function(x) UseMethod("index_var", x)
 #' @export
 index_var.ts_tbl <- function(x) attr(x, "index_var")
 
+#' @export
+index_var.default <- function(x) stop_generic(x, .Generic)
+
 #' @rdname tbl_meta
 #' @export
 index_col <- function(x) x[[index_var(x)]]
@@ -115,9 +121,8 @@ meta_vars.id_tbl <- function(x) id_vars(x)
 #' @export
 meta_vars.ts_tbl <- function(x) c(id_vars(x), index_var(x))
 
-#' @method meta_vars data.table
 #' @export
-meta_vars.data.table <- function(x) character(0L)
+meta_vars.default <- function(x) stop_generic(x, .Generic)
 
 #' @rdname tbl_meta
 #' @export
@@ -141,6 +146,9 @@ interval <- function(x) UseMethod("interval", x)
 
 #' @export
 interval.ts_tbl <- function(x) attr(x, "interval")
+
+#' @export
+interval.default <- function(x) stop_generic(x, .Generic)
 
 #' @export
 interval.difftime <- function(x) {
@@ -169,6 +177,9 @@ time_vars <- function(x) UseMethod("time_vars", x)
 #' @export
 time_vars.data.frame <- function(x) colnames(x)[lgl_ply(x, is_difftime)]
 
+#' @export
+time_vars.default <- function(x) stop_generic(x, .Generic)
+
 rename <- function(x, new, old) {
   hits <- match(old, x)
   replace(x, hits[!is.na(hits)], new[!is.na(hits)])
@@ -194,7 +205,31 @@ is_dt <- is_type("data.table")
 #' to handle column renaming correctly.
 #'
 #' @details
-#' yada yada
+#' Apart from a function for renaming columns while respecting attributes
+#' marking columns a index or ID columns, several other utility functions are
+#' provided to make handling of `id_tbl` and `ts_tbl` objects more convenient.
+#'
+#' ## Sorting
+#' An `id_tbl` or `ts_tbl` object is considered sorted when rows are in
+#' ascending order according to column as specified by [meta_vars()]. This
+#' means that for an `id_tbl` object rows have to be ordered by [id_vars()]
+#' and for a `ts_tbl` object rows have to be ordered first by [id_vars()],
+#' followed by the [index_var()]. Calling the S3 generic function
+#' [base::sort()] on an object that inherits form `id_tbl` using default
+#' arguments yields an object that is considered sorted. For convenience
+#' (mostly in printing), the column by which the table was sorted are moved to
+#' the front (this can be disabled by passing `FALSE` as `reorder_cols`
+#' argument). Internally, sorting is handled by either setting a
+#' [data.table::key()] in case `decreasing = FALSE` or be calling
+#' [data.table::setorder()] in case `decreasing = TRUE`.
+#'
+#' ## Uniqueness
+#' On object inheriting form `ts_tbl` is considered unique if it is unique in
+#' terms of the columns as specified by [meta_vars()].
+#'
+#' ## Aggregating
+#' In order to turn a non-unique `id_tbl` or `ts_tbl` object into a unique
+#' one, the S3 generic function [stats::aggregate()] is available.
 #'
 #' @param new,old Replacement names and existing column names for renaming
 #' columns
@@ -219,24 +254,30 @@ rename_cols <- function(x, new, old = colnames(x), skip_absent = FALSE,
 }
 
 #' @export
-rename_cols.ts_tbl <- function(x, new, old = colnames(x),
-                               skip_absent = FALSE, ...) {
+rename_cols.ts_tbl <- function(x, new, old = colnames(x), skip_absent = FALSE,
+                               by_ref = FALSE) {
 
-  new_ind <- index_var(x)
+  old_ind <- index_var(x)
   intval  <- interval(x)
 
-  if (new_ind %in% old) {
-    new_ind <- new[old %in% new_ind]
+  if (old_ind %in% old) {
+
+    new_ind <- new[old %in% old_ind]
+
+    if (!by_ref) {
+      x <- copy(x)
+      by_ref <- TRUE
+    }
+
+    x <- set_attributes(x, index_var = unname(new_ind))
   }
 
-  x <- set_attributes(x, index_var = unname(new_ind))
-
-  NextMethod()
+  rename_cols.id_tbl(x, new, old, skip_absent, by_ref)
 }
 
 #' @export
-rename_cols.id_tbl <- function(x, new, old = colnames(x),
-                               skip_absent = FALSE, ...) {
+rename_cols.id_tbl <- function(x, new, old = colnames(x), skip_absent = FALSE,
+                               by_ref = FALSE) {
 
   if (skip_absent) {
 
@@ -248,11 +289,21 @@ rename_cols.id_tbl <- function(x, new, old = colnames(x),
     old <- old[hits]
   }
 
-  new_id <- rename(id_vars(x), new, old)
+  old_id <- id_vars(x)
 
-  x <- set_attributes(x, id_vars = unname(new_id))
+  if (any(old_id %in% old)) {
 
-  NextMethod()
+    new_id <- rename(old_id, new, old)
+
+    if (!by_ref) {
+      x <- copy(x)
+      by_ref <- TRUE
+    }
+
+    x <- set_attributes(x, id_vars = unname(new_id))
+  }
+
+  rename_cols.data.table(x, new, old, skip_absent, by_ref)
 }
 
 #' @method rename_cols data.table
@@ -273,21 +324,26 @@ rename_cols.data.table <- function(x, new, old = colnames(x),
   check_valid(x)
 }
 
+#' @export
+rename_cols.default <- function(x, ...) stop_generic(x, .Generic)
+
 #' @rdname tbl_utils
 #' @export
 rm_cols <- function(x, cols, skip_absent = FALSE, by_ref = FALSE) {
 
   assert_that(is.flag(skip_absent), is.flag(by_ref))
 
-  if (!length(cols)) {
-    return(x)
-  }
-
   if (skip_absent) {
     cols <- intersect(cols, colnames(x))
   } else {
-    assert_that(has_length(cols), has_cols(x, cols))
+    cols <- unique(cols)
   }
+
+  if (length(cols) == 0L) {
+    return(x)
+  }
+
+  assert_that(has_cols(x, cols))
 
   if (!by_ref) {
     x <- copy(x)
@@ -299,11 +355,9 @@ rm_cols <- function(x, cols, skip_absent = FALSE, by_ref = FALSE) {
     ptyp <- NULL
   }
 
-  if (length(cols)) {
-    x <- set(x, j = unique(cols), value = NULL)
-  }
+  x <- set(x, j = cols, value = NULL)
 
-  reclass_tbl(x, ptyp, FALSE)
+  try_reclass(x, ptyp)
 }
 
 #' @param new_interval Replacement interval length specified as scalar-valued
@@ -315,9 +369,12 @@ rm_cols <- function(x, cols, skip_absent = FALSE, by_ref = FALSE) {
 change_interval <- function(x, new_interval, cols = time_vars(x),
                             by_ref = FALSE) {
 
-  assert_that(is_scalar(new_interval), is_interval(new_interval))
+  assert_that(is_scalar(new_interval), is_interval(new_interval),
+              is.flag(by_ref))
 
-  if (!length(cols)) {
+  if (!length(cols) ||
+      (is_ts_tbl(x) && all_equal(interval(x), new_interval))) {
+
     return(x)
   }
 
@@ -325,11 +382,8 @@ change_interval <- function(x, new_interval, cols = time_vars(x),
 }
 
 #' @export
-change_interval.ts_tbl <- function(x, new_interval, cols = time_vars(x), ...) {
-
-  if (all_equal(interval(x), new_interval)) {
-    return(x)
-  }
+change_interval.ts_tbl <- function(x, new_interval, cols = time_vars(x),
+                                   by_ref = FALSE) {
 
   id_nms <- id_vars(x)
   idx_nm <- index_var(x)
@@ -340,11 +394,14 @@ change_interval.ts_tbl <- function(x, new_interval, cols = time_vars(x), ...) {
     cols <- unique(c(idx_nm, cols))
   }
 
-  x <- NextMethod()
+  if (!by_ref) {
+    x <- copy(x)
+    by_ref <- TRUE
+  }
 
-  check_valid(
-    set_attributes(x, interval = new_interval)
-  )
+  x <- set_attributes(x, interval = new_interval)
+
+  change_interval.data.table(x, new_interval, cols, by_ref)
 }
 
 #' @method change_interval data.table
@@ -360,8 +417,11 @@ change_interval.data.table <- function(x, new_interval, cols = time_vars(x),
     set(x, j = col, value = re_time(x[[col]], new_interval))
   }
 
-  x
+  check_valid(x)
 }
+
+#' @export
+change_interval.default <- function(x, ...) stop_generic(x, .Generic)
 
 #' @param cols Column names of columns to consider
 #' @param mode Switch between `all` where all entries of a row have to be
@@ -391,15 +451,18 @@ rm_na <- function(x, cols = data_vars(x), mode = c("all", "any")) {
 }
 
 #' @param decreasing Logical flag indicating the sort order
+#' @param reorder_cols Logical flag indicating whether to move the `by`
+#' columns to the front.
 #'
 #' @rdname tbl_utils
 #' @export
 sort.id_tbl <- function(x, decreasing = FALSE, by = meta_vars(x),
-                        by_ref = FALSE, ...) {
+                        reorder_cols = TRUE, by_ref = FALSE, ...) {
 
   warn_dots(...)
 
-  assert_that(has_cols(x, by), is.flag(decreasing), is.flag(by_ref))
+  assert_that(has_cols(x, by), is.flag(decreasing), is.flag(by_ref),
+              is.flag(reorder_cols))
 
   if (!by_ref) {
     x <- copy(x)
@@ -409,6 +472,10 @@ sort.id_tbl <- function(x, decreasing = FALSE, by = meta_vars(x),
     x <- data.table::setorderv(x, by, order = -1L)
   } else {
     x <- data.table::setkeyv(x, by, physical = TRUE)
+  }
+
+  if (reorder_cols) {
+    x <- setcolorder(x, c(by, setdiff(colnames(x), by)))
   }
 
   x

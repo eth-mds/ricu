@@ -184,6 +184,9 @@ as_src_tbl.character <- function(x, env, ...) {
   as_src_tbl(as_src_env(env), x, ...)
 }
 
+#' @export
+as_src_tbl.default <- function(x, ...) stop_generic(x, .Generic)
+
 #' @param x A `src_cfg` object for which to instantiate a `src_env` object.
 #'
 #' @rdname attach_src

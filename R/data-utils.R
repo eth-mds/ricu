@@ -70,6 +70,9 @@ id_orig_helper.src_env <- function(x, id) {
   as_id_tbl(unique(res), id, by_ref = TRUE)
 }
 
+#' @export
+id_orig_helper.default <- function(x, ...) stop_generic(x, .Generic)
+
 #' @rdname data_utils
 #' @export
 id_windows <- function(x, copy = TRUE) {
@@ -203,6 +206,9 @@ id_win_helper.hirid_env <- function(x) {
   order_rename(res, ids, sta, "datetime")
 }
 
+#' @export
+id_win_helper.default <- function(x) stop_generic(x, .Generic)
+
 order_rename <- function(x, id_var, st_var, ed_var) {
   x <- setcolorder(x, c(id_var, st_var, ed_var))
   x <- rename_cols(x, c(id_var, paste0(id_var, "_start"),
@@ -280,6 +286,9 @@ id_map_helper.src_env <- function(x, id_var, win_var) {
 
   as_id_tbl(unique(map), id_var, by_ref = TRUE)
 }
+
+#' @export
+id_map_helper.default <- function(x, ...) stop_generic(x, .Generic)
 
 #' Stays
 #'
@@ -433,6 +442,9 @@ downgrade_id.ts_tbl <- function(x, target_id, src, cols = time_vars(x),
   change_interval(res, mins(1L), cols, by_ref = TRUE)
 }
 
+#' @export
+upgrade_id.default <- function(x, ...) stop_generic(x, .Generic)
+
 #' @rdname change_id
 #' @export
 #'
@@ -441,6 +453,9 @@ downgrade_id.id_tbl <- function(x, target_id, src, cols = time_vars(x),
 
   change_id_helper(x, target_id, src, cols, "down", ...)
 }
+
+#' @export
+downgrade_id.default <- function(x, ...) stop_generic(x, .Generic)
 
 change_id_helper <- function(x, targ, src, cols, dir = c("down", "up"), ...) {
 

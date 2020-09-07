@@ -37,7 +37,6 @@ test_that("rm_cols for id_tbl", {
   expect_is(rm_cols(tbl, c("a", "b")), "data.table")
 
   expect_error(rm_cols(tbl, "d"), class = "has_cols_assert")
-  expect_error(rm_cols(tbl, c("a", "a")), class = "is_unique_assert")
 
   expect_identical(rm_cols(tbl, "d", skip_absent = TRUE), tbl)
 
@@ -82,7 +81,6 @@ test_that("rm_cols for ts_tbl", {
   expect_is(rm_cols(tbl, "a"), "data.table")
 
   expect_error(rm_cols(tbl, "d"), class = "has_cols_assert")
-  expect_error(rm_cols(tbl, c("a", "a")), class = "is_unique_assert")
 
   expect_identical(rm_cols(tbl, "d", skip_absent = TRUE), tbl)
 

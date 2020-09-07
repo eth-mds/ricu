@@ -528,6 +528,9 @@ load_concepts.fun_itm <- function(x, patient_ids = NULL, id_type = "icustay",
   cb(x = x, patient_ids = patient_ids, id_type = id_type, interval = interval)
 }
 
+#' @export
+load_concepts.default <- function(x, ...) stop_generic(x, .Generic)
+
 do_itm_load <- function(x, patient_ids, id_type, interval) {
 
   ide <- unname(lookup_id_type(x, id_type))

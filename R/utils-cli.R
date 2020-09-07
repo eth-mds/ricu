@@ -275,3 +275,11 @@ format_assert <- function(message, class, envir = parent.frame()) {
 
   res
 }
+
+stop_generic <- function(x, fun) {
+
+  assert_that(is.string(fun))
+
+  stop_ricu("No applicable method for generic function `{fun}()` and
+             class{?es} {quote_bt(class(x))}.", class = "generic_no_fun")
+}

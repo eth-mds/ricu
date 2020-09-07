@@ -234,6 +234,9 @@ init_itm.itm <- function(x, ...) {
   x
 }
 
+#' @export
+init_itm.default <- function(x, ...) stop_generic(x, .Generic)
+
 #' Internal utilities for `item`/`concept` objects
 #'
 #' @param x Object defining the row-subsetting
@@ -276,6 +279,9 @@ prepare_query.rgx_itm <- function(x) {
 #' @keywords internal
 #' @export
 prepare_query.col_itm <- function(x) rlang::quo(NULL)
+
+#' @export
+prepare_query.default <- function(x) stop_generic(x, .Generic)
 
 #' @param ... Variable specification
 #'
@@ -360,6 +366,9 @@ try_add_vars.cncpt <- function(x, ...) {
 #' @export
 try_add_vars.rec_cncpt <- function(x, ...) x
 
+#' @export
+try_add_vars.default <- function(x, ...) stop_generic(x, .Generic)
+
 #' @param ... Variable name
 #'
 #' @rdname item_utils
@@ -380,6 +389,9 @@ get_itm_var.itm <- function(x, var = NULL) {
   }
 }
 
+#' @export
+get_itm_var.default <- function(x, ...) stop_generic(x, .Generic)
+
 #' @param fun Callback function (passed as string)
 #'
 #' @rdname item_utils
@@ -397,6 +409,9 @@ set_itm_callback.itm <- function(x, fun) {
 
   x
 }
+
+#' @export
+set_itm_callback.default <- function(x, ...) stop_generic(x, .Generic)
 
 str_to_fun <- function(x) {
   res <- eval(parse(text = x))
@@ -417,6 +432,9 @@ get_itm_callback.itm <- function(x) str_to_fun(x[["callback"]])
 #' @export
 get_itm_callback.rec_cncpt <- function(x) str_to_fun(x[["callback"]])
 
+#' @export
+get_itm_callback.default <- function(x) stop_generic(x, .Generic)
+
 #' @rdname item_utils
 #' @keywords internal
 #' @export
@@ -429,6 +447,9 @@ set_id_opts.itm <- function(x) {
                              as.character(as_id_cfg(x)))
   try_add_vars(x, id_var = FALSE)
 }
+
+#' @export
+set_id_opts.default <- function(x) stop_generic(x, .Generic)
 
 #' @rdname item_utils
 #' @keywords internal
@@ -447,6 +468,9 @@ lookup_id_type.itm <- function(x, id_type = NULL, ...) {
 
   res
 }
+
+#' @export
+lookup_id_type.default <- function(x, ...) stop_generic(x, .Generic)
 
 #' @rdname data_items
 #' @export
@@ -487,6 +511,9 @@ as_item.cncpt <- function(x) x[["items"]]
 as_item.concept <- function(x) do.call(c, unname(lapply(x, as_item)))
 
 #' @export
+as_item.default <- function(x) stop_generic(x, .Generic)
+
+#' @export
 format.item <- function(x, ...) {
   paste0("<", chr_xtr(lapply(x, class), 1L), ">")
 }
@@ -515,6 +542,9 @@ n_tick.itm <- function(x) 1L
 #' @export
 n_tick.item <- function(x) length(x)
 
+#' @export
+n_tick.default <- function(x) stop_generic(x, .Generic)
+
 #' @rdname item_utils
 #' @keywords internal
 #' @export
@@ -522,6 +552,9 @@ target_class <- function(x) UseMethod("target_class", x)
 
 #' @export
 target_class.cncpt <- function(x) x[["target"]]
+
+#' @export
+target_class.default <- function(x) stop_generic(x, .Generic)
 
 #' Data items
 #'
@@ -743,6 +776,9 @@ init_cncpt.rec_cncpt <- function(x, callback = "identity_callback",
 }
 
 #' @export
+init_cncpt.default <- function(x, ...) stop_generic(x, .Generic)
+
+#' @export
 src_name.cncpt <- function(x) src_name(x[["items"]])
 
 #' @importFrom stats aggregate
@@ -802,6 +838,9 @@ as_concept.list <- function(x) new_concept(x)
 
 #' @export
 as_concept.cncpt <- function(x) new_concept(list(x))
+
+#' @export
+as_concept.default <- function(x) stop_generic(x, .Generic)
 
 #' @export
 format.concept <- function(x, ...) {

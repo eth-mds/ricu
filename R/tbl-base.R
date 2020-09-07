@@ -72,7 +72,16 @@ str.id_tbl <- function(object, ...) invisible(prt::str_dt(object, ...))
 
 #' @method as.data.table id_tbl
 #' @export
-as.data.table.id_tbl <- function(x, ...) warn_dot_ident(unclass_tbl(x), ...)
+as.data.table.id_tbl <- function(x, keep.rownames = FALSE, ...) {
+
+  warn_dots(...)
+
+  if (!isFALSE(keep.rownames)) {
+    warn_arg("keep.rownames")
+  }
+
+  unclass_tbl(x)
+}
 
 #' @method as.data.frame id_tbl
 #' @export
@@ -86,7 +95,10 @@ as.data.frame.id_tbl <- function(x, row.names = NULL, optional = FALSE, ...) {
     warn_arg("optional")
   }
 
-  setDF(as.data.table(x, ...))
+  x <- as.data.table(x, ...)
+  x <- setDF(x)
+
+  x
 }
 
 #' ICU class data reshaping
@@ -209,9 +221,7 @@ merge.id_tbl <- function(x, y, by = NULL, by.x = NULL, by.y = NULL, ...) {
 
 #' @rdname tbl_reshape
 #' @export
-split.id_tbl <- function(x, ...) {
-  lapply(NextMethod(), reclass_tbl, x, stop_on_fail = FALSE)
-}
+split.id_tbl <- function(x, ...) lapply(NextMethod(), try_reclass, x)
 
 #' @rdname tbl_reshape
 #' @export
