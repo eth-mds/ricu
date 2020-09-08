@@ -1004,8 +1004,7 @@ cfg <- list(
       ),
       eicu = list(
         list(ids = "Eyes", table = "nursecharting",
-             sub_var = "nursingchartcelltypevalname",
-             callback = "transform_fun(force_type('numeric'))")
+             sub_var = "nursingchartcelltypevalname")
       ),
       hirid = list(
         list(ids = 10000300L, table = "observations", sub_var = "variableid",
@@ -1024,8 +1023,7 @@ cfg <- list(
       ),
       eicu = list(
         list(ids = "Verbal", table = "nursecharting",
-             sub_var = "nursingchartcelltypevalname",
-             callback = "transform_fun(force_type('numeric'))")
+             sub_var = "nursingchartcelltypevalname")
       ),
       hirid = list(
         list(ids = 10000100L, table = "observations", sub_var = "variableid",
@@ -1044,8 +1042,7 @@ cfg <- list(
       ),
       eicu = list(
         list(ids = "Motor", table = "nursecharting",
-             sub_var = "nursingchartcelltypevalname",
-             callback = "transform_fun(force_type('numeric'))")
+             sub_var = "nursingchartcelltypevalname")
       ),
       hirid = list(
         list(ids = 10000200L, table = "observations", sub_var = "variableid",
@@ -1064,8 +1061,7 @@ cfg <- list(
       ),
       eicu = list(
         list(ids = "GCS Total", table = "nursecharting",
-             sub_var = "nursingchartcelltypevalname",
-             callback = "transform_fun(force_type('numeric'))")
+             sub_var = "nursingchartcelltypevalname")
       )
   )
   ),
@@ -1098,7 +1094,7 @@ cfg <- list(
     )
   ),
   dobu = list(
-    unit = "mcg/kg/min",
+    unit = c("mcg/kg/min", "mcgkgmin"),
     min = 0,
     max = 50,
     description = "dobutamine",
@@ -1112,8 +1108,7 @@ cfg <- list(
       ),
       eicu = list(
         list(ids = "Dobutamine (mcg/kg/min)", table = "infusiondrug",
-             sub_var = "drugname",
-             callback = "transform_fun(force_type('numeric'))"),
+             sub_var = "drugname"),
         list(ids = c("Dobutamine ()", "Dobutamine (ml/hr)"),
              table = "infusiondrug", sub_var = "drugname",
              callback = "eicu_body_weight", weight_var = "patientweight")
@@ -1125,7 +1120,7 @@ cfg <- list(
     )
   ),
   dopa = list(
-    unit = "mcg/kg/min",
+    unit = c("mcg/kg/min", "mcgkgmin"),
     min = 0,
     max = 50,
     description = "dopamine",
@@ -1138,13 +1133,12 @@ cfg <- list(
       ),
       eicu = list(
         list(ids = "Dopamine (mcg/kg/min)", table = "infusiondrug",
-             sub_var = "drugname",
-             callback = "transform_fun(force_type('numeric'))")
+             sub_var = "drugname")
       )
   )
   ),
   norepi = list(
-    unit = "mcg/kg/min",
+    unit = c("mcg/kg/min", "mcgkgmin"),
     min = 0,
     max = 3,
     description = "norepinephrine",
@@ -1158,8 +1152,7 @@ cfg <- list(
       ),
       eicu = list(
         list(ids = "Norepinephrine (mcg/kg/min)", table = "infusiondrug",
-             sub_var = "drugname",
-             callback = "transform_fun(force_type('numeric'))"),
+             sub_var = "drugname"),
         list(ids = c("Norepinephrine (ml/hr)", "Norepinephrine (mcg/min)"),
              table = "infusiondrug", sub_var = "drugname",
              callback = "eicu_body_weight", weight_var = "patientweight")
@@ -1171,7 +1164,7 @@ cfg <- list(
     )
   ),
   epi = list(
-    unit = "mcg/kg/min",
+    unit = c("mcg/kg/min", "mcgkgmin"),
     min = 0,
     max = 1.5,
     description = "epinephrine",
@@ -1184,8 +1177,7 @@ cfg <- list(
       ),
       eicu = list(
         list(ids = "Epinephrine (mcg/kg/min)", table = "infusiondrug",
-             sub_var = "drugname",
-             callback = "transform_fun(force_type('numeric'))"),
+             sub_var = "drugname"),
         list(ids = c("Epinephrine (ml/hr)", "Epinephrine (mcg/min)"),
              table = "infusiondrug", sub_var = "drugname",
              callback = "eicu_body_weight", weight_var = "patientweight")
@@ -1197,6 +1189,7 @@ cfg <- list(
     )
   ),
   vent_start = list(
+    class = "lgl_cncpt",
     description = "ventilation start",
     category = "respiratory",
     sources = list(
@@ -1232,6 +1225,7 @@ cfg <- list(
     )
   ),
   vent_end = list(
+    class = "lgl_cncpt",
     description = "ventilation end",
     category = "respiratory",
     sources = list(
@@ -1257,6 +1251,7 @@ cfg <- list(
     )
   ),
   trach = list(
+    class = "lgl_cncpt",
     description = "tracheostomy",
     category = "respiratory",
     sources = list(
@@ -1276,8 +1271,7 @@ cfg <- list(
     sources = list(
       eicu = list(
         list(ids = "Sedation Score", table = "nursecharting",
-             sub_var = "nursingchartcelltypevalname",
-             callback = "transform_fun(force_type('numeric'))")
+             sub_var = "nursingchartcelltypevalname")
       ),
       hirid = list(
         list(ids = 15001565L, table = "observations", sub_var = "variableid",
@@ -1286,6 +1280,7 @@ cfg <- list(
     )
   ),
   abx = list(
+    class = "lgl_cncpt",
     description = "antibiotics",
     category = "medication",
     sources = list(
@@ -1351,6 +1346,7 @@ cfg <- list(
     )
   ),
   samp = list(
+    class = "lgl_cncpt",
     description = "fluid sampling",
     sources = list(
       mimic = list(
@@ -1452,9 +1448,7 @@ cfg <- list(
       ),
       eicu = list(
         list(regex = "^insulin (250.+)?\\(((ml|units)/hr)?\\)$",
-             table = "infusiondrug", sub_var = "drugname",
-             callback = "transform_fun(force_type('numeric'))",
-             class = "rgx_itm")
+             table = "infusiondrug", sub_var = "drugname", class = "rgx_itm")
       ),
       hirid = list(
         list(ids = c(15L, 1000724L), table = "pharma", sub_var = "pharmaid",
@@ -1540,6 +1534,7 @@ cfg <- list(
     )
   ),
   death = list(
+    class = "lgl_cncpt",
     description = "in hospital mortality",
     category = "outcome",
     sources = list(

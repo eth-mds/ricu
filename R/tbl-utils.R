@@ -601,7 +601,7 @@ on_failure(is_unique) <- function(call, env) {
 aggregate.id_tbl <- function(x, expr = NULL, by = meta_vars(x),
                              vars = data_vars(x), env = NULL, ...) {
 
-  is_num <- function(col) is.numeric(x[[col]])
+  is_type <- function(col, fun) fun(x[[col]])
 
   if (is.null(env)) {
     env <- caller_env()
@@ -625,20 +625,23 @@ aggregate.id_tbl <- function(x, expr = NULL, by = meta_vars(x),
 
   if (is.null(how)) {
 
-    is_num_col <- lgl_ply(vars, is_num)
-
-    if (any(is_num_col)) {
-
-      assert_that(all(is_num_col), msg = paste("For automatically determining",
-        "an aggregation function, either all of or none of vars",
-        concat(quote_bt(vars)), "are expected to be of numeric type")
-      )
+    if (all(lgl_ply(vars, is_type, is.numeric))) {
 
       fun <- "median"
 
-    } else {
+    } else if (all(lgl_ply(vars, is_type, is.logical))) {
+
+      fun <- "sum"
+
+    } else if (all(lgl_ply(vars, is_type, is.character))) {
 
       fun <- "first"
+
+    } else {
+
+      stop_ricu("when automatically determining an aggregation function,
+                 {quote_bt(vars)} are required to be of the same type",
+                "auto_agg_fun")
     }
 
     dt_gforce(x, fun, by = by, vars = vars, ...)

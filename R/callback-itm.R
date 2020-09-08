@@ -11,16 +11,24 @@ vent_flag <- function(x, val_var, ...) {
 
 percent_as_numeric <- function(x) as.numeric(sub("%", "", x))
 
-#' @importFrom methods as
 force_type <- function(type) {
+
   assert_that(is.string(type))
+
   function(x) {
-    res <- suppressWarnings(as(x, type))
+
+    if (identical(typeof(x), type)) {
+      return(x)
+    }
+
+    res <- suppressWarnings(`storage.mode<-`(x, type))
     new_na <- sum(is.na(res) & !is.na(x))
+
     if (new_na > 0L) {
       msg_progress("  lost ", new_na, " (", prcnt(new_na, length(x)),
                    ") entries due to coercion to ", type, ".")
     }
+
     res
   }
 }
@@ -267,9 +275,9 @@ convert_unit <- function(rgx, fun, new, ignore_case = TRUE, ...) {
   function(x, val_var, unit_var, ...) {
 
     for (i in seq_len(len)) {
-      set(x, i = do.call(grep, c(list(rgx[[i]], x[[unit_var]]), xtr)),
-          j = c(val_var, unit_var),
-          value = list(fun[[i]](x[[val_var]]), new[[i]]))
+      rows <- do.call(grep, c(list(rgx[[i]], x[[unit_var]]), xtr))
+      vals <- fun[[i]](x[[val_var]][rows])
+      set(x, i = rows, j = c(val_var, unit_var), value = list(vals, new[[i]]))
     }
 
     x

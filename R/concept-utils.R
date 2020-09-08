@@ -598,6 +598,8 @@ target_class.default <- function(x) stop_generic(x, .Generic)
 #'   plausible range which can be used during data loading.
 #' * `fct_cncpt`: In case of categorical concepts, such as `sex`, a set of
 #'   factor levels can be specified, against which the loaded data is checked.
+#' * `lgl_cncpt`: A special case of `fct_cncpt`, this allows only for logical
+#'   values (`TRUE`, `FALSE` and `NA`).
 #' * `rec_cncpt`: More involved concepts, such as a [SOFA score][sofa_score()]
 #'   can pull in other concepts. Recursive concepts can build on other
 #'   recursive concepts up to arbitrary recursion depth. Owing to the more

@@ -1,5 +1,6 @@
 {
   "abx": {
+    "class": "lgl_cncpt",
     "description": "antibiotics",
     "category": "medication",
     "sources": {
@@ -1069,6 +1070,7 @@
     }
   },
   "death": {
+    "class": "lgl_cncpt",
     "description": "in hospital mortality",
     "category": "outcome",
     "sources": {
@@ -1120,7 +1122,7 @@
     }
   },
   "dobu": {
-    "unit": "mcg/kg/min",
+    "unit": ["mcg/kg/min", "mcgkgmin"],
     "min": 0,
     "max": 50,
     "description": "dobutamine",
@@ -1130,8 +1132,7 @@
         {
           "ids": "Dobutamine (mcg/kg/min)",
           "table": "infusiondrug",
-          "sub_var": "drugname",
-          "callback": "transform_fun(force_type('numeric'))"
+          "sub_var": "drugname"
         },
         {
           "ids": ["Dobutamine ()", "Dobutamine (ml/hr)"],
@@ -1145,8 +1146,7 @@
         {
           "ids": "Dobutamine (mcg/kg/min)",
           "table": "infusiondrug",
-          "sub_var": "drugname",
-          "callback": "transform_fun(force_type('numeric'))"
+          "sub_var": "drugname"
         },
         {
           "ids": ["Dobutamine ()", "Dobutamine (ml/hr)"],
@@ -1191,7 +1191,7 @@
     }
   },
   "dopa": {
-    "unit": "mcg/kg/min",
+    "unit": ["mcg/kg/min", "mcgkgmin"],
     "min": 0,
     "max": 50,
     "description": "dopamine",
@@ -1201,16 +1201,14 @@
         {
           "ids": "Dopamine (mcg/kg/min)",
           "table": "infusiondrug",
-          "sub_var": "drugname",
-          "callback": "transform_fun(force_type('numeric'))"
+          "sub_var": "drugname"
         }
       ],
       "eicu_demo": [
         {
           "ids": "Dopamine (mcg/kg/min)",
           "table": "infusiondrug",
-          "sub_var": "drugname",
-          "callback": "transform_fun(force_type('numeric'))"
+          "sub_var": "drugname"
         }
       ],
       "mimic": [
@@ -1249,16 +1247,14 @@
         {
           "ids": "Eyes",
           "table": "nursecharting",
-          "sub_var": "nursingchartcelltypevalname",
-          "callback": "transform_fun(force_type('numeric'))"
+          "sub_var": "nursingchartcelltypevalname"
         }
       ],
       "eicu_demo": [
         {
           "ids": "Eyes",
           "table": "nursecharting",
-          "sub_var": "nursingchartcelltypevalname",
-          "callback": "transform_fun(force_type('numeric'))"
+          "sub_var": "nursingchartcelltypevalname"
         }
       ],
       "hirid": [
@@ -1323,7 +1319,7 @@
     }
   },
   "epi": {
-    "unit": "mcg/kg/min",
+    "unit": ["mcg/kg/min", "mcgkgmin"],
     "min": 0,
     "max": 1.5,
     "description": "epinephrine",
@@ -1333,8 +1329,7 @@
         {
           "ids": "Epinephrine (mcg/kg/min)",
           "table": "infusiondrug",
-          "sub_var": "drugname",
-          "callback": "transform_fun(force_type('numeric'))"
+          "sub_var": "drugname"
         },
         {
           "ids": ["Epinephrine (ml/hr)", "Epinephrine (mcg/min)"],
@@ -1348,8 +1343,7 @@
         {
           "ids": "Epinephrine (mcg/kg/min)",
           "table": "infusiondrug",
-          "sub_var": "drugname",
-          "callback": "transform_fun(force_type('numeric'))"
+          "sub_var": "drugname"
         },
         {
           "ids": ["Epinephrine (ml/hr)", "Epinephrine (mcg/min)"],
@@ -1831,7 +1825,6 @@
           "regex": "^insulin (250.+)?\\(((ml|units)/hr)?\\)$",
           "table": "infusiondrug",
           "sub_var": "drugname",
-          "callback": "transform_fun(force_type('numeric'))",
           "class": "rgx_itm"
         }
       ],
@@ -1840,7 +1833,6 @@
           "regex": "^insulin (250.+)?\\(((ml|units)/hr)?\\)$",
           "table": "infusiondrug",
           "sub_var": "drugname",
-          "callback": "transform_fun(force_type('numeric'))",
           "class": "rgx_itm"
         }
       ],
@@ -2399,16 +2391,14 @@
         {
           "ids": "Motor",
           "table": "nursecharting",
-          "sub_var": "nursingchartcelltypevalname",
-          "callback": "transform_fun(force_type('numeric'))"
+          "sub_var": "nursingchartcelltypevalname"
         }
       ],
       "eicu_demo": [
         {
           "ids": "Motor",
           "table": "nursecharting",
-          "sub_var": "nursingchartcelltypevalname",
-          "callback": "transform_fun(force_type('numeric'))"
+          "sub_var": "nursingchartcelltypevalname"
         }
       ],
       "hirid": [
@@ -2533,7 +2523,7 @@
     "class": "rec_cncpt"
   },
   "norepi": {
-    "unit": "mcg/kg/min",
+    "unit": ["mcg/kg/min", "mcgkgmin"],
     "min": 0,
     "max": 3,
     "description": "norepinephrine",
@@ -2543,8 +2533,7 @@
         {
           "ids": "Norepinephrine (mcg/kg/min)",
           "table": "infusiondrug",
-          "sub_var": "drugname",
-          "callback": "transform_fun(force_type('numeric'))"
+          "sub_var": "drugname"
         },
         {
           "ids": ["Norepinephrine (ml/hr)", "Norepinephrine (mcg/min)"],
@@ -2558,8 +2547,7 @@
         {
           "ids": "Norepinephrine (mcg/kg/min)",
           "table": "infusiondrug",
-          "sub_var": "drugname",
-          "callback": "transform_fun(force_type('numeric'))"
+          "sub_var": "drugname"
         },
         {
           "ids": ["Norepinephrine (ml/hr)", "Norepinephrine (mcg/min)"],
@@ -2981,16 +2969,14 @@
         {
           "ids": "Sedation Score",
           "table": "nursecharting",
-          "sub_var": "nursingchartcelltypevalname",
-          "callback": "transform_fun(force_type('numeric'))"
+          "sub_var": "nursingchartcelltypevalname"
         }
       ],
       "eicu_demo": [
         {
           "ids": "Sedation Score",
           "table": "nursecharting",
-          "sub_var": "nursingchartcelltypevalname",
-          "callback": "transform_fun(force_type('numeric'))"
+          "sub_var": "nursingchartcelltypevalname"
         }
       ],
       "hirid": [
@@ -3123,6 +3109,7 @@
     }
   },
   "samp": {
+    "class": "lgl_cncpt",
     "description": "fluid sampling",
     "sources": {
       "eicu": [
@@ -3411,16 +3398,14 @@
         {
           "ids": "GCS Total",
           "table": "nursecharting",
-          "sub_var": "nursingchartcelltypevalname",
-          "callback": "transform_fun(force_type('numeric'))"
+          "sub_var": "nursingchartcelltypevalname"
         }
       ],
       "eicu_demo": [
         {
           "ids": "GCS Total",
           "table": "nursecharting",
-          "sub_var": "nursingchartcelltypevalname",
-          "callback": "transform_fun(force_type('numeric'))"
+          "sub_var": "nursingchartcelltypevalname"
         }
       ],
       "mimic": [
@@ -3484,6 +3469,7 @@
     }
   },
   "trach": {
+    "class": "lgl_cncpt",
     "description": "tracheostomy",
     "category": "respiratory",
     "sources": {
@@ -3625,6 +3611,7 @@
     "class": "rec_cncpt"
   },
   "vent_end": {
+    "class": "lgl_cncpt",
     "description": "ventilation end",
     "category": "respiratory",
     "sources": {
@@ -3710,6 +3697,7 @@
     }
   },
   "vent_start": {
+    "class": "lgl_cncpt",
     "description": "ventilation start",
     "category": "respiratory",
     "sources": {
@@ -3790,16 +3778,14 @@
         {
           "ids": "Verbal",
           "table": "nursecharting",
-          "sub_var": "nursingchartcelltypevalname",
-          "callback": "transform_fun(force_type('numeric'))"
+          "sub_var": "nursingchartcelltypevalname"
         }
       ],
       "eicu_demo": [
         {
           "ids": "Verbal",
           "table": "nursecharting",
-          "sub_var": "nursingchartcelltypevalname",
-          "callback": "transform_fun(force_type('numeric'))"
+          "sub_var": "nursingchartcelltypevalname"
         }
       ],
       "hirid": [

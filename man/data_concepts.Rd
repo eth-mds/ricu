@@ -123,6 +123,8 @@ specified includes a string-valued unit specification, alongside a
 plausible range which can be used during data loading.
 \item \code{fct_cncpt}: In case of categorical concepts, such as \code{sex}, a set of
 factor levels can be specified, against which the loaded data is checked.
+\item \code{lgl_cncpt}: A special case of \code{fct_cncpt}, this allows only for logical
+values (\code{TRUE}, \code{FALSE} and \code{NA}).
 \item \code{rec_cncpt}: More involved concepts, such as a \link[=sofa_score]{SOFA score}
 can pull in other concepts. Recursive concepts can build on other
 recursive concepts up to arbitrary recursion depth. Owing to the more

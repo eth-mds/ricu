@@ -284,6 +284,20 @@ load_one_concept_helper <- function(x, aggregate, ..., progress) {
   res
 }
 
+rm_na_val_var <- function(x) {
+
+  n_row <- nrow(x)
+  x   <- rm_na(x, "val_var")
+  n_rm  <- n_row - nrow(x)
+
+  if (n_rm > 0L) {
+    msg_progress("removed ", n_rm, " (", prcnt(n_rm, n_row), ") of rows ",
+                 "due to `NA` values")
+  }
+
+  x
+}
+
 #' @param progress Either `NULL`, or a progress bar object as created by
 #' [progress::progress_bar]
 #'
@@ -292,7 +306,7 @@ load_one_concept_helper <- function(x, aggregate, ..., progress) {
 load_concepts.cncpt <- function(x, aggregate = NULL, ..., progress = NULL) {
 
   res <- load_concepts(as_item(x), ..., progress = progress)
-  res <- rm_na(res)
+  res <- rm_na_val_var(res)
 
   res <- rm_cols(res, setdiff(data_vars(res), "val_var"), by_ref = TRUE)
   res <- rename_cols(res, x[["name"]], "val_var", by_ref = TRUE)
@@ -304,6 +318,8 @@ load_concepts.cncpt <- function(x, aggregate = NULL, ..., progress = NULL) {
 #' @export
 load_concepts.num_cncpt <- function(x, aggregate = NULL, ...,
                                     progress = NULL) {
+
+  force_num <- force_type("double")
 
   check_bound <- function(x, val, op) {
     vc  <- x[["val_var"]]
@@ -335,6 +351,8 @@ load_concepts.num_cncpt <- function(x, aggregate = NULL, ...,
   }
 
   res <- load_concepts(as_item(x), ..., progress = progress)
+  res <- rm_na_val_var(res)
+  res <- set(res, j = "val_var", value = force_num(res[["val_var"]]))
 
   keep <- check_bound(res, x[["min"]], `>=`) &
           check_bound(res, x[["max"]], `<=`)
@@ -375,6 +393,7 @@ load_concepts.fct_cncpt <- function(x, aggregate = NULL, ...,
   lvl <- x[["levels"]]
 
   res <- load_concepts(as_item(x), ..., progress = progress)
+  res <- rm_na_val_var(res)
 
   if (is.character(lvl)) {
     keep <- res[["val_var"]] %chin% lvl
@@ -398,6 +417,31 @@ load_concepts.fct_cncpt <- function(x, aggregate = NULL, ...,
   res <- rename_cols(res, x[["name"]], "val_var", by_ref = TRUE)
 
   stats::aggregate(x, res, aggregate)
+}
+
+#' @rdname load_concepts
+#' @export
+load_concepts.lgl_cncpt <- function(x, aggregate = NULL, ...,
+                                    progress = NULL) {
+
+  force_lgl <- force_type("logical")
+
+  res <- load_concepts(as_item(x), ..., progress = progress)
+  res <- rm_na_val_var(res)
+
+  res <- rm_cols(res, setdiff(data_vars(res), "val_var"), by_ref = TRUE)
+  res <- set(res, j = "val_var", value = force_lgl(res[["val_var"]]))
+
+  res <- stats::aggregate(x, res, aggregate)
+
+  if (is.null(aggregate) || identical(aggregate, "any")) {
+    # default aggregation corresponds to any()
+    res <- set(res, j = "val_var", value = force_lgl(res[["val_var"]]))
+  }
+
+  res <- rename_cols(res, x[["name"]], "val_var", by_ref = TRUE)
+
+  res
 }
 
 #' @rdname load_concepts
