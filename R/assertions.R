@@ -102,11 +102,6 @@ on_failure(has_cols) <- function(call, env) {
 }
 
 has_interval <- function(x, interval) {
-
-  if (is_id_tbl(x) && !is_ts_tbl(x)) {
-    return(TRUE)
-  }
-
   assert_that(is_ts_tbl(x), is_interval(interval)) &&
     same_time(interval(x), interval)
 }

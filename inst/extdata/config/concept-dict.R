@@ -1627,7 +1627,7 @@ cfg <- list(
     description = "Horowitz index",
     category = "respiratory",
     aggregate = c("min", "max"),
-    callback = "cb_pafi",
+    callback = "pafi",
     class = "rec_cncpt"
   ),
   vent = list(
@@ -1635,7 +1635,7 @@ cfg <- list(
     description = "ventilation status",
     category = "respiratory",
     interval = "00:01:00",
-    callback = "cb_vent",
+    callback = "vent",
     class = "rec_cncpt"
   ),
   sed = list(
@@ -1643,7 +1643,7 @@ cfg <- list(
     description = "sedation status",
     category = "neurological",
     aggregate = c(NA, "min"),
-    callback = "cb_sed",
+    callback = "sed",
     class = "rec_cncpt"
   ),
   gcs = list(
@@ -1651,14 +1651,14 @@ cfg <- list(
     description = "Glasgow coma scale (non-sedated)",
     category = "neurological",
     aggregate = c("min", "min", "min", "min", NA),
-    callback = "cb_gcs",
+    callback = "gcs",
     class = "rec_cncpt"
   ),
   urine24 = list(
     concepts = "urine",
     description = "urine output per 24h",
     category = "output",
-    callback = "cb_urine24",
+    callback = "urine24",
     class = "rec_cncpt"
   ),
   sofa = list(
@@ -1683,7 +1683,7 @@ cfg <- list(
     concepts = c("sofa", "susp_inf"),
     description = "sepsis-3 criterion",
     category = "outcome",
-    callback = "sepsis_3",
+    callback = "sep3",
     class = "rec_cncpt"
   ),
   bnd = list(

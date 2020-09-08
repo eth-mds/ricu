@@ -24,20 +24,12 @@ sirs_score <- function(..., win_length = hours(24L), keep_components = FALSE,
   rspi <- function(re, pa) fifelse(re > 20 | pa < 32, 1L, 0L)
   wbcn <- function(wb, ba) fifelse(wb < 4 | wb > 12 | ba > 10, 1L, 0L)
 
-  res <- list(...)
+  assert_that(is.flag(keep_components), is_interval(win_length))
 
-  if (is.null(interval)) {
-    interval <- interval(res[[1L]])
-  }
-
-  assert_that(all_fun(res, has_interval, interval), is.flag(keep_components),
-              is_interval(win_length))
+  cnc <- c("temp", "hr", "resp", "pco2", "wbc", "bnd")
+  res <- capture_data(cnc, interval, ...)
 
   res <- reduce(merge, res, all = TRUE)
-
-  comps <- c("temp", "hr", "resp", "pco2", "wbc", "bnd")
-
-  assert_that(has_name(res, comps))
 
   expr <- substitute(
     list(temp = fun(temp), hr = fun(hr), resp = fun(resp), pco2 = fun(pco2),
@@ -47,71 +39,22 @@ sirs_score <- function(..., win_length = hours(24L), keep_components = FALSE,
 
   res <- slide(res, !!expr, before = win_length)
 
-  res <- res[, c(comps) := list(
+  res <- res[, c(cnc) := list(
     tmpe(get("temp")), hrat(get("hr")),
     rspi(get("resp"), get("pco2")), NULL,
     wbcn(get("wbc"), get("bnd")), NULL)
   ]
 
-  comps <- data_vars(res)
+  cnc <- data_vars(res)
 
-  res <- setnafill(res, fill = 0L, cols = comps)
-  res <- res[, c("sirs") := rowSums(.SD), .SDcols = comps]
+  res <- setnafill(res, fill = 0L, cols = cnc)
+  res <- res[, c("sirs") := rowSums(.SD), .SDcols = cnc]
 
   if (!keep_components) {
-    res <- rm_cols(res, comps, by_ref = TRUE)
+    res <- rm_cols(res, cnc, by_ref = TRUE)
   }
 
   res
-}
-
-#' @param vent,fio2,gcs Data as returned by [load_concepts()] used for score
-#' calculation
-#'
-#' @rdname label_sirs
-#' @export
-supp_o2 <- function(vent, fio2, interval = NULL) {
-
-  if (is.null(interval)) {
-    interval <- interval(vent)
-  }
-
-  assert_that(has_interval(vent, interval), has_interval(fio2, interval))
-
-  res <- merge(vent, fio2, all = TRUE)
-
-  res <- res[, c("supp_o2", "vent", "fio2") := list(
-    get("vent") | get("fio2") > 21, NULL, NULL
-  )]
-
-  res
-}
-
-map_vals <- function(pts, vals) {
-  function(x) pts[findInterval(x, vals, left.open = TRUE) + 1]
-}
-
-#' @param by_ref Logical flag indicating whether to change the input by
-#' reference
-#' @rdname label_sirs
-#' @export
-avpu <- function(gcs, interval = NULL, by_ref = TRUE) {
-
-  avpu_map <- map_vals(c(NA, "U", "P", "V", "A", NA), c(2, 3, 9, 13, 15))
-
-  if (is.null(interval)) {
-    interval <- interval(gcs)
-  }
-
-  assert_that(has_interval(gcs, interval))
-
-  if (isFALSE(by_ref)) {
-    gcs <- copy(gcs)
-  }
-
-  gcs <- gcs[, c("avpu", "gcs") := list(avpu_map(get("gcs")), NULL)]
-
-  gcs
 }
 
 #' @rdname label_sirs
@@ -128,21 +71,13 @@ news_score <- function(..., win_length = hours(24L), keep_components = FALSE,
   suppo2 <- function(x) fifelse(x, 2L, 0L)
   avpu   <- function(x) fifelse(x == "A", 0L, 3L)
 
-  res <- list(...)
+  assert_that(is_interval(win_length), is.flag(keep_components))
 
-  if (is.null(interval)) {
-    interval <- interval(res[[1L]])
-  }
-
-  assert_that(all_fun(res, has_interval, interval), is_interval(win_length),
-              is.flag(keep_components))
+  cnc <- c("hr", "avpu", "supp_o2", "o2sat", "temp", "sbp", "resp")
+  res <- capture_data(cnc, interval, ...)
 
   res <- reduce(merge, res, all = TRUE)
   res <- res[is.na(get("supp_o2")), c("supp_o2") := FALSE]
-
-  comps <- c("hr", "avpu", "supp_o2", "o2sat", "temp", "sbp", "resp")
-
-  assert_that(has_name(res, comps))
 
   expr <- substitute(
     list(resp = fun(resp), avpu = fun(avpu),
@@ -153,17 +88,17 @@ news_score <- function(..., win_length = hours(24L), keep_components = FALSE,
 
   res <- slide(res, !!expr, before = win_length)
 
-  res <- res[, c(comps) := list(
+  res <- res[, c(cnc) := list(
     heart(get("hr")), avpu(get("avpu")), suppo2(get("supp_o2")),
     o2_sat(get("o2sat")), temp(get("temp")),
     sys_bp(get("sbp")), resp(get("resp")))
   ]
 
-  res <- setnafill(res, fill = 0L, cols = comps)
-  res <- res[, c("news") := rowSums(.SD), .SDcols = comps]
+  res <- setnafill(res, fill = 0L, cols = cnc)
+  res <- res[, c("news") := rowSums(.SD), .SDcols = cnc]
 
   if (!keep_components) {
-    res <- rm_cols(res, comps, by_ref = TRUE)
+    res <- rm_cols(res, cnc, by_ref = TRUE)
   }
 
   res
@@ -182,21 +117,12 @@ mews_score <- function(..., win_length = hours(24L), keep_components = FALSE,
 
   avpu <- function(x) setNames(c(0L, 1L, 2L, 3L), c("A", "V", "P", "U"))[x]
 
-  res <- list(...)
+  assert_that(is_interval(win_length), is.flag(keep_components))
 
-  if (is.null(interval)) {
-    interval <- interval(res[[1L]])
-  }
-
-  assert_that(all_fun(res, has_interval, interval), is_interval(win_length),
-              is.flag(keep_components))
+  cnc <- c("hr", "avpu", "temp", "sbp", "resp")
+  res <- capture_data(cnc, interval, ...)
 
   res <- reduce(merge, res, all = TRUE)
-
-  comps <- c("hr", "avpu", "temp", "sbp", "resp")
-
-  assert_that(has_name(res, comps))
-
 
   expr <- substitute(
     list(hr = fun(hr), avpu = fun(avpu), temp = fun(temp), sbp = fun(sbp),
@@ -205,16 +131,16 @@ mews_score <- function(..., win_length = hours(24L), keep_components = FALSE,
 
   res <- slide(res, !!expr, before = win_length)
 
-  res <- res[, c(comps) := list(
+  res <- res[, c(cnc) := list(
     heart(get("hr")), avpu(get("avpu")), temp(get("temp")), sys_bp(get("sbp")),
     resp(get("resp")))
   ]
 
-  res <- setnafill(res, fill = 0L, cols = comps)
-  res <- res[, c("mews") := rowSums(.SD), .SDcols = comps]
+  res <- setnafill(res, fill = 0L, cols = cnc)
+  res <- res[, c("mews") := rowSums(.SD), .SDcols = cnc]
 
   if (!keep_components) {
-    res <- rm_cols(res, comps, by_ref = TRUE)
+    res <- rm_cols(res, cnc, by_ref = TRUE)
   }
 
   res

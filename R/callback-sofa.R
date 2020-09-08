@@ -4,10 +4,8 @@
 #' The SOFA (Sequential Organ Failure Assessment) score is a commonly used
 #' assessment tool used to track a patient's well-being in an ICU.
 #'
-#' @param pafi,vent,plt,bili,map,norepi,epi,dopa,dobu,gcs,crea,urine24 Data
-#' input used for sofa score evaluation (`ts_tbl` objects, as produced by
-#' [load_concepts()])
-#' @param ... Passed to `sofa_window()` or `sofa_compute()`
+#' @param ... Data and further arguments passed to `sofa_window()` or
+#' `sofa_compute()`
 #' @param interval Time series interval (only used for checking consistency
 #' of input data, `NULL` will use the interval of the first data object)
 #'
@@ -54,36 +52,30 @@
 #' @rdname label_sofa
 #' @export
 #'
-sofa_score <- function(pafi, vent, plt, bili, map, norepi, epi, dopa, dobu,
-                       gcs, crea, urine24, ...,
-                       interval = NULL) {
+sofa_score <- function(..., interval = NULL) {
 
-  args <- list(...)
-  dat  <- list(pafi, vent, plt, bili, map, norepi, epi, dopa, dobu, gcs, crea,
-               urine24)
+  cnc <- c("pafi", "vent", "plt", "bili", "map", "norepi", "epi", "dopa",
+           "dobu", "gcs", "crea", "urine24")
 
-  if (is.null(interval)) {
-    interval <- interval(pafi)
-  }
+  sofa_data <- capture_fun(cnc, interval)
+  form_args <- c(formals(sofa_data), formals(sofa_window),
+                 formals(sofa_compute)[-1L])
 
-  assert_that(!has_name(args, c("tbl", "by_ref")),
-              all_fun(dat, has_interval, interval))
+  res <- capture_eval(sofa_data, ..., .formal_args = form_args)
 
-  dat <- reduce(merge, dat, all = TRUE)
+  interval <- attr(res, "interval")
 
-  dat <- dat[is_true(get("pafi") < 200) & !is_true(get("vent")),
+  res <- reduce(merge, res, all = TRUE)
+
+  res <- res[is_true(get("pafi") < 200) & !is_true(get("vent")),
              c("pafi") := 200]
 
-  dat <- rm_cols(dat, "vent", by_ref = TRUE)
+  res <- rm_cols(res, "vent", by_ref = TRUE)
 
-  com_args <- names(args)[names(args) %in% names(formals(sofa_compute))]
-  win_args <- names(args)[names(args) %in% names(formals(sofa_window))]
+  res <- capture_eval(sofa_window, tbl = res, ..., .formal_args = form_args)
+  res <- capture_eval(sofa_compute, tbl = res, ..., .formal_args = form_args)
 
-  dat <- do.call(sofa_window, c(list(dat), args[win_args]))
-  dat <- do.call(sofa_compute, c(list(dat), args[com_args],
-                                 list(by_ref = TRUE)))
-
-  dat
+  res
 }
 
 #' @param tbl Table holding SOFA covariates
@@ -173,7 +165,7 @@ sofa_compute <- function(tbl, na_val = 0L, na_val_resp = na_val,
                          na_val_plt = na_val, na_val_liver = na_val,
                          na_val_cardio = na_val, na_val_cns = na_val,
                          na_val_renal = na_val, impute_fun = NULL,
-                         keep_components = FALSE, by_ref = FALSE) {
+                         keep_components = FALSE, by_ref = TRUE) {
 
   need_cols <- c("pafi", "plt", "bili", "map", "dopa", "norepi", "dobu",
                  "epi", "gcs", "crea", "urine24")

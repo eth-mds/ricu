@@ -4,9 +4,7 @@
 #' The sepsis 3 label consists of a suspected infection combined with an acute
 #' increase in SOFA score.
 #'
-#' @param sofa `ts_tbl` with a column `sofa`
-#' @param susp_inf `ts_tbl` with columns `si_lwr` and `si_upr` defining windows for
-#' which a suspected infection is valid
+#' @param ... Data objects
 #' @param si_window Switch that can be used to filter SI windows
 #' @param delta_fun Function used to determine the SOFA increase during an SI
 #' window
@@ -76,19 +74,21 @@
 #' @rdname label_sep3
 #' @export
 #'
-sepsis_3 <- function(sofa, susp_inf, si_window = c("first", "last", "any"),
-                     delta_fun = delta_cummin, sofa_thresh = 2L,
-                     si_lwr = hours(48L), si_upr = hours(24L),
-                     interval = NULL) {
+sep3 <- function(..., si_window = c("first", "last", "any"),
+                 delta_fun = delta_cummin, sofa_thresh = 2L,
+                 si_lwr = hours(48L), si_upr = hours(24L),
+                 interval = NULL) {
 
-  if (is.null(interval)) {
-    interval <- interval(sofa)
-  }
+  cnc <- c("sofa", "susp_inf")
+  res <- capture_data(cnc, interval, ...)
 
-  assert_that(has_interval(sofa, interval),
-              has_interval(susp_inf, interval), is.count(sofa_thresh))
+  assert_that(is.count(sofa_thresh), is.function(delta_fun),
+              is_interval(si_lwr), is_interval(si_upr))
 
   si_window <- match.arg(si_window)
+
+  sofa <- res[["sofa"]]
+  susp <- res[["susp_inf"]]
 
   id <- id_vars(sofa)
   ind <- index_var(sofa)
@@ -99,21 +99,21 @@ sepsis_3 <- function(sofa, susp_inf, si_window = c("first", "last", "any"),
 
   on.exit(rm_cols(sofa, c("join_time1", "join_time2"), by_ref = TRUE))
 
-  susp_inf <- susp_inf[is_true(get("susp_inf")), ]
-  susp_inf <- susp_inf[, c("susp_inf") := NULL]
+  susp <- susp[is_true(get("susp_inf")), ]
+  susp <- susp[, c("susp_inf") := NULL]
 
-  susp_inf <- susp_inf[, c("si_lwr", "si_upr") := list(
-    get(index_var(susp_inf)) - si_lwr,
-    get(index_var(susp_inf)) + si_upr
+  susp <- susp[, c("si_lwr", "si_upr") := list(
+    get(index_var(susp)) - si_lwr,
+    get(index_var(susp)) + si_upr
   )]
 
   if (si_window %in%  c("first", "last")) {
-    susp_inf <- dt_gforce(susp_inf, si_window, id)
+    susp <- dt_gforce(susp, si_window, id)
   }
 
   join_clause <- c(id, "join_time1 >= si_lwr", "join_time2 <= si_upr")
 
-  res <- sofa[susp_inf,
+  res <- sofa[susp,
     c(list(delta_sofa = delta_fun(get("sofa"))), mget(ind)),
     on = join_clause, by = .EACHI, nomatch = NULL]
 
@@ -122,7 +122,7 @@ sepsis_3 <- function(sofa, susp_inf, si_window = c("first", "last", "any"),
   res <- rm_cols(res, c("join_time1", "join_time2", "delta_sofa"),
                  by_ref = TRUE)
   res <- res[, head(.SD, n = 1L), by = c(id_vars(res))]
-  res <- res[, c("sepsis_3") := TRUE]
+  res <- res[, c("sep3") := TRUE]
 
   res
 }
@@ -159,14 +159,12 @@ delta_min <- function(x, shifts = seq.int(0L, 23L)) {
 #' Suspected infection is defined as co-occurrence of of antibiotic treatment
 #' and body-fluid sampling.
 #'
-#' @param abx,samp Data input used for determining suspicion of infection
-#' (`ts_tbl` objects, as produced by [load_concepts()])
+#' @param ... Data and further arguments are passed to `si_calc()`
 #' @param abx_count_win Time span during which to apply the `abx_min_count`
 #' criterion
 #' @param abx_min_count Minimal number of antibiotic administrations
 #' @param positive_cultures Logical flag indicating whether to require
 #' cultures to be positive
-#' @param ... Passed to [si_calc()]
 #' @param interval Time series interval (only used for checking consistency
 #' of input data)
 #'
@@ -227,16 +225,19 @@ delta_min <- function(x, shifts = seq.int(0L, 23L)) {
 #' @rdname label_si
 #' @export
 #'
-susp_inf <- function(abx, samp, abx_count_win = hours(24L),
-                     abx_min_count = 1L, positive_cultures = FALSE, ...,
-                     interval = NULL) {
+susp_inf <- function(..., abx_count_win = hours(24L), abx_min_count = 1L,
+                     positive_cultures = FALSE, interval = NULL) {
 
-  if (is.null(interval)) {
-    interval <- interval(abx)
-  }
+  cnc <- c("abx", "samp")
 
-  assert_that(has_interval(abx, interval), has_interval(samp, interval),
-              is.count(abx_min_count), is.flag(positive_cultures))
+  sofa_data <- capture_fun(cnc, interval)
+  form_args <- c(formals(sofa_data), formals(si_calc))
+
+  res <- capture_eval(sofa_data, ..., .formal_args = form_args)
+
+  interval <- attr(res, "interval")
+
+  assert_that(is.count(abx_min_count), is.flag(positive_cultures))
 
   if (positive_cultures) {
     samp_fun <- "sum"
@@ -245,12 +246,12 @@ susp_inf <- function(abx, samp, abx_count_win = hours(24L),
   }
 
   res <- merge(
-    si_abx(abx, abx_count_win, abx_min_count),
-    si_samp(aggregate(samp, samp_fun)),
+    si_abx(res[["abx"]], abx_count_win, abx_min_count),
+    si_samp(aggregate(res[["samp"]], samp_fun)),
     all = TRUE
   )
 
-  si_calc(res, ...)
+  capture_eval(si_calc, tbl = res, ..., .formal_args = form_args)
 }
 
 si_abx <- function(x, count_win, min_count) {

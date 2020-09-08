@@ -42,7 +42,7 @@ test_that("suspicion of infection", {
   expect_equal(interval(si_ei), hours(1L))
 })
 
-sep3 <- sepsis_3(so_mi, si_mi)
+sep3 <- sep3(so_mi, si_mi)
 
 test_that("sepsis 3", {
 
@@ -50,7 +50,7 @@ test_that("sepsis 3", {
   expect_true(is_ts_tbl(sep3))
   expect_identical(id_vars(sep3), "icustay_id")
   expect_identical(index_var(sep3), "charttime")
-  expect_identical(data_vars(sep3), "sepsis_3")
+  expect_identical(data_vars(sep3), "sep3")
   expect_is(data_col(sep3), "logical")
   expect_gt(nrow(sep3), 0L)
   expect_equal(interval(sep3), hours(1L))

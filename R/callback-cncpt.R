@@ -1,27 +1,76 @@
 
-check_cncpt_cb_args <- function(names, in_val, ...) {
+capture_eval <- function(fun, ..., .formal_args = NULL) {
 
-  res <- list(...)
+  if (is.null(.formal_args)) {
+    return(fun(...))
+  }
 
-  if (is.null(in_val)) {
+  body <- quote({
+
+    call <- match.call(expand.dots = FALSE)
+    keep <- match(names(formals(fun)), names(call), 0L)
+    call <- call[c(1L, keep)]
+
+    call[[1L]] <- substitute(x, list(x = fun))
+
+    eval(call)
+  })
+
+  rlang::new_function(.formal_args, body)(...)
+}
+
+capture_fun <- function(concepts, interval) {
+
+  assert_that(is.character(concepts), has_length(concepts))
+
+  check_interval <- function(x, ival) !is_ts_tbl(x) || has_interval(x, ival)
+
+  body <- quote({
+
+    call <- match.call(expand.dots = FALSE)
+
+    call[[1L]] <- quote(list)
+
+    res <- eval(call, caller_env())
+
+    if (length(res) == 1L && length(concepts) > 1L) {
+      res <- res[[1L]]
+    }
+
+    assert_that(same_length(res, concepts), all_fun(res, is_id_tbl))
+
+    ivl <- NULL
+
     for (x in res) {
       if (is_ts_tbl(x)) {
-        in_val <- interval(x)
+        ivl <- interval(x)
         break
       }
     }
-  }
 
-  if (is.null(names(res))) {
-    names(res) <- names
-  }
+    assert_that(all_fun(res, check_interval, ivl),
+                setequal(concepts, names(res)),
+                all_map(has_cols, res[concepts], concepts),
+                null_or(interval, all_equal, ivl))
 
-  assert_that(all_fun(res, has_interval, in_val),
-              setequal(names, names(res)),
-              all_map(has_cols, res[names], names))
+    if (length(concepts) == 1L) {
+      res <- res[[1L]]
+    }
 
-  assign("interval", in_val, envir = caller_env())
+    attr(res, "interval") <- ivl
 
+    res
+  })
+
+  arg <- rep(list(bquote()), length(concepts))
+  names(arg) <- concepts
+
+  rlang::new_function(arg, body)
+}
+
+capture_data <- function(concepts, interval, ...) {
+  res <- capture_fun(concepts, interval)(...)
+  assign("interval", attr(res, "interval"), envir = caller_env())
   res
 }
 
@@ -44,14 +93,14 @@ check_cncpt_cb_args <- function(names, in_val, ...) {
 #' @rdname callback_cncpt
 #' @export
 #'
-cb_pafi <- function(..., match_win = hours(2L),
-                    mode = c("match_vals", "extreme_vals", "fill_gaps"),
-                    fix_na_fio2 = TRUE, interval = NULL) {
+pafi <- function(..., match_win = hours(2L),
+                 mode = c("match_vals", "extreme_vals", "fill_gaps"),
+                 fix_na_fio2 = TRUE, interval = NULL) {
 
   mode <- match.arg(mode)
 
   cnc <- c("po2", "fio2")
-  res <- check_cncpt_cb_args(cnc, interval, ...)
+  res <- capture_data(cnc, interval, ...)
 
   assert_that(is_interval(match_win), match_win > interval,
               is.flag(fix_na_fio2))
@@ -102,8 +151,8 @@ cb_pafi <- function(..., match_win = hours(2L),
 #' @rdname callback_cncpt
 #' @export
 #'
-cb_vent <- function(..., match_win = hours(6L),
-                    min_length = mins(10L), interval = NULL) {
+vent <- function(..., match_win = hours(6L), min_length = mins(10L),
+                 interval = NULL) {
 
   subset_true <- function(x, col) x[is_true(get(col))]
   copy_time <- function(x, new, old) x[, c(new) := get(old)]
@@ -111,7 +160,7 @@ cb_vent <- function(..., match_win = hours(6L),
   final_int <- interval
 
   cnc <- c("vent_start", "vent_end")
-  res <- check_cncpt_cb_args(cnc, NULL, ...)
+  res <- capture_data(cnc, NULL, ...)
 
   if (is.null(final_int)) {
     final_int <- interval
@@ -158,10 +207,10 @@ cb_vent <- function(..., match_win = hours(6L),
 #' @rdname callback_cncpt
 #' @export
 #'
-cb_sed <- function(..., interval = NULL) {
+sed <- function(..., interval = NULL) {
 
   cnc <- c("trach", "rass")
-  res <- check_cncpt_cb_args(cnc, interval, ...)
+  res <- capture_data(cnc, interval, ...)
 
   res <- reduce(merge, res, all = TRUE)
 
@@ -181,12 +230,12 @@ cb_sed <- function(..., interval = NULL) {
 #' @rdname callback_cncpt
 #' @export
 #'
-cb_gcs <- function(..., valid_win = hours(6L), set_sed_max = TRUE,
-                   set_na_max = TRUE, interval = NULL) {
+gcs <- function(..., valid_win = hours(6L), set_sed_max = TRUE,
+                set_na_max = TRUE, interval = NULL) {
 
 
   cnc <- c("egcs", "vgcs", "mgcs", "tgcs", "sed")
-  res <- check_cncpt_cb_args(cnc, interval, ...)
+  res <- capture_data(cnc, interval, ...)
 
   assert_that(is_interval(valid_win), valid_win > interval,
               is.flag(set_sed_max), is.flag(set_na_max))
@@ -226,7 +275,7 @@ cb_gcs <- function(..., valid_win = hours(6L), set_sed_max = TRUE,
 #' @rdname callback_cncpt
 #' @export
 #'
-cb_urine24 <- function(..., min_win = hours(12L), interval = NULL) {
+urine24 <- function(..., min_win = hours(12L), interval = NULL) {
 
   convert_dt <- function(x) as.double(x, units(interval))
 
@@ -241,7 +290,7 @@ cb_urine24 <- function(..., min_win = hours(12L), interval = NULL) {
     }
   })
 
-  res <- check_cncpt_cb_args("urine", interval, ...)[[1L]]
+  res <- capture_data("urine", interval, ...)
 
   assert_that(is_interval(min_win), min_win > interval, min_win <= hours(24L))
 
@@ -252,3 +301,43 @@ cb_urine24 <- function(..., min_win = hours(12L), interval = NULL) {
 
   slide(res, !!expr, hours(24L))
 }
+
+#' @rdname callback_cncpt
+#' @export
+supp_o2 <- function(..., interval = NULL) {
+
+  cnc <- c("vent", "fio2")
+  res <- capture_data(cnc, interval, ...)
+
+  res <- reduce(merge, res, all = TRUE)
+
+  res <- res[, c("supp_o2", "vent", "fio2") := list(
+    get("vent") | get("fio2") > 21, NULL, NULL
+  )]
+
+  res
+}
+
+map_vals <- function(pts, vals) {
+  function(x) pts[findInterval(x, vals, left.open = TRUE) + 1]
+}
+
+#' @param by_ref Logical flag indicating whether to change the input by
+#' reference
+#' @rdname callback_cncpt
+#' @export
+avpu <- function(..., interval = NULL, by_ref = TRUE) {
+
+  avpu_map <- map_vals(c(NA, "U", "P", "V", "A", NA), c(2, 3, 9, 13, 15))
+
+  res <- capture_data("gcs", interval, ...)
+
+  if (isFALSE(by_ref)) {
+    res <- copy(res)
+  }
+
+  res <- res[, c("avpu", "gcs") := list(avpu_map(get("gcs")), NULL)]
+
+  res
+}
+
