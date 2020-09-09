@@ -73,6 +73,73 @@ data_dir <- function(subdir = NULL, create = TRUE) {
   res
 }
 
+src_data_dir <- function(src) {
+
+  if (!is.string(src)) {
+    src <- src_name(src)
+  }
+
+  assert_that(is.string(src))
+
+  if (grepl("_demo$", src)) {
+
+    pkg <- sub("_demo$", ".demo", src)
+
+    if (is_pkg_available(pkg)) {
+      system.file("extdata", package = pkg)
+    } else {
+      data_dir(src, create = FALSE)
+    }
+
+  } else {
+    data_dir(src, create = FALSE)
+  }
+}
+
+auto_load_src_names <- function() {
+
+  res <- Sys.getenv("RICU_SRC_LOAD", unset = NA_character_)
+
+  if (is.na(res)) {
+    c("mimic", "mimic_demo", "eicu", "eicu_demo", "hirid")
+  } else {
+    strsplit(res, ",")[[1L]]
+  }
+}
+
+src_data_avail <- function(src = auto_load_src_names()) {
+
+  src_stats <- function(x, env) {
+
+    src_env <- tryCatch(
+      get0(x, envir = env, inherits = FALSE),
+      miss_tbl_msg = function(msg) attr(msg, "tbl_ok"),
+      message = function(msg) NULL,
+      warning = function(warn) NULL,
+      error = function(err) NULL
+    )
+
+    if (is.null(src_env)) {
+      c(NA_integer_, NA_integer_)
+    } else if (is_src_env(src_env)) {
+      rep(length(src_env), 2L)
+    } else {
+      c(sum(src_env), length(src_env))
+    }
+  }
+
+  assert_that(is.character(src), has_length(src))
+
+  env <- data_env()
+  res <- int_ply(src, src_stats, env, length = 2L)
+
+  data.frame(
+    name = src,
+    available = is_true(src %in% ls(envir = env) & res[1L, ] == res[2L, ]),
+    tables = res[1L, ], total = res[2L, ]
+  )
+}
+
 ensure_dirs <- function(paths) {
 
   uq_paths <- unique(paths)
@@ -469,17 +536,6 @@ rep_arg <- function(arg, names) {
   assert_that(identical(names(arg), names))
 
   arg
-}
-
-auto_load_src_names <- function() {
-
-  res <- Sys.getenv("RICU_SRC_LOAD", unset = NA_character_)
-
-  if (is.na(res)) {
-    c("mimic", "mimic_demo", "eicu", "eicu_demo", "hirid")
-  } else {
-    strsplit(res, ",")[[1L]]
-  }
 }
 
 unlst <- function(x, recursive = FALSE, use_names = FALSE) {

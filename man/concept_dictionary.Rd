@@ -12,7 +12,7 @@ load_dictionary(
 )
 }
 \arguments{
-\item{src}{\code{NULL} or the name of a data source}
+\item{src}{\code{NULL} or the name of one or several data sources}
 
 \item{concepts}{A character vector used to subset the concept dictionary or
 \code{NULL} indicating no subsetting}

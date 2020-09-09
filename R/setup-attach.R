@@ -188,26 +188,3 @@ setup_src_env.src_cfg <- function(x, env, dir = src_data_dir(x)) {
 
 #' @export
 setup_src_env.default <- function(x, ...) stop_generic(x, .Generic)
-
-src_data_dir <- function(source) {
-
-  if (!is.string(source)) {
-    source <- src_name(source)
-  }
-
-  assert_that(is.string(source))
-
-  if (grepl("_demo$", source)) {
-
-    pkg <- sub("_demo$", ".demo", source)
-
-    if (is_pkg_available(pkg)) {
-      system.file("extdata", package = pkg)
-    } else {
-      data_dir(source, create = FALSE)
-    }
-
-  } else {
-    data_dir(source, create = FALSE)
-  }
-}

@@ -937,7 +937,7 @@ n_tick.concept <- function(x) sum(int_ply(x, n_tick))
 #' dictionary by specifying a character vector of data sources and/or concept
 #' names.
 #'
-#' @param src `NULL` or the name of a data source
+#' @param src `NULL` or the name of one or several data sources
 #' @param concepts A character vector used to subset the concept dictionary or
 #' `NULL` indicating no subsetting
 #' @param name Name of the dictionary to be read
@@ -952,6 +952,15 @@ n_tick.concept <- function(x) sum(int_ply(x, n_tick))
 #' @export
 load_dictionary <- function(src = NULL, concepts = NULL,
                             name = "concept-dict", file = NULL) {
+
+  avail <- src_data_avail()
+  avail <- setNames(avail[["available"]], avail[["name"]])
+
+  if (is.null(src)) {
+    src <- names(avail[avail])
+  }
+
+  assert_that(are_in(src, names(avail)), all(avail[src]))
 
   parse_dictionary(read_dictionary(name, file), src, concepts)
 }
