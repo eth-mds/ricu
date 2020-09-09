@@ -10,11 +10,7 @@
 \alias{load_concepts.lgl_cncpt}
 \alias{load_concepts.rec_cncpt}
 \alias{load_concepts.item}
-\alias{load_concepts.col_itm}
-\alias{load_concepts.sel_itm}
-\alias{load_concepts.rgx_itm}
-\alias{load_concepts.hrd_itm}
-\alias{load_concepts.fun_itm}
+\alias{load_concepts.itm}
 \title{Load concept data}
 \usage{
 load_concepts(x, ...)
@@ -64,39 +60,7 @@ load_concepts(x, ...)
   ...
 )
 
-\method{load_concepts}{col_itm}(
-  x,
-  patient_ids = NULL,
-  id_type = "icustay",
-  interval = hours(1L),
-  ...
-)
-
-\method{load_concepts}{sel_itm}(
-  x,
-  patient_ids = NULL,
-  id_type = "icustay",
-  interval = hours(1L),
-  ...
-)
-
-\method{load_concepts}{rgx_itm}(
-  x,
-  patient_ids = NULL,
-  id_type = "icustay",
-  interval = hours(1L),
-  ...
-)
-
-\method{load_concepts}{hrd_itm}(
-  x,
-  patient_ids = NULL,
-  id_type = "icustay",
-  interval = hours(1L),
-  ...
-)
-
-\method{load_concepts}{fun_itm}(
+\method{load_concepts}{itm}(
   x,
   patient_ids = NULL,
   id_type = "icustay",

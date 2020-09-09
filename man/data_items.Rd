@@ -16,7 +16,7 @@
 \alias{is_item}
 \title{Data items}
 \usage{
-new_itm(src, ..., class = "sel_itm")
+new_itm(src, ..., target = NA_character_, class = "sel_itm")
 
 is_itm(x)
 
@@ -47,6 +47,9 @@ is_item(x)
 
 \item{...}{Further specification of the \code{itm} object (passed to
 \code{\link[=init_itm]{init_itm()}})}
+
+\item{target}{Item target class (e.g. "id_tbl"), \code{NA} indicates no specific
+class requirement}
 
 \item{class}{Sub class for customizing \code{itm} behavior}
 

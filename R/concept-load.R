@@ -262,7 +262,7 @@ load_concepts.concept <- function(x, src = NULL, aggregate = NULL,
 load_one_concept_helper <- function(x, aggregate, ..., progress) {
 
   name <- x[["name"]]
-  targ <- target_class(x)
+  targ <- get_target(x)
   type <- is_type(targ)
 
   progress_tick(name, progress, 0L)
@@ -455,13 +455,14 @@ load_concepts.rec_cncpt <- function(x, aggregate = NULL, patient_ids = NULL,
               progress = progress)
 
   itm <- as_item(x)
+
   agg <- x[["aggregate"]]
   agg <- Map(coalesce, rep_arg(aggregate, names(agg)), agg)
   agg <- agg[names(itm)]
 
   dat <- Map(load_one_concept_helper, itm, agg, MoreArgs = ext)
 
-  do.call(get_itm_callback(x), c(dat, list(...), list(interval = interval)))
+  do_callback(x, dat, ..., interval = interval)
 }
 
 #' @param patient_ids Optional vector of patient ids to subset the fetched data
@@ -497,99 +498,19 @@ load_concepts.item <- function(x, patient_ids = NULL, id_type = "icustay",
 
 #' @rdname load_concepts
 #' @export
-load_concepts.col_itm <- function(x, patient_ids = NULL, id_type = "icustay",
-                                  interval = hours(1L), ...) {
-
-
-  warn_dots(...)
-
-  res <- do_itm_load(x, patient_ids, id_type, interval)
-
-  if (is.null(get_itm_var(x, "unit_var"))) {
-
-    unt <- x[["unit_val"]]
-
-    if (not_null(unt)) {
-      res <- res[, c("measurement_unit") := unt]
-        x <- try_add_vars(x, unit_var = "measurement_unit")
-    }
-  }
-
-  itm_post_proc(x, res)
-}
-
-#' @rdname load_concepts
-#' @export
-load_concepts.sel_itm <- function(x, patient_ids = NULL, id_type = "icustay",
-                                  interval = hours(1L), ...) {
+load_concepts.itm <- function(x, patient_ids = NULL, id_type = "icustay",
+                              interval = hours(1L), ...) {
 
   warn_dots(...)
 
-  res <- do_itm_load(x, patient_ids, id_type, interval)
+  res <- do_itm_load(x, id_type, interval = interval)
+  res <- merge_patid(res, patient_ids)
 
-  itm_post_proc(x, res)
-}
-
-#' @rdname load_concepts
-#' @export
-load_concepts.rgx_itm <- function(x, patient_ids = NULL, id_type = "icustay",
-                                  interval = hours(1L), ...) {
-
-  warn_dots(...)
-
-  res <- do_itm_load(x, patient_ids, id_type, interval)
-
-  itm_post_proc(x, res)
-}
-
-#' @rdname load_concepts
-#' @export
-load_concepts.hrd_itm <- function(x, patient_ids = NULL, id_type = "icustay",
-                                  interval = hours(1L), ...) {
-
-  warn_dots(...)
-
-  res <- do_itm_load(x, patient_ids, id_type, interval)
-
-  if (is.null(get_itm_var(x, "unit_var"))) {
-    unt <- x[["units"]]
-    res <- merge(res, unt, by = get_itm_var(x, "sub_var"), all.x = TRUE)
-      x <- try_add_vars(x, unit_var = data_vars(unt))
-  }
-
-  itm_post_proc(x, res)
-}
-
-#' @rdname load_concepts
-#' @export
-load_concepts.fun_itm <- function(x, patient_ids = NULL, id_type = "icustay",
-                                  interval = hours(1L), ...) {
-
-  warn_dots(...)
-
-  cb <- get_itm_callback(x)
-
-  cb(x = x, patient_ids = patient_ids, id_type = id_type, interval = interval)
+  do_callback(x, res)
 }
 
 #' @export
 load_concepts.default <- function(x, ...) stop_generic(x, .Generic)
-
-do_itm_load <- function(x, patient_ids, id_type, interval) {
-
-  ide <- unname(lookup_id_type(x, id_type))
-  idx <- get_itm_var(x, "index_var")
-  qry <- prepare_query(x)
-  col <- get_itm_var(x)
-
-  if (is.null(idx)) {
-    res <- load_id(x, !!qry, col, ide, interval)
-  } else {
-    res <- load_ts(x, !!qry, col, ide, idx, interval)
-  }
-
-  merge_patid(res, patient_ids)
-}
 
 merge_patid <- function(x, patid) {
 
@@ -605,16 +526,4 @@ merge_patid <- function(x, patid) {
   }
 
   merge(x, patid, by = id_col, all = FALSE)
-}
-
-itm_post_proc <- function(x, dat) {
-
-  var <- get_itm_var(x)
-
-  arg <- c(list(dat), as.list(var), list(env = as_src_env(x)))
-  dat <- do.call(get_itm_callback(x), arg)
-
-  dat <- rename_cols(dat, names(var), var, skip_absent = TRUE, by_ref = TRUE)
-
-  dat
 }

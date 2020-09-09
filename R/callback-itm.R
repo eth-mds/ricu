@@ -346,7 +346,7 @@ hirid_urine <- function(x, val_var, unit_var, ...) {
   x[, c(val_var, unit_var) := list(do_diff(get(val_var)), "mL"), by = idx]
 }
 
-los_callback <- function(x, patient_ids, id_type, interval) {
+los_callback <- function(x, id_type, interval) {
 
   as_day <- function(x) as.double(x, units = "days")
 
@@ -374,5 +374,5 @@ los_callback <- function(x, patient_ids, id_type, interval) {
     }
   }
 
-  merge_patid(res, patient_ids)
+  res
 }

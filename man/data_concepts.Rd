@@ -12,7 +12,7 @@
 \alias{concept}
 \alias{is_concept}
 \alias{as_concept}
-\title{Data items}
+\title{Data Concepts}
 \usage{
 new_cncpt(
   name,

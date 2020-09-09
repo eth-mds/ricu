@@ -65,8 +65,70 @@ load_difftime(x, ...)
 timestamps and thus returned as \code{\link[base:difftime]{base::difftime()}} vectors}
 }
 \description{
-Depending on the desired return type (\code{ts_tbl}, \code{id_tbl} or plain
-\code{data.table}) and on whether the row-subsetting argument is a quoted
-expression (suffix \verb{_quo}), this set of functions provides the basic
-mechanisms for loading data.
+Data loading involves a cascade of S3 generic functions, which can
+individually be adapted to the specifics of individual data sources. A the
+lowest level, \code{load_scr} is called, followed by \code{load_difftime()}.
+Functions up the chain, are described in \code{\link[=load_id]{load_id()}}.
+}
+\details{
+A function extending the S3 generic \code{load_src()} is expected to load a
+subset of rows/columns from a tabular data source. While the column
+specification is provided as character vector of column names, the row
+subsetting involves non-standard evaluation (NSE). Data-sets that are
+included with \code{ricu} are represented by \code{\link[prt:new_prt]{prt}} objects,
+which use \code{\link[rlang:eval_tidy]{rlang::eval_tidy()}} to evaluate NSE expressions. Furthermore,
+\code{prt} objects potentially represent tabular data split into partitions and
+row-subsetting expressions are evaluated per partition (see the \code{part_safe}
+flag in \code{\link[prt:nse]{prt::subset.prt()}}). The return value of \code{load_src()} is expected
+to be of type \code{data.table}.
+
+Timestamps are represented differently among the included data sources:
+while MIMIC-III and HiRID use absolute date/times, eICU provides temporal
+information as minutes relative to ICU admission. Other data sources, such
+as the ICU dataset provided by Amsterdam UMC, opt for relative times as
+well, but not in minutes since admission, but in milliseconds. In order to
+smoothen out such discrepancies, the next function in the data loading
+hierarchy is \code{load_difftime()}. This function is expected to call
+\code{load_src()} in order to load a subset of rows/columns from a table stored
+on disk and convert all columns that represent timestamps (as specified by
+the argument \code{time_vars}) into \code{\link[base:difftime]{base::difftime()}} vectors using \code{mins} as
+time unit.
+
+The returned object should be of type \code{id_tbl}, with the ID vars
+identifying the ID system the times are relative to. If for example all
+times are relative to ICU admission, the ICU stay ID should be returned as
+ID column. The argument \code{id_hint} may suggest an ID type, but if in the raw
+data, this ID is not available, \code{load_difftime()} may return data using a
+different ID system. In MIMIC-III, for example, data in the \code{labevents}
+table is available for \code{subject_id} (patient ID) pr \code{hadm_id} (hospital
+admission ID). If data is requested for \code{icustay_id} (ICU stay ID), this
+request cannot be fulfilled and data is returned using the ID system with
+the highest cardinality (among the available ones). Utilities such as
+\code{\link[=change_id]{change_id()}} can the later be used to resolve data to \code{icustay_id}.
+}
+\examples{
+
+tbl <- mimic_demo$labevents
+col <- c("charttime", "value")
+
+load_src(tbl, itemid == 50809)
+
+colnames(
+  load_src("labevents", "mimic_demo", itemid == 50809, cols = col)
+)
+
+load_difftime(tbl, itemid == 50809)
+
+colnames(
+  load_difftime(tbl, itemid == 50809, col)
+)
+
+id_vars(
+  load_difftime(tbl, itemid == 50809, id_hint = "icustay_id")
+)
+
+id_vars(
+  load_difftime(tbl, itemid == 50809, id_hint = "subject_id")
+)
+
 }

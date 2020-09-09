@@ -73,6 +73,8 @@
 #' @param src The data source name
 #' @param ... Further specification of the `itm` object (passed to
 #' [init_itm()])
+#' @param target Item target class (e.g. "id_tbl"), `NA` indicates no specific
+#' class requirement
 #' @param class Sub class for customizing `itm` behavior
 #'
 #' @rdname data_items
@@ -100,11 +102,12 @@
 #'
 #' @export
 #'
-new_itm <- function(src, ..., class = "sel_itm") {
+new_itm <- function(src, ..., target = NA_character_, class = "sel_itm") {
 
   assert_that(is.string(src), is.character(class), has_length(class))
 
-  init_itm(structure(list(src = src), class = c(class, "itm")), ...)
+  init_itm(structure(list(src = src, target = target),
+           class = c(class, "itm")), ...)
 }
 
 #' @param x Object to query/dispatch on
@@ -127,9 +130,7 @@ tbl_name.itm <- function(x) {
 tbl_name.fun_itm <- function(x) NULL
 
 #' @export
-as_src_tbl.itm <- function(x, ...) {
-  as_src_tbl(tbl_name(x), src_name(x), ...)
-}
+as_src_tbl.itm <- function(x, ...) as_src_tbl(tbl_name(x), src_name(x), ...)
 
 #' @rdname data_items
 #' @export
@@ -208,17 +209,25 @@ init_itm.rgx_itm <- function(x, table, sub_var, regex,
   complete_tbl_itm(x, callback, sub_var, ...)
 }
 
-complete_tbl_itm <- function(x, callback, sub_var, ...) {
-  res <- set_itm_callback(x, callback)
+complete_tbl_itm <- function(x, callback, sub_var, id_var = NULL,
+                             index_var = NULL, ...) {
+
+  res <- set_callback(x, callback)
   res <- try_add_vars(res, sub_var = sub_var, ...)
   res <- try_add_vars(res, val_var = TRUE)
-  set_id_opts(res)
+
+  tbl <- as_src_tbl(x)
+
+  res[["id_var"]]    <- coalesce(id_var,    id_var(tbl))
+  res[["index_var"]] <- coalesce(index_var, index_var(tbl))
+
+  res
 }
 
 #' @rdname data_items
 #' @export
 init_itm.fun_itm <- function(x, callback, ...) {
-  init_itm.itm(set_itm_callback(x, callback), ...)
+  init_itm.itm(set_callback(x, callback), ...)
 }
 
 #' @rdname data_items
@@ -383,9 +392,9 @@ get_itm_var.itm <- function(x, var = NULL) {
   res <- x[["vars"]]
 
   if (is.null(var)) {
-    unlist(res[setdiff(names(res), "index_var")], recursive = FALSE)
+    res
   } else {
-    if (has_name(res, var)) res[[var]] else NULL
+    x[["vars"]][[var]]
   }
 }
 
@@ -397,11 +406,11 @@ get_itm_var.default <- function(x, ...) stop_generic(x, .Generic)
 #' @rdname item_utils
 #' @keywords internal
 #' @export
-set_itm_callback <- function(x, fun) UseMethod("set_itm_callback", x)
+set_callback <- function(x, fun) UseMethod("set_callback", x)
 
 #' @keywords internal
 #' @export
-set_itm_callback.itm <- function(x, fun) {
+set_callback.itm <- function(x, fun) {
 
   assert_that(evals_to_fun(fun))
 
@@ -411,7 +420,7 @@ set_itm_callback.itm <- function(x, fun) {
 }
 
 #' @export
-set_itm_callback.default <- function(x, ...) stop_generic(x, .Generic)
+set_callback.default <- function(x, ...) stop_generic(x, .Generic)
 
 str_to_fun <- function(x) {
   res <- eval(parse(text = x))
@@ -422,55 +431,113 @@ str_to_fun <- function(x) {
 #' @rdname item_utils
 #' @keywords internal
 #' @export
-get_itm_callback <- function(x) UseMethod("get_itm_callback", x)
+do_callback <- function(x, ...) UseMethod("do_callback", x)
 
 #' @keywords internal
 #' @export
-get_itm_callback.itm <- function(x) str_to_fun(x[["callback"]])
+do_callback.itm <- function(x, ...) {
+
+  fun <- str_to_fun(x[["callback"]])
+  var <- x[["vars"]]
+  env <- as_src_env(x)
+
+  (function(x) {
+
+    res <- do.call(fun, c(list(x), var, list(env = env)))
+
+    res <- rename_cols(res, names(var), unlst(var), skip_absent = TRUE,
+                       by_ref = TRUE)
+    res
+
+  })(...)
+}
 
 #' @keywords internal
 #' @export
-get_itm_callback.rec_cncpt <- function(x) str_to_fun(x[["callback"]])
-
-#' @export
-get_itm_callback.default <- function(x) stop_generic(x, .Generic)
-
-#' @rdname item_utils
-#' @keywords internal
-#' @export
-set_id_opts <- function(x) UseMethod("set_id_opts", x)
+do_callback.fun_itm <- function(x, ...) identity_callback(...)
 
 #' @keywords internal
 #' @export
-set_id_opts.itm <- function(x) {
-  x[["id_opts"]] <- coalesce(get_itm_var(x, "id_var"),
-                             as.character(as_id_cfg(x)))
-  try_add_vars(x, id_var = FALSE)
+do_callback.rec_cncpt <- function(x, lst, ...) {
+  do.call(str_to_fun(x[["callback"]]), c(lst, list(...)))
 }
 
 #' @export
-set_id_opts.default <- function(x) stop_generic(x, .Generic)
+do_callback.default <- function(x, ...) stop_generic(x, .Generic)
 
+#' @inheritParams load_concepts
 #' @rdname item_utils
 #' @keywords internal
 #' @export
-lookup_id_type <- function(x, ...) UseMethod("lookup_id_type", x)
+do_itm_load <- function(x, id_type = "icustay", interval = hours(1L)) {
+  UseMethod("do_itm_load", x)
+}
 
-#' @keywords internal
 #' @export
-lookup_id_type.itm <- function(x, id_type = NULL, ...) {
+do_itm_load.itm <- function(x, id_type = "icustay", interval = hours(1L)) {
 
-  res <- x[["id_opts"]]
+  trg <- get_target(x)
+  fun <- switch(trg, id_tbl = load_id, ts_tbl = load_ts,
+                stop_ricu("Cannot load object with target class {trg}"))
 
-  if (!is.null(id_type)) {
-    res <- res[id_type]
+  fun(x, id_var = id_var(as_id_cfg(x)[id_type]), interval = interval)
+}
+
+#' @export
+do_itm_load.hrd_itm <- function(x, id_type = "icustay", interval = hours(1L)) {
+
+  res <- NextMethod()
+
+  if (is.null(get_itm_var(x, "unit_var"))) {
+    unt <- x[["units"]]
+    res <- merge(res, unt, by = get_itm_var(x, "sub_var"), all.x = TRUE)
+      x <- try_add_vars(x, unit_var = data_vars(unt))
   }
 
   res
 }
 
 #' @export
-lookup_id_type.default <- function(x, ...) stop_generic(x, .Generic)
+do_itm_load.col_itm <- function(x, id_type = "icustay", interval = hours(1L)) {
+
+  res <- NextMethod()
+
+  if (is.null(get_itm_var(x, "unit_var"))) {
+
+    unt <- x[["unit_val"]]
+
+    if (not_null(unt)) {
+      res <- res[, c("measurement_unit") := unt]
+        x <- try_add_vars(x, unit_var = "measurement_unit")
+    }
+  }
+
+  res
+}
+
+#' @export
+do_itm_load.fun_itm <- function(x, id_type = "icustay", interval = hours(1L)) {
+  str_to_fun(x[["callback"]])(x, id_type = id_type, interval = interval)
+}
+
+#' @export
+do_itm_load.default <- function(x, ...) stop_generic(x, .Generic)
+
+#' @export
+id_vars.itm <- function(x) {
+  coalesce(x[["id_var"]], id_vars(as_src_tbl(x)))
+}
+
+#' @export
+index_var.itm <- function(x) {
+  coalesce(x[["index_var"]], index_var(as_src_tbl(x)))
+}
+
+#' @export
+meta_vars.itm <- function(x) c(id_vars(x), index_var(x))
+
+#' @export
+dimnames.itm <- function(x) list(NULL, unlst(x[["vars"]]))
 
 #' @rdname data_items
 #' @export
@@ -548,15 +615,42 @@ n_tick.default <- function(x) stop_generic(x, .Generic)
 #' @rdname item_utils
 #' @keywords internal
 #' @export
-target_class <- function(x) UseMethod("target_class", x)
+set_target <- function(x, target) UseMethod("set_target", x)
 
 #' @export
-target_class.cncpt <- function(x) x[["target"]]
+set_target.item <- function(x, target) new_item(lapply(x, set_target, target))
 
 #' @export
-target_class.default <- function(x) stop_generic(x, .Generic)
+set_target.itm <- function(x, target) {
 
-#' Data items
+  assert_that(is.string(target))
+
+  curr <- get_target(x)
+
+  if (is.null(curr) || is.na(curr)) {
+    x[["target"]] <- target
+  }
+
+  x
+}
+
+set_target.default <- function(x, target) stop_generic(x, .Generic)
+
+#' @rdname item_utils
+#' @keywords internal
+#' @export
+get_target <- function(x) UseMethod("get_target", x)
+
+#' @export
+get_target.cncpt <- function(x) x[["target"]]
+
+#' @export
+get_target.itm <- function(x) x[["target"]]
+
+#' @export
+get_target.default <- function(x) stop_generic(x, .Generic)
+
+#' Data Concepts
 #'
 #' Concept objects are used in `ricu` as a way to specify how a clinical
 #' concept, such as heart rate can be loaded from a data source and are mainly
@@ -670,18 +764,13 @@ new_cncpt <- function(name, items, description = NA_character_,
               is.string(description), is.string(category))
 
   if (!is_concept(items)) {
-    items <- as_item(items)
+    items <- set_target(as_item(items), target)
   }
 
   res <- list(name = name, items = items, description = description,
               category = category, aggregate = aggregate, target = target)
-  res <- init_cncpt(structure(res, class = c(class, "cncpt")), ...)
 
-  if (identical(target, "ts_tbl")) {
-    res <- try_add_vars(res, index_var = TRUE)
-  }
-
-  res
+  init_cncpt(structure(res, class = c(class, "cncpt")), ...)
 }
 
 #' @param x Object to query/dispatch on
@@ -1074,7 +1163,7 @@ parse_dictionary <- function(dict, src = NULL, concepts = NULL) {
     new_concept(lapply(Map(c, name = names(sub), sub), do_call, do_cncpt))
   }
 
-  assert_that(null_or(src, is.string))
+  assert_that(null_or(src, is.character))
 
   if (is.null(concepts)) {
     concepts <- names(dict)

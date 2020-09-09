@@ -37,12 +37,6 @@ as.list.id_cfg <- function(x, ...) {
   vec_chop(x)
 }
 
-#' @method as.character id_cfg
-#' @export
-as.character.id_cfg <- function(x, ...) {
-  setNames(id_var_opts(x), names(x))
-}
-
 #' @rdname id_cfg
 #' @keywords internal
 #' @export

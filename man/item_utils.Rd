@@ -4,12 +4,12 @@
 \alias{prepare_query}
 \alias{try_add_vars}
 \alias{get_itm_var}
-\alias{set_itm_callback}
-\alias{get_itm_callback}
-\alias{set_id_opts}
-\alias{lookup_id_type}
+\alias{set_callback}
+\alias{do_callback}
+\alias{do_itm_load}
 \alias{n_tick}
-\alias{target_class}
+\alias{set_target}
+\alias{get_target}
 \title{Internal utilities for \code{item}/\code{concept} objects}
 \usage{
 prepare_query(x)
@@ -18,17 +18,17 @@ try_add_vars(x, ...)
 
 get_itm_var(x, var = NULL)
 
-set_itm_callback(x, fun)
+set_callback(x, fun)
 
-get_itm_callback(x)
+do_callback(x, ...)
 
-set_id_opts(x)
-
-lookup_id_type(x, ...)
+do_itm_load(x, id_type = "icustay", interval = hours(1L))
 
 n_tick(x)
 
-target_class(x)
+set_target(x, target)
+
+get_target(x)
 }
 \arguments{
 \item{x}{Object defining the row-subsetting}
@@ -36,6 +36,11 @@ target_class(x)
 \item{...}{Variable name}
 
 \item{fun}{Callback function (passed as string)}
+
+\item{id_type}{String specifying the patient id type to return}
+
+\item{interval}{The time interval used to discretize time stamps with,
+specified as \code{\link[base:difftime]{base::difftime()}} object}
 }
 \description{
 Internal utilities for \code{item}/\code{concept} objects

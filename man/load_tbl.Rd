@@ -4,10 +4,14 @@
 \alias{load_id}
 \alias{load_id.src_tbl}
 \alias{load_id.character}
+\alias{load_id.itm}
+\alias{load_id.fun_itm}
 \alias{load_id.default}
 \alias{load_ts}
 \alias{load_ts.src_tbl}
 \alias{load_ts.character}
+\alias{load_ts.itm}
+\alias{load_ts.fun_itm}
 \alias{load_ts.default}
 \title{Load data as \code{id_tbl} or \code{ts_tbl} objects}
 \usage{
@@ -25,6 +29,10 @@ load_id(x, ...)
 
 \method{load_id}{character}(x, src, ...)
 
+\method{load_id}{itm}(x, cols = colnames(x), id_var = id_vars(x), ...)
+
+\method{load_id}{fun_itm}(x, ...)
+
 \method{load_id}{default}(x, ...)
 
 load_ts(x, ...)
@@ -41,6 +49,16 @@ load_ts(x, ...)
 )
 
 \method{load_ts}{character}(x, src, ...)
+
+\method{load_ts}{itm}(
+  x,
+  cols = colnames(x),
+  id_var = id_vars(x),
+  index_var = ricu::index_var(x),
+  ...
+)
+
+\method{load_ts}{fun_itm}(x, ...)
 
 \method{load_ts}{default}(x, ...)
 }
@@ -66,5 +84,34 @@ timestamps and thus returned as \code{\link[base:difftime]{base::difftime()}} ve
 \item{index_var}{The column defining the index of \code{ts_tbl} objects}
 }
 \description{
-Load data as \code{id_tbl} or \code{ts_tbl} objects
+Building on functionality provided by \code{\link[=load_src]{load_src()}} and \code{\link[=load_difftime]{load_difftime()}},
+\code{load_id()} and \code{load_ts()} load data from disk as \code{id_tbl} and \code{ts_tbl}
+objects respectively. Over \code{load_difftime()} both \code{load_id()} and
+\code{load_ts()} provide a way to specify \code{\link[=meta_vars]{meta_vars()}} (as \code{id_var} and
+\code{index_var} arguments), as well as an interval size (as \code{interval}
+argument) for time series data.
+}
+\details{
+While for \code{\link[=load_difftime]{load_difftime()}} the ID variable can be suggested, the function
+only returns a best effort at fulfilling this request. In some cases, where
+the data does not allow for the desired ID type, data is returned using the
+ID system among all available ones for the given table with highest
+cardinality. Both \code{load_id()} and \code{load_ts()} are guaranteed to return an
+object with \code{\link[=id_vars]{id_vars()}} set as requested by the \code{id_var} argument.
+Internally, the change of ID system is performed by \code{\link[=change_id]{change_id()}}.
+
+Additionally, while times returned by \code{\link[=load_difftime]{load_difftime()}} are in 1 minute
+resolution, the time series step size can be specified by the \code{interval}
+argument. This rounding and potential change of time unit is performed by
+\code{\link[=change_interval]{change_interval()}} on all columns specified by the \code{time_vars} argument.
+All time stamps are relative to the origin provided by the ID system. This
+means that for an \code{id_var} corresponding to hospital IDs, times are
+relative to hospital admission.
+}
+\examples{
+glu <- new_itm(src = "mimic_demo", table = "labevents",
+               sub_var = "itemid", ids = c(50809L, 50931L))
+
+load_ts(glu)
+
 }
