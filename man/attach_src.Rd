@@ -8,6 +8,7 @@
 \alias{eicu}
 \alias{eicu_demo}
 \alias{hirid}
+\alias{new_src_tbl}
 \alias{as_src_tbl}
 \alias{as_src_tbl.src_tbl}
 \alias{as_src_tbl.src_env}
@@ -29,6 +30,8 @@ An object of class \code{environment} of length 5.
 }
 \usage{
 data
+
+new_src_tbl(files, col_cfg, prefix, src_env)
 
 as_src_tbl(x, ...)
 
@@ -61,6 +64,15 @@ setup_src_env(x, env, dir = NULL)
 \method{setup_src_env}{src_cfg}(x, env, dir = src_data_dir(x))
 }
 \arguments{
+\item{files}{File names of \code{fst} files that will be used to create a \code{prt}
+object (see also \code{\link[prt:new_prt]{prt::new_prt()}})}
+
+\item{col_cfg}{Coerced to \code{col_cfg} by calling \code{\link[=as_col_cfg]{as_col_cfg()}}}
+
+\item{prefix}{String valued data source name (used as class prefix)}
+
+\item{src_env}{The data source environment (as \code{src_env} object)}
+
 \item{x}{Data source to attach}
 
 \item{...}{Forwarded to further calls to \code{attach_src()}}

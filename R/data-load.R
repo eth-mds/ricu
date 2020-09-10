@@ -241,18 +241,26 @@ load_eicu <- function(x, rows, cols, id_hint, time_vars) {
 #' While for [load_difftime()] the ID variable can be suggested, the function
 #' only returns a best effort at fulfilling this request. In some cases, where
 #' the data does not allow for the desired ID type, data is returned using the
-#' ID system among all available ones for the given table with highest
+#' ID system (among all available ones for the given table) with highest
 #' cardinality. Both `load_id()` and `load_ts()` are guaranteed to return an
 #' object with [id_vars()] set as requested by the `id_var` argument.
 #' Internally, the change of ID system is performed by [change_id()].
 #'
 #' Additionally, while times returned by [load_difftime()] are in 1 minute
 #' resolution, the time series step size can be specified by the `interval`
-#' argument. This rounding and potential change of time unit is performed by
-#' [change_interval()] on all columns specified by the `time_vars` argument.
-#' All time stamps are relative to the origin provided by the ID system. This
-#' means that for an `id_var` corresponding to hospital IDs, times are
-#' relative to hospital admission.
+#' argument when calling `load_id()` or `load_ts()`. This rounding and
+#' potential change of time unit is performed by [change_interval()] on all
+#' columns specified by the `time_vars` argument. All time stamps are relative
+#' to the origin provided by the ID system. This means that for an `id_var`
+#' corresponding to hospital IDs, times are relative to hospital admission.
+#'
+#' When `load_id()` (or `load_ts()`) is called on [`itm`][new_itm()] objects
+#' instead of [`src_tbl`][new_src_tbl()] (or objects that can be coerced to
+#' `src_tbl`), The row-subsetting is performed according the the specification
+#' as provided by the `itm` object. Furhtermore, at default settings, columns
+#' are returned as required by the `itm` object and `id_var` (as well as
+#' `index_var`) are set accordingly if specified by the `itm` or set to
+#' default values for the given `src_tbl` object if not explicitly specified.
 #'
 #' @inheritParams load_difftime
 #'
@@ -261,10 +269,15 @@ load_eicu <- function(x, rows, cols, id_hint, time_vars) {
 #' specified as [base::difftime()] object
 #'
 #' @examples
+#' load_id("admissions", "mimic_demo", cols = "admission_type")
+#'
+#' dat <- load_ts(mimic_demo$labevents, itemid %in% c(50809L, 50931L),
+#'                cols = c("itemid", "valuenum"))
+#'
 #' glu <- new_itm(src = "mimic_demo", table = "labevents",
 #'                sub_var = "itemid", ids = c(50809L, 50931L))
 #'
-#' load_ts(glu)
+#' identical(load_ts(glu), dat)
 #'
 #' @rdname load_tbl
 #' @export
@@ -282,7 +295,7 @@ load_id.src_tbl <- function(x, rows, cols = colnames(x),
 
   time_vars <- intersect(time_vars, colnames(res))
 
-  res <- change_id(res, id_var, x, cols = time_vars)
+  res <- change_id(res, id_var, x, cols = time_vars, keep_old_id = FALSE)
   res <- change_interval(res, interval, time_vars, by_ref = TRUE)
 
   res
@@ -334,7 +347,7 @@ load_ts.src_tbl <- function(x, rows, cols = colnames(x), id_var = id_vars(x),
 
   time_vars <- intersect(time_vars, colnames(res))
 
-  res <- change_id(res, id_var, x, cols = time_vars)
+  res <- change_id(res, id_var, x, cols = time_vars, keep_old_id = FALSE)
 
   change_interval(res, interval, time_vars, by_ref = TRUE)
 }

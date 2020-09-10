@@ -53,6 +53,15 @@ get_from_data_env <- function(source) {
   }
 }
 
+#' @param files File names of `fst` files that will be used to create a `prt`
+#' object (see also [prt::new_prt()])
+#' @param col_cfg Coerced to `col_cfg` by calling [as_col_cfg()]
+#' @param prefix Character vector valued data source name(s) (used as class
+#' prefix)
+#' @param src_env The data source environment (as `src_env` object)
+#'
+#' @rdname attach_src
+#' @export
 new_src_tbl <- function(files, col_cfg, prefix, src_env) {
 
   assert_that(is_src_env(src_env))

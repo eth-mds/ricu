@@ -143,7 +143,7 @@ Several additional S3 generic functions exist for manipulation of
 }
 \examples{
 gluc <- item("mimic_demo", "labevents", "itemid", list(c(50809L, 50931L)),
-             unit_var = TRUE, index_var = TRUE)
+             unit_var = TRUE, target = "ts_tbl")
 
 is_item(gluc)
 

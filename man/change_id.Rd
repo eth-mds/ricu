@@ -10,7 +10,7 @@
 \alias{downgrade_id.id_tbl}
 \title{Switch between id types}
 \usage{
-change_id(x, target_id, src, ...)
+change_id(x, target_id, src, ..., keep_old_id = TRUE)
 
 upgrade_id(x, target_id, src, cols = time_vars(x), ...)
 
@@ -32,6 +32,9 @@ downgrade_id(x, target_id, src, cols = time_vars(x), ...)
 \item{src}{Passed to \code{\link[=as_id_cfg]{as_id_cfg()}} and \code{\link[=as_src_env]{as_src_env()}}}
 
 \item{...}{Passed to \code{upgrade_id()}/\code{downgrade_id()}}
+
+\item{keep_old_id}{Logical flag indicating whether to keep the previous ID
+column}
 
 \item{cols}{Column names that require time-adjustment}
 }

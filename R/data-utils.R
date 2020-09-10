@@ -332,15 +332,17 @@ stay_windows <- function(x, id_type = "icustay", win_type = "icustay",
 #' @param target_id The destination id name
 #' @param src Passed to [as_id_cfg()] and [as_src_env()]
 #' @param ... Passed to `upgrade_id()`/`downgrade_id()`
+#' @param keep_old_id Logical flag indicating whether to keep the previous ID
+#' column
 #'
 #' @rdname change_id
 #' @export
 #'
-change_id <- function(x, target_id, src, ...) {
+change_id <- function(x, target_id, src, ..., keep_old_id = TRUE) {
 
-  assert_that(is.string(target_id))
+  assert_that(is.string(target_id), is.flag(keep_old_id))
 
-  orig_id <- id_vars(x)
+  orig_id <- id_var(x)
 
   if (identical(orig_id, target_id)) {
     return(x)
@@ -353,13 +355,19 @@ change_id <- function(x, target_id, src, ...) {
   fin <- id_cfg[target_id == opt]
 
   if (isTRUE(ori < fin)) {
-    upgrade_id(x, target_id, src, ...)
+    res <- upgrade_id(x, target_id, src, ...)
   } else if (isTRUE(ori > fin)) {
-    downgrade_id(x, target_id, src, ...)
+    res <- downgrade_id(x, target_id, src, ...)
   } else {
     stop_ricu("Cannot handle conversion of IDs with identical positions",
               class = "ident_pos_id_change")
   }
+
+  if (isFALSE(keep_old_id)) {
+    res <- rm_cols(res, orig_id, by_ref = TRUE)
+  }
+
+  res
 }
 
 #' @param cols Column names that require time-adjustment

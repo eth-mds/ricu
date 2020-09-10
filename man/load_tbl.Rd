@@ -95,23 +95,36 @@ argument) for time series data.
 While for \code{\link[=load_difftime]{load_difftime()}} the ID variable can be suggested, the function
 only returns a best effort at fulfilling this request. In some cases, where
 the data does not allow for the desired ID type, data is returned using the
-ID system among all available ones for the given table with highest
+ID system (among all available ones for the given table) with highest
 cardinality. Both \code{load_id()} and \code{load_ts()} are guaranteed to return an
 object with \code{\link[=id_vars]{id_vars()}} set as requested by the \code{id_var} argument.
 Internally, the change of ID system is performed by \code{\link[=change_id]{change_id()}}.
 
 Additionally, while times returned by \code{\link[=load_difftime]{load_difftime()}} are in 1 minute
 resolution, the time series step size can be specified by the \code{interval}
-argument. This rounding and potential change of time unit is performed by
-\code{\link[=change_interval]{change_interval()}} on all columns specified by the \code{time_vars} argument.
-All time stamps are relative to the origin provided by the ID system. This
-means that for an \code{id_var} corresponding to hospital IDs, times are
-relative to hospital admission.
+argument when calling \code{load_id()} or \code{load_ts()}. This rounding and
+potential change of time unit is performed by \code{\link[=change_interval]{change_interval()}} on all
+columns specified by the \code{time_vars} argument. All time stamps are relative
+to the origin provided by the ID system. This means that for an \code{id_var}
+corresponding to hospital IDs, times are relative to hospital admission.
+
+When \code{load_id()} (or \code{load_ts()}) is called on \code{\link[=new_itm]{itm}} objects
+instead of \code{\link[=new_src_tbl]{src_tbl}} (or objects that can be coerced to
+\code{src_tbl}), The row-subsetting is performed according the the specification
+as provided by the \code{itm} object. Furhtermore, at default settings, columns
+are returned as required by the \code{itm} object and \code{id_var} (as well as
+\code{index_var}) are set accordingly if specified by the \code{itm} or set to
+default values for the given \code{src_tbl} object if not explicitly specified.
 }
 \examples{
+load_id("admissions", "mimic_demo", cols = "admission_type")
+
+dat <- load_ts(mimic_demo$labevents, itemid \%in\% c(50809L, 50931L),
+               cols = c("itemid", "valuenum"))
+
 glu <- new_itm(src = "mimic_demo", table = "labevents",
                sub_var = "itemid", ids = c(50809L, 50931L))
 
-load_ts(glu)
+identical(load_ts(glu), dat)
 
 }
