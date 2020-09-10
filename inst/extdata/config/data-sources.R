@@ -52,19 +52,23 @@ as_col_spec <- function(names, types) {
 
 as_tbl_spec <- function(files, defaults, time_vars, tbl_info, partitioning) {
 
+  mod_col <- function(x) {
+    x[["name"]] <- x[["col"]]
+    x[["col"]] <- NULL
+    x
+  }
+
   do_as <- function(file, default, time, tbl, part) {
 
     all_cols <- vapply(tbl[["cols"]], `[[`, character(1L), "name")
-    name <- tolower(tbl[["table_name"]])
 
     stopifnot(all(vapply(default, `%in%`, logical(1L), all_cols)))
 
     if (length(time)) {
-      res <- list(files = file, name = name,
-                  defaults = c(default, list(time_vars = unname(time))))
-    } else {
-      res <- list(files = file, name = name, defaults = default)
+      default <- c(default, list(time_vars = unname(time)))
     }
+
+    res <- list(files = file, defaults = default)
 
     if ("num_rows" %in% names(tbl)) {
       res[["num_rows"]] <- tbl[["num_rows"]]
@@ -72,7 +76,8 @@ as_tbl_spec <- function(files, defaults, time_vars, tbl_info, partitioning) {
       res["num_rows"] <- list(NULL)
     }
 
-    res[["cols"]] <- unname(tbl[["cols"]])
+    res[["cols"]] <- lapply(tbl[["cols"]], mod_col)
+    names(res[["cols"]]) <- all_cols
 
     if (!is.null(part)) {
       stopifnot(isTRUE(names(part) %in% all_cols))
@@ -85,11 +90,18 @@ as_tbl_spec <- function(files, defaults, time_vars, tbl_info, partitioning) {
 
   tbls <- vapply(tbl_info, `[[`, character(1L), "table_name")
 
-  Map(do_as, files[tbls], defaults[tbls], time_vars[tbls], tbl_info,
-      partitioning[tbls], USE.NAMES = FALSE)
+  res <- Map(do_as, files[tbls], defaults[tbls], time_vars[tbls], tbl_info,
+             partitioning[tbls])
+  names(res) <- tolower(tbls)
+
+  res
 }
 
-eicu_tbl_cfg <- function(is_demo = FALSE) {
+as_minimal_tbl_spec <- function(x) {
+  x[setdiff(names(x), c("files", "num_rows", "cols"))]
+}
+
+eicu_tbl_cfg <- function(info, is_demo = FALSE) {
 
   files <- c("admissionDrug.csv.gz",
              "admissionDx.csv.gz",
@@ -260,11 +272,6 @@ eicu_tbl_cfg <- function(is_demo = FALSE) {
     )
   )
 
-
-  info <- get_table_info(
-    "https://mit-lcp.github.io/eicu-schema-spy/eicu.eicu_crd.xml"
-  )
-
   if (is_demo) {
 
     info <- lapply(info, `[[<-`, "num_rows", NULL)
@@ -290,7 +297,7 @@ eicu_tbl_cfg <- function(is_demo = FALSE) {
   as_tbl_spec(files, defaults, time_vars, info, part)
 }
 
-mimic_tbl_cfg <- function(is_demo = FALSE) {
+mimic_tbl_cfg <- function(info, is_demo = FALSE) {
 
   files <- c("ADMISSIONS.csv.gz",
              "CALLOUT.csv.gz",
@@ -443,10 +450,6 @@ mimic_tbl_cfg <- function(is_demo = FALSE) {
         )
       )
     )
-  )
-
-  info <- get_table_info(
-    "https://mit-lcp.github.io/mimic-schema-spy/mimic.mimiciii.xml"
   )
 
   info <- info[
@@ -633,32 +636,43 @@ mimic_id_cfg <- list(
                  end = "outtime", table = "icustays")
 )
 
+eicu <- get_table_info(
+  "https://mit-lcp.github.io/eicu-schema-spy/eicu.eicu_crd.xml"
+)
+
+mimic <- get_table_info(
+  "https://mit-lcp.github.io/mimic-schema-spy/mimic.mimiciii.xml"
+)
+
+eicu_demo_tbls <- eicu_tbl_cfg(eicu, is_demo = TRUE)
+mimic_demo_tbls <- mimic_tbl_cfg(mimic, is_demo = TRUE)
+
 cfg <- list(
   list(
     name = "eicu",
     url = "https://physionet.org/files/eicu-crd/2.0",
     id_cfg = eicu_id_cfg,
-    tables = eicu_tbl_cfg(is_demo = FALSE)
+    tables = eicu_tbl_cfg(eicu, is_demo = FALSE)
   ),
   list(
     name = "eicu_demo",
     class_prefix = c("eicu_demo", "eicu"),
     url = "https://physionet.org/files/eicu-crd-demo/2.0",
     id_cfg = eicu_id_cfg,
-    tables = eicu_tbl_cfg(is_demo = TRUE)
+    tables = eicu_demo_tbls
   ),
   list(
     name = "mimic",
     url = "https://physionet.org/files/mimiciii/1.4",
     id_cfg = mimic_id_cfg,
-    tables = mimic_tbl_cfg(is_demo = FALSE)
+    tables = mimic_tbl_cfg(mimic, is_demo = FALSE)
   ),
   list(
     name = "mimic_demo",
     class_prefix = c("mimic_demo", "mimic"),
     url = "https://physionet.org/files/mimiciii-demo/1.4",
     id_cfg = mimic_id_cfg,
-    tables = mimic_tbl_cfg(is_demo = TRUE)
+    tables = mimic_demo_tbls
   ),
   list(
     name = "hirid",
@@ -672,4 +686,22 @@ cfg <- list(
 )
 
 ricu::set_config(cfg, "data-sources", cfg_dir)
+
+cfg <- list(
+  list(
+    name = "eicu_demo",
+    class_prefix = c("eicu_demo", "eicu"),
+    id_cfg = eicu_id_cfg,
+    tables = lapply(eicu_demo_tbls, as_minimal_tbl_spec)
+  ),
+  list(
+    name = "mimic_demo",
+    class_prefix = c("mimic_demo", "mimic"),
+    id_cfg = mimic_id_cfg,
+    tables = lapply(mimic_demo_tbls, as_minimal_tbl_spec)
+  )
+)
+
+ricu::set_config(cfg, "demo-sources", cfg_dir)
+
 devtools::install(pkg_dir)

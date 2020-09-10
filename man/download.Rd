@@ -18,7 +18,7 @@ download_src(x, ...)
   ...
 )
 
-\method{download_src}{character}(x, name = "data-sources", file = NULL, ...)
+\method{download_src}{character}(x, name = "data-sources", dir = NULL, ...)
 }
 \arguments{
 \item{x}{Object specifying the source configuration}
@@ -38,8 +38,6 @@ input is required}
 
 \item{name}{String valued name of a config file which will be looked up in
 the default config directors}
-
-\item{file}{Full file name to load}
 }
 \description{
 The \href{https://lcp.mit.edu/index.html}{Laboratory for Computational Physiology } (LCP) at MIT hosts several large-scale

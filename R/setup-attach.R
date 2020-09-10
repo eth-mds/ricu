@@ -53,14 +53,13 @@ attach_src.src_cfg <- function(x, assign_env = .GlobalEnv,
 #' @inheritParams load_src_cfg
 #' @rdname attach_src
 #' @export
-attach_src.character <- function(x, name = "data-sources", file = NULL,
+attach_src.character <- function(x, name = "data-sources", dir = NULL,
                                  assign_env = .GlobalEnv, ...) {
 
-  cfgs <- tryCatch(read_src_cfg(x, name, file), error = function(err) {
+  cfgs <- tryCatch(read_src_cfg(x, name, dir), error = function(err) {
 
     warn_ricu({
-      cli_text("Failed to read source configuration
-                \"{basename(coalesce(file, name))}\" with error:")
+      cli_text("Failed to read source configuration with error:")
       cli_div(theme = list(body = list("margin-left" = 2)))
       cli_verbatim(conditionMessage(err))
     }, class = "src_cfg_read_error")

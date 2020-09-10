@@ -37,91 +37,65 @@ as.list.id_cfg <- function(x, ...) {
   vec_chop(x)
 }
 
-#' @rdname id_cfg
+#' @rdname src_cfg
 #' @keywords internal
 #' @export
 as_id_cfg <- function(x) UseMethod("as_id_cfg", x)
 
-#' @rdname id_cfg
-#' @keywords internal
 #' @export
 as_id_cfg.id_cfg <- function(x) x
 
-#' @rdname id_cfg
-#' @keywords internal
 #' @export
 #'
 as_id_cfg.src_cfg <- function(x) x[["id_cfg"]]
 
-#' @rdname id_cfg
-#' @keywords internal
 #' @export
 #'
 as_id_cfg.src_env <- function(x) attr(x, "id_cfg")
 
-#' @rdname id_cfg
-#' @keywords internal
 #' @export
 #'
 as_id_cfg.default <- function(x) as_id_cfg(as_src_env(x))
 
-#' @rdname id_cfg
+#' @rdname src_cfg
 #' @keywords internal
 #' @export
 id_var_opts <- function(x) {
   field(as_id_cfg(x), "id")
 }
 
-#' @rdname col_cfg
+#' @rdname src_cfg
 #' @keywords internal
 #' @export
 #'
 as_col_cfg <- function(x) UseMethod("as_col_cfg", x)
 
-#' @rdname col_cfg
-#' @keywords internal
 #' @export
-#'
 as_col_cfg.col_cfg <- function(x) x
 
-#' @rdname col_cfg
-#' @keywords internal
 #' @export
-#'
 as_col_cfg.src_cfg <- function(x) x[["col_cfg"]]
 
-#' @rdname col_cfg
-#' @keywords internal
 #' @export
-#'
 as_col_cfg.src_tbl <- function(x) attr(x, "col_cfg")
 
-#' @rdname col_cfg
-#' @keywords internal
 #' @export
-#'
 as_col_cfg.default <- function(x) as_col_cfg(as_src_tbl(x))
 
 val_var <- function(x) as_col_cfg(x)[["val_var"]]
 
 unit_var <- function(x) as_col_cfg(x)[["unit_var"]]
 
-#' @rdname tbl_cfg
+#' @rdname src_cfg
 #' @keywords internal
 #' @export
 #'
 as_tbl_cfg <- function(x) UseMethod("as_tbl_cfg", x)
 
-#' @rdname tbl_cfg
-#' @keywords internal
 #' @export
-#'
 as_tbl_cfg.tbl_cfg <- function(x) x
 
-#' @rdname tbl_cfg
-#' @keywords internal
 #' @export
-#'
 as_tbl_cfg.src_cfg <- function(x) x[["tbl_cfg"]]
 
 #' @export
@@ -244,19 +218,15 @@ time_vars.col_cfg <- function(x) x[["time_vars"]]
 #' @export
 src_name <- function(x) UseMethod("src_name", x)
 
-#' @rdname cfg_utils
 #' @export
 src_name.src_cfg <- function(x) x[["name"]]
 
-#' @rdname cfg_utils
 #' @export
 src_name.id_cfg <- function(x) attr(x, "src")
 
-#' @rdname cfg_utils
 #' @export
 src_name.col_cfg <- function(x) x[["src"]]
 
-#' @rdname cfg_utils
 #' @export
 src_name.tbl_cfg <- function(x) x[["src"]]
 
@@ -267,11 +237,9 @@ src_name.default <- function(x) stop_generic(x, .Generic)
 #' @export
 tbl_name <- function(x) UseMethod("tbl_name", x)
 
-#' @rdname cfg_utils
 #' @export
 tbl_name.col_cfg <- function(x) x[["table"]]
 
-#' @rdname cfg_utils
 #' @export
 tbl_name.tbl_cfg <- function(x) x[["table"]]
 

@@ -142,10 +142,10 @@ import_src.src_cfg <- function(x, dir = src_data_dir(x), force = FALSE, ...) {
 #' @inheritParams load_src_cfg
 #' @rdname import
 #' @export
-import_src.character <- function(x, name = "data-sources", file = NULL,
+import_src.character <- function(x, name = "data-sources", dir = NULL,
                                  ...) {
 
-  for (cfg in load_src_cfg(x, name, file)) {
+  for (cfg in load_src_cfg(x, name, dir)) {
     import_src(cfg, ...)
   }
 

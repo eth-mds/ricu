@@ -82,13 +82,13 @@ reference:
     setup step by `import_src()` and for data sets hosted on
     [Physionet](https://physionet.org), a downloader is available as
     `download_src()`. As a final step, making data available to `ricu`,
-    `attach_src()` is automatically called for configured data sources  at
+    `attach_src()` is automatically called for configured data sources at
     package loading.
   contents:
+    - load_src_cfg
     - download_src
     - import_src
     - attach_src
-    - load_src_cfg
     - data_dir
     - data
     - src_name

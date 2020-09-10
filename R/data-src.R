@@ -231,7 +231,7 @@ dim_brak <- function(x) paste0("[", dim_desc(x), "]")
 
 #' @importFrom utils ls.str
 #' @export
-str.src_env <- function(object, ...) ls.str(object, ...)
+str.src_env <- function(object, ...) ls.str(object)
 
 #' @export
 src_name.src_env <- function(x) attr(x, "src_name")

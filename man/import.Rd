@@ -12,7 +12,7 @@ import_src(x, ...)
 
 \method{import_src}{src_cfg}(x, dir = src_data_dir(x), force = FALSE, ...)
 
-\method{import_src}{character}(x, name = "data-sources", file = NULL, ...)
+\method{import_src}{character}(x, name = "data-sources", dir = NULL, ...)
 
 import_tbl(x, ...)
 
@@ -32,8 +32,6 @@ tables}
 
 \item{name}{String valued name of a config file which will be looked up in
 the default config directors}
-
-\item{file}{Full file name to load}
 
 \item{progress}{Either \code{NULL} or a progress bar as created by
 \code{\link[progress:progress_bar]{progress::progress_bar()}}}

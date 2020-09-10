@@ -43,14 +43,12 @@ new_src_cfg <- function(name, id_cfg, col_cfg, tbl_cfg = NULL, url = NULL,
 #'
 is_src_cfg <- is_type("src_cfg")
 
-#' ID columns
-#'
 #' A set of id columns corresponding to `patient`, `hadm` (hospital stay) and
 #' `icustay` (ICU stay) can be represented by an `id_cfg` object.
 #'
 #' @param cfg List containing string valued column names
 #'
-#' @rdname id_cfg
+#' @rdname src_cfg
 #' @keywords internal
 #'
 new_id_cfg <- function(name, src, id, pos, start = NA_character_,
@@ -82,13 +80,11 @@ new_id_cfg <- function(name, src, id, pos, start = NA_character_,
 
 #' @param x Object to test/coerce
 #'
-#' @rdname id_cfg
+#' @rdname src_cfg
 #' @keywords internal
 #'
 is_id_cfg <- is_type("id_cfg")
 
-#' Default columns
-#'
 #' A table can have some of its columns marked as default columns for the
 #' following concepts:
 #'
@@ -104,7 +100,7 @@ is_id_cfg <- is_type("id_cfg")
 #' @param times Character vector enumerating columns that contain time
 #' information
 #'
-#' @rdname col_cfg
+#' @rdname src_cfg
 #' @keywords internal
 #'
 new_col_cfg <- function(table, src, id_var = NULL, index_var = NULL,
@@ -138,7 +134,7 @@ new_col_cfg <- function(table, src, id_var = NULL, index_var = NULL,
 
 #' @param x Object to test/coerce
 #'
-#' @rdname col_cfg
+#' @rdname src_cfg
 #' @keywords internal
 #'
 is_col_cfg <- is_type("col_cfg")
@@ -161,13 +157,13 @@ is_col_cfg <- is_type("col_cfg")
 #' vector of numeric values that are passed as `vec` argument to
 #' `base::findInterval()`
 #'
-#' @rdname tbl_cfg
+#' @rdname src_cfg
 #' @keywords internal
 #'
-new_tbl_cfg <- function(table, src, files, cols, num_rows = NULL,
+new_tbl_cfg <- function(table, src, files = NULL, cols = NULL, num_rows = NULL,
                         partitioning = NULL, class_prefix = src) {
 
-  col_spc <- function(name, col, spec, ...) {
+  col_spc <- function(name, spec, ...) {
     do.call(call, c(list(spec), list(...)))
   }
 
@@ -178,8 +174,9 @@ new_tbl_cfg <- function(table, src, files, cols, num_rows = NULL,
   }
 
   assert_that(
-    is.string(table), is.string(src), all_fun(files, is.character),
-    all_fun(cols, is.list), all_fun(cols, has_name, c("name", "col", "spec")),
+    is.string(table), is.string(src), null_or(files, all_fun, is.character),
+    null_or(cols, all_fun, is.list),
+    null_or(cols, all_fun, has_name, c("name", "spec")),
     null_or(num_rows, is.count), null_or(partitioning, is.list),
     null_or(partitioning, has_name, c("col", "breaks"))
   )
@@ -196,11 +193,15 @@ new_tbl_cfg <- function(table, src, files, cols, num_rows = NULL,
     class_prefix <- paste0(class_prefix, "_cols")
   }
 
-  spec <- lapply(cols, do_call, col_spc)
-  names(spec) <- chr_xtr(cols, "col")
+  if (not_null(cols)) {
+    spec <- lapply(cols, do_call, col_spc)
+    names(spec) <- chr_xtr(cols, "name")
 
-  spec <- eval(do.call(tbl_spc, spec), envir = asNamespace("readr"))
-  cols <- chr_xtr(cols, "name")
+    spec <- eval(do.call(tbl_spc, spec), envir = asNamespace("readr"))
+    cols <- names(cols)
+  } else {
+    spec <- NULL
+  }
 
   structure(
     list(table = table, src = src, files = files, cols = cols, spec = spec,
@@ -211,80 +212,233 @@ new_tbl_cfg <- function(table, src, files, cols, num_rows = NULL,
 
 #' @param x Object to test/coerce
 #'
-#' @rdname tbl_cfg
+#' @rdname src_cfg
 #' @keywords internal
 #'
 is_tbl_cfg <- is_type("tbl_cfg")
 
 #' Load configuration for a data source
 #'
-#' For a data source to become available to ricu, a JSON base configuration
-#' file is required which is parsed into a `src_cfg` object (see
-#' [new_src_cfg()]).
+#' For a data source to be accessible by `ricu`, a configuration object
+#' inheriting from the S3 class `src_cfg` is required. Such objects can be
+#' generated from JSON based configuration files, using `load_src_cfg()`.
+#' Information encoded by this configuration object includes available ID
+#' systems (mainly for use in [change_id()], default column names per table
+#' for columns with special meaning (such as index column, value columns, unit
+#' columns, etc.), as well as a specification used for initial setup of the
+#' dataset which includes file names and column names alongside their data
+#' types.
+#'
+#' @details
+#' Configuration files are looked for as files `name` with added suffix
+#' `.json` starting with the directory (or directories) supplied as `dir`
+#' argument, followed by the directory specified by the environment variable
+#' `RICU_CONFIG_PATH`, and finally in `extdata/config` of the package install
+#' directory. If files with matching names are found in multiple places they
+#' are concatenated such that in cases of name clashes. the earlier hits take
+#' precedent over the later ones. The following JSON code blocks show excerpts
+#' of the config file available at
+#'
+#' ```
+#' system.file("extdata", "config", "data-sources.json", package = "ricu")
+#' ```
+#'
+#' A data source configuration entry in a config file starts with a name,
+#' followed by optional entries `class_prefix` and `url`. While the URL is
+#' only used initially for data download (see [download_src()]),
+#' `class_prefix` is used for instantiations of [`src_env`][new_src_env()] and
+#' [`src_tbl`][new_src_tbl()] objects to specify sub-classes (see
+#' [attach_src()]). Further entries include `id_cfg` and `tables` which
+#' are explained in more detail below. As outline, this gives for the data
+#' source `mimic_demo`, the following JSON object:
+#'
+#' ```
+#' {
+#'   "name": "mimic_demo",
+#'   "class_prefix": ["mimic_demo", "mimic"],
+#'   "url": "https://physionet.org/files/mimiciii-demo/1.4",
+#'   "id_cfg": {
+#'     ...
+#'   },
+#'   "tables": {
+#'     ...
+#'   }
+#' }
+#' ```
+#'
+#' The `id_cfg` entry is used to specify the available ID systems for a data
+#' source and how they relate to each other. An ID system within the context
+#' of `ricu` is a patient identifier of which typically several are present in
+#' a data set. In MIMIC-III, for example, three ID systems are available:
+#' patient IDs (`subject_id`), hospital admission IDs (`hadm_id`) and ICU stay
+#' IDs (`icustay_id`). Furthermore there is a one-to-many relationship between
+#' `subject_id` and `hadm_id`, as well as between `hadm_id` and `icustay_id`.
+#' Required for defining an ID system are a name, a `position` entry which
+#' orders the ID systems by their cardinality, a `table` entry, alongside
+#' column specifications `id`, `start` and `end`, which define how the IDs
+#' themselves, combined with start and end times can be loaded from a table.
+#' This gives the following specification for the ICU stay ID system in
+#' MIMIC-III:
+#'
+#' ```
+#' {
+#'   "icustay": {
+#'     "id": "icustay_id",
+#'     "position": 3,
+#'     "start": "intime",
+#'     "end": "outtime",
+#'     "table": "icustays"
+#'   }
+#' }
+#' ```
+#'
+#' Tables are defined by a name and entries `files`, `defaults`, and `cols`,
+#' as well as optional entries `num_rows` and `partitioning`. As `files` entry,
+#' a character vector of file names is expected. For all of MIMIC-III a single
+#' `.csv` file corresponds to a table, but for example for HiRID, some tables
+#' are distributed in partitions. The `defaults` entry consists of key-value
+#' pairs, identifying columns in a table with special meaning, such as the
+#' default index column or the set of all columns that represent timestamps.
+#' This gives as an example for a table entry for the `chartevents` table in
+#' MIMIC-III a JSON object like:
+#'
+#' ```
+#' {
+#'   "chartevents": {
+#'     "files": "CHARTEVENTS.csv.gz",
+#'     "defaults": {
+#'       "index_var": "charttime",
+#'       "val_var": "valuenum",
+#'       "unit_var": "valueuom",
+#'       "time_vars": ["charttime", "storetime"]
+#'     },
+#'     "num_rows": 330712483,
+#'     "cols": {
+#'       ...
+#'     },
+#'     "partitioning": {
+#'       "col": "itemid",
+#'       "breaks": [127, 210, 425, 549, 643, 741, 1483, 3458, 3695, 8440,
+#'                  8553, 220274, 223921, 224085, 224859, 227629]
+#'     }
+#'   }
+#' }
+#' ```
+#'
+#' The optional `num_rows` entry is used when importing data (see
+#' [import_src()]) as a sanity check, which is not performed if this entry is
+#' missing from the data source configuration. The remaining table entry,
+#' `partitioning`, is optional in the sense that if it is missing, the table
+#' is not partitioned and if it is present, the table will be partitioned
+#' accordingly when being imported (see [import_src()]). In order to specify a
+#' partitioning, two entries are required, `col` and `breaks`, where the former
+#' denotes a column and the latter a numeric vector which is used to construct
+#' intervals according to which `col` is binned. As such, currently `col` is
+#' required to be of numeric type. A `partitioning` entry as in the example
+#' above will assign rows corresponding to `idemid` 1 through 126 to partition
+#' 1, 127 through 209 to partition 2 and so on up to partition 17.
+#'
+#' Column specifications consist of a `name` and a `spec` entry alongside a
+#' name which determines the column name that will be used by `ricu`. The
+#' `spec` entry is expected to be the name of a column specification function
+#' of the `readr` package (see [readr::cols()]) and all further entries in a
+#' `cols` object are used as arugments to the `readr` column specification.
+#' For the `admissions` table of MIMIC-III the columns `hadm_id` and
+#' `admittime` are represented by:
+#'
+#' ```
+#' {
+#'   ...,
+#'   "hadm_id": {
+#'     "name": "HADM_ID",
+#'     "spec": "col_integer"
+#'   },
+#'   "admittime": {
+#'     "name": "ADMITTIME",
+#'     "spec": "col_datetime",
+#'     "format": "%Y-%m-%d %H:%M:%S"
+#'   },
+#'   ...
+#' }
+#' ```
+#'
+#' Internally, a `src_cfg` object consist of further S3 classes, which are
+#' instantiated when loading a JSON source configuration file. Functions for
+#' creating and manipulating `src_cfg` and related objects are marked
+#' `internal` but a brief overview is given here nevertheless:
+#'
+#' * `src_cfg`: wraps objects `id_cfg`, `col_cfg` and optionally `tbl_cfg`
+#' * `id_cfg`: contains information in ID systems and is created from `id_cfg`
+#'   entries in config files
+#' * `col_cfg`: contains column default settings represented by `defaults`
+#'   entries in table configuration blocks
+#' * `tbl_cfg`: used when importing data and therefore encompasses information
+#'   in `files`, `num_rows` and `cols` entries of table configuration blocks
+#'
+#' A `src_cfg` can be instantiated without corresponding `tbl_cfg` but
+#' consequently cannot be used for data import (see [import_src()]). In that
+#' sense, table config entries `files` and `cols` are optional as well with
+#' the restriction that the data source has to be already available in `.fst`
+#' format
+#'
+#' An example for such a slimmed down config file is available at
+#'
+#' ```
+#' system.file("extdata", "config", "demo-sources.json", package = "ricu")
+#' ```
 #'
 #' @param src (Optional) name(s) of data sources used for subsetting
 #' @param name String valued name of a config file which will be looked up in
 #' the default config directors
-#' @param file Full file name to load
+#' @param dir Additional directory/ies to look for configuration files
 #'
 #' @export
 #'
-load_src_cfg <- function(src = NULL, name = "data-sources", file = NULL) {
+load_src_cfg <- function(src = NULL, name = "data-sources", dir = NULL) {
 
-  res <- read_src_cfg(src, name, file)
+  res <- read_src_cfg(src, name, dir)
 
   if (is.null(src)) {
     src <- names(res)
   }
 
-  assert_that(identical(src, names(res)), msg = paste(
-    "Could not read configuration for the following source(s)",
-    concat(quote_bt(setdiff(src, names(res)))))
-  )
-
   lapply(res, parse_src_cfg)
 }
 
-read_src_cfg <- function(src = NULL, name = "data-sources", file = NULL) {
+read_src_cfg <- function(src = NULL, name = "data-sources", dir = NULL) {
 
-  if (is.null(file)) {
+  file <- paste0(name, ".json")
+  res  <- NULL
+  dirs <- unique(c(dir, user_config_path(), default_config_path()))
 
-    file <- paste0(name, ".json")
+  for (dir in dirs) {
 
-    usr_file <- file.path(user_config_path(), file)
-    usr_exst <- isTRUE(file.exists(usr_file))
+    path <- file.path(dir, file)
 
-    if (usr_exst) {
+    if (file.exists(path)) {
 
-      usr_cfg <- read_json(usr_file)
-      usr_nme <- chr_xtr(usr_cfg, "name")
+      cfg <- read_json(path)
+      nme <- chr_xtr(cfg, "name")
 
-      if (not_null(src) && all(src %in% usr_nme)) {
-        return(setNames(usr_cfg, usr_nme)[src])
+      names(cfg) <- nme
+
+      res <- c(res, cfg[nme %in% setdiff(nme, names(res))])
+
+      if (not_null(src) && all(src %in% nme)) {
+        break
       }
     }
-
-    res <- read_json(file.path(default_config_path(), file))
-
-    if (usr_exst) {
-
-      def_nme <- chr_xtr(res, "name")
-
-      res <- res[def_nme %in% setdiff(def_nme, usr_nme)]
-      res <- c(usr_cfg, res)
-    }
-
-  } else {
-
-    res <- read_json(file)
   }
 
-  res <- setNames(res, chr_xtr(res, "name"))
+  if (not_null(src)) {
 
-  if (is.null(src)) {
-    res
-  } else {
+    assert_that(are_in(src, names(res)))
     res[src]
+
+  } else {
+
+    assert_that(has_length(res))
+    res
   }
 }
 
@@ -307,7 +461,7 @@ parse_src_cfg <- function(x) {
 
   mk_col_cfg <- function(name, tables, class_prefix = name, ...) {
 
-    na <- chr_xtr(tables, "name")
+    na <- names(tables)
     df <- lst_xtr(tables, "defaults")
     pf <- list(list(class_prefix))
 
@@ -318,11 +472,11 @@ parse_src_cfg <- function(x) {
 
   mk_tbl_cfg <- function(name, tables, class_prefix = name, ...) {
 
-    na <- chr_xtr(tables, "name")
+    na <- names(tables)
     rs <- mul_xtr(tables, c("files", "cols", "num_rows", "partitioning"))
     pf <- list(list(class_prefix))
 
-    args <- map(c, chr_xtr(tables, "name"), name, rs, class_prefix = pf)
+    args <- map(c, na, name, rs, class_prefix = pf)
 
     lapply(args, do_call, new_tbl_cfg)
   }

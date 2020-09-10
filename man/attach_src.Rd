@@ -57,7 +57,7 @@ attach_src(x, ...)
 
 \method{attach_src}{src_cfg}(x, assign_env = .GlobalEnv, dir = src_data_dir(x), ...)
 
-\method{attach_src}{character}(x, name = "data-sources", file = NULL, assign_env = .GlobalEnv, ...)
+\method{attach_src}{character}(x, name = "data-sources", dir = NULL, assign_env = .GlobalEnv, ...)
 
 setup_src_env(x, env, dir = NULL)
 
@@ -69,7 +69,8 @@ object (see also \code{\link[prt:new_prt]{prt::new_prt()}})}
 
 \item{col_cfg}{Coerced to \code{col_cfg} by calling \code{\link[=as_col_cfg]{as_col_cfg()}}}
 
-\item{prefix}{String valued data source name (used as class prefix)}
+\item{prefix}{Character vector valued data source name(s) (used as class
+prefix)}
 
 \item{src_env}{The data source environment (as \code{src_env} object)}
 
@@ -88,8 +89,6 @@ object (see also \code{\link[prt:new_prt]{prt::new_prt()}})}
 
 \item{name}{String valued name of a config file which will be looked up in
 the default config directors}
-
-\item{file}{Full file name to load}
 }
 \description{
 Attaching a data source sets up an environment containing \code{\link[prt:new_prt]{prt::new_prt()}}

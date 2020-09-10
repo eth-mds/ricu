@@ -3,7 +3,17 @@
 \name{new_src_cfg}
 \alias{new_src_cfg}
 \alias{is_src_cfg}
+\alias{new_id_cfg}
+\alias{is_id_cfg}
+\alias{new_col_cfg}
+\alias{is_col_cfg}
+\alias{new_tbl_cfg}
+\alias{is_tbl_cfg}
 \alias{src_url}
+\alias{as_id_cfg}
+\alias{id_var_opts}
+\alias{as_col_cfg}
+\alias{as_tbl_cfg}
 \title{Data source configuration}
 \usage{
 new_src_cfg(
@@ -17,7 +27,53 @@ new_src_cfg(
 
 is_src_cfg(x)
 
+new_id_cfg(
+  name,
+  src,
+  id,
+  pos,
+  start = NA_character_,
+  end = NA_character_,
+  table = NA_character_,
+  class_prefix = src
+)
+
+is_id_cfg(x)
+
+new_col_cfg(
+  table,
+  src,
+  id_var = NULL,
+  index_var = NULL,
+  val_var = NULL,
+  unit_var = NULL,
+  time_vars = NULL,
+  class_prefix = src
+)
+
+is_col_cfg(x)
+
+new_tbl_cfg(
+  table,
+  src,
+  files = NULL,
+  cols = NULL,
+  num_rows = NULL,
+  partitioning = NULL,
+  class_prefix = src
+)
+
+is_tbl_cfg(x)
+
 src_url(x)
+
+as_id_cfg(x)
+
+id_var_opts(x)
+
+as_col_cfg(x)
+
+as_tbl_cfg(x)
 }
 \arguments{
 \item{name}{Name of the data source}
@@ -29,11 +85,47 @@ src_url(x)
 
 \item{x}{Object to test/coerce}
 
+\item{table}{String valued table name}
+
+\item{files}{A character vector of file names}
+
+\item{cols}{List containing a list per column each holding string valued
+entries \code{name} (column name as used by \code{ricu}), \code{col} (column name as used
+in the raw data) and \code{spec} (name of \code{\link[readr:cols]{readr::cols()}} column specification).
+Further entries will be passed as argument to the respective \code{readr} column
+specification}
+
+\item{partitioning}{A table partitioning is defined by a column name and a
+vector of numeric values that are passed as \code{vec} argument to
+\code{base::findInterval()}}
+
 \item{tables}{List passed to \code{\link[=as_col_cfg]{as_col_cfg()}} and potentially to
 \code{\link[=as_tbl_cfg]{as_tbl_cfg()}}}
+
+\item{cfg}{List containing string valued column names}
+
+\item{defaults}{Named list containing column names}
+
+\item{times}{Character vector enumerating columns that contain time
+information}
+
+\item{nrow}{A count indicating the expected number of rows}
 }
 \description{
 In order to use a data source with \code{ricu}, a configuration object has to be
 created.
+
+\itemize{
+\item \code{id_col}: column will be used for as id for \code{icu_tbl} objects
+\item \code{index_col}: column represents a timestamp variable and will be use as
+such for \code{ts_tbl} objects
+\item \code{val_col}: column contains the measured variable of interest
+\item \code{unit_col}: column specifies the unit of measurement in the corresponding
+\code{val_col}
+}
+
+Used when importing a data source, a table specification defines column
+data types, source file names, a mapping of source to imported column
+names and optionally a number of expected rows and a partitioning scheme.
 }
 \keyword{internal}

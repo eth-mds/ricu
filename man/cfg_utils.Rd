@@ -2,30 +2,12 @@
 % Please edit documentation in R/config-utils.R
 \name{src_name}
 \alias{src_name}
-\alias{src_name.src_cfg}
-\alias{src_name.id_cfg}
-\alias{src_name.col_cfg}
-\alias{src_name.tbl_cfg}
 \alias{tbl_name}
-\alias{tbl_name.col_cfg}
-\alias{tbl_name.tbl_cfg}
 \title{Get default columns}
 \usage{
 src_name(x)
 
-\method{src_name}{src_cfg}(x)
-
-\method{src_name}{id_cfg}(x)
-
-\method{src_name}{col_cfg}(x)
-
-\method{src_name}{tbl_cfg}(x)
-
 tbl_name(x)
-
-\method{tbl_name}{col_cfg}(x)
-
-\method{tbl_name}{tbl_cfg}(x)
 }
 \arguments{
 \item{x}{Object used for dispatch}

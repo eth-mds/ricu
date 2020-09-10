@@ -18,17 +18,17 @@ setup({
 teardown(unlink(tmp, recursive = TRUE))
 
 spec <- list(
-  list(name = "trans", col = "am", spec = "col_integer"),
-  list(name = "carbu", col = "carb", spec = "col_integer"),
-  list(name = "cylin", col = "cyl", spec = "col_integer"),
-  list(name = "displ", col = "disp", spec = "col_double"),
-  list(name = "rear", col = "drat", spec = "col_double"),
-  list(name = "gears", col = "gear", spec = "col_integer"),
-  list(name = "power", col = "hp", spec = "col_double"),
-  list(name = "mpg", col = "mpg", spec = "col_double"),
-  list(name = "quar", col = "qsec", spec = "col_double"),
-  list(name = "engin", col = "vs", spec = "col_integer"),
-  list(name = "weight", col = "wt", spec = "col_double")
+  trans = list(name = "am", spec = "col_integer"),
+  carbu = list(name = "carb", spec = "col_integer"),
+  cylin = list(name = "cyl", spec = "col_integer"),
+  displ = list(name = "disp", spec = "col_double"),
+  rear = list(name = "drat", spec = "col_double"),
+  gears = list(name = "gear", spec = "col_integer"),
+  power = list(name = "hp", spec = "col_double"),
+  mpg = list(name = "mpg", spec = "col_double"),
+  quar = list(name = "qsec", spec = "col_double"),
+  engin = list(name = "vs", spec = "col_integer"),
+  weight = list(name = "wt", spec = "col_double")
 )
 
 test_that("import csv", {
