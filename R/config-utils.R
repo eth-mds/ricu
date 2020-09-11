@@ -20,19 +20,22 @@ is_tbl_cfg <- is_type("tbl_cfg")
 #' @rdname src_cfg
 #' @keywords internal
 #' @export
-as_src_cfg <- function(x) UseMethod("as_src_cfg", x)
+as_src_cfg <- function(x, ...) UseMethod("as_src_cfg", x)
 
 #' @export
-as_src_cfg.src_cfg <- function(x) x
+as_src_cfg.src_cfg <- function(x, ...) x
 
 #' @export
-as_src_cfg.src_env <- function(x) {
+as_src_cfg.src_env <- function(x, ...) {
   new_src_cfg(src_name(x), as_id_cfg(x), eapply(x, as_col_cfg),
               eapply(x, as_tbl_cfg), sub("_env", "", head(class(x), n = 2L)))
 }
 
 #' @export
-as_src_cfg.default <- function(x) as_src_cfg(as_src_env(x))
+as_src_cfg.character <- function(x, ...) load_src_cfg(x, ...)
+
+#' @export
+as_src_cfg.default <- function(x, ...) as_src_cfg(as_src_env(x))
 
 #' @rdname src_cfg
 #' @keywords internal

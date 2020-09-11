@@ -51,7 +51,9 @@
 #'
 #' While the included data downloaders are intended for data hosted by
 #' PhysioNet, `download_src()` is an S3 generic function that can be extended
-#' to new classes of data source configuration classes (see [load_src_cfg()]).
+#' to new classes. Method dispatch is intended to occur on objects that
+#' inherit from or can be coerced to `src_cfg`. For more information on data
+#' source configuration, refer to [load_src_cfg()].
 #'
 #' @param x Object specifying the source configuration
 #' @param ... Generic consistency
@@ -138,22 +140,23 @@ download_src.hirid_cfg <- function(x, dir = src_data_dir(x), tables = NULL,
   invisible(NULL)
 }
 
-#' @param name,cfg_dir Forwarded to [load_src_cfg()]
-#'
-#' @rdname download
 #' @export
-download_src.character <- function(x, name = "data-sources", cfg_dir = NULL,
-                                   ...) {
+download_src.default <- function(x, dir = src_data_dir(x), tables = NULL,
+                                 force = FALSE, user = NULL, pass = NULL,
+                                 ...) {
 
-  for (cfg in load_src_cfg(x, name, cfg_dir)) {
-    download_src(cfg, ...)
+  cfgs <- as_src_cfg(x, ...)
+
+  if (is_src_cfg(cfgs)) {
+    cfgs <- list(cfgs)
+  }
+
+  for (cfg in cfgs) {
+    download_src(cfg, dir, tables, force, user, pass)
   }
 
   invisible(NULL)
 }
-
-#' @export
-download_src.default <- function(x, ...) stop_generic(x, .Generic)
 
 determine_tables <- function(x, dir, tables, force) {
 

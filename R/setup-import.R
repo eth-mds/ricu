@@ -1,68 +1,45 @@
 
 #' Data import utilities
 #'
+#' Making a dataset available to `ricu` consists of 3 steps: downloading
+#' ([download_src()]), importing ([import_src()]) and attaching
+#' ([attach_src()]). While downloading and importing are one-time procedures,
+#' attaching of the dataset is repeated every time the package is loaded.
+#' Briefly, downloading loads the raw dataset from the internet (most likely
+#' in `.csv` format), importing consists of some preprocessing to make the
+#' data available more efficiently and attaching sets up the data for use by
+#' the package.
+#'
+#' @details
 #' In order to speed up data access operations, `ricu` does not directly use
 #' the PhysioNet provided CSV files, but converts all data to [fst::fst()]
 #' format, which allows for random row and column access. Large tables are
-#' split into chunks in order to keep memory requirements under control.
+#' split into chunks in order to keep memory requirements reasonably low.
 #'
-#' A nested list supplied as `config` argument controls how the CSV data is
-#' parsed and ingested. A the top level, elements `name` (string), `base_url`
-#' (string), `version` (string) and `tables` (list) are expected. For every
-#' file to be read in, an entry in `tables` with the name of the corresponding
-#' file is assumed, requiring a list named `col_spec` and optionally a list
-#' named `partitioning`.
+#' The one-time step per dataset of data import is fairly resource intensive:
+#' depending on CPU and available storage system, it will take on the order of
+#' an hour to run to completion and depending on the dataset, somewhere
+#' between 50 GB and 75 GB of temporary disk space are required as tables are
+#' uncompressed, in case of partitioned data, rows are reordered and the data
+#' again is saved to a storage efficient format.
 #'
-#' Every `col_spec` node again is expected to be a named list with names
-#' corresponding to column names in the CSV and list valued entries. Finally,
-#' a list node defining a single column is a named list with a required,
-#' string-valued `type` entry which is interpreted as `readr` column
-#' specification function (see [readr::cols()]). Further list entries will be
-#' passed as arguments to the column specification function. A column defined
-#' as
+#' The S3 generic function `import_src()` performs import of an entire data
+#' source, internally calling the S3 generic function `import_tbl()` in order
+#' to perform import of individual tables. Method dispatch is intended to
+#' occur on objects inheriting from `src_cfg` and `tbl_cfg` respectively. Such
+#' objects can be generated from JSON based configuration files which contain
+#' information such as table names,  column types or row numbers, in order to
+#' provide safety in parsing of `.csv` files. For more information on data
+#' source configuration, refer to [load_src_cfg()].
 #'
-#' ```
-#' list(type = "col_datetime", format = "%Y-%m-%d %H:%M:%S")
-#' ```
-#'
-#' will therefore result in a `readr` column specification like
-#'
-#' ```
-#' col_datetime(format = "%Y-%m-%d %H:%M:%S")
-#' ```
-#'
-#' Entries controlling the partitioning of tables, specified as `partitioning`
-#' list nodes are expected to be named lists of length 1, where the name
-#' corresponds to the column used for partitioning and partitions are defined
-#' as integer vector which is passed to [base::findInterval()]. This implies
-#' that partitions can only be created on integer valued columns.
-#'
-#' Putting all this together, the expected structure of `config` is as
-#'
-#' ```
-#' list(
-#'   name = "some_name",
-#'   base_url = "some_url",
-#'   version = "major.minor",
-#'   tables = list(
-#'     file_name_table_1 = list(
-#'       col_spec = list(
-#'         colname_1 = list(type = "col_*"),
-#'         colname_2 = list(type = "col_*"),
-#'         ...
-#'       )
-#'     ),
-#'     file_name_table_2 = list(
-#'       col_spec = list(...),
-#'       partitioning = list(colname_i = c(0L, ))
-#'     ),
-#'     ...
-#'   )
-#' )
-#' ```
-#'
-#' Configurations for the MIMIC-III and eICU databases are available in
-#' `extdata/config` as JSON files and can be read in using [get_config()].
+#' Current import capabilities include re-saving a `.csv` file to `.fst` at
+#' once (used for smaller sized tables), reading a large `.csv` file using the
+#' [readr::read_csv_chunked()] API, while partitioning chunks and reassembling
+#' sub-partitions (used for splitting a large file into partitions), as well
+#' as re-partitioning an already partitioned table according to a new
+#' partitioning scheme. Care has been taken to keep the maximal memory
+#' requirements for this reasonably low, such that data import is feasible on
+#' laptop class hardware.
 #'
 #' @param x Object specifying the source configuration
 #' @param dir The directory where the data was downloaded to (see
@@ -91,16 +68,12 @@
 #'
 import_src <- function(x, ...) UseMethod("import_src", x)
 
-#' @param dir The directory where the data was downloaded to (see
-#' [download_src()]).
 #' @param force Logical flag indicating whether to overwrite already imported
 #' tables
 #'
 #' @rdname import
 #' @export
 import_src.src_cfg <- function(x, dir = src_data_dir(x), force = FALSE, ...) {
-
-  all_avail <- function(y) all(file.exists(file.path(dir, y)))
 
   assert_that(is.dir(dir), is.flag(force))
 
@@ -139,21 +112,21 @@ import_src.src_cfg <- function(x, dir = src_data_dir(x), force = FALSE, ...) {
   invisible(NULL)
 }
 
-#' @param name,cfg_dir Forwarded to [load_src_cfg()]
-#' @rdname import
 #' @export
-import_src.character <- function(x, name = "data-sources", cfg_dir = NULL,
-                                 ...) {
+import_src.default <- function(x, dir = src_data_dir(x), force = FALSE, ...) {
 
-  for (cfg in load_src_cfg(x, name, cfg_dir)) {
-    import_src(cfg, ...)
+  cfgs <- as_src_cfg(x, ...)
+
+  if (is_src_cfg(cfgs)) {
+    cfgs <- list(cfgs)
+  }
+
+  for (cfg in cfgs) {
+    import_src(cfg, dir, force)
   }
 
   invisible(NULL)
 }
-
-#' @export
-import_src.default <- function(x, ...) stop_generic(x, .Generic)
 
 #' @param progress Either `NULL` or a progress bar as created by
 #' [progress::progress_bar()]

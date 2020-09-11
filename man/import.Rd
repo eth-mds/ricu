@@ -3,7 +3,6 @@
 \name{import_src}
 \alias{import_src}
 \alias{import_src.src_cfg}
-\alias{import_src.character}
 \alias{import_tbl}
 \alias{import_tbl.tbl_cfg}
 \title{Data import utilities}
@@ -11,8 +10,6 @@
 import_src(x, ...)
 
 \method{import_src}{src_cfg}(x, dir = src_data_dir(x), force = FALSE, ...)
-
-\method{import_src}{character}(x, name = "data-sources", cfg_dir = NULL, ...)
 
 import_tbl(x, ...)
 
@@ -30,66 +27,49 @@ import_tbl(x, ...)
 \item{force}{Logical flag indicating whether to overwrite already imported
 tables}
 
-\item{name, cfg_dir}{Forwarded to \code{\link[=load_src_cfg]{load_src_cfg()}}}
-
 \item{progress}{Either \code{NULL} or a progress bar as created by
 \code{\link[progress:progress_bar]{progress::progress_bar()}}}
 }
 \description{
+Making a dataset available to \code{ricu} consists of 3 steps: downloading
+(\code{\link[=download_src]{download_src()}}), importing (\code{\link[=import_src]{import_src()}}) and attaching
+(\code{\link[=attach_src]{attach_src()}}). While downloading and importing are one-time procedures,
+attaching of the dataset is repeated every time the package is loaded.
+Briefly, downloading loads the raw dataset from the internet (most likely
+in \code{.csv} format), importing consists of some preprocessing to make the
+data available more efficiently and attaching sets up the data for use by
+the package.
+}
+\details{
 In order to speed up data access operations, \code{ricu} does not directly use
 the PhysioNet provided CSV files, but converts all data to \code{\link[fst:fst]{fst::fst()}}
 format, which allows for random row and column access. Large tables are
-split into chunks in order to keep memory requirements under control.
-}
-\details{
-A nested list supplied as \code{config} argument controls how the CSV data is
-parsed and ingested. A the top level, elements \code{name} (string), \code{base_url}
-(string), \code{version} (string) and \code{tables} (list) are expected. For every
-file to be read in, an entry in \code{tables} with the name of the corresponding
-file is assumed, requiring a list named \code{col_spec} and optionally a list
-named \code{partitioning}.
+split into chunks in order to keep memory requirements reasonably low.
 
-Every \code{col_spec} node again is expected to be a named list with names
-corresponding to column names in the CSV and list valued entries. Finally,
-a list node defining a single column is a named list with a required,
-string-valued \code{type} entry which is interpreted as \code{readr} column
-specification function (see \code{\link[readr:cols]{readr::cols()}}). Further list entries will be
-passed as arguments to the column specification function. A column defined
-as\preformatted{list(type = "col_datetime", format = "\%Y-\%m-\%d \%H:\%M:\%S")
-}
+The one-time step per dataset of data import is fairly resource intensive:
+depending on CPU and available storage system, it will take on the order of
+an hour to run to completion and depending on the dataset, somewhere
+between 50 GB and 75 GB of temporary disk space are required as tables are
+uncompressed, in case of partitioned data, rows are reordered and the data
+again is saved to a storage efficient format.
 
-will therefore result in a \code{readr} column specification like\preformatted{col_datetime(format = "\%Y-\%m-\%d \%H:\%M:\%S")
-}
+The S3 generic function \code{import_src()} performs import of an entire data
+source, internally calling the S3 generic function \code{import_tbl()} in order
+to perform import of individual tables. Method dispatch is intended to
+occur on objects inheriting from \code{src_cfg} and \code{tbl_cfg} respectively. Such
+objects can be generated from JSON based configuration files which contain
+information such as table names,  column types or row numbers, in order to
+provide safety in parsing of \code{.csv} files. For more information on data
+source configuration, refer to \code{\link[=load_src_cfg]{load_src_cfg()}}.
 
-Entries controlling the partitioning of tables, specified as \code{partitioning}
-list nodes are expected to be named lists of length 1, where the name
-corresponds to the column used for partitioning and partitions are defined
-as integer vector which is passed to \code{\link[base:findInterval]{base::findInterval()}}. This implies
-that partitions can only be created on integer valued columns.
-
-Putting all this together, the expected structure of \code{config} is as\preformatted{list(
-  name = "some_name",
-  base_url = "some_url",
-  version = "major.minor",
-  tables = list(
-    file_name_table_1 = list(
-      col_spec = list(
-        colname_1 = list(type = "col_*"),
-        colname_2 = list(type = "col_*"),
-        ...
-      )
-    ),
-    file_name_table_2 = list(
-      col_spec = list(...),
-      partitioning = list(colname_i = c(0L, ))
-    ),
-    ...
-  )
-)
-}
-
-Configurations for the MIMIC-III and eICU databases are available in
-\code{extdata/config} as JSON files and can be read in using \code{\link[=get_config]{get_config()}}.
+Current import capabilities include re-saving a \code{.csv} file to \code{.fst} at
+once (used for smaller sized tables), reading a large \code{.csv} file using the
+\code{\link[readr:read_delim_chunked]{readr::read_csv_chunked()}} API, while partitioning chunks and reassembling
+sub-partitions (used for splitting a large file into partitions), as well
+as re-partitioning an already partitioned table according to a new
+partitioning scheme. Care has been taken to keep the maximal memory
+requirements for this reasonably low, such that data import is feasible on
+laptop class hardware.
 }
 \examples{
 \dontrun{

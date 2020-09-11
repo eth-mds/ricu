@@ -3,7 +3,6 @@
 \name{download_src}
 \alias{download_src}
 \alias{download_src.src_cfg}
-\alias{download_src.character}
 \title{Data download utilities}
 \usage{
 download_src(x, ...)
@@ -17,8 +16,6 @@ download_src(x, ...)
   pass = NULL,
   ...
 )
-
-\method{download_src}{character}(x, name = "data-sources", cfg_dir = NULL, ...)
 }
 \arguments{
 \item{x}{Object specifying the source configuration}
@@ -35,8 +32,6 @@ download_src(x, ...)
 \item{user, pass}{Physionet credentials; if \code{NULL} and environment
 variables \code{RICU_PHYSIONET_USER}/\code{RICU_PHYSIONET_PASS} are not set, user
 input is required}
-
-\item{name, cfg_dir}{Forwarded to \code{\link[=load_src_cfg]{load_src_cfg()}}}
 }
 \description{
 Making a dataset available to \code{ricu} consists of 3 steps: downloading
@@ -85,7 +80,9 @@ the demo datasets as well.
 
 While the included data downloaders are intended for data hosted by
 PhysioNet, \code{download_src()} is an S3 generic function that can be extended
-to new classes of data source configuration classes (see \code{\link[=load_src_cfg]{load_src_cfg()}}).
+to new classes. Method dispatch is intended to occur on objects that
+inherit from or can be coerced to \code{src_cfg}. For more information on data
+source configuration, refer to \code{\link[=load_src_cfg]{load_src_cfg()}}.
 }
 \examples{
 \dontrun{
