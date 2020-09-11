@@ -1,52 +1,94 @@
 
-#' Data source configuration
+#' Internal utilities for working with data source configurations
 #'
-#' In order to use a data source with `ricu`, a configuration object has to be
-#' created.
+#' Data source configuration objects store information on data sources used
+#' throughout `ricu`. This includes URLs for data set downloading, Column
+#' specifications used for data set importing, default values per table for
+#' important columns such as index columns when loading data and how different
+#' patient identifiers used throughout a dataset relate to another. Per
+#' dataset, a `src_cfg` object is created from a JSON file (see
+#' [load_src_cfg()]), consisnting of several helper-classes compartmentalizing
+#' the pieces of information outlined above. Alongside constructors for the
+#' various classes, several utiltites, such as inheritance checks, coercion
+#' functions, as well as functions to extract pieces of information from these
+#' objects are provided.
+#'
+#' @details
+#' The following classes are used to represent data source configuration
+#' objects:
+#'
+#' * `src_cfg`: wraps objects `id_cfg`, `col_cfg` and optionally `tbl_cfg`
+#' * `id_cfg`: contains information in ID systems and is created from `id_cfg`
+#'   entries in config files
+#' * `col_cfg`: contains column default settings represented by `defaults`
+#'   entries in table configuration blocks
+#' * `tbl_cfg`: used when importing data and therefore encompasses information
+#'   in `files`, `num_rows` and `cols` entries of table configuration blocks
+#'
+#' Alongside constructors (`new_*()`), inheritance checking functions
+#' (`is_*()`), as well as coercion functions (`as_*(`), relevant utility
+#' functions include:
+#'
+#' * `src_url()`: retrieve the URL of a data source
+#' * `id_var_opts()`: column name(s) corresponding to ID systems
+#' * `src_name()`: name of the data source
+#' * `tbl_name()`: name of a table
+#'
+#' Coercion between objects under some circumstances can yield list-of object
+#' return types. For example when coercing `src_cfg` to `tbl_cfg`, this will
+#' result in a list of `tbl_cfg` objects, as multiple tables typically
+#' correspond to a data source.
 #'
 #' @param name Name of the data source
-#' @param id_cfg List passed to [new_id_cfg()]
-#' @param tables List passed to [as_col_cfg()] and potentially to
-#' [as_tbl_cfg()]
-#' @param url String valued url used for data downloading (see
-#' [download_src()])
+#' @param id_cfg An `id_cfg` object for the given data source
+#' @param col_cfg A list of `col_cfg` objects representing column defaults for
+#' all tables of the
+#' @param tbl_cfg A list of `tbl_cfg` containing information on how tables are
+#' organized (may be `NULL`)
+#' @param ... Further objects to add (such as an URL specification)
+#' @param class_prefix A character vector of class prefixes that are added to
+#' the instantiated classes
 #'
 #' @rdname src_cfg
 #' @keywords internal
 #'
-new_src_cfg <- function(name, id_cfg, col_cfg, tbl_cfg = NULL, url = NULL,
-                        class_prefix = NULL) {
+new_src_cfg <- function(name, id_cfg, col_cfg, tbl_cfg = NULL, ...,
+                        class_prefix = name) {
 
-  if (is.null(class_prefix)) {
-    class_prefix <- name
+  if (all_fun(tbl_cfg, is.null)) {
+    tbl_cfg <- NULL
   }
 
   assert_that(
-    is.string(name), null_or(url, is.string), is_id_cfg(id_cfg),
-    all_fun(col_cfg, is_col_cfg), null_or(tbl_cfg, all_fun, is_tbl_cfg)
+    is.string(name), is_id_cfg(id_cfg), all_fun(col_cfg, is_col_cfg),
+    null_or(tbl_cfg, all_fun, is_tbl_cfg), is.character(class_prefix)
   )
 
+  if (has_length(class_prefix)) {
+    subclass <- paste0(class_prefix, "_cfg")
+  }
+
   names(col_cfg) <- chr_ply(col_cfg, tbl_name)
-  names(tbl_cfg) <- chr_ply(tbl_cfg, tbl_name)
+
+  if (not_null(tbl_cfg)) {
+
+    names(tbl_cfg) <- chr_ply(tbl_cfg, tbl_name)
+
+    assert_that(setequal(names(col_cfg), names(tbl_cfg)))
+  }
 
   structure(
-    list(name = name, url = url, prefix = class_prefix, id_cfg = id_cfg,
+    list(name = name, ..., prefix = class_prefix, id_cfg = id_cfg,
          col_cfg = col_cfg, tbl_cfg = tbl_cfg),
-    class = paste0(c(class_prefix, "src"), "_cfg")
+    class = c(subclass, "src_cfg")
   )
 }
 
-#' @param x Object to test/coerce
-#'
-#' @rdname src_cfg
-#' @keywords internal
-#'
-is_src_cfg <- is_type("src_cfg")
-
-#' A set of id columns corresponding to `patient`, `hadm` (hospital stay) and
-#' `icustay` (ICU stay) can be represented by an `id_cfg` object.
-#'
-#' @param cfg List containing string valued column names
+#' @param src Data source name
+#' @param id,start,end Name(s) of ID column(s), as well as respective start
+#' and end timestamps
+#' @param pos Integer valued position, ordering IDs by their cardinality
+#' @param table Table name
 #'
 #' @rdname src_cfg
 #' @keywords internal
@@ -78,15 +120,8 @@ new_id_cfg <- function(name, src, id, pos, start = NA_character_,
   )
 }
 
-#' @param x Object to test/coerce
-#'
-#' @rdname src_cfg
-#' @keywords internal
-#'
-is_id_cfg <- is_type("id_cfg")
-
 #' A table can have some of its columns marked as default columns for the
-#' following concepts:
+#' following concepts and further column meanings can be specified via `...`:
 #'
 #' * `id_col`: column will be used for as id for `icu_tbl` objects
 #' * `index_col`: column represents a timestamp variable and will be use as
@@ -95,23 +130,23 @@ is_id_cfg <- is_type("id_cfg")
 #' * `unit_col`: column specifies the unit of measurement in the corresponding
 #'   `val_col`
 #'
-#' @param table Table name (string)
-#' @param defaults Named list containing column names
-#' @param times Character vector enumerating columns that contain time
-#' information
+#' @param id_var,index_var,val_var,unit_var,time_vars Names of columns with
+#' respective meanings
 #'
 #' @rdname src_cfg
 #' @keywords internal
 #'
 new_col_cfg <- function(table, src, id_var = NULL, index_var = NULL,
-                        val_var = NULL, unit_var = NULL, time_vars = NULL,
+                        val_var = NULL, unit_var = NULL, time_vars = NULL, ...,
                         class_prefix = src) {
+
+  extra <- list(...)
 
   assert_that(
     is.string(table), is.string(src), null_or(id_var, is.string),
     null_or(index_var, is.string), null_or(val_var, is.string),
     null_or(unit_var, is.string), null_or(time_vars, is.character),
-    is.character(class_prefix)
+    is.character(class_prefix), all_fun(extra, is.character)
   )
 
   if (not_null(index_var)) {
@@ -125,34 +160,21 @@ new_col_cfg <- function(table, src, id_var = NULL, index_var = NULL,
     class_prefix <- paste0(class_prefix, "_cols")
   }
 
-  structure(
+  res <- c(
     list(table = table, src = src, id_var = id_var, index_var = index_var,
          val_var = val_var, unit_var = unit_var, time_vars = time_vars),
-    class = c(class_prefix, "col_cfg")
+    extra
   )
+
+  structure(res, class = c(class_prefix, "col_cfg"))
 }
 
-#' @param x Object to test/coerce
-#'
-#' @rdname src_cfg
-#' @keywords internal
-#'
-is_col_cfg <- is_type("col_cfg")
-
-#' Table specification
-#'
-#' Used when importing a data source, a table specification defines column
-#' data types, source file names, a mapping of source to imported column
-#' names and optionally a number of expected rows and a partitioning scheme.
-#'
-#' @param table String valued table name
-#' @param files A character vector of file names
 #' @param cols List containing a list per column each holding string valued
 #' entries `name` (column name as used by `ricu`), `col` (column name as used
 #' in the raw data) and `spec` (name of [readr::cols()] column specification).
 #' Further entries will be passed as argument to the respective `readr` column
 #' specification
-#' @param nrow A count indicating the expected number of rows
+#' @param num_rows A count indicating the expected number of rows
 #' @param partitioning A table partitioning is defined by a column name and a
 #' vector of numeric values that are passed as `vec` argument to
 #' `base::findInterval()`
@@ -161,7 +183,7 @@ is_col_cfg <- is_type("col_cfg")
 #' @keywords internal
 #'
 new_tbl_cfg <- function(table, src, files = NULL, cols = NULL, num_rows = NULL,
-                        partitioning = NULL, class_prefix = src) {
+                        partitioning = NULL, ..., class_prefix = src) {
 
   col_spc <- function(name, spec, ...) {
     do.call(call, c(list(spec), list(...)))
@@ -169,12 +191,8 @@ new_tbl_cfg <- function(table, src, files = NULL, cols = NULL, num_rows = NULL,
 
   tbl_spc <- function(...) substitute(cols(...))
 
-  if (is.character(files)) {
-    files <- list(files)
-  }
-
   assert_that(
-    is.string(table), is.string(src), null_or(files, all_fun, is.character),
+    is.string(table), is.string(src), null_or(files, is.character),
     null_or(cols, all_fun, is.list),
     null_or(cols, all_fun, has_name, c("name", "spec")),
     null_or(num_rows, is.count), null_or(partitioning, is.list),
@@ -183,10 +201,6 @@ new_tbl_cfg <- function(table, src, files = NULL, cols = NULL, num_rows = NULL,
 
   if (is.null(num_rows)) {
     num_rows <- NA_integer_
-  }
-
-  if (is.null(names(files))) {
-    names(files) <- chr_xtr(files, 1L)
   }
 
   if (has_length(class_prefix)) {
@@ -205,17 +219,10 @@ new_tbl_cfg <- function(table, src, files = NULL, cols = NULL, num_rows = NULL,
 
   structure(
     list(table = table, src = src, files = files, cols = cols, spec = spec,
-         nrow = num_rows, partitioning = partitioning),
+         nrow = num_rows, partitioning = partitioning, ...),
     class = c(class_prefix, "tbl_cfg")
   )
 }
-
-#' @param x Object to test/coerce
-#'
-#' @rdname src_cfg
-#' @keywords internal
-#'
-is_tbl_cfg <- is_type("tbl_cfg")
 
 #' Load configuration for a data source
 #'
@@ -244,13 +251,11 @@ is_tbl_cfg <- is_type("tbl_cfg")
 #' ```
 #'
 #' A data source configuration entry in a config file starts with a name,
-#' followed by optional entries `class_prefix` and `url`. While the URL is
-#' only used initially for data download (see [download_src()]),
-#' `class_prefix` is used for instantiations of [`src_env`][new_src_env()] and
-#' [`src_tbl`][new_src_tbl()] objects to specify sub-classes (see
-#' [attach_src()]). Further entries include `id_cfg` and `tables` which
-#' are explained in more detail below. As outline, this gives for the data
-#' source `mimic_demo`, the following JSON object:
+#' followed by optional entries `class_prefix` and further (variable)
+#' key-value pairs, such as an URL. For more information on `class_prefix`,
+#' please refer to the end of this section. Further entries include `id_cfg`
+#' and `tables` which are explained in more detail below. As outline, this
+#' gives for the data source `mimic_demo`, the following JSON object:
 #'
 #' ```
 #' {
@@ -387,10 +392,38 @@ is_tbl_cfg <- is_type("tbl_cfg")
 #' system.file("extdata", "config", "demo-sources.json", package = "ricu")
 #' ```
 #'
+#' The `class_prefix` entry in a data source configuration is used create sub-
+#' classes to `src_cfg`, `id_cfg`, `col_cfg` and `tbl_cfg` classes and passed
+#' on to constructors of `src_env` ([new_src_env()]) and `src_tbl`
+#' [new_src_tbl()] objects. As an example, for the above `class_prefix` value
+#' of `c("mimic_demo", "mimic")`, the corresponding `src_cfg` will be assigned
+#' classes `c("mimic_demo_cfg", "mimic_cfg", "src_cfg")` and consequently the
+#' `src_tbl` objects will inherit from `"mimic_demo_tbl"`, `"mimic_tbl"` and
+#' ` "src_tbl"`. This can be used to adapt the behavior of involved S3 generic
+#' function to specifics of the different data sources. An example for this is
+#' how [load_difftime()] uses theses sub-classes to smoothen out different
+#' time-stamp representations. Furthermore, such a design was chosen with
+#' extensibility in mind. Currently, [download_src()] is designed around data
+#' sources hosted on Physionet, but in order to include a dataset external to
+#' Phsionet, the `download_src()` generic can simply be extended for the new
+#' class.
+#'
 #' @param src (Optional) name(s) of data sources used for subsetting
 #' @param name String valued name of a config file which will be looked up in
 #' the default config directors
 #' @param dir Additional directory/ies to look for configuration files
+#'
+#' @examples
+#' cfg <- load_src_cfg("mimic_demo")
+#' str(cfg, max.level = 1L)
+#' cfg <- cfg[["mimic_demo"]]
+#' str(cfg, max.level = 1L)
+#'
+#' cols <- as_col_cfg(cfg)
+#' index_var(cols[["chartevents"]])
+#' time_vars(cols[["chartevents"]])
+#'
+#' as_id_cfg(cfg)
 #'
 #' @export
 #'
@@ -473,7 +506,7 @@ parse_src_cfg <- function(x) {
   mk_tbl_cfg <- function(name, tables, class_prefix = name, ...) {
 
     na <- names(tables)
-    rs <- mul_xtr(tables, c("files", "cols", "num_rows", "partitioning"))
+    rs <- Map(`[`, tables, lapply(lapply(tables, names), setdiff, "defaults"))
     pf <- list(list(class_prefix))
 
     args <- map(c, na, name, rs, class_prefix = pf)
@@ -483,11 +516,10 @@ parse_src_cfg <- function(x) {
 
   assert_that(is.list(x), has_name(x, c("name", "id_cfg", "tables")))
 
-  id_cfg  <- do.call(mk_id_cfg, x)
-  col_cfg <- do.call(mk_col_cfg, x)
-  tbl_cfg <- do.call(mk_tbl_cfg, x)
+  x[["id_cfg"]]  <- do.call(mk_id_cfg, x)
+  x[["col_cfg"]] <- do.call(mk_col_cfg, x)
+  x[["tbl_cfg"]] <- do.call(mk_tbl_cfg, x)
+  x[["tables"]] <- NULL
 
-  new_src_cfg(
-    x[["name"]], id_cfg, col_cfg, tbl_cfg, x[["url"]], x[["class_prefix"]]
-  )
+  do.call(new_src_cfg, x)
 }

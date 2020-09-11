@@ -94,73 +94,60 @@ download_src.src_cfg <- function(x, dir = src_data_dir(x), tables = NULL,
                                  force = FALSE, user = NULL, pass = NULL,
                                  ...) {
 
-  all_avail <- function(y) all(file.exists(file.path(dir, y)))
-
   warn_dots(...)
 
-  assert_that(is.string(dir), is.flag(force))
+  tbl <- determine_tables(x, dir, tables, force)
 
-  tmp <- tempfile()
-  on.exit(unlink(tmp, recursive = TRUE))
-
-  ensure_dirs(c(tmp, dir))
-
-  tbl <- as_tbl_cfg(x)
-
-  if (is.null(tables)) {
-    tables <- names(tbl)
-  }
-
-  assert_that(is.character(tables), all(tables %in% names(tbl)))
-
-  if (!force) {
-
-    avail <- names(tbl)[lgl_ply(lapply(tbl, fst_names), all_avail) |
-                        lgl_ply(lapply(tbl, dst_files), all_avail)]
-
-    tables <- setdiff(tables, avail)
-  }
-
-  if (length(tables) == 0L) {
+  if (length(tbl) == 0L) {
     msg_ricu("The requested tables have already been downloaded")
     return(invisible(NULL))
   }
 
-  tbl <- tbl[tables]
-
-  to_dl <- unique(
-    unlist(lapply(tbl, src_files), recursive = FALSE, use.names = FALSE)
-  )
-
-  download_check_data(tmp, to_dl, src_url(x), user, pass, src_name(x))
-
-  to_unpck <- grepl("\\.tar(\\.gz)?$", to_dl)
-
-  if (any(to_unpck)) {
-    for (file in file.path(tmp, to_dl[to_unpck])) {
-      untar(file, exdir = tmp)
-    }
-  }
-
-  to_mv <- unlist(lapply(tbl, dst_files), recursive = FALSE, use.names = FALSE)
-  targ  <- file.path(dir, to_mv)
-
-  ensure_dirs(unique(dirname(targ)))
-
-  assert_that(all(file.rename(file.path(tmp, to_mv), targ)), msg = paste0(
-    "Some files could not be moved to the required location")
-  )
+  download_check_data(dir, chr_ply(tbl, raw_file_names),
+                      src_url(x), user, pass, src_name(x))
 
   invisible(NULL)
 }
 
-#' @inheritParams load_src_cfg
-#' @rdname download
 #' @export
-download_src.character <- function(x, name = "data-sources", dir = NULL,
+download_src.hirid_cfg <- function(x, dir = src_data_dir(x), tables = NULL,
+                                   force = FALSE, user = NULL, pass = NULL,
                                    ...) {
 
-  for (cfg in load_src_cfg(x, name, dir)) {
+  warn_dots(...)
+
+  tbl <- determine_tables(x, dir, tables, force)
+
+  if (length(tbl) == 0L) {
+    msg_ricu("The requested tables have already been downloaded")
+    return(invisible(NULL))
+  }
+
+  todo <- chr_xtr(tbl, "zip_file")
+
+  download_check_data(dir, unique(todo), src_url(x), user, pass, src_name(x))
+
+  todo <- file.path(dir, todo)
+  done <- lapply(tbl, raw_file_names)
+
+  assert_that(
+    all_fun(Map(untar, todo, done, MoreArgs = list(exdir = dir)),
+            identical, 0L)
+  )
+
+  unlink(unique(todo))
+
+  invisible(NULL)
+}
+
+#' @param name,cfg_dir Forwarded to [load_src_cfg()]
+#'
+#' @rdname download
+#' @export
+download_src.character <- function(x, name = "data-sources", cfg_dir = NULL,
+                                   ...) {
+
+  for (cfg in load_src_cfg(x, name, cfg_dir)) {
     download_src(cfg, ...)
   }
 
@@ -169,6 +156,25 @@ download_src.character <- function(x, name = "data-sources", dir = NULL,
 
 #' @export
 download_src.default <- function(x, ...) stop_generic(x, .Generic)
+
+determine_tables <- function(x, dir, tables, force) {
+
+  x <- as_tbl_cfg(x)
+
+  if (is.null(tables)) {
+    tables <- names(x)
+  }
+
+  assert_that(is.character(tables), are_in(tables, names(x)),
+              is.dir(dir), is.flag(force))
+
+  if (!force) {
+    avail  <- names(x)[src_file_exist(x, "fst") | src_file_exist(x, "raw")]
+    tables <- setdiff(tables, avail)
+  }
+
+  x[tables]
+}
 
 download_pysionet_file <- function(url, dest = NULL, user = NULL,
                                    pass = NULL, head_only = FALSE,
@@ -302,13 +308,13 @@ get_file_size <- function(url, user, pass) {
   resp <- download_pysionet_file(url, NULL, user, pass, TRUE)
   resp <- parse_headers(resp$headers)
 
-  hit <- grepl("^Content-Length:", resp)
+  hit <- grepl("^Content-Length:", resp, ignore.case = TRUE)
 
   if (sum(hit) != 1L) {
     return(NULL)
   }
 
-  as.numeric(sub("^Content-Length: ", "", resp[hit]))
+  as.numeric(sub("^Content-Length: ", "", resp[hit], ignore.case = TRUE))
 }
 
 download_check_data <- function(dest_folder, files, url, user, pass, src) {
@@ -337,7 +343,7 @@ download_check_data <- function(dest_folder, files, url, user, pass, src) {
 
   avail_tbls <- vapply(chksums, `[[`, character(1L), 2L)
 
-  assert_that(all(files %in% avail_tbls))
+  assert_that(are_in(files, avail_tbls))
 
   todo <- chksums[match(files, avail_tbls)]
 

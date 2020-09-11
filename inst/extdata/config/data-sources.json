@@ -1949,7 +1949,6 @@
           "unit_var": "drugunit",
           "time_vars": ["drugoffset", "drugenteredoffset"]
         },
-        "num_rows": null,
         "cols": {
           "admissiondrugid": {
             "name": "admissiondrugid",
@@ -2016,7 +2015,6 @@
           "val_var": "admitdxtext",
           "time_vars": "admitdxenteredoffset"
         },
-        "num_rows": null,
         "cols": {
           "admissiondxid": {
             "name": "admissiondxid",
@@ -2051,7 +2049,6 @@
           "val_var": "allergyname",
           "time_vars": ["allergyoffset", "allergyenteredoffset"]
         },
-        "num_rows": null,
         "cols": {
           "allergyid": {
             "name": "allergyid",
@@ -2110,7 +2107,6 @@
       "apacheapsvar": {
         "files": "apacheApsVar.csv.gz",
         "defaults": [],
-        "num_rows": null,
         "cols": {
           "apacheapsvarid": {
             "name": "apacheapsvarid",
@@ -2223,7 +2219,6 @@
         "defaults": {
           "val_var": "apachescore"
         },
-        "num_rows": null,
         "cols": {
           "apachepatientresultsid": {
             "name": "apachepatientresultsid",
@@ -2322,7 +2317,6 @@
       "apachepredvar": {
         "files": "apachePredVar.csv.gz",
         "defaults": [],
-        "num_rows": null,
         "cols": {
           "apachepredvarid": {
             "name": "apachepredvarid",
@@ -2537,7 +2531,6 @@
           "val_var": "specialty",
           "time_vars": "careprovidersaveoffset"
         },
-        "num_rows": null,
         "cols": {
           "cplcareprovderid": {
             "name": "cplcareprovderid",
@@ -2579,7 +2572,6 @@
           "index_var": "cpleoldiscussionoffset",
           "time_vars": ["cpleolsaveoffset", "cpleoldiscussionoffset"]
         },
-        "num_rows": null,
         "cols": {
           "cpleolid": {
             "name": "cpleolid",
@@ -2610,7 +2602,6 @@
           "val_var": "cplitemvalue",
           "time_vars": "cplitemoffset"
         },
-        "num_rows": null,
         "cols": {
           "cplgeneralid": {
             "name": "cplgeneralid",
@@ -2645,7 +2636,6 @@
           "val_var": "cplgoalvalue",
           "time_vars": "cplgoaloffset"
         },
-        "num_rows": null,
         "cols": {
           "cplgoalid": {
             "name": "cplgoalid",
@@ -2684,7 +2674,6 @@
           "val_var": "infectdiseasesite",
           "time_vars": "cplinfectdiseaseoffset"
         },
-        "num_rows": null,
         "cols": {
           "cplinfectid": {
             "name": "cplinfectid",
@@ -2727,7 +2716,6 @@
           "val_var": "labotherresult",
           "time_vars": "labotheroffset"
         },
-        "num_rows": null,
         "cols": {
           "customlabid": {
             "name": "customlabid",
@@ -2766,7 +2754,6 @@
           "val_var": "icd9code",
           "time_vars": "diagnosisoffset"
         },
-        "num_rows": null,
         "cols": {
           "diagnosisid": {
             "name": "diagnosisid",
@@ -2804,7 +2791,6 @@
           "id_var": "hospitalid",
           "val_var": "numbedscategory"
         },
-        "num_rows": null,
         "cols": {
           "hospitalid": {
             "name": "hospitalid",
@@ -2831,7 +2817,6 @@
           "val_var": "drugrate",
           "time_vars": "infusionoffset"
         },
-        "num_rows": null,
         "cols": {
           "infusiondrugid": {
             "name": "infusiondrugid",
@@ -2878,7 +2863,6 @@
           "val_var": "cellvaluenumeric",
           "time_vars": ["intakeoutputoffset", "intakeoutputentryoffset"]
         },
-        "num_rows": null,
         "cols": {
           "intakeoutputid": {
             "name": "intakeoutputid",
@@ -2938,7 +2922,6 @@
           "unit_var": "labmeasurenameinterface",
           "time_vars": ["labresultoffset", "labresultrevisedoffset"]
         },
-        "num_rows": null,
         "cols": {
           "labid": {
             "name": "labid",
@@ -2989,7 +2972,6 @@
           "val_var": "dosage",
           "time_vars": ["drugorderoffset", "drugstartoffset", "drugstopoffset"]
         },
-        "num_rows": null,
         "cols": {
           "medicationid": {
             "name": "medicationid",
@@ -3060,7 +3042,6 @@
           "val_var": "organism",
           "time_vars": "culturetakenoffset"
         },
-        "num_rows": null,
         "cols": {
           "microlabid": {
             "name": "microlabid",
@@ -3099,7 +3080,6 @@
           "val_var": "notetext",
           "time_vars": ["noteoffset", "noteenteredoffset"]
         },
-        "num_rows": null,
         "cols": {
           "noteid": {
             "name": "noteid",
@@ -3142,7 +3122,6 @@
           "val_var": "cellattributevalue",
           "time_vars": ["nurseassessoffset", "nurseassessentryoffset"]
         },
-        "num_rows": null,
         "cols": {
           "nurseassessid": {
             "name": "nurseassessid",
@@ -3185,7 +3164,6 @@
           "val_var": "cellattributevalue",
           "time_vars": ["nursecareoffset", "nursecareentryoffset"]
         },
-        "num_rows": null,
         "cols": {
           "nursecareid": {
             "name": "nursecareid",
@@ -3228,7 +3206,6 @@
           "val_var": "nursingchartvalue",
           "time_vars": ["nursingchartoffset", "nursingchartentryoffset"]
         },
-        "num_rows": null,
         "cols": {
           "nursingchartid": {
             "name": "nursingchartid",
@@ -3275,7 +3252,6 @@
           "val_var": "pasthistoryvalue",
           "time_vars": ["pasthistoryoffset", "pasthistoryenteredoffset"]
         },
-        "num_rows": null,
         "cols": {
           "pasthistoryid": {
             "name": "pasthistoryid",
@@ -3317,7 +3293,6 @@
           "val_var": "unitdischargestatus",
           "time_vars": ["hospitaladmitoffset", "hospitaldischargeoffset", "unitdischargeoffset"]
         },
-        "num_rows": null,
         "cols": {
           "patientunitstayid": {
             "name": "patientunitstayid",
@@ -3444,7 +3419,6 @@
           "val_var": "physicalexamvalue",
           "time_vars": "physicalexamoffset"
         },
-        "num_rows": null,
         "cols": {
           "physicalexamid": {
             "name": "physicalexamid",
@@ -3478,7 +3452,6 @@
           "index_var": "respcarestatusoffset",
           "time_vars": ["respcarestatusoffset", "ventstartoffset", "ventendoffset", "priorventstartoffset", "priorventendoffset"]
         },
-        "num_rows": null,
         "cols": {
           "respcareid": {
             "name": "respcareid",
@@ -3625,7 +3598,6 @@
           "val_var": "respchartvalue",
           "time_vars": ["respchartoffset", "respchartentryoffset"]
         },
-        "num_rows": null,
         "cols": {
           "respchartid": {
             "name": "respchartid",
@@ -3664,7 +3636,6 @@
           "val_var": "treatmentstring",
           "time_vars": "treatmentoffset"
         },
-        "num_rows": null,
         "cols": {
           "treatmentid": {
             "name": "treatmentid",
@@ -3694,7 +3665,6 @@
           "index_var": "observationoffset",
           "time_vars": "observationoffset"
         },
-        "num_rows": null,
         "cols": {
           "vitalaperiodicid": {
             "name": "vitalaperiodicid",
@@ -3756,7 +3726,6 @@
           "index_var": "observationoffset",
           "time_vars": "observationoffset"
         },
-        "num_rows": null,
         "cols": {
           "vitalperiodicid": {
             "name": "vitalperiodicid",
@@ -5530,7 +5499,6 @@
           "val_var": "admission_type",
           "time_vars": ["admittime", "dischtime", "deathtime", "edregtime", "edouttime"]
         },
-        "num_rows": null,
         "cols": {
           "row_id": {
             "name": "row_id",
@@ -5622,7 +5590,6 @@
           "val_var": "callout_outcome",
           "time_vars": ["createtime", "updatetime", "acknowledgetime", "outcometime", "firstreservationtime", "currentreservationtime"]
         },
-        "num_rows": null,
         "cols": {
           "row_id": {
             "name": "row_id",
@@ -5734,7 +5701,6 @@
           "id_var": "cgid",
           "val_var": "label"
         },
-        "num_rows": null,
         "cols": {
           "row_id": {
             "name": "row_id",
@@ -5762,7 +5728,6 @@
           "unit_var": "valueuom",
           "time_vars": ["charttime", "storetime"]
         },
-        "num_rows": null,
         "cols": {
           "row_id": {
             "name": "row_id",
@@ -5839,7 +5804,6 @@
           "val_var": "cpt_cd",
           "time_vars": "chartdate"
         },
-        "num_rows": null,
         "cols": {
           "row_id": {
             "name": "row_id",
@@ -5898,7 +5862,6 @@
           "id_var": "subsectionrange",
           "val_var": "subsectionheader"
         },
-        "num_rows": null,
         "cols": {
           "row_id": {
             "name": "row_id",
@@ -5944,7 +5907,6 @@
           "id_var": "icd9_code",
           "val_var": "short_title"
         },
-        "num_rows": null,
         "cols": {
           "row_id": {
             "name": "row_id",
@@ -5970,7 +5932,6 @@
           "id_var": "icd9_code",
           "val_var": "short_title"
         },
-        "num_rows": null,
         "cols": {
           "row_id": {
             "name": "row_id",
@@ -5996,7 +5957,6 @@
           "id_var": "itemid",
           "val_var": "label"
         },
-        "num_rows": null,
         "cols": {
           "row_id": {
             "name": "row_id",
@@ -6046,7 +6006,6 @@
           "id_var": "itemid",
           "val_var": "label"
         },
-        "num_rows": null,
         "cols": {
           "row_id": {
             "name": "row_id",
@@ -6081,7 +6040,6 @@
           "val_var": "itemid",
           "time_vars": ["charttime", "storetime", "value"]
         },
-        "num_rows": null,
         "cols": {
           "row_id": {
             "name": "row_id",
@@ -6149,7 +6107,6 @@
         "defaults": {
           "val_var": "icd9_code"
         },
-        "num_rows": null,
         "cols": {
           "row_id": {
             "name": "row_id",
@@ -6178,7 +6135,6 @@
         "defaults": {
           "val_var": "drg_code"
         },
-        "num_rows": null,
         "cols": {
           "row_id": {
             "name": "row_id",
@@ -6221,7 +6177,6 @@
           "val_var": "last_careunit",
           "time_vars": ["intime", "outtime"]
         },
-        "num_rows": null,
         "cols": {
           "row_id": {
             "name": "row_id",
@@ -6283,7 +6238,6 @@
           "unit_var": "rateuom",
           "time_vars": ["charttime", "storetime"]
         },
-        "num_rows": null,
         "cols": {
           "row_id": {
             "name": "row_id",
@@ -6385,7 +6339,6 @@
           "unit_var": "rateuom",
           "time_vars": ["starttime", "endtime", "storetime", "comments_date"]
         },
-        "num_rows": null,
         "cols": {
           "row_id": {
             "name": "row_id",
@@ -6525,7 +6478,6 @@
           "unit_var": "valueuom",
           "time_vars": "charttime"
         },
-        "num_rows": null,
         "cols": {
           "row_id": {
             "name": "row_id",
@@ -6573,7 +6525,6 @@
           "val_var": "isolate_num",
           "time_vars": ["chartdate", "charttime"]
         },
-        "num_rows": null,
         "cols": {
           "row_id": {
             "name": "row_id",
@@ -6651,7 +6602,6 @@
           "unit_var": "valueuom",
           "time_vars": ["charttime", "storetime"]
         },
-        "num_rows": null,
         "cols": {
           "row_id": {
             "name": "row_id",
@@ -6715,7 +6665,6 @@
           "val_var": "expire_flag",
           "time_vars": ["dob", "dod", "dod_hosp", "dod_ssn"]
         },
-        "num_rows": null,
         "cols": {
           "row_id": {
             "name": "row_id",
@@ -6763,7 +6712,6 @@
           "unit_var": "dose_unit_rx",
           "time_vars": ["startdate", "enddate"]
         },
-        "num_rows": null,
         "cols": {
           "row_id": {
             "name": "row_id",
@@ -6853,7 +6801,6 @@
           "unit_var": "valueuom",
           "time_vars": ["starttime", "endtime", "storetime", "comments_date"]
         },
-        "num_rows": null,
         "cols": {
           "row_id": {
             "name": "row_id",
@@ -6966,7 +6913,6 @@
         "defaults": {
           "val_var": "icd9_code"
         },
-        "num_rows": null,
         "cols": {
           "row_id": {
             "name": "row_id",
@@ -6997,7 +6943,6 @@
           "val_var": "curr_service",
           "time_vars": "transfertime"
         },
-        "num_rows": null,
         "cols": {
           "row_id": {
             "name": "row_id",
@@ -7033,7 +6978,6 @@
           "val_var": "curr_careunit",
           "time_vars": ["intime", "outtime"]
         },
-        "num_rows": null,
         "cols": {
           "row_id": {
             "name": "row_id",
@@ -7096,6 +7040,7 @@
   {
     "name": "hirid",
     "url": "https://physionet.org/files/hirid/1.0",
+    "unzip": ["reference_data.tar.gz", "raw_stage/observation_tables_csv.tar.gz", "raw_stage/pharma_records_csv.tar.gz"],
     "id_cfg": {
       "icustay": {
         "id": "patientid",
@@ -7106,14 +7051,11 @@
     },
     "tables": {
       "general": {
-        "files": {
-          "reference_data.tar.gz": "general_table.csv"
-        },
+        "files": "general_table.csv",
         "defaults": {
           "index_var": "admissiontime",
           "time_vars": "admissiontime"
         },
-        "num_rows": 33905,
         "cols": {
           "patientid": {
             "name": "patientid",
@@ -7132,18 +7074,17 @@
             "name": "age",
             "spec": "col_integer"
           }
-        }
+        },
+        "num_rows": 33905,
+        "zip_file": "reference_data.tar.gz"
       },
       "observations": {
-        "files": {
-          "raw_stage/observation_tables_csv.tar.gz": ["observation_tables/csv/part-0.csv", "observation_tables/csv/part-1.csv", "observation_tables/csv/part-2.csv", "observation_tables/csv/part-3.csv", "observation_tables/csv/part-4.csv", "observation_tables/csv/part-5.csv", "observation_tables/csv/part-6.csv", "observation_tables/csv/part-7.csv", "observation_tables/csv/part-8.csv", "observation_tables/csv/part-9.csv", "observation_tables/csv/part-10.csv", "observation_tables/csv/part-11.csv", "observation_tables/csv/part-12.csv", "observation_tables/csv/part-13.csv", "observation_tables/csv/part-14.csv", "observation_tables/csv/part-15.csv", "observation_tables/csv/part-16.csv", "observation_tables/csv/part-17.csv", "observation_tables/csv/part-18.csv", "observation_tables/csv/part-19.csv", "observation_tables/csv/part-20.csv", "observation_tables/csv/part-21.csv", "observation_tables/csv/part-22.csv", "observation_tables/csv/part-23.csv", "observation_tables/csv/part-24.csv", "observation_tables/csv/part-25.csv", "observation_tables/csv/part-26.csv", "observation_tables/csv/part-27.csv", "observation_tables/csv/part-28.csv", "observation_tables/csv/part-29.csv", "observation_tables/csv/part-30.csv", "observation_tables/csv/part-31.csv", "observation_tables/csv/part-32.csv", "observation_tables/csv/part-33.csv", "observation_tables/csv/part-34.csv", "observation_tables/csv/part-35.csv", "observation_tables/csv/part-36.csv", "observation_tables/csv/part-37.csv", "observation_tables/csv/part-38.csv", "observation_tables/csv/part-39.csv", "observation_tables/csv/part-40.csv", "observation_tables/csv/part-41.csv", "observation_tables/csv/part-42.csv", "observation_tables/csv/part-43.csv", "observation_tables/csv/part-44.csv", "observation_tables/csv/part-45.csv", "observation_tables/csv/part-46.csv", "observation_tables/csv/part-47.csv", "observation_tables/csv/part-48.csv", "observation_tables/csv/part-49.csv", "observation_tables/csv/part-50.csv", "observation_tables/csv/part-51.csv", "observation_tables/csv/part-52.csv", "observation_tables/csv/part-53.csv", "observation_tables/csv/part-54.csv", "observation_tables/csv/part-55.csv", "observation_tables/csv/part-56.csv", "observation_tables/csv/part-57.csv", "observation_tables/csv/part-58.csv", "observation_tables/csv/part-59.csv", "observation_tables/csv/part-60.csv", "observation_tables/csv/part-61.csv", "observation_tables/csv/part-62.csv", "observation_tables/csv/part-63.csv", "observation_tables/csv/part-64.csv", "observation_tables/csv/part-65.csv", "observation_tables/csv/part-66.csv", "observation_tables/csv/part-67.csv", "observation_tables/csv/part-68.csv", "observation_tables/csv/part-69.csv", "observation_tables/csv/part-70.csv", "observation_tables/csv/part-71.csv", "observation_tables/csv/part-72.csv", "observation_tables/csv/part-73.csv", "observation_tables/csv/part-74.csv", "observation_tables/csv/part-75.csv", "observation_tables/csv/part-76.csv", "observation_tables/csv/part-77.csv", "observation_tables/csv/part-78.csv", "observation_tables/csv/part-79.csv", "observation_tables/csv/part-80.csv", "observation_tables/csv/part-81.csv", "observation_tables/csv/part-82.csv", "observation_tables/csv/part-83.csv", "observation_tables/csv/part-84.csv", "observation_tables/csv/part-85.csv", "observation_tables/csv/part-86.csv", "observation_tables/csv/part-87.csv", "observation_tables/csv/part-88.csv", "observation_tables/csv/part-89.csv", "observation_tables/csv/part-90.csv", "observation_tables/csv/part-91.csv", "observation_tables/csv/part-92.csv", "observation_tables/csv/part-93.csv", "observation_tables/csv/part-94.csv", "observation_tables/csv/part-95.csv", "observation_tables/csv/part-96.csv", "observation_tables/csv/part-97.csv", "observation_tables/csv/part-98.csv", "observation_tables/csv/part-99.csv", "observation_tables/csv/part-100.csv", "observation_tables/csv/part-101.csv", "observation_tables/csv/part-102.csv", "observation_tables/csv/part-103.csv", "observation_tables/csv/part-104.csv", "observation_tables/csv/part-105.csv", "observation_tables/csv/part-106.csv", "observation_tables/csv/part-107.csv", "observation_tables/csv/part-108.csv", "observation_tables/csv/part-109.csv", "observation_tables/csv/part-110.csv", "observation_tables/csv/part-111.csv", "observation_tables/csv/part-112.csv", "observation_tables/csv/part-113.csv", "observation_tables/csv/part-114.csv", "observation_tables/csv/part-115.csv", "observation_tables/csv/part-116.csv", "observation_tables/csv/part-117.csv", "observation_tables/csv/part-118.csv", "observation_tables/csv/part-119.csv", "observation_tables/csv/part-120.csv", "observation_tables/csv/part-121.csv", "observation_tables/csv/part-122.csv", "observation_tables/csv/part-123.csv", "observation_tables/csv/part-124.csv", "observation_tables/csv/part-125.csv", "observation_tables/csv/part-126.csv", "observation_tables/csv/part-127.csv", "observation_tables/csv/part-128.csv", "observation_tables/csv/part-129.csv", "observation_tables/csv/part-130.csv", "observation_tables/csv/part-131.csv", "observation_tables/csv/part-132.csv", "observation_tables/csv/part-133.csv", "observation_tables/csv/part-134.csv", "observation_tables/csv/part-135.csv", "observation_tables/csv/part-136.csv", "observation_tables/csv/part-137.csv", "observation_tables/csv/part-138.csv", "observation_tables/csv/part-139.csv", "observation_tables/csv/part-140.csv", "observation_tables/csv/part-141.csv", "observation_tables/csv/part-142.csv", "observation_tables/csv/part-143.csv", "observation_tables/csv/part-144.csv", "observation_tables/csv/part-145.csv", "observation_tables/csv/part-146.csv", "observation_tables/csv/part-147.csv", "observation_tables/csv/part-148.csv", "observation_tables/csv/part-149.csv", "observation_tables/csv/part-150.csv", "observation_tables/csv/part-151.csv", "observation_tables/csv/part-152.csv", "observation_tables/csv/part-153.csv", "observation_tables/csv/part-154.csv", "observation_tables/csv/part-155.csv", "observation_tables/csv/part-156.csv", "observation_tables/csv/part-157.csv", "observation_tables/csv/part-158.csv", "observation_tables/csv/part-159.csv", "observation_tables/csv/part-160.csv", "observation_tables/csv/part-161.csv", "observation_tables/csv/part-162.csv", "observation_tables/csv/part-163.csv", "observation_tables/csv/part-164.csv", "observation_tables/csv/part-165.csv", "observation_tables/csv/part-166.csv", "observation_tables/csv/part-167.csv", "observation_tables/csv/part-168.csv", "observation_tables/csv/part-169.csv", "observation_tables/csv/part-170.csv", "observation_tables/csv/part-171.csv", "observation_tables/csv/part-172.csv", "observation_tables/csv/part-173.csv", "observation_tables/csv/part-174.csv", "observation_tables/csv/part-175.csv", "observation_tables/csv/part-176.csv", "observation_tables/csv/part-177.csv", "observation_tables/csv/part-178.csv", "observation_tables/csv/part-179.csv", "observation_tables/csv/part-180.csv", "observation_tables/csv/part-181.csv", "observation_tables/csv/part-182.csv", "observation_tables/csv/part-183.csv", "observation_tables/csv/part-184.csv", "observation_tables/csv/part-185.csv", "observation_tables/csv/part-186.csv", "observation_tables/csv/part-187.csv", "observation_tables/csv/part-188.csv", "observation_tables/csv/part-189.csv", "observation_tables/csv/part-190.csv", "observation_tables/csv/part-191.csv", "observation_tables/csv/part-192.csv", "observation_tables/csv/part-193.csv", "observation_tables/csv/part-194.csv", "observation_tables/csv/part-195.csv", "observation_tables/csv/part-196.csv", "observation_tables/csv/part-197.csv", "observation_tables/csv/part-198.csv", "observation_tables/csv/part-199.csv", "observation_tables/csv/part-200.csv", "observation_tables/csv/part-201.csv", "observation_tables/csv/part-202.csv", "observation_tables/csv/part-203.csv", "observation_tables/csv/part-204.csv", "observation_tables/csv/part-205.csv", "observation_tables/csv/part-206.csv", "observation_tables/csv/part-207.csv", "observation_tables/csv/part-208.csv", "observation_tables/csv/part-209.csv", "observation_tables/csv/part-210.csv", "observation_tables/csv/part-211.csv", "observation_tables/csv/part-212.csv", "observation_tables/csv/part-213.csv", "observation_tables/csv/part-214.csv", "observation_tables/csv/part-215.csv", "observation_tables/csv/part-216.csv", "observation_tables/csv/part-217.csv", "observation_tables/csv/part-218.csv", "observation_tables/csv/part-219.csv", "observation_tables/csv/part-220.csv", "observation_tables/csv/part-221.csv", "observation_tables/csv/part-222.csv", "observation_tables/csv/part-223.csv", "observation_tables/csv/part-224.csv", "observation_tables/csv/part-225.csv", "observation_tables/csv/part-226.csv", "observation_tables/csv/part-227.csv", "observation_tables/csv/part-228.csv", "observation_tables/csv/part-229.csv", "observation_tables/csv/part-230.csv", "observation_tables/csv/part-231.csv", "observation_tables/csv/part-232.csv", "observation_tables/csv/part-233.csv", "observation_tables/csv/part-234.csv", "observation_tables/csv/part-235.csv", "observation_tables/csv/part-236.csv", "observation_tables/csv/part-237.csv", "observation_tables/csv/part-238.csv", "observation_tables/csv/part-239.csv", "observation_tables/csv/part-240.csv", "observation_tables/csv/part-241.csv", "observation_tables/csv/part-242.csv", "observation_tables/csv/part-243.csv", "observation_tables/csv/part-244.csv", "observation_tables/csv/part-245.csv", "observation_tables/csv/part-246.csv", "observation_tables/csv/part-247.csv", "observation_tables/csv/part-248.csv", "observation_tables/csv/part-249.csv"]
-        },
+        "files": ["observation_tables/csv/part-0.csv", "observation_tables/csv/part-1.csv", "observation_tables/csv/part-2.csv", "observation_tables/csv/part-3.csv", "observation_tables/csv/part-4.csv", "observation_tables/csv/part-5.csv", "observation_tables/csv/part-6.csv", "observation_tables/csv/part-7.csv", "observation_tables/csv/part-8.csv", "observation_tables/csv/part-9.csv", "observation_tables/csv/part-10.csv", "observation_tables/csv/part-11.csv", "observation_tables/csv/part-12.csv", "observation_tables/csv/part-13.csv", "observation_tables/csv/part-14.csv", "observation_tables/csv/part-15.csv", "observation_tables/csv/part-16.csv", "observation_tables/csv/part-17.csv", "observation_tables/csv/part-18.csv", "observation_tables/csv/part-19.csv", "observation_tables/csv/part-20.csv", "observation_tables/csv/part-21.csv", "observation_tables/csv/part-22.csv", "observation_tables/csv/part-23.csv", "observation_tables/csv/part-24.csv", "observation_tables/csv/part-25.csv", "observation_tables/csv/part-26.csv", "observation_tables/csv/part-27.csv", "observation_tables/csv/part-28.csv", "observation_tables/csv/part-29.csv", "observation_tables/csv/part-30.csv", "observation_tables/csv/part-31.csv", "observation_tables/csv/part-32.csv", "observation_tables/csv/part-33.csv", "observation_tables/csv/part-34.csv", "observation_tables/csv/part-35.csv", "observation_tables/csv/part-36.csv", "observation_tables/csv/part-37.csv", "observation_tables/csv/part-38.csv", "observation_tables/csv/part-39.csv", "observation_tables/csv/part-40.csv", "observation_tables/csv/part-41.csv", "observation_tables/csv/part-42.csv", "observation_tables/csv/part-43.csv", "observation_tables/csv/part-44.csv", "observation_tables/csv/part-45.csv", "observation_tables/csv/part-46.csv", "observation_tables/csv/part-47.csv", "observation_tables/csv/part-48.csv", "observation_tables/csv/part-49.csv", "observation_tables/csv/part-50.csv", "observation_tables/csv/part-51.csv", "observation_tables/csv/part-52.csv", "observation_tables/csv/part-53.csv", "observation_tables/csv/part-54.csv", "observation_tables/csv/part-55.csv", "observation_tables/csv/part-56.csv", "observation_tables/csv/part-57.csv", "observation_tables/csv/part-58.csv", "observation_tables/csv/part-59.csv", "observation_tables/csv/part-60.csv", "observation_tables/csv/part-61.csv", "observation_tables/csv/part-62.csv", "observation_tables/csv/part-63.csv", "observation_tables/csv/part-64.csv", "observation_tables/csv/part-65.csv", "observation_tables/csv/part-66.csv", "observation_tables/csv/part-67.csv", "observation_tables/csv/part-68.csv", "observation_tables/csv/part-69.csv", "observation_tables/csv/part-70.csv", "observation_tables/csv/part-71.csv", "observation_tables/csv/part-72.csv", "observation_tables/csv/part-73.csv", "observation_tables/csv/part-74.csv", "observation_tables/csv/part-75.csv", "observation_tables/csv/part-76.csv", "observation_tables/csv/part-77.csv", "observation_tables/csv/part-78.csv", "observation_tables/csv/part-79.csv", "observation_tables/csv/part-80.csv", "observation_tables/csv/part-81.csv", "observation_tables/csv/part-82.csv", "observation_tables/csv/part-83.csv", "observation_tables/csv/part-84.csv", "observation_tables/csv/part-85.csv", "observation_tables/csv/part-86.csv", "observation_tables/csv/part-87.csv", "observation_tables/csv/part-88.csv", "observation_tables/csv/part-89.csv", "observation_tables/csv/part-90.csv", "observation_tables/csv/part-91.csv", "observation_tables/csv/part-92.csv", "observation_tables/csv/part-93.csv", "observation_tables/csv/part-94.csv", "observation_tables/csv/part-95.csv", "observation_tables/csv/part-96.csv", "observation_tables/csv/part-97.csv", "observation_tables/csv/part-98.csv", "observation_tables/csv/part-99.csv", "observation_tables/csv/part-100.csv", "observation_tables/csv/part-101.csv", "observation_tables/csv/part-102.csv", "observation_tables/csv/part-103.csv", "observation_tables/csv/part-104.csv", "observation_tables/csv/part-105.csv", "observation_tables/csv/part-106.csv", "observation_tables/csv/part-107.csv", "observation_tables/csv/part-108.csv", "observation_tables/csv/part-109.csv", "observation_tables/csv/part-110.csv", "observation_tables/csv/part-111.csv", "observation_tables/csv/part-112.csv", "observation_tables/csv/part-113.csv", "observation_tables/csv/part-114.csv", "observation_tables/csv/part-115.csv", "observation_tables/csv/part-116.csv", "observation_tables/csv/part-117.csv", "observation_tables/csv/part-118.csv", "observation_tables/csv/part-119.csv", "observation_tables/csv/part-120.csv", "observation_tables/csv/part-121.csv", "observation_tables/csv/part-122.csv", "observation_tables/csv/part-123.csv", "observation_tables/csv/part-124.csv", "observation_tables/csv/part-125.csv", "observation_tables/csv/part-126.csv", "observation_tables/csv/part-127.csv", "observation_tables/csv/part-128.csv", "observation_tables/csv/part-129.csv", "observation_tables/csv/part-130.csv", "observation_tables/csv/part-131.csv", "observation_tables/csv/part-132.csv", "observation_tables/csv/part-133.csv", "observation_tables/csv/part-134.csv", "observation_tables/csv/part-135.csv", "observation_tables/csv/part-136.csv", "observation_tables/csv/part-137.csv", "observation_tables/csv/part-138.csv", "observation_tables/csv/part-139.csv", "observation_tables/csv/part-140.csv", "observation_tables/csv/part-141.csv", "observation_tables/csv/part-142.csv", "observation_tables/csv/part-143.csv", "observation_tables/csv/part-144.csv", "observation_tables/csv/part-145.csv", "observation_tables/csv/part-146.csv", "observation_tables/csv/part-147.csv", "observation_tables/csv/part-148.csv", "observation_tables/csv/part-149.csv", "observation_tables/csv/part-150.csv", "observation_tables/csv/part-151.csv", "observation_tables/csv/part-152.csv", "observation_tables/csv/part-153.csv", "observation_tables/csv/part-154.csv", "observation_tables/csv/part-155.csv", "observation_tables/csv/part-156.csv", "observation_tables/csv/part-157.csv", "observation_tables/csv/part-158.csv", "observation_tables/csv/part-159.csv", "observation_tables/csv/part-160.csv", "observation_tables/csv/part-161.csv", "observation_tables/csv/part-162.csv", "observation_tables/csv/part-163.csv", "observation_tables/csv/part-164.csv", "observation_tables/csv/part-165.csv", "observation_tables/csv/part-166.csv", "observation_tables/csv/part-167.csv", "observation_tables/csv/part-168.csv", "observation_tables/csv/part-169.csv", "observation_tables/csv/part-170.csv", "observation_tables/csv/part-171.csv", "observation_tables/csv/part-172.csv", "observation_tables/csv/part-173.csv", "observation_tables/csv/part-174.csv", "observation_tables/csv/part-175.csv", "observation_tables/csv/part-176.csv", "observation_tables/csv/part-177.csv", "observation_tables/csv/part-178.csv", "observation_tables/csv/part-179.csv", "observation_tables/csv/part-180.csv", "observation_tables/csv/part-181.csv", "observation_tables/csv/part-182.csv", "observation_tables/csv/part-183.csv", "observation_tables/csv/part-184.csv", "observation_tables/csv/part-185.csv", "observation_tables/csv/part-186.csv", "observation_tables/csv/part-187.csv", "observation_tables/csv/part-188.csv", "observation_tables/csv/part-189.csv", "observation_tables/csv/part-190.csv", "observation_tables/csv/part-191.csv", "observation_tables/csv/part-192.csv", "observation_tables/csv/part-193.csv", "observation_tables/csv/part-194.csv", "observation_tables/csv/part-195.csv", "observation_tables/csv/part-196.csv", "observation_tables/csv/part-197.csv", "observation_tables/csv/part-198.csv", "observation_tables/csv/part-199.csv", "observation_tables/csv/part-200.csv", "observation_tables/csv/part-201.csv", "observation_tables/csv/part-202.csv", "observation_tables/csv/part-203.csv", "observation_tables/csv/part-204.csv", "observation_tables/csv/part-205.csv", "observation_tables/csv/part-206.csv", "observation_tables/csv/part-207.csv", "observation_tables/csv/part-208.csv", "observation_tables/csv/part-209.csv", "observation_tables/csv/part-210.csv", "observation_tables/csv/part-211.csv", "observation_tables/csv/part-212.csv", "observation_tables/csv/part-213.csv", "observation_tables/csv/part-214.csv", "observation_tables/csv/part-215.csv", "observation_tables/csv/part-216.csv", "observation_tables/csv/part-217.csv", "observation_tables/csv/part-218.csv", "observation_tables/csv/part-219.csv", "observation_tables/csv/part-220.csv", "observation_tables/csv/part-221.csv", "observation_tables/csv/part-222.csv", "observation_tables/csv/part-223.csv", "observation_tables/csv/part-224.csv", "observation_tables/csv/part-225.csv", "observation_tables/csv/part-226.csv", "observation_tables/csv/part-227.csv", "observation_tables/csv/part-228.csv", "observation_tables/csv/part-229.csv", "observation_tables/csv/part-230.csv", "observation_tables/csv/part-231.csv", "observation_tables/csv/part-232.csv", "observation_tables/csv/part-233.csv", "observation_tables/csv/part-234.csv", "observation_tables/csv/part-235.csv", "observation_tables/csv/part-236.csv", "observation_tables/csv/part-237.csv", "observation_tables/csv/part-238.csv", "observation_tables/csv/part-239.csv", "observation_tables/csv/part-240.csv", "observation_tables/csv/part-241.csv", "observation_tables/csv/part-242.csv", "observation_tables/csv/part-243.csv", "observation_tables/csv/part-244.csv", "observation_tables/csv/part-245.csv", "observation_tables/csv/part-246.csv", "observation_tables/csv/part-247.csv", "observation_tables/csv/part-248.csv", "observation_tables/csv/part-249.csv"],
         "defaults": {
           "index_var": "datetime",
           "val_var": "value",
           "time_vars": ["datetime", "entertime"]
         },
-        "num_rows": 776921131,
         "cols": {
           "patientid": {
             "name": "patientid",
@@ -7180,19 +7121,18 @@
             "spec": "col_integer"
           }
         },
+        "num_rows": 776921131,
+        "zip_file": "raw_stage/observation_tables_csv.tar.gz",
         "partitioning": {
           "col": "variableid",
           "breaks": [110, 120, 200, 210, 211, 300, 620, 2010, 2610, 3110, 4000, 5685, 15001565, 30005075]
         }
       },
       "ordinal": {
-        "files": {
-          "reference_data.tar.gz": "ordinal_vars_ref.csv"
-        },
+        "files": "ordinal_vars_ref.csv",
         "defaults": {
           "id_var": "variableid"
         },
-        "num_rows": 72,
         "cols": {
           "variableid": {
             "name": "variableid",
@@ -7206,19 +7146,18 @@
             "name": "stringvalue",
             "spec": "col_character"
           }
-        }
+        },
+        "num_rows": 72,
+        "zip_file": "reference_data.tar.gz"
       },
       "pharma": {
-        "files": {
-          "raw_stage/pharma_records_csv.tar.gz": ["pharma_records/csv/part-0.csv", "pharma_records/csv/part-1.csv", "pharma_records/csv/part-2.csv", "pharma_records/csv/part-3.csv", "pharma_records/csv/part-4.csv", "pharma_records/csv/part-5.csv", "pharma_records/csv/part-6.csv", "pharma_records/csv/part-7.csv", "pharma_records/csv/part-8.csv", "pharma_records/csv/part-9.csv", "pharma_records/csv/part-10.csv", "pharma_records/csv/part-11.csv", "pharma_records/csv/part-12.csv", "pharma_records/csv/part-13.csv", "pharma_records/csv/part-14.csv", "pharma_records/csv/part-15.csv", "pharma_records/csv/part-16.csv", "pharma_records/csv/part-17.csv", "pharma_records/csv/part-18.csv", "pharma_records/csv/part-19.csv", "pharma_records/csv/part-20.csv", "pharma_records/csv/part-21.csv", "pharma_records/csv/part-22.csv", "pharma_records/csv/part-23.csv", "pharma_records/csv/part-24.csv", "pharma_records/csv/part-25.csv", "pharma_records/csv/part-26.csv", "pharma_records/csv/part-27.csv", "pharma_records/csv/part-28.csv", "pharma_records/csv/part-29.csv", "pharma_records/csv/part-30.csv", "pharma_records/csv/part-31.csv", "pharma_records/csv/part-32.csv", "pharma_records/csv/part-33.csv", "pharma_records/csv/part-34.csv", "pharma_records/csv/part-35.csv", "pharma_records/csv/part-36.csv", "pharma_records/csv/part-37.csv", "pharma_records/csv/part-38.csv", "pharma_records/csv/part-39.csv", "pharma_records/csv/part-40.csv", "pharma_records/csv/part-41.csv", "pharma_records/csv/part-42.csv", "pharma_records/csv/part-43.csv", "pharma_records/csv/part-44.csv", "pharma_records/csv/part-45.csv", "pharma_records/csv/part-46.csv", "pharma_records/csv/part-47.csv", "pharma_records/csv/part-48.csv", "pharma_records/csv/part-49.csv", "pharma_records/csv/part-50.csv", "pharma_records/csv/part-51.csv", "pharma_records/csv/part-52.csv", "pharma_records/csv/part-53.csv", "pharma_records/csv/part-54.csv", "pharma_records/csv/part-55.csv", "pharma_records/csv/part-56.csv", "pharma_records/csv/part-57.csv", "pharma_records/csv/part-58.csv", "pharma_records/csv/part-59.csv", "pharma_records/csv/part-60.csv", "pharma_records/csv/part-61.csv", "pharma_records/csv/part-62.csv", "pharma_records/csv/part-63.csv", "pharma_records/csv/part-64.csv", "pharma_records/csv/part-65.csv", "pharma_records/csv/part-66.csv", "pharma_records/csv/part-67.csv", "pharma_records/csv/part-68.csv", "pharma_records/csv/part-69.csv", "pharma_records/csv/part-70.csv", "pharma_records/csv/part-71.csv", "pharma_records/csv/part-72.csv", "pharma_records/csv/part-73.csv", "pharma_records/csv/part-74.csv", "pharma_records/csv/part-75.csv", "pharma_records/csv/part-76.csv", "pharma_records/csv/part-77.csv", "pharma_records/csv/part-78.csv", "pharma_records/csv/part-79.csv", "pharma_records/csv/part-80.csv", "pharma_records/csv/part-81.csv", "pharma_records/csv/part-82.csv", "pharma_records/csv/part-83.csv", "pharma_records/csv/part-84.csv", "pharma_records/csv/part-85.csv", "pharma_records/csv/part-86.csv", "pharma_records/csv/part-87.csv", "pharma_records/csv/part-88.csv", "pharma_records/csv/part-89.csv", "pharma_records/csv/part-90.csv", "pharma_records/csv/part-91.csv", "pharma_records/csv/part-92.csv", "pharma_records/csv/part-93.csv", "pharma_records/csv/part-94.csv", "pharma_records/csv/part-95.csv", "pharma_records/csv/part-96.csv", "pharma_records/csv/part-97.csv", "pharma_records/csv/part-98.csv", "pharma_records/csv/part-99.csv", "pharma_records/csv/part-100.csv", "pharma_records/csv/part-101.csv", "pharma_records/csv/part-102.csv", "pharma_records/csv/part-103.csv", "pharma_records/csv/part-104.csv", "pharma_records/csv/part-105.csv", "pharma_records/csv/part-106.csv", "pharma_records/csv/part-107.csv", "pharma_records/csv/part-108.csv", "pharma_records/csv/part-109.csv", "pharma_records/csv/part-110.csv", "pharma_records/csv/part-111.csv", "pharma_records/csv/part-112.csv", "pharma_records/csv/part-113.csv", "pharma_records/csv/part-114.csv", "pharma_records/csv/part-115.csv", "pharma_records/csv/part-116.csv", "pharma_records/csv/part-117.csv", "pharma_records/csv/part-118.csv", "pharma_records/csv/part-119.csv", "pharma_records/csv/part-120.csv", "pharma_records/csv/part-121.csv", "pharma_records/csv/part-122.csv", "pharma_records/csv/part-123.csv", "pharma_records/csv/part-124.csv", "pharma_records/csv/part-125.csv", "pharma_records/csv/part-126.csv", "pharma_records/csv/part-127.csv", "pharma_records/csv/part-128.csv", "pharma_records/csv/part-129.csv", "pharma_records/csv/part-130.csv", "pharma_records/csv/part-131.csv", "pharma_records/csv/part-132.csv", "pharma_records/csv/part-133.csv", "pharma_records/csv/part-134.csv", "pharma_records/csv/part-135.csv", "pharma_records/csv/part-136.csv", "pharma_records/csv/part-137.csv", "pharma_records/csv/part-138.csv", "pharma_records/csv/part-139.csv", "pharma_records/csv/part-140.csv", "pharma_records/csv/part-141.csv", "pharma_records/csv/part-142.csv", "pharma_records/csv/part-143.csv", "pharma_records/csv/part-144.csv", "pharma_records/csv/part-145.csv", "pharma_records/csv/part-146.csv", "pharma_records/csv/part-147.csv", "pharma_records/csv/part-148.csv", "pharma_records/csv/part-149.csv", "pharma_records/csv/part-150.csv", "pharma_records/csv/part-151.csv", "pharma_records/csv/part-152.csv", "pharma_records/csv/part-153.csv", "pharma_records/csv/part-154.csv", "pharma_records/csv/part-155.csv", "pharma_records/csv/part-156.csv", "pharma_records/csv/part-157.csv", "pharma_records/csv/part-158.csv", "pharma_records/csv/part-159.csv", "pharma_records/csv/part-160.csv", "pharma_records/csv/part-161.csv", "pharma_records/csv/part-162.csv", "pharma_records/csv/part-163.csv", "pharma_records/csv/part-164.csv", "pharma_records/csv/part-165.csv", "pharma_records/csv/part-166.csv", "pharma_records/csv/part-167.csv", "pharma_records/csv/part-168.csv", "pharma_records/csv/part-169.csv", "pharma_records/csv/part-170.csv", "pharma_records/csv/part-171.csv", "pharma_records/csv/part-172.csv", "pharma_records/csv/part-173.csv", "pharma_records/csv/part-174.csv", "pharma_records/csv/part-175.csv", "pharma_records/csv/part-176.csv", "pharma_records/csv/part-177.csv", "pharma_records/csv/part-178.csv", "pharma_records/csv/part-179.csv", "pharma_records/csv/part-180.csv", "pharma_records/csv/part-181.csv", "pharma_records/csv/part-182.csv", "pharma_records/csv/part-183.csv", "pharma_records/csv/part-184.csv", "pharma_records/csv/part-185.csv", "pharma_records/csv/part-186.csv", "pharma_records/csv/part-187.csv", "pharma_records/csv/part-188.csv", "pharma_records/csv/part-189.csv", "pharma_records/csv/part-190.csv", "pharma_records/csv/part-191.csv", "pharma_records/csv/part-192.csv", "pharma_records/csv/part-193.csv", "pharma_records/csv/part-194.csv", "pharma_records/csv/part-195.csv", "pharma_records/csv/part-196.csv", "pharma_records/csv/part-197.csv", "pharma_records/csv/part-198.csv", "pharma_records/csv/part-199.csv", "pharma_records/csv/part-200.csv", "pharma_records/csv/part-201.csv", "pharma_records/csv/part-202.csv", "pharma_records/csv/part-203.csv", "pharma_records/csv/part-204.csv", "pharma_records/csv/part-205.csv", "pharma_records/csv/part-206.csv", "pharma_records/csv/part-207.csv", "pharma_records/csv/part-208.csv", "pharma_records/csv/part-209.csv", "pharma_records/csv/part-210.csv", "pharma_records/csv/part-211.csv", "pharma_records/csv/part-212.csv", "pharma_records/csv/part-213.csv", "pharma_records/csv/part-214.csv", "pharma_records/csv/part-215.csv", "pharma_records/csv/part-216.csv", "pharma_records/csv/part-217.csv", "pharma_records/csv/part-218.csv", "pharma_records/csv/part-219.csv", "pharma_records/csv/part-220.csv", "pharma_records/csv/part-221.csv", "pharma_records/csv/part-222.csv", "pharma_records/csv/part-223.csv", "pharma_records/csv/part-224.csv", "pharma_records/csv/part-225.csv", "pharma_records/csv/part-226.csv", "pharma_records/csv/part-227.csv", "pharma_records/csv/part-228.csv", "pharma_records/csv/part-229.csv", "pharma_records/csv/part-230.csv", "pharma_records/csv/part-231.csv", "pharma_records/csv/part-232.csv", "pharma_records/csv/part-233.csv", "pharma_records/csv/part-234.csv", "pharma_records/csv/part-235.csv", "pharma_records/csv/part-236.csv", "pharma_records/csv/part-237.csv", "pharma_records/csv/part-238.csv", "pharma_records/csv/part-239.csv", "pharma_records/csv/part-240.csv", "pharma_records/csv/part-241.csv", "pharma_records/csv/part-242.csv", "pharma_records/csv/part-243.csv", "pharma_records/csv/part-244.csv", "pharma_records/csv/part-245.csv", "pharma_records/csv/part-246.csv", "pharma_records/csv/part-247.csv", "pharma_records/csv/part-248.csv", "pharma_records/csv/part-249.csv"]
-        },
+        "files": ["pharma_records/csv/part-0.csv", "pharma_records/csv/part-1.csv", "pharma_records/csv/part-2.csv", "pharma_records/csv/part-3.csv", "pharma_records/csv/part-4.csv", "pharma_records/csv/part-5.csv", "pharma_records/csv/part-6.csv", "pharma_records/csv/part-7.csv", "pharma_records/csv/part-8.csv", "pharma_records/csv/part-9.csv", "pharma_records/csv/part-10.csv", "pharma_records/csv/part-11.csv", "pharma_records/csv/part-12.csv", "pharma_records/csv/part-13.csv", "pharma_records/csv/part-14.csv", "pharma_records/csv/part-15.csv", "pharma_records/csv/part-16.csv", "pharma_records/csv/part-17.csv", "pharma_records/csv/part-18.csv", "pharma_records/csv/part-19.csv", "pharma_records/csv/part-20.csv", "pharma_records/csv/part-21.csv", "pharma_records/csv/part-22.csv", "pharma_records/csv/part-23.csv", "pharma_records/csv/part-24.csv", "pharma_records/csv/part-25.csv", "pharma_records/csv/part-26.csv", "pharma_records/csv/part-27.csv", "pharma_records/csv/part-28.csv", "pharma_records/csv/part-29.csv", "pharma_records/csv/part-30.csv", "pharma_records/csv/part-31.csv", "pharma_records/csv/part-32.csv", "pharma_records/csv/part-33.csv", "pharma_records/csv/part-34.csv", "pharma_records/csv/part-35.csv", "pharma_records/csv/part-36.csv", "pharma_records/csv/part-37.csv", "pharma_records/csv/part-38.csv", "pharma_records/csv/part-39.csv", "pharma_records/csv/part-40.csv", "pharma_records/csv/part-41.csv", "pharma_records/csv/part-42.csv", "pharma_records/csv/part-43.csv", "pharma_records/csv/part-44.csv", "pharma_records/csv/part-45.csv", "pharma_records/csv/part-46.csv", "pharma_records/csv/part-47.csv", "pharma_records/csv/part-48.csv", "pharma_records/csv/part-49.csv", "pharma_records/csv/part-50.csv", "pharma_records/csv/part-51.csv", "pharma_records/csv/part-52.csv", "pharma_records/csv/part-53.csv", "pharma_records/csv/part-54.csv", "pharma_records/csv/part-55.csv", "pharma_records/csv/part-56.csv", "pharma_records/csv/part-57.csv", "pharma_records/csv/part-58.csv", "pharma_records/csv/part-59.csv", "pharma_records/csv/part-60.csv", "pharma_records/csv/part-61.csv", "pharma_records/csv/part-62.csv", "pharma_records/csv/part-63.csv", "pharma_records/csv/part-64.csv", "pharma_records/csv/part-65.csv", "pharma_records/csv/part-66.csv", "pharma_records/csv/part-67.csv", "pharma_records/csv/part-68.csv", "pharma_records/csv/part-69.csv", "pharma_records/csv/part-70.csv", "pharma_records/csv/part-71.csv", "pharma_records/csv/part-72.csv", "pharma_records/csv/part-73.csv", "pharma_records/csv/part-74.csv", "pharma_records/csv/part-75.csv", "pharma_records/csv/part-76.csv", "pharma_records/csv/part-77.csv", "pharma_records/csv/part-78.csv", "pharma_records/csv/part-79.csv", "pharma_records/csv/part-80.csv", "pharma_records/csv/part-81.csv", "pharma_records/csv/part-82.csv", "pharma_records/csv/part-83.csv", "pharma_records/csv/part-84.csv", "pharma_records/csv/part-85.csv", "pharma_records/csv/part-86.csv", "pharma_records/csv/part-87.csv", "pharma_records/csv/part-88.csv", "pharma_records/csv/part-89.csv", "pharma_records/csv/part-90.csv", "pharma_records/csv/part-91.csv", "pharma_records/csv/part-92.csv", "pharma_records/csv/part-93.csv", "pharma_records/csv/part-94.csv", "pharma_records/csv/part-95.csv", "pharma_records/csv/part-96.csv", "pharma_records/csv/part-97.csv", "pharma_records/csv/part-98.csv", "pharma_records/csv/part-99.csv", "pharma_records/csv/part-100.csv", "pharma_records/csv/part-101.csv", "pharma_records/csv/part-102.csv", "pharma_records/csv/part-103.csv", "pharma_records/csv/part-104.csv", "pharma_records/csv/part-105.csv", "pharma_records/csv/part-106.csv", "pharma_records/csv/part-107.csv", "pharma_records/csv/part-108.csv", "pharma_records/csv/part-109.csv", "pharma_records/csv/part-110.csv", "pharma_records/csv/part-111.csv", "pharma_records/csv/part-112.csv", "pharma_records/csv/part-113.csv", "pharma_records/csv/part-114.csv", "pharma_records/csv/part-115.csv", "pharma_records/csv/part-116.csv", "pharma_records/csv/part-117.csv", "pharma_records/csv/part-118.csv", "pharma_records/csv/part-119.csv", "pharma_records/csv/part-120.csv", "pharma_records/csv/part-121.csv", "pharma_records/csv/part-122.csv", "pharma_records/csv/part-123.csv", "pharma_records/csv/part-124.csv", "pharma_records/csv/part-125.csv", "pharma_records/csv/part-126.csv", "pharma_records/csv/part-127.csv", "pharma_records/csv/part-128.csv", "pharma_records/csv/part-129.csv", "pharma_records/csv/part-130.csv", "pharma_records/csv/part-131.csv", "pharma_records/csv/part-132.csv", "pharma_records/csv/part-133.csv", "pharma_records/csv/part-134.csv", "pharma_records/csv/part-135.csv", "pharma_records/csv/part-136.csv", "pharma_records/csv/part-137.csv", "pharma_records/csv/part-138.csv", "pharma_records/csv/part-139.csv", "pharma_records/csv/part-140.csv", "pharma_records/csv/part-141.csv", "pharma_records/csv/part-142.csv", "pharma_records/csv/part-143.csv", "pharma_records/csv/part-144.csv", "pharma_records/csv/part-145.csv", "pharma_records/csv/part-146.csv", "pharma_records/csv/part-147.csv", "pharma_records/csv/part-148.csv", "pharma_records/csv/part-149.csv", "pharma_records/csv/part-150.csv", "pharma_records/csv/part-151.csv", "pharma_records/csv/part-152.csv", "pharma_records/csv/part-153.csv", "pharma_records/csv/part-154.csv", "pharma_records/csv/part-155.csv", "pharma_records/csv/part-156.csv", "pharma_records/csv/part-157.csv", "pharma_records/csv/part-158.csv", "pharma_records/csv/part-159.csv", "pharma_records/csv/part-160.csv", "pharma_records/csv/part-161.csv", "pharma_records/csv/part-162.csv", "pharma_records/csv/part-163.csv", "pharma_records/csv/part-164.csv", "pharma_records/csv/part-165.csv", "pharma_records/csv/part-166.csv", "pharma_records/csv/part-167.csv", "pharma_records/csv/part-168.csv", "pharma_records/csv/part-169.csv", "pharma_records/csv/part-170.csv", "pharma_records/csv/part-171.csv", "pharma_records/csv/part-172.csv", "pharma_records/csv/part-173.csv", "pharma_records/csv/part-174.csv", "pharma_records/csv/part-175.csv", "pharma_records/csv/part-176.csv", "pharma_records/csv/part-177.csv", "pharma_records/csv/part-178.csv", "pharma_records/csv/part-179.csv", "pharma_records/csv/part-180.csv", "pharma_records/csv/part-181.csv", "pharma_records/csv/part-182.csv", "pharma_records/csv/part-183.csv", "pharma_records/csv/part-184.csv", "pharma_records/csv/part-185.csv", "pharma_records/csv/part-186.csv", "pharma_records/csv/part-187.csv", "pharma_records/csv/part-188.csv", "pharma_records/csv/part-189.csv", "pharma_records/csv/part-190.csv", "pharma_records/csv/part-191.csv", "pharma_records/csv/part-192.csv", "pharma_records/csv/part-193.csv", "pharma_records/csv/part-194.csv", "pharma_records/csv/part-195.csv", "pharma_records/csv/part-196.csv", "pharma_records/csv/part-197.csv", "pharma_records/csv/part-198.csv", "pharma_records/csv/part-199.csv", "pharma_records/csv/part-200.csv", "pharma_records/csv/part-201.csv", "pharma_records/csv/part-202.csv", "pharma_records/csv/part-203.csv", "pharma_records/csv/part-204.csv", "pharma_records/csv/part-205.csv", "pharma_records/csv/part-206.csv", "pharma_records/csv/part-207.csv", "pharma_records/csv/part-208.csv", "pharma_records/csv/part-209.csv", "pharma_records/csv/part-210.csv", "pharma_records/csv/part-211.csv", "pharma_records/csv/part-212.csv", "pharma_records/csv/part-213.csv", "pharma_records/csv/part-214.csv", "pharma_records/csv/part-215.csv", "pharma_records/csv/part-216.csv", "pharma_records/csv/part-217.csv", "pharma_records/csv/part-218.csv", "pharma_records/csv/part-219.csv", "pharma_records/csv/part-220.csv", "pharma_records/csv/part-221.csv", "pharma_records/csv/part-222.csv", "pharma_records/csv/part-223.csv", "pharma_records/csv/part-224.csv", "pharma_records/csv/part-225.csv", "pharma_records/csv/part-226.csv", "pharma_records/csv/part-227.csv", "pharma_records/csv/part-228.csv", "pharma_records/csv/part-229.csv", "pharma_records/csv/part-230.csv", "pharma_records/csv/part-231.csv", "pharma_records/csv/part-232.csv", "pharma_records/csv/part-233.csv", "pharma_records/csv/part-234.csv", "pharma_records/csv/part-235.csv", "pharma_records/csv/part-236.csv", "pharma_records/csv/part-237.csv", "pharma_records/csv/part-238.csv", "pharma_records/csv/part-239.csv", "pharma_records/csv/part-240.csv", "pharma_records/csv/part-241.csv", "pharma_records/csv/part-242.csv", "pharma_records/csv/part-243.csv", "pharma_records/csv/part-244.csv", "pharma_records/csv/part-245.csv", "pharma_records/csv/part-246.csv", "pharma_records/csv/part-247.csv", "pharma_records/csv/part-248.csv", "pharma_records/csv/part-249.csv"],
         "defaults": {
           "index_var": "givenat",
           "val_var": "givendose",
           "unit_var": "doseunit",
           "time_vars": ["givenat", "enteredentryat"]
         },
-        "num_rows": 16270399,
         "cols": {
           "patientid": {
             "name": "patientid",
@@ -7279,19 +7218,18 @@
             "spec": "col_integer"
           }
         },
+        "num_rows": 16270399,
+        "zip_file": "raw_stage/pharma_records_csv.tar.gz",
         "partitioning": {
           "col": "pharmaid",
           "breaks": 431
         }
       },
       "variables": {
-        "files": {
-          "reference_data.tar.gz": "hirid_variable_reference.csv"
-        },
+        "files": "hirid_variable_reference.csv",
         "defaults": {
           "id_var": "id"
         },
-        "num_rows": 712,
         "cols": {
           "source_table": {
             "name": "Source Table",
@@ -7313,7 +7251,9 @@
             "name": "Additional information",
             "spec": "col_character"
           }
-        }
+        },
+        "num_rows": 712,
+        "zip_file": "reference_data.tar.gz"
       }
     }
   }

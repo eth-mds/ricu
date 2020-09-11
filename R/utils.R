@@ -88,11 +88,11 @@ src_data_dir <- function(src) {
     if (is_pkg_available(pkg)) {
       system.file("extdata", package = pkg)
     } else {
-      data_dir(src, create = FALSE)
+      data_dir(src)
     }
 
   } else {
-    data_dir(src, create = FALSE)
+    data_dir(src)
   }
 }
 
@@ -476,11 +476,6 @@ dbl_xtr_null <- function(x, i, length = 1L) {
 
 xtr_null <- function(x, i, null_val) {
   if (is.null(res <- x[[i]])) null_val else res
-}
-
-mul_xtr <- function(x, i) {
-  res <- lapply(x, `[`, i)
-  if (is.character(i)) lapply(res, setNames, i) else res
 }
 
 map <- function(f, ...) Map(f, ..., USE.NAMES = FALSE)

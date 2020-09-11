@@ -1,4 +1,90 @@
 
+#' @param x Object to coerce/query
+#'
+#' @rdname src_cfg
+#' @keywords internal
+is_src_cfg <- is_type("src_cfg")
+
+#' @rdname src_cfg
+#' @keywords internal
+is_id_cfg <- is_type("id_cfg")
+
+#' @rdname src_cfg
+#' @keywords internal
+is_col_cfg <- is_type("col_cfg")
+
+#' @rdname src_cfg
+#' @keywords internal
+is_tbl_cfg <- is_type("tbl_cfg")
+
+#' @rdname src_cfg
+#' @keywords internal
+#' @export
+as_src_cfg <- function(x) UseMethod("as_src_cfg", x)
+
+#' @export
+as_src_cfg.src_cfg <- function(x) x
+
+#' @export
+as_src_cfg.src_env <- function(x) {
+  new_src_cfg(src_name(x), as_id_cfg(x), eapply(x, as_col_cfg),
+              eapply(x, as_tbl_cfg), sub("_env", "", head(class(x), n = 2L)))
+}
+
+#' @export
+as_src_cfg.default <- function(x) as_src_cfg(as_src_env(x))
+
+#' @rdname src_cfg
+#' @keywords internal
+#' @export
+as_id_cfg <- function(x) UseMethod("as_id_cfg", x)
+
+#' @export
+as_id_cfg.id_cfg <- function(x) x
+
+#' @export
+as_id_cfg.src_cfg <- function(x) x[["id_cfg"]]
+
+#' @export
+as_id_cfg.src_env <- function(x) attr(x, "id_cfg")
+
+#' @export
+as_id_cfg.default <- function(x) as_id_cfg(as_src_env(x))
+
+#' @rdname src_cfg
+#' @keywords internal
+#' @export
+as_col_cfg <- function(x) UseMethod("as_col_cfg", x)
+
+#' @export
+as_col_cfg.col_cfg <- function(x) x
+
+#' @export
+as_col_cfg.src_cfg <- function(x) x[["col_cfg"]]
+
+#' @export
+as_col_cfg.src_tbl <- function(x) attr(x, "col_cfg")
+
+#' @export
+as_col_cfg.default <- function(x) as_col_cfg(as_src_tbl(x))
+
+#' @rdname src_cfg
+#' @keywords internal
+#' @export
+as_tbl_cfg <- function(x) UseMethod("as_tbl_cfg", x)
+
+#' @export
+as_tbl_cfg.tbl_cfg <- function(x) x
+
+#' @export
+as_tbl_cfg.src_cfg <- function(x) x[["tbl_cfg"]]
+
+#' @export
+as_tbl_cfg.src_tbl <- function(x) attr(x, "tbl_cfg")
+
+#' @export
+as_tbl_cfg.default <- function(x) as_tbl_cfg(as_src_tbl(x))
+
 #' @rdname src_cfg
 #' @keywords internal
 #'
@@ -40,80 +126,17 @@ as.list.id_cfg <- function(x, ...) {
 #' @rdname src_cfg
 #' @keywords internal
 #' @export
-as_id_cfg <- function(x) UseMethod("as_id_cfg", x)
-
-#' @export
-as_id_cfg.id_cfg <- function(x) x
-
-#' @export
-#'
-as_id_cfg.src_cfg <- function(x) x[["id_cfg"]]
-
-#' @export
-#'
-as_id_cfg.src_env <- function(x) attr(x, "id_cfg")
-
-#' @export
-#'
-as_id_cfg.default <- function(x) as_id_cfg(as_src_env(x))
-
-#' @rdname src_cfg
-#' @keywords internal
-#' @export
 id_var_opts <- function(x) {
   field(as_id_cfg(x), "id")
 }
-
-#' @rdname src_cfg
-#' @keywords internal
-#' @export
-#'
-as_col_cfg <- function(x) UseMethod("as_col_cfg", x)
-
-#' @export
-as_col_cfg.col_cfg <- function(x) x
-
-#' @export
-as_col_cfg.src_cfg <- function(x) x[["col_cfg"]]
-
-#' @export
-as_col_cfg.src_tbl <- function(x) attr(x, "col_cfg")
-
-#' @export
-as_col_cfg.default <- function(x) as_col_cfg(as_src_tbl(x))
 
 val_var <- function(x) as_col_cfg(x)[["val_var"]]
 
 unit_var <- function(x) as_col_cfg(x)[["unit_var"]]
 
-#' @rdname src_cfg
-#' @keywords internal
-#' @export
-#'
-as_tbl_cfg <- function(x) UseMethod("as_tbl_cfg", x)
-
-#' @export
-as_tbl_cfg.tbl_cfg <- function(x) x
-
-#' @export
-as_tbl_cfg.src_cfg <- function(x) x[["tbl_cfg"]]
-
-#' @export
-as_tbl_cfg.default <- function(x) stop_generic(x, .Generic)
-
 #' @export
 dim.tbl_cfg <- function(x) {
   c(x[["nrow"]], length(x[["cols"]]))
-}
-
-src_files <- function(x) {
-  assert_that(is_tbl_cfg(x))
-  names(x[["files"]])
-}
-
-dst_files <- function(x) {
-  assert_that(is_tbl_cfg(x))
-  unlist(x[["files"]], recursive = FALSE, use.names = FALSE)
 }
 
 n_partitions <- function(x) {
@@ -121,7 +144,12 @@ n_partitions <- function(x) {
   length(x[["partitioning"]][["breaks"]]) + 1L
 }
 
-fst_names <- function(x) {
+raw_file_names <- function(x) {
+  assert_that(is_tbl_cfg(x))
+  x[["files"]]
+}
+
+fst_file_names <- function(x) {
 
   assert_that(is_tbl_cfg(x))
 
@@ -133,6 +161,19 @@ fst_names <- function(x) {
   }
 
   paste0(tbl_nme, ".fst")
+}
+
+src_file_exist <- function(x, dir, type = c("fst", "raw")) {
+
+  are_avail <- function(x) all(file.exists(file.path(dir, x)))
+
+  fun <- switch(match.arg(type), fst = fst_file_names, raw = raw_file_names)
+
+  if (is_tbl_cfg(x)) {
+    are_avail(fun(x))
+  } else {
+    lgl_ply(lapply(x, fun), are_avail)
+  }
 }
 
 col_spec <- function(x) {
@@ -207,14 +248,8 @@ index_var.col_cfg <- function(x) x[["index_var"]]
 #' @export
 time_vars.col_cfg <- function(x) x[["time_vars"]]
 
-#' Get default columns
-#'
-#' For a table, query the default columns as specified by an `id_cfg`
-#' ([new_id_cfg()]) or `col_cfg` ([new_col_cfg()]) object.
-#'
-#' @param x Object used for dispatch
-#'
-#' @rdname cfg_utils
+#' @rdname src_cfg
+#' @keywords internal
 #' @export
 src_name <- function(x) UseMethod("src_name", x)
 
@@ -233,7 +268,8 @@ src_name.tbl_cfg <- function(x) x[["src"]]
 #' @export
 src_name.default <- function(x) stop_generic(x, .Generic)
 
-#' @rdname cfg_utils
+#' @rdname src_cfg
+#' @keywords internal
 #' @export
 tbl_name <- function(x) UseMethod("tbl_name", x)
 

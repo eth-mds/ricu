@@ -68,24 +68,18 @@ as_tbl_spec <- function(files, defaults, time_vars, tbl_info, partitioning) {
       default <- c(default, list(time_vars = unname(time)))
     }
 
-    res <- list(files = file, defaults = default)
+    tbl <- c(list(files = file, defaults = default), tbl)
 
-    if ("num_rows" %in% names(tbl)) {
-      res[["num_rows"]] <- tbl[["num_rows"]]
-    } else {
-      res["num_rows"] <- list(NULL)
-    }
-
-    res[["cols"]] <- lapply(tbl[["cols"]], mod_col)
-    names(res[["cols"]]) <- all_cols
+    tbl[["table_name"]] <- NULL
+    tbl[["cols"]] <- setNames(lapply(tbl[["cols"]], mod_col), all_cols)
 
     if (!is.null(part)) {
       stopifnot(isTRUE(names(part) %in% all_cols))
-      res <- c(res, list(partitioning = list(col = names(part),
+      tbl <- c(tbl, list(partitioning = list(col = names(part),
                                              breaks = part[[1L]])))
     }
 
-    res
+    tbl
   }
 
   tbls <- vapply(tbl_info, `[[`, character(1L), "table_name")
@@ -537,28 +531,16 @@ hirid_tbl_cfg <- function() {
   )
 
   files <- list(
-    list(
-      reference_data.tar.gz = "general_table.csv"
+    general = "general_table.csv",
+    observations = file.path(
+      "observation_tables", "csv", paste0("part-", 0L:249L, ".csv")
     ),
-    list(
-      `raw_stage/observation_tables_csv.tar.gz` = file.path(
-        "observation_tables", "csv", paste0("part-", 0L:249L, ".csv")
-      )
+    ordinal = "ordinal_vars_ref.csv",
+    pharma= file.path(
+      "pharma_records", "csv", paste0("part-", 0L:249L, ".csv")
     ),
-    list(
-      reference_data.tar.gz = "ordinal_vars_ref.csv"
-    ),
-    list(
-      `raw_stage/pharma_records_csv.tar.gz` = file.path(
-        "pharma_records", "csv", paste0("part-", 0L:249L, ".csv")
-      )
-    ),
-    list(
-      reference_data.tar.gz = "hirid_variable_reference.csv"
-    )
+    variables = "hirid_variable_reference.csv"
   )
-
-  names(files) <- names(info)
 
   defaults <- list(
     general = list(
@@ -589,6 +571,14 @@ hirid_tbl_cfg <- function() {
     observations = 776921131L
   )
 
+  zip_files <- list(
+    general = "reference_data.tar.gz",
+    variables = "reference_data.tar.gz",
+    ordinal = "reference_data.tar.gz",
+    pharma = "raw_stage/pharma_records_csv.tar.gz",
+    observations = "raw_stage/observation_tables_csv.tar.gz"
+  )
+
   part <- list(
     observations = list(variableid = c(
        110L,  120L,  200L,  210L,  211L,      300L,      620L,
@@ -597,12 +587,14 @@ hirid_tbl_cfg <- function() {
     pharma = list(pharmaid = 431L)
   )
 
-  info <- Map(function(x, name, nr) {
-    list(table_name = name,
-         cols = Map(c, Map(list, name = sub(" ", "_", tolower(names(x))),
-                    col = names(x)), x),
-         num_rows = nr)
-  }, info, names(info), n_row[names(info)])
+  info <- lapply(info, function(x) {
+    Map(c, Map(list, name = sub(" ", "_", tolower(names(x))),
+               col = names(x)), x)
+  })
+
+  info <- Map(list, table_name = names(info), cols = info,
+              num_rows = n_row[names(info)],
+              zip_file = zip_files[names(info)])
 
   time_vars <- lapply(info, function(x) {
     nme <- vapply(x[["cols"]], `[[`, character(1L), "name")
@@ -677,6 +669,11 @@ cfg <- list(
   list(
     name = "hirid",
     url = "https://physionet.org/files/hirid/1.0",
+    unzip = c(
+      "reference_data.tar.gz",
+      "raw_stage/observation_tables_csv.tar.gz",
+      "raw_stage/pharma_records_csv.tar.gz"
+    ),
     id_cfg = list(
       icustay = list(id = "patientid", position = 1L, start = "admissiontime",
                      table = "general")

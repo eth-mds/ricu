@@ -18,7 +18,7 @@ download_src(x, ...)
   ...
 )
 
-\method{download_src}{character}(x, name = "data-sources", dir = NULL, ...)
+\method{download_src}{character}(x, name = "data-sources", cfg_dir = NULL, ...)
 }
 \arguments{
 \item{x}{Object specifying the source configuration}
@@ -36,8 +36,7 @@ download_src(x, ...)
 variables \code{RICU_PHYSIONET_USER}/\code{RICU_PHYSIONET_PASS} are not set, user
 input is required}
 
-\item{name}{String valued name of a config file which will be looked up in
-the default config directors}
+\item{name, cfg_dir}{Forwarded to \code{\link[=load_src_cfg]{load_src_cfg()}}}
 }
 \description{
 The \href{https://lcp.mit.edu/index.html}{Laboratory for Computational Physiology } (LCP) at MIT hosts several large-scale

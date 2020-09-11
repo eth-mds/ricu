@@ -2,30 +2,24 @@
 % Please edit documentation in R/config-class.R, R/config-utils.R
 \name{new_src_cfg}
 \alias{new_src_cfg}
-\alias{is_src_cfg}
 \alias{new_id_cfg}
-\alias{is_id_cfg}
 \alias{new_col_cfg}
-\alias{is_col_cfg}
 \alias{new_tbl_cfg}
+\alias{is_src_cfg}
+\alias{is_id_cfg}
+\alias{is_col_cfg}
 \alias{is_tbl_cfg}
-\alias{src_url}
+\alias{as_src_cfg}
 \alias{as_id_cfg}
-\alias{id_var_opts}
 \alias{as_col_cfg}
 \alias{as_tbl_cfg}
-\title{Data source configuration}
+\alias{src_url}
+\alias{id_var_opts}
+\alias{src_name}
+\alias{tbl_name}
+\title{Internal utilities for working with data source configurations}
 \usage{
-new_src_cfg(
-  name,
-  id_cfg,
-  col_cfg,
-  tbl_cfg = NULL,
-  url = NULL,
-  class_prefix = NULL
-)
-
-is_src_cfg(x)
+new_src_cfg(name, id_cfg, col_cfg, tbl_cfg = NULL, ..., class_prefix = name)
 
 new_id_cfg(
   name,
@@ -38,8 +32,6 @@ new_id_cfg(
   class_prefix = src
 )
 
-is_id_cfg(x)
-
 new_col_cfg(
   table,
   src,
@@ -48,10 +40,9 @@ new_col_cfg(
   val_var = NULL,
   unit_var = NULL,
   time_vars = NULL,
+  ...,
   class_prefix = src
 )
-
-is_col_cfg(x)
 
 new_tbl_cfg(
   table,
@@ -60,34 +51,61 @@ new_tbl_cfg(
   cols = NULL,
   num_rows = NULL,
   partitioning = NULL,
+  ...,
   class_prefix = src
 )
 
+is_src_cfg(x)
+
+is_id_cfg(x)
+
+is_col_cfg(x)
+
 is_tbl_cfg(x)
 
-src_url(x)
+as_src_cfg(x)
 
 as_id_cfg(x)
-
-id_var_opts(x)
 
 as_col_cfg(x)
 
 as_tbl_cfg(x)
+
+src_url(x)
+
+id_var_opts(x)
+
+src_name(x)
+
+tbl_name(x)
 }
 \arguments{
 \item{name}{Name of the data source}
 
-\item{id_cfg}{List passed to \code{\link[=new_id_cfg]{new_id_cfg()}}}
+\item{id_cfg}{An \code{id_cfg} object for the given data source}
 
-\item{url}{String valued url used for data downloading (see
-\code{\link[=download_src]{download_src()}})}
+\item{col_cfg}{A list of \code{col_cfg} objects representing column defaults for
+all tables of the}
 
-\item{x}{Object to test/coerce}
+\item{tbl_cfg}{A list of \code{tbl_cfg} containing information on how tables are
+organized (may be \code{NULL})}
 
-\item{table}{String valued table name}
+\item{...}{Further objects to add (such as an URL specification)}
 
-\item{files}{A character vector of file names}
+\item{class_prefix}{A character vector of class prefixes that are added to
+the instantiated classes}
+
+\item{src}{Data source name}
+
+\item{id, start, end}{Name(s) of ID column(s), as well as respective start
+and end timestamps}
+
+\item{pos}{Integer valued position, ordering IDs by their cardinality}
+
+\item{table}{Table name}
+
+\item{id_var, index_var, val_var, unit_var, time_vars}{Names of columns with
+respective meanings}
 
 \item{cols}{List containing a list per column each holding string valued
 entries \code{name} (column name as used by \code{ricu}), \code{col} (column name as used
@@ -95,25 +113,26 @@ in the raw data) and \code{spec} (name of \code{\link[readr:cols]{readr::cols()}
 Further entries will be passed as argument to the respective \code{readr} column
 specification}
 
+\item{num_rows}{A count indicating the expected number of rows}
+
 \item{partitioning}{A table partitioning is defined by a column name and a
 vector of numeric values that are passed as \code{vec} argument to
 \code{base::findInterval()}}
 
-\item{tables}{List passed to \code{\link[=as_col_cfg]{as_col_cfg()}} and potentially to
-\code{\link[=as_tbl_cfg]{as_tbl_cfg()}}}
-
-\item{cfg}{List containing string valued column names}
-
-\item{defaults}{Named list containing column names}
-
-\item{times}{Character vector enumerating columns that contain time
-information}
-
-\item{nrow}{A count indicating the expected number of rows}
+\item{x}{Object to coerce/query}
 }
 \description{
-In order to use a data source with \code{ricu}, a configuration object has to be
-created.
+Data source configuration objects store information on data sources used
+throughout \code{ricu}. This includes URLs for data set downloading, Column
+specifications used for data set importing, default values per table for
+important columns such as index columns when loading data and how different
+patient identifiers used throughout a dataset relate to another. Per
+dataset, a \code{src_cfg} object is created from a JSON file (see
+\code{\link[=load_src_cfg]{load_src_cfg()}}), consisnting of several helper-classes compartmentalizing
+the pieces of information outlined above. Alongside constructors for the
+various classes, several utiltites, such as inheritance checks, coercion
+functions, as well as functions to extract pieces of information from these
+objects are provided.
 
 \itemize{
 \item \code{id_col}: column will be used for as id for \code{icu_tbl} objects
@@ -123,9 +142,33 @@ such for \code{ts_tbl} objects
 \item \code{unit_col}: column specifies the unit of measurement in the corresponding
 \code{val_col}
 }
+}
+\details{
+The following classes are used to represent data source configuration
+objects:
+\itemize{
+\item \code{src_cfg}: wraps objects \code{id_cfg}, \code{col_cfg} and optionally \code{tbl_cfg}
+\item \code{id_cfg}: contains information in ID systems and is created from \code{id_cfg}
+entries in config files
+\item \code{col_cfg}: contains column default settings represented by \code{defaults}
+entries in table configuration blocks
+\item \code{tbl_cfg}: used when importing data and therefore encompasses information
+in \code{files}, \code{num_rows} and \code{cols} entries of table configuration blocks
+}
 
-Used when importing a data source, a table specification defines column
-data types, source file names, a mapping of source to imported column
-names and optionally a number of expected rows and a partitioning scheme.
+Alongside constructors (\verb{new_*()}), inheritance checking functions
+(\verb{is_*()}), as well as coercion functions (\verb{as_*(}), relevant utility
+functions include:
+\itemize{
+\item \code{src_url()}: retrieve the URL of a data source
+\item \code{id_var_opts()}: column name(s) corresponding to ID systems
+\item \code{src_name()}: name of the data source
+\item \code{tbl_name()}: name of a table
+}
+
+Coercion between objects under some circumstances can yield list-of object
+return types. For example when coercing \code{src_cfg} to \code{tbl_cfg}, this will
+result in a list of \code{tbl_cfg} objects, as multiple tables typically
+correspond to a data source.
 }
 \keyword{internal}

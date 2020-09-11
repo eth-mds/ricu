@@ -37,13 +37,11 @@ of the config file available at\preformatted{system.file("extdata", "config", "d
 }
 
 A data source configuration entry in a config file starts with a name,
-followed by optional entries \code{class_prefix} and \code{url}. While the URL is
-only used initially for data download (see \code{\link[=download_src]{download_src()}}),
-\code{class_prefix} is used for instantiations of \code{\link[=new_src_env]{src_env}} and
-\code{\link[=new_src_tbl]{src_tbl}} objects to specify sub-classes (see
-\code{\link[=attach_src]{attach_src()}}). Further entries include \code{id_cfg} and \code{tables} which
-are explained in more detail below. As outline, this gives for the data
-source \code{mimic_demo}, the following JSON object:\preformatted{\{
+followed by optional entries \code{class_prefix} and further (variable)
+key-value pairs, such as an URL. For more information on \code{class_prefix},
+please refer to the end of this section. Further entries include \code{id_cfg}
+and \code{tables} which are explained in more detail below. As outline, this
+gives for the data source \code{mimic_demo}, the following JSON object:\preformatted{\{
   "name": "mimic_demo",
   "class_prefix": ["mimic_demo", "mimic"],
   "url": "https://physionet.org/files/mimiciii-demo/1.4",
@@ -165,4 +163,33 @@ format
 
 An example for such a slimmed down config file is available at\preformatted{system.file("extdata", "config", "demo-sources.json", package = "ricu")
 }
+
+The \code{class_prefix} entry in a data source configuration is used create sub-
+classes to \code{src_cfg}, \code{id_cfg}, \code{col_cfg} and \code{tbl_cfg} classes and passed
+on to constructors of \code{src_env} (\code{\link[=new_src_env]{new_src_env()}}) and \code{src_tbl}
+\code{\link[=new_src_tbl]{new_src_tbl()}} objects. As an example, for the above \code{class_prefix} value
+of \code{c("mimic_demo", "mimic")}, the corresponding \code{src_cfg} will be assigned
+classes \code{c("mimic_demo_cfg", "mimic_cfg", "src_cfg")} and consequently the
+\code{src_tbl} objects will inherit from \code{"mimic_demo_tbl"}, \code{"mimic_tbl"} and
+\code{ "src_tbl"}. This can be used to adapt the behavior of involved S3 generic
+function to specifics of the different data sources. An example for this is
+how \code{\link[=load_difftime]{load_difftime()}} uses theses sub-classes to smoothen out different
+time-stamp representations. Furthermore, such a design was chosen with
+extensibility in mind. Currently, \code{\link[=download_src]{download_src()}} is designed around data
+sources hosted on Physionet, but in order to include a dataset external to
+Phsionet, the \code{download_src()} generic can simply be extended for the new
+class.
+}
+\examples{
+cfg <- load_src_cfg("mimic_demo")
+str(cfg, max.level = 1L)
+cfg <- cfg[["mimic_demo"]]
+str(cfg, max.level = 1L)
+
+cols <- as_col_cfg(cfg)
+index_var(cols[["chartevents"]])
+time_vars(cols[["chartevents"]])
+
+as_id_cfg(cfg)
+
 }

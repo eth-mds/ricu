@@ -12,7 +12,7 @@ import_src(x, ...)
 
 \method{import_src}{src_cfg}(x, dir = src_data_dir(x), force = FALSE, ...)
 
-\method{import_src}{character}(x, name = "data-sources", dir = NULL, ...)
+\method{import_src}{character}(x, name = "data-sources", cfg_dir = NULL, ...)
 
 import_tbl(x, ...)
 
@@ -30,8 +30,7 @@ import_tbl(x, ...)
 \item{force}{Logical flag indicating whether to overwrite already imported
 tables}
 
-\item{name}{String valued name of a config file which will be looked up in
-the default config directors}
+\item{name, cfg_dir}{Forwarded to \code{\link[=load_src_cfg]{load_src_cfg()}}}
 
 \item{progress}{Either \code{NULL} or a progress bar as created by
 \code{\link[progress:progress_bar]{progress::progress_bar()}}}

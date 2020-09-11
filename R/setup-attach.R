@@ -111,7 +111,7 @@ setup_src_env.src_cfg <- function(x, env, dir = src_data_dir(x)) {
 
   tbl <- as_tbl_cfg(x)
 
-  fst_files <- lapply(tbl, fst_names)
+  fst_files <- lapply(tbl, fst_file_names)
   fst_paths <- Map(file.path, dir, fst_files)
 
   ensure_dirs(
@@ -178,7 +178,7 @@ setup_src_env.src_cfg <- function(x, env, dir = src_data_dir(x)) {
     }
   }
 
-  dat_tbls <- Map(new_src_tbl, fst_paths, as_col_cfg(x),
+  dat_tbls <- Map(new_src_tbl, fst_paths, as_col_cfg(x), as_tbl_cfg(x),
                   MoreArgs = list(prefix = x[["prefix"]], src_env = env))
   names(dat_tbls) <- tables
 

@@ -31,7 +31,7 @@ An object of class \code{environment} of length 5.
 \usage{
 data
 
-new_src_tbl(files, col_cfg, prefix, src_env)
+new_src_tbl(files, col_cfg, tbl_cfg, prefix, src_env)
 
 as_src_tbl(x, ...)
 
@@ -68,6 +68,8 @@ setup_src_env(x, env, dir = NULL)
 object (see also \code{\link[prt:new_prt]{prt::new_prt()}})}
 
 \item{col_cfg}{Coerced to \code{col_cfg} by calling \code{\link[=as_col_cfg]{as_col_cfg()}}}
+
+\item{tbl_cfg}{Coerced to \code{tbl_cfg} by calling \code{\link[=as_tbl_cfg]{as_tbl_cfg()}}}
 
 \item{prefix}{Character vector valued data source name(s) (used as class
 prefix)}

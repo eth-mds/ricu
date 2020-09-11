@@ -106,8 +106,8 @@ import_src.src_cfg <- function(x, dir = src_data_dir(x), force = FALSE, ...) {
 
   tbl <- as_tbl_cfg(x)
 
-  todo <- lgl_ply(lapply(tbl, dst_files), all_avail)
-  done <- lgl_ply(lapply(tbl, fst_names), all_avail)
+  todo <- src_file_exist(tbl, "raw")
+  done <- src_file_exist(tbl, "fst")
   skip <- done & todo
 
   if (!force && any(skip)) {
@@ -139,13 +139,13 @@ import_src.src_cfg <- function(x, dir = src_data_dir(x), force = FALSE, ...) {
   invisible(NULL)
 }
 
-#' @inheritParams load_src_cfg
+#' @param name,cfg_dir Forwarded to [load_src_cfg()]
 #' @rdname import
 #' @export
-import_src.character <- function(x, name = "data-sources", dir = NULL,
+import_src.character <- function(x, name = "data-sources", cfg_dir = NULL,
                                  ...) {
 
-  for (cfg in load_src_cfg(x, name, dir)) {
+  for (cfg in load_src_cfg(x, name, cfg_dir)) {
     import_src(cfg, ...)
   }
 
@@ -232,7 +232,7 @@ partition_table <- function(x, dir, progress = NULL, chunk_length = 10 ^ 7,
   spec <- col_spec(x)
   pfun <- partition_fun(x, orig_names = TRUE)
   pcol <- partition_col(x, orig_names = TRUE)
-  file <- file.path(dir, dst_files(x))
+  file <- file.path(dir, raw_file_names(x))
   name <- tbl_name(x)
 
   if (length(file) == 1L) {
@@ -264,7 +264,7 @@ partition_table <- function(x, dir, progress = NULL, chunk_length = 10 ^ 7,
     merge_fst_chunks(src_dir, targ, cols, pcol, progress, name)
   }
 
-  fst_tables <- lapply(file.path(dir, fst_names(x)), fst::fst)
+  fst_tables <- lapply(file.path(dir, fst_file_names(x)), fst::fst)
 
   check_n_row(x, sum(dbl_ply(fst_tables, nrow)))
 
@@ -273,8 +273,8 @@ partition_table <- function(x, dir, progress = NULL, chunk_length = 10 ^ 7,
 
 csv_to_fst <- function(x, dir, progress = NULL, ...) {
 
-  src <- file.path(dir, dst_files(x))
-  dst <- file.path(dir, fst_names(x))
+  src <- file.path(dir, raw_file_names(x))
+  dst <- file.path(dir, fst_file_names(x))
 
   assert_that(length(src) == 1L, length(dst) == 1L)
 
