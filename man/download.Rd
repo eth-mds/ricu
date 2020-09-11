@@ -39,48 +39,54 @@ input is required}
 \item{name, cfg_dir}{Forwarded to \code{\link[=load_src_cfg]{load_src_cfg()}}}
 }
 \description{
-The \href{https://lcp.mit.edu/index.html}{Laboratory for Computational Physiology } (LCP) at MIT hosts several large-scale
-databases of hospital intensive care units (ICUs), two of which can be
-either downloaded in full or as demo subsets using utilities provided by
-\code{ricu}, while a third data set is available only in full. While demo data
-sets are publicly available, full download requires credentialed access
-which can be gained by applying for up an account with \href{https://physionet.org}{PhysioNet }.
+Making a dataset available to \code{ricu} consists of 3 steps: downloading
+(\code{\link[=download_src]{download_src()}}), importing (\code{\link[=import_src]{import_src()}}) and attaching
+(\code{\link[=attach_src]{attach_src()}}). While downloading and importing are one-time procedures,
+attaching of the dataset is repeated every time the package is loaded.
+Briefly, downloading loads the raw dataset from the internet (most likely
+in \code{.csv} format), importing consists of some preprocessing to make the
+data available more efficiently (by converting it to \code{\link[fst:fst]{.fst}}
+format) and attaching sets up the data for use by the package.
 }
-\section{MIMIC-III}{
-
-The Medical Information Mart for Intensive Care
-(\href{https://physionet.org/content/mimiciii/}{MIMIC}) database holds
-detailed clinical data from roughly 60,000 patient stays in Beth Israel
-Deaconess Medical Center (BIDMC) intensive care units between 2001 and 2012.
-The database includes information such as demographics, vital sign
-measurements made at the bedside (~1 data point per hour), laboratory test
-results, procedures, medications, caregiver notes, imaging reports, and
-mortality (both in and out of hospital). For further information, please
-refer to the \href{https://mimic.physionet.org/about/mimic}{MIMIC-III documentation }.
-
-The corresponding
-\href{https://physionet.org/content/mimiciii-demo}{demo dataset}
-contains the full data of a randomly selected subset of 100 patients from
-the patient cohort with conformed in-hospital mortality. The only notable
-data omission is the \code{noteevents} table, which unstructured text reports on
-patients.
-
-More recently, Philips Healthcare and LCP began assembling the eICU
-Collaborative Research Database as a multi-center resource for ICU data.
-Combining data of several critical care units throughout the continental
-United States from the years 2014 and 2015, this database contains
-deidentified health data associated with over 200,000 admissions, including
-vital sign measurements, care plan documentation, severity of illness
-measures, diagnosis information, and treatment information. For further
-information, please refer to the \href{https://eicu-crd.mit.edu/about/eicu}{eICU documentation }.
+\details{
+Downloads by \code{ricu} are focused data hosted by
+\href{https://physionet.org}{PhysioNet} and tools are currently available for
+downloading the datasets
+\href{https://physionet.org/content/mimiciii/1.4/}{MIMIC-III},
+\href{https://physionet.org/content/eicu-crd/2.0/}{eICU} and
+\href{https://physionet.org/content/hirid/1.0/}{HiRID} (see \link{data}). While
+credentials are required for downloading any of the three datasets, demo
+dataset for both MIMIC-III and eICU are available without having to log in.
+Even though access to full dataset is credentialed, the datasets are in
+fact publicly available. For setting up an account, please refer to \href{https://physionet.org/register/}{the registration form}.
 
 Physionet credentials can either be entered in an interactive session,
 passed as function arguments \code{user}/\code{pass} or as environment
-variables \code{RICU_PHYSIONET_USER}/\code{RICU_PHYSIONET_PASS}. If the openssl
-package is available, SHA256 hashes of downloaded files are verified using
-\code{\link[openssl:hash]{openssl::sha256()}}.
+variables \code{RICU_PHYSIONET_USER}/\code{RICU_PHYSIONET_PASS}. For setting
+environment variables on session startup, refer to \code{\link[base:Startup]{base::.First.sys()}} and
+for setting environment varaibles in general, refer to \code{\link[base:Sys.setenv]{base::Sys.setenv()}}
+If the openssl package is available, SHA256 hashes of downloaded files are
+verified using \code{\link[openssl:hash]{openssl::sha256()}}.
+
+Demo datasets
+\href{https://physionet.org/content/mimiciii-demo/1.4/}{MIMIC-III demo} and
+\href{https://physionet.org/content/eicu-crd-demo/2.0/}{eiCU demo} can either be
+installed as R packages directly by running\preformatted{install.packages(
+  c("mimic.demo", "eicu.demo"),
+  repos = "https://septic-tank.github.io/physionet-demo"
+)
 }
 
+or downloaded and imported using \code{\link[=download_src]{download_src()}} and \code{\link[=import_src]{import_src()}}.
+Furthermore, \code{ricu} specifies \code{mimic.demo} and \code{eicu.demo} as \code{Suggests}
+dependencies therefore, passing \code{dependencies = TURE} when calling
+\code{\link[=install.packages]{install.packages()}} for installing \code{ricu}, this will automatically install
+the demo datasets as well.
+
+While the included data downloaders are intended for data hosted by
+PhysioNet, \code{download_src()} is an S3 generic function that can be extended
+to new classes of data source configuration classes (see \code{\link[=load_src_cfg]{load_src_cfg()}}).
+}
 \examples{
 \dontrun{
 
@@ -94,14 +100,4 @@ unlink(dir, recursive = TRUE)
 
 }
 
-}
-\references{
-MIMIC-III, a freely accessible critical care database. Johnson AEW, Pollard
-TJ, Shen L, Lehman L, Feng M, Ghassemi M, Moody B, Szolovits P, Celi LA,
-and Mark RG. Scientific Data (2016). DOI: 10.1038/sdata.2016.35.
-
-The eICU Collaborative Research Database, a freely available multi-center
-database for critical care research. Pollard TJ, Johnson AEW, Raffa JD,
-Celi LA, Mark RG and Badawi O. Scientific Data (2018). DOI:
-http://dx.doi.org/10.1038/sdata.2018.178.
 }
