@@ -392,9 +392,16 @@ get_itm_var.itm <- function(x, var = NULL) {
   res <- x[["vars"]]
 
   if (is.null(var)) {
+
     res
+
   } else {
-    x[["vars"]][[var]]
+
+    if (has_name(res, var)) {
+      res[[var]]
+    } else {
+      NULL
+    }
   }
 }
 
@@ -1035,7 +1042,7 @@ n_tick.concept <- function(x) sum(int_ply(x, n_tick))
 #' @rdname concept_dictionary
 #'
 #' @examples
-#' head(load_dictionary())
+#' head(load_dictionary("mimic_demo"))
 #' load_dictionary("mimic_demo", c("glu", "lact"))
 #'
 #' @export
