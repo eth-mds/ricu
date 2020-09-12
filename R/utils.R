@@ -560,3 +560,33 @@ locf <- function(x) {
 
   res
 }
+
+pkg_env <- function() asNamespace(methods::getPackageName())
+
+data_env <- function() get("data", envir = pkg_env(), mode = "environment")
+
+get_from_data_env <- function(source) {
+
+  warn_fun <- function(warn) {
+
+    if (identical(conditionMessage(warn),
+                  "restarting interrupted promise evaluation")) {
+
+      invokeRestart("muffleWarning")
+    }
+  }
+
+  source <- force(source)
+
+  function(value) {
+
+    assert_that(missing(value),
+      msg = paste0("Cannot update read-only data source `", source, "`")
+    )
+
+    tryCatch(
+      withCallingHandlers(as_src_env(source), warning = warn_fun),
+      miss_tbl_err = function(err) invisible(NULL)
+    )
+  }
+}

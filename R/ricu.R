@@ -1,4 +1,5 @@
 
+#' @keywords internal
 #' @importFrom data.table setattr setcolorder set setnames
 #' @importFrom data.table setDT setDF fifelse rbindlist data.table
 #' @importFrom data.table := .SD .EACHI .I %chin% as.data.table copy
@@ -9,4 +10,4 @@
 #' @importFrom cli cli_text cli_verbatim cli_div cli_ul
 #' @importFrom rlang !!
 #' @import vctrs
-NULL
+"_PACKAGE"
