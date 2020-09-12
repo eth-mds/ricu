@@ -1,5 +1,5 @@
 
-#' Data
+#' ICU datasets
 #'
 #' The [Laboratory for Computational Physiology
 #' ](https://lcp.mit.edu/index.html) (LCP) at MIT hosts several large-scale
@@ -117,6 +117,19 @@
 #' period from January 2008 to June 2016. Dependent on the type of measurement,
 #' time resolution can be on the order of 2 minutes.
 #'
+#' @format
+#' The exported `data` environment contains all datasets that have been made
+#' available to `ricu`. For datasets that are attached during package loading
+#' (see [attach_src()]), shortcuts to the datsets are set up in the package
+#' namespace, alowing the object `ricu::data::mimic_demo` to be accessed as
+#' `ricu::mimic_demo` (or in case the package namespace has been attached,
+#' simply as `mimic_demo`). Datasets that are made available after the package
+#' namespace has been sealed will have their proxy object by default located
+#' in `.GlobalEnv`. Datasets are represented by [`src_env`][new_src_env()]
+#' objects, while individual tables are [`src_tbl`][new_src_tbl()] and do not
+#' represent in-memory data, but rather data stored on disk, subsets of which
+#' can be loaded into memory.
+#'
 #' @references
 #' Johnson, A., Pollard, T., & Mark, R. (2016). MIMIC-III Clinical Database
 #' (version 1.4). PhysioNet. https://doi.org/10.13026/C2XW26.
@@ -142,26 +155,26 @@
 #' failure in the intensive care unit using machine learning. Nat Med 26,
 #' 364–373 (2020). https://doi.org/10.1038/s41591-020-0789-4
 #'
-#' @rdname data_src
+#' @rdname data_env
 #' @export
 data <- new.env()
 
 #' @name mimic
-#' @rdname data_src
+#' @rdname data_env
 NULL
 
 #' @name mimic_demo
-#' @rdname data_src
+#' @rdname data_env
 NULL
 
 #' @name eicu
-#' @rdname data_src
+#' @rdname data_env
 NULL
 
 #' @name eicu_demo
-#' @rdname data_src
+#' @rdname data_env
 NULL
 
 #' @name hirid
-#' @rdname data_src
+#' @rdname data_env
 NULL

@@ -8,7 +8,7 @@ load_dictionary(
   src = NULL,
   concepts = NULL,
   name = "concept-dict",
-  file = NULL
+  cfg_dirs = NULL
 )
 }
 \arguments{
@@ -19,7 +19,7 @@ load_dictionary(
 
 \item{name}{Name of the dictionary to be read}
 
-\item{file}{File name of the dictionary}
+\item{cfg_dirs}{File name of the dictionary}
 }
 \description{
 Data concepts can be specified in JSON format as a concept dictionary which

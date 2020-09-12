@@ -25,6 +25,45 @@
 #'
 #' Any directory specified as environment variable will recursively be created.
 #'
+#' Data source directories typically are sub-directories to `data_dir()` named
+#' the same as the respective dataset. For demo datasets corresponding to
+#' `mimic` and `eicu`, file location however deviates from this scheme. The
+#' function `src_data_dir()` is used to determine the expected data location
+#' of a given dataset.
+#'
+#' Configuration files used both for data source configuration, as well as for
+#' dictionary definitions potentially involve multiple files that are read and
+#' merged. For that reason, `get_config()` will iterate over directories
+#' passed as `cfg_dirs` and look for the specified file (with suffix `.json`
+#' appended and might be missing in some of the queried directories). All
+#' found files are read by [jsonlite::read_json()] and the resulting lists are
+#' combined by reduction with the binary function passed as `combine_fun`.
+#'
+#' With default arguments, `get_config()` will simply concatenate lists
+#' corresponding to files found in the default config locations as returned by
+#' `config_paths()`: first the directory specified by the environment variable
+#' `RICU_CONFIG_PATH` (if set), followed by the directory at
+#'
+#' ```
+#' system.file("extdata", "config", package = "ricu")
+#' ```
+#'
+#' Further arguments are passed to [jsonlite::read_json()], which is called
+#' with slightly modified defaults: `simplifyVector = TRUE`,
+#' `simplifyDataFrame = FALSE` and `simplifyMatrix = FALSE`.
+#'
+#' The utility function `set_config()` writes the list passed as `x` to file
+#' `dir/name.json`, using [jsonlite::write_json()] also with slightly modified
+#' defaults (which can be overridden by passing arguments as `...`): `null =
+#' "null"`, `auto_unbox = TRUE` and `pretty = TRUE`.
+#'
+#' Whenever the package namespace is attached, a summary of dataset
+#' availability is printed using the utility functions `auto_load_src_names()`
+#' and `src_data_avail()`. While the former simply returns a character vector
+#' of data sources that are configures for automatically being set up on
+#' package loading, the latter returns a summary of the number of available
+#' tables per dataset.
+#'
 #' @param subdir A string specifying a directory that will be made sure to
 #' exist below the data directory.
 #' @param create Logical flag indicating whether to create the specified
@@ -39,6 +78,14 @@
 #' dir.exists(file.path(tempdir(), "some_subdir"))
 #' some_subdir <- data_dir("some_subdir")
 #' dir.exists(some_subdir)
+#'
+#' cfg <- get_config("concept-dict")
+#'
+#' identical(
+#'   cfg,
+#'   get_config("concept-dict",
+#'              system.file("extdata", "config", package = "ricu"))
+#' )
 #'
 #' @export
 #'
@@ -73,6 +120,9 @@ data_dir <- function(subdir = NULL, create = TRUE) {
   res
 }
 
+#' @param src Character vector of data source names
+#' @rdname file_utils
+#' @export
 src_data_dir <- function(src) {
 
   if (length(src) > 1L) {
@@ -100,6 +150,8 @@ src_data_dir <- function(src) {
   }
 }
 
+#' @rdname file_utils
+#' @export
 auto_load_src_names <- function() {
 
   res <- Sys.getenv("RICU_SRC_LOAD", unset = NA_character_)
@@ -111,6 +163,8 @@ auto_load_src_names <- function() {
   }
 }
 
+#' @rdname file_utils
+#' @export
 src_data_avail <- function(src = auto_load_src_names()) {
 
   src_stats <- function(x, env) {
@@ -182,7 +236,7 @@ ensure_dirs <- function(paths) {
 }
 
 default_config_path <- function() {
-  system.file("extdata", "config", package = methods::getPackageName())
+  system.file("extdata", "config", package = pkg_name())
 }
 
 user_config_path <- function() {
@@ -196,52 +250,41 @@ user_config_path <- function() {
   }
 }
 
-#' For configuration files, the default location is `extdata/config` and the
-#' environment variable `RICU_CONFIG_PATH` can be used to overwrite the
-#' default location. Files are first searched for in the user-specified
-#' directory and if not found there, the default dir ist taken into account.
-#' Additionally, `get_config()` has a `dir` argument which takes highest
-#' precedence.
-#'
-#' @param name File name of the configuration file (without file ending)
-#' @param dir (Optional) directory name where to look for the specified file
+#' @export
+config_paths <- function() c(user_config_path(), default_config_path())
+
+#' @param name File name of the configuration file (`.json` will be appended)
+#' @param cfg_dirs Character vector of directories searched for config files
+#' @param combine_fun If multiple files are found, a function for combining
+#' returned lists
 #' @param ... Passed to [jsonlite::read_json()] or [jsonlite::write_json()]
 #'
 #' @rdname file_utils
 #'
-#' @examples
-#' cfg <- get_config("concept-dict")
-#' identical(
-#'   cfg,
-#'   get_config("concept-dict",
-#'              system.file("extdata", "config", package = "ricu"))
-#' )
-#'
 #' @export
 #'
-get_config <- function(name, dir = NULL, ...) {
+get_config <- function(name, cfg_dirs = config_paths(), combine_fun = c, ...) {
 
-  assert_that(is.string(name))
+  read_if_exists <- function(x, ...) {
 
-  file <- paste0(name, ".json")
-
-  if (is.null(dir)) {
-
-    usr_file <- file.path(user_config_path(), file)
-
-    if (isTRUE(file.exists(usr_file))) {
-      file <- usr_file
+    if (isTRUE(file.exists(x))) {
+      read_json(x, ...)
     } else {
-      file <- file.path(default_config_path(), file)
+      NULL
     }
-
-  } else {
-
-    assert_that(is.dir(dir))
-    file <- file.path(dir, file)
   }
 
-  read_json(file, ...)
+  assert_that(is.string(name), has_length(cfg_dirs), all_fun(cfg_dirs, is.dir),
+              null_or(combine_fun, is.function))
+
+  res <- lapply(file.path(cfg_dirs, paste0(name, ".json")),
+                read_if_exists, ...)
+
+  if (is.null(combine_fun)) {
+    res
+  } else {
+    Reduce(combine_fun, res, NULL)
+  }
 }
 
 read_json <- function(path, simplifyVector = TRUE, simplifyDataFrame = FALSE,
@@ -255,6 +298,7 @@ read_json <- function(path, simplifyVector = TRUE, simplifyDataFrame = FALSE,
 }
 
 #' @param x Object to be written
+#' @param dir Directory to write the file to (created if non-existent)
 #'
 #' @rdname file_utils
 #'
@@ -271,7 +315,7 @@ set_config <- function(x, name, dir = file.path("inst", "extdata", "config"),
 
     assert_that(is.string(dir))
 
-    file <- file.path(dir, file)
+    file <- file.path(ensure_dirs(dir), file)
   }
 
   write_json(x, file, ...)
@@ -561,7 +605,9 @@ locf <- function(x) {
   res
 }
 
-pkg_env <- function() asNamespace(methods::getPackageName())
+pkg_name <- function() methods::getPackageName()
+
+pkg_env <- function() asNamespace(pkg_name())
 
 data_env <- function() get("data", envir = pkg_env(), mode = "environment")
 

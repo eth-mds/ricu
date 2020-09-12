@@ -85,13 +85,12 @@ reference:
     `attach_src()` is automatically called for configured data sources at
     package loading.
   contents:
-    - load_src_cfg
+    - data
     - download_src
     - import_src
     - attach_src
+    - load_src_cfg
     - data_dir
-    - data
-    - src_name
 - title: Utilities
   contents:
     - secs

@@ -2,13 +2,22 @@
 % Please edit documentation in R/utils.R
 \name{data_dir}
 \alias{data_dir}
+\alias{src_data_dir}
+\alias{auto_load_src_names}
+\alias{src_data_avail}
 \alias{get_config}
 \alias{set_config}
 \title{File system utilities}
 \usage{
 data_dir(subdir = NULL, create = TRUE)
 
-get_config(name, dir = NULL, ...)
+src_data_dir(src)
+
+auto_load_src_names()
+
+src_data_avail(src = auto_load_src_names())
+
+get_config(name, cfg_dirs = config_paths(), combine_fun = c, ...)
 
 set_config(x, name, dir = file.path("inst", "extdata", "config"), ...)
 }
@@ -19,9 +28,14 @@ exist below the data directory.}
 \item{create}{Logical flag indicating whether to create the specified
 directory}
 
-\item{name}{File name of the configuration file (without file ending)}
+\item{src}{Character vector of data source names}
 
-\item{dir}{(Optional) directory name where to look for the specified file}
+\item{name}{File name of the configuration file (\code{.json} will be appended)}
+
+\item{cfg_dirs}{Character vector of directories searched for config files}
+
+\item{combine_fun}{If multiple files are found, a function for combining
+returned lists}
 
 \item{...}{Passed to \code{\link[jsonlite:read_json]{jsonlite::read_json()}} or \code{\link[jsonlite:read_json]{jsonlite::write_json()}}}
 
@@ -53,6 +67,41 @@ to make it apply to all R sessions. For example, it could be set within:
 }
 
 Any directory specified as environment variable will recursively be created.
+
+Data source directories typically are sub-directories to \code{data_dir()} named
+the same as the respective dataset. For demo datasets corresponding to
+\code{mimic} and \code{eicu}, file location however deviates from this scheme. The
+function \code{src_data_dir()} is used to determine the expected data location
+of a given dataset.
+
+Configuration files used both for data source configuration, as well as for
+dictionary definitions potentially involve multiple files that are read and
+merged. For that reason, \code{get_config()} will iterate over directories
+passed as \code{cfg_dirs} and look for the specified file (with suffix \code{.json}
+appended and might be missing in some of the queried directories). All
+found files are read by \code{\link[jsonlite:read_json]{jsonlite::read_json()}} and the resulting lists are
+combined by reduction with the binary function passed as \code{combine_fun}.
+
+With default arguments, \code{get_config()} will simply concatenate lists
+corresponding to files found in the default config locations as returned by
+\code{config_paths()}: first the directory specified by the environment variable
+\code{RICU_CONFIG_PATH} (if set), followed by the directory at\preformatted{system.file("extdata", "config", package = "ricu")
+}
+
+Further arguments are passed to \code{\link[jsonlite:read_json]{jsonlite::read_json()}}, which is called
+with slightly modified defaults: \code{simplifyVector = TRUE},
+\code{simplifyDataFrame = FALSE} and \code{simplifyMatrix = FALSE}.
+
+The utility function \code{set_config()} writes the list passed as \code{x} to file
+\code{dir/name.json}, using \code{\link[jsonlite:read_json]{jsonlite::write_json()}} also with slightly modified
+defaults (which can be overridden by passing arguments as \code{...}): \code{null = "null"}, \code{auto_unbox = TRUE} and \code{pretty = TRUE}.
+
+Whenever the package namespace is attached, a summary of dataset
+availability is printed using the utility functions \code{auto_load_src_names()}
+and \code{src_data_avail()}. While the former simply returns a character vector
+of data sources that are configures for automatically being set up on
+package loading, the latter returns a summary of the number of available
+tables per dataset.
 }
 \examples{
 Sys.setenv(RICU_DATA_PATH = tempdir())
@@ -63,6 +112,7 @@ some_subdir <- data_dir("some_subdir")
 dir.exists(some_subdir)
 
 cfg <- get_config("concept-dict")
+
 identical(
   cfg,
   get_config("concept-dict",

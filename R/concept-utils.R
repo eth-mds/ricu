@@ -1030,7 +1030,7 @@ n_tick.concept <- function(x) sum(int_ply(x, n_tick))
 #' @param concepts A character vector used to subset the concept dictionary or
 #' `NULL` indicating no subsetting
 #' @param name Name of the dictionary to be read
-#' @param file File name of the dictionary
+#' @param cfg_dirs File name of the dictionary
 #'
 #' @rdname concept_dictionary
 #'
@@ -1040,7 +1040,7 @@ n_tick.concept <- function(x) sum(int_ply(x, n_tick))
 #'
 #' @export
 load_dictionary <- function(src = NULL, concepts = NULL,
-                            name = "concept-dict", file = NULL) {
+                            name = "concept-dict", cfg_dirs = NULL) {
 
   avail <- src_data_avail()
   avail <- setNames(avail[["available"]], avail[["name"]])
@@ -1051,10 +1051,10 @@ load_dictionary <- function(src = NULL, concepts = NULL,
 
   assert_that(are_in(src, names(avail)), all(avail[src]))
 
-  parse_dictionary(read_dictionary(name, file), src, concepts)
+  parse_dictionary(read_dictionary(name, cfg_dirs), src, concepts)
 }
 
-read_dictionary <- function(name = "data-sources", file = NULL) {
+read_dictionary <- function(name = "data-sources", cfg_dirs = NULL) {
 
   combine_sources <- function(x, y) {
 
@@ -1069,40 +1069,27 @@ read_dictionary <- function(name = "data-sources", file = NULL) {
     x
   }
 
-  if (is.null(file)) {
+  combine_concepts <- function(x, y) {
 
-    file <- paste0(name, ".json")
+    assert_that(is.list(y), not_null(names(y)))
 
-    usr_file <- file.path(user_config_path(), file)
-    usr_exst <- isTRUE(file.exists(usr_file))
-
-    if (usr_exst) {
-
-      usr_dict <- read_json(usr_file)
-
-      assert_that(is.list(usr_dict), not_null(names(usr_dict)))
+    if (is.null(x)) {
+      return(y)
+    } else if (is.null(y)) {
+      return(x)
     }
 
-    res <- read_json(file.path(default_config_path(), file))
+    dups <- intersect(names(x), names(y))
 
-    if (usr_exst) {
-
-      dups <- intersect(names(res), names(usr_dict))
-
-      if (has_length(dups)) {
-        res[dups] <- map(combine_sources, res[dups], usr_dict[dups])
-        usr_dict[dups] <- NULL
-      }
-
-      res <- c(usr_dict, res)
+    if (has_length(dups)) {
+      x[dups] <- map(combine_sources, x[dups], y[dups])
+      y[dups] <- NULL
     }
 
-  } else {
-
-    res <- read_json(file)
+    c(x, y)
   }
 
-  res
+  get_config(name, unique(c(rev(config_paths()), cfg_dirs)), combine_concepts)
 }
 
 parse_dictionary <- function(dict, src = NULL, concepts = NULL) {

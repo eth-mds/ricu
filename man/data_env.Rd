@@ -3,14 +3,19 @@
 \docType{data}
 \name{data}
 \alias{data}
-\alias{mimic}
-\alias{mimic_demo}
-\alias{eicu}
-\alias{eicu_demo}
-\alias{hirid}
-\title{Data}
+\title{ICU datasets}
 \format{
-An object of class \code{environment} of length 5.
+The exported \code{data} environment contains all datasets that have been made
+available to \code{ricu}. For datasets that are attached during package loading
+(see \code{\link[=attach_src]{attach_src()}}), shortcuts to the datsets are set up in the package
+namespace, alowing the object \verb{ricu::data::mimic_demo} to be accessed as
+\code{ricu::mimic_demo} (or in case the package namespace has been attached,
+simply as \code{mimic_demo}). Datasets that are made available after the package
+namespace has been sealed will have their proxy object by default located
+in \code{.GlobalEnv}. Datasets are represented by \code{\link[=new_src_env]{src_env}}
+objects, while individual tables are \code{\link[=new_src_tbl]{src_tbl}} and do not
+represent in-memory data, but rather data stored on disk, subsets of which
+can be loaded into memory.
 }
 \usage{
 data

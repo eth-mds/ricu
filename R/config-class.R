@@ -25,6 +25,17 @@
 #' * `tbl_cfg`: used when importing data and therefore encompasses information
 #'   in `files`, `num_rows` and `cols` entries of table configuration blocks
 #'
+#' Represented by a `col_cfg`, a table can have some of its columns marked as
+#' default columns for the following concepts and further column meanings can
+#' be specified via `...`:
+#'
+#' * `id_col`: column will be used for as id for `icu_tbl` objects
+#' * `index_col`: column represents a timestamp variable and will be use as
+#'   such for `ts_tbl` objects
+#' * `val_col`: column contains the measured variable of interest
+#' * `unit_col`: column specifies the unit of measurement in the corresponding
+#'   `val_col`
+#'
 #' Alongside constructors (`new_*()`), inheritance checking functions
 #' (`is_*()`), as well as coercion functions (`as_*(`), relevant utility
 #' functions include:
@@ -120,16 +131,6 @@ new_id_cfg <- function(name, src, id, pos, start = NA_character_,
   )
 }
 
-#' A table can have some of its columns marked as default columns for the
-#' following concepts and further column meanings can be specified via `...`:
-#'
-#' * `id_col`: column will be used for as id for `icu_tbl` objects
-#' * `index_col`: column represents a timestamp variable and will be use as
-#'   such for `ts_tbl` objects
-#' * `val_col`: column contains the measured variable of interest
-#' * `unit_col`: column specifies the unit of measurement in the corresponding
-#'   `val_col`
-#'
 #' @param id_var,index_var,val_var,unit_var,time_vars Names of columns with
 #' respective meanings
 #'
@@ -440,28 +441,20 @@ load_src_cfg <- function(src = NULL, name = "data-sources", cfg_dirs = NULL) {
 
 read_src_cfg <- function(src = NULL, name = "data-sources", cfg_dirs = NULL) {
 
-  file <- paste0(name, ".json")
-  res  <- NULL
-  dirs <- unique(c(cfg_dirs, user_config_path(), default_config_path()))
+  combine_srcs <- function(x, y) {
 
-  for (dir in dirs) {
+    names(y) <- chr_xtr(y, "name")
 
-    path <- file.path(dir, file)
-
-    if (file.exists(path)) {
-
-      cfg <- read_json(path)
-      nme <- chr_xtr(cfg, "name")
-
-      names(cfg) <- nme
-
-      res <- c(res, cfg[nme %in% setdiff(nme, names(res))])
-
-      if (not_null(src) && all(src %in% nme)) {
-        break
-      }
+    if (is.null(x)) {
+      return(y)
+    } else if (is.null(y)) {
+      return(x)
     }
+
+    c(x, y[setdiff(names(x), names(y))])
   }
+
+  res <- get_config(name, unique(c(cfg_dirs, config_paths())), combine_srcs)
 
   if (not_null(src)) {
 

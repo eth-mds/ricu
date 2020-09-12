@@ -21,7 +21,7 @@ load_concepts(x, ...)
   concepts = NULL,
   ...,
   dict_name = "concept-dict",
-  dict_file = NULL
+  dict_dirs = NULL
 )
 
 \method{load_concepts}{concept}(
@@ -79,7 +79,7 @@ means no subsetting}
 \item{concepts}{The concepts to be used or \code{NULL} in which case
 \code{\link[=load_dictionary]{load_dictionary()}} is called}
 
-\item{dict_name, dict_file}{In case not concepts are passed as \code{concepts},
+\item{dict_name, dict_dirs}{In case not concepts are passed as \code{concepts},
 these are forwarded to \code{\link[=load_dictionary]{load_dictionary()}} as \code{name} and \code{file} arguments}
 
 \item{aggregate}{Controls how data within concepts is aggregated}
@@ -139,7 +139,7 @@ Top-level entry points are either a character vector, which is used to
 subset a \code{concept} object or an entire \link[=load_dictionary]{concept dictionary}, or a \code{concept} object. When passing a
 character vector as first argument, the most important further arguments at
 that level control from where the dictionary is taken (\code{dict_name} or
-\code{dict_file}). At \code{concept} level, the most important additional arguments
+\code{dict_dirs}). At \code{concept} level, the most important additional arguments
 control the result structure: data merging can be disabled using
 \code{merge_data} and data aggregation is governed by the \code{aggregate} argument.
 

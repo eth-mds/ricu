@@ -133,15 +133,6 @@ the pieces of information outlined above. Alongside constructors for the
 various classes, several utiltites, such as inheritance checks, coercion
 functions, as well as functions to extract pieces of information from these
 objects are provided.
-
-\itemize{
-\item \code{id_col}: column will be used for as id for \code{icu_tbl} objects
-\item \code{index_col}: column represents a timestamp variable and will be use as
-such for \code{ts_tbl} objects
-\item \code{val_col}: column contains the measured variable of interest
-\item \code{unit_col}: column specifies the unit of measurement in the corresponding
-\code{val_col}
-}
 }
 \details{
 The following classes are used to represent data source configuration
@@ -154,6 +145,18 @@ entries in config files
 entries in table configuration blocks
 \item \code{tbl_cfg}: used when importing data and therefore encompasses information
 in \code{files}, \code{num_rows} and \code{cols} entries of table configuration blocks
+}
+
+Represented by a \code{col_cfg}, a table can have some of its columns marked as
+default columns for the following concepts and further column meanings can
+be specified via \code{...}:
+\itemize{
+\item \code{id_col}: column will be used for as id for \code{icu_tbl} objects
+\item \code{index_col}: column represents a timestamp variable and will be use as
+such for \code{ts_tbl} objects
+\item \code{val_col}: column contains the measured variable of interest
+\item \code{unit_col}: column specifies the unit of measurement in the corresponding
+\code{val_col}
 }
 
 Alongside constructors (\verb{new_*()}), inheritance checking functions

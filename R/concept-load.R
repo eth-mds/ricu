@@ -38,7 +38,7 @@
 #' dictionary][load_dictionary()], or a `concept` object. When passing a
 #' character vector as first argument, the most important further arguments at
 #' that level control from where the dictionary is taken (`dict_name` or
-#' `dict_file`). At `concept` level, the most important additional arguments
+#' `dict_dirs`). At `concept` level, the most important additional arguments
 #' control the result structure: data merging can be disabled using
 #' `merge_data` and data aggregation is governed by the `aggregate` argument.
 #'
@@ -161,21 +161,21 @@ load_concepts <- function(x, ...) UseMethod("load_concepts", x)
 #' means no subsetting
 #' @param concepts The concepts to be used or `NULL` in which case
 #' [load_dictionary()] is called
-#' @param dict_name,dict_file In case not concepts are passed as `concepts`,
+#' @param dict_name,dict_dirs In case not concepts are passed as `concepts`,
 #' these are forwarded to [load_dictionary()] as `name` and `file` arguments
 #'
 #' @rdname load_concepts
 #' @export
 load_concepts.character <- function(x, src = NULL, concepts = NULL, ...,
                                     dict_name = "concept-dict",
-                                    dict_file = NULL) {
+                                    dict_dirs = NULL) {
 
   if (is.null(concepts)) {
 
     assert_that(not_null(src))
 
     load_concepts(
-      load_dictionary(src, x, name = dict_name, file = dict_file),
+      load_dictionary(src, x, name = dict_name, cfg_dirs = dict_dirs),
       src = NULL, ...
     )
 
