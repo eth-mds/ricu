@@ -1,8 +1,16 @@
 
 #' Read and write utilities
 #'
-#' Support for reading from and writing to `.psv` files as used for the
-#' Physionet Sepsis Challenge.
+#' Support for reading from and writing to pipe separated values (`.psv`)
+#' files as used for the Physionet Sepsis Challenge.
+#'
+#' @details
+#' Data for the Physionet Sepsis Challenge is distributed as pipe separated
+#' values (`.psv`) files, split into separate files per patient ID, containing
+#' time stamped rows with measured variables as columns. Files are named with
+#' patient IDs and do not contain any patient identifiers as data. Functions
+#' `read_psv()` and `write_psv()` can be used to read from and write to such
+#' a data format.
 #'
 #' @param x Object to write to files
 #' @param dir Directory to write the (many) files to or read from
@@ -11,7 +19,6 @@
 #' if `NULL`, data is written as-is
 #'
 #' @references
-#'
 #' Reyna, M., Josef, C., Jeter, R., Shashikumar, S., Moody, B., Westover, M.
 #' B., Sharma, A., Nemati, S., & Clifford, G. (2019). Early Prediction of
 #' Sepsis from Clinical Data -- the PhysioNet Computing in Cardiology

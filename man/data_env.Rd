@@ -3,6 +3,11 @@
 \docType{data}
 \name{data}
 \alias{data}
+\alias{mimic}
+\alias{mimic_demo}
+\alias{eicu}
+\alias{eicu_demo}
+\alias{hirid}
 \title{ICU datasets}
 \format{
 The exported \code{data} environment contains all datasets that have been made

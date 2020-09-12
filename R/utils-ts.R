@@ -308,3 +308,19 @@ hopper <- function(x, expr, windows, full_window = FALSE,
 
   rename_cols(res, win_cols, tmp_col, by_ref = TRUE)
 }
+
+locf <- function(x) {
+
+  res <- last_elem(x)
+
+  if (is.na(res)) {
+
+    no_na <- !is.na(x)
+
+    if (any(no_na)) {
+      res <- last_elem(x[no_na])
+    }
+  }
+
+  res
+}
