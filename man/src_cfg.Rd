@@ -63,7 +63,7 @@ is_col_cfg(x)
 
 is_tbl_cfg(x)
 
-as_src_cfg(x, ...)
+as_src_cfg(x)
 
 as_id_cfg(x)
 

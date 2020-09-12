@@ -75,6 +75,10 @@ data_dir <- function(subdir = NULL, create = TRUE) {
 
 src_data_dir <- function(src) {
 
+  if (length(src) > 1L) {
+    return(chr_ply(src, src_data_dir))
+  }
+
   if (!is.string(src)) {
     src <- src_name(src)
   }
@@ -128,7 +132,11 @@ src_data_avail <- function(src = auto_load_src_names()) {
     }
   }
 
-  assert_that(is.character(src), has_length(src))
+  if (identical(length(src), 0L)) {
+    return(NULL)
+  }
+
+  assert_that(is.character(src))
 
   env <- data_env()
   res <- int_ply(src, src_stats, env, length = 2L)

@@ -30,8 +30,11 @@
   backports::import(pkgname)
 
   srcs <- auto_load_src_names()
-  attach_src(srcs, assign_env = pkg_env())
-  namespaceExport(pkg_env(), srcs)
+
+  if (has_length(srcs)) {
+    attach_src(srcs, assign_env = pkg_env())
+    namespaceExport(pkg_env(), srcs)
+  }
 
   if (base::getRversion() < "4.0.0") {
 
@@ -61,23 +64,35 @@
   pkg <- methods::getPackageName()
   ver <- utils::packageVersion(pkg)
 
-  stats <- src_data_avail()
-  bull  <- ifelse(stats[["available"]], "tick", "cross")
-  color <- ifelse(stats[["available"]], "green", "red")
-  srcs  <- paste0(stats[["name"]], ": ", stats[["tables"]], " of ",
-                  stats[["total"]], " tables available")
-
   cat_line(file = con)
   cat_rule(paste(pkg, ver), file = con)
 
-  cat_line(
-    "\nThe following data sources are configured to be attached:\n",
-    "(the environment variable `RICU_SRC_LOAD` controls this)\n",
-    file = con
-  )
+  stats <- src_data_avail()
 
-  Map(cat_bullet, srcs, bullet = bull, bullet_col = color,
-      MoreArgs = list(file = con))
+  if (is.null(stats)) {
+
+    cat_line(
+      "\nCurrently no data sources are configured to be attached:\n",
+      "(the environment variable `RICU_SRC_LOAD` controls this)",
+      file = con
+    )
+
+  } else {
+
+    bull  <- ifelse(stats[["available"]], "tick", "cross")
+    color <- ifelse(stats[["available"]], "green", "red")
+    srcs  <- paste0(stats[["name"]], ": ", stats[["tables"]], " of ",
+                    stats[["total"]], " tables available")
+
+    cat_line(
+      "\nThe following data sources are configured to be attached:\n",
+      "(the environment variable `RICU_SRC_LOAD` controls this)\n",
+      file = con
+    )
+
+    Map(cat_bullet, srcs, bullet = bull, bullet_col = color,
+        MoreArgs = list(file = con))
+  }
 
   cat_line(file = con)
   cat_rule(file = con)

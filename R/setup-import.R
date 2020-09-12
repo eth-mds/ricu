@@ -42,7 +42,7 @@
 #' laptop class hardware.
 #'
 #' @param x Object specifying the source configuration
-#' @param dir The directory where the data was downloaded to (see
+#' @param data_dir The directory where the data was downloaded to (see
 #' [download_src()]).
 #' @param ... Passed to downstream methods (finally to
 #' [readr::read_csv]/[readr::read_csv_chunked])/generic consistency
@@ -73,9 +73,10 @@ import_src <- function(x, ...) UseMethod("import_src", x)
 #'
 #' @rdname import
 #' @export
-import_src.src_cfg <- function(x, dir = src_data_dir(x), force = FALSE, ...) {
+import_src.src_cfg <- function(x, data_dir = src_data_dir(x), force = FALSE,
+                               ...) {
 
-  assert_that(is.dir(dir), is.flag(force))
+  assert_that(is.dir(data_dir), is.flag(force))
 
   tbl <- as_tbl_cfg(x)
 
@@ -100,7 +101,7 @@ import_src.src_cfg <- function(x, dir = src_data_dir(x), force = FALSE, ...) {
   )
 
   for(table in tbl) {
-    import_tbl(table, dir = dir, progress = pba, ...)
+    import_tbl(table, data_dir = data_dir, progress = pba, ...)
   }
 
   if (!(is.null(pba) || pba$finished)) {
@@ -113,20 +114,17 @@ import_src.src_cfg <- function(x, dir = src_data_dir(x), force = FALSE, ...) {
 }
 
 #' @export
-import_src.default <- function(x, dir = src_data_dir(x), force = FALSE, ...) {
+import_src.character <- function(x, data_dir = src_data_dir(x), force = FALSE,
+                                 ...) {
 
-  cfgs <- as_src_cfg(x, ...)
-
-  if (is_src_cfg(cfgs)) {
-    cfgs <- list(cfgs)
-  }
-
-  for (cfg in cfgs) {
-    import_src(cfg, dir, force)
-  }
+  Map(import_src, load_src_cfg(x, ...), data_dir,
+      MoreArgs = list(force = force))
 
   invisible(NULL)
 }
+
+#' @export
+import_src.default <- function(x, ...) stop_generic(x, .Generic)
 
 #' @param progress Either `NULL` or a progress bar as created by
 #' [progress::progress_bar()]
@@ -137,15 +135,15 @@ import_tbl <- function(x, ...) UseMethod("import_tbl", x)
 
 #' @rdname import
 #' @export
-import_tbl.tbl_cfg <- function(x, dir = src_data_dir(x), progress = NULL,
+import_tbl.tbl_cfg <- function(x, data_dir = src_data_dir(x), progress = NULL,
                                ...) {
 
-  assert_that(is.dir(dir))
+  assert_that(is.dir(data_dir))
 
   if (n_partitions(x) > 1L) {
-    partition_table(x, dir, progress, ...)
+    partition_table(x, data_dir, progress, ...)
   } else {
-    csv_to_fst(x, dir, progress, ...)
+    csv_to_fst(x, data_dir, progress, ...)
   }
 }
 

@@ -4,7 +4,7 @@
 \alias{load_src_cfg}
 \title{Load configuration for a data source}
 \usage{
-load_src_cfg(src = NULL, name = "data-sources", dir = NULL)
+load_src_cfg(src = NULL, name = "data-sources", cfg_dirs = NULL)
 }
 \arguments{
 \item{src}{(Optional) name(s) of data sources used for subsetting}
@@ -12,7 +12,7 @@ load_src_cfg(src = NULL, name = "data-sources", dir = NULL)
 \item{name}{String valued name of a config file which will be looked up in
 the default config directors}
 
-\item{dir}{Additional directory/ies to look for configuration files}
+\item{cfg_dirs}{Additional directory/ies to look for configuration files}
 }
 \description{
 For a data source to be accessible by \code{ricu}, a configuration object
@@ -27,7 +27,7 @@ types.
 }
 \details{
 Configuration files are looked for as files \code{name} with added suffix
-\code{.json} starting with the directory (or directories) supplied as \code{dir}
+\code{.json} starting with the directory (or directories) supplied as \code{cfg_dirs}
 argument, followed by the directory specified by the environment variable
 \code{RICU_CONFIG_PATH}, and finally in \code{extdata/config} of the package install
 directory. If files with matching names are found in multiple places they

@@ -9,7 +9,7 @@ download_src(x, ...)
 
 \method{download_src}{src_cfg}(
   x,
-  dir = src_data_dir(x),
+  data_dir = src_data_dir(x),
   tables = NULL,
   force = FALSE,
   user = NULL,
@@ -22,7 +22,7 @@ download_src(x, ...)
 
 \item{...}{Generic consistency}
 
-\item{dir}{Destination directory where the downloaded data is written to.}
+\item{data_dir}{Destination directory where the downloaded data is written to.}
 
 \item{tables}{Character vector specifying the tables to download. If
 \code{NULL}, all available tables are downloaded.}
@@ -90,7 +90,7 @@ source configuration, refer to \code{\link[=load_src_cfg]{load_src_cfg()}}.
 dir <- tempdir()
 list.files(dir)
 
-download_datasource("mimic_demo", dir = dir)
+download_datasource("mimic_demo", data_dir = dir)
 list.files(dir)
 
 unlink(dir, recursive = TRUE)

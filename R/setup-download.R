@@ -68,7 +68,7 @@
 #' dir <- tempdir()
 #' list.files(dir)
 #'
-#' download_datasource("mimic_demo", dir = dir)
+#' download_datasource("mimic_demo", data_dir = dir)
 #' list.files(dir)
 #'
 #' unlink(dir, recursive = TRUE)
@@ -80,7 +80,7 @@
 #'
 download_src <- function(x, ...) UseMethod("download_src", x)
 
-#' @param dir Destination directory where the downloaded data is written to.
+#' @param data_dir Destination directory where the downloaded data is written to.
 #' @param tables Character vector specifying the tables to download. If
 #' `NULL`, all available tables are downloaded.
 #' @param force Logical flag; if `TRUE`, existing data will be re-downloaded
@@ -90,33 +90,33 @@ download_src <- function(x, ...) UseMethod("download_src", x)
 #'
 #' @rdname download
 #' @export
-download_src.src_cfg <- function(x, dir = src_data_dir(x), tables = NULL,
+download_src.src_cfg <- function(x, data_dir = src_data_dir(x), tables = NULL,
                                  force = FALSE, user = NULL, pass = NULL,
                                  ...) {
 
   warn_dots(...)
 
-  tbl <- determine_tables(x, dir, tables, force)
+  tbl <- determine_tables(x, data_dir, tables, force)
 
   if (length(tbl) == 0L) {
     msg_ricu("The requested tables have already been downloaded")
     return(invisible(NULL))
   }
 
-  download_check_data(dir, chr_ply(tbl, raw_file_names),
+  download_check_data(data_dir, chr_ply(tbl, raw_file_names),
                       src_url(x), user, pass, src_name(x))
 
   invisible(NULL)
 }
 
 #' @export
-download_src.hirid_cfg <- function(x, dir = src_data_dir(x), tables = NULL,
-                                   force = FALSE, user = NULL, pass = NULL,
-                                   ...) {
+download_src.hirid_cfg <- function(x, data_dir = src_data_dir(x),
+                                   tables = NULL, force = FALSE, user = NULL,
+                                   pass = NULL, ...) {
 
   warn_dots(...)
 
-  tbl <- determine_tables(x, dir, tables, force)
+  tbl <- determine_tables(x, data_dir, tables, force)
 
   if (length(tbl) == 0L) {
     msg_ricu("The requested tables have already been downloaded")
@@ -125,13 +125,14 @@ download_src.hirid_cfg <- function(x, dir = src_data_dir(x), tables = NULL,
 
   todo <- chr_xtr(tbl, "zip_file")
 
-  download_check_data(dir, unique(todo), src_url(x), user, pass, src_name(x))
+  download_check_data(data_dir, unique(todo), src_url(x), user, pass,
+                      src_name(x))
 
-  todo <- file.path(dir, todo)
+  todo <- file.path(data_dir, todo)
   done <- lapply(tbl, raw_file_names)
 
   assert_that(
-    all_fun(Map(untar, todo, done, MoreArgs = list(exdir = dir)),
+    all_fun(Map(untar, todo, done, MoreArgs = list(exdir = data_dir)),
             identical, 0L)
   )
 
@@ -141,22 +142,18 @@ download_src.hirid_cfg <- function(x, dir = src_data_dir(x), tables = NULL,
 }
 
 #' @export
-download_src.default <- function(x, dir = src_data_dir(x), tables = NULL,
-                                 force = FALSE, user = NULL, pass = NULL,
-                                 ...) {
+download_src.character <- function(x, data_dir = src_data_dir(x),
+                                   tables = NULL, force = FALSE,
+                                   user = NULL, pass = NULL, ...) {
 
-  cfgs <- as_src_cfg(x, ...)
-
-  if (is_src_cfg(cfgs)) {
-    cfgs <- list(cfgs)
-  }
-
-  for (cfg in cfgs) {
-    download_src(cfg, dir, tables, force, user, pass)
-  }
+  Map(download_src, load_src_cfg(x, ...), data_dir, tables,
+      MoreArgs = list(force = force, user = user, pass = pass))
 
   invisible(NULL)
 }
+
+#' @export
+download_src.default <- function(x, ...) stop_generic(x, .Generic)
 
 determine_tables <- function(x, dir, tables, force) {
 

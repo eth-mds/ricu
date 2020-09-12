@@ -238,7 +238,7 @@ new_tbl_cfg <- function(table, src, files = NULL, cols = NULL, num_rows = NULL,
 #'
 #' @details
 #' Configuration files are looked for as files `name` with added suffix
-#' `.json` starting with the directory (or directories) supplied as `dir`
+#' `.json` starting with the directory (or directories) supplied as `cfg_dirs`
 #' argument, followed by the directory specified by the environment variable
 #' `RICU_CONFIG_PATH`, and finally in `extdata/config` of the package install
 #' directory. If files with matching names are found in multiple places they
@@ -411,7 +411,7 @@ new_tbl_cfg <- function(table, src, files = NULL, cols = NULL, num_rows = NULL,
 #' @param src (Optional) name(s) of data sources used for subsetting
 #' @param name String valued name of a config file which will be looked up in
 #' the default config directors
-#' @param dir Additional directory/ies to look for configuration files
+#' @param cfg_dirs Additional directory/ies to look for configuration files
 #'
 #' @examples
 #' cfg <- load_src_cfg("mimic_demo")
@@ -427,9 +427,9 @@ new_tbl_cfg <- function(table, src, files = NULL, cols = NULL, num_rows = NULL,
 #'
 #' @export
 #'
-load_src_cfg <- function(src = NULL, name = "data-sources", dir = NULL) {
+load_src_cfg <- function(src = NULL, name = "data-sources", cfg_dirs = NULL) {
 
-  res <- read_src_cfg(src, name, dir)
+  res <- read_src_cfg(src, name, cfg_dirs)
 
   if (is.null(src)) {
     src <- names(res)
@@ -438,11 +438,11 @@ load_src_cfg <- function(src = NULL, name = "data-sources", dir = NULL) {
   lapply(res, parse_src_cfg)
 }
 
-read_src_cfg <- function(src = NULL, name = "data-sources", dir = NULL) {
+read_src_cfg <- function(src = NULL, name = "data-sources", cfg_dirs = NULL) {
 
   file <- paste0(name, ".json")
   res  <- NULL
-  dirs <- unique(c(dir, user_config_path(), default_config_path()))
+  dirs <- unique(c(cfg_dirs, user_config_path(), default_config_path()))
 
   for (dir in dirs) {
 

@@ -9,11 +9,11 @@
 \usage{
 import_src(x, ...)
 
-\method{import_src}{src_cfg}(x, dir = src_data_dir(x), force = FALSE, ...)
+\method{import_src}{src_cfg}(x, data_dir = src_data_dir(x), force = FALSE, ...)
 
 import_tbl(x, ...)
 
-\method{import_tbl}{tbl_cfg}(x, dir = src_data_dir(x), progress = NULL, ...)
+\method{import_tbl}{tbl_cfg}(x, data_dir = src_data_dir(x), progress = NULL, ...)
 }
 \arguments{
 \item{x}{Object specifying the source configuration}
@@ -21,7 +21,7 @@ import_tbl(x, ...)
 \item{...}{Passed to downstream methods (finally to
 \link[readr:read_delim]{readr::read_csv}/\link[readr:read_delim_chunked]{readr::read_csv_chunked})/generic consistency}
 
-\item{dir}{The directory where the data was downloaded to (see
+\item{data_dir}{The directory where the data was downloaded to (see
 \code{\link[=download_src]{download_src()}}).}
 
 \item{force}{Logical flag indicating whether to overwrite already imported
