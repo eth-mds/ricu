@@ -461,6 +461,28 @@ do_callback.itm <- function(x, ...) {
 
 #' @keywords internal
 #' @export
+do_callback.hrd_itm <- function(x, ...) {
+
+  if (is.null(get_itm_var(x, "unit_var"))) {
+    x <- try_add_vars(x, unit_var = "unit")
+  }
+
+  NextMethod()
+}
+
+#' @keywords internal
+#' @export
+do_callback.col_itm <- function(x, ...) {
+
+  if (is.null(get_itm_var(x, "unit_var")) && not_null(x[["unit_val"]])) {
+    x <- try_add_vars(x, unit_var = "unit")
+  }
+
+  NextMethod()
+}
+
+#' @keywords internal
+#' @export
 do_callback.fun_itm <- function(x, ...) identity_callback(...)
 
 #' @keywords internal
@@ -498,7 +520,6 @@ do_itm_load.hrd_itm <- function(x, id_type = "icustay", interval = hours(1L)) {
   if (is.null(get_itm_var(x, "unit_var"))) {
     unt <- x[["units"]]
     res <- merge(res, unt, by = get_itm_var(x, "sub_var"), all.x = TRUE)
-      x <- try_add_vars(x, unit_var = data_vars(unt))
   }
 
   res
@@ -514,8 +535,7 @@ do_itm_load.col_itm <- function(x, id_type = "icustay", interval = hours(1L)) {
     unt <- x[["unit_val"]]
 
     if (not_null(unt)) {
-      res <- res[, c("measurement_unit") := unt]
-        x <- try_add_vars(x, unit_var = "measurement_unit")
+      res <- res[, c("unit") := unt]
     }
   }
 
