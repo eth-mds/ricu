@@ -34,7 +34,7 @@ urine24(..., min_win = hours(12L), interval = NULL)
 
 supp_o2(..., interval = NULL)
 
-avpu(..., interval = NULL, by_ref = TRUE)
+avpu(..., interval = NULL)
 }
 \arguments{
 \item{...}{Data input used for concept calculation}
@@ -62,9 +62,6 @@ if no newer measurement is available}
 with the respective maximum values}
 
 \item{min_win}{Minimal time span required for calculation of urine/24h}
-
-\item{by_ref}{Logical flag indicating whether to change the input by
-reference}
 }
 \description{
 Owing to increased complexity and more diverse applications, recursive

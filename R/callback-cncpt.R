@@ -53,10 +53,6 @@ capture_fun <- function(concepts, interval) {
                 all_map(has_cols, res[concepts], concepts),
                 null_or(interval, all_equal, ivl))
 
-    if (length(concepts) == 1L) {
-      res <- res[[1L]]
-    }
-
     attr(res, "interval") <- ivl
 
     res
@@ -290,9 +286,14 @@ urine24 <- function(..., min_win = hours(12L), interval = NULL) {
     }
   })
 
-  res <- capture_data("urine", interval, ...)
+  res <- list(...)[[1L]]
 
-  assert_that(is_interval(min_win), min_win > interval, min_win <= hours(24L))
+  if (is.null(interval)) {
+    interval <- interval(res)
+  }
+
+  assert_that(has_interval(res, interval), has_cols(res, "urine"),
+              is_interval(min_win), min_win > interval, min_win <= hours(24L))
 
   res <- fill_gaps(res)
 
@@ -322,19 +323,19 @@ map_vals <- function(pts, vals) {
   function(x) pts[findInterval(x, vals, left.open = TRUE) + 1]
 }
 
-#' @param by_ref Logical flag indicating whether to change the input by
-#' reference
 #' @rdname callback_cncpt
 #' @export
-avpu <- function(..., interval = NULL, by_ref = TRUE) {
+avpu <- function(..., interval = NULL) {
 
   avpu_map <- map_vals(c(NA, "U", "P", "V", "A", NA), c(2, 3, 9, 13, 15))
 
-  res <- capture_data("gcs", interval, ...)
+  res <- copy(list(...)[[1L]])
 
-  if (isFALSE(by_ref)) {
-    res <- copy(res)
+  if (is.null(interval)) {
+    interval <- interval(res)
   }
+
+  assert_that(has_interval(res, interval), has_cols(res, "gcs"))
 
   res <- res[, c("avpu", "gcs") := list(avpu_map(get("gcs")), NULL)]
 
