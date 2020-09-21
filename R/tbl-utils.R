@@ -211,7 +211,7 @@ is_dt <- is_type("data.table")
 #'
 #' ## Sorting
 #' An `id_tbl` or `ts_tbl` object is considered sorted when rows are in
-#' ascending order according to column as specified by [meta_vars()]. This
+#' ascending order according to columns as specified by [meta_vars()]. This
 #' means that for an `id_tbl` object rows have to be ordered by [id_vars()]
 #' and for a `ts_tbl` object rows have to be ordered first by [id_vars()],
 #' followed by the [index_var()]. Calling the S3 generic function
@@ -224,12 +224,47 @@ is_dt <- is_type("data.table")
 #' [data.table::setorder()] in case `decreasing = TRUE`.
 #'
 #' ## Uniqueness
-#' On object inheriting form `ts_tbl` is considered unique if it is unique in
-#' terms of the columns as specified by [meta_vars()].
+#' On object inheriting form `id_tbl` is considered unique if it is unique in
+#' terms of the columns as specified by [meta_vars()]. This means that for an
+#' `id_tbl` object, either zero or a single row is allowed per combination of
+#' values in columns [id_vars()] and consequently for `ts_tbl` objects a
+#' maximum of one row is allowed per combination of time step and ID. In order
+#' to create a unique `id_tbl` object from a non-unique `id_tbl` object,
+#' `aggregate()` will combine observations that represent repeated
+#' measurements within a group.
 #'
 #' ## Aggregating
-#' In order to turn a non-unique `id_tbl` or `ts_tbl` object into a unique
-#' one, the S3 generic function [stats::aggregate()] is available.
+#' In order to turn a non-unique `id_tbl` or `ts_tbl` object into an object
+#' considered unique, the S3 generic function [stats::aggregate()] is
+#' available. This applied the expression (or function specification) passed
+#' as `expr` to each combination of grouping variables. The columns to be
+#' aggregated can be controlled using the `vars` argument and the grouping
+#' variables can be changed using the `by` argument. The argument `expr` is
+#' fairly flexible: it can take an expression that will be evaluated in the
+#' context of the `data.table` in a clean environment inheriting from `env`,
+#' it can be a function, or it can be a string in which case `dt_gforce()` is
+#' called. The default value `NULL` chooses a string dependent on data types,
+#' where `numeric` resolves to `median`, `logical` to `sum` and `character` to
+#' `first`.
+#'
+#' As aggregation is used in concept loading (see [load_concepts()]),
+#' performance is important. For this reason, `dt_gforce()` allows for any of
+#' the available functions to be applied using the `GForce` optimization of
+#' `data.table` (see [data.table::datatable.optimize]).
+#'
+#' @examples
+#' tbl <- id_tbl(a = rep(1:5, 4), b = rep(1:2, each = 10), c = rnorm(20),
+#'               id_vars = c("a", "b"))
+#' is_unique(tbl)
+#' is_sorted(tbl)
+#'
+#' is_sorted(tbl[order(c)])
+#'
+#' identical(aggregate(tbl, list(c = sum(c))), aggregate(tbl, "sum"))
+#'
+#' tbl <- aggregate(tbl, "sum")
+#' is_unique(tbl)
+#' is_sorted(tbl)
 #'
 #' @param new,old Replacement names and existing column names for renaming
 #' columns
@@ -496,41 +531,6 @@ on_failure(is_sorted) <- function(call, env) {
                  increasing order", "is_sorted_assert")
 }
 
-#' @param fun Function name (as string) to apply over groups
-#' @param vars Column names to apply the function to
-#' @param na_rm Logical flag indicating how to treat `NA` values
-#'
-#' @rdname tbl_utils
-#' @export
-#'
-dt_gforce <- function(x,
-                      fun = c("mean", "median", "min", "max", "sum", "prod",
-                              "var", "sd", "first", "last"),
-                      by = meta_vars(x), vars = data_vars(x),
-                      na_rm = !fun %in% c("first", "last")) {
-
-  fun <- match.arg(fun)
-
-  if (fun %in% c("first", "last") && isTRUE(na_rm)) {
-    warn_arg("na_rm")
-  }
-
-  assert_that(is.flag(na_rm), all(c(vars, by) %in% colnames(x)))
-
-  switch(fun,
-    mean   = x[, lapply(.SD, mean, na.rm = na_rm),   by = by, .SDcols = vars],
-    median = x[, lapply(.SD, median, na.rm = na_rm), by = by, .SDcols = vars],
-    min    = x[, lapply(.SD, min, na.rm = na_rm),    by = by, .SDcols = vars],
-    max    = x[, lapply(.SD, max, na.rm = na_rm),    by = by, .SDcols = vars],
-    sum    = x[, lapply(.SD, sum, na.rm = na_rm),    by = by, .SDcols = vars],
-    prod   = x[, lapply(.SD, prod, na.rm = na_rm),   by = by, .SDcols = vars],
-    var    = x[, lapply(.SD, var, na.rm = na_rm),    by = by, .SDcols = vars],
-    sd     = x[, lapply(.SD, sd, na.rm = na_rm),     by = by, .SDcols = vars],
-    first  = x[, first(.SD),                         by = by, .SDcols = vars],
-    last   = x[, last(.SD),                          by = by, .SDcols = vars]
-  )
-}
-
 temp_unclass <- function(x, expr) {
   ptyp <- as_ptype(x)
   unclass_tbl(x)
@@ -664,4 +664,44 @@ aggregate.id_tbl <- function(x, expr = NULL, by = meta_vars(x),
       envir = list2env(list(.x_ = x, .expr_ = how, .by_ = by), parent = env)
     )
   }
+}
+
+#' @param fun Function name (as string) to apply over groups
+#' @param vars Column names to apply the function to
+#' @param na_rm Logical flag indicating how to treat `NA` values
+#'
+#' @rdname tbl_utils
+#' @export
+#'
+dt_gforce <- function(x,
+                      fun = c("mean", "median", "min", "max", "sum", "prod",
+                              "var", "sd", "first", "last"),
+                      by = meta_vars(x), vars = data_vars(x),
+                      na_rm = !fun %in% c("first", "last")) {
+
+  if (getOption("datatable.optimize") < 2L) {
+    warn_ricu("the setting `datatable.optimize` prevents GForce optimizations
+               from being applied.", "gforce_disabled")
+  }
+
+  fun <- match.arg(fun)
+
+  if (fun %in% c("first", "last") && isTRUE(na_rm)) {
+    warn_arg("na_rm")
+  }
+
+  assert_that(is.flag(na_rm), all(c(vars, by) %in% colnames(x)))
+
+  switch(fun,
+    mean   = x[, lapply(.SD, mean, na.rm = na_rm),   by = by, .SDcols = vars],
+    median = x[, lapply(.SD, median, na.rm = na_rm), by = by, .SDcols = vars],
+    min    = x[, lapply(.SD, min, na.rm = na_rm),    by = by, .SDcols = vars],
+    max    = x[, lapply(.SD, max, na.rm = na_rm),    by = by, .SDcols = vars],
+    sum    = x[, lapply(.SD, sum, na.rm = na_rm),    by = by, .SDcols = vars],
+    prod   = x[, lapply(.SD, prod, na.rm = na_rm),   by = by, .SDcols = vars],
+    var    = x[, lapply(.SD, var, na.rm = na_rm),    by = by, .SDcols = vars],
+    sd     = x[, lapply(.SD, sd, na.rm = na_rm),     by = by, .SDcols = vars],
+    first  = x[, first(.SD),                         by = by, .SDcols = vars],
+    last   = x[, last(.SD),                          by = by, .SDcols = vars]
+  )
 }

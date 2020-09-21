@@ -7,12 +7,12 @@
 \alias{rm_na}
 \alias{sort.id_tbl}
 \alias{is_sorted}
-\alias{dt_gforce}
 \alias{duplicated.id_tbl}
 \alias{anyDuplicated.id_tbl}
 \alias{unique.id_tbl}
 \alias{is_unique}
 \alias{aggregate.id_tbl}
+\alias{dt_gforce}
 \title{ICU class data utilities}
 \usage{
 rename_cols(x, new, old = colnames(x), skip_absent = FALSE, by_ref = FALSE)
@@ -34,14 +34,6 @@ rm_na(x, cols = data_vars(x), mode = c("all", "any"))
 
 is_sorted(x)
 
-dt_gforce(
-  x,
-  fun = c("mean", "median", "min", "max", "sum", "prod", "var", "sd", "first", "last"),
-  by = meta_vars(x),
-  vars = data_vars(x),
-  na_rm = !fun \%in\% c("first", "last")
-)
-
 \method{duplicated}{id_tbl}(x, incomparables = FALSE, by = meta_vars(x), ...)
 
 \method{anyDuplicated}{id_tbl}(x, incomparables = FALSE, by = meta_vars(x), ...)
@@ -57,6 +49,14 @@ is_unique(x, ...)
   vars = data_vars(x),
   env = NULL,
   ...
+)
+
+dt_gforce(
+  x,
+  fun = c("mean", "median", "min", "max", "sum", "prod", "var", "sd", "first", "last"),
+  by = meta_vars(x),
+  vars = data_vars(x),
+  na_rm = !fun \%in\% c("first", "last")
 )
 }
 \arguments{
@@ -89,17 +89,17 @@ columns to the front.}
 
 \item{...}{Ignored}
 
-\item{fun}{Function name (as string) to apply over groups}
-
-\item{vars}{Column names to apply the function to}
-
-\item{na_rm}{Logical flag indicating how to treat \code{NA} values}
-
 \item{incomparables}{Not used. Here for S3 method consistency}
 
 \item{expr}{Expression to apply over groups}
 
+\item{vars}{Column names to apply the function to}
+
 \item{env}{Environment to look up names in \code{expr}}
+
+\item{fun}{Function name (as string) to apply over groups}
+
+\item{na_rm}{Logical flag indicating how to treat \code{NA} values}
 }
 \description{
 Several utility functions for working with \code{id_tbl} and \code{ts_tbl} objects
@@ -124,7 +124,7 @@ provided to make handling of \code{id_tbl} and \code{ts_tbl} objects more conven
 \subsection{Sorting}{
 
 An \code{id_tbl} or \code{ts_tbl} object is considered sorted when rows are in
-ascending order according to column as specified by \code{\link[=meta_vars]{meta_vars()}}. This
+ascending order according to columns as specified by \code{\link[=meta_vars]{meta_vars()}}. This
 means that for an \code{id_tbl} object rows have to be ordered by \code{\link[=id_vars]{id_vars()}}
 and for a \code{ts_tbl} object rows have to be ordered first by \code{\link[=id_vars]{id_vars()}},
 followed by the \code{\link[=index_var]{index_var()}}. Calling the S3 generic function
@@ -139,13 +139,49 @@ argument). Internally, sorting is handled by either setting a
 
 \subsection{Uniqueness}{
 
-On object inheriting form \code{ts_tbl} is considered unique if it is unique in
-terms of the columns as specified by \code{\link[=meta_vars]{meta_vars()}}.
+On object inheriting form \code{id_tbl} is considered unique if it is unique in
+terms of the columns as specified by \code{\link[=meta_vars]{meta_vars()}}. This means that for an
+\code{id_tbl} object, either zero or a single row is allowed per combination of
+values in columns \code{\link[=id_vars]{id_vars()}} and consequently for \code{ts_tbl} objects a
+maximum of one row is allowed per combination of time step and ID. In order
+to create a unique \code{id_tbl} object from a non-unique \code{id_tbl} object,
+\code{aggregate()} will combine observations that represent repeated
+measurements within a group.
 }
 
 \subsection{Aggregating}{
 
-In order to turn a non-unique \code{id_tbl} or \code{ts_tbl} object into a unique
-one, the S3 generic function \code{\link[stats:aggregate]{stats::aggregate()}} is available.
+In order to turn a non-unique \code{id_tbl} or \code{ts_tbl} object into an object
+considered unique, the S3 generic function \code{\link[stats:aggregate]{stats::aggregate()}} is
+available. This applied the expression (or function specification) passed
+as \code{expr} to each combination of grouping variables. The columns to be
+aggregated can be controlled using the \code{vars} argument and the grouping
+variables can be changed using the \code{by} argument. The argument \code{expr} is
+fairly flexible: it can take an expression that will be evaluated in the
+context of the \code{data.table} in a clean environment inheriting from \code{env},
+it can be a function, or it can be a string in which case \code{dt_gforce()} is
+called. The default value \code{NULL} chooses a string dependent on data types,
+where \code{numeric} resolves to \code{median}, \code{logical} to \code{sum} and \code{character} to
+\code{first}.
+
+As aggregation is used in concept loading (see \code{\link[=load_concepts]{load_concepts()}}),
+performance is important. For this reason, \code{dt_gforce()} allows for any of
+the available functions to be applied using the \code{GForce} optimization of
+\code{data.table} (see \link[data.table:datatable-optimize]{data.table::datatable.optimize}).
 }
+}
+\examples{
+tbl <- id_tbl(a = rep(1:5, 4), b = rep(1:2, each = 10), c = rnorm(20),
+              id_vars = c("a", "b"))
+is_unique(tbl)
+is_sorted(tbl)
+
+is_sorted(tbl[order(c)])
+
+identical(aggregate(tbl, list(c = sum(c))), aggregate(tbl, "sum"))
+
+tbl <- aggregate(tbl, "sum")
+is_unique(tbl)
+is_sorted(tbl)
+
 }
