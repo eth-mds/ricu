@@ -1,19 +1,89 @@
 
 #' Time series utility functions
 #'
+#' ICU data as handled by `ricu` is mostly comprised of time series data and as
+#' such, several utilitiy functions are availabel for working with time series
+#' data in addition to a class dedicated to representing time series data (see
+#' [ts_tbl()]). Some terminology to begin with: a time series is considered
+#' to have gaps if, per (combination of) ID variable value(s), some time steps
+#' are missing. Expanding and collapsing mean to change between
+#' representations where time steps are explicit or encoded as interval with
+#' start and end times. For sliding window-type operations, `slide()` means to
+#' iterate over time-windows, `slide_index()` means to iterate over certain
+#' time-windows, selected relative to the index and `hop()` means to iterate
+#' over time-windows selected in absolute terms.
+#'
+#' @details
+#' A gap in a `ts_tbl` object is a missing time step, i.e. a missing entry in
+#' the sequence `seq(min(index), max(index), by = interval)` in at least one
+#' group (as defined by [id_vars()], where the extrema are calculated per
+#' group. In this case, `has_gaps()` will return `TRUE`. The function
+#' `is_regular()` checks whether the time series has no gaps, in addition to
+#' the object being sorted and unique (see [is_sorted()] and [is_unique()]).
+#' In order to transform a time series containing gaps into a regular time
+#' series, `fill_gaps()` will fill missing time steps with `NA` values in all
+#' [data_vars()] columns, while `remove_gaps()` provides the inverse operation
+#' of removing time steps that consist of `NA` values in [data_vars()] columns.
+#'
+#' An `expand()` operation performed on an object inheriting from `data.table`
+#' yields a `ts_tbl` where time-steps encoded by columns `start_var` and
+#' `end_var` are made explicit with values in `keep_vars` being appropriately
+#' repeated. The inverse operation is available as `collapse()`, which groups
+#' by `id_vars`, represents `index_var` as group-wise extrema in two new
+#' columns `start_var` and `end_var` and allows for further data summary using
+#' `...`.
+#'
+#' Sliding-window type operations are available as `slide()`, `slide_index()`
+#' and `hop()` (function naming is inspired by the CRAN package `slider`). The
+#' most flexible of the three, `hop` takes as input a `ts_tbl` object `x`
+#' containing the data, an `id_tbl` object `windows`, containing for each ID
+#' the desired windows represented by two columns `lwr_col` and `upr_col`, as
+#' well as an expression `expr` to be evaluated per window. At the other end
+#' of the spectrum, `slide()` spans windows for every ID and available
+#' time-step using the arguments `before` and `after`, while `slide_index()`
+#' can be seen as a compromise between the two, where windows are spanned for
+#' certain time-points, specified by `index`.
+#'
 #' @param x `ts_tbl` object to use
-#' @param min_col,max_col Name of the columns that represent lower and upper
+#' @param start_var,end_var Name of the columns that represent lower and upper
 #' windows bounds
 #' @param step_size Controls the step size used to interpolate between
-#' `min_col` and `max_col`
+#' `start_var` and `end_var`
 #' @param new_index Name of the new index column
 #' @param keep_vars Names of the columns to hold onto
+#'
+#' @examples
+#' tbl <- ts_tbl(x = 1:5, y = hours(1:5), z = hours(2:6), val = rnorm(5),
+#'               index_var = "y")
+#' exp <- expand(tbl, "y", "z", step_size = 1L, new_index = "y",
+#'               keep_vars = c("x", "val"))
+#' col <- collapse(exp, start_var = "y", end_var = "z", val = unique(val))
+#' all.equal(tbl, col, check.attributes = FALSE)
+#'
+#' tbl <- ts_tbl(x = rep(1:5, 1:5), y = hours(sequence(1:5)), z = 1:15)
+#'
+#' win <- id_tbl(x = c(3, 4), a = hours(c(2, 1)), b = hours(c(3, 4)))
+#' hop(tbl, list(z = sum(z)), win, lwr_col = "a", upr_col = "b")
+#' slide_index(tbl, list(z = sum(z)), hours(c(4, 5)), before = hours(2))
+#' slide(tbl, list(z = sum(z)), before = hours(2))
+#'
+#' tbl <- ts_tbl(x = rep(3:4, 3:4), y = hours(sequence(3:4)), z = 1:7)
+#' has_no_gaps(tbl)
+#' is_regular(tbl)
+#'
+#' tbl[1, 2] <- hours(2)
+#' has_no_gaps(tbl)
+#' is_regular(tbl)
+#'
+#' tbl[6, 2] <- hours(2)
+#' has_no_gaps(tbl)
+#' is_regular(tbl)
 #'
 #' @rdname ts_utils
 #' @export
 #'
-expand <- function(x, min_col, max_col, step_size = NULL, new_index = NULL,
-                   keep_vars = id_vars(x)) {
+expand <- function(x, start_var = "start", end_var = "end", step_size = NULL,
+                   new_index = NULL, keep_vars = id_vars(x)) {
 
   do_seq <- function(min, max) seq(min, max, step_size)
 
@@ -25,35 +95,70 @@ expand <- function(x, min_col, max_col, step_size = NULL, new_index = NULL,
   }
 
   assert_that(
-    is_id_tbl(x), is.string(min_col), is.string(max_col),
-    has_time_cols(x, c(min_col, max_col)),
-    same_unit(x[[min_col]], x[[max_col]])
+    is_dt(x), has_time_cols(x, c(start_var, end_var), 2L),
+    same_unit(x[[start_var]], x[[end_var]])
   )
 
   if (identical(nrow(x), 0L)) {
     return(x)
   }
 
-  if (is.null(step_size) || is.null(new_index)) {
-    assert_that(is_ts_tbl(x))
-    step_size <- coalesce(step_size, time_step(x))
-    new_index <- coalesce(new_index, index_var(x))
-  }
+  step_size <- coalesce(step_size, time_step(x))
+  new_index <- coalesce(new_index, index_var(x))
 
-  unit <- units(x[[min_col]])
+  assert_that(is.string(new_index), is_scalar(step_size),
+              is.numeric(step_size))
 
-  x <- rm_na(x, c(min_col, max_col), "any")
-  x <- x[get(min_col) <= get(max_col), ]
+  unit <- units(x[[start_var]])
 
-  res <- x[, c(keep_vars, min_col, max_col), with = FALSE]
-  res <- res[, c(min_col, max_col) := lapply(.SD, as.double),
-             .SDcols = c(min_col, max_col)]
+  x <- rm_na(x, c(start_var, end_var), "any")
+  x <- x[get(start_var) <= get(end_var), ]
 
-  res <- res[, seq_expand(get(min_col), get(max_col), unit, .SD),
+  res <- x[, c(keep_vars, start_var, end_var), with = FALSE]
+  res <- res[, c(start_var, end_var) := lapply(.SD, as.double),
+             .SDcols = c(start_var, end_var)]
+
+  res <- res[, seq_expand(get(start_var), get(end_var), unit, .SD),
              .SDcols = keep_vars]
 
   as_ts_tbl(res, index_var = new_index,
             interval = as.difftime(step_size, units = unit), by_ref = TRUE)
+}
+
+#' @param id_vars,index_var ID and index variables
+#' @param env Environment used as parent to the environment used to evaluate
+#' expressions passes as `...`
+#'
+#' @rdname ts_utils
+#' @export
+#'
+collapse <- function(x, id_vars = NULL, index_var = NULL, start_var = "start",
+                     end_var = "end", env = NULL, ...) {
+
+  id_vars   <- coalesce(id_vars,   id_vars(x))
+  index_var <- coalesce(index_var, index_var(x))
+
+  if (is.null(env)) {
+    env <- caller_env()
+  }
+
+  assert_that(is_dt(x), has_cols(x, id_vars), has_time_cols(x, index_var, 1L),
+              is.string(start_var), is.string(end_var), is.environment(env))
+
+  expr <- substitute(list(min(get(ind)), max(get(ind)), ...),
+                     env = list(ind = index_var))
+
+  names(expr)[c(2L, 3L)] <- c(start_var, end_var)
+
+  expr <- do.call(substitute, list(substitute(expr)))
+
+  .x_ <- .expr_ <- .by_ <- NULL
+
+  local({
+    .x_[, eval(.expr_), by = .by_]
+  }, envir = list2env(
+    list(.x_ = x, .expr_ = expr, .by_ = id_vars), parent = env)
+  )
 }
 
 #' @rdname ts_utils
@@ -62,18 +167,20 @@ expand <- function(x, min_col, max_col, step_size = NULL, new_index = NULL,
 has_no_gaps <- function(x) {
 
   check_time_col <- function(time, step) {
-    len <- length(time)
-    if (len < 2L) TRUE
-    else identical(len - 1, as.numeric((time[len] - time[1L]) / step))
+    ext <- range(time, na.rm = TRUE)
+    setequal(time, seq(ext[1L], ext[2L], by = step))
   }
 
-  assert_that(is_ts_tbl(x), is_unique(x),
-              identical(data.table::key(x), meta_vars(x)))
+  assert_that(is_ts_tbl(x))
 
   id_cols <- id_vars(x)
 
-  res <- x[, check_time_col(get(index_var(x)), time_step(x)),
-           by = c(id_cols)]
+  expr <- substitute(
+    check_time_col(as.double(get(idx)), step),
+    env = list(idx = index_var(x), step = time_step(x))
+  )
+
+  res <- x[, eval(expr), by = c(id_cols)]
 
   all(res[[setdiff(colnames(res), id_cols)]])
 }
@@ -83,31 +190,53 @@ has_no_gaps <- function(x) {
 #'
 has_gaps <- Negate(has_no_gaps)
 
+#' @rdname ts_utils
+#' @export
+#'
+is_regular <- function(x) {
+
+  check_time_col <- function(time, step) {
+    len <- length(time)
+    if (len < 2L) TRUE
+    else identical(len - 1, as.numeric((time[len] - time[1L]) / step))
+  }
+
+  assert_that(is_ts_tbl(x))
+
+  if (!is_unique(x) || !is_sorted(x)) {
+    return(FALSE)
+  }
+
+  id_cols <- id_vars(x)
+
+  expr <- substitute(
+    check_time_col(get(idx), step),
+    env = list(idx = index_var(x), step = time_step(x))
+  )
+
+  res <- x[, eval(expr), by = c(id_cols)]
+
+  all(res[[setdiff(colnames(res), id_cols)]])
+}
+
 #' @param limits A table with columns for lower and upper window bounds
 #'
 #' @rdname ts_utils
 #' @export
 #'
-fill_gaps <- function(x, limits = NULL, ...) {
+fill_gaps <- function(x, limits = collapse(x), start_var = "start",
+                      end_var = "end") {
 
   assert_that(is_unique(x))
 
-  time_col <- index_var(x)
-
-  if (is.null(limits)) {
-
-    limits <- x[, list(min = min(get(time_col)), max = max(get(time_col))),
-                by = c(id_vars(x))]
-
-    join <- expand(limits, "min", "max", time_step(x), new_index = time_col)
-
+  if (is_id_tbl(limits)) {
+    id_vars <- id_vars(limits)
   } else {
-
-    id <- if (is_id_tbl(limits)) id_vars(limits) else id_vars(x)
-
-    join <- expand(limits, ..., step_size = time_step(x),
-                   new_index = time_col, keep_vars = id)
+    id_vars <- id_vars(x)
   }
+
+  join <- expand(limits, start_var, end_var, step_size = time_step(x),
+                 new_index = index_var(x), keep_vars = id_vars)
 
   x[unique(join), on = paste(meta_vars(x), "==", meta_vars(join))]
 }

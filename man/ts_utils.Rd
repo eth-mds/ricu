@@ -2,8 +2,10 @@
 % Please edit documentation in R/utils-ts.R
 \name{expand}
 \alias{expand}
+\alias{collapse}
 \alias{has_no_gaps}
 \alias{has_gaps}
+\alias{is_regular}
 \alias{fill_gaps}
 \alias{remove_gaps}
 \alias{slide}
@@ -13,18 +15,30 @@
 \usage{
 expand(
   x,
-  min_col,
-  max_col,
+  start_var = "start",
+  end_var = "end",
   step_size = NULL,
   new_index = NULL,
   keep_vars = id_vars(x)
+)
+
+collapse(
+  x,
+  id_vars = NULL,
+  index_var = NULL,
+  start_var = "start",
+  end_var = "end",
+  env = NULL,
+  ...
 )
 
 has_no_gaps(x)
 
 has_gaps(...)
 
-fill_gaps(x, limits = NULL, ...)
+is_regular(x)
+
+fill_gaps(x, limits = collapse(x), start_var = "start", end_var = "end")
 
 remove_gaps(x)
 
@@ -48,15 +62,20 @@ hop(
 \arguments{
 \item{x}{\code{ts_tbl} object to use}
 
-\item{min_col, max_col}{Name of the columns that represent lower and upper
+\item{start_var, end_var}{Name of the columns that represent lower and upper
 windows bounds}
 
 \item{step_size}{Controls the step size used to interpolate between
-\code{min_col} and \code{max_col}}
+\code{start_var} and \code{end_var}}
 
 \item{new_index}{Name of the new index column}
 
 \item{keep_vars}{Names of the columns to hold onto}
+
+\item{id_vars, index_var}{ID and index variables}
+
+\item{env}{Environment used as parent to the environment used to evaluate
+expressions passes as \code{...}}
 
 \item{...}{Passed to \code{hop_quo()}}
 
@@ -87,5 +106,74 @@ are closed (default) or open.}
 to the environment in which \code{expr} was created}
 }
 \description{
-Time series utility functions
+ICU data as handled by \code{ricu} is mostly comprised of time series data and as
+such, several utilitiy functions are availabel for working with time series
+data in addition to a class dedicated to representing time series data (see
+\code{\link[=ts_tbl]{ts_tbl()}}). Some terminology to begin with: a time series is considered
+to have gaps if, per (combination of) ID variable value(s), some time steps
+are missing. Expanding and collapsing mean to change between
+representations where time steps are explicit or encoded as interval with
+start and end times. For sliding window-type operations, \code{slide()} means to
+iterate over time-windows, \code{slide_index()} means to iterate over certain
+time-windows, selected relative to the index and \code{hop()} means to iterate
+over time-windows selected in absolute terms.
+}
+\details{
+A gap in a \code{ts_tbl} object is a missing time step, i.e. a missing entry in
+the sequence \code{seq(min(index), max(index), by = interval)} in at least one
+group (as defined by \code{\link[=id_vars]{id_vars()}}, where the extrema are calculated per
+group. In this case, \code{has_gaps()} will return \code{TRUE}. The function
+\code{is_regular()} checks whether the time series has no gaps, in addition to
+the object being sorted and unique (see \code{\link[=is_sorted]{is_sorted()}} and \code{\link[=is_unique]{is_unique()}}).
+In order to transform a time series containing gaps into a regular time
+series, \code{fill_gaps()} will fill missing time steps with \code{NA} values in all
+\code{\link[=data_vars]{data_vars()}} columns, while \code{remove_gaps()} provides the inverse operation
+of removing time steps that consist of \code{NA} values in \code{\link[=data_vars]{data_vars()}} columns.
+
+An \code{expand()} operation performed on an object inheriting from \code{data.table}
+yields a \code{ts_tbl} where time-steps encoded by columns \code{start_var} and
+\code{end_var} are made explicit with values in \code{keep_vars} being appropriately
+repeated. The inverse operation is available as \code{collapse()}, which groups
+by \code{id_vars}, represents \code{index_var} as group-wise extrema in two new
+columns \code{start_var} and \code{end_var} and allows for further data summary using
+\code{...}.
+
+Sliding-window type operations are available as \code{slide()}, \code{slide_index()}
+and \code{hop()} (function naming is inspired by the CRAN package \code{slider}). The
+most flexible of the three, \code{hop} takes as input a \code{ts_tbl} object \code{x}
+containing the data, an \code{id_tbl} object \code{windows}, containing for each ID
+the desired windows represented by two columns \code{lwr_col} and \code{upr_col}, as
+well as an expression \code{expr} to be evaluated per window. At the other end
+of the spectrum, \code{slide()} spans windows for every ID and available
+time-step using the arguments \code{before} and \code{after}, while \code{slide_index()}
+can be seen as a compromise between the two, where windows are spanned for
+certain time-points, specified by \code{index}.
+}
+\examples{
+tbl <- ts_tbl(x = 1:5, y = hours(1:5), z = hours(2:6), val = rnorm(5),
+              index_var = "y")
+exp <- expand(tbl, "y", "z", step_size = 1L, new_index = "y",
+              keep_vars = c("x", "val"))
+col <- collapse(exp, start_var = "y", end_var = "z", val = unique(val))
+all.equal(tbl, col, check.attributes = FALSE)
+
+tbl <- ts_tbl(x = rep(1:5, 1:5), y = hours(sequence(1:5)), z = 1:15)
+
+win <- id_tbl(x = c(3, 4), a = hours(c(2, 1)), b = hours(c(3, 4)))
+hop(tbl, list(z = sum(z)), win, lwr_col = "a", upr_col = "b")
+slide_index(tbl, list(z = sum(z)), hours(c(4, 5)), before = hours(2))
+slide(tbl, list(z = sum(z)), before = hours(2))
+
+tbl <- ts_tbl(x = rep(3:4, 3:4), y = hours(sequence(3:4)), z = 1:7)
+has_no_gaps(tbl)
+is_regular(tbl)
+
+tbl[1, 2] <- hours(2)
+has_no_gaps(tbl)
+is_regular(tbl)
+
+tbl[6, 2] <- hours(2)
+has_no_gaps(tbl)
+is_regular(tbl)
+
 }

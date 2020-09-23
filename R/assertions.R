@@ -85,10 +85,11 @@ is_in <- function(x, opts, na_rm = FALSE) {
 
 on_failure(is_in) <- in_failure
 
-has_cols <- function(x, cols) {
-  assert_that(
-    is.character(cols), has_length(cols), is_unique(cols)
-  ) && length(setdiff(cols, colnames(x))) == 0L
+has_cols <- function(x, cols, length = NA) {
+  assert_that(is.character(cols), is_unique(cols)) &&
+    if (is.na(length)) assert_that(has_length(cols))
+    else assert_that(is.count(length), all_equal(length(cols), length)) &&
+    length(setdiff(cols, colnames(x))) == 0L
 }
 
 on_failure(has_cols) <- function(call, env) {
@@ -129,8 +130,8 @@ on_failure(is_interval) <- function(call, env) {
   )
 }
 
-has_time_cols <- function(x, cols) {
-  assert_that(has_cols(x, cols)) && all(col_ply(x, cols, is_difftime))
+has_time_cols <- function(x, cols, length = NA) {
+  assert_that(has_cols(x, cols, length)) && all(col_ply(x, cols, is_difftime))
 }
 
 on_failure(has_time_cols) <- function(call, env) {
