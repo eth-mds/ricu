@@ -67,7 +67,9 @@ id_orig_helper.src_env <- function(x, id) {
     res <- res[, c(strt) := 0]
   }
 
-  as_id_tbl(unique(res), id, by_ref = TRUE)
+  res <- unique(res)
+
+  as_id_tbl(res, id, by_ref = TRUE)
 }
 
 #' @export
@@ -284,7 +286,9 @@ id_map_helper.src_env <- function(x, id_var, win_var) {
     map <- rm_cols(map, ori, by_ref = TRUE)
   }
 
-  as_id_tbl(unique(map), id_var, by_ref = TRUE)
+  map <- unique(map)
+
+  as_id_tbl(map, id_var, by_ref = TRUE)
 }
 
 #' @export

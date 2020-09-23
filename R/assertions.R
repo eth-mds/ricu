@@ -86,9 +86,12 @@ is_in <- function(x, opts, na_rm = FALSE) {
 on_failure(is_in) <- in_failure
 
 has_cols <- function(x, cols, length = NA) {
-  assert_that(is.character(cols), is_unique(cols)) &&
-    if (is.na(length)) assert_that(has_length(cols))
-    else assert_that(is.count(length), all_equal(length(cols), length)) &&
+  if (is.na(length)) {
+    len_check <- assert_that(has_length(cols))
+  } else {
+    len_check <- assert_that(is.count(length), all_equal(length(cols), length))
+  }
+  assert_that(is.character(cols), is_unique(cols)) && len_check &&
     length(setdiff(cols, colnames(x))) == 0L
 }
 

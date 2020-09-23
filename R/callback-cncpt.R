@@ -194,7 +194,7 @@ vent <- function(..., match_win = hours(6L), min_length = mins(10L),
   res <- res[get(sst[2L]) - get(sst[1L]) >= min_length, ]
   res <- change_interval(res, final_int, by_ref = TRUE)
 
-  res <- unique(expand(res, min_col = sst[1L], max_col = sst[2L]))
+  res <- unique(expand(res, start_var = sst[1L], end_var = sst[2L]))
   res <- res[, c("vent") := TRUE]
 
   res
