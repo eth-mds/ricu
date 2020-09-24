@@ -2,8 +2,31 @@
 #' Data loading utilities
 #'
 #' Two important tools for smoothing out differences among used datasets are
-#' `id_origin()` which returns origin times for a given ID and `id_windows()`
-#' which defines stay windows and relationships between ID systems.
+#' `id_origin()` which returns origin times for a given ID and `id_map()`
+#' which returns a mapping between two ID systems alongside start and end
+#' columns of the target ID system relative to the source ID system. As both
+#' these function are called frequently during data loading and might involve
+#' somewhat expensive operations, both rely on internal helper functions
+#' (`id_orig_helper()` and `id_map_helper()`) which perform the heavy lifting
+#' and wrap those helper functions, providing a memoization layer. When adding
+#' a new data source, a class specific implementation of the S3 generic
+#' function `id_map_helper()` might be required, as this is used during data
+#' loading using [load_id()] and [load_ts()] via [change_id()].
+#'
+#' @details
+#' For the internal datasets, `id_map_helper()` relies on yet another S3
+#' generic function `id_windows()`, which provides a table containing all
+#' available ID systems, as well as all ID windows for a given data source. As
+#' for the other two functions, the same helper-function approach is in place,
+#' with the data loading function `id_win_helper()`. The function
+#' `id_map_helper()` is then implemented in a data source agnostic manner
+#' (dispatching on the `src_env` class), providing subsetting of this larger
+#' ID map table and ensuring timestamps are relative to the correct ID system.
+#' FOr adding a new data source however, this layer can be forgone. Similarly
+#' for `id_origin()`, this is used for the internal datasets in
+#' [load_difftime()]. An implementation of [load_difftime()], specific to a
+#' new data source can be provided that does not rely on `id_windows()`,
+#' making this function irrelevant for this specific dataset.
 #'
 #' @param x Object identify the ID system (passed to [as_src_env()])
 #' @param id ID name for which to return origin times
@@ -310,7 +333,6 @@ id_map_helper.default <- function(x, ...) stop_generic(x, .Generic)
 #' specified as [base::difftime()] object
 #'
 #' @export
-#'
 stay_windows <- function(x, id_type = "icustay", win_type = id_type,
                          in_time = "start", out_time = "end",
                          interval = hours(1L)) {

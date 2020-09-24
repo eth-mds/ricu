@@ -55,7 +55,30 @@ column}
 }
 \description{
 Two important tools for smoothing out differences among used datasets are
-\code{id_origin()} which returns origin times for a given ID and \code{id_windows()}
-which defines stay windows and relationships between ID systems.
+\code{id_origin()} which returns origin times for a given ID and \code{id_map()}
+which returns a mapping between two ID systems alongside start and end
+columns of the target ID system relative to the source ID system. As both
+these function are called frequently during data loading and might involve
+somewhat expensive operations, both rely on internal helper functions
+(\code{id_orig_helper()} and \code{id_map_helper()}) which perform the heavy lifting
+and wrap those helper functions, providing a memoization layer. When adding
+a new data source, a class specific implementation of the S3 generic
+function \code{id_map_helper()} might be required, as this is used during data
+loading using \code{\link[=load_id]{load_id()}} and \code{\link[=load_ts]{load_ts()}} via \code{\link[=change_id]{change_id()}}.
+}
+\details{
+For the internal datasets, \code{id_map_helper()} relies on yet another S3
+generic function \code{id_windows()}, which provides a table containing all
+available ID systems, as well as all ID windows for a given data source. As
+for the other two functions, the same helper-function approach is in place,
+with the data loading function \code{id_win_helper()}. The function
+\code{id_map_helper()} is then implemented in a data source agnostic manner
+(dispatching on the \code{src_env} class), providing subsetting of this larger
+ID map table and ensuring timestamps are relative to the correct ID system.
+FOr adding a new data source however, this layer can be forgone. Similarly
+for \code{id_origin()}, this is used for the internal datasets in
+\code{\link[=load_difftime]{load_difftime()}}. An implementation of \code{\link[=load_difftime]{load_difftime()}}, specific to a
+new data source can be provided that does not rely on \code{id_windows()},
+making this function irrelevant for this specific dataset.
 }
 \keyword{internal}
