@@ -296,7 +296,11 @@ id_map_helper.default <- function(x, ...) stop_generic(x, .Generic)
 
 #' Stays
 #'
-#' For a given ID type, get all stays with corresponding start and end times.
+#' Building on functionality offered by the (internal) function [id_map()],
+#' stay windows as well as (in case of differing values being passed as
+#' `id_type` and `win_type`) an ID mapping is computed.
+#'
+#' @seealso change_id
 #'
 #' @param x Passed to [as_id_cfg()] and [as_src_env()]
 #' @param id_type Type of ID all returned times are relative to
@@ -307,7 +311,7 @@ id_map_helper.default <- function(x, ...) stop_generic(x, .Generic)
 #'
 #' @export
 #'
-stay_windows <- function(x, id_type = "icustay", win_type = "icustay",
+stay_windows <- function(x, id_type = "icustay", win_type = id_type,
                          in_time = "start", out_time = "end",
                          interval = hours(1L)) {
 
@@ -328,9 +332,74 @@ stay_windows <- function(x, id_type = "icustay", win_type = "icustay",
 
 #' Switch between id types
 #'
-#' In ICU settings, multiple ID types may be in use which present an ordering
-#' or nested structure, for example patient id, hospital stay id and ICU stay
-#' id. This function allows for converting from one ID to another.
+#' ICU datasets such as MIMIC-III or eICU typically represent patients by
+#' multiple ID systems such as patient IDs, hospital stay IDs and ICU
+#' admission IDs. Even if the raw data is available in only one such ID
+#' system, given a mapping of IDs alongside start and end times, it is
+#' possible to convert data from one ID system to another. The function
+#' `change_id()` provides such a conversion utiltity, internally either
+#' calling `upgrade_id()` when moving to an ID system with higher cardinality
+#' and `downgrade_id()` when the target ID system is of lower cardinality
+#'
+#' @details
+#' In order to provide ID system conversion for a data source, the (internal)
+#' function [id_map()] must be able to construct an ID mapping for that data
+#' source. Constructing such a mapping can be expensive w.r.t. the frequency
+#' it might be re-used and therefore, [id_map()] provides caching
+#' infrastructure. The mapping itself is constructed by the (internal)
+#' function [id_map_helper()], which is expected to provide source and
+#' destination ID columns as well as start and end columns corresponding to
+#' the destination ID, relative to the source ID system. In the following
+#' example, we request for `mimic_demo`, with ICU stay IDs as source and
+#' hospital admissions as destination IDs.
+#'
+#' ```{r}
+#' id_map_helper(mimic_demo, "icustay_id", "hadm_id")
+#' ```
+#'
+#' Both start and end columns encode the hospital admission windows relative
+#' to each corresponding ICU stay start time. It therefore comes as no
+#' surprise that most start times are negative (hospital admission typically
+#' occurs before ICU stay start time), while end times are often days in the
+#' future (as hospital discharge typically occurs several days after ICU
+#' admission).
+#'
+#' In order to use the ID conversion infrastructure offered by `ricu` for a
+#' new dataset, it typically suffices to provide an `id_cfg` entry in the
+#' source configuration (see [load_src_cfg()]), outlining the available ID
+#' systems alongside an ordering, as well as potentially a class specific
+#' implementation of [id_map_helper()] for the given source class, specifying
+#' the corresponding time windows in 1 minute resolution (for every possible
+#' pair of IDs).
+#'
+#' While both up- and downgrades for `id_tbl` objects, as well as downgrades
+#' for `ts_tbl` objects are simple merge operations based on the ID mapping
+#' provided by [id_map()], ID upgrades for `ts_tbl` objects are slightly more
+#' involved. As an example, consider the following setting: we have `data`
+#' associated with `hadm_id` IDs and times relative to hospital admission:
+#'
+#' ```
+#'                1      2       3        4       5       6        7      8
+#' data        ---*------*-------*--------*-------*-------*--------*------*---
+#'                3h    10h     18h      27h     35h     43h      52h    59h
+#'
+#'                                          HADM_1
+#'             0h     7h                26h        37h             53h      62h
+#' hadm_id     |-------------------------------------------------------------|
+#' icustay_id         |------------------|          |---------------|
+#'                    0h                19h         0h             16h
+#'                            ICU_1                       ICU_2
+#' ```
+#'
+#' The mapping of data points from `hadm_id` to `icustay_id` is created as
+#' follows: ICU stay end times mark boundaries and all data that is recorded
+#' after the last ICU stay ended is assigned to the last ICU stay. Therefore
+#' data points 1-3 are assigned to `ICU_1`, while 4-8 are assigned to `ICU_2`.
+#' Times have to be shifted as well, as timestamps are expected to be relative
+#' to the current ID system. Data points 1-3 therefore are assigned to time
+#' stamps -4h, 3h and 11h, while data points 4-8 are assigned to -10h, -2h,
+#' 6h, 15h and 22h. Implementation-wise, the mapping is computed using an
+#' efficient `data.table` rolling join.
 #'
 #' @param x `icu_tbl` object for which to make the id change
 #' @param target_id The destination id name
@@ -338,6 +407,13 @@ stay_windows <- function(x, id_type = "icustay", win_type = "icustay",
 #' @param ... Passed to `upgrade_id()`/`downgrade_id()`
 #' @param keep_old_id Logical flag indicating whether to keep the previous ID
 #' column
+#'
+#' @examples
+#' tbl <- mimic_demo$labevents
+#' dat <- load_difftime(tbl, itemid == 50809, c("charttime", "valuenum"))
+#' dat
+#'
+#' change_id(dat, "icustay_id", tbl, keep_old_id = FALSE)
 #'
 #' @rdname change_id
 #' @export

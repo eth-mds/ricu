@@ -7,7 +7,7 @@
 stay_windows(
   x,
   id_type = "icustay",
-  win_type = "icustay",
+  win_type = id_type,
   in_time = "start",
   out_time = "end",
   interval = hours(1L)
@@ -26,5 +26,10 @@ stay_windows(
 specified as \code{\link[base:difftime]{base::difftime()}} object}
 }
 \description{
-For a given ID type, get all stays with corresponding start and end times.
+Building on functionality offered by the (internal) function \code{\link[=id_map]{id_map()}},
+stay windows as well as (in case of differing values being passed as
+\code{id_type} and \code{win_type}) an ID mapping is computed.
+}
+\seealso{
+change_id
 }

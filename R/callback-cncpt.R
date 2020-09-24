@@ -275,16 +275,10 @@ urine24 <- function(..., min_win = hours(12L), interval = NULL) {
 
   convert_dt <- function(x) as.double(x, units(interval))
 
-  urine_sum <- local({
-
-    min_steps <- ceiling(convert_dt(min_win) / as.double(interval))
-    step_factor <- convert_dt(hours(24L)) / as.double(interval)
-
-    function(x) {
-      if (length(x) < min_steps) return(NA_real_)
-      else sum(x, na.rm = TRUE) * step_factor / length(x)
-    }
-  })
+  urine_sum <- function(x) {
+    if (length(x) < min_steps) return(NA_real_)
+    else sum(x, na.rm = TRUE) * step_factor / length(x)
+  }
 
   res <- list(...)[[1L]]
 
@@ -294,6 +288,9 @@ urine24 <- function(..., min_win = hours(12L), interval = NULL) {
 
   assert_that(has_interval(res, interval), has_cols(res, "urine"),
               is_interval(min_win), min_win > interval, min_win <= hours(24L))
+
+  min_steps   <- ceiling(convert_dt(min_win) / as.double(interval))
+  step_factor <- convert_dt(hours(24L)) / as.double(interval)
 
   res <- fill_gaps(res)
 
