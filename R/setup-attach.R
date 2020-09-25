@@ -223,7 +223,7 @@ setup_src_env.src_cfg <- function(x, env, data_dir = src_data_dir(x), ...) {
 
     todo <- tables[missing]
 
-    if (interactive()) {
+    if (is_interactive()) {
 
       msg_ricu({
         cli_text("The following {qty(length(todo))} table{?s} {?is/are}

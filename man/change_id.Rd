@@ -59,8 +59,7 @@ destination ID columns as well as start and end columns corresponding to
 the destination ID, relative to the source ID system. In the following
 example, we request for \code{mimic_demo}, with ICU stay IDs as source and
 hospital admissions as destination IDs.\if{html}{\out{<div class="r">}}\preformatted{id_map_helper(mimic_demo, "icustay_id", "hadm_id")
-}\if{html}{\out{</div>}}\preformatted{## Cannot update read-only data source `mimic_demo`
-}\preformatted{## # An `id_tbl`: 136 ✖ 4
+}\if{html}{\out{</div>}}\preformatted{## # An `id_tbl`: 136 ✖ 4
 ## # Id var:      `icustay_id`
 ##     icustay_id hadm_id hadm_id_start hadm_id_end
 ##          <int>   <int> <drtn>        <drtn>     

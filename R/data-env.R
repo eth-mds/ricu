@@ -196,9 +196,10 @@ get_from_data_env <- function(source) {
 
   function(value) {
 
-    assert_that(missing(value),
-      msg = paste0("Cannot update read-only data source `", source, "`")
-    )
+    if (!missing(value)) {
+      warn_ricu("Cannot update read-only data source `{source}`.",
+                "assign_src_env")
+    }
 
     tryCatch(
       withCallingHandlers(as_src_env(source), warning = warn_fun),

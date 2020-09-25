@@ -1,4 +1,8 @@
 
+is_interactive <- function() {
+  !isTRUE(getOption('knitr.in.progress')) && interactive()
+}
+
 progress_init <- function(lenth = NULL, msg = "loading", ...) {
 
   cb_fun <- function(x) {
@@ -15,7 +19,7 @@ progress_init <- function(lenth = NULL, msg = "loading", ...) {
     cli::cli_rule()
   }
 
-  if (interactive() && is_pkg_available("progress") && lenth > 1L) {
+  if (is_interactive() && is_pkg_available("progress") && lenth > 1L) {
 
     res <- progress::progress_bar$new(
       format = ":what [:bar] :percent", total = lenth, callback = cb_fun, ...
@@ -173,17 +177,20 @@ prcnt <- function(x, tot = sum(x)) {
 
 assert_that <- function(..., env = parent.frame(), msg = NULL) {
 
-  if (not_null(msg)) {
-    msg <- cli_format( {{ msg }}, env)
-  }
-
-  res <- see_if(..., env = env, msg = msg)
+  res <- see_if(..., env = env)
 
   if (isTRUE(res)) {
     return(TRUE)
   }
 
-  msg <- attr(res, "msg")
+  msg <- rlang::enquo(msg)
+
+  if (rlang::quo_is_null(msg)) {
+    msg <- attr(res, "msg")
+  } else {
+    msg <- cli_format(!!msg, env)
+  }
+
   cls <- c(attr(msg, "assert_class"), "assertError", "ricu_err")
 
   rlang::abort(msg, class = cls)

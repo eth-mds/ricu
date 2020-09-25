@@ -44,12 +44,11 @@ reference:
   contents:
     - transform_fun
     - msg_progress
+    - pafi
     - sofa_score
     - sirs_score
-    - news_score
-    - mews_score
     - susp_inf
-    - sepsis_3
+    - sep3
 - subtitle: Query loading
   desc: >
     Tables can be queried directly by creating an R expression that evaluates

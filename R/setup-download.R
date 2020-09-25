@@ -290,7 +290,9 @@ get_cred <- function(x, env, msg) {
 
     if (is.na(x)) {
 
-      assert_that(interactive(), msg = "User input is required")
+      if (!is_interactive()) {
+        stop_ricu("User input is required")
+      }
 
       x <- readline(msg)
     }

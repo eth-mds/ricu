@@ -48,3 +48,4 @@ missing entries in the respective \code{col_groups} group}
 \description{
 Utilities for reshaping \code{id_tbl} and \code{ts_tbl} objects.
 }
+\keyword{internal}

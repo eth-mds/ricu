@@ -56,7 +56,6 @@
 
 .onAttach <- function(libname, pkgname) {
 
-
   out <- character(0L)
   con <- textConnection("out", "w", local = TRUE)
   on.exit(close(con))

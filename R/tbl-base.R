@@ -110,6 +110,7 @@ as.data.frame.id_tbl <- function(x, row.names = NULL, optional = FALSE, ...) {
 #' [data.table::data.table]
 #'
 #' @rdname tbl_reshape
+#' @keywords internal
 #'
 #' @export
 .cbind.id_tbl <- function(..., keep.rownames = FALSE, check.names = FALSE,

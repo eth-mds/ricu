@@ -59,8 +59,7 @@ A dataset that has been successfully made available can interavtively be
 expored by typing its name into the console and individual tables can be
 inspected using the \code{$} function. For example for the MIMIC-III demo
 dataset and the \code{icustays} table, this gives\if{html}{\out{<div class="r">}}\preformatted{mimic_demo
-}\if{html}{\out{</div>}}\preformatted{## Cannot update read-only data source `mimic_demo`
-}\preformatted{## <mimic_demo_env[25]>
+}\if{html}{\out{</div>}}\preformatted{## <mimic_demo_env[25]>
 ##           icustays     procedures_icd              d_cpt            d_items 
 ##         [136 ✖ 12]          [506 ✖ 5]          [134 ✖ 9]      [12,487 ✖ 10] 
 ##      diagnoses_icd     datetimeevents        chartevents         admissions 
@@ -76,8 +75,7 @@ dataset and the \code{icustays} table, this gives\if{html}{\out{<div class="r">}
 ##     inputevents_mv 
 ##      [13,224 ✖ 31]
 }\if{html}{\out{<div class="r">}}\preformatted{mimic_demo$icustays
-}\if{html}{\out{</div>}}\preformatted{## Cannot update read-only data source `mimic_demo`
-}\preformatted{## # <mimic_tbl>: [136 ✖ 12]
+}\if{html}{\out{</div>}}\preformatted{## # <mimic_tbl>: [136 ✖ 12]
 ## # ID options:  subject_id (patient) < hadm_id (hadm) < icustay_id (icustay)
 ## # Defaults:    intime (index), last_careunit (value)
 ## # Time vars:   intime, outtime
@@ -107,8 +105,7 @@ memory are represented as \code{\link[data.table:data.table]{data.table}} object
 Extending the above example, if only ICU stays corresponding to the patient
 with \code{subject_id == 10124} are of interest, the respective data can be
 loaded as\if{html}{\out{<div class="r">}}\preformatted{subset(mimic_demo$icustays, subject_id == 10124)
-}\if{html}{\out{</div>}}\preformatted{## Cannot update read-only data source `mimic_demo`
-}\preformatted{##    row_id subject_id hadm_id icustay_id dbsource first_careunit last_careunit
+}\if{html}{\out{</div>}}\preformatted{##    row_id subject_id hadm_id icustay_id dbsource first_careunit last_careunit
 ## 1:  12863      10124  182664     261764  carevue           MICU          MICU
 ## 2:  12864      10124  170883     222779  carevue           MICU          MICU
 ## 3:  12865      10124  170883     295043  carevue            CCU           CCU

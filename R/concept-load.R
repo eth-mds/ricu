@@ -210,19 +210,18 @@ load_concepts.concept <- function(x, src = NULL, aggregate = NULL,
 
   srcs <- unlst(src_name(x), recursive = TRUE)
 
-  assert_that(
-    all_fun(srcs, identical, srcs[1L]), msg = "
-    Only concept data from a single data source can be loaded a the time.
-    Please choose one of {unique(srcs)}"
-  )
+  if (!all_fun(srcs, identical, srcs[1L])) {
+    stop_ricu("Only concept data from a single data source can be loaded a the
+               time. Please choose one of {unique(srcs)}.", "multi_src_load")
+  }
 
   aggregate <- rep_arg(aggregate, names(x))
 
-  if (isTRUE(merge_data)) {
-    assert_that(
-      !any(lgl_ply(aggregate, isFALSE)), msg = "
+  if (isTRUE(merge_data) && any(lgl_ply(aggregate, isFALSE))) {
+    stop_ricu("
       Data aggregation cannot be disabled (i.e. passing an `aggregate` value
-      of `FALSE` for at least one concept) when data merging is enabled."
+      of `FALSE` for at least one concept) when data merging is enabled.",
+      "merge_no_agg"
     )
   }
 
