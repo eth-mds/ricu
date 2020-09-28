@@ -46,9 +46,6 @@ reference:
     - msg_progress
     - pafi
     - sofa_score
-    - sirs_score
-    - susp_inf
-    - sep3
 - subtitle: Query loading
   desc: >
     Tables can be queried directly by creating an R expression that evaluates
