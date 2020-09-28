@@ -6,12 +6,19 @@
 \alias{ricu-package}
 \title{ricu: Tools for working with publicly available intensive care unit (ICU) data sets}
 \description{
-What the package does (one paragraph).
+Focused on (but not exclusive to) data sets hosted on PhysioNet,
+    'ricu' provides utilities for download, setup and access of intensive care
+    unit (ICU) data sets. In addition to functions for running arbitrary
+    queries against available data sets, a system for defining clinical
+    concepts and encoding their representations in tabular ICU data is
+    presented.
 }
 \seealso{
 Useful links:
 \itemize{
   \item \url{https://github.com/septic-tank/ricu}
+  \item \url{https://physionet.org}
+  \item Report bugs at \url{https://github.com/septic-tank/ricu/issues}
 }
 
 }
