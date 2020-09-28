@@ -37,6 +37,8 @@ Imports:
     rlang,
     vctrs,
     cli,
+    glue,
+    fansi,
     utils
 Suggests:
     openssl,
@@ -50,7 +52,6 @@ Suggests:
     progress,
     knitr,
     rmarkdown,
-    fansi,
     ggplot2,
     rticles,
     survival,

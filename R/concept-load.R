@@ -290,8 +290,8 @@ rm_na_val_var <- function(x) {
   n_rm  <- n_row - nrow(x)
 
   if (n_rm > 0L) {
-    msg_progress("removed ", n_rm, " (", prcnt(n_rm, n_row), ") of rows ",
-                 "due to `NA` values")
+    msg_progress(
+      "removed {n_rm} ({prcnt(n_rm, n_row)}) of rows due to `NA` values")
   }
 
   x
@@ -340,12 +340,12 @@ load_concepts.num_cncpt <- function(x, aggregate = NULL, ...,
         return(NULL)
       }
 
-      msg_progress("not all units are in ", concat("[", unt, "]"), ": ",
-                   concat(nm[!ok], " (", pct[!ok], ")"))
+      msg_progress("not all units are in {concat('[', unt, ']')}:
+                    {concat(nm[!ok])} ({pct[!ok]})")
 
     } else if (length(nm) > 1L) {
 
-      msg_progress("multiple units detected: ", concat(nm, " (", pct, ")"))
+      msg_progress("multiple units detected: {concat(nm, ' (', pct, ')')}")
     }
   }
 
@@ -364,8 +364,8 @@ load_concepts.num_cncpt <- function(x, aggregate = NULL, ...,
 
     n_rm <- n_row - nrow(res)
 
-    msg_progress("removed ", n_rm, " (", prcnt(n_rm, n_row), ") of rows ",
-                 "due to out of range entries")
+    msg_progress("removed {n_rm} ({prcnt(n_rm, n_row)}) of rows due to out
+                  of range entries")
   }
 
   unit <- x[["unit"]]
@@ -408,8 +408,9 @@ load_concepts.fct_cncpt <- function(x, aggregate = NULL, ...,
 
     n_rm <- n_row - nrow(res)
 
-    msg_progress("  removed ", n_rm, " (", prcnt(n_rm, n_row), ") of rows ",
-                 "due to level mismatch")
+    msg_progress(
+      "removed {n_rm} ({prcnt(n_rm, n_row)}) of rows due to level mismatch"
+    )
   }
 
   res <- rm_cols(res, setdiff(data_vars(res), "val_var"), by_ref = TRUE)

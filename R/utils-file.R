@@ -210,11 +210,11 @@ ensure_dirs <- function(paths) {
   is_no_dir <- lgl_ply(is_dir, identical, FALSE)
 
   if (any(is_no_dir)) {
-    stop_ricu({
-      cli_text("The following {qty(sum(is_no_dir))} path{?s} {?exists/exist}
-                but not as director{?y/ies}:")
-      cli_ul(uq_paths[is_no_dir])
-    }, class = "path_exists_not_dir")
+    stop_ricu(
+      c("The following {qty(sum(is_no_dir))} path{?s} {?exists/exist} but not
+         as director{?y/ies}:", bullet(uq_paths[is_no_dir])),
+      class = "path_exists_not_dir", exdent = c(0L, rep(2L, sum(is_no_dir)))
+    )
   }
 
   dirs_to_create <- uq_paths[is.na(is_dir)]
@@ -224,11 +224,11 @@ ensure_dirs <- function(paths) {
     res <- lgl_ply(dirs_to_create, dir.create, recursive = TRUE)
 
     if (!all(res)) {
-      stop_ricu({
-        cli_text("The following {qty(sum(!res))} director{?y/ies} could not be
-                  created:")
-        cli_ul(dirs_to_create[!res])
-      }, class = "dir_create_fail")
+      stop_ricu(
+        c("The following {qty(sum(!res))} director{?y/ies} could not be
+           created:", bullet(dirs_to_create[!res])),
+        class = "dir_create_fail", exdent = c(0L, rep(2L, sum(!res)))
+      )
     }
   }
 

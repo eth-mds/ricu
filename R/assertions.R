@@ -69,11 +69,11 @@ in_failure <- function(call, env) {
        mean {sug[[1L]]} instead?", "are_in_assert"
      )
   } else {
-    format_assert({
-      cli_text("None of the following were found among the provided options.
-                Did you possibly mean:")
-      cli_ul(paste0(concat("'", sug, "'"), " instead of '", names(sug), "'"))
-    }, "are_in_assert")
+    format_assert(
+      c("None of the following were found among the provided options.
+         Did you possibly mean:",
+         bullet(concat("'", sug, "'"), " instead of '", names(sug), "'")),
+      "are_in_assert", exdent = c(0L, rep_along(2L, sug)))
   }
 }
 

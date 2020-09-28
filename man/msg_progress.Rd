@@ -4,10 +4,12 @@
 \alias{msg_progress}
 \title{Message signaling nested with progress reporting}
 \usage{
-msg_progress(...)
+msg_progress(..., envir = parent.frame())
 }
 \arguments{
 \item{...}{Passed to \code{\link[base:message]{base::.makeMessage()}}}
+
+\item{envir}{Passed to \code{\link[glue:glue]{glue::glue()}}.}
 }
 \description{
 In order to not interrupt progress reporting by a \link[progress:progress_bar]{progress::progress_bar},

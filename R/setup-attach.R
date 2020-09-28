@@ -119,11 +119,13 @@ attach_src.src_cfg <- function(x, assign_env = .GlobalEnv,
 
   }, error = function(err) {
 
-    warn_ricu({
-      cli_text("Failed to attach source `{src}` with error:")
-      cli_div(theme = list(body = list("margin-left" = 2)))
-      cli_verbatim(conditionMessage(err))
-    }, class = "src_attach_error")
+    msg <- conditionMessage(err)
+
+    warn_ricu(
+      c("Failed to attach source `{src}` with error:", msg),
+      class = "src_attach_error", indent = c(0L, rep_along(2L, msg)),
+      exdent = c(0L, rep_along(2L, msg))
+    )
 
     assign(src, NULL, envir = assign_env)
   })
@@ -138,11 +140,13 @@ attach_src.character <- function(x, assign_env = .GlobalEnv,
 
   read_err <- function(err) {
 
-    warn_ricu({
-      cli_text("Failed to read source configuration with error:")
-      cli_div(theme = list(body = list("margin-left" = 2)))
-      cli_verbatim(conditionMessage(err))
-    }, class = "src_cfg_read_error")
+    msg <- conditionMessage(err)
+
+    warn_ricu(
+      c("Failed to read source configuration with error:", msg),
+      class = "src_cfg_read_error", indent = c(0L, rep_along(2L, msg)),
+      exdent = c(0L, rep_along(2L, msg))
+    )
 
     NULL
   }
@@ -151,12 +155,14 @@ attach_src.character <- function(x, assign_env = .GlobalEnv,
 
     parse_err <- function(err) {
 
-      warn_ricu({
-        cli_text("Failed to parse source configuration for source `{src}`
-                  with error:")
-        cli_div(theme = list(body = list("margin-left" = 2)))
-        cli_verbatim(conditionMessage(err))
-      }, class = "src_cfg_parse_error")
+      msg <- conditionMessage(err)
+
+      warn_ricu(
+        c("Failed to parse source configuration for source `{src}` with
+           error:", msg),
+        class = "src_cfg_parse_error", indent = c(0L, rep_along(2L, msg)),
+        exdent = c(0L, rep_along(2L, msg))
+      )
 
 
       assign(src, NULL, envir = assign_env)
@@ -225,26 +231,27 @@ setup_src_env.src_cfg <- function(x, env, data_dir = src_data_dir(x), ...) {
 
     if (is_interactive()) {
 
-      msg_ricu({
-        cli_text("The following {qty(length(todo))} table{?s} {?is/are}
-                  missing from directory {data_dir}:")
-        cli_ul(quote_bt(todo))
-      }, "miss_tbl_msg", tbl_ok = setNames(!missing, tables))
+      msg_ricu(
+        c("The following {qty(length(todo))} table{?s} {?is/are} missing from
+           directory {data_dir}:", bullet(quote_bt(todo))), "miss_tbl_msg",
+        exdent = c(0L, rep_along(2L, todo)),
+        tbl_ok = setNames(!missing, tables)
+      )
 
       resp <- readline("Download now (Y/n)? ")
 
       if (!identical(resp, "Y")) {
         stop_ricu("Cannot continue with missing tables for `{src_name(x)}`",
-                  class = "tbl_dl_abort")
+                  "tbl_dl_abort")
       }
 
     } else {
 
-      stop_ricu({
-        cli_text("The following {qty(length(todo))} table{?s} {?is/are}
-                  missing from directory {data_dir}:")
-        cli_ul(quote_bt(todo))
-      }, class = "miss_tbl_err")
+      stop_ricu(
+        c("The following {qty(length(todo))} table{?s} {?is/are}
+           missing from directory {data_dir}:", bullet(quote_bt(todo))),
+        class = "miss_tbl_err", exdent = c(0L, rep_along(2L, todo))
+      )
     }
 
     tmp <- ensure_dirs(tempfile())
@@ -258,21 +265,21 @@ setup_src_env.src_cfg <- function(x, env, data_dir = src_data_dir(x), ...) {
     done <- lgl_ply(done, all)
 
     if (!all(done)) {
-      stop_ricu({
-        cli_text("The following {qty(sum(!done))} table{?s} could be moved to
-                  directory {data_dir}:")
-        cli_ul(quote_bt(todo[!done]))
-      }, class = "tbl_mv_err")
+      stop_ricu(
+        c("The following {qty(sum(!done))} table{?s} could be moved to
+           directory {data_dir}:", bullet(quote_bt(todo[!done]))),
+        class = "tbl_mv_err", exdent = c(0L, rep(2L, sum(!done)))
+      )
     }
 
     done <- lgl_ply(fst_paths, all_fun, file.exists)
 
     if (!all(done)) {
-      stop_ricu({
-        cli_text("The following {qty(sum(!done))} table{?s} were not
-                  successfully downloaded and imported:")
-        cli_ul(quote_bt(todo[!done]))
-      }, class = "tbl_mv_err")
+      stop_ricu(
+        c("The following {qty(sum(!done))} table{?s} were not successfully
+           downloaded and imported:", bullet(quote_bt(todo[!done]))),
+        class = "tbl_mv_err", exdent = c(0L, rep(2L, sum(!done)))
+      )
     }
   }
 
@@ -407,10 +414,13 @@ as_src_tbl.src_env <- function(x, tbl, ...) {
 
   if (is.null(res)) {
 
-    stop_ricu({
-      cli_text("Table `{tbl}` not found for `{src_name(x)}`. Available are:")
-      cli_ul(quote_bt(ls(envir = x)))
-    }, class = "src_tbl_not_found")
+    opts <- ls(envir = x)
+
+    stop_ricu(
+      c("Table `{tbl}` not found for `{src_name(x)}`. Available are:",
+        bullet(quote_bt(opts))),
+      class = "src_tbl_not_found", exdent = c(0L, rep_along(2L, opts))
+    )
   }
 
   res

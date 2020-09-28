@@ -372,10 +372,11 @@ download_check_data <- function(dest_folder, files, url, user, pass, src) {
     checks <- mapply(check_file_sha256, paths, chksums)
 
     if (!all(checks)) {
-      warn_ricu({
-        cli_text("Checksum mismatch for {qty(sum(!checks))} file{?s}:")
-        cli_ul(files[!checks])
-      }, class = "checksum_mismatch")
+      warn_ricu(
+        c("Checksum mismatch for {qty(sum(!checks))} file{?s}:",
+          bullet(files[!checks])),
+        class = "checksum_mismatch", exdent = c(0L, rep(2L, sum(!checks)))
+      )
     }
 
   } else {

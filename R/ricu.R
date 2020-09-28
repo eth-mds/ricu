@@ -7,7 +7,6 @@
 #' @importFrom stats setNames na.omit median sd var
 #' @importFrom utils str head tail
 #' @importFrom cli cat_line cat_rule cat_bullet symbol no qty
-#' @importFrom cli cli_text cli_verbatim cli_div cli_ul
 #' @importFrom rlang !!
 #' @import vctrs
 "_PACKAGE"

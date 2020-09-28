@@ -8,11 +8,10 @@ progress_init <- function(lenth = NULL, msg = "loading", ...) {
   cb_fun <- function(x) {
 
     for (out in combine_messages(x)) {
-      if (has_length(out$msgs)) {
-        cli::cli_alert_warning(out$head)
-        cli_ul(out$msgs)
-      } else if (has_length(out$head)) {
-        cli::cli_alert_success(out$head)
+      msg_ricu(bullet(out$head), "progress_header", exdent = 2L)
+      for (msg in out$msgs) {
+        msg_ricu(bullet(msg, level = 2L), "progress_body", indent = 2L,
+                 exdent = 4L)
       }
     }
 
@@ -45,7 +44,7 @@ progress_tick <- function(info = NULL, progress_bar = NULL, length = 1L) {
   if (is.null(progress_bar)) {
 
     if (not_null(info)) {
-      msg_ricu(paste(symbol$bullet, info))
+      msg_ricu(bullet(info), "progress_header", exdent = 2L)
     }
 
     return(invisible(NULL))
@@ -105,6 +104,7 @@ combine_messages <- function(x) {
 #' be used when signaling messages in callback functions.
 #'
 #' @param ... Passed to [base::.makeMessage()]
+#' @param envir Passed to [glue::glue()].
 #'
 #' @examples
 #' msg_progress("Foo", "bar")
@@ -116,9 +116,8 @@ combine_messages <- function(x) {
 #' tryCatch(msg_progress("Foo", "bar"), msg_progress = capt_fun)
 #'
 #' @export
-msg_progress <- function(...) {
-  msg <- .makeMessage(...)
-  msg_ricu(msg, "msg_progress")
+msg_progress <- function(..., envir = parent.frame()) {
+  msg_ricu(.makeMessage(...), "msg_progress", envir = envir)
 }
 
 create_progress_handler <- function(prog) {
@@ -131,7 +130,9 @@ create_progress_handler <- function(prog) {
 
     function(msg) {
 
-      cli_ul(conditionMessage(msg))
+      msg_ricu(bullet(conditionMessage(msg), level = 2L), "progress_body",
+               indent = 2L, exdent = 4L)
+
       invokeRestart("muffleMessage")
     }
 
@@ -175,6 +176,11 @@ prcnt <- function(x, tot = sum(x)) {
   paste0(round(x / tot * 100, digits = 2), "%")
 }
 
+bullet <- function(..., level = 1L) {
+  assert_that(is.count(level), level <= 3L)
+  paste0(switch(level, symbol$bullet, symbol$circle, "-"), " ", ...)
+}
+
 assert_that <- function(..., env = parent.frame(), msg = NULL) {
 
   res <- see_if(..., env = env)
@@ -183,12 +189,10 @@ assert_that <- function(..., env = parent.frame(), msg = NULL) {
     return(TRUE)
   }
 
-  msg <- rlang::enquo(msg)
-
-  if (rlang::quo_is_null(msg)) {
+  if (is.null(msg)) {
     msg <- attr(res, "msg")
   } else {
-    msg <- cli_format(!!msg, env)
+    msg <- fmt_msg(msg, envir = env)
   }
 
   cls <- c(attr(msg, "assert_class"), "assertError", "ricu_err")
@@ -196,41 +200,36 @@ assert_that <- function(..., env = parent.frame(), msg = NULL) {
   rlang::abort(msg, class = cls)
 }
 
-cli_format <- function(message, envir) {
+fmt_msg <- function(msg, envir = parent.frame(), indent = 0L, exdent = 0L) {
 
-  msg <- rlang::enquo(message)
+  msg <- chr_ply(msg, pluralize, .envir = envir)
+  msg <- map(fansi::strwrap2_ctl, msg, indent = indent, exdent = exdent,
+             MoreArgs = list(simplify = TRUE, wrap.always = TRUE))
 
-  if (rlang::quo_is_symbol(msg) || quo_is_syntactic_literal(msg)) {
-    msg <- cli::cli_format_method(cli_text(message, .envir = envir))
-  } else {
-    msg <- cli::cli_format_method(message)
-  }
-
-  paste(msg, collapse = "\n")
+  paste(do.call("c", msg), collapse = "\n")
 }
 
-quo_is_syntactic_literal <- function(x) {
-  rlang::is_quosure(x) && rlang::is_syntactic_literal(rlang::quo_get_expr(x))
-}
-
-msg_ricu <- function(message = NULL, class = NULL, envir = parent.frame(),
-                     ...) {
+msg_ricu <- function(message, class = NULL, envir = parent.frame(),
+                     indent = 0L, exdent = 0L, ...) {
   rlang::inform(
-    cli_format( {{ message }}, envir), class = c(class, "ricu_msg"), ...
+    fmt_msg(message, envir = envir, indent = indent, exdent = exdent),
+    class = c(class, "ricu_msg"), ...
   )
 }
 
-warn_ricu <- function(message = NULL, class = NULL, envir = parent.frame(),
-                     ...) {
+warn_ricu <- function(message, class = NULL, envir = parent.frame(),
+                     indent = 0L, exdent = 0L, ...) {
   rlang::warn(
-    cli_format( {{ message }}, envir), class = c(class, "ricu_warn"), ...
+    fmt_msg(message, envir = envir, indent = indent, exdent = exdent),
+    class = c(class, "ricu_warn"), ...
   )
 }
 
-stop_ricu <- function(message = NULL, class = NULL, envir = parent.frame(),
-                      ...) {
+stop_ricu <- function(message, class = NULL, envir = parent.frame(),
+                      indent = 0L, exdent = 0L, ...) {
   rlang::abort(
-    cli_format( {{ message }}, envir), class = c(class, "ricu_err"), ...
+    fmt_msg(message, envir = envir, indent = indent, exdent = exdent),
+    class = c(class, "ricu_err"), ...
   )
 }
 
@@ -275,9 +274,9 @@ warn_dot_ident <- function(x, ...)  {
   x
 }
 
-format_assert <- function(message, class, envir = parent.frame()) {
+format_assert <- function(message, class, envir = parent.frame(), ...) {
 
-  res <- cli_format( {{ message }}, envir)
+  res <- fmt_msg(message, envir = envir, ...)
   attr(res, "assert_class") <- class
 
   res
@@ -289,4 +288,98 @@ stop_generic <- function(x, fun) {
 
   stop_ricu("No applicable method for generic function `{fun}()` and
              class{?es} {quote_bt(class(x))}.", class = "generic_no_fun")
+}
+
+# the following functions are added until `cli` is next updated on CRAN
+# see https://github.com/r-lib/cli/pull/155
+
+pluralize <- function(..., .envir = parent.frame(),
+                      .transformer = glue::identity_transformer) {
+
+  values <- new.env(parent = emptyenv())
+  values$empty <- new_names(length = 7L)
+  values$qty <- values$empty
+  values$num_subst <- 0L
+  values$postprocess <- FALSE
+  values$pmarkers <- list()
+
+  tf <- function(text, envir) {
+    if (substr(text, 1, 1) == "?") {
+      if (identical(values$qty, values$empty)) {
+        values$postprocess <- TRUE
+        id <- new_names(length = 7L)
+        values$pmarkers[[id]] <- text
+        return(id)
+      } else {
+        return(process_plural(make_quantity(values$qty), text))
+      }
+
+    } else {
+      values$num_subst <- values$num_subst + 1
+      qty <- .transformer(text, envir)
+      values$qty <- qty
+      return(inline_collapse(qty))
+    }
+  }
+
+  raw <- glue::glue(..., .envir = .envir, .transformer = tf)
+  post_process_plurals(raw, values)
+}
+
+make_quantity <- function(object) {
+  val <- if (is.numeric(object)) {
+    stopifnot(length(object) == 1)
+    as.integer(object)
+  } else {
+    length(object)
+  }
+}
+
+process_plural <- function(qty, code) {
+  parts <- strsplit(str_tail(code), "/", fixed = TRUE)[[1]]
+  if (length(parts) == 1) {
+    if (qty != 1) parts[1] else ""
+  } else if (length(parts) == 2) {
+    if (qty == 1) parts[1] else parts[2]
+  } else if (length(parts) == 3) {
+    if (qty == 0) {
+      parts[1]
+    } else if (qty == 1) {
+      parts[2]
+    } else {
+      parts[3]
+    }
+  } else {
+    stop("Invalid pluralization directive: `", code, "`")
+  }
+}
+
+post_process_plurals <- function(str, values) {
+  if (!values$postprocess) return(str)
+  if (values$num_subst == 0) {
+    stop("Cannot pluralize without a quantity")
+  }
+  if (values$num_subst != 1) {
+    stop("Multiple quantities for pluralization")
+  }
+
+  qty <- make_quantity(values$qty)
+  for (i in seq_along(values$pmarkers)) {
+    mark <- values$pmarkers[i]
+    str <- sub(names(mark), process_plural(qty, mark[[1]]), str)
+  }
+
+  str
+}
+
+str_tail <- function(x) {
+  substr(x, 2, nchar(x))
+}
+
+inline_collapse <- function(x) {
+  if (length(x) >= 3) {
+    glue::glue_collapse(x, sep = ", ", last = ", and ")
+  } else {
+    glue::glue_collapse(x, sep = ", ", last = " and ")
+  }
 }

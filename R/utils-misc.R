@@ -298,3 +298,5 @@ rep_arg <- function(arg, names) {
 unlst <- function(x, recursive = FALSE, use_names = FALSE) {
   unlist(x, recursive = recursive, use.names = use_names)
 }
+
+rep_along <- function(x, times) rep(x, length(times))

@@ -25,8 +25,8 @@ force_type <- function(type) {
     new_na <- sum(is.na(res) & !is.na(x))
 
     if (new_na > 0L) {
-      msg_progress("  lost ", new_na, " (", prcnt(new_na, length(x)),
-                   ") entries due to coercion to ", type, ".")
+      msg_progress("lost {new_na} ({prcnt(new_na, length(x))}
+                    ) entries due to coercion to {type}.")
     }
 
     res
@@ -315,8 +315,8 @@ hirid_vaso <- function(x, val_var, unit_var, env, ...) {
   dif_row <- old_row - nrow(x)
 
   if (dif_row > 0) {
-    msg_progress("    lost ", dif_row, " (", prcnt(dif_row, old_row),
-                 ") entries due to unexpected units")
+    msg_progress("lost {dif_row} ({prcnt(dif_row, old_row)}) entries due to
+                  unexpected units")
   }
 
   sex <- load_id("general", env, cols = "sex", id_var = ids)
