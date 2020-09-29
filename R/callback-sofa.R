@@ -17,8 +17,6 @@
 #' @param interval Time series interval (only used for checking consistency
 #' of input data, `NULL` will use the interval of the first data object)
 #'
-#' @encoding UTF-8
-#'
 #' @details
 #' The function `sofa_window()` calculates, for each covariate, the worst
 #' value over a moving window as specified by `worst_win_length`, using the
@@ -57,7 +55,8 @@
 #' Failure Assessment) score to describe organ dysfunction/failure. Intensive
 #' Care Med 22, 707–710 (1996). https://doi.org/10.1007/BF01709751
 #'
-#' @rdname label_sofa
+#' @encoding UTF-8
+#' @rdname callback_sofa
 #' @export
 #'
 sofa_score <- function(..., interval = NULL) {
@@ -94,7 +93,8 @@ sofa_score <- function(..., interval = NULL) {
 #' iterate over these explicit time points
 #' @param worst_win_length Time-frame to look back and apply the `*_win_fun`s
 #'
-#' @rdname label_sofa
+#' @encoding UTF-8
+#' @rdname callback_sofa
 #' @export
 #'
 sofa_window <- function(tbl,
@@ -166,7 +166,8 @@ sofa_window <- function(tbl,
 #' @param by_ref Logical flag indicating whether to perform the operation by
 #' reference
 #'
-#' @rdname label_sofa
+#' @encoding UTF-8
+#' @rdname callback_sofa
 #' @export
 #'
 sofa_compute <- function(tbl, na_val = 0L, na_val_resp = na_val,

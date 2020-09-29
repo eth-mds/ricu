@@ -79,7 +79,7 @@
 #' results, procedures, medications, caregiver notes, imaging reports, and
 #' mortality (both in and out of hospital). For further information, please
 #' refer to the [MIMIC-III documentation
-#' ](https://mimic.physionet.org/about/mimic).
+#' ](https://mimic.physionet.org/about/mimic/).
 #'
 #' The corresponding
 #' [demo dataset](https://physionet.org/content/mimiciii-demo/)
@@ -98,7 +98,7 @@
 #' including vital sign measurements, care plan documentation, severity of
 #' illness measures, diagnosis information, and treatment information. For
 #' further information, please refer to the [eICU documentation
-#' ](https://eicu-crd.mit.edu/about/eicu).
+#' ](https://eicu-crd.mit.edu/about/eicu/).
 #'
 #' For the [demo subset](https://physionet.org/content/eicu-crd-demo/2.0/),
 #' data associated with ICU stays for over 2,500 unit stays selected from 20
@@ -155,27 +155,33 @@
 #' failure in the intensive care unit using machine learning. Nat Med 26,
 #' 364–373 (2020). https://doi.org/10.1038/s41591-020-0789-4
 #'
+#' @encoding UTF-8
 #' @rdname data_env
 #' @export
 data <- new.env()
 
 #' @name mimic
+#' @encoding UTF-8
 #' @rdname data_env
 NULL
 
 #' @name mimic_demo
+#' @encoding UTF-8
 #' @rdname data_env
 NULL
 
 #' @name eicu
+#' @encoding UTF-8
 #' @rdname data_env
 NULL
 
 #' @name eicu_demo
+#' @encoding UTF-8
 #' @rdname data_env
 NULL
 
 #' @name hirid
+#' @encoding UTF-8
 #' @rdname data_env
 NULL
 

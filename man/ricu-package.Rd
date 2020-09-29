@@ -4,7 +4,7 @@
 \name{ricu-package}
 \alias{ricu}
 \alias{ricu-package}
-\title{ricu: Tools for working with publicly available intensive care unit (ICU) data sets}
+\title{ricu: Intensive Care Unit Data with R}
 \description{
 Focused on (but not exclusive to) data sets hosted on PhysioNet,
     'ricu' provides utilities for download, setup and access of intensive care

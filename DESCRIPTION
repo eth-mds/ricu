@@ -1,5 +1,5 @@
 Package: ricu
-Title: Tools for working with publicly available intensive care unit (ICU) data sets
+Title: Intensive Care Unit Data with R
 Description: Focused on (but not exclusive to) data sets hosted on PhysioNet,
     'ricu' provides utilities for download, setup and access of intensive care
     unit (ICU) data sets. In addition to functions for running arbitrary

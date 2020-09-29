@@ -111,6 +111,7 @@ capture_data <- function(concepts, interval, ...) {
 #' @param interval Expected time series step size (determined from data if
 #' `NULL`)
 #'
+#' @encoding UTF-8
 #' @rdname callback_cncpt
 #' @export
 #'
@@ -178,6 +179,7 @@ pafi <- function(..., match_win = hours(2L),
 #' @param min_length Minimal time span between a ventilation start and end
 #' time
 #'
+#' @encoding UTF-8
 #' @rdname callback_cncpt
 #' @export
 #'
@@ -240,6 +242,7 @@ vent <- function(..., match_win = hours(6L), min_length = mins(10L),
 #' sedated if intubated or has less or equal to -2 on the Richmond
 #' Agitation-Sedation Scale.
 #'
+#' @encoding UTF-8
 #' @rdname callback_cncpt
 #' @export
 #'
@@ -274,6 +277,7 @@ sed <- function(..., interval = NULL) {
 #' @param set_na_max Logical flag controlling imputation of missing GCS values
 #' with the respective maximum values
 #'
+#' @encoding UTF-8
 #' @rdname callback_cncpt
 #' @export
 #'
@@ -332,6 +336,7 @@ gcs <- function(..., valid_win = hours(6L), set_sed_max = TRUE,
 #' beyond first and last measurements
 #' @param start_var,end_var Passed to [fill_gaps()]
 #'
+#' @encoding UTF-8
 #' @rdname callback_cncpt
 #' @export
 #'
