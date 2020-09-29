@@ -111,7 +111,7 @@ corresponding to hospital IDs, times are relative to hospital admission.
 When \code{load_id()} (or \code{load_ts()}) is called on \code{\link[=new_itm]{itm}} objects
 instead of \code{\link[=new_src_tbl]{src_tbl}} (or objects that can be coerced to
 \code{src_tbl}), The row-subsetting is performed according the the specification
-as provided by the \code{itm} object. Furhtermore, at default settings, columns
+as provided by the \code{itm} object. Furthermore, at default settings, columns
 are returned as required by the \code{itm} object and \code{id_var} (as well as
 \code{index_var}) are set accordingly if specified by the \code{itm} or set to
 default values for the given \code{src_tbl} object if not explicitly specified.

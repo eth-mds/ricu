@@ -12,8 +12,8 @@
 \format{
 The exported \code{data} environment contains all datasets that have been made
 available to \code{ricu}. For datasets that are attached during package loading
-(see \code{\link[=attach_src]{attach_src()}}), shortcuts to the datsets are set up in the package
-namespace, alowing the object \verb{ricu::data::mimic_demo} to be accessed as
+(see \code{\link[=attach_src]{attach_src()}}), shortcuts to the datasets are set up in the package
+namespace, allowing the object \verb{ricu::data::mimic_demo} to be accessed as
 \code{ricu::mimic_demo} (or in case the package namespace has been attached,
 simply as \code{mimic_demo}). Datasets that are made available after the package
 namespace has been sealed will have their proxy object by default located
@@ -55,8 +55,8 @@ format) and attaching sets up the data for use by the package. For more
 information on the individual steps, refer to the respective documentation
 pages.
 
-A dataset that has been successfully made available can interavtively be
-expored by typing its name into the console and individual tables can be
+A dataset that has been successfully made available can interactively be
+explored by typing its name into the console and individual tables can be
 inspected using the \code{$} function. For example for the MIMIC-III demo
 dataset and the \code{icustays} table, this gives\if{html}{\out{<div class="r">}}\preformatted{mimic_demo
 }\if{html}{\out{</div>}}\preformatted{## <mimic_demo_env[25]>
@@ -148,7 +148,7 @@ reports on patients.
 More recently, Philips Healthcare and LCP began assembling the \href{https://physionet.org/content/eicu-crd/2.0/}{eICU Collaborative Research Database } as a multi-center resource
 for ICU data. Combining data of several critical care units throughout the
 continental United States from the years 2014 and 2015, this database
-contains deidentified health data associated with over 200,000 admissions,
+contains de-identified health data associated with over 200,000 admissions,
 including vital sign measurements, care plan documentation, severity of
 illness measures, diagnosis information, and treatment information. For
 further information, please refer to the \href{https://eicu-crd.mit.edu/about/eicu}{eICU documentation }.

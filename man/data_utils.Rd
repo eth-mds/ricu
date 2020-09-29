@@ -75,7 +75,7 @@ with the data loading function \code{id_win_helper()}. The function
 \code{id_map_helper()} is then implemented in a data source agnostic manner
 (dispatching on the \code{src_env} class), providing subsetting of this larger
 ID map table and ensuring timestamps are relative to the correct ID system.
-FOr adding a new data source however, this layer can be forgone. Similarly
+For adding a new data source however, this layer can be forgone. Similarly
 for \code{id_origin()}, this is used for the internal datasets in
 \code{\link[=load_difftime]{load_difftime()}}. An implementation of \code{\link[=load_difftime]{load_difftime()}}, specific to a
 new data source can be provided that does not rely on \code{id_windows()},

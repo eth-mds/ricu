@@ -14,7 +14,7 @@
 #' Attaching a dataset sets up two types of S3 classes: a single `src_env`
 #' object, containing as many `src_tbl` objects as tables are associated with
 #' the dataset. A `src_env` is an environment with an `id_cfg` attribute, as
-#' well as sub-calsses as specified by the data source `class_prefix`
+#' well as sub-classes as specified by the data source `class_prefix`
 #' configuration setting (see [load_src_cfg()]). All `src_env` objects created
 #' by calling `attach_src()` represent environments that are direct
 #' descendants of the `data` environment and are bound to the respective
@@ -48,7 +48,7 @@
 #'
 #' will change the default of loading both MIMIC-III and eICU, alongside the
 #' respective demo datasets, and HiRID, to just the two demo datasets. For
-#' setting an enviroment variable upon startup of the R session, refer to
+#' setting an environment variable upon startup of the R session, refer to
 #' [base::.First.sys()].
 #'
 #' The `src_env` promise for each data source is created using the S3 generic

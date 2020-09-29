@@ -257,7 +257,7 @@ load_eicu <- function(x, rows, cols, id_hint, time_vars) {
 #' When `load_id()` (or `load_ts()`) is called on [`itm`][new_itm()] objects
 #' instead of [`src_tbl`][new_src_tbl()] (or objects that can be coerced to
 #' `src_tbl`), The row-subsetting is performed according the the specification
-#' as provided by the `itm` object. Furhtermore, at default settings, columns
+#' as provided by the `itm` object. Furthermore, at default settings, columns
 #' are returned as required by the `itm` object and `id_var` (as well as
 #' `index_var`) are set accordingly if specified by the `itm` or set to
 #' default values for the given `src_tbl` object if not explicitly specified.

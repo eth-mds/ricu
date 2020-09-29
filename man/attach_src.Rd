@@ -68,7 +68,7 @@ the package.
 Attaching a dataset sets up two types of S3 classes: a single \code{src_env}
 object, containing as many \code{src_tbl} objects as tables are associated with
 the dataset. A \code{src_env} is an environment with an \code{id_cfg} attribute, as
-well as sub-calsses as specified by the data source \code{class_prefix}
+well as sub-classes as specified by the data source \code{class_prefix}
 configuration setting (see \code{\link[=load_src_cfg]{load_src_cfg()}}). All \code{src_env} objects created
 by calling \code{attach_src()} represent environments that are direct
 descendants of the \code{data} environment and are bound to the respective
@@ -99,7 +99,7 @@ names before loading the library. Setting this environment variable as\preformat
 
 will change the default of loading both MIMIC-III and eICU, alongside the
 respective demo datasets, and HiRID, to just the two demo datasets. For
-setting an enviroment variable upon startup of the R session, refer to
+setting an environment variable upon startup of the R session, refer to
 \code{\link[base:Startup]{base::.First.sys()}}.
 
 The \code{src_env} promise for each data source is created using the S3 generic

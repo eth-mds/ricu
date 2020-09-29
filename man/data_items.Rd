@@ -75,7 +75,7 @@ available for the given table}
 Item objects are used in \code{ricu} as a way to specify how individual data
 items corresponding to clinical concepts (see also \code{\link[=concept]{concept()}}), such as
 heart rate can be loaded from a data source. Several functions are
-available for constructing \code{item} (and related auxillary) objects either
+available for constructing \code{item} (and related auxiliary) objects either
 from code or by parsing a JSON formatted concept dictionary using
 \code{\link[=load_dictionary]{load_dictionary()}}.
 }
@@ -116,7 +116,7 @@ example for insulin in \code{eicu}, where the regular expression \verb{^insulin 
 of \code{infusiondrug}. The regular expression is evaluated by \code{\link[base:grep]{base::grepl()}}
 with \code{ignore.case = TRUE}.
 \item \code{fun_itm}: Intended for the scenario where data of interest is not
-directly available from a table, this \code{itm} class offers most flexbility.
+directly available from a table, this \code{itm} class offers most flexibility.
 A function can be specified as \code{callback} and this function will be called
 with arguments \code{x} (the object itself), \code{patient_ids}, \code{id_type} and
 \code{interval} (see \code{\link[=load_concepts]{load_concepts()}}) and is expected to return an object as
@@ -129,7 +129,7 @@ units fixed per concept.
 All \code{itm} objects have to specify a data source (\code{src}) as well as a
 sub-class. Further arguments then are specific to the respective sub-class
 and encode information that define data loading, such as the table to
-query, the column name and values to use for idenfifying relevant rows,
+query, the column name and values to use for identifying relevant rows,
 etc. The S3 generic function \code{init_itm()} is responsible for input
 validation of class-specific arguments as well as class initialization. A
 list of \code{itm} objects, created by calls to \code{new_itm()} can be passed to

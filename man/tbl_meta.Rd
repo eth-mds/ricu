@@ -92,7 +92,7 @@ column is one of (potentially) several time variables.
 valued \code{\link[base:difftime]{difftime}} object.
 \item \code{time_unit()}: The time unit of the time series interval, represented by
 a string such as "hours" or "mins" (see \code{\link[base:difftime]{difftime}}).
-\item \code{time_step()}: The time series step size represented by a nuemric value
+\item \code{time_step()}: The time series step size represented by a numeric value
 in the unit as returned by \code{time_unit()}.
 }
 }

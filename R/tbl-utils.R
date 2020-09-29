@@ -47,7 +47,7 @@
 #'   valued [`difftime`][base::difftime()] object.
 #' * `time_unit()`: The time unit of the time series interval, represented by
 #'   a string such as "hours" or "mins" (see [`difftime`][base::difftime()]).
-#' * `time_step()`: The time series step size represented by a nuemric value
+#' * `time_step()`: The time series step size represented by a numeric value
 #'   in the unit as returned by `time_unit()`.
 #'
 #' @param x Object to query

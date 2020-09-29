@@ -4,7 +4,7 @@
 #' Item objects are used in `ricu` as a way to specify how individual data
 #' items corresponding to clinical concepts (see also [concept()]), such as
 #' heart rate can be loaded from a data source. Several functions are
-#' available for constructing `item` (and related auxillary) objects either
+#' available for constructing `item` (and related auxiliary) objects either
 #' from code or by parsing a JSON formatted concept dictionary using
 #' [load_dictionary()].
 #'
@@ -46,7 +46,7 @@
 #'   of `infusiondrug`. The regular expression is evaluated by [base::grepl()]
 #'   with `ignore.case = TRUE`.
 #' * `fun_itm`: Intended for the scenario where data of interest is not
-#'   directly available from a table, this `itm` class offers most flexbility.
+#'   directly available from a table, this `itm` class offers most flexibility.
 #'   A function can be specified as `callback` and this function will be called
 #'   with arguments `x` (the object itself), `patient_ids`, `id_type` and
 #'   `interval` (see [load_concepts()]) and is expected to return an object as
@@ -58,7 +58,7 @@
 #' All `itm` objects have to specify a data source (`src`) as well as a
 #' sub-class. Further arguments then are specific to the respective sub-class
 #' and encode information that define data loading, such as the table to
-#' query, the column name and values to use for idenfifying relevant rows,
+#' query, the column name and values to use for identifying relevant rows,
 #' etc. The S3 generic function `init_itm()` is responsible for input
 #' validation of class-specific arguments as well as class initialization. A
 #' list of `itm` objects, created by calls to `new_itm()` can be passed to
@@ -681,8 +681,8 @@ get_target.default <- function(x) stop_generic(x, .Generic)
 #'
 #' Concept objects are used in `ricu` as a way to specify how a clinical
 #' concept, such as heart rate can be loaded from a data source and are mainly
-#' consumed by [load_concepts()]. Several functions are avialable for
-#' constructing `concept` (and related auxillary) objects either from code or
+#' consumed by [load_concepts()]. Several functions are available for
+#' constructing `concept` (and related auxiliary) objects either from code or
 #' by parsing a JSON formatted concept dictionary using [load_dictionary()].
 #'
 #' @details
@@ -728,7 +728,7 @@ get_target.default <- function(x) stop_generic(x, .Generic)
 #'   specified which is used in data loading for concept-specific post-
 #'   processing steps.
 #'
-#' Class instatiation is organized in the same fashion as for
+#' Class instantiation is organized in the same fashion as for
 #' [`item`][new_itm()] objects: `concept()` maps vector-valued arguments
 #' to `new_cncpt()`, which internally calls the S3 generic function
 #' `init_cncpt()`, while `new_concept()` instantiates a `concept` object from

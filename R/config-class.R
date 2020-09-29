@@ -7,9 +7,9 @@
 #' important columns such as index columns when loading data and how different
 #' patient identifiers used throughout a dataset relate to another. Per
 #' dataset, a `src_cfg` object is created from a JSON file (see
-#' [load_src_cfg()]), consisnting of several helper-classes compartmentalizing
+#' [load_src_cfg()]), consisting of several helper-classes compartmentalizing
 #' the pieces of information outlined above. Alongside constructors for the
-#' various classes, several utiltites, such as inheritance checks, coercion
+#' various classes, several utilities, such as inheritance checks, coercion
 #' functions, as well as functions to extract pieces of information from these
 #' objects are provided.
 #'
@@ -348,7 +348,7 @@ new_tbl_cfg <- function(table, src, files = NULL, cols = NULL, num_rows = NULL,
 #' name which determines the column name that will be used by `ricu`. The
 #' `spec` entry is expected to be the name of a column specification function
 #' of the `readr` package (see [readr::cols()]) and all further entries in a
-#' `cols` object are used as arugments to the `readr` column specification.
+#' `cols` object are used as arguments to the `readr` column specification.
 #' For the `admissions` table of MIMIC-III the columns `hadm_id` and
 #' `admittime` are represented by:
 #'
@@ -405,8 +405,8 @@ new_tbl_cfg <- function(table, src, files = NULL, cols = NULL, num_rows = NULL,
 #' how [load_difftime()] uses theses sub-classes to smoothen out different
 #' time-stamp representations. Furthermore, such a design was chosen with
 #' extensibility in mind. Currently, [download_src()] is designed around data
-#' sources hosted on Physionet, but in order to include a dataset external to
-#' Phsionet, the `download_src()` generic can simply be extended for the new
+#' sources hosted on PhysioNet, but in order to include a dataset external to
+#' PhysioNet, the `download_src()` generic can simply be extended for the new
 #' class.
 #'
 #' @param src (Optional) name(s) of data sources used for subsetting

@@ -124,7 +124,7 @@ Column specifications consist of a \code{name} and a \code{spec} entry alongside
 name which determines the column name that will be used by \code{ricu}. The
 \code{spec} entry is expected to be the name of a column specification function
 of the \code{readr} package (see \code{\link[readr:cols]{readr::cols()}}) and all further entries in a
-\code{cols} object are used as arugments to the \code{readr} column specification.
+\code{cols} object are used as arguments to the \code{readr} column specification.
 For the \code{admissions} table of MIMIC-III the columns \code{hadm_id} and
 \code{admittime} are represented by:\preformatted{\{
   ...,
@@ -176,8 +176,8 @@ function to specifics of the different data sources. An example for this is
 how \code{\link[=load_difftime]{load_difftime()}} uses theses sub-classes to smoothen out different
 time-stamp representations. Furthermore, such a design was chosen with
 extensibility in mind. Currently, \code{\link[=download_src]{download_src()}} is designed around data
-sources hosted on Physionet, but in order to include a dataset external to
-Phsionet, the \code{download_src()} generic can simply be extended for the new
+sources hosted on PhysioNet, but in order to include a dataset external to
+PhysioNet, the \code{download_src()} generic can simply be extended for the new
 class.
 }
 \examples{

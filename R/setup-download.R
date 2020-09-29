@@ -23,11 +23,11 @@
 #' fact publicly available. For setting up an account, please refer to [the
 #' registration form](https://physionet.org/register/).
 #'
-#' Physionet credentials can either be entered in an interactive session,
+#' PhysioNet credentials can either be entered in an interactive session,
 #' passed as function arguments `user`/`pass` or as environment
 #' variables `RICU_PHYSIONET_USER`/`RICU_PHYSIONET_PASS`. For setting
 #' environment variables on session startup, refer to [base::.First.sys()] and
-#' for setting environment varaibles in general, refer to [base::Sys.setenv()]
+#' for setting environment variables in general, refer to [base::Sys.setenv()]
 #' If the openssl package is available, SHA256 hashes of downloaded files are
 #' verified using [openssl::sha256()].
 #'
@@ -84,7 +84,7 @@ download_src <- function(x, ...) UseMethod("download_src", x)
 #' @param tables Character vector specifying the tables to download. If
 #' `NULL`, all available tables are downloaded.
 #' @param force Logical flag; if `TRUE`, existing data will be re-downloaded
-#' @param user,pass Physionet credentials; if `NULL` and environment
+#' @param user,pass PhysioNet credentials; if `NULL` and environment
 #' variables `RICU_PHYSIONET_USER`/`RICU_PHYSIONET_PASS` are not set, user
 #' input is required
 #'

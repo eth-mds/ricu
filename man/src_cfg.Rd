@@ -128,9 +128,9 @@ specifications used for data set importing, default values per table for
 important columns such as index columns when loading data and how different
 patient identifiers used throughout a dataset relate to another. Per
 dataset, a \code{src_cfg} object is created from a JSON file (see
-\code{\link[=load_src_cfg]{load_src_cfg()}}), consisnting of several helper-classes compartmentalizing
+\code{\link[=load_src_cfg]{load_src_cfg()}}), consisting of several helper-classes compartmentalizing
 the pieces of information outlined above. Alongside constructors for the
-various classes, several utiltites, such as inheritance checks, coercion
+various classes, several utilities, such as inheritance checks, coercion
 functions, as well as functions to extract pieces of information from these
 objects are provided.
 }

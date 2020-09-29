@@ -29,7 +29,7 @@ download_src(x, ...)
 
 \item{force}{Logical flag; if \code{TRUE}, existing data will be re-downloaded}
 
-\item{user, pass}{Physionet credentials; if \code{NULL} and environment
+\item{user, pass}{PhysioNet credentials; if \code{NULL} and environment
 variables \code{RICU_PHYSIONET_USER}/\code{RICU_PHYSIONET_PASS} are not set, user
 input is required}
 }
@@ -55,11 +55,11 @@ dataset for both MIMIC-III and eICU are available without having to log in.
 Even though access to full dataset is credentialed, the datasets are in
 fact publicly available. For setting up an account, please refer to \href{https://physionet.org/register/}{the registration form}.
 
-Physionet credentials can either be entered in an interactive session,
+PhysioNet credentials can either be entered in an interactive session,
 passed as function arguments \code{user}/\code{pass} or as environment
 variables \code{RICU_PHYSIONET_USER}/\code{RICU_PHYSIONET_PASS}. For setting
 environment variables on session startup, refer to \code{\link[base:Startup]{base::.First.sys()}} and
-for setting environment varaibles in general, refer to \code{\link[base:Sys.setenv]{base::Sys.setenv()}}
+for setting environment variables in general, refer to \code{\link[base:Sys.setenv]{base::Sys.setenv()}}
 If the openssl package is available, SHA256 hashes of downloaded files are
 verified using \code{\link[openssl:hash]{openssl::sha256()}}.
 

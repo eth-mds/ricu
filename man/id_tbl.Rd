@@ -51,7 +51,7 @@ information can be identified.
 \details{
 The two classes are designed for two often encountered data scenarios:
 \itemize{
-\item \code{id_tbl} objects can be used to represent static (with repspect to
+\item \code{id_tbl} objects can be used to represent static (with respect to
 relevant time scales) patient data such as patient age and such an object
 is simply a \code{data.table} combined with a non-zero length character vector
 valued attribute marking the columns tracking patient ID information

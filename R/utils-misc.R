@@ -25,9 +25,9 @@ agg_or_na <- function(agg_fun) {
 #' `c(FALSE TRUE)`. Passing `NA` as `val` might lead to unintended results but
 #' no warning is thrown.
 #'
-#' Finally, `first_elem()` and `last_elem()` hase the same semantics as
+#' Finally, `first_elem()` and `last_elem()` has the same semantics as
 #' [utils::head()] and [utils::tail()] with `n = 1L` and `replace_na()` will
-#' replace all ocurrences of `NA` in `x` with `val.`
+#' replace all occurrences of `NA` in `x` with `val.`
 #'
 #' @param x Object to use
 #' @param val Value to compare against

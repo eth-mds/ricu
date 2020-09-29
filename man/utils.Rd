@@ -46,9 +46,9 @@ returning \code{c(NA, TRUE)} for \code{c(NA, 5) == 5}, \code{is_val()} will retu
 \verb{c(FALSE TRUE)}. Passing \code{NA} as \code{val} might lead to unintended results but
 no warning is thrown.
 
-Finally, \code{first_elem()} and \code{last_elem()} hase the same semantics as
+Finally, \code{first_elem()} and \code{last_elem()} has the same semantics as
 \code{\link[utils:head]{utils::head()}} and \code{\link[utils:head]{utils::tail()}} with \code{n = 1L} and \code{replace_na()} will
-replace all ocurrences of \code{NA} in \code{x} with \code{val.}
+replace all occurrences of \code{NA} in \code{x} with \code{val.}
 }
 \examples{
 some_na <- c(NA, sample(1:10, 5), NA)

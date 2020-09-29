@@ -2,7 +2,7 @@
 #' Time series utility functions
 #'
 #' ICU data as handled by `ricu` is mostly comprised of time series data and as
-#' such, several utilitiy functions are availabel for working with time series
+#' such, several utility functions are available for working with time series
 #' data in addition to a class dedicated to representing time series data (see
 #' [ts_tbl()]). Some terminology to begin with: a time series is considered
 #' to have gaps if, per (combination of) ID variable value(s), some time steps

@@ -22,7 +22,7 @@
 #' `id_map_helper()` is then implemented in a data source agnostic manner
 #' (dispatching on the `src_env` class), providing subsetting of this larger
 #' ID map table and ensuring timestamps are relative to the correct ID system.
-#' FOr adding a new data source however, this layer can be forgone. Similarly
+#' For adding a new data source however, this layer can be forgone. Similarly
 #' for `id_origin()`, this is used for the internal datasets in
 #' [load_difftime()]. An implementation of [load_difftime()], specific to a
 #' new data source can be provided that does not rely on `id_windows()`,
@@ -359,7 +359,7 @@ stay_windows <- function(x, id_type = "icustay", win_type = id_type,
 #' admission IDs. Even if the raw data is available in only one such ID
 #' system, given a mapping of IDs alongside start and end times, it is
 #' possible to convert data from one ID system to another. The function
-#' `change_id()` provides such a conversion utiltity, internally either
+#' `change_id()` provides such a conversion utility, internally either
 #' calling `upgrade_id()` when moving to an ID system with higher cardinality
 #' and `downgrade_id()` when the target ID system is of lower cardinality
 #'

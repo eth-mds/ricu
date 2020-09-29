@@ -84,8 +84,8 @@ interval passed as argument to \code{\link[=load_concepts]{load_concepts()}} is 
 \description{
 Concept objects are used in \code{ricu} as a way to specify how a clinical
 concept, such as heart rate can be loaded from a data source and are mainly
-consumed by \code{\link[=load_concepts]{load_concepts()}}. Several functions are avialable for
-constructing \code{concept} (and related auxillary) objects either from code or
+consumed by \code{\link[=load_concepts]{load_concepts()}}. Several functions are available for
+constructing \code{concept} (and related auxiliary) objects either from code or
 by parsing a JSON formatted concept dictionary using \code{\link[=load_dictionary]{load_dictionary()}}.
 }
 \details{
@@ -133,7 +133,7 @@ specified which is used in data loading for concept-specific post-
 processing steps.
 }
 
-Class instatiation is organized in the same fashion as for
+Class instantiation is organized in the same fashion as for
 \code{\link[=new_itm]{item}} objects: \code{concept()} maps vector-valued arguments
 to \code{new_cncpt()}, which internally calls the S3 generic function
 \code{init_cncpt()}, while \code{new_concept()} instantiates a \code{concept} object from

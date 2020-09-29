@@ -2,10 +2,10 @@
 #' Read and write utilities
 #'
 #' Support for reading from and writing to pipe separated values (`.psv`)
-#' files as used for the Physionet Sepsis Challenge.
+#' files as used for the PhysioNet Sepsis Challenge.
 #'
 #' @details
-#' Data for the Physionet Sepsis Challenge is distributed as pipe separated
+#' Data for the PhysioNet Sepsis Challenge is distributed as pipe separated
 #' values (`.psv`) files, split into separate files per patient ID, containing
 #' time stamped rows with measured variables as columns. Files are named with
 #' patient IDs and do not contain any patient identifiers as data. Functions

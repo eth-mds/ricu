@@ -44,7 +44,7 @@ multiple ID systems such as patient IDs, hospital stay IDs and ICU
 admission IDs. Even if the raw data is available in only one such ID
 system, given a mapping of IDs alongside start and end times, it is
 possible to convert data from one ID system to another. The function
-\code{change_id()} provides such a conversion utiltity, internally either
+\code{change_id()} provides such a conversion utility, internally either
 calling \code{upgrade_id()} when moving to an ID system with higher cardinality
 and \code{downgrade_id()} when the target ID system is of lower cardinality
 }
