@@ -77,6 +77,31 @@ capture_data <- function(concepts, interval, ...) {
 #' to be called on corresponding data objects and perform post-processing
 #' steps.
 #'
+#' @details
+#' Several concept callback functions are exported, mainly for documenting
+#' their arguments, as default values oftentimes represent somewhat arbitrary
+#' choices and passing non-default values might be of interest for
+#' investigating stability with respect to such choices. Furthermore, default
+#' values might not be ideal for some datasets and/or analysis tasks.
+#'
+#' ## `pafi`
+#' In order to calculate the PaO₂/FiO₂ (or Horowitz index), for a given time
+#' point, both a PaO₂ and a FiO₂ measurement is required. As the two are often
+#' not measured at the same time, some form of imputation or matching
+#' procedure is required. Several options are available:
+#'
+#' * `match_vals` allows for a time difference of maximally `match_win`
+#'   between two measurements for calculating their ratio
+#' * `extreme_vals` uses the worst PaO₂ and a FiO₂ values within the time
+#'   window spanned by `match_win`
+#' * `fill_gaps` represents a variation of `extreme_vals`, where ratios are
+#'   evaluated at every time-point as specified by `interval`as opposed to
+#'   only the time points where either a PaO₂ or a FiO₂ measurement is
+#'   available
+#'
+#' Finally, `fix_na_fio2` imputes all remaining missing FiO₂ with 21, the
+#' percentage (by volume) of oxygen in (tropospheric) air.
+#'
 #' @param ... Data input used for concept calculation
 #' @param match_win Time-span during which matching of PaO₂ and FiO₂
 #' values is allowed
@@ -139,6 +164,15 @@ pafi <- function(..., match_win = hours(2L),
   res
 }
 
+#' ## `vent`
+#' Building on the atomic concepts `vent_start` and `vent_end`, an binary
+#' indicator for ventilation status is constructed by combining start and end
+#' events that are separated by at most `match_win` and at least `min_length`.
+#' Time-points (as determined by `interval`) that fall into such ventilation
+#' windows are set to `TRUE`, while missingness (`NA`) or `FALSE` indicate no
+#' mechanical ventilation. Currently, no clear distinction between invasive
+#' an non-invasive ventilation is made.
+#'
 #' @param match_win Default ventilation window if no stop time can be
 #' matched to a start time
 #' @param min_length Minimal time span between a ventilation start and end
@@ -200,6 +234,12 @@ vent <- function(..., match_win = hours(6L), min_length = mins(10L),
   res
 }
 
+#' ## `sed`
+#' In order to construct an indicator for patient sedation, information from
+#' the two concepts `trach` and `rass` is pooled: A patient is considered
+#' sedated if intubated or has less or equal to -2 on the Richmond
+#' Agitation-Sedation Scale.
+#'
 #' @rdname callback_cncpt
 #' @export
 #'
@@ -217,6 +257,17 @@ sed <- function(..., interval = NULL) {
   res
 }
 
+#' ## `gcs`
+#' Aggregating components of the Glasgow Coma Scale into a total score
+#' (whenever the total score `tgcs` is not already available) requires
+#' coinciding availability of an eye (`egcs`), verbal (`vgcs`) and motor
+#' (`mgcs`) score. In order to match values, a last observation carry forward
+#' imputation scheme over the time span specified by `valid_win` is performed.
+#' Furthermore passing `TRUE` as `set_sed_max` will assume maximal points for
+#' time steps where the patient is sedated (as indicated by `sed`) and passing
+#' `TRUE` as `set_na_max` will assume maximal points for missing values (after
+#' matching and potentially applying `set_sed_max`).
+#'
 #' @param valid_win Maximal time window for which a GCS value is valid
 #' if no newer measurement is available
 #' @param set_sed_max Logical flag for considering sedation
@@ -266,12 +317,26 @@ gcs <- function(..., valid_win = hours(6L), set_sed_max = TRUE,
   res
 }
 
+#' ## `urine24`
+#' Single urine output events are aggregated into a 24 hour moving window sum.
+#' At default value of `limits = NULL`, moving window evaluation begins with
+#' the first and ends with the last available measurement. This can however be
+#' extended by passing an `id_tbl` object, such as for example returned by
+#' [stay_windows()] to full stay windows. In order to provide data earlier
+#' than 24 hours before the evaluation start point, `min_win` specifies the
+#' minimally required data window and the evaluation scheme is adjusted for
+#' shorter than 24 hour windows.
+#'
 #' @param min_win Minimal time span required for calculation of urine/24h
+#' @param limits Passed to [fill_gaps()] in order to expand the time series
+#' beyond first and last measurements
+#' @param start_var,end_var Passed to [fill_gaps()]
 #'
 #' @rdname callback_cncpt
 #' @export
 #'
-urine24 <- function(..., min_win = hours(12L), interval = NULL) {
+urine24 <- function(..., min_win = hours(12L), limits = NULL,
+                    start_var = "start", end_var = "end", interval = NULL) {
 
   convert_dt <- function(x) as.double(x, units(interval))
 
@@ -292,50 +357,14 @@ urine24 <- function(..., min_win = hours(12L), interval = NULL) {
   min_steps   <- ceiling(convert_dt(min_win) / as.double(interval))
   step_factor <- convert_dt(hours(24L)) / as.double(interval)
 
-  res <- fill_gaps(res)
+  if (is.null(limits)) {
+    limits <- collapse(res)
+  }
+
+  res <- fill_gaps(res, limits = limits)
 
   expr <- substitute(list(urine24 = win_agg_fun(urine)),
                      list(win_agg_fun = urine_sum))
 
   slide(res, !!expr, hours(24L))
 }
-
-#' @rdname callback_cncpt
-#' @export
-supp_o2 <- function(..., interval = NULL) {
-
-  cnc <- c("vent", "fio2")
-  res <- capture_data(cnc, interval, ...)
-
-  res <- reduce(merge, res, all = TRUE)
-
-  res <- res[, c("supp_o2", "vent", "fio2") := list(
-    get("vent") | get("fio2") > 21, NULL, NULL
-  )]
-
-  res
-}
-
-map_vals <- function(pts, vals) {
-  function(x) pts[findInterval(x, vals, left.open = TRUE) + 1]
-}
-
-#' @rdname callback_cncpt
-#' @export
-avpu <- function(..., interval = NULL) {
-
-  avpu_map <- map_vals(c(NA, "U", "P", "V", "A", NA), c(2, 3, 9, 13, 15))
-
-  res <- copy(list(...)[[1L]])
-
-  if (is.null(interval)) {
-    interval <- interval(res)
-  }
-
-  assert_that(has_interval(res, interval), has_cols(res, "gcs"))
-
-  res <- res[, c("avpu", "gcs") := list(avpu_map(get("gcs")), NULL)]
-
-  res
-}
-

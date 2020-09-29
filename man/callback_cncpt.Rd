@@ -6,8 +6,6 @@
 \alias{sed}
 \alias{gcs}
 \alias{urine24}
-\alias{supp_o2}
-\alias{avpu}
 \title{Concept callback functions}
 \usage{
 pafi(
@@ -30,11 +28,14 @@ gcs(
   interval = NULL
 )
 
-urine24(..., min_win = hours(12L), interval = NULL)
-
-supp_o2(..., interval = NULL)
-
-avpu(..., interval = NULL)
+urine24(
+  ...,
+  min_win = hours(12L),
+  limits = NULL,
+  start_var = "start",
+  end_var = "end",
+  interval = NULL
+)
 }
 \arguments{
 \item{...}{Data input used for concept calculation}
@@ -62,10 +63,42 @@ if no newer measurement is available}
 with the respective maximum values}
 
 \item{min_win}{Minimal time span required for calculation of urine/24h}
+
+\item{limits}{Passed to \code{\link[=fill_gaps]{fill_gaps()}} in order to expand the time series
+beyond first and last measurements}
+
+\item{start_var, end_var}{Passed to \code{\link[=fill_gaps]{fill_gaps()}}}
 }
 \description{
 Owing to increased complexity and more diverse applications, recursive
 concepts (class \code{\link[=new_cncpt]{rec_cncpt}}) may specify callback functions
 to be called on corresponding data objects and perform post-processing
 steps.
+}
+\details{
+Several concept callback functions are exported, mainly for documenting
+their arguments, as default values oftentimes represent somewhat arbitrary
+choices and passing non-default values might be of interest for
+investigating stability with respect to such choices. Furthermore, default
+values might not be ideal for some datasets and/or analysis tasks.
+\subsection{\code{pafi}}{
+
+In order to calculate the PaO₂/FiO₂ (or Horowitz index), for a given time
+point, both a PaO₂ and a FiO₂ measurement is required. As the two are often
+not measured at the same time, some form of imputation or matching
+procedure is required. Several options are available:
+\itemize{
+\item \code{match_vals} allows for a time difference of maximally \code{match_win}
+between two measurements for calculating their ratio
+\item \code{extreme_vals} uses the worst PaO₂ and a FiO₂ values within the time
+window spanned by \code{match_win}
+\item \code{fill_gaps} represents a variation of \code{extreme_vals}, where ratios are
+evaluated at every time-point as specified by \code{interval}as opposed to
+only the time points where either a PaO₂ or a FiO₂ measurement is
+available
+}
+
+Finally, \code{fix_na_fio2} imputes all remaining missing FiO₂ with 21, the
+percentage (by volume) of oxygen in (tropospheric) air.
+}
 }

@@ -71,10 +71,28 @@ reference}
 }
 \description{
 The SOFA (Sequential Organ Failure Assessment) score is a commonly used
-assessment tool used to track a patient's well-being in an ICU.
+assessment tool for tracking a patient's status during a stay at an ICU.
+Organ function is quantified by aggregating 6 individual scores,
+representing respiratory, cardiovascular, hepatic, coagulation, renal and
+neurological systems. The function \code{sofa_score()} is used as callback
+function to the \code{sofa} concept but is exported as there are a few arguments
+that can used to modify some aspects of the presented SOFA implementation.
+Internally, \code{sofa_score()} calls first \code{sofa_window()}, followed by
+\code{sofa_compute()} and arguments passed as \code{...} will be forwarded to the
+respective internally called function.
 }
 \details{
-The SOFA score (Vincent et. al.) is evaluated as follows:\tabular{lllll}{
+The function \code{sofa_window()} calculates, for each covariate, the worst
+value over a moving window as specified by \code{worst_win_length}, using the
+respective function passed as \verb{*_win_fun} (e.g. \code{pafi_win_fun} for the
+\code{pafi} component. The default functions \code{min_or_na()} and \code{max_or_na()}
+return \code{NA} instead of \code{-Inf/Inf} in the case where no measurement is
+available over an entire window.
+
+Using data imputed by \code{sofa_window()}, the function \code{sofa_compute()}
+performs the actual score calculation. First, for each time step and
+component, measurements are converted to a component score using the
+definition by Vincent et. al.:\tabular{lllll}{
    \strong{SOFA score} \tab 1 \tab 2 \tab 3 \tab 4 \cr
    \strong{Respiration} PaO₂/FiO₂ [mmHg] \tab < 400 \tab < 300 \tab < 200 (with mech. vent.) \tab < 100 (with mech. vent.) \cr
    \strong{Coagulation} Platelets [⨉10³/mm³] \tab < 150 \tab < 100 \tab < 50 \tab < 20 \cr
@@ -89,23 +107,12 @@ The SOFA score (Vincent et. al.) is evaluated as follows:\tabular{lllll}{
 ⋅ min]; dopa: dopamine, dobu: dobutamine, epi: epinephrine, norepi:
 norepinephrine)
 
-For each component, the worst value over a window of length
-\code{worst_win_length} (default \code{hours(24L)}) is taken.
-
-The respiratory component of the SOFA score requires the evaluation of the
-PaO₂/FiO₂ ratio. Often, however, both measures are not available at the
-same time point. Therefore, PaO₂ and FiO₂ measurements are matched within a
-window of size \code{pafi_win_length} (default \code{hours(2L)}).
-
-The renal component of the SOFA score assigns scores of 3 and 4 in case of
-a very low urine output. Since the information on urine output is not very
-reliable at the start of the ICU stay, we do not evaluate urine outputs
-before a time window of \code{urine_min_win} (default \code{hours(12L)}).
-
-Mechanical ventilation is also part of the SOFA score. In some datasets,
-ventilation start events are given, which cannot be matched to ventilation
-end events specifically. In these cases, the duration of the ventilation
-window is taken to be \code{vent_win_length} (default \code{hours(6L)}).
+In case, for a given time step and component, no measurement is available,
+the corresponding \verb{na_val_*} value is used (e.g. \code{na_val_resp} for the
+respiratory component). At default, this is 0 (the lowest possible score
+for a SOFA component). It is possible to retain missingness by passing \code{NA}
+as \verb{na_val_*} value and using a function passed as \code{impute_fun()} in order
+to perform an additional imputation step.
 }
 \references{
 Vincent, J.-L., Moreno, R., Takala, J. et al. The SOFA (Sepsis-related Organ
