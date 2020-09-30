@@ -1062,8 +1062,10 @@ n_tick.concept <- function(x) sum(int_ply(x, n_tick))
 #' @rdname concept_dictionary
 #'
 #' @examples
+#' if (require(mimic.demo)) {
 #' head(load_dictionary("mimic_demo"))
 #' load_dictionary("mimic_demo", c("glu", "lact"))
+#' }
 #'
 #' @export
 load_dictionary <- function(src = NULL, concepts = NULL,

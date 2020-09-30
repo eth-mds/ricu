@@ -1,4 +1,6 @@
 
+skip_on_cran()
+
 test_that("load concepts", {
 
   gluc <- concept("gluc",

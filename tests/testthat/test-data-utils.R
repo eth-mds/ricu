@@ -1,4 +1,6 @@
 
+skip_on_cran()
+
 test_that("id up/downgrades", {
 
   tbl  <- as_src_tbl("labevents", "mimic_demo")

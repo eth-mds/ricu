@@ -83,7 +83,9 @@ dictionary by specifying a character vector of data sources and/or concept
 names.
 }
 \examples{
+if (require(mimic.demo)) {
 head(load_dictionary("mimic_demo"))
 load_dictionary("mimic_demo", c("glu", "lact"))
+}
 
 }
