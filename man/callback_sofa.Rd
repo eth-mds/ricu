@@ -95,22 +95,37 @@ component, measurements are converted to a component score using the
 definition by Vincent et. al.:\tabular{lllll}{
    \strong{SOFA score} \tab 1 \tab 2 \tab 3 \tab 4 \cr
    \strong{Respiration} \tab  \tab  \tab  \tab  \cr
-   PaO\ifelse{latex}{\out{\textsubscript{2}}}{\ifelse{html}{\out{<sub>2</sub>}}{2}}/FiO\ifelse{latex}{\out{\textsubscript{2}}}{\ifelse{html}{\out{<sub>2</sub>}}{2}} [mmHg] \tab < 400 \tab < 300 \tab < 200 \tab < 100 \cr
+   PaO\ifelse{latex}{\out{\textsubscript{2}}}{\ifelse{html
+  }{\out{<sub>2</sub>}}{2}}/FiO\ifelse{latex
+  }{\out{\textsubscript{2}}}{\ifelse{html
+  }{\out{<sub>2</sub>}}{2}} [mmHg] \tab < 400 \tab < 300 \tab < 200 \tab < 100 \cr
    and mechanical ventilation \tab  \tab  \tab yes \tab yes \cr
    \strong{Coagulation} \tab  \tab  \tab  \tab  \cr
-   Platelets [\ifelse{latex}{\out{$\times$}}{\ifelse{html}{\out{&times;}}{x}}10\ifelse{latex}{\out{\textsuperscript{3}}}{\ifelse{html}{\out{<sup>3</sup>}}{3}}/mm\ifelse{latex}{\out{\textsuperscript{3}}}{\ifelse{html}{\out{<sup>3</sup>}}{3}}] \tab < 150 \tab < 100 \tab < 50 \tab < 20 \cr
+   Platelets [\ifelse{latex}{\out{$\times$}}{\ifelse{html
+  }{\out{&times;}}{x}}10\ifelse{latex}{\out{\textsuperscript{3}}}{\ifelse{
+  html}{\out{<sup>3</sup>}}{3}}/mm\ifelse{latex
+  }{\out{\textsuperscript{3}}}{\ifelse{html
+  }{\out{<sup>3</sup>}}{3}}] \tab < 150 \tab < 100 \tab < 50 \tab < 20 \cr
    \strong{Liver} \tab  \tab  \tab  \tab  \cr
-   Bilirubin [mg/dl] ([\ifelse{latex}{\out{$\mu$}}{\ifelse{html}{\out{&mu;}}{u}}mol/\ifelse{latex}{\out{$\mu$}}{\ifelse{html}{\out{&mu;}}{u}}l]) \tab 1.2-1.9 (20-32) \tab 2.0-5.9 (33-101) \tab 6.0-11.9 (102-204) \tab > 12.0 (> 204) \cr
-   \strong{Cardiovascular}\ifelse{latex}{\out{\textsuperscript{a}}}{\ifelse{html}{\out{<sup>a</sup>}}{a}} \tab  \tab  \tab  \tab  \cr
+   Bilirubin [mg/dl] ([\ifelse{latex}{\out{$\mu$}}{\ifelse{html
+  }{\out{&mu;}}{u}}mol/\ifelse{latex}{\out{$\mu$}}{\ifelse{html
+  }{\out{&mu;}}{u}}l]) \tab 1.2-1.9 (20-32) \tab 2.0-5.9 (33-101) \tab 6.0-11.9 (102-204) \tab > 12.0 (> 204) \cr
+   \strong{Cardiovascular}\ifelse{latex}{\out{\textsuperscript{a}}}{\ifelse{html
+  }{\out{<sup>a</sup>}}{a}} \tab  \tab  \tab  \tab  \cr
    MAP \tab < 70 mmHg \tab  \tab  \tab  \cr
-   or dopamine \tab  \tab \ifelse{latex}{\out{$\le$}}{\ifelse{html}{\out{&leq;}}{<=}} 5 \tab > 5 \tab > 15 \cr
+   or dopamine \tab  \tab \ifelse{latex}{\out{$\le$}}{\ifelse{html
+  }{\out{&leq;}}{<=}}                           5 \tab > 5 \tab > 15 \cr
    or dobutamine \tab  \tab any dose \tab  \tab  \cr
-   or epinephrine \tab  \tab  \tab \ifelse{latex}{\out{$\le$}}{\ifelse{html}{\out{&leq;}}{<=}} 0.1 \tab > 0.1 \cr
-   or norepinephrine \tab  \tab  \tab \ifelse{latex}{\out{$\le$}}{\ifelse{html}{\out{&leq;}}{<=}} 0.1 \tab > 0.1 \cr
+   or epinephrine \tab  \tab  \tab \ifelse{latex}{\out{$\le$}}{\ifelse{html
+  }{\out{&leq;}}{<=}}                                    0.1 \tab > 0.1 \cr
+   or norepinephrine \tab  \tab  \tab \ifelse{latex}{\out{$\le$}}{\ifelse{html
+  }{\out{&leq;}}{<=}}                                    0.1 \tab > 0.1 \cr
    \strong{Central nervous system} \tab  \tab  \tab  \tab  \cr
    Glasgow Coma Score \tab 13-14 \tab 10-12 \tab 6-9 \tab < 6 \cr
    \strong{Renal} \tab  \tab  \tab  \tab  \cr
-   Creatinine [mg/dl] ([\ifelse{latex}{\out{$\mu$}}{\ifelse{html}{\out{&mu;}}{u}}mol/\ifelse{latex}{\out{$\mu$}}{\ifelse{html}{\out{&mu;}}{u}}l]) \tab 1.2-1.9 (110-170) \tab 2.0-3.4 (171-299) \tab 3.5-4.9 (300-440) \tab > 5.0 (< 440) \cr
+   Creatinine [mg/dl] ([\ifelse{latex}{\out{$\mu$}}{\ifelse{html
+  }{\out{&mu;}}{u}}mol/\ifelse{latex}{\out{$\mu$}}{\ifelse{html
+  }{\out{&mu;}}{u}}l]) \tab 1.2-1.9 (110-170) \tab 2.0-3.4 (171-299) \tab 3.5-4.9 (300-440) \tab > 5.0 (< 440) \cr
    or urine output [ml/day] \tab  \tab  \tab < 500 \tab < 200 \cr
 }
 

@@ -43,13 +43,14 @@ urine24(
 
 \item{match_win}{Time-span during which matching of values is allowed}
 
-\item{mode}{Method for matching PaO\ifelse{latex}{\out{\textsubscript{2}}}{
-\ifelse{html}{\out{<sub>2</sub>}}{2}} and FiO\ifelse{latex
-}{\out{\textsubscript{2}}}{\ifelse{html}{\out{<sub>2</sub>}}{2}} values}
+\item{mode}{Method for matching PaO\ifelse{latex
+}{\out{\textsubscript{2}}}{\ifelse{html}{\out{<sub>2</sub>}}{2}} and
+FiO\ifelse{latex}{\out{\textsubscript{2}}}{\ifelse{html
+}{\out{<sub>2</sub>}}{2}} values}
 
 \item{fix_na_fio2}{Logical flag indicating whether to impute missing
-FiO\ifelse{latex}{\out{\textsubscript{2}}}{\ifelse{html}{
-\out{<sub>2</sub>}}{2}} values with 21}
+FiO\ifelse{latex}{\out{\textsubscript{2}}}{\ifelse{html
+}{\out{<sub>2</sub>}}{2}} values with 21}
 
 \item{interval}{Expected time series step size (determined from data if
 \code{NULL})}
@@ -86,28 +87,29 @@ investigating stability with respect to such choices. Furthermore, default
 values might not be ideal for some datasets and/or analysis tasks.
 \subsection{\code{pafi}}{
 
-In order to calculate the PaO\ifelse{latex}{\out{\textsubscript{2}}}{
-\ifelse{html}{\out{<sub>2</sub>}}{2}}/FiO\ifelse{
+In order to calculate the PaO\ifelse{latex
+}{\out{\textsubscript{2}}}{\ifelse{html}{\out{<sub>2</sub>}}{2}}/FiO\ifelse{
 latex}{\out{\textsubscript{2}}}{\ifelse{html}{\out{<sub>2</sub>}}{2}} (or
 Horowitz index), for a given time point, both a PaO\ifelse{
 latex}{\out{\textsubscript{2}}}{\ifelse{html}{\out{<sub>2</sub>}}{2}} and a
-FiO\ifelse{latex}{\out{\textsubscript{2}}}{\ifelse{html}{
-\out{<sub>2</sub>}}{2}} measurement is required. As the two are often
+FiO\ifelse{latex}{\out{\textsubscript{2}}}{\ifelse{html
+}{\out{<sub>2</sub>}}{2}} measurement is required. As the two are often
 not measured at the same time, some form of imputation or matching
 procedure is required. Several options are available:
 \itemize{
 \item \code{match_vals} allows for a time difference of maximally \code{match_win}
 between two measurements for calculating their ratio
-\item \code{extreme_vals} uses the worst PaO\ifelse{latex}{\out{\textsubscript{2}}}{
-  \ifelse{html}{\out{<sub>2</sub>}}{2}} and a FiO\ifelse{latex
-  }{\out{\textsubscript{2}}}{\ifelse{html}{\out{<sub>2</sub>}}{2}}
-values within the time window spanned by \code{match_win}
+\item \code{extreme_vals} uses the worst PaO\ifelse{latex
+  }{\out{\textsubscript{2}}}{\ifelse{html}{\out{<sub>2</sub>}}{2}} and a
+FiO\ifelse{latex}{\out{\textsubscript{2}}}{\ifelse{html
+  }{\out{<sub>2</sub>}}{2}} values within the time window spanned by
+\code{match_win}
 \item \code{fill_gaps} represents a variation of \code{extreme_vals}, where ratios are
 evaluated at every time-point as specified by \code{interval}as opposed to
 only the time points where either a PaO\ifelse{latex
   }{\out{\textsubscript{2}}}{\ifelse{html}{\out{<sub>2</sub>}}{2}} or a
-FiO\ifelse{latex}{\out{\textsubscript{2}}}{\ifelse{html}{
-  \out{<sub>2</sub>}}{2}} measurement is available
+FiO\ifelse{latex}{\out{\textsubscript{2}}}{\ifelse{html
+  }{\out{<sub>2</sub>}}{2}} measurement is available
 }
 
 Finally, \code{fix_na_fio2} imputes all remaining missing FiO\ifelse{latex
