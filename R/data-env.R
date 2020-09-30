@@ -161,27 +161,22 @@
 data <- new.env()
 
 #' @name mimic
-#' @encoding UTF-8
 #' @rdname data_env
 NULL
 
 #' @name mimic_demo
-#' @encoding UTF-8
 #' @rdname data_env
 NULL
 
 #' @name eicu
-#' @encoding UTF-8
 #' @rdname data_env
 NULL
 
 #' @name eicu_demo
-#' @encoding UTF-8
 #' @rdname data_env
 NULL
 
 #' @name hirid
-#' @encoding UTF-8
 #' @rdname data_env
 NULL
 

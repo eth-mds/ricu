@@ -61,7 +61,6 @@ Suggests:
     knitr,
     rmarkdown,
     ggplot2
-Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.1.1
 Additional_repositories: https://septic-tank.github.io/physionet-demo
 VignetteBuilder: knitr

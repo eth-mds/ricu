@@ -11,17 +11,17 @@ sofa_score(..., interval = NULL)
 
 sofa_window(
   tbl,
-  pafi_win_fun = min_or_na,
-  plt_win_fun = min_or_na,
-  bili_win_fun = max_or_na,
-  map_win_fun = min_or_na,
-  dopa_win_fun = max_or_na,
-  norepi_win_fun = max_or_na,
-  dobu_win_fun = max_or_na,
-  epi_win_fun = max_or_na,
-  gcs_win_fun = min_or_na,
-  crea_win_fun = max_or_na,
-  urine_win_fun = min_or_na,
+  pafi_wf = min_or_na,
+  plt_wf = min_or_na,
+  bili_wf = max_or_na,
+  map_wf = min_or_na,
+  dopa_wf = max_or_na,
+  norepi_wf = max_or_na,
+  dobu_wf = max_or_na,
+  epi_wf = max_or_na,
+  gcs_wf = min_or_na,
+  crea_wf = max_or_na,
+  urine_wf = min_or_na,
   explicit_wins = FALSE,
   worst_win_length = hours(24L)
 )
@@ -29,12 +29,12 @@ sofa_window(
 sofa_compute(
   tbl,
   na_val = 0L,
-  na_val_resp = na_val,
-  na_val_plt = na_val,
-  na_val_liver = na_val,
-  na_val_cardio = na_val,
-  na_val_cns = na_val,
-  na_val_renal = na_val,
+  na_resp = na_val,
+  na_plt = na_val,
+  na_liver = na_val,
+  na_cardio = na_val,
+  na_cns = na_val,
+  na_renal = na_val,
   impute_fun = NULL,
   keep_components = FALSE,
   by_ref = TRUE
@@ -49,17 +49,17 @@ of input data, \code{NULL} will use the interval of the first data object)}
 
 \item{tbl}{Table holding SOFA covariates}
 
-\item{pafi_win_fun, plt_win_fun, bili_win_fun, map_win_fun, dopa_win_fun, norepi_win_fun, dobu_win_fun, epi_win_fun, gcs_win_fun, crea_win_fun, urine_win_fun}{functions used to calculate worst values over windows}
+\item{pafi_wf, plt_wf, bili_wf, map_wf, dopa_wf, norepi_wf, dobu_wf, epi_wf, gcs_wf, crea_wf, urine_wf}{functions used to calculate worst values over windows}
 
 \item{explicit_wins}{The default \code{FALSE} iterates over all time steps,
 \code{TRUE} uses only the last time step per patient and a vector of times will
 iterate over these explicit time points}
 
-\item{worst_win_length}{Time-frame to look back and apply the \verb{*_win_fun}s}
+\item{worst_win_length}{Time-frame to look back and apply the \verb{*_wf}s}
 
 \item{na_val}{Value to use for missing data}
 
-\item{na_val_resp, na_val_plt, na_val_liver, na_val_cardio, na_val_cns, na_val_renal}{Feature-specific values to use in case of missing data; default is \code{na_val}}
+\item{na_resp, na_plt, na_liver, na_cardio, na_cns, na_renal}{Feature-specific values to use in case of missing data; default is \code{na_val}}
 
 \item{impute_fun}{Function used to impute missing data; default is NULL}
 
@@ -84,7 +84,7 @@ respective internally called function.
 \details{
 The function \code{sofa_window()} calculates, for each covariate, the worst
 value over a moving window as specified by \code{worst_win_length}, using the
-respective function passed as \verb{*_win_fun} (e.g. \code{pafi_win_fun} for the
+respective function passed as \verb{*_wf} (e.g. \code{pafi_wf} for the
 \code{pafi} component. The default functions \code{min_or_na()} and \code{max_or_na()}
 return \code{NA} instead of \code{-Inf/Inf} in the case where no measurement is
 available over an entire window.
@@ -94,24 +94,37 @@ performs the actual score calculation. First, for each time step and
 component, measurements are converted to a component score using the
 definition by Vincent et. al.:\tabular{lllll}{
    \strong{SOFA score} \tab 1 \tab 2 \tab 3 \tab 4 \cr
-   \strong{Respiration} PaO₂/FiO₂ [mmHg] \tab < 400 \tab < 300 \tab < 200 (with mech. vent.) \tab < 100 (with mech. vent.) \cr
-   \strong{Coagulation} Platelets [⨉10³/mm³] \tab < 150 \tab < 100 \tab < 50 \tab < 20 \cr
-   \strong{Liver} Bilirubin [mg/dl] ([μmol/μl]) \tab 1.2-1.9 (20-32) \tab 2.0-5.9 (33-101) \tab 6.0-11.9 (102-204) \tab > 12.0 (> 204) \cr
-   \strong{Cardiovascular} Hypotension \tab MAP < 70 mmHg \tab Dopa ≤ 5 or dobu (any dose)ª \tab Dopa > 5 or epi ≤ 0.1 or norepi ≤ 0.1 \tab Dopa > 15 or epi > 0.1 or norepi > 0.1 \cr
-   \strong{Central nervous system} Glasgow Coma Score \tab 13-14 \tab 10-12 \tab 6-9 \tab < 6 \cr
-   \strong{Renal} Creatinine [mg/dl] ([μmol/μl]) or urine output [ml/day] \tab 1.2-1.9 (110-170) \tab 2.0-3.4 (171-299) \tab 3.5-4.9 (300-440) < 500 \tab > 5.0 (< 440) < 200 \cr
+   \strong{Respiration} \tab  \tab  \tab  \tab  \cr
+   PaO\ifelse{latex}{\out{\textsubscript{2}}}{\ifelse{html}{\out{<sub>2</sub>}}{2}}/FiO\ifelse{latex}{\out{\textsubscript{2}}}{\ifelse{html}{\out{<sub>2</sub>}}{2}} [mmHg] \tab < 400 \tab < 300 \tab < 200 \tab < 100 \cr
+   and mechanical ventilation \tab  \tab  \tab yes \tab yes \cr
+   \strong{Coagulation} \tab  \tab  \tab  \tab  \cr
+   Platelets [\ifelse{latex}{\out{$\times$}}{\ifelse{html}{\out{&times;}}{x}}10\ifelse{latex}{\out{\textsuperscript{3}}}{\ifelse{html}{\out{<sup>3</sup>}}{3}}/mm\ifelse{latex}{\out{\textsuperscript{3}}}{\ifelse{html}{\out{<sup>3</sup>}}{3}}] \tab < 150 \tab < 100 \tab < 50 \tab < 20 \cr
+   \strong{Liver} \tab  \tab  \tab  \tab  \cr
+   Bilirubin [mg/dl] ([\ifelse{latex}{\out{$\mu$}}{\ifelse{html}{\out{&mu;}}{u}}mol/\ifelse{latex}{\out{$\mu$}}{\ifelse{html}{\out{&mu;}}{u}}l]) \tab 1.2-1.9 (20-32) \tab 2.0-5.9 (33-101) \tab 6.0-11.9 (102-204) \tab > 12.0 (> 204) \cr
+   \strong{Cardiovascular}\ifelse{latex}{\out{\textsuperscript{a}}}{\ifelse{html}{\out{<sup>a</sup>}}{a}} \tab  \tab  \tab  \tab  \cr
+   MAP \tab < 70 mmHg \tab  \tab  \tab  \cr
+   or dopamine \tab  \tab \ifelse{latex}{\out{$\le$}}{\ifelse{html}{\out{&leq;}}{<=}} 5 \tab > 5 \tab > 15 \cr
+   or dobutamine \tab  \tab any dose \tab  \tab  \cr
+   or epinephrine \tab  \tab  \tab \ifelse{latex}{\out{$\le$}}{\ifelse{html}{\out{&leq;}}{<=}} 0.1 \tab > 0.1 \cr
+   or norepinephrine \tab  \tab  \tab \ifelse{latex}{\out{$\le$}}{\ifelse{html}{\out{&leq;}}{<=}} 0.1 \tab > 0.1 \cr
+   \strong{Central nervous system} \tab  \tab  \tab  \tab  \cr
+   Glasgow Coma Score \tab 13-14 \tab 10-12 \tab 6-9 \tab < 6 \cr
+   \strong{Renal} \tab  \tab  \tab  \tab  \cr
+   Creatinine [mg/dl] ([\ifelse{latex}{\out{$\mu$}}{\ifelse{html}{\out{&mu;}}{u}}mol/\ifelse{latex}{\out{$\mu$}}{\ifelse{html}{\out{&mu;}}{u}}l]) \tab 1.2-1.9 (110-170) \tab 2.0-3.4 (171-299) \tab 3.5-4.9 (300-440) \tab > 5.0 (< 440) \cr
+   or urine output [ml/day] \tab  \tab  \tab < 500 \tab < 200 \cr
 }
 
 
-ªAdrenergic agents administered for at least 1h (doses given are in [μg/kg
-⋅ min]; dopa: dopamine, dobu: dobutamine, epi: epinephrine, norepi:
-norepinephrine)
+\ifelse{latex}{\out{\textsuperscript{a}}}{\ifelse{html}{
+\out{<sup>a</sup>}}{a}}Adrenergic agents administered for at least 1h (doses
+given are in [\ifelse{latex}{\out{$\mu$}}{\ifelse{html}{\out{&mu;}}{u}}g/kg
+\ifelse{latex}{\out{$\cdot$}}{\ifelse{html}{\out{&middot;}}{.}} min]
 
 In case, for a given time step and component, no measurement is available,
-the corresponding \verb{na_val_*} value is used (e.g. \code{na_val_resp} for the
+the corresponding \verb{na_*} value is used (e.g. \code{na_resp} for the
 respiratory component). At default, this is 0 (the lowest possible score
 for a SOFA component). It is possible to retain missingness by passing \code{NA}
-as \verb{na_val_*} value and using a function passed as \code{impute_fun()} in order
+as \verb{na_*} value and using a function passed as \code{impute_fun()} in order
 to perform an additional imputation step.
 }
 \references{

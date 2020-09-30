@@ -85,29 +85,77 @@ capture_data <- function(concepts, interval, ...) {
 #' values might not be ideal for some datasets and/or analysis tasks.
 #'
 #' ## `pafi`
-#' In order to calculate the PaO₂/FiO₂ (or Horowitz index), for a given time
-#' point, both a PaO₂ and a FiO₂ measurement is required. As the two are often
+#' In order to calculate the PaO\ifelse{latex}{\out{\textsubscript{2}}}{
+#' \ifelse{html}{\out{<sub>2</sub>}}{2}}/FiO\ifelse{
+#' latex}{\out{\textsubscript{2}}}{\ifelse{html}{\out{<sub>2</sub>}}{2}} (or
+#' Horowitz index), for a given time point, both a PaO\ifelse{
+#' latex}{\out{\textsubscript{2}}}{\ifelse{html}{\out{<sub>2</sub>}}{2}} and a
+#' FiO\ifelse{latex}{\out{\textsubscript{2}}}{\ifelse{html}{
+#' \out{<sub>2</sub>}}{2}} measurement is required. As the two are often
 #' not measured at the same time, some form of imputation or matching
 #' procedure is required. Several options are available:
 #'
 #' * `match_vals` allows for a time difference of maximally `match_win`
 #'   between two measurements for calculating their ratio
-#' * `extreme_vals` uses the worst PaO₂ and a FiO₂ values within the time
-#'   window spanned by `match_win`
+#' * `extreme_vals` uses the worst PaO\ifelse{latex}{\out{\textsubscript{2}}}{
+#'   \ifelse{html}{\out{<sub>2</sub>}}{2}} and a FiO\ifelse{latex
+#'   }{\out{\textsubscript{2}}}{\ifelse{html}{\out{<sub>2</sub>}}{2}}
+#'   values within the time window spanned by `match_win`
 #' * `fill_gaps` represents a variation of `extreme_vals`, where ratios are
 #'   evaluated at every time-point as specified by `interval`as opposed to
-#'   only the time points where either a PaO₂ or a FiO₂ measurement is
-#'   available
+#'   only the time points where either a PaO\ifelse{latex
+#'   }{\out{\textsubscript{2}}}{\ifelse{html}{\out{<sub>2</sub>}}{2}} or a
+#'   FiO\ifelse{latex}{\out{\textsubscript{2}}}{\ifelse{html}{
+#'   \out{<sub>2</sub>}}{2}} measurement is available
 #'
-#' Finally, `fix_na_fio2` imputes all remaining missing FiO₂ with 21, the
-#' percentage (by volume) of oxygen in (tropospheric) air.
+#' Finally, `fix_na_fio2` imputes all remaining missing FiO\ifelse{latex
+#' }{\out{\textsubscript{2}}}{\ifelse{html}{\out{<sub>2</sub>}}{2}} with 21,
+#' the percentage (by volume) of oxygen in (tropospheric) air.
+#'
+#' ## `vent`
+#' Building on the atomic concepts `vent_start` and `vent_end`, an binary
+#' indicator for ventilation status is constructed by combining start and end
+#' events that are separated by at most `match_win` and at least `min_length`.
+#' Time-points (as determined by `interval`) that fall into such ventilation
+#' windows are set to `TRUE`, while missingness (`NA`) or `FALSE` indicate no
+#' mechanical ventilation. Currently, no clear distinction between invasive
+#' an non-invasive ventilation is made.
+#'
+#' ## `sed`
+#' In order to construct an indicator for patient sedation, information from
+#' the two concepts `trach` and `rass` is pooled: A patient is considered
+#' sedated if intubated or has less or equal to -2 on the Richmond
+#' Agitation-Sedation Scale.
+#'
+#' ## `gcs`
+#' Aggregating components of the Glasgow Coma Scale into a total score
+#' (whenever the total score `tgcs` is not already available) requires
+#' coinciding availability of an eye (`egcs`), verbal (`vgcs`) and motor
+#' (`mgcs`) score. In order to match values, a last observation carry forward
+#' imputation scheme over the time span specified by `valid_win` is performed.
+#' Furthermore passing `TRUE` as `set_sed_max` will assume maximal points for
+#' time steps where the patient is sedated (as indicated by `sed`) and passing
+#' `TRUE` as `set_na_max` will assume maximal points for missing values (after
+#' matching and potentially applying `set_sed_max`).
+#'
+#' ## `urine24`
+#' Single urine output events are aggregated into a 24 hour moving window sum.
+#' At default value of `limits = NULL`, moving window evaluation begins with
+#' the first and ends with the last available measurement. This can however be
+#' extended by passing an `id_tbl` object, such as for example returned by
+#' [stay_windows()] to full stay windows. In order to provide data earlier
+#' than 24 hours before the evaluation start point, `min_win` specifies the
+#' minimally required data window and the evaluation scheme is adjusted for
+#' shorter than 24 hour windows.
 #'
 #' @param ... Data input used for concept calculation
-#' @param match_win Time-span during which matching of PaO₂ and FiO₂
-#' values is allowed
-#' @param mode Method for matching PaO₂ and FiO₂ values
-#' @param fix_na_fio2 Logical flag indicating whether to impute missing FiO₂
-#' values with 21
+#' @param match_win Time-span during which matching of values is allowed
+#' @param mode Method for matching PaO\ifelse{latex}{\out{\textsubscript{2}}}{
+#' \ifelse{html}{\out{<sub>2</sub>}}{2}} and FiO\ifelse{latex
+#' }{\out{\textsubscript{2}}}{\ifelse{html}{\out{<sub>2</sub>}}{2}} values
+#' @param fix_na_fio2 Logical flag indicating whether to impute missing
+#' FiO\ifelse{latex}{\out{\textsubscript{2}}}{\ifelse{html}{
+#' \out{<sub>2</sub>}}{2}} values with 21
 #' @param interval Expected time series step size (determined from data if
 #' `NULL`)
 #'
@@ -165,21 +213,9 @@ pafi <- function(..., match_win = hours(2L),
   res
 }
 
-#' ## `vent`
-#' Building on the atomic concepts `vent_start` and `vent_end`, an binary
-#' indicator for ventilation status is constructed by combining start and end
-#' events that are separated by at most `match_win` and at least `min_length`.
-#' Time-points (as determined by `interval`) that fall into such ventilation
-#' windows are set to `TRUE`, while missingness (`NA`) or `FALSE` indicate no
-#' mechanical ventilation. Currently, no clear distinction between invasive
-#' an non-invasive ventilation is made.
-#'
-#' @param match_win Default ventilation window if no stop time can be
-#' matched to a start time
 #' @param min_length Minimal time span between a ventilation start and end
 #' time
 #'
-#' @encoding UTF-8
 #' @rdname callback_cncpt
 #' @export
 #'
@@ -236,13 +272,6 @@ vent <- function(..., match_win = hours(6L), min_length = mins(10L),
   res
 }
 
-#' ## `sed`
-#' In order to construct an indicator for patient sedation, information from
-#' the two concepts `trach` and `rass` is pooled: A patient is considered
-#' sedated if intubated or has less or equal to -2 on the Richmond
-#' Agitation-Sedation Scale.
-#'
-#' @encoding UTF-8
 #' @rdname callback_cncpt
 #' @export
 #'
@@ -260,24 +289,12 @@ sed <- function(..., interval = NULL) {
   res
 }
 
-#' ## `gcs`
-#' Aggregating components of the Glasgow Coma Scale into a total score
-#' (whenever the total score `tgcs` is not already available) requires
-#' coinciding availability of an eye (`egcs`), verbal (`vgcs`) and motor
-#' (`mgcs`) score. In order to match values, a last observation carry forward
-#' imputation scheme over the time span specified by `valid_win` is performed.
-#' Furthermore passing `TRUE` as `set_sed_max` will assume maximal points for
-#' time steps where the patient is sedated (as indicated by `sed`) and passing
-#' `TRUE` as `set_na_max` will assume maximal points for missing values (after
-#' matching and potentially applying `set_sed_max`).
-#'
 #' @param valid_win Maximal time window for which a GCS value is valid
 #' if no newer measurement is available
 #' @param set_sed_max Logical flag for considering sedation
 #' @param set_na_max Logical flag controlling imputation of missing GCS values
 #' with the respective maximum values
 #'
-#' @encoding UTF-8
 #' @rdname callback_cncpt
 #' @export
 #'
@@ -321,22 +338,11 @@ gcs <- function(..., valid_win = hours(6L), set_sed_max = TRUE,
   res
 }
 
-#' ## `urine24`
-#' Single urine output events are aggregated into a 24 hour moving window sum.
-#' At default value of `limits = NULL`, moving window evaluation begins with
-#' the first and ends with the last available measurement. This can however be
-#' extended by passing an `id_tbl` object, such as for example returned by
-#' [stay_windows()] to full stay windows. In order to provide data earlier
-#' than 24 hours before the evaluation start point, `min_win` specifies the
-#' minimally required data window and the evaluation scheme is adjusted for
-#' shorter than 24 hour windows.
-#'
 #' @param min_win Minimal time span required for calculation of urine/24h
 #' @param limits Passed to [fill_gaps()] in order to expand the time series
 #' beyond first and last measurements
 #' @param start_var,end_var Passed to [fill_gaps()]
 #'
-#' @encoding UTF-8
 #' @rdname callback_cncpt
 #' @export
 #'

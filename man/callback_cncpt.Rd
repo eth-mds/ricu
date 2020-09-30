@@ -41,13 +41,15 @@ urine24(
 \arguments{
 \item{...}{Data input used for concept calculation}
 
-\item{match_win}{Default ventilation window if no stop time can be
-matched to a start time}
+\item{match_win}{Time-span during which matching of values is allowed}
 
-\item{mode}{Method for matching PaO₂ and FiO₂ values}
+\item{mode}{Method for matching PaO\ifelse{latex}{\out{\textsubscript{2}}}{
+\ifelse{html}{\out{<sub>2</sub>}}{2}} and FiO\ifelse{latex
+}{\out{\textsubscript{2}}}{\ifelse{html}{\out{<sub>2</sub>}}{2}} values}
 
-\item{fix_na_fio2}{Logical flag indicating whether to impute missing FiO₂
-values with 21}
+\item{fix_na_fio2}{Logical flag indicating whether to impute missing
+FiO\ifelse{latex}{\out{\textsubscript{2}}}{\ifelse{html}{
+\out{<sub>2</sub>}}{2}} values with 21}
 
 \item{interval}{Expected time series step size (determined from data if
 \code{NULL})}
@@ -84,22 +86,76 @@ investigating stability with respect to such choices. Furthermore, default
 values might not be ideal for some datasets and/or analysis tasks.
 \subsection{\code{pafi}}{
 
-In order to calculate the PaO₂/FiO₂ (or Horowitz index), for a given time
-point, both a PaO₂ and a FiO₂ measurement is required. As the two are often
+In order to calculate the PaO\ifelse{latex}{\out{\textsubscript{2}}}{
+\ifelse{html}{\out{<sub>2</sub>}}{2}}/FiO\ifelse{
+latex}{\out{\textsubscript{2}}}{\ifelse{html}{\out{<sub>2</sub>}}{2}} (or
+Horowitz index), for a given time point, both a PaO\ifelse{
+latex}{\out{\textsubscript{2}}}{\ifelse{html}{\out{<sub>2</sub>}}{2}} and a
+FiO\ifelse{latex}{\out{\textsubscript{2}}}{\ifelse{html}{
+\out{<sub>2</sub>}}{2}} measurement is required. As the two are often
 not measured at the same time, some form of imputation or matching
 procedure is required. Several options are available:
 \itemize{
 \item \code{match_vals} allows for a time difference of maximally \code{match_win}
 between two measurements for calculating their ratio
-\item \code{extreme_vals} uses the worst PaO₂ and a FiO₂ values within the time
-window spanned by \code{match_win}
+\item \code{extreme_vals} uses the worst PaO\ifelse{latex}{\out{\textsubscript{2}}}{
+  \ifelse{html}{\out{<sub>2</sub>}}{2}} and a FiO\ifelse{latex
+  }{\out{\textsubscript{2}}}{\ifelse{html}{\out{<sub>2</sub>}}{2}}
+values within the time window spanned by \code{match_win}
 \item \code{fill_gaps} represents a variation of \code{extreme_vals}, where ratios are
 evaluated at every time-point as specified by \code{interval}as opposed to
-only the time points where either a PaO₂ or a FiO₂ measurement is
-available
+only the time points where either a PaO\ifelse{latex
+  }{\out{\textsubscript{2}}}{\ifelse{html}{\out{<sub>2</sub>}}{2}} or a
+FiO\ifelse{latex}{\out{\textsubscript{2}}}{\ifelse{html}{
+  \out{<sub>2</sub>}}{2}} measurement is available
 }
 
-Finally, \code{fix_na_fio2} imputes all remaining missing FiO₂ with 21, the
-percentage (by volume) of oxygen in (tropospheric) air.
+Finally, \code{fix_na_fio2} imputes all remaining missing FiO\ifelse{latex
+}{\out{\textsubscript{2}}}{\ifelse{html}{\out{<sub>2</sub>}}{2}} with 21,
+the percentage (by volume) of oxygen in (tropospheric) air.
+}
+
+\subsection{\code{vent}}{
+
+Building on the atomic concepts \code{vent_start} and \code{vent_end}, an binary
+indicator for ventilation status is constructed by combining start and end
+events that are separated by at most \code{match_win} and at least \code{min_length}.
+Time-points (as determined by \code{interval}) that fall into such ventilation
+windows are set to \code{TRUE}, while missingness (\code{NA}) or \code{FALSE} indicate no
+mechanical ventilation. Currently, no clear distinction between invasive
+an non-invasive ventilation is made.
+}
+
+\subsection{\code{sed}}{
+
+In order to construct an indicator for patient sedation, information from
+the two concepts \code{trach} and \code{rass} is pooled: A patient is considered
+sedated if intubated or has less or equal to -2 on the Richmond
+Agitation-Sedation Scale.
+}
+
+\subsection{\code{gcs}}{
+
+Aggregating components of the Glasgow Coma Scale into a total score
+(whenever the total score \code{tgcs} is not already available) requires
+coinciding availability of an eye (\code{egcs}), verbal (\code{vgcs}) and motor
+(\code{mgcs}) score. In order to match values, a last observation carry forward
+imputation scheme over the time span specified by \code{valid_win} is performed.
+Furthermore passing \code{TRUE} as \code{set_sed_max} will assume maximal points for
+time steps where the patient is sedated (as indicated by \code{sed}) and passing
+\code{TRUE} as \code{set_na_max} will assume maximal points for missing values (after
+matching and potentially applying \code{set_sed_max}).
+}
+
+\subsection{\code{urine24}}{
+
+Single urine output events are aggregated into a 24 hour moving window sum.
+At default value of \code{limits = NULL}, moving window evaluation begins with
+the first and ends with the last available measurement. This can however be
+extended by passing an \code{id_tbl} object, such as for example returned by
+\code{\link[=stay_windows]{stay_windows()}} to full stay windows. In order to provide data earlier
+than 24 hours before the evaluation start point, \code{min_win} specifies the
+minimally required data window and the evaluation scheme is adjusted for
+shorter than 24 hour windows.
 }
 }

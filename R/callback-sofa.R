@@ -20,7 +20,7 @@
 #' @details
 #' The function `sofa_window()` calculates, for each covariate, the worst
 #' value over a moving window as specified by `worst_win_length`, using the
-#' respective function passed as `*_win_fun` (e.g. `pafi_win_fun` for the
+#' respective function passed as `*_wf` (e.g. `pafi_wf` for the
 #' `pafi` component. The default functions `min_or_na()` and `max_or_na()`
 #' return `NA` instead of `-Inf/Inf` in the case where no measurement is
 #' available over an entire window.
@@ -30,24 +30,37 @@
 #' component, measurements are converted to a component score using the
 #' definition by Vincent et. al.:
 #'
-#' | **SOFA score**                                                          | 1                 | 2                                      | 3                                                         | 4                                                          |
-#' | ----------------------------------------------------------------------- | ----------------- | -------------------------------------- | --------------------------------------------------------- | ---------------------------------------------------------- |
-#' | **Respiration** PaO₂/FiO₂ \[mmHg\]                                      | < 400             | < 300                                  | < 200 (with mech. vent.)                                  | < 100 (with mech. vent.)                                   |
-#' | **Coagulation** Platelets \[⨉10³/mm³\]                                  | < 150             | < 100                                  | < 50                                                      | < 20                                                       |
-#' | **Liver** Bilirubin \[mg/dl\] (\[μmol/μl\])                             | 1.2-1.9 (20-32)   | 2.0-5.9 (33-101)                       | 6.0-11.9 (102-204)                                        | > 12.0 (> 204)                                             |
-#' | **Cardiovascular** Hypotension                                          | MAP < 70 mmHg     | Dopa ≤ 5 or dobu (any dose)ª | Dopa > 5 or epi ≤ 0.1 or norepi ≤ 0.1 | Dopa > 15 or epi > 0.1 or norepi > 0.1 |
-#' | **Central nervous system** Glasgow Coma Score                           | 13-14             | 10-12                                  | 6-9                                                       | < 6                                                        |
-#' | **Renal** Creatinine \[mg/dl\] (\[μmol/μl\]) or urine output \[ml/day\] | 1.2-1.9 (110-170) | 2.0-3.4 (171-299)                      | 3.5-4.9 (300-440) < 500                                   | > 5.0 (< 440) < 200                                        |
+#' | **SOFA score**             |   1       |    2     |   3   |   4   |
+#' | -------------------------- | --------- | -------- | ----- | ----- |
+#' | **Respiration**            |           |          |       |       |
+#' | PaO\ifelse{latex}{\out{\textsubscript{2}}}{\ifelse{html}{\out{<sub>2</sub>}}{2}}/FiO\ifelse{latex}{\out{\textsubscript{2}}}{\ifelse{html}{\out{<sub>2</sub>}}{2}} \[mmHg\] | < 400 | < 300 | < 200 | < 100 |
+#' | and mechanical ventilation |           |          |  yes  |  yes  |
+#' | **Coagulation**            |           |          |       |       |
+#' | Platelets \[\ifelse{latex}{\out{$\times$}}{\ifelse{html}{\out{&times;}}{x}}10\ifelse{latex}{\out{\textsuperscript{3}}}{\ifelse{html}{\out{<sup>3</sup>}}{3}}/mm\ifelse{latex}{\out{\textsuperscript{3}}}{\ifelse{html}{\out{<sup>3</sup>}}{3}}\] | < 150 | < 100 | < 50 | < 20 |
+#' | **Liver**                  |           |          |       |       |
+#' | Bilirubin \[mg/dl\] (\[\ifelse{latex}{\out{$\mu$}}{\ifelse{html}{\out{&mu;}}{u}}mol/\ifelse{latex}{\out{$\mu$}}{\ifelse{html}{\out{&mu;}}{u}}l\]) | 1.2-1.9 (20-32) | 2.0-5.9 (33-101) | 6.0-11.9 (102-204) | > 12.0 (> 204) |
+#' | **Cardiovascular**\ifelse{latex}{\out{\textsuperscript{a}}}{\ifelse{html}{\out{<sup>a</sup>}}{a}}| | | | |
+#' | MAP                        | < 70 mmHg |          |       |       |
+#' | or dopamine                |           | \ifelse{latex}{\out{$\le$}}{\ifelse{html}{\out{&leq;}}{<=}} 5 | > 5 | > 15 |
+#' | or dobutamine              |           | any dose |       |       |
+#' | or epinephrine             |           |          | \ifelse{latex}{\out{$\le$}}{\ifelse{html}{\out{&leq;}}{<=}} 0.1 | > 0.1 |
+#' | or norepinephrine          |           |          | \ifelse{latex}{\out{$\le$}}{\ifelse{html}{\out{&leq;}}{<=}} 0.1 | > 0.1 |
+#' | **Central nervous system** |           |          |       |       |
+#' | Glasgow Coma Score         | 13-14     |  10-12   |  6-9  |  < 6  |
+#' | **Renal**                  |           |          |       |       |
+#' | Creatinine \[mg/dl\] (\[\ifelse{latex}{\out{$\mu$}}{\ifelse{html}{\out{&mu;}}{u}}mol/\ifelse{latex}{\out{$\mu$}}{\ifelse{html}{\out{&mu;}}{u}}l\]) | 1.2-1.9 (110-170) | 2.0-3.4 (171-299) | 3.5-4.9 (300-440) | > 5.0 (< 440) |
+#' | or urine output \[ml/day\] |           |          | < 500 | < 200 |
 #'
-#' ªAdrenergic agents administered for at least 1h (doses given are in \[μg/kg
-#' ⋅ min\]; dopa: dopamine, dobu: dobutamine, epi: epinephrine, norepi:
-#' norepinephrine)
+#' \ifelse{latex}{\out{\textsuperscript{a}}}{\ifelse{html}{
+#' \out{<sup>a</sup>}}{a}}Adrenergic agents administered for at least 1h (doses
+#' given are in \[\ifelse{latex}{\out{$\mu$}}{\ifelse{html}{\out{&mu;}}{u}}g/kg
+#' \ifelse{latex}{\out{$\cdot$}}{\ifelse{html}{\out{&middot;}}{.}} min\]
 #'
 #' In case, for a given time step and component, no measurement is available,
-#' the corresponding `na_val_*` value is used (e.g. `na_val_resp` for the
+#' the corresponding `na_*` value is used (e.g. `na_resp` for the
 #' respiratory component). At default, this is 0 (the lowest possible score
 #' for a SOFA component). It is possible to retain missingness by passing `NA`
-#' as `na_val_*` value and using a function passed as `impute_fun()` in order
+#' as `na_*` value and using a function passed as `impute_fun()` in order
 #' to perform an additional imputation step.
 #'
 #' @references
@@ -86,24 +99,23 @@ sofa_score <- function(..., interval = NULL) {
 }
 
 #' @param tbl Table holding SOFA covariates
-#' @param pafi_win_fun,plt_win_fun,bili_win_fun,map_win_fun,dopa_win_fun,norepi_win_fun,dobu_win_fun,epi_win_fun,gcs_win_fun,crea_win_fun,urine_win_fun
+#' @param pafi_wf,plt_wf,bili_wf,map_wf,dopa_wf,norepi_wf,dobu_wf,epi_wf,gcs_wf,crea_wf,urine_wf
 #' functions used to calculate worst values over windows
 #' @param explicit_wins The default `FALSE` iterates over all time steps,
 #' `TRUE` uses only the last time step per patient and a vector of times will
 #' iterate over these explicit time points
-#' @param worst_win_length Time-frame to look back and apply the `*_win_fun`s
+#' @param worst_win_length Time-frame to look back and apply the `*_wf`s
 #'
-#' @encoding UTF-8
 #' @rdname callback_sofa
 #' @export
 #'
 sofa_window <- function(tbl,
-                        pafi_win_fun  = min_or_na, plt_win_fun    = min_or_na,
-                        bili_win_fun  = max_or_na, map_win_fun    = min_or_na,
-                        dopa_win_fun  = max_or_na, norepi_win_fun = max_or_na,
-                        dobu_win_fun  = max_or_na, epi_win_fun    = max_or_na,
-                        gcs_win_fun   = min_or_na, crea_win_fun   = max_or_na,
-                        urine_win_fun = min_or_na, explicit_wins  = FALSE,
+                        pafi_wf  = min_or_na, plt_wf    = min_or_na,
+                        bili_wf  = max_or_na, map_wf    = min_or_na,
+                        dopa_wf  = max_or_na, norepi_wf = max_or_na,
+                        dobu_wf  = max_or_na, epi_wf    = max_or_na,
+                        gcs_wf   = min_or_na, crea_wf   = max_or_na,
+                        urine_wf = min_or_na, explicit_wins  = FALSE,
                         worst_win_length = hours(24L)) {
 
   need_cols <- c("pafi", "plt", "bili", "map", "dopa", "norepi", "dobu",
@@ -120,12 +132,12 @@ sofa_window <- function(tbl,
       gcs_win     = gcs_wf(gcs),   crea_win   = crea_wf(crea),
       urine24_win = urine_wf(urine24)
     ), list(
-      pafi_wf  = pafi_win_fun,  plt_wf    = plt_win_fun,
-      bili_wf  = bili_win_fun,  map_wf    = map_win_fun,
-      dopa_wf  = dopa_win_fun,  norepi_wf = norepi_win_fun,
-      dobu_wf  = dobu_win_fun,  epi_wf    = epi_win_fun,
-      gcs_wf   = gcs_win_fun,   crea_wf   = crea_win_fun,
-      urine_wf = urine_win_fun
+      pafi_wf  = pafi_wf,  plt_wf    = plt_wf,
+      bili_wf  = bili_wf,  map_wf    = map_wf,
+      dopa_wf  = dopa_wf,  norepi_wf = norepi_wf,
+      dobu_wf  = dobu_wf,  epi_wf    = epi_wf,
+      gcs_wf   = gcs_wf,   crea_wf   = crea_wf,
+      urine_wf = urine_wf
     )
   )
 
@@ -159,21 +171,20 @@ sofa_window <- function(tbl,
 }
 
 #' @param na_val Value to use for missing data
-#' @param na_val_resp,na_val_plt,na_val_liver,na_val_cardio,na_val_cns,na_val_renal Feature-specific values to use in case of missing data; default is `na_val`
+#' @param na_resp,na_plt,na_liver,na_cardio,na_cns,na_renal Feature-specific values to use in case of missing data; default is `na_val`
 #' @param impute_fun Function used to impute missing data; default is NULL
 #' @param keep_components Logical flag indicating whether to return individual
 #' SOFA components as columns
 #' @param by_ref Logical flag indicating whether to perform the operation by
 #' reference
 #'
-#' @encoding UTF-8
 #' @rdname callback_sofa
 #' @export
 #'
-sofa_compute <- function(tbl, na_val = 0L, na_val_resp = na_val,
-                         na_val_plt = na_val, na_val_liver = na_val,
-                         na_val_cardio = na_val, na_val_cns = na_val,
-                         na_val_renal = na_val, impute_fun = NULL,
+sofa_compute <- function(tbl, na_val = 0L, na_resp = na_val,
+                         na_plt = na_val, na_liver = na_val,
+                         na_cardio = na_val, na_cns = na_val,
+                         na_renal = na_val, impute_fun = NULL,
                          keep_components = FALSE, by_ref = TRUE) {
 
   need_cols <- c("pafi", "plt", "bili", "map", "dopa", "norepi", "dobu",
@@ -192,13 +203,13 @@ sofa_compute <- function(tbl, na_val = 0L, na_val_resp = na_val,
 
   tbl <- tbl[,
     c(sofa_cols) := list(
-      sofa_resp(get("pafi"), na_val_resp),
-      sofa_coag(get("plt"), na_val_plt),
-      sofa_liver(get("bili"), na_val_liver),
+      sofa_resp(get("pafi"), na_resp),
+      sofa_coag(get("plt"), na_plt),
+      sofa_liver(get("bili"), na_liver),
       sofa_cardio(get("map"), get("dopa"), get("norepi"), get("dobu"),
-                  get("epi"), na_val_cardio),
-      sofa_cns(get("gcs"), na_val_cns),
-      sofa_renal(get("crea"), get("urine24"), na_val_renal)
+                  get("epi"), na_cardio),
+      sofa_cns(get("gcs"), na_cns),
+      sofa_renal(get("crea"), get("urine24"), na_renal)
     )
   ]
 
