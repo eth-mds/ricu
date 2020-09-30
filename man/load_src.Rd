@@ -107,7 +107,7 @@ the highest cardinality (among the available ones). Utilities such as
 \code{\link[=change_id]{change_id()}} can the later be used to resolve data to \code{icustay_id}.
 }
 \examples{
-
+if (require(mimic.demo)) {
 tbl <- mimic_demo$labevents
 col <- c("charttime", "value")
 
@@ -130,5 +130,6 @@ id_vars(
 id_vars(
   load_difftime(tbl, itemid == 50809, id_hint = "subject_id")
 )
+}
 
 }

@@ -39,7 +39,7 @@ Imports:
     jsonlite,
     methods,
     stats,
-    prt,
+    prt (>= 0.1.2),
     tibble,
     backports,
     rlang,

@@ -46,7 +46,7 @@
 #' @param ... Generic consistency
 #'
 #' @examples
-#'
+#' if (require(mimic.demo)) {
 #' tbl <- mimic_demo$labevents
 #' col <- c("charttime", "value")
 #'
@@ -69,6 +69,7 @@
 #' id_vars(
 #'   load_difftime(tbl, itemid == 50809, id_hint = "subject_id")
 #' )
+#' }
 #'
 #' @rdname load_src
 #' @export
@@ -269,6 +270,7 @@ load_eicu <- function(x, rows, cols, id_hint, time_vars) {
 #' specified as [base::difftime()] object
 #'
 #' @examples
+#' if (require(mimic.demo)) {
 #' load_id("admissions", "mimic_demo", cols = "admission_type")
 #'
 #' dat <- load_ts(mimic_demo$labevents, itemid %in% c(50809L, 50931L),
@@ -278,6 +280,7 @@ load_eicu <- function(x, rows, cols, id_hint, time_vars) {
 #'                sub_var = "itemid", ids = c(50809L, 50931L))
 #'
 #' identical(load_ts(glu), dat)
+#' }
 #'
 #' @rdname load_tbl
 #' @export

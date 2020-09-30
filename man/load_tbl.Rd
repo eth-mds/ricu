@@ -117,6 +117,7 @@ are returned as required by the \code{itm} object and \code{id_var} (as well as
 default values for the given \code{src_tbl} object if not explicitly specified.
 }
 \examples{
+if (require(mimic.demo)) {
 load_id("admissions", "mimic_demo", cols = "admission_type")
 
 dat <- load_ts(mimic_demo$labevents, itemid \%in\% c(50809L, 50931L),
@@ -126,5 +127,6 @@ glu <- new_itm(src = "mimic_demo", table = "labevents",
                sub_var = "itemid", ids = c(50809L, 50931L))
 
 identical(load_ts(glu), dat)
+}
 
 }

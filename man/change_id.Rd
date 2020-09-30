@@ -120,10 +120,12 @@ stamps -4h, 3h and 11h, while data points 4-8 are assigned to -10h, -2h,
 efficient \code{data.table} rolling join.
 }
 \examples{
+if (require(mimic.demo)) {
 tbl <- mimic_demo$labevents
 dat <- load_difftime(tbl, itemid == 50809, c("charttime", "valuenum"))
 dat
 
 change_id(dat, "icustay_id", tbl, keep_old_id = FALSE)
+}
 
 }

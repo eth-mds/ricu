@@ -430,14 +430,16 @@ stay_windows <- function(x, id_type = "icustay", win_type = id_type,
 #' @param keep_old_id Logical flag indicating whether to keep the previous ID
 #' column
 #'
-#' @encoding UTF-8
 #' @examples
+#' if (require(mimic.demo)) {
 #' tbl <- mimic_demo$labevents
 #' dat <- load_difftime(tbl, itemid == 50809, c("charttime", "valuenum"))
 #' dat
 #'
 #' change_id(dat, "icustay_id", tbl, keep_old_id = FALSE)
+#' }
 #'
+#' @encoding UTF-8
 #' @rdname change_id
 #' @export
 #'

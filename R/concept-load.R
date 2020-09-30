@@ -142,6 +142,7 @@
 #' @param ... Passed to downstream methods
 #'
 #' @examples
+#' if (require(mimic.demo)) {
 #' dat <- load_concepts("glu", "mimic_demo")
 #'
 #' gluc <- concept("gluc",
@@ -152,6 +153,7 @@
 #'
 #' class(dat)
 #' class(load_concepts(c("sex", "age"), "mimic_demo"))
+#' }
 #'
 #' @rdname load_concepts
 #' @export

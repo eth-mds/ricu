@@ -247,6 +247,7 @@ multiple \code{itm} objects concatenated in row-wise fashion as in
 }
 
 \examples{
+if (require(mimic.demo)) {
 dat <- load_concepts("glu", "mimic_demo")
 
 gluc <- concept("gluc",
@@ -257,5 +258,6 @@ identical(load_concepts(gluc), dat)
 
 class(dat)
 class(load_concepts(c("sex", "age"), "mimic_demo"))
+}
 
 }
