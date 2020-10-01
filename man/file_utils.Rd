@@ -12,7 +12,7 @@
 \usage{
 data_dir(subdir = NULL, create = TRUE)
 
-src_data_dir(src)
+src_data_dir(srcs)
 
 auto_load_src_names()
 
@@ -31,7 +31,7 @@ exist below the data directory.}
 \item{create}{Logical flag indicating whether to create the specified
 directory}
 
-\item{src}{Character vector of data source names}
+\item{src, srcs}{Character vector of data source names}
 
 \item{name}{File name of the configuration file (\code{.json} will be appended)}
 

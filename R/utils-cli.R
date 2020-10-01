@@ -18,7 +18,7 @@ progress_init <- function(lenth = NULL, msg = "loading", ...) {
     cli::cli_rule()
   }
 
-  if (is_interactive() && is_pkg_available("progress") && lenth > 1L) {
+  if (is_interactive() && is_pkg_installed("progress") && lenth > 1L) {
 
     res <- progress::progress_bar$new(
       format = ":what [:bar] :percent", total = lenth, callback = cb_fun, ...

@@ -120,34 +120,54 @@ data_dir <- function(subdir = NULL, create = TRUE) {
   res
 }
 
-#' @param src Character vector of data source names
+#' @param src,srcs Character vector of data source names
 #' @rdname file_utils
 #' @export
-src_data_dir <- function(src) {
+src_data_dir <- function(srcs) {
 
-  if (length(src) > 1L) {
-    return(chr_ply(src, src_data_dir))
+  if (!is.character(srcs)) {
+    srcs <- src_name(srcs)
   }
+
+  if (length(srcs) > 1L) {
+    return(chr_ply(srcs, src_data_dir))
+  }
+
+  assert_that(is.string(srcs))
+
+  pkg <- sub("_", ".", srcs)
+
+  if (is_pkg_installed(pkg)) {
+    system.file("extdata", package = pkg)
+  } else if (data_pkg_avail(pkg)) {
+    file.path(.libPaths()[1L], pkg, "extdata")
+  } else {
+    data_dir(srcs)
+  }
+}
+
+#' @importFrom utils packageDescription available.packages install.packages
+data_pkg_avail <- function(src) {
 
   if (!is.string(src)) {
     src <- src_name(src)
   }
 
-  assert_that(is.string(src))
+  repos <- packageDescription("ricu", fields = "Additional_repositories")
+  pkgs  <- available.packages(repos = repos)
 
-  if (grepl("_demo$", src)) {
+  sub("_", ".", src) %in% pkgs[, "Package"]
+}
 
-    pkg <- sub("_demo$", ".demo", src)
+install_data_pkgs <- function(srcs = c("mimic_demo", "eicu_demo")) {
 
-    if (is_pkg_available(pkg)) {
-      system.file("extdata", package = pkg)
-    } else {
-      data_dir(src)
-    }
-
-  } else {
-    data_dir(src)
+  if (!is.character(srcs)) {
+    srcs <- src_name(srcs)
   }
+
+  repos <- packageDescription("ricu", fields = "Additional_repositories")
+
+  install.packages(sub("_", ".", srcs), repos = repos)
 }
 
 #' @rdname file_utils

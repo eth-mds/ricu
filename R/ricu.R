@@ -11,7 +11,7 @@
 #' @import vctrs
 "_PACKAGE"
 
-is_pkg_available <- function(pkg) requireNamespace(pkg, quietly = TRUE)
+is_pkg_installed <- function(pkg) requireNamespace(pkg, quietly = TRUE)
 
 pkg_name <- function() methods::getPackageName()
 

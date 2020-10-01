@@ -80,6 +80,7 @@
 #' @rdname data_items
 #'
 #' @examples
+#' if (require(mimic.demo)) {
 #' gluc <- item("mimic_demo", "labevents", "itemid", list(c(50809L, 50931L)),
 #'              unit_var = TRUE, target = "ts_tbl")
 #'
@@ -99,6 +100,7 @@
 #'
 #' identical(as_item(hr1), hr2[1])
 #' identical(new_item(list(hr1)), hr2[1])
+#' }
 #'
 #' @export
 #'
@@ -751,6 +753,7 @@ get_target.default <- function(x) stop_generic(x, .Generic)
 #' @rdname data_concepts
 #'
 #' @examples
+#' if (require(mimic.demo)) {
 #' gluc <- concept("glu",
 #'   item("mimic_demo", "labevents", "itemid", list(c(50809L, 50931L))),
 #'   description = "glucose", category = "chemistry",
@@ -780,6 +783,7 @@ get_target.default <- function(x) stop_generic(x, .Generic)
 #' conc
 #'
 #' identical(as_concept(gl1), conc[1L])
+#' }
 #'
 #' @export
 #'

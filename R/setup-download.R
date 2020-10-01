@@ -365,7 +365,7 @@ download_check_data <- function(dest_folder, files, url, user, pass, src) {
     progress_bar = pba
   )
 
-  if (is_pkg_available("openssl")) {
+  if (is_pkg_installed("openssl")) {
 
     msg_ricu("Comparing checksums")
 

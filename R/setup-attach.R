@@ -218,10 +218,6 @@ setup_src_env.src_cfg <- function(x, env, data_dir = src_data_dir(x), ...) {
   fst_files <- lapply(tbl, fst_file_names)
   fst_paths <- Map(file.path, data_dir, fst_files)
 
-  ensure_dirs(
-    unique(dirname(unlist(fst_paths, recursive = FALSE)))
-  )
-
   tables  <- chr_ply(tbl, tbl_name)
   missing <- lgl_ply(fst_paths, all_fun, Negate(file.exists))
 
@@ -254,22 +250,40 @@ setup_src_env.src_cfg <- function(x, env, data_dir = src_data_dir(x), ...) {
       )
     }
 
-    tmp <- ensure_dirs(tempfile())
-    on.exit(unlink(tmp, recursive = TRUE))
+    if (data_pkg_avail(x)) {
 
-    download_src(x, tmp, tables = todo)
-    import_src(x, tmp)
+      src_dir <- src_data_dir(x)
 
-    done <- Map(file.rename, Map(file.path, tmp, fst_files[missing]),
-                fst_paths[missing])
-    done <- lgl_ply(done, all)
+      if (!identical(data_dir, src_dir)) {
+        warn_ricu("data will be saved to {src_dir} instead of {data_dir}",
+                  class = "pkg_src_dir")
+      }
 
-    if (!all(done)) {
-      stop_ricu(
-        c("The following {qty(sum(!done))} table{?s} could be moved to
-           directory {data_dir}:", bullet(quote_bt(todo[!done]))),
-        class = "tbl_mv_err", exdent = c(0L, rep(2L, sum(!done)))
+      install_data_pkgs(x)
+
+    } else {
+
+      ensure_dirs(
+        unique(dirname(unlist(fst_paths, recursive = FALSE)))
       )
+
+      tmp <- ensure_dirs(tempfile())
+      on.exit(unlink(tmp, recursive = TRUE))
+
+      download_src(x, tmp, tables = todo)
+      import_src(x, tmp)
+
+      done <- Map(file.rename, Map(file.path, tmp, fst_files[missing]),
+                  fst_paths[missing])
+      done <- lgl_ply(done, all)
+
+      if (!all(done)) {
+        stop_ricu(
+          c("The following {qty(sum(!done))} table{?s} could be moved to
+             directory {data_dir}:", bullet(quote_bt(todo[!done]))),
+          class = "tbl_mv_err", exdent = c(0L, rep(2L, sum(!done)))
+        )
+      }
     }
 
     done <- lgl_ply(fst_paths, all_fun, file.exists)
@@ -278,7 +292,7 @@ setup_src_env.src_cfg <- function(x, env, data_dir = src_data_dir(x), ...) {
       stop_ricu(
         c("The following {qty(sum(!done))} table{?s} were not successfully
            downloaded and imported:", bullet(quote_bt(todo[!done]))),
-        class = "tbl_mv_err", exdent = c(0L, rep(2L, sum(!done)))
+        class = "tbl_dl_err", exdent = c(0L, rep(2L, sum(!done)))
       )
     }
   }

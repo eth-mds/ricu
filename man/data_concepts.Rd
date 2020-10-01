@@ -142,6 +142,7 @@ only possible from \code{list} and \code{cncpt}, by calling \code{as_concept()} 
 inheritance can be checked using \code{is_concept()} or \code{is_cncpt()}.
 }
 \examples{
+if (require(mimic.demo)) {
 gluc <- concept("glu",
   item("mimic_demo", "labevents", "itemid", list(c(50809L, 50931L))),
   description = "glucose", category = "chemistry",
@@ -171,5 +172,6 @@ conc <- concept(c("glu", "lact"),
 conc
 
 identical(as_concept(gl1), conc[1L])
+}
 
 }
