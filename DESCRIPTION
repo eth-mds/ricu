@@ -23,6 +23,7 @@ Authors@R: c(
     )
 License: GPL-3
 Encoding: UTF-8
+Language: en-US
 LazyData: true
 URL:
     https://github.com/septic-tank/ricu,
