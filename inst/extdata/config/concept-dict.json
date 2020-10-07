@@ -1683,6 +1683,64 @@
       ]
     }
   },
+  "height": {
+    "unit": "cm",
+    "min": 10,
+    "max": 230,
+    "target": "id_tbl",
+    "description": "patient height",
+    "category": "demographics",
+    "sources": {
+      "eicu": [
+        {
+          "table": "patient",
+          "val_var": "admissionheight",
+          "class": "col_itm"
+        }
+      ],
+      "eicu_demo": [
+        {
+          "table": "patient",
+          "val_var": "admissionheight",
+          "class": "col_itm"
+        }
+      ],
+      "hirid": [
+        {
+          "ids": 10000450,
+          "table": "observations",
+          "sub_var": "variableid",
+          "class": "hrd_itm"
+        }
+      ],
+      "mimic": [
+        {
+          "ids": [920, 1394, 4187, 3486, 226707],
+          "table": "chartevents",
+          "sub_var": "itemid",
+          "callback": "transform_fun(binary_op(`*`, 2.54))"
+        },
+        {
+          "ids": [3485, 4188],
+          "table": "chartevents",
+          "sub_var": "itemid"
+        }
+      ],
+      "mimic_demo": [
+        {
+          "ids": [920, 1394, 4187, 3486, 226707],
+          "table": "chartevents",
+          "sub_var": "itemid",
+          "callback": "transform_fun(binary_op(`*`, 2.54))"
+        },
+        {
+          "ids": [3485, 4188],
+          "table": "chartevents",
+          "sub_var": "itemid"
+        }
+      ]
+    }
+  },
   "hgb": {
     "unit": "g/dL",
     "min": 4,
@@ -3858,7 +3916,7 @@
   },
   "weight": {
     "unit": "kg",
-    "min": 0,
+    "min": 1,
     "max": 500,
     "target": "id_tbl",
     "description": "patient weight",
@@ -3876,6 +3934,28 @@
           "table": "patient",
           "val_var": "admissionweight",
           "class": "col_itm"
+        }
+      ],
+      "hirid": [
+        {
+          "ids": 10000400,
+          "table": "observations",
+          "sub_var": "variableid",
+          "class": "hrd_itm"
+        }
+      ],
+      "mimic": [
+        {
+          "ids": [762, 4183, 226512],
+          "table": "chartevents",
+          "sub_var": "itemid"
+        }
+      ],
+      "mimic_demo": [
+        {
+          "ids": [762, 4183, 226512],
+          "table": "chartevents",
+          "sub_var": "itemid"
         }
       ]
     }

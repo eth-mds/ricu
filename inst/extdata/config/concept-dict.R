@@ -1135,7 +1135,7 @@ cfg <- list(
         list(ids = "Dopamine (mcg/kg/min)", table = "infusiondrug",
              sub_var = "drugname")
       )
-  )
+    )
   ),
   norepi = list(
     unit = c("mcg/kg/min", "mcgkgmin"),
@@ -1501,15 +1501,48 @@ cfg <- list(
   ),
   weight = list(
     unit = "kg",
-    min = 0,
+    min = 1,
     max = 500,
     target = "id_tbl",
     description = "patient weight",
     category = "demographics",
     sources = list(
+      mimic = list(
+        list(ids = c(762L, 4183L, 226512L), table = "chartevents",
+             sub_var = "itemid")
+      ),
       eicu = list(
         list(table = "patient", val_var = "admissionweight",
              class = "col_itm")
+      ),
+      hirid = list(
+        list(ids = 10000400L, table = "observations",
+             sub_var = "variableid", class = "hrd_itm")
+      )
+    )
+  ),
+  height = list(
+    unit = "cm",
+    min = 10,
+    max = 230,
+    target = "id_tbl",
+    description = "patient height",
+    category = "demographics",
+    sources = list(
+      mimic = list(
+        list(ids = c(920L, 1394L, 4187L, 3486L, 226707L),
+             table = "chartevents", sub_var = "itemid",
+             callback = "transform_fun(binary_op(`*`, 2.54))"),
+        list(ids = c(3485L, 4188L), table = "chartevents",
+             sub_var = "itemid")
+      ),
+      eicu = list(
+        list(table = "patient", val_var = "admissionheight",
+             class = "col_itm")
+      ),
+      hirid = list(
+        list(ids = 10000450L, table = "observations",
+             sub_var = "variableid", class = "hrd_itm")
       )
     )
   ),
