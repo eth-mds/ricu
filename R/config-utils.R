@@ -28,7 +28,7 @@ as_src_cfg.src_cfg <- function(x) x
 #' @export
 as_src_cfg.src_env <- function(x) {
   new_src_cfg(src_name(x), as_id_cfg(x), eapply(x, as_col_cfg),
-              eapply(x, as_tbl_cfg), sub("_env", "", head(class(x), n = 2L)))
+              eapply(x, as_tbl_cfg), sub("_env", "", head(class(x), n = -1L)))
 }
 
 #' @export
@@ -128,6 +128,16 @@ as.list.id_cfg <- function(x, ...) {
 #' @export
 id_var_opts <- function(x) {
   field(as_id_cfg(x), "id")
+}
+
+id_name_to_type <- function(x, name) {
+
+  id_cfg  <- as_id_cfg(x)
+  id_opts <- id_var_opts(id_cfg)
+
+  assert_that(is_in(name, id_opts))
+
+  names(id_cfg)[id_opts == name]
 }
 
 val_var <- function(x) as_col_cfg(x)[["val_var"]]

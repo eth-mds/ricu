@@ -1093,7 +1093,7 @@ cfg <- list(
       )
     )
   ),
-  dobu = list(
+  dobu_rate = list(
     unit = c("mcg/kg/min", "mcgkgmin"),
     min = 0,
     max = 50,
@@ -1107,19 +1107,17 @@ cfg <- list(
              sub_var = "itemid")
       ),
       eicu = list(
-        list(ids = "Dobutamine (mcg/kg/min)", table = "infusiondrug",
-             sub_var = "drugname"),
-        list(ids = c("Dobutamine ()", "Dobutamine (ml/hr)"),
-             table = "infusiondrug", sub_var = "drugname",
-             callback = "eicu_body_weight", weight_var = "patientweight")
+        list(regex = "^dobu.*\\(.+\\)$", table = "infusiondrug",
+             sub_var = "drugname", weight_var = "patientweight",
+             callback = "eicu_vaso_rate(ml_to_mcg = 2000)", class = "rgx_itm")
       ),
       hirid = list(
         list(ids = 426L, table = "pharma", sub_var = "pharmaid",
-             callback = "hirid_vaso")
+             callback = "hirid_vaso_rate")
       )
     )
   ),
-  dopa = list(
+  dopa_rate = list(
     unit = c("mcg/kg/min", "mcgkgmin"),
     min = 0,
     max = 50,
@@ -1132,12 +1130,13 @@ cfg <- list(
         list(ids = 221662L, table = "inputevents_mv", sub_var = "itemid")
       ),
       eicu = list(
-        list(ids = "Dopamine (mcg/kg/min)", table = "infusiondrug",
-             sub_var = "drugname")
+        list(regex = "^dopami.*\\(.+\\)$", table = "infusiondrug",
+             sub_var = "drugname", weight_var = "patientweight",
+             callback = "eicu_vaso_rate(ml_to_mcg = 1600)", class = "rgx_itm")
       )
     )
   ),
-  norepi = list(
+  norepi_rate = list(
     unit = c("mcg/kg/min", "mcgkgmin"),
     min = 0,
     max = 3,
@@ -1151,19 +1150,17 @@ cfg <- list(
              sub_var = "itemid")
       ),
       eicu = list(
-        list(ids = "Norepinephrine (mcg/kg/min)", table = "infusiondrug",
-             sub_var = "drugname"),
-        list(ids = c("Norepinephrine (ml/hr)", "Norepinephrine (mcg/min)"),
-             table = "infusiondrug", sub_var = "drugname",
-             callback = "eicu_body_weight", weight_var = "patientweight")
+        list(regex = "^norepi.*\\(.+\\)$", table = "infusiondrug",
+             sub_var = "drugname", weight_var = "patientweight",
+             callback = "eicu_vaso_rate(ml_to_mcg = 32)", class = "rgx_itm")
       ),
       hirid = list(
         list(ids = c(1000462L, 1000656L, 1000657L, 1000658L), table = "pharma",
-             sub_var = "pharmaid", callback = "hirid_vaso")
+             sub_var = "pharmaid", callback = "hirid_vaso_rate")
       )
     )
   ),
-  epi = list(
+  epi_rate = list(
     unit = c("mcg/kg/min", "mcgkgmin"),
     min = 0,
     max = 1.5,
@@ -1176,15 +1173,14 @@ cfg <- list(
         list(ids = 221289L, table = "inputevents_mv", sub_var = "itemid")
       ),
       eicu = list(
-        list(ids = "Epinephrine (mcg/kg/min)", table = "infusiondrug",
-             sub_var = "drugname"),
-        list(ids = c("Epinephrine (ml/hr)", "Epinephrine (mcg/min)"),
-             table = "infusiondrug", sub_var = "drugname",
-             callback = "eicu_body_weight", weight_var = "patientweight")
+        list(regex = "^epi( |n).*\\(.+\\)$", table = "infusiondrug",
+             sub_var = "drugname", weight_var = "patientweight",
+             callback = "eicu_vaso_rate(ml_to_mcg = 40)", class = "rgx_itm")
       ),
       hirid = list(
         list(ids = c(71L, 1000649L, 1000650L, 1000655L, 1000750L),
-             table = "pharma", sub_var = "pharmaid", callback = "hirid_vaso")
+             table = "pharma", sub_var = "pharmaid",
+             callback = "hirid_vaso_rate")
       )
     )
   ),
@@ -1690,8 +1686,9 @@ cfg <- list(
     class = "rec_cncpt"
   ),
   sofa = list(
-    concepts = c("pafi", "vent", "plt", "bili", "map", "norepi", "epi", "dopa",
-                 "dobu", "gcs", "crea", "urine24"),
+    concepts = c("pafi", "vent", "plt", "bili", "map", "norepi_rate",
+                 "epi_rate", "dopa_rate", "dobu_rate", "gcs", "crea",
+                 "urine24"),
     description = "sequential organ failure assessment score",
     category = "outcome",
     aggregate = c(NA, NA, "min", "max", "min", "max", "max", "max", "max", NA,

@@ -11,6 +11,10 @@ vent_flag <- function(x, val_var, ...) {
 
 percent_as_numeric <- function(x) as.numeric(sub("%", "", x))
 
+silent_as <- function(x, type) suppressWarnings(`storage.mode<-`(x, type))
+
+silent_as_num <- function(x) silent_as(x, "numeric")
+
 force_type <- function(type) {
 
   assert_that(is.string(type))
@@ -21,7 +25,7 @@ force_type <- function(type) {
       return(x)
     }
 
-    res <- suppressWarnings(`storage.mode<-`(x, type))
+    res <- silent_as(x, type)
     new_na <- sum(is.na(res) & !is.na(x))
 
     if (new_na > 0L) {
@@ -263,11 +267,22 @@ apply_map <- function(map) {
 #' @export
 convert_unit <- function(rgx, fun, new, ignore_case = TRUE, ...) {
 
+  chr_to_fun <- function(a) {
+
+    if (is.function(a)) return(a)
+
+    a <- as.character(a)
+
+    function(x) a
+  }
+
   if (is.function(fun)) {
     fun <- list(fun)
   }
 
-  assert_that(all(lgl_ply(fun, is.function)))
+  new <- lapply(new, chr_to_fun)
+
+  assert_that(all_fun(fun, is.function))
 
   len <- vctrs::vec_size_common(rgx, fun, new)
   xtr <- c(list(ignore.case = ignore_case), list(...))
@@ -276,8 +291,8 @@ convert_unit <- function(rgx, fun, new, ignore_case = TRUE, ...) {
 
     for (i in seq_len(len)) {
       rows <- do.call(grep, c(list(rgx[[i]], x[[unit_var]]), xtr))
-      vals <- fun[[i]](x[[val_var]][rows])
-      set(x, i = rows, j = c(val_var, unit_var), value = list(vals, new[[i]]))
+      vals <- list(fun[[i]](x[[val_var]][rows]), new[[i]](x[[unit_var]][rows]))
+      set(x, i = rows, j = c(val_var, unit_var), value = vals)
     }
 
     x
@@ -301,9 +316,87 @@ eicu_adx <- function(x, val_var, ...) {
   set(x, j = val_var, value = cats)
 }
 
-hirid_vaso <- function(x, val_var, unit_var, env, ...) {
+weight_env <- new.env()
 
-  ids <- id_vars(x)
+add_weight <- function(x, env, weight_var = "weight") {
+
+  assert_that(is_id_tbl(x), is_src_env(env), is.string(weight_var))
+
+  cache  <- paste(src_name(env), id_vars(x), sep = "_")
+  weight <- get0(cache, envir = weight_env, inherits = FALSE)
+
+  if (is.null(weight)) {
+    weight <- load_concepts("weight", src_name(env), verbose = FALSE,
+                            id_type = id_name_to_type(env, id_var(x)))
+    assign(cache, weight, envir = weight_env)
+  }
+
+  if (is_in(weight_var, colnames(x))) {
+    tmp_var <- new_names(c(colnames(x), colnames(weight)))
+  } else {
+    tmp_var <- weight_var
+  }
+
+  weight <- rename_cols(weight, tmp_var, "weight")
+  res    <- merge(x, weight, by = id_var(x), all.x = TRUE)
+
+  if (is_in(weight_var, colnames(x))) {
+    res <- res[, c(weight_var) := silent_as_num(get(weight_var))]
+    res <- res[, c(weight_var, tmp_var) := list(
+      fifelse(is.na(get(weight_var)), get(tmp_var), get(weight_var)), NULL
+    )]
+  }
+
+  res
+}
+
+eicu_extract_unit <- function(x) {
+
+  res <- sub("^.+\\(", "", sub("\\)$", "", x))
+  res[!nzchar(res)] <- NA_character_
+
+  res
+}
+
+sub_trans <- function(regex, repl) {
+  assert_that(is.string(regex), is.string(repl))
+  function(x) sub(regex, repl, x, ignore.case = TRUE)
+}
+
+eicu_vaso_rate <- function(ml_to_mcg) {
+
+  assert_that(is.count(ml_to_mcg))
+
+  function(x, sub_var, val_var, weight_var, env, ...) {
+
+    fix_units <- convert_unit(
+      c("/hr$", "^mg/", "^units/", "^ml/", "^nanograms/", "^Unknown$", "^ml$"),
+      c(binary_op(`/`, 60), binary_op(`*`, 1000), set_na,
+        binary_op(`*`, ml_to_mcg), binary_op(`/`, 1000), set_na, set_na),
+      c(sub_trans("/hr$", "/min"), sub_trans("^mg/", "mcg/"),
+        "mcg/kg/min", sub_trans("^ml/", "mcg/"),
+        sub_trans("^nanograms/", "mcg/"), "mcg/kg/min", "mcg/kg/min")
+    )
+
+    add_kg <- sub_trans("/", "/kg/")
+
+    x <- x[, c(val_var) := silent_as_num(get(val_var))]
+    x <- x[get(val_var) > 0, ]
+
+    x <- add_weight(x, env, weight_var)
+    x <- x[, c("unit_var") := eicu_extract_unit(get(sub_var))]
+
+    x <- x[!grepl("/kg/", get("unit_var"), ignore.case = TRUE),
+      c(val_var, "unit_var") := list(
+        get(val_var) / get(weight_var), add_kg(get("unit_var"))
+      )
+    ]
+
+    fix_units(x, val_var, "unit_var")
+  }
+}
+
+hirid_vaso_rate <- function(x, val_var, unit_var, env, ...) {
 
   x <- x[get(val_var) > 0, ]
   x <- x[get(unit_var) == "mg",
@@ -319,12 +412,8 @@ hirid_vaso <- function(x, val_var, unit_var, env, ...) {
                   unexpected units")
   }
 
-  sex <- load_id("general", env, cols = "sex", id_var = ids)
-  sex <- sex[,
-    c("weight", "sex") := list(fifelse(get("sex") == "M", 85, 65), NULL)
-  ]
-
-  x <- merge(dt_gforce(x, "sum", vars = val_var), sex, by = ids)
+  x <- dt_gforce(x, "sum", vars = val_var)
+  x <- add_weight(x, env, "weight")
 
   frac <- 1 / as.double(interval(x), units = "mins")
 

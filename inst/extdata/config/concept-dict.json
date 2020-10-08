@@ -1121,7 +1121,7 @@
       ]
     }
   },
-  "dobu": {
+  "dobu_rate": {
     "unit": ["mcg/kg/min", "mcgkgmin"],
     "min": 0,
     "max": 50,
@@ -1130,30 +1130,22 @@
     "sources": {
       "eicu": [
         {
-          "ids": "Dobutamine (mcg/kg/min)",
-          "table": "infusiondrug",
-          "sub_var": "drugname"
-        },
-        {
-          "ids": ["Dobutamine ()", "Dobutamine (ml/hr)"],
+          "regex": "^dobu.*\\(.+\\)$",
           "table": "infusiondrug",
           "sub_var": "drugname",
-          "callback": "eicu_body_weight",
-          "weight_var": "patientweight"
+          "weight_var": "patientweight",
+          "callback": "eicu_vaso_rate(ml_to_mcg = 2000)",
+          "class": "rgx_itm"
         }
       ],
       "eicu_demo": [
         {
-          "ids": "Dobutamine (mcg/kg/min)",
-          "table": "infusiondrug",
-          "sub_var": "drugname"
-        },
-        {
-          "ids": ["Dobutamine ()", "Dobutamine (ml/hr)"],
+          "regex": "^dobu.*\\(.+\\)$",
           "table": "infusiondrug",
           "sub_var": "drugname",
-          "callback": "eicu_body_weight",
-          "weight_var": "patientweight"
+          "weight_var": "patientweight",
+          "callback": "eicu_vaso_rate(ml_to_mcg = 2000)",
+          "class": "rgx_itm"
         }
       ],
       "hirid": [
@@ -1161,7 +1153,7 @@
           "ids": 426,
           "table": "pharma",
           "sub_var": "pharmaid",
-          "callback": "hirid_vaso"
+          "callback": "hirid_vaso_rate"
         }
       ],
       "mimic": [
@@ -1190,7 +1182,7 @@
       ]
     }
   },
-  "dopa": {
+  "dopa_rate": {
     "unit": ["mcg/kg/min", "mcgkgmin"],
     "min": 0,
     "max": 50,
@@ -1199,16 +1191,22 @@
     "sources": {
       "eicu": [
         {
-          "ids": "Dopamine (mcg/kg/min)",
+          "regex": "^dopami.*\\(.+\\)$",
           "table": "infusiondrug",
-          "sub_var": "drugname"
+          "sub_var": "drugname",
+          "weight_var": "patientweight",
+          "callback": "eicu_vaso_rate(ml_to_mcg = 1600)",
+          "class": "rgx_itm"
         }
       ],
       "eicu_demo": [
         {
-          "ids": "Dopamine (mcg/kg/min)",
+          "regex": "^dopami.*\\(.+\\)$",
           "table": "infusiondrug",
-          "sub_var": "drugname"
+          "sub_var": "drugname",
+          "weight_var": "patientweight",
+          "callback": "eicu_vaso_rate(ml_to_mcg = 1600)",
+          "class": "rgx_itm"
         }
       ],
       "mimic": [
@@ -1318,7 +1316,7 @@
       ]
     }
   },
-  "epi": {
+  "epi_rate": {
     "unit": ["mcg/kg/min", "mcgkgmin"],
     "min": 0,
     "max": 1.5,
@@ -1327,30 +1325,22 @@
     "sources": {
       "eicu": [
         {
-          "ids": "Epinephrine (mcg/kg/min)",
-          "table": "infusiondrug",
-          "sub_var": "drugname"
-        },
-        {
-          "ids": ["Epinephrine (ml/hr)", "Epinephrine (mcg/min)"],
+          "regex": "^epi( |n).*\\(.+\\)$",
           "table": "infusiondrug",
           "sub_var": "drugname",
-          "callback": "eicu_body_weight",
-          "weight_var": "patientweight"
+          "weight_var": "patientweight",
+          "callback": "eicu_vaso_rate(ml_to_mcg = 40)",
+          "class": "rgx_itm"
         }
       ],
       "eicu_demo": [
         {
-          "ids": "Epinephrine (mcg/kg/min)",
-          "table": "infusiondrug",
-          "sub_var": "drugname"
-        },
-        {
-          "ids": ["Epinephrine (ml/hr)", "Epinephrine (mcg/min)"],
+          "regex": "^epi( |n).*\\(.+\\)$",
           "table": "infusiondrug",
           "sub_var": "drugname",
-          "callback": "eicu_body_weight",
-          "weight_var": "patientweight"
+          "weight_var": "patientweight",
+          "callback": "eicu_vaso_rate(ml_to_mcg = 40)",
+          "class": "rgx_itm"
         }
       ],
       "hirid": [
@@ -1358,7 +1348,7 @@
           "ids": [71, 1000649, 1000650, 1000655, 1000750],
           "table": "pharma",
           "sub_var": "pharmaid",
-          "callback": "hirid_vaso"
+          "callback": "hirid_vaso_rate"
         }
       ],
       "mimic": [
@@ -2580,7 +2570,7 @@
     "callback": "news_score",
     "class": "rec_cncpt"
   },
-  "norepi": {
+  "norepi_rate": {
     "unit": ["mcg/kg/min", "mcgkgmin"],
     "min": 0,
     "max": 3,
@@ -2589,30 +2579,22 @@
     "sources": {
       "eicu": [
         {
-          "ids": "Norepinephrine (mcg/kg/min)",
-          "table": "infusiondrug",
-          "sub_var": "drugname"
-        },
-        {
-          "ids": ["Norepinephrine (ml/hr)", "Norepinephrine (mcg/min)"],
+          "regex": "^norepi.*\\(.+\\)$",
           "table": "infusiondrug",
           "sub_var": "drugname",
-          "callback": "eicu_body_weight",
-          "weight_var": "patientweight"
+          "weight_var": "patientweight",
+          "callback": "eicu_vaso_rate(ml_to_mcg = 32)",
+          "class": "rgx_itm"
         }
       ],
       "eicu_demo": [
         {
-          "ids": "Norepinephrine (mcg/kg/min)",
-          "table": "infusiondrug",
-          "sub_var": "drugname"
-        },
-        {
-          "ids": ["Norepinephrine (ml/hr)", "Norepinephrine (mcg/min)"],
+          "regex": "^norepi.*\\(.+\\)$",
           "table": "infusiondrug",
           "sub_var": "drugname",
-          "callback": "eicu_body_weight",
-          "weight_var": "patientweight"
+          "weight_var": "patientweight",
+          "callback": "eicu_vaso_rate(ml_to_mcg = 32)",
+          "class": "rgx_itm"
         }
       ],
       "hirid": [
@@ -2620,7 +2602,7 @@
           "ids": [1000462, 1000656, 1000657, 1000658],
           "table": "pharma",
           "sub_var": "pharmaid",
-          "callback": "hirid_vaso"
+          "callback": "hirid_vaso_rate"
         }
       ],
       "mimic": [
@@ -3321,7 +3303,7 @@
     "class": "rec_cncpt"
   },
   "sofa": {
-    "concepts": ["pafi", "vent", "plt", "bili", "map", "norepi", "epi", "dopa", "dobu", "gcs", "crea", "urine24"],
+    "concepts": ["pafi", "vent", "plt", "bili", "map", "norepi_rate", "epi_rate", "dopa_rate", "dobu_rate", "gcs", "crea", "urine24"],
     "description": "sequential organ failure assessment score",
     "category": "outcome",
     "aggregate": [null, null, "min", "max", "min", "max", "max", "max", "max", null, "max", null],

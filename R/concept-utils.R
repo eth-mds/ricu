@@ -1127,7 +1127,10 @@ read_dictionary <- function(name = "data-sources", cfg_dirs = NULL) {
 
 parse_dictionary <- function(dict, src = NULL, concepts = NULL) {
 
-  do_itm <- function(sr, x) lapply(lapply(x, c, src = sr), do_call, new_itm)
+  do_itm <- function(sr, x) {
+    res <- lapply(x, c, src = sr)
+    lapply(res, do_call, new_itm)
+  }
 
   do_cncpt <- function(name, sources, target = "ts_tbl", ...) {
 
@@ -1144,7 +1147,8 @@ parse_dictionary <- function(dict, src = NULL, concepts = NULL) {
         sources <- sources[src]
       }
 
-      itms <- new_item(do.call(c, Map(do_itm, names(sources), sources)))
+      itms <- do.call(c, Map(do_itm, names(sources), sources))
+      itms <- new_item(itms)
     }
 
     cncpt_info <- list(name = name, items = itms, target = target)
@@ -1173,14 +1177,15 @@ parse_dictionary <- function(dict, src = NULL, concepts = NULL) {
 
     sub <- ful[sel]
 
-    re_con <- lapply(lst_xtr(sub, "concepts"), do_new, ful)
     is_rec <- lgl_ply(lst_xtr(sub, "class"), identical, "rec_cncpt")
 
     if (any(is_rec)) {
+      re_con      <- lapply(lst_xtr(sub, "concepts"), do_new, ful)
       sub[is_rec] <- Map(`[[<-`, sub[is_rec], "sources", re_con[is_rec])
     }
 
-    new_concept(lapply(Map(c, name = names(sub), sub), do_call, do_cncpt))
+    res <- lapply(Map(c, name = names(sub), sub), do_call, do_cncpt)
+    new_concept(res)
   }
 
   assert_that(null_or(src, is.character))

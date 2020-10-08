@@ -201,7 +201,7 @@ load_concepts.concept <- function(x, src = NULL, aggregate = NULL,
 
   assert_that(is.flag(merge_data), is.flag(verbose))
 
-  if (!is.null(src)) {
+  if (not_null(src)) {
 
     assert_that(is.string(src))
 
@@ -485,15 +485,13 @@ load_concepts.item <- function(x, patient_ids = NULL, id_type = "icustay",
     load_concepts(x, ...)
   }
 
-  warn_dots(...)
-
   assert_that(has_length(x))
 
   # slightly inefficient, as cols might get filled which were only relevant
   # during callback
 
   rbind_lst(
-    lapply(x, load_one, progress, patient_ids, id_type, interval),
+    lapply(x, load_one, progress, patient_ids, id_type, interval, ...),
     fill = TRUE
   )
 }
