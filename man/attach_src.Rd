@@ -14,9 +14,9 @@
 \usage{
 attach_src(x, ...)
 
-\method{attach_src}{src_cfg}(x, assign_env = .GlobalEnv, data_dir = src_data_dir(x), ...)
+\method{attach_src}{src_cfg}(x, assign_env = NULL, data_dir = src_data_dir(x), ...)
 
-\method{attach_src}{character}(x, assign_env = .GlobalEnv, data_dir = src_data_dir(x), ...)
+\method{attach_src}{character}(x, assign_env = NULL, data_dir = src_data_dir(x), ...)
 
 setup_src_env(x, env, ...)
 

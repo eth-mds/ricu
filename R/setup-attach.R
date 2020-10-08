@@ -99,7 +99,7 @@ attach_src <- function(x, ...) UseMethod("attach_src", x)
 #'
 #' @export
 #'
-attach_src.src_cfg <- function(x, assign_env = .GlobalEnv,
+attach_src.src_cfg <- function(x, assign_env = NULL,
                                data_dir = src_data_dir(x), ...) {
 
   warn_dots(...)
@@ -108,14 +108,17 @@ attach_src.src_cfg <- function(x, assign_env = .GlobalEnv,
 
   tryCatch({
 
-    assert_that(is.string(data_dir), is.environment(assign_env))
+    assert_that(is.string(data_dir), null_or(assign_env, is.environment))
 
     dat_env <- data_env()
     src_env <- new_src_env(x, env = new.env(parent = dat_env))
 
     delayedAssign(src, setup_src_env(x, src_env, data_dir),
                   assign.env = dat_env)
-    makeActiveBinding(src, get_from_data_env(src), assign_env)
+
+    if (is.environment(assign_env)) {
+      makeActiveBinding(src, get_from_data_env(src), assign_env)
+    }
 
   }, error = function(err) {
 
@@ -127,7 +130,9 @@ attach_src.src_cfg <- function(x, assign_env = .GlobalEnv,
       exdent = c(0L, rep_along(2L, msg))
     )
 
-    assign(src, NULL, envir = assign_env)
+    if (is.environment(assign_env)) {
+      assign(src, NULL, envir = assign_env)
+    }
   })
 
   invisible(NULL)
@@ -135,7 +140,7 @@ attach_src.src_cfg <- function(x, assign_env = .GlobalEnv,
 
 #' @rdname attach_src
 #' @export
-attach_src.character <- function(x, assign_env = .GlobalEnv,
+attach_src.character <- function(x, assign_env = NULL,
                                  data_dir = src_data_dir(x), ...) {
 
   read_err <- function(err) {
@@ -164,8 +169,9 @@ attach_src.character <- function(x, assign_env = .GlobalEnv,
         exdent = c(0L, rep_along(2L, msg))
       )
 
-
-      assign(src, NULL, envir = assign_env)
+      if (is.environment(env)) {
+        assign(src, NULL, envir = env)
+      }
 
       NULL
     }

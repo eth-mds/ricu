@@ -146,7 +146,7 @@ src_data_dir <- function(srcs) {
   }
 }
 
-#' @importFrom utils packageDescription available.packages install.packages
+#' @importFrom utils packageDescription available.packages
 data_pkg_avail <- function(src) {
 
   if (!is.string(src)) {
@@ -159,6 +159,7 @@ data_pkg_avail <- function(src) {
   sub("_", ".", src) %in% pkgs[, "Package"]
 }
 
+#' @importFrom utils install.packages
 install_data_pkgs <- function(srcs = c("mimic_demo", "eicu_demo")) {
 
   if (!is.character(srcs)) {
