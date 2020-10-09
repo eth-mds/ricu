@@ -85,6 +85,8 @@ is_in <- function(x, opts, na_rm = FALSE) {
 
 on_failure(is_in) <- in_failure
 
+has_col <- function(x, cols) has_cols(x, cols, 1L)
+
 has_cols <- function(x, cols, length = NA) {
   if (is.na(length)) {
     len_check <- assert_that(has_length(cols))
@@ -119,8 +121,6 @@ on_failure(has_interval) <- function(call, env) {
     "has_interval_assert"
   )
 }
-
-is_difftime <- is_type("difftime")
 
 is_interval <- function(x) {
   assert_that(is_difftime(x), has_length(x)) && all(x >= 0)

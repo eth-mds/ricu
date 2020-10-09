@@ -601,7 +601,9 @@ on_failure(is_unique) <- function(call, env) {
 aggregate.id_tbl <- function(x, expr = NULL, by = meta_vars(x),
                              vars = data_vars(x), env = NULL, ...) {
 
-  is_type <- function(col, fun) fun(x[[col]])
+  is_type <- function(col, ...) {
+    Reduce(`|`, lapply(list(...), function(fun) fun(x[[col]])))
+  }
 
   if (is.null(env)) {
     env <- caller_env()
@@ -625,7 +627,7 @@ aggregate.id_tbl <- function(x, expr = NULL, by = meta_vars(x),
 
   if (is.null(how)) {
 
-    if (all(lgl_ply(vars, is_type, is.numeric))) {
+    if (all(lgl_ply(vars, is_type, is.numeric, is_difftime))) {
 
       fun <- "median"
 

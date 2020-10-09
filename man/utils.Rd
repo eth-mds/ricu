@@ -6,6 +6,7 @@
 \alias{is_val}
 \alias{not_val}
 \alias{is_true}
+\alias{is_false}
 \alias{last_elem}
 \alias{first_elem}
 \alias{replace_na}
@@ -20,6 +21,8 @@ is_val(x, val)
 not_val(x, val)
 
 is_true(x)
+
+is_false(x)
 
 last_elem(x)
 
@@ -40,11 +43,11 @@ The two functions \code{min_or_na()} and \code{max_or_na()} overcome a design ch
 of \code{\link[base:Extremes]{base::min()}} (or \code{\link[base:Extremes]{base::max()}}\verb{) that can yield undesirable results. If called on a vector of all missing values with }na.rm = TRUE\verb{, }Inf\verb{(and}-Inf\verb{respectively) are returned. This is changed to returning a missing value of the same type as}x`.
 
 The functions \code{is_val()} and \code{not_val()} (as well as analogously
-\code{is_true()}) return logical vectors of the same length as the value passed
-as \code{x}, with non-base R semanticists of comparing against \code{NA}: instead of
-returning \code{c(NA, TRUE)} for \code{c(NA, 5) == 5}, \code{is_val()} will return
-\verb{c(FALSE TRUE)}. Passing \code{NA} as \code{val} might lead to unintended results but
-no warning is thrown.
+\code{is_true()} and \code{is_false()}) return logical vectors of the same length as
+the value passed as \code{x}, with non-base R semanticists of comparing against
+\code{NA}: instead of returning \code{c(NA, TRUE)} for \code{c(NA, 5) == 5}, \code{is_val()}
+will return \verb{c(FALSE TRUE)}. Passing \code{NA} as \code{val} might lead to unintended
+results but no warning is thrown.
 
 Finally, \code{first_elem()} and \code{last_elem()} has the same semantics as
 \code{\link[utils:head]{utils::head()}} and \code{\link[utils:head]{utils::tail()}} with \code{n = 1L} and \code{replace_na()} will

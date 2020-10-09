@@ -19,11 +19,11 @@ agg_or_na <- function(agg_fun) {
 #' value of the same type as `x`.
 #'
 #' The functions `is_val()` and `not_val()` (as well as analogously
-#' `is_true()`) return logical vectors of the same length as the value passed
-#' as `x`, with non-base R semanticists of comparing against `NA`: instead of
-#' returning `c(NA, TRUE)` for `c(NA, 5) == 5`, `is_val()` will return
-#' `c(FALSE TRUE)`. Passing `NA` as `val` might lead to unintended results but
-#' no warning is thrown.
+#' `is_true()` and `is_false()`) return logical vectors of the same length as
+#' the value passed as `x`, with non-base R semanticists of comparing against
+#' `NA`: instead of returning `c(NA, TRUE)` for `c(NA, 5) == 5`, `is_val()`
+#' will return `c(FALSE TRUE)`. Passing `NA` as `val` might lead to unintended
+#' results but no warning is thrown.
 #'
 #' Finally, `first_elem()` and `last_elem()` has the same semantics as
 #' [utils::head()] and [utils::tail()] with `n = 1L` and `replace_na()` will
@@ -62,51 +62,6 @@ min_or_na <- agg_or_na(min)
 #'
 max_or_na <- agg_or_na(max)
 
-#' Difftime utilities
-#'
-#' As [base::difftime()] vectors are used throughout `ricu`, a set of wrapper
-#' functions are exported for convenience of instantiation [base::difftime()]
-#' vectors with given time units.
-#'
-#' @param x Numeric vector to coerce to [base::difftime()]
-#'
-#' @examples
-#' hours(1L)
-#' mins(NA_real_)
-#' secs(1:10)
-#' hours(numeric(0L))
-#'
-#' @rdname difftime
-#' @export
-#'
-secs <- function(x) as.difftime(x, units = "secs")
-
-#' @rdname difftime
-#' @export
-#'
-mins <- function(x) as.difftime(x, units = "mins")
-
-#' @rdname difftime
-#' @export
-#'
-hours <- function(x) as.difftime(x, units = "hours")
-
-#' @rdname difftime
-#' @export
-#'
-days <- function(x) as.difftime(x, units = "days")
-
-#' @rdname difftime
-#' @export
-#'
-weeks <- function(x) as.difftime(x, units = "weeks")
-
-is_one_min <- function(x) all_equal(x, mins(1L))
-
-re_time <- function(x, interval) {
-  round_to(`units<-`(x, units(interval)), as.double(interval))
-}
-
 reduce <- function(f, x, ...) Reduce(function(x, y) f(x, y, ...), x)
 
 round_to <- function(x, to = 1) {
@@ -129,6 +84,11 @@ val_or_na <- function(x, val) is.na(x) | x == val
 #' @export
 #'
 is_true <- function(x) !is.na(x) & x
+
+#' @rdname utils
+#' @export
+#'
+is_false <- function(x) !(is.na(x) | x)
 
 #' @rdname utils
 #' @export

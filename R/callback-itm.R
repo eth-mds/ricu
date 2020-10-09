@@ -422,6 +422,60 @@ hirid_vaso_rate <- function(x, val_var, unit_var, env, ...) {
   ]
 }
 
+mimic_dur_incv <- function(x, val_var, grp_var, ...) {
+  calc_dur(x, val_var, index_var(x), index_var(x), grp_var)
+}
+
+mimic_dur_inmv <- function(x, val_var, grp_var, stop_var, ...) {
+  calc_dur(x, val_var, index_var(x), stop_var, grp_var)
+}
+
+eicu_duration <- function(gap_length) {
+
+  assert_that(is_interval(gap_length), is_scalar(gap_length))
+
+  function(x, val_var, ...) {
+
+    time_diff <- function(x) x - data.table::shift(x)
+
+    grp_calc  <- function(x) {
+      tmp <- rle(is_true(x <= gap_length))
+      val <- tmp[["values"]]
+      tmp[["values"]][val] <- seq_len(sum(val))
+      inverse.rle(tmp)
+    }
+
+    id_vars   <- id_vars(x)
+    index_var <- index_var(x)
+
+    if (interval(x) > gap_length) {
+      warn_ricu("splitting durations by gaps of length {format(gap_length)}
+                 using data with a time resolution of {format(interval(x))}")
+    }
+
+    x <- x[, c("time_diff") := time_diff(get(index_var)), by = c(id_vars)]
+    x <- x[, c("grp_var") := grp_calc(get("time_diff"))]
+
+    calc_dur(x, val_var, index_var, index_var, "grp_var")
+  }
+}
+
+hirid_duration <- function(x, val_var, grp_var, ...) {
+  calc_dur(x, val_var, index_var(x), index_var(x), grp_var)
+}
+
+calc_dur <- function(x, val_var, min_var, max_var, grp_var) {
+
+  id_vars   <- id_vars(x)
+  index_var <- index_var(x)
+
+  res <- x[, setNames(list(min(get(min_var)), max(get(max_var))),
+                      c(index_var, val_var)), by = c(id_vars, grp_var)]
+  res <- res[, c(val_var) := get(val_var) - get(index_var)]
+
+  res
+}
+
 hirid_urine <- function(x, val_var, unit_var, ...) {
 
   do_diff <- function(x) {

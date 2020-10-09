@@ -438,6 +438,53 @@ hopper <- function(x, expr, windows, full_window = FALSE,
   rename_cols(res, win_cols, tmp_col, by_ref = TRUE)
 }
 
+#' Difftime utilities
+#'
+#' As [base::difftime()] vectors are used throughout `ricu`, a set of wrapper
+#' functions are exported for convenience of instantiation [base::difftime()]
+#' vectors with given time units.
+#'
+#' @param x Numeric vector to coerce to [base::difftime()]
+#'
+#' @examples
+#' hours(1L)
+#' mins(NA_real_)
+#' secs(1:10)
+#' hours(numeric(0L))
+#'
+#' @rdname difftime
+#' @export
+#'
+secs <- function(x) as.difftime(x, units = "secs")
+
+#' @rdname difftime
+#' @export
+#'
+mins <- function(x) as.difftime(x, units = "mins")
+
+#' @rdname difftime
+#' @export
+#'
+hours <- function(x) as.difftime(x, units = "hours")
+
+#' @rdname difftime
+#' @export
+#'
+days <- function(x) as.difftime(x, units = "days")
+
+#' @rdname difftime
+#' @export
+#'
+weeks <- function(x) as.difftime(x, units = "weeks")
+
+is_one_min <- function(x) all_equal(x, mins(1L))
+
+is_difftime <- is_type("difftime")
+
+re_time <- function(x, interval) {
+  round_to(`units<-`(x, units(interval)), as.double(interval))
+}
+
 locf <- function(x) {
 
   res <- last_elem(x)

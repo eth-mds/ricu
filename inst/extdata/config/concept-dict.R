@@ -406,7 +406,7 @@ cfg <- list(
       eicu = list(
         list(ids = "PT", table = "lab", sub_var = "labname")
       )
-  )
+    )
   ),
   rdw = list(
     unit = "%",
@@ -421,7 +421,7 @@ cfg <- list(
         eicu = list(
         list(ids = "RDW", table = "lab", sub_var = "labname")
       )
-  )
+    )
   ),
   alp = list(
     unit = "IU/L",
@@ -720,7 +720,7 @@ cfg <- list(
       eicu = list(
         list(ids = "-basos", table = "lab", sub_var = "labname")
       )
-  )
+    )
   ),
   eos = list(
     unit = "%",
@@ -955,7 +955,7 @@ cfg <- list(
       eicu = list(
         list(ids = "RBC", table = "lab", sub_var = "labname")
       )
-  )
+    )
   ),
   ck = list(
     unit = "IU/L",
@@ -1063,7 +1063,7 @@ cfg <- list(
         list(ids = "GCS Total", table = "nursecharting",
              sub_var = "nursingchartcelltypevalname")
       )
-  )
+    )
   ),
   urine = list(
     unit = "mL",
@@ -1097,7 +1097,7 @@ cfg <- list(
     unit = c("mcg/kg/min", "mcgkgmin"),
     min = 0,
     max = 50,
-    description = "dobutamine",
+    description = "dobutamine rate",
     category = "medications",
     sources = list(
       mimic = list(
@@ -1117,11 +1117,35 @@ cfg <- list(
       )
     )
   ),
+  dobu_dur = list(
+    description = "dobutamine duration",
+    category = "medications",
+    aggregate = "max",
+    sources = list(
+      mimic = list(
+        list(ids = c(30042L, 30306L), table = "inputevents_cv",
+             sub_var = "itemid", grp_var = "linkorderid",
+             callback = "mimic_dur_incv"),
+        list(ids = 221653L, table = "inputevents_mv", sub_var = "itemid",
+             stop_var = "endtime", grp_var = "linkorderid",
+             callback = "mimic_dur_inmv")
+      ),
+      eicu = list(
+        list(regex = "^dobu", table = "infusiondrug", sub_var = "drugname",
+             callback = "eicu_duration(gap_length = hours(5L))",
+             class = "rgx_itm")
+      ),
+      hirid = list(
+        list(ids = 426L, table = "pharma", sub_var = "pharmaid",
+             grp_var = "infusionid", callback = "hirid_duration")
+      )
+    )
+  ),
   dopa_rate = list(
     unit = c("mcg/kg/min", "mcgkgmin"),
     min = 0,
     max = 50,
-    description = "dopamine",
+    description = "dopamine rate",
     category = "medications",
     sources = list(
       mimic = list(
@@ -1130,9 +1154,29 @@ cfg <- list(
         list(ids = 221662L, table = "inputevents_mv", sub_var = "itemid")
       ),
       eicu = list(
-        list(regex = "^dopami.*\\(.+\\)$", table = "infusiondrug",
+        list(regex = "^dopa.*\\(.+\\)$", table = "infusiondrug",
              sub_var = "drugname", weight_var = "patientweight",
              callback = "eicu_vaso_rate(ml_to_mcg = 1600)", class = "rgx_itm")
+      )
+    )
+  ),
+  dopa_dur = list(
+    description = "dopamine duration",
+    category = "medications",
+    aggregate = "max",
+    sources = list(
+      mimic = list(
+        list(ids = c(30043L, 30125L, 30307L), table = "inputevents_cv",
+             sub_var = "itemid", grp_var = "linkorderid",
+             callback = "mimic_dur_incv"),
+        list(ids = 221662L, table = "inputevents_mv", sub_var = "itemid",
+             stop_var = "endtime", grp_var = "linkorderid",
+             callback = "mimic_dur_inmv")
+      ),
+      eicu = list(
+        list(regex = "^dopa", table = "infusiondrug", sub_var = "drugname",
+             callback = "eicu_duration(gap_length = hours(5L))",
+             class = "rgx_itm")
       )
     )
   ),
@@ -1140,14 +1184,13 @@ cfg <- list(
     unit = c("mcg/kg/min", "mcgkgmin"),
     min = 0,
     max = 3,
-    description = "norepinephrine",
+    description = "norepinephrine rate",
     category = "medications",
     sources = list(
       mimic = list(
         list(ids = c(30047L, 30120L), table = "inputevents_cv",
              sub_var = "itemid"),
-        list(ids = 221906L, table = "inputevents_mv",
-             sub_var = "itemid")
+        list(ids = 221906L, table = "inputevents_mv", sub_var = "itemid")
       ),
       eicu = list(
         list(regex = "^norepi.*\\(.+\\)$", table = "infusiondrug",
@@ -1160,11 +1203,36 @@ cfg <- list(
       )
     )
   ),
+  norepi_dur = list(
+    description = "norepinephrine duration",
+    category = "medications",
+    aggregate = "max",
+    sources = list(
+      mimic = list(
+        list(ids = c(30047L, 30120L), table = "inputevents_cv",
+             sub_var = "itemid", grp_var = "linkorderid",
+             callback = "mimic_dur_incv"),
+        list(ids = 221906L, table = "inputevents_mv", sub_var = "itemid",
+             stop_var = "endtime", grp_var = "linkorderid",
+             callback = "mimic_dur_inmv")
+      ),
+      eicu = list(
+        list(regex = "^norepi", table = "infusiondrug", sub_var = "drugname",
+             callback = "eicu_duration(gap_length = hours(5L))",
+             class = "rgx_itm")
+      ),
+      hirid = list(
+        list(ids = c(1000462L, 1000656L, 1000657L, 1000658L), table = "pharma",
+             sub_var = "pharmaid", grp_var = "infusionid",
+             callback = "hirid_duration")
+      )
+    )
+  ),
   epi_rate = list(
     unit = c("mcg/kg/min", "mcgkgmin"),
     min = 0,
     max = 1.5,
-    description = "epinephrine",
+    description = "epinephrine rate",
     category = "medications",
     sources = list(
       mimic = list(
@@ -1181,6 +1249,31 @@ cfg <- list(
         list(ids = c(71L, 1000649L, 1000650L, 1000655L, 1000750L),
              table = "pharma", sub_var = "pharmaid",
              callback = "hirid_vaso_rate")
+      )
+    )
+  ),
+  epi_dur = list(
+    description = "epinephrine duration",
+    category = "medications",
+    aggregate = "max",
+    sources = list(
+      mimic = list(
+        list(ids = c(30044L, 30119L, 30309L), table = "inputevents_cv",
+             sub_var = "itemid", grp_var = "linkorderid",
+             callback = "mimic_dur_incv"),
+        list(ids = 221289L, table = "inputevents_mv", sub_var = "itemid",
+             stop_var = "endtime", grp_var = "linkorderid",
+             callback = "mimic_dur_inmv")
+      ),
+      eicu = list(
+        list(regex = "^epi( |n)", table = "infusiondrug", sub_var = "drugname",
+             callback = "eicu_duration(gap_length = hours(5L))",
+             class = "rgx_itm")
+      ),
+      hirid = list(
+        list(ids = c(71L, 1000649L, 1000650L, 1000655L, 1000750L),
+             table = "pharma", sub_var = "pharmaid", grp_var = "infusionid",
+             callback = "hirid_duration")
       )
     )
   ),

@@ -1121,11 +1121,79 @@
       ]
     }
   },
+  "dobu_dur": {
+    "description": "dobutamine duration",
+    "category": "medications",
+    "aggregate": "max",
+    "sources": {
+      "eicu": [
+        {
+          "regex": "^dobu",
+          "table": "infusiondrug",
+          "sub_var": "drugname",
+          "callback": "eicu_duration(gap_length = hours(5L))",
+          "class": "rgx_itm"
+        }
+      ],
+      "eicu_demo": [
+        {
+          "regex": "^dobu",
+          "table": "infusiondrug",
+          "sub_var": "drugname",
+          "callback": "eicu_duration(gap_length = hours(5L))",
+          "class": "rgx_itm"
+        }
+      ],
+      "hirid": [
+        {
+          "ids": 426,
+          "table": "pharma",
+          "sub_var": "pharmaid",
+          "grp_var": "infusionid",
+          "callback": "hirid_duration"
+        }
+      ],
+      "mimic": [
+        {
+          "ids": [30042, 30306],
+          "table": "inputevents_cv",
+          "sub_var": "itemid",
+          "grp_var": "linkorderid",
+          "callback": "mimic_dur_incv"
+        },
+        {
+          "ids": 221653,
+          "table": "inputevents_mv",
+          "sub_var": "itemid",
+          "stop_var": "endtime",
+          "grp_var": "linkorderid",
+          "callback": "mimic_dur_inmv"
+        }
+      ],
+      "mimic_demo": [
+        {
+          "ids": [30042, 30306],
+          "table": "inputevents_cv",
+          "sub_var": "itemid",
+          "grp_var": "linkorderid",
+          "callback": "mimic_dur_incv"
+        },
+        {
+          "ids": 221653,
+          "table": "inputevents_mv",
+          "sub_var": "itemid",
+          "stop_var": "endtime",
+          "grp_var": "linkorderid",
+          "callback": "mimic_dur_inmv"
+        }
+      ]
+    }
+  },
   "dobu_rate": {
     "unit": ["mcg/kg/min", "mcgkgmin"],
     "min": 0,
     "max": 50,
-    "description": "dobutamine",
+    "description": "dobutamine rate",
     "category": "medications",
     "sources": {
       "eicu": [
@@ -1182,16 +1250,75 @@
       ]
     }
   },
+  "dopa_dur": {
+    "description": "dopamine duration",
+    "category": "medications",
+    "aggregate": "max",
+    "sources": {
+      "eicu": [
+        {
+          "regex": "^dopa",
+          "table": "infusiondrug",
+          "sub_var": "drugname",
+          "callback": "eicu_duration(gap_length = hours(5L))",
+          "class": "rgx_itm"
+        }
+      ],
+      "eicu_demo": [
+        {
+          "regex": "^dopa",
+          "table": "infusiondrug",
+          "sub_var": "drugname",
+          "callback": "eicu_duration(gap_length = hours(5L))",
+          "class": "rgx_itm"
+        }
+      ],
+      "mimic": [
+        {
+          "ids": [30043, 30125, 30307],
+          "table": "inputevents_cv",
+          "sub_var": "itemid",
+          "grp_var": "linkorderid",
+          "callback": "mimic_dur_incv"
+        },
+        {
+          "ids": 221662,
+          "table": "inputevents_mv",
+          "sub_var": "itemid",
+          "stop_var": "endtime",
+          "grp_var": "linkorderid",
+          "callback": "mimic_dur_inmv"
+        }
+      ],
+      "mimic_demo": [
+        {
+          "ids": [30043, 30125, 30307],
+          "table": "inputevents_cv",
+          "sub_var": "itemid",
+          "grp_var": "linkorderid",
+          "callback": "mimic_dur_incv"
+        },
+        {
+          "ids": 221662,
+          "table": "inputevents_mv",
+          "sub_var": "itemid",
+          "stop_var": "endtime",
+          "grp_var": "linkorderid",
+          "callback": "mimic_dur_inmv"
+        }
+      ]
+    }
+  },
   "dopa_rate": {
     "unit": ["mcg/kg/min", "mcgkgmin"],
     "min": 0,
     "max": 50,
-    "description": "dopamine",
+    "description": "dopamine rate",
     "category": "medications",
     "sources": {
       "eicu": [
         {
-          "regex": "^dopami.*\\(.+\\)$",
+          "regex": "^dopa.*\\(.+\\)$",
           "table": "infusiondrug",
           "sub_var": "drugname",
           "weight_var": "patientweight",
@@ -1201,7 +1328,7 @@
       ],
       "eicu_demo": [
         {
-          "regex": "^dopami.*\\(.+\\)$",
+          "regex": "^dopa.*\\(.+\\)$",
           "table": "infusiondrug",
           "sub_var": "drugname",
           "weight_var": "patientweight",
@@ -1316,11 +1443,79 @@
       ]
     }
   },
+  "epi_dur": {
+    "description": "epinephrine duration",
+    "category": "medications",
+    "aggregate": "max",
+    "sources": {
+      "eicu": [
+        {
+          "regex": "^epi( |n)",
+          "table": "infusiondrug",
+          "sub_var": "drugname",
+          "callback": "eicu_duration(gap_length = hours(5L))",
+          "class": "rgx_itm"
+        }
+      ],
+      "eicu_demo": [
+        {
+          "regex": "^epi( |n)",
+          "table": "infusiondrug",
+          "sub_var": "drugname",
+          "callback": "eicu_duration(gap_length = hours(5L))",
+          "class": "rgx_itm"
+        }
+      ],
+      "hirid": [
+        {
+          "ids": [71, 1000649, 1000650, 1000655, 1000750],
+          "table": "pharma",
+          "sub_var": "pharmaid",
+          "grp_var": "infusionid",
+          "callback": "hirid_duration"
+        }
+      ],
+      "mimic": [
+        {
+          "ids": [30044, 30119, 30309],
+          "table": "inputevents_cv",
+          "sub_var": "itemid",
+          "grp_var": "linkorderid",
+          "callback": "mimic_dur_incv"
+        },
+        {
+          "ids": 221289,
+          "table": "inputevents_mv",
+          "sub_var": "itemid",
+          "stop_var": "endtime",
+          "grp_var": "linkorderid",
+          "callback": "mimic_dur_inmv"
+        }
+      ],
+      "mimic_demo": [
+        {
+          "ids": [30044, 30119, 30309],
+          "table": "inputevents_cv",
+          "sub_var": "itemid",
+          "grp_var": "linkorderid",
+          "callback": "mimic_dur_incv"
+        },
+        {
+          "ids": 221289,
+          "table": "inputevents_mv",
+          "sub_var": "itemid",
+          "stop_var": "endtime",
+          "grp_var": "linkorderid",
+          "callback": "mimic_dur_inmv"
+        }
+      ]
+    }
+  },
   "epi_rate": {
     "unit": ["mcg/kg/min", "mcgkgmin"],
     "min": 0,
     "max": 1.5,
-    "description": "epinephrine",
+    "description": "epinephrine rate",
     "category": "medications",
     "sources": {
       "eicu": [
@@ -2570,11 +2765,79 @@
     "callback": "news_score",
     "class": "rec_cncpt"
   },
+  "norepi_dur": {
+    "description": "norepinephrine duration",
+    "category": "medications",
+    "aggregate": "max",
+    "sources": {
+      "eicu": [
+        {
+          "regex": "^norepi",
+          "table": "infusiondrug",
+          "sub_var": "drugname",
+          "callback": "eicu_duration(gap_length = hours(5L))",
+          "class": "rgx_itm"
+        }
+      ],
+      "eicu_demo": [
+        {
+          "regex": "^norepi",
+          "table": "infusiondrug",
+          "sub_var": "drugname",
+          "callback": "eicu_duration(gap_length = hours(5L))",
+          "class": "rgx_itm"
+        }
+      ],
+      "hirid": [
+        {
+          "ids": [1000462, 1000656, 1000657, 1000658],
+          "table": "pharma",
+          "sub_var": "pharmaid",
+          "grp_var": "infusionid",
+          "callback": "hirid_duration"
+        }
+      ],
+      "mimic": [
+        {
+          "ids": [30047, 30120],
+          "table": "inputevents_cv",
+          "sub_var": "itemid",
+          "grp_var": "linkorderid",
+          "callback": "mimic_dur_incv"
+        },
+        {
+          "ids": 221906,
+          "table": "inputevents_mv",
+          "sub_var": "itemid",
+          "stop_var": "endtime",
+          "grp_var": "linkorderid",
+          "callback": "mimic_dur_inmv"
+        }
+      ],
+      "mimic_demo": [
+        {
+          "ids": [30047, 30120],
+          "table": "inputevents_cv",
+          "sub_var": "itemid",
+          "grp_var": "linkorderid",
+          "callback": "mimic_dur_incv"
+        },
+        {
+          "ids": 221906,
+          "table": "inputevents_mv",
+          "sub_var": "itemid",
+          "stop_var": "endtime",
+          "grp_var": "linkorderid",
+          "callback": "mimic_dur_inmv"
+        }
+      ]
+    }
+  },
   "norepi_rate": {
     "unit": ["mcg/kg/min", "mcgkgmin"],
     "min": 0,
     "max": 3,
-    "description": "norepinephrine",
+    "description": "norepinephrine rate",
     "category": "medications",
     "sources": {
       "eicu": [
