@@ -16,3 +16,9 @@ is_pkg_installed <- function(pkg) requireNamespace(pkg, quietly = TRUE)
 pkg_name <- function() methods::getPackageName()
 
 pkg_env <- function() asNamespace(pkg_name())
+
+release_questions <- function() {
+  c(
+    "Have you updated the vignette cache by running `build_vignettes()`?"
+  )
+}

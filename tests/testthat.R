@@ -1,4 +1,6 @@
 
+library(testthat)
+
 pkg_env <- function(package, rm) {
 
   res <- as.list(getNamespace(package), all.names = TRUE)
@@ -22,7 +24,7 @@ run_tests <- function(package,
                       stop_on_failure = TRUE,
                       stop_on_warning = FALSE,
                       wrap = TRUE) {
-  library(testthat)
+
   require(package, character.only = TRUE)
 
   env_test <- getFromNamespace("env_test", "testthat")
@@ -67,15 +69,20 @@ if (getRversion() < "4.0.0") {
 }
 
 if (requireNamespace("xml2")) {
-  run_tests(
-    "ricu",
-    reporter = MultiReporter$new(
-      reporters = list(JunitReporter$new(file = "test-results.xml"),
-                       CheckReporter$new()
-      )
-    ),
-    rm = to_rm
+  reporter <- MultiReporter$new(
+    reporters = list(JunitReporter$new(file = "test-results.xml"),
+                     CheckReporter$new()
+    )
   )
 } else {
-  run_tests("ricu", rm = to_rm)
+  reporter <- check_reporter()
+}
+
+if (utils::packageVersion("testthat") <= "2.3.2") {
+
+  run_tests("ricu", reporter = reporter, rm = to_rm)
+
+} else {
+
+  test_package("ricu", reporter = reporter)
 }
