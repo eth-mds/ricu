@@ -1141,6 +1141,13 @@ cfg <- list(
       )
     )
   ),
+  dobu60 = list(
+    concepts = c("dobu_rate", "dobu_dur"),
+    description = "dobutamine administration for min 1h",
+    category = "medications",
+    callback = "vaso60",
+    class = "rec_cncpt"
+  ),
   dopa_rate = list(
     unit = c("mcg/kg/min", "mcgkgmin"),
     min = 0,
@@ -1179,6 +1186,13 @@ cfg <- list(
              class = "rgx_itm")
       )
     )
+  ),
+  dopa60 = list(
+    concepts = c("dopa_rate", "dopa_dur"),
+    description = "dopamine administration for min 1h",
+    category = "outcome",
+    callback = "vaso60",
+    class = "rec_cncpt"
   ),
   norepi_rate = list(
     unit = c("mcg/kg/min", "mcgkgmin"),
@@ -1228,6 +1242,13 @@ cfg <- list(
       )
     )
   ),
+  norepi60 = list(
+    concepts = c("norepi_rate", "norepi_dur"),
+    description = "norepinephrine administration for min 1h",
+    category = "outcome",
+    callback = "vaso60",
+    class = "rec_cncpt"
+  ),
   epi_rate = list(
     unit = c("mcg/kg/min", "mcgkgmin"),
     min = 0,
@@ -1276,6 +1297,13 @@ cfg <- list(
              callback = "hirid_duration")
       )
     )
+  ),
+  epi60 = list(
+    concepts = c("epi_rate", "epi_dur"),
+    description = "epinephrine administration for min 1h",
+    category = "outcome",
+    callback = "vaso60",
+    class = "rec_cncpt"
   ),
   vent_start = list(
     class = "lgl_cncpt",
@@ -1358,6 +1386,9 @@ cfg <- list(
     description = "Richmond agitation sedation scale",
     category = "neurological",
     sources = list(
+      mimic = list(
+        list(ids = 228096L, table = "chartevents", sub_var = "itemid")
+      ),
       eicu = list(
         list(ids = "Sedation Score", table = "nursecharting",
              sub_var = "nursingchartcelltypevalname")
@@ -1779,9 +1810,8 @@ cfg <- list(
     class = "rec_cncpt"
   ),
   sofa = list(
-    concepts = c("pafi", "vent", "plt", "bili", "map", "norepi_rate",
-                 "epi_rate", "dopa_rate", "dobu_rate", "gcs", "crea",
-                 "urine24"),
+    concepts = c("pafi", "vent", "plt", "bili", "map", "norepi60", "epi60",
+                 "dopa60", "dobu60", "gcs", "crea", "urine24"),
     description = "sequential organ failure assessment score",
     category = "outcome",
     aggregate = c(NA, NA, "min", "max", "min", "max", "max", "max", "max", NA,

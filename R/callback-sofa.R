@@ -85,8 +85,8 @@
 #'
 sofa_score <- function(..., interval = NULL) {
 
-  cnc <- c("pafi", "vent", "plt", "bili", "map", "norepi_rate", "epi_rate",
-           "dopa_rate", "dobu_rate", "gcs", "crea", "urine24")
+  cnc <- c("pafi", "vent", "plt", "bili", "map", "norepi60", "epi60",
+           "dopa60", "dobu60", "gcs", "crea", "urine24")
 
   sofa_data <- capture_fun(cnc, interval)
   form_args <- c(formals(sofa_data), formals(sofa_window),
@@ -129,18 +129,18 @@ sofa_window <- function(tbl,
                         urine_wf = min_or_na, explicit_wins  = FALSE,
                         worst_win_length = hours(24L)) {
 
-  need_cols <- c("pafi", "plt", "bili", "map", "dopa_rate", "norepi_rate",
-                 "dobu_rate", "epi_rate", "gcs", "crea", "urine24")
+  need_cols <- c("pafi", "plt", "bili", "map", "dopa60", "norepi60",
+                 "dobu60", "epi60", "gcs", "crea", "urine24")
 
   assert_that(is_ts_tbl(tbl), has_cols(tbl, need_cols))
 
   expr <- substitute(
     list(
-      pafi_win    = pafi_wf(pafi),      plt_win    = plt_wf(plt),
-      bili_win    = bili_wf(bili),      map_win    = map_wf(map),
-      dopa_win    = dopa_wf(dopa_rate), norepi_win = norepi_wf(norepi_rate),
-      dobu_win    = dobu_wf(dobu_rate), epi_win    = epi_wf(epi_rate),
-      gcs_win     = gcs_wf(gcs),        crea_win   = crea_wf(crea),
+      pafi_win    = pafi_wf(pafi),    plt_win    = plt_wf(plt),
+      bili_win    = bili_wf(bili),    map_win    = map_wf(map),
+      dopa60_win  = dopa_wf(dopa60),  norepi60_win = norepi_wf(norepi60),
+      dobu60_win  = dobu_wf(dobu60),  epi60_win    = epi_wf(epi60),
+      gcs_win     = gcs_wf(gcs),      crea_win   = crea_wf(crea),
       urine24_win = urine_wf(urine24)
     ), list(
       pafi_wf  = pafi_wf,  plt_wf    = plt_wf,
@@ -178,8 +178,7 @@ sofa_window <- function(tbl,
     }
   }
 
-  rename_cols(res, need_cols, paste0(sub("_rate$", "", need_cols), "_win"),
-              by_ref = TRUE)
+  rename_cols(res, need_cols, paste0(need_cols, "_win"), by_ref = TRUE)
 }
 
 #' @param na_val Value to use for missing data
@@ -199,8 +198,8 @@ sofa_compute <- function(tbl, na_val = 0L, na_resp = na_val,
                          na_renal = na_val, impute_fun = NULL,
                          keep_components = FALSE, by_ref = TRUE) {
 
-  need_cols <- c("pafi", "plt", "bili", "map", "dopa_rate", "norepi_rate",
-                 "dobu_rate", "epi_rate", "gcs", "crea", "urine24")
+  need_cols <- c("pafi", "plt", "bili", "map", "dopa60", "norepi60", "dobu60",
+                 "epi60", "gcs", "crea", "urine24")
 
   assert_that(is_id_tbl(tbl), has_cols(tbl, need_cols), is.flag(by_ref))
 
@@ -218,8 +217,8 @@ sofa_compute <- function(tbl, na_val = 0L, na_resp = na_val,
       sofa_resp(get("pafi"), na_resp),
       sofa_coag(get("plt"), na_plt),
       sofa_liver(get("bili"), na_liver),
-      sofa_cardio(get("map"), get("dopa_rate"), get("norepi_rate"),
-                  get("dobu_rate"), get("epi_rate"), na_cardio),
+      sofa_cardio(get("map"), get("dopa60"), get("norepi60"),
+                  get("dobu60"), get("epi60"), na_cardio),
       sofa_cns(get("gcs"), na_cns),
       sofa_renal(get("crea"), get("urine24"), na_renal)
     )

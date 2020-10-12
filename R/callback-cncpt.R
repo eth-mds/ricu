@@ -381,3 +381,88 @@ urine24 <- function(..., min_win = hours(12L), limits = NULL,
 
   slide(res, !!expr, hours(24L))
 }
+
+rec_cb_dots <- function(concepts, ...) {
+
+  assert_that(is.character(concepts))
+
+  dots <- list(...)
+
+  if (length(concepts) == 1L) {
+    return(dots[[1L]])
+  }
+
+  if (length(dots) == 1L) {
+    dots <- dots[[1L]]
+  }
+
+  if (is.null(names(dots))) {
+    names(dots) <- concepts
+  }
+
+  if (not_null(names(concepts))) {
+    concepts <- chr_ply(concepts, grep, names(dots), value = TRUE,
+                        use_names = TRUE)
+  }
+
+  assert_that(setequal(names(dots), concepts))
+
+  res <- dots[concepts]
+
+  if (not_null(names(concepts))) {
+    names(res) <- names(concepts)
+  }
+
+  res
+}
+
+rec_cb_ival <- function(dat, ival = NULL) {
+
+  check_interval <- function(x, iv) {
+    is_df(x) && (!is_ts_tbl(x) || has_interval(x, iv))
+  }
+
+  if (is_df(dat)) {
+    dat <- list(dat)
+  }
+
+  if (is.null(ival)) {
+    for (x in dat) {
+      if (is_ts_tbl(x)) {
+        ival <- ival(x)
+        break
+      }
+    }
+  }
+
+  assert_that(all_fun(dat, check_interval, ival))
+
+  ival
+}
+
+vaso60 <- function(..., interval = NULL) {
+
+  dat <- rec_cb_dots(c(rate = "_rate$", dur = "_dur$"), ...)
+  interval <- rec_cb_ival(dat, interval)
+
+  dur <- dat[["dur"]]
+  dur <- dur[get(data_vars(dur)) >= hours(1L), ]
+  dur <- dur[, c(data_vars(dur)) := get(index_var(dur)) + get(data_vars(dur))]
+
+  rate <- dat[["rate"]]
+  temp <- new_names(c(colnames(dur), colnames(rate)), 2L)
+  rate <- rate[, c(temp) := get(index_var(rate))]
+  on.exit(rm_cols(rate, temp, by_ref = TRUE))
+
+  join <- c(
+    paste(id_vars(rate), id_vars(dur), sep = " == "),
+    paste(temp, c(">=", "<="), c(index_var(dur), data_vars(dur)))
+  )
+
+  res <- rate[dur, on = join, nomatch = NULL]
+  res <- rm_cols(res, temp, by_ref = TRUE)
+  res <- rename_cols(res, sub("_rate$", "60", data_vars(res)), data_vars(res),
+                     by_ref = TRUE)
+
+  unique(res)
+}

@@ -1250,6 +1250,13 @@
       ]
     }
   },
+  "dobu60": {
+    "concepts": ["dobu_rate", "dobu_dur"],
+    "description": "dobutamine administration for min 1h",
+    "category": "medications",
+    "callback": "vaso60",
+    "class": "rec_cncpt"
+  },
   "dopa_dur": {
     "description": "dopamine duration",
     "category": "medications",
@@ -1361,6 +1368,13 @@
         }
       ]
     }
+  },
+  "dopa60": {
+    "concepts": ["dopa_rate", "dopa_dur"],
+    "description": "dopamine administration for min 1h",
+    "category": "outcome",
+    "callback": "vaso60",
+    "class": "rec_cncpt"
   },
   "egcs": {
     "min": 1,
@@ -1571,6 +1585,13 @@
         }
       ]
     }
+  },
+  "epi60": {
+    "concepts": ["epi_rate", "epi_dur"],
+    "description": "epinephrine administration for min 1h",
+    "category": "outcome",
+    "callback": "vaso60",
+    "class": "rec_cncpt"
   },
   "esr": {
     "unit": "mm/hr",
@@ -2894,6 +2915,13 @@
       ]
     }
   },
+  "norepi60": {
+    "concepts": ["norepi_rate", "norepi_dur"],
+    "description": "norepinephrine administration for min 1h",
+    "category": "outcome",
+    "callback": "vaso60",
+    "class": "rec_cncpt"
+  },
   "o2sat": {
     "unit": ["%", "% Sat."],
     "min": 70,
@@ -3289,6 +3317,20 @@
           "sub_var": "variableid",
           "class": "hrd_itm"
         }
+      ],
+      "mimic": [
+        {
+          "ids": 228096,
+          "table": "chartevents",
+          "sub_var": "itemid"
+        }
+      ],
+      "mimic_demo": [
+        {
+          "ids": 228096,
+          "table": "chartevents",
+          "sub_var": "itemid"
+        }
       ]
     }
   },
@@ -3566,7 +3608,7 @@
     "class": "rec_cncpt"
   },
   "sofa": {
-    "concepts": ["pafi", "vent", "plt", "bili", "map", "norepi_rate", "epi_rate", "dopa_rate", "dobu_rate", "gcs", "crea", "urine24"],
+    "concepts": ["pafi", "vent", "plt", "bili", "map", "norepi60", "epi60", "dopa60", "dobu60", "gcs", "crea", "urine24"],
     "description": "sequential organ failure assessment score",
     "category": "outcome",
     "aggregate": [null, null, "min", "max", "min", "max", "max", "max", "max", null, "max", null],

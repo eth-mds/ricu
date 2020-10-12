@@ -469,6 +469,10 @@ calc_dur <- function(x, val_var, min_var, max_var, grp_var) {
   id_vars   <- id_vars(x)
   index_var <- index_var(x)
 
+  if (nrow(x) == 0L) {
+    return(x[, c(val_var) := get(index_var)])
+  }
+
   res <- x[, setNames(list(min(get(min_var)), max(get(max_var))),
                       c(index_var, val_var)), by = c(id_vars, grp_var)]
   res <- res[, c(val_var) := get(val_var) - get(index_var)]

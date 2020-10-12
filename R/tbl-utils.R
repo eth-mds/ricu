@@ -187,6 +187,8 @@ rename <- function(x, new, old) {
 
 is_dt <- is_type("data.table")
 
+is_df <- is_type("data.frame")
+
 #' ICU class data utilities
 #'
 #' Several utility functions for working with `id_tbl` and `ts_tbl` objects
@@ -577,7 +579,7 @@ unique.id_tbl <- function(x, incomparables = FALSE, by = meta_vars(x), ...) {
     unique(x, incomparables = incomparables, by = by, ...)
   )
 
-  reclass_tbl(res, x)
+  reclass_tbl(res, as_ptype(x))
 }
 
 #' @rdname tbl_utils
