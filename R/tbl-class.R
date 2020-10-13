@@ -381,6 +381,9 @@ unclass_tbl.default <- function(x) stop_generic(x, .Generic)
 #' @keywords internal
 #' @export
 reclass_tbl <- function(x, template, stop_on_fail = TRUE) {
+
+  template <- force(template)
+
   UseMethod("reclass_tbl", template)
 }
 

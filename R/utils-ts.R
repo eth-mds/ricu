@@ -500,3 +500,19 @@ locf <- function(x) {
 
   res
 }
+
+merge_ranges <- function(x, lwr_var = index_var(x), upr_var = data_vars(x),
+                         by_ref = FALSE) {
+
+  assert_that(is_dt(x), has_col(x, lwr_var), has_col(x, upr_var))
+
+  tmp_var <- paste0("i.", upr_var)
+
+  assert_that(!has_col(x, tmp_var))
+
+  x <- sort(x, by = c(id_vars(x), lwr_var, upr_var), by_ref = by_ref)
+  x <- reclass_tbl(data.table::foverlaps(x, x, mult = "first"), as_ptype(x))
+  x <- x[, setNames(list(max(get(tmp_var))), upr_var), by = c(meta_vars(x))]
+
+  x
+}

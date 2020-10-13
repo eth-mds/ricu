@@ -446,8 +446,11 @@ vaso60 <- function(..., interval = NULL) {
   interval <- rec_cb_ival(dat, interval)
 
   dur <- dat[["dur"]]
-  dur <- dur[get(data_vars(dur)) >= hours(1L), ]
-  dur <- dur[, c(data_vars(dur)) := get(index_var(dur)) + get(data_vars(dur))]
+  dva <- data_vars(dur)
+  dur <- dur[get(dva) >= hours(1L), ]
+
+  dur <- dur[, c(dva) := get(index_var(dur)) + get(dva)]
+  dur <- merge_ranges(dur, index_var(dur), dva, by_ref = TRUE)
 
   rate <- dat[["rate"]]
   temp <- new_names(c(colnames(dur), colnames(rate)), 2L)
@@ -464,5 +467,5 @@ vaso60 <- function(..., interval = NULL) {
   res <- rename_cols(res, sub("_rate$", "60", data_vars(res)), data_vars(res),
                      by_ref = TRUE)
 
-  unique(res)
+  res
 }
