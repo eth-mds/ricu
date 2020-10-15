@@ -55,8 +55,8 @@ hop(
   upr_col = "max_time",
   left_closed = TRUE,
   right_closed = TRUE,
-  nomatch = NULL,
-  eval_env = NULL
+  eval_env = NULL,
+  ...
 )
 }
 \arguments{
@@ -77,7 +77,8 @@ windows bounds}
 \item{env}{Environment used as parent to the environment used to evaluate
 expressions passes as \code{...}}
 
-\item{...}{Passed to \code{hop_quo()}}
+\item{...}{Passed to \code{hop_quo()} and ultimately to
+\code{\link[=data.table]{data.table::[()}}}
 
 \item{limits}{A table with columns for lower and upper window bounds}
 
@@ -99,8 +100,6 @@ window bounds}
 
 \item{left_closed, right_closed}{Logical flag indicating whether intervals
 are closed (default) or open.}
-
-\item{nomatch}{Forwarded to \code{\link[=data.table]{data.table::[()}}}
 
 \item{eval_env}{Environment in which \code{expr} is substituted; \code{NULL} resolves
 to the environment in which \code{expr} was created}

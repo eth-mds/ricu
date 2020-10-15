@@ -12,23 +12,25 @@
 #' `sofa_compute()` and arguments passed as `...` will be forwarded to the
 #' respective internally called function.
 #'
-#' @param ... Data and further arguments passed to `sofa_window()` or
-#' `sofa_compute()`
+#' @param ... Concept data, either passed as list or individual argument
 #' @param interval Time series interval (only used for checking consistency
 #' of input data, `NULL` will use the interval of the first data object)
+#' @param win_fun functions used to calculate worst values over windows
+#' @param explicit_wins The default `FALSE` iterates over all time steps,
+#' `TRUE` uses only the last time step per patient and a vector of times will
+#' iterate over these explicit time points
+#' @param win_length Time-frame to look back and apply the `win_fun`
 #'
 #' @details
-#' The function `sofa_window()` calculates, for each covariate, the worst
-#' value over a moving window as specified by `worst_win_length`, using the
-#' respective function passed as `*_wf` (e.g. `pafi_wf` for the
-#' `pafi` component. The default functions `min_or_na()` and `max_or_na()`
-#' return `NA` instead of `-Inf/Inf` in the case where no measurement is
-#' available over an entire window.
+#' The function `sofa_score()` calculates, for each component, the worst value
+#' over a moving window as specified by `win_length`, using the function
+#' passed as `win_fun`. The default functions `max_or_na()` return `NA`
+#' instead of `-Inf/Inf` in the case where no measurement is available over an
+#' entire window. When calculating the overall score by summing up components
+#' per time-step, a `NA` value is treated as 0.
 #'
-#' Using data imputed by `sofa_window()`, the function `sofa_compute()`
-#' performs the actual score calculation. First, for each time step and
-#' component, measurements are converted to a component score using the
-#' definition by Vincent et. al.:
+#' Building on separate concepts, measurements for each component are
+#' converted to a component score using the definition by Vincent et. al.:
 #'
 #' | **SOFA score**              |     1     |     2     |     3    |    4   |
 #' | --------------------------- | --------- | --------- | -------- | ------ |
@@ -62,17 +64,18 @@
 #' | Creatinine \[mg/dl\]        |  1.2-1.9  |  2.0-3.4  |  3.5-4.9 |  > 5.0 |
 #' | or urine output \[ml/day\]  |           |           |   < 500  |  < 200 |
 #'
-#' \ifelse{latex}{\out{\textsuperscript{a}}}{\ifelse{html}{
-#' \out{<sup>a</sup>}}{a}}Adrenergic agents administered for at least 1h (doses
-#' given are in \[\ifelse{latex}{\out{$\mu$}}{\ifelse{html}{\out{&mu;}}{u}}g/kg
-#' \ifelse{latex}{\out{$\cdot$}}{\ifelse{html}{\out{&middot;}}{.}} min\]
+#' \ifelse{latex}{\out{\textsuperscript{a}}}{\ifelse{html
+#' }{\out{<sup>a</sup>}}{a}}Adrenergic agents administered for at least 1h
+#' (doses given are in \[\ifelse{latex}{\out{$\mu$}}{\ifelse{html
+#' }{\out{&mu;}}{u}}g/kg \ifelse{latex}{\out{$\cdot$}}{\ifelse{html
+#' }{\out{&middot;}}{.}} min\]
 #'
-#' In case, for a given time step and component, no measurement is available,
-#' the corresponding `na_*` value is used (e.g. `na_resp` for the
-#' respiratory component). At default, this is 0 (the lowest possible score
-#' for a SOFA component). It is possible to retain missingness by passing `NA`
-#' as `na_*` value and using a function passed as `impute_fun()` in order
-#' to perform an additional imputation step.
+#' At default, for each patient, a score is calculated for every time step,
+#' from the first available measurement to the last. In instead of a regularly
+#' evaluated score, only certain time points are of interest, this can be
+#' specified using the `explicit_wins` argument: passing for example
+#' `hours(24, 48)` will yield for every patient a score at hours 24 and 48
+#' relative to the orgin of the current ID system (for example ICU stay).
 #'
 #' @references
 #' Vincent, J.-L., Moreno, R., Takala, J. et al. The SOFA (Sepsis-related Organ
@@ -83,207 +86,176 @@
 #' @rdname callback_sofa
 #' @export
 #'
-sofa_score <- function(..., interval = NULL) {
+sofa_score <- function(..., interval = NULL, win_fun = max_or_na,
+                       explicit_wins = FALSE, win_length = hours(24L)) {
 
-  cnc <- c("pafi", "vent", "plt", "bili", "map", "norepi60", "epi60",
-           "dopa60", "dobu60", "gcs", "crea", "urine24")
+  cncps    <- c("sofa_resp", "sofa_coag", "sofa_liver", "sofa_cardio",
+                "sofa_cns", "sofa_renal")
+  dat      <- rec_cb_dots(cncps, ...)
+  interval <- rec_cb_ival(dat, interval)
 
-  sofa_data <- capture_fun(cnc, interval)
-  form_args <- c(formals(sofa_data), formals(sofa_window),
-                 formals(sofa_compute)[-1L])
+  dat <- reduce(merge, dat, all = TRUE)
 
-  res <- capture_eval(sofa_data, ..., .formal_args = form_args)
-
-  interval <- attr(res, "interval")
-
-  res <- reduce(merge, res, all = TRUE)
-
-  res <- res[is_true(get("pafi") < 200) & !is_true(get("vent")),
-             c("pafi") := 200]
-
-  res <- rm_cols(res, "vent", by_ref = TRUE)
-
-  res <- capture_eval(sofa_window, tbl = res, ..., .formal_args = form_args)
-  res <- capture_eval(sofa_compute, tbl = res, ..., .formal_args = form_args)
-
-  res
-}
-
-#' @param tbl Table holding SOFA covariates
-#' @param pafi_wf,plt_wf,bili_wf,map_wf,dopa_wf,norepi_wf,dobu_wf,epi_wf,gcs_wf,crea_wf,urine_wf
-#' functions used to calculate worst values over windows
-#' @param explicit_wins The default `FALSE` iterates over all time steps,
-#' `TRUE` uses only the last time step per patient and a vector of times will
-#' iterate over these explicit time points
-#' @param worst_win_length Time-frame to look back and apply the `*_wf`s
-#'
-#' @rdname callback_sofa
-#' @export
-#'
-sofa_window <- function(tbl,
-                        pafi_wf  = min_or_na, plt_wf    = min_or_na,
-                        bili_wf  = max_or_na, map_wf    = min_or_na,
-                        dopa_wf  = max_or_na, norepi_wf = max_or_na,
-                        dobu_wf  = max_or_na, epi_wf    = max_or_na,
-                        gcs_wf   = min_or_na, crea_wf   = max_or_na,
-                        urine_wf = min_or_na, explicit_wins  = FALSE,
-                        worst_win_length = hours(24L)) {
-
-  need_cols <- c("pafi", "plt", "bili", "map", "dopa60", "norepi60",
-                 "dobu60", "epi60", "gcs", "crea", "urine24")
-
-  assert_that(is_ts_tbl(tbl), has_cols(tbl, need_cols))
-
-  expr <- substitute(
-    list(
-      pafi_win    = pafi_wf(pafi),    plt_win    = plt_wf(plt),
-      bili_win    = bili_wf(bili),    map_win    = map_wf(map),
-      dopa60_win  = dopa_wf(dopa60),  norepi60_win = norepi_wf(norepi60),
-      dobu60_win  = dobu_wf(dobu60),  epi60_win    = epi_wf(epi60),
-      gcs_win     = gcs_wf(gcs),      crea_win   = crea_wf(crea),
-      urine24_win = urine_wf(urine24)
-    ), list(
-      pafi_wf  = pafi_wf,  plt_wf    = plt_wf,
-      bili_wf  = bili_wf,  map_wf    = map_wf,
-      dopa_wf  = dopa_wf,  norepi_wf = norepi_wf,
-      dobu_wf  = dobu_wf,  epi_wf    = epi_wf,
-      gcs_wf   = gcs_wf,   crea_wf   = crea_wf,
-      urine_wf = urine_wf
-    )
-  )
+  expr <- substitute(lapply(.SD, fun), list(fun = win_fun))
 
   if (isFALSE(explicit_wins)) {
 
-    res <- fill_gaps(tbl)
-    res <- slide(res, !!expr, before = worst_win_length,
-                     full_window = FALSE)
+    res <- fill_gaps(dat)
+    res <- slide(res, !!expr, before = win_length, full_window = FALSE,
+                 .SDcols = cncps)
 
   } else {
 
     if (isTRUE(explicit_wins)) {
 
-      assert_that(is_scalar(worst_win_length), is_interval(worst_win_length))
+      assert_that(is_scalar(win_length), is_interval(win_length))
 
-      ind <- index_var(tbl)
+      ind <- index_var(dat)
 
-      win <- tbl[, list(max_time = max(get(ind))), by = c(id_vars(tbl))]
-      win <- win[, c("min_time") := get("max_time") - worst_win_length]
+      win <- dat[, list(max_time = max(get(ind))), by = c(id_vars(dat))]
+      win <- win[, c("min_time") := get("max_time") - win_length]
 
-      res <- hop(tbl, !!expr, win)
+      res <- hop(dat, !!expr, win, .SDcols = cncps)
 
     } else {
 
-      res <- slide_index(tbl, !!expr, explicit_wins,
-                             before = worst_win_length, full_window = FALSE)
+      res <- slide_index(dat, !!expr, explicit_wins, before = win_length,
+                         full_window = FALSE, .SDcols = cncps)
     }
   }
 
-  rename_cols(res, need_cols, paste0(need_cols, "_win"), by_ref = TRUE)
+  res <- res[, c("sofa") := rowSums(.SD, na.rm = TRUE), .SDcols = cncps]
+  res <- rm_cols(res, cncps)
+
+  res
 }
 
-#' @param na_val Value to use for missing data
-#' @param na_resp,na_plt,na_liver,na_cardio,na_cns,na_renal Feature-specific values to use in case of missing data; default is `na_val`
-#' @param impute_fun Function used to impute missing data; default is NULL
-#' @param keep_components Logical flag indicating whether to return individual
-#' SOFA components as columns
-#' @param by_ref Logical flag indicating whether to perform the operation by
-#' reference
-#'
 #' @rdname callback_sofa
 #' @export
-#'
-sofa_compute <- function(tbl, na_val = 0L, na_resp = na_val,
-                         na_plt = na_val, na_liver = na_val,
-                         na_cardio = na_val, na_cns = na_val,
-                         na_renal = na_val, impute_fun = NULL,
-                         keep_components = FALSE, by_ref = TRUE) {
+sofa_resp <- function(..., interval = NULL) {
 
-  need_cols <- c("pafi", "plt", "bili", "map", "dopa60", "norepi60", "dobu60",
-                 "epi60", "gcs", "crea", "urine24")
-
-  assert_that(is_id_tbl(tbl), has_cols(tbl, need_cols), is.flag(by_ref))
-
-  if (!by_ref) {
-    tbl <- copy(tbl)
-  }
-
-  sofa_cols <- c(
-    "sofa_resp", "sofa_coag", "sofa_liver", "sofa_cardio", "sofa_cns",
-    "sofa_renal"
-  )
-
-  tbl <- tbl[,
-    c(sofa_cols) := list(
-      sofa_resp(get("pafi"), na_resp),
-      sofa_coag(get("plt"), na_plt),
-      sofa_liver(get("bili"), na_liver),
-      sofa_cardio(get("map"), get("dopa60"), get("norepi60"),
-                  get("dobu60"), get("epi60"), na_cardio),
-      sofa_cns(get("gcs"), na_cns),
-      sofa_renal(get("crea"), get("urine24"), na_renal)
-    )
-  ]
-
-  tbl <- rm_cols(tbl, need_cols, by_ref = TRUE)
-
-  if (!is.null(impute_fun)) {
-    tbl <- tbl[, c(sofa_cols) := lapply(.SD, impute_fun),
-               .SDcols = sofa_cols, by = c(id_vars(tbl))]
-  }
-
-  tbl <- tbl[, c("sofa") := rowSums(.SD), .SDcols = sofa_cols]
-
-  if (!isTRUE(keep_components)) {
-    tbl <- rm_cols(tbl, sofa_cols, by_ref = TRUE)
-  }
-
-  tbl
-}
-
-sofa_resp <- function(pafi, na_val) {
-  fifelse(
-    is_true(pafi < 100), 4L, fifelse(
-      is_true(pafi < 200), 3L, fifelse(
-        is_true(pafi < 300), 2L, fifelse(
-          is_true(pafi < 400), 1L, 0L, na_val
+  score_calc <- function(x) {
+    fifelse(
+      is_true(x < 100), 4L, fifelse(
+        is_true(x < 200), 3L, fifelse(
+          is_true(x < 300), 2L, fifelse(
+            is_true(x < 400), 1L, 0L
+          )
         )
       )
     )
-  )
+  }
+
+  cncps    <- c("pafi", "vent")
+  dat      <- rec_cb_dots(cncps, ...)
+  interval <- rec_cb_ival(dat, interval)
+
+  dat <- reduce(merge, dat, all = TRUE)
+
+  dat <- dat[is_true(get("pafi") < 200) & !is_true(get("vent")),
+             c("pafi") := 200]
+  dat <- dat[, c("sofa_resp") := score_calc(get("pafi"))]
+
+  dat <- rm_cols(dat, cncps, by_ref = TRUE)
+
+  dat
 }
 
-sofa_coag <- function(x, na_val) {
-  fifelse(is.na(x), na_val, 4L - findInterval(x, c(20, 50, 100, 150)))
+#' @rdname callback_sofa
+#' @export
+sofa_coag <- function(..., interval = NULL) {
+
+  score_calc <- function(x) 4L - findInterval(x, c(20, 50, 100, 150))
+
+  cnc <- "plt"
+  dat <- rec_cb_dots(cnc, ...)
+  dat <- dat[, c("sofa_coag") := score_calc(get(cnc))]
+  dat <- rm_cols(dat, cnc, by_ref = TRUE)
+
+  dat
 }
 
-sofa_liver <- function(x, na_val) {
-  fifelse(is.na(x), na_val, findInterval(x, c(1.2, 2, 6, 12)))
+#' @rdname callback_sofa
+#' @export
+sofa_liver <- function(..., interval = NULL) {
+
+  score_calc <- function(x) findInterval(x, c(1.2, 2, 6, 12))
+
+  cnc <- "bili"
+  dat <- rec_cb_dots(cnc, ...)
+  dat <- dat[, c("sofa_liver") := score_calc(get(cnc))]
+  dat <- rm_cols(dat, cnc, by_ref = TRUE)
+
+  dat
 }
 
-sofa_cardio <- function(map, dopa, norepi, dobu, epi, na_val) {
-  fifelse(
-    is_true(dopa > 15 | epi > 0.1 | norepi > 0.1), 4L, fifelse(
-      is_true(dopa > 5 | epi <= 0.1 | norepi <= 0.1), 3L, fifelse(
-        is_true(dopa <= 5 | !is.na(dobu)), 2L, fifelse(
-          is_true(map < 70), 1L, 0L, na_val
+#' @rdname callback_sofa
+#' @export
+sofa_cardio <- function(..., interval = NULL) {
+
+  score_calc <- function(map, dopa, norepi, dobu, epi) {
+    fifelse(
+      is_true(dopa > 15 | epi > 0.1 | norepi > 0.1), 4L, fifelse(
+        is_true(dopa > 5 | epi <= 0.1 | norepi <= 0.1), 3L, fifelse(
+          is_true(dopa <= 5 | !is.na(dobu)), 2L, fifelse(
+            is_true(map < 70), 1L, 0L
+          )
         )
       )
     )
-  )
+  }
+
+  cncps    <- c("map", "dopa60", "norepi60", "dobu60", "epi60")
+  dat      <- rec_cb_dots(cncps, ...)
+  interval <- rec_cb_ival(dat, interval)
+
+  dat <- reduce(merge, dat, all = TRUE)
+
+  dat <- dat[, c("sofa_cardio") := score_calc(
+    get("map"), get("dopa60"), get("norepi60"), get("dobu60"), get("epi60")
+  )]
+  dat <- rm_cols(dat, cncps, by_ref = TRUE)
+
+  dat
 }
 
-sofa_cns <- function(x, na_val) {
-  fifelse(is.na(x), na_val, 4L - findInterval(x, c(6, 10, 13, 15)))
+#' @rdname callback_sofa
+#' @export
+sofa_cns <- function(..., interval = NULL) {
+
+  score_calc <- function(x) 4L - findInterval(x, c(6, 10, 13, 15))
+
+  dat <- rec_cb_dots("gcs", ...)
+  dat <- dat[, c("sofa_cns") := score_calc(get("gcs"))]
+  dat <- rm_cols(dat, "gcs", by_ref = TRUE)
+
+  dat
 }
 
-sofa_renal <- function(cre, uri, na_val) {
-  fifelse(
-    is_true(cre >= 5 | uri < 200), 4L, fifelse(
-      is_true((cre >= 3.5 & cre < 5) | uri < 500), 3L, fifelse(
-        is_true(cre >= 2 & cre < 3.5), 2L, fifelse(
-          is_true(cre >= 1.2 & cre < 2), 1L, 0L, na_val
+#' @rdname callback_sofa
+#' @export
+sofa_renal <- function(..., interval = NULL) {
+
+  score_calc <- function(cre, uri) {
+    fifelse(
+      is_true(cre >= 5 | uri < 200), 4L, fifelse(
+        is_true((cre >= 3.5 & cre < 5) | uri < 500), 3L, fifelse(
+          is_true(cre >= 2 & cre < 3.5), 2L, fifelse(
+            is_true(cre >= 1.2 & cre < 2), 1L, 0L
+          )
         )
       )
     )
-  )
+  }
+
+  cncps    <- c("crea", "urine24")
+  dat      <- rec_cb_dots(cncps, ...)
+  interval <- rec_cb_ival(dat, interval)
+
+  dat <- reduce(merge, dat, all = TRUE)
+
+  dat <- dat[, c("sofa_renal") := score_calc(get("crea"), get("urine24"))]
+  dat <- rm_cols(dat, cncps, by_ref = TRUE)
+
+  dat
 }

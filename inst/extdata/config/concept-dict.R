@@ -1809,13 +1809,57 @@ cfg <- list(
     callback = "urine24",
     class = "rec_cncpt"
   ),
+  sofa_resp = list(
+    concepts = c("pafi", "vent"),
+    description = "SOFA respiratory component",
+    category = "outcome",
+    callback = "sofa_resp",
+    class = "rec_cncpt"
+  ),
+  sofa_coag = list(
+    concepts = "plt",
+    description = "SOFA coagulation component",
+    category = "outcome",
+    aggregate = "min",
+    callback = "sofa_coag",
+    class = "rec_cncpt"
+  ),
+  sofa_liver = list(
+    concepts = "bili",
+    description = "SOFA liver component",
+    category = "outcome",
+    aggregate = "max",
+    callback = "sofa_liver",
+    class = "rec_cncpt"
+  ),
+  sofa_cardio = list(
+    concepts = c("map", "dopa60", "norepi60", "dobu60", "epi60"),
+    description = "SOFA cardiovascular component",
+    category = "outcome",
+    aggregate = c("min", "max", "max", "max", "max"),
+    callback = "sofa_cardio",
+    class = "rec_cncpt"
+  ),
+  sofa_cns = list(
+    concepts = "gcs",
+    description = "SOFA central nervous system component",
+    category = "outcome",
+    callback = "sofa_cns",
+    class = "rec_cncpt"
+  ),
+  sofa_renal = list(
+    concepts = c("crea", "urine24"),
+    description = "SOFA renal component",
+    category = "outcome",
+    aggregate = c("max", NA),
+    callback = "sofa_renal",
+    class = "rec_cncpt"
+  ),
   sofa = list(
-    concepts = c("pafi", "vent", "plt", "bili", "map", "norepi60", "epi60",
-                 "dopa60", "dobu60", "gcs", "crea", "urine24"),
+    concepts = c("sofa_resp", "sofa_coag", "sofa_liver", "sofa_cardio",
+                 "sofa_cns", "sofa_renal"),
     description = "sequential organ failure assessment score",
     category = "outcome",
-    aggregate = c(NA, NA, "min", "max", "min", "max", "max", "max", "max", NA,
-                  "max", NA),
     callback = "sofa_score",
     class = "rec_cncpt"
   ),

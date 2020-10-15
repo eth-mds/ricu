@@ -219,7 +219,9 @@ load_concepts.concept <- function(x, src = NULL, aggregate = NULL,
 
   aggregate <- rep_arg(aggregate, names(x))
 
-  if (isTRUE(merge_data) && any(lgl_ply(aggregate, isFALSE))) {
+  if (isTRUE(merge_data) && any(lgl_ply(aggregate, isFALSE)) &&
+      length(x) > 1L) {
+
     stop_ricu("
       Data aggregation cannot be disabled (i.e. passing an `aggregate` value
       of `FALSE` for at least one concept) when data merging is enabled.",

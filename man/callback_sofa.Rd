@@ -3,71 +3,47 @@
 \encoding{UTF-8}
 \name{sofa_score}
 \alias{sofa_score}
-\alias{sofa_window}
-\alias{sofa_compute}
+\alias{sofa_resp}
+\alias{sofa_coag}
+\alias{sofa_liver}
+\alias{sofa_cardio}
+\alias{sofa_cns}
+\alias{sofa_renal}
 \title{SOFA score label}
 \usage{
-sofa_score(..., interval = NULL)
-
-sofa_window(
-  tbl,
-  pafi_wf = min_or_na,
-  plt_wf = min_or_na,
-  bili_wf = max_or_na,
-  map_wf = min_or_na,
-  dopa_wf = max_or_na,
-  norepi_wf = max_or_na,
-  dobu_wf = max_or_na,
-  epi_wf = max_or_na,
-  gcs_wf = min_or_na,
-  crea_wf = max_or_na,
-  urine_wf = min_or_na,
+sofa_score(
+  ...,
+  interval = NULL,
+  win_fun = max_or_na,
   explicit_wins = FALSE,
-  worst_win_length = hours(24L)
+  win_length = hours(24L)
 )
 
-sofa_compute(
-  tbl,
-  na_val = 0L,
-  na_resp = na_val,
-  na_plt = na_val,
-  na_liver = na_val,
-  na_cardio = na_val,
-  na_cns = na_val,
-  na_renal = na_val,
-  impute_fun = NULL,
-  keep_components = FALSE,
-  by_ref = TRUE
-)
+sofa_resp(..., interval = NULL)
+
+sofa_coag(..., interval = NULL)
+
+sofa_liver(..., interval = NULL)
+
+sofa_cardio(..., interval = NULL)
+
+sofa_cns(..., interval = NULL)
+
+sofa_renal(..., interval = NULL)
 }
 \arguments{
-\item{...}{Data and further arguments passed to \code{sofa_window()} or
-\code{sofa_compute()}}
+\item{...}{Concept data, either passed as list or individual argument}
 
 \item{interval}{Time series interval (only used for checking consistency
 of input data, \code{NULL} will use the interval of the first data object)}
 
-\item{tbl}{Table holding SOFA covariates}
-
-\item{pafi_wf, plt_wf, bili_wf, map_wf, dopa_wf, norepi_wf, dobu_wf, epi_wf, gcs_wf, crea_wf, urine_wf}{functions used to calculate worst values over windows}
+\item{win_fun}{functions used to calculate worst values over windows}
 
 \item{explicit_wins}{The default \code{FALSE} iterates over all time steps,
 \code{TRUE} uses only the last time step per patient and a vector of times will
 iterate over these explicit time points}
 
-\item{worst_win_length}{Time-frame to look back and apply the \verb{*_wf}s}
-
-\item{na_val}{Value to use for missing data}
-
-\item{na_resp, na_plt, na_liver, na_cardio, na_cns, na_renal}{Feature-specific values to use in case of missing data; default is \code{na_val}}
-
-\item{impute_fun}{Function used to impute missing data; default is NULL}
-
-\item{keep_components}{Logical flag indicating whether to return individual
-SOFA components as columns}
-
-\item{by_ref}{Logical flag indicating whether to perform the operation by
-reference}
+\item{win_length}{Time-frame to look back and apply the \code{win_fun}}
 }
 \description{
 The SOFA (Sequential Organ Failure Assessment) score is a commonly used
@@ -82,17 +58,15 @@ Internally, \code{sofa_score()} calls first \code{sofa_window()}, followed by
 respective internally called function.
 }
 \details{
-The function \code{sofa_window()} calculates, for each covariate, the worst
-value over a moving window as specified by \code{worst_win_length}, using the
-respective function passed as \verb{*_wf} (e.g. \code{pafi_wf} for the
-\code{pafi} component. The default functions \code{min_or_na()} and \code{max_or_na()}
-return \code{NA} instead of \code{-Inf/Inf} in the case where no measurement is
-available over an entire window.
+The function \code{sofa_score()} calculates, for each component, the worst value
+over a moving window as specified by \code{win_length}, using the function
+passed as \code{win_fun}. The default functions \code{max_or_na()} return \code{NA}
+instead of \code{-Inf/Inf} in the case where no measurement is available over an
+entire window. When calculating the overall score by summing up components
+per time-step, a \code{NA} value is treated as 0.
 
-Using data imputed by \code{sofa_window()}, the function \code{sofa_compute()}
-performs the actual score calculation. First, for each time step and
-component, measurements are converted to a component score using the
-definition by Vincent et. al.:\tabular{lllll}{
+Building on separate concepts, measurements for each component are
+converted to a component score using the definition by Vincent et. al.:\tabular{lllll}{
    \strong{SOFA score} \tab 1 \tab 2 \tab 3 \tab 4 \cr
    \strong{Respiration} \tab  \tab  \tab  \tab  \cr
    PaO\ifelse{latex}{\out{\textsubscript{2}}}{\ifelse{html
@@ -126,17 +100,18 @@ definition by Vincent et. al.:\tabular{lllll}{
 }
 
 
-\ifelse{latex}{\out{\textsuperscript{a}}}{\ifelse{html}{
-\out{<sup>a</sup>}}{a}}Adrenergic agents administered for at least 1h (doses
-given are in [\ifelse{latex}{\out{$\mu$}}{\ifelse{html}{\out{&mu;}}{u}}g/kg
-\ifelse{latex}{\out{$\cdot$}}{\ifelse{html}{\out{&middot;}}{.}} min]
+\ifelse{latex}{\out{\textsuperscript{a}}}{\ifelse{html
+}{\out{<sup>a</sup>}}{a}}Adrenergic agents administered for at least 1h
+(doses given are in [\ifelse{latex}{\out{$\mu$}}{\ifelse{html
+}{\out{&mu;}}{u}}g/kg \ifelse{latex}{\out{$\cdot$}}{\ifelse{html
+}{\out{&middot;}}{.}} min]
 
-In case, for a given time step and component, no measurement is available,
-the corresponding \verb{na_*} value is used (e.g. \code{na_resp} for the
-respiratory component). At default, this is 0 (the lowest possible score
-for a SOFA component). It is possible to retain missingness by passing \code{NA}
-as \verb{na_*} value and using a function passed as \code{impute_fun()} in order
-to perform an additional imputation step.
+At default, for each patient, a score is calculated for every time step,
+from the first available measurement to the last. In instead of a regularly
+evaluated score, only certain time points are of interest, this can be
+specified using the \code{explicit_wins} argument: passing for example
+\code{hours(24, 48)} will yield for every patient a score at hours 24 and 48
+relative to the orgin of the current ID system (for example ICU stay).
 }
 \references{
 Vincent, J.-L., Moreno, R., Takala, J. et al. The SOFA (Sepsis-related Organ

@@ -409,6 +409,8 @@ rec_cb_dots <- function(concepts, ...) {
 
   res <- dots[concepts]
 
+  assert_that(all_map(has_col, res, concepts))
+
   if (not_null(names(concepts))) {
     names(res) <- names(concepts)
   }
