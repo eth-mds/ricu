@@ -660,13 +660,7 @@ aggregate.id_tbl <- function(x, expr = NULL, by = meta_vars(x),
 
   } else {
 
-    .x_ <- .expr_ <- .by_ <- NULL
-
-    local({
-      .x_[, eval(.expr_), by = .by_]
-    },
-      envir = list2env(list(.x_ = x, .expr_ = how, .by_ = by), parent = env)
-    )
+    do.call(`[`, list(x, substitute(), substitute(how), by = by), envir = env)
   }
 }
 

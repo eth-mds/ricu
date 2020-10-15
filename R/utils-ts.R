@@ -150,14 +150,10 @@ collapse <- function(x, id_vars = NULL, index_var = NULL, start_var = "start",
 
   names(expr)[c(2L, 3L)] <- c(start_var, end_var)
 
-  expr <- do.call(substitute, list(substitute(expr)))
-
-  .x_ <- .expr_ <- .by_ <- NULL
-
-  local({
-    .x_[, eval(.expr_), by = .by_]
-  }, envir = list2env(
-    list(.x_ = x, .expr_ = expr, .by_ = id_vars), parent = env)
+  do.call(`[`,
+    list(x, substitute(), do.call(substitute, list(substitute(expr))),
+         by = id_vars),
+    envir = env
   )
 }
 

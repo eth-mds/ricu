@@ -1,4 +1,22 @@
 
+test_that("collapse/expand", {
+
+  tbl <- ts_tbl(x = 1:5, y = hours(1:5), z = hours(2:6), val = rnorm(5),
+                index_var = "y")
+
+  exp <- expand(tbl, "y", "z", step_size = 1L, new_index = "y",
+                keep_vars = c("x", "val"))
+
+  expect_is(exp, "ts_tbl")
+  expect_identical(meta_vars(tbl), meta_vars(exp))
+  expect_identical(nrow(exp), sum(as.integer(tbl$z - tbl$x)) + nrow(tbl))
+
+  col <- collapse(exp, start_var = "y", end_var = "z", val = unique(val))
+
+  expect_is(col, "ts_tbl")
+  expect_equal(tbl, col, check.attributes = FALSE)
+})
+
 test_that("slide", {
 
   fun <- function(x) sum(x)
