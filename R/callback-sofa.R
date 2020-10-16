@@ -91,7 +91,7 @@ sofa_score <- function(..., interval = NULL, win_fun = max_or_na,
 
   cnc <- c("sofa_resp", "sofa_coag", "sofa_liver", "sofa_cardio",
            "sofa_cns", "sofa_renal")
-  dat <- collect_dots(cnc, interval, ..., merge = TRUE)
+  dat <- collect_dots(cnc, interval, ..., merge_dat = TRUE)
 
   expr <- substitute(lapply(.SD, fun), list(fun = win_fun))
 
@@ -144,7 +144,7 @@ sofa_resp <- function(..., interval = NULL) {
   }
 
   cnc <- c("pafi", "vent")
-  dat <- collect_dots(cnc, interval, ..., merge = TRUE)
+  dat <- collect_dots(cnc, interval, ..., merge_dat = TRUE)
 
   dat <- dat[is_true(get("pafi") < 200) & !is_true(get("vent")),
              c("pafi") := 200]
@@ -199,7 +199,7 @@ sofa_cardio <- function(..., interval = NULL) {
   }
 
   cnc <- c("map", "dopa60", "norepi60", "dobu60", "epi60")
-  dat <- collect_dots(cnc, interval, ..., merge = TRUE)
+  dat <- collect_dots(cnc, interval, ..., merge_dat = TRUE)
 
   dat <- dat[, c("sofa_cardio") := score_calc(
     get("map"), get("dopa60"), get("norepi60"), get("dobu60"), get("epi60")
@@ -232,7 +232,7 @@ sofa_renal <- function(..., interval = NULL) {
   }
 
   cnc <- c("crea", "urine24")
-  dat <- collect_dots(cnc, interval, ..., merge = TRUE)
+  dat <- collect_dots(cnc, interval, ..., merge_dat = TRUE)
 
   dat <- dat[, c("sofa_renal") := score_calc(get("crea"), get("urine24"))]
   dat <- rm_cols(dat, cnc, by_ref = TRUE)

@@ -1,5 +1,5 @@
 
-collect_dots <- function(concepts, interval, ..., merge = FALSE) {
+collect_dots <- function(concepts, interval, ..., merge_dat = FALSE) {
 
   assert_that(is.character(concepts))
 
@@ -46,7 +46,7 @@ collect_dots <- function(concepts, interval, ..., merge = FALSE) {
 
   ival <- check_interval(res, interval)
 
-  if (merge) {
+  if (merge_dat) {
     res <- reduce(merge, res, all = TRUE)
   } else {
     attr(res, "ival_checked") <- ival
@@ -314,7 +314,7 @@ vent <- function(..., match_win = hours(6L), min_length = mins(10L),
 sed <- function(..., interval = NULL) {
 
   cnc <- c("trach", "rass")
-  res <- collect_dots(cnc, interval, ..., merge = TRUE)
+  res <- collect_dots(cnc, interval, ..., merge_dat = TRUE)
 
   res <- res[, c("sed", cnc) := list(
     get(cnc[1L]) | get(cnc[2L]) <= -2, NULL, NULL)
@@ -337,7 +337,7 @@ gcs <- function(..., valid_win = hours(6L), set_sed_max = TRUE,
 
 
   cnc <- c("egcs", "vgcs", "mgcs", "tgcs", "sed")
-  res <- collect_dots(cnc, interval, ..., merge = TRUE)
+  res <- collect_dots(cnc, interval, ..., merge_dat = TRUE)
 
   assert_that(is_interval(valid_win), valid_win > check_interval(res),
               is.flag(set_sed_max), is.flag(set_na_max))
@@ -458,5 +458,5 @@ vaso60 <- function(..., max_gap = mins(5L), interval = NULL) {
     res <- unique(res)
   }
 
-  res
+  aggregate(res, "max")
 }
