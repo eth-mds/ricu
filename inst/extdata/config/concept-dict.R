@@ -1145,6 +1145,7 @@ cfg <- list(
     concepts = c("dobu_rate", "dobu_dur"),
     description = "dobutamine administration for min 1h",
     category = "medications",
+    interval = "00:01:00",
     callback = "vaso60",
     class = "rec_cncpt"
   ),
@@ -1191,6 +1192,7 @@ cfg <- list(
     concepts = c("dopa_rate", "dopa_dur"),
     description = "dopamine administration for min 1h",
     category = "outcome",
+    interval = "00:01:00",
     callback = "vaso60",
     class = "rec_cncpt"
   ),
@@ -1246,6 +1248,7 @@ cfg <- list(
     concepts = c("norepi_rate", "norepi_dur"),
     description = "norepinephrine administration for min 1h",
     category = "outcome",
+    interval = "00:01:00",
     callback = "vaso60",
     class = "rec_cncpt"
   ),
@@ -1302,6 +1305,7 @@ cfg <- list(
     concepts = c("epi_rate", "epi_dur"),
     description = "epinephrine administration for min 1h",
     category = "outcome",
+    interval = "00:01:00",
     callback = "vaso60",
     class = "rec_cncpt"
   ),

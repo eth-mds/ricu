@@ -318,6 +318,23 @@ eicu_adx <- function(x, val_var, ...) {
 
 weight_env <- new.env()
 
+#' Internal item callback utilities
+#'
+#' The utility function `add_weight()` is exported for convenience when adding
+#' external datasets and integrating concepts such as vasopressor rates which
+#' rely on patient weight. For this to function, the newly added dataset must
+#' offer a `weight` concept. For performance reasons, the weight concept is
+#' internally cached, as this might be used unchanged many times, when loading
+#' several concepts that need to pull in patient weight data.
+#'
+#' @param x Object in loading
+#' @param env Data source environment as available as `env` in callback
+#' functions
+#' @param weight_var String valued name of the newly added weight column
+#'
+#' @rdname callback_int
+#' @keywords internal
+#' @export
 add_weight <- function(x, env, weight_var = "weight") {
 
   assert_that(is_id_tbl(x), is_src_env(env), is.string(weight_var))
@@ -381,7 +398,6 @@ eicu_vaso_rate <- function(ml_to_mcg) {
     add_kg <- sub_trans("/", "/kg/")
 
     x <- x[, c(val_var) := silent_as_num(get(val_var))]
-    x <- x[get(val_var) > 0, ]
 
     x <- add_weight(x, env, weight_var)
     x <- x[, c("unit_var") := eicu_extract_unit(get(sub_var))]
@@ -398,7 +414,6 @@ eicu_vaso_rate <- function(ml_to_mcg) {
 
 hirid_vaso_rate <- function(x, val_var, unit_var, env, ...) {
 
-  x <- x[get(val_var) > 0, ]
   x <- x[get(unit_var) == "mg",
     c(val_var, unit_var) := list(1000 * get(val_var), "\u00b5g")
   ]
@@ -464,7 +479,19 @@ hirid_duration <- function(x, val_var, grp_var, ...) {
   calc_dur(x, val_var, index_var(x), index_var(x), grp_var)
 }
 
-calc_dur <- function(x, val_var, min_var, max_var, grp_var) {
+#' Used for determining vasopressor durations, `calc_dur()` will calculate
+#' durations by taking either per ID or per combination of ID and `grp_var`
+#' the minimum for `min_var` and the maximum of `max_var` and returning the
+#' time difference among the two.
+#'
+#' @param val_var String valued column name corresponding to the value variable
+#' @param min_var,max_var Column names denoting start and end times
+#' @param grp_var Optional grouping variable (for example linking infusions)
+#'
+#' @rdname callback_int
+#' @keywords internal
+#' @export
+calc_dur <- function(x, val_var, min_var, max_var, grp_var = NULL) {
 
   id_vars   <- id_vars(x)
   index_var <- index_var(x)
@@ -473,8 +500,10 @@ calc_dur <- function(x, val_var, min_var, max_var, grp_var) {
     return(x[, c(val_var) := get(index_var)])
   }
 
-  res <- x[, setNames(list(min(get(min_var)), max(get(max_var))),
-                      c(index_var, val_var)), by = c(id_vars, grp_var)]
+  expr <- quote(list(min(get(min_var)), max(get(max_var))))
+  names(expr) <- c("", index_var, val_var)
+
+  res <- x[, eval(expr), by = c(id_vars, grp_var)]
   res <- res[, c(val_var) := get(val_var) - get(index_var)]
 
   res

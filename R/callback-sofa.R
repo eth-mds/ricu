@@ -188,8 +188,9 @@ sofa_cardio <- function(..., interval = NULL) {
   score_calc <- function(map, dopa, norepi, dobu, epi) {
     fifelse(
       is_true(dopa > 15 | epi > 0.1 | norepi > 0.1), 4L, fifelse(
-        is_true(dopa > 5 | epi <= 0.1 | norepi <= 0.1), 3L, fifelse(
-          is_true(dopa <= 5 | !is.na(dobu)), 2L, fifelse(
+        is_true(dopa > 5 | (epi > 0 &    epi <= 0.1) |
+                        (norepi > 0 & norepi <= 0.1)), 3L, fifelse(
+          is_true((dopa > 0 & dopa <= 5) | dobu > 0), 2L, fifelse(
             is_true(map < 70), 1L, 0L
           )
         )

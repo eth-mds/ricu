@@ -7,6 +7,7 @@
 \alias{sed}
 \alias{gcs}
 \alias{urine24}
+\alias{vaso60}
 \title{Concept callback functions}
 \usage{
 pafi(
@@ -37,6 +38,8 @@ urine24(
   end_var = "end",
   interval = NULL
 )
+
+vaso60(..., max_gap = mins(5L), interval = NULL)
 }
 \arguments{
 \item{...}{Data input used for concept calculation}
@@ -72,6 +75,9 @@ with the respective maximum values}
 beyond first and last measurements}
 
 \item{start_var, end_var}{Passed to \code{\link[=fill_gaps]{fill_gaps()}}}
+
+\item{max_gap}{Maximum time gap between administration windows that are
+merged (can be negative).}
 }
 \description{
 Owing to increased complexity and more diverse applications, recursive
@@ -159,5 +165,15 @@ extended by passing an \code{id_tbl} object, such as for example returned by
 than 24 hours before the evaluation start point, \code{min_win} specifies the
 minimally required data window and the evaluation scheme is adjusted for
 shorter than 24 hour windows.
+}
+
+\subsection{\code{vaso60}}{
+
+Building on concepts for drug administration rate and drug administration
+durations, administration events are filtered if they do not fall into
+administrations windows of at least 1h. The \code{max_gap} argument can be used
+to control how far apart windows can be in order to be merged (negative
+times are possible as well, meaning that even overlapping windows can be
+considered as individual windows).
 }
 }

@@ -173,6 +173,14 @@ check_interval <- function(dat, ival = NULL) {
 #' minimally required data window and the evaluation scheme is adjusted for
 #' shorter than 24 hour windows.
 #'
+#' ## `vaso60`
+#' Building on concepts for drug administration rate and drug administration
+#' durations, administration events are filtered if they do not fall into
+#' administrations windows of at least 1h. The `max_gap` argument can be used
+#' to control how far apart windows can be in order to be merged (negative
+#' times are possible as well, meaning that even overlapping windows can be
+#' considered as individual windows).
+#'
 #' @param ... Data input used for concept calculation
 #' @param match_win Time-span during which matching of values is allowed
 #' @param mode Method for matching PaO\ifelse{latex
@@ -400,16 +408,35 @@ urine24 <- function(..., min_win = hours(12L), limits = NULL,
   slide(res, !!expr, hours(24L))
 }
 
-vaso60 <- function(..., interval = NULL) {
+#' @param max_gap Maximum time gap between administration windows that are
+#' merged (can be negative).
+#'
+#' @rdname callback_cncpt
+#' @export
+#'
+vaso60 <- function(..., max_gap = mins(5L), interval = NULL) {
 
-  dat <- collect_dots(c(rate = "_rate$", dur = "_dur$"), interval, ...)
+  final_int <- interval
+
+  dat <- collect_dots(c(rate = "_rate$", dur = "_dur$"), NULL, ...)
+
+  interval <- check_interval(dat)
+
+  if (is.null(final_int)) {
+    final_int <- interval
+  }
+
+  assert_that(is_interval(final_int), is_interval(max_gap))
 
   dur <- dat[["dur"]]
   dva <- data_vars(dur)
-  dur <- dur[get(dva) >= hours(1L), ]
+  idx <- index_var(dur)
+  dur <- dur[get(dva) > 0, ]
 
-  dur <- dur[, c(dva) := get(index_var(dur)) + get(dva)]
-  dur <- merge_ranges(dur, index_var(dur), dva, by_ref = TRUE)
+  dur <- dur[, c(dva) := get(idx) + get(dva) + max_gap]
+  dur <- merge_ranges(dur, idx, dva, by_ref = TRUE)
+  dur <- dur[, c(dva) := get(dva) - max_gap]
+  dur <- dur[get(dva) - get(idx) >= hours(1L), ]
 
   rate <- dat[["rate"]]
   temp <- new_names(c(colnames(dur), colnames(rate)), 2L)
@@ -425,6 +452,11 @@ vaso60 <- function(..., interval = NULL) {
   res <- rm_cols(res, temp, by_ref = TRUE)
   res <- rename_cols(res, sub("_rate$", "60", data_vars(res)), data_vars(res),
                      by_ref = TRUE)
+  res <- change_interval(res, final_int, by_ref = TRUE)
+
+  if (max_gap < 0L) {
+    res <- unique(res)
+  }
 
   res
 }
