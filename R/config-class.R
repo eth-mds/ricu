@@ -443,15 +443,16 @@ read_src_cfg <- function(src = NULL, name = "data-sources", cfg_dirs = NULL) {
 
   combine_srcs <- function(x, y) {
 
-    names(y) <- chr_xtr(y, "name")
+    if (not_null(y)) {
 
-    if (is.null(x)) {
-      return(y)
-    } else if (is.null(y)) {
-      return(x)
+      names(y) <- chr_xtr(y, "name")
+
+      if (not_null(x)) {
+        y <- y[setdiff(names(y), names(x))]
+      }
     }
 
-    c(x, y[setdiff(names(x), names(y))])
+    c(x, y)
   }
 
   res <- get_config(name, unique(c(cfg_dirs, config_paths())), combine_srcs)
