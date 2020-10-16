@@ -181,25 +181,6 @@ bullet <- function(..., level = 1L) {
   paste0(switch(level, symbol$bullet, symbol$circle, "-"), " ", ...)
 }
 
-assert_that <- function(..., env = parent.frame(), msg = NULL) {
-
-  res <- see_if(..., env = env)
-
-  if (isTRUE(res)) {
-    return(TRUE)
-  }
-
-  if (is.null(msg)) {
-    msg <- attr(res, "msg")
-  } else {
-    msg <- fmt_msg(msg, envir = env)
-  }
-
-  cls <- c(attr(msg, "assert_class"), "assertError", "ricu_err")
-
-  rlang::abort(msg, class = cls)
-}
-
 fmt_msg <- function(msg, envir = parent.frame(), indent = 0L, exdent = 0L) {
 
   msg <- chr_ply(msg, pluralize, .envir = envir)

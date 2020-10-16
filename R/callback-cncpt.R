@@ -1,73 +1,97 @@
 
-capture_eval <- function(fun, ..., .formal_args = NULL) {
+collect_dots <- function(concepts, interval, ..., merge = FALSE) {
 
-  if (is.null(.formal_args)) {
-    return(fun(...))
-  }
+  assert_that(is.character(concepts))
 
-  body <- quote({
+  dots <- list(...)
 
-    call <- match.call(expand.dots = FALSE)
-    keep <- match(names(formals(fun)), names(call), 0L)
-    call <- call[c(1L, keep)]
+  if (length(concepts) == 1L) {
 
-    call[[1L]] <- substitute(x, list(x = fun))
+    assert_that(identical(length(dots), 1L))
 
-    eval(call)
-  })
+    res <- dots[[1L]]
 
-  rlang::new_function(.formal_args, body)(...)
-}
-
-capture_fun <- function(concepts, interval) {
-
-  assert_that(is.character(concepts), has_length(concepts))
-
-  check_interval <- function(x, ival) !is_ts_tbl(x) || has_interval(x, ival)
-
-  body <- quote({
-
-    call <- match.call(expand.dots = FALSE)
-
-    call[[1L]] <- quote(list)
-
-    res <- eval(call, caller_env())
-
-    if (length(res) == 1L && length(concepts) > 1L) {
-      res <- res[[1L]]
+    if (is_ts_tbl(res)) {
+      ival <- coalesce(interval, interval(res))
+      assert_that(has_interval(res, ival))
+    } else {
+      assert_that(is_df(res))
     }
 
-    assert_that(same_length(res, concepts), all_fun(res, is_id_tbl))
+    return(res)
+  }
 
-    ivl <- NULL
+  if (length(dots) == 1L) {
+    dots <- dots[[1L]]
+  }
 
-    for (x in res) {
-      if (is_ts_tbl(x)) {
-        ivl <- interval(x)
-        break
+  if (is.null(names(dots))) {
+    names(dots) <- concepts
+  }
+
+  if (not_null(names(concepts))) {
+    concepts <- chr_ply(concepts, grep, names(dots), value = TRUE,
+                        use_names = TRUE)
+  }
+
+  assert_that(setequal(names(dots), concepts))
+
+  res <- dots[concepts]
+
+  assert_that(all_map(has_col, res, concepts))
+
+  if (not_null(names(concepts))) {
+    names(res) <- names(concepts)
+  }
+
+  ival <- check_interval(res, interval)
+
+  if (merge) {
+    res <- reduce(merge, res, all = TRUE)
+  } else {
+    attr(res, "ival_checked") <- ival
+  }
+
+  res
+}
+
+check_interval <- function(dat, ival = NULL) {
+
+  check_ival <- function(x, iv) {
+    is_df(x) && (!is_ts_tbl(x) || has_interval(x, iv))
+  }
+
+  if (has_attr(dat, "ival_checked")) {
+
+    ival <- attr(dat, "ival_checked")
+
+  } else if (is_ts_tbl(dat)) {
+
+    if (is.null(ival)) {
+      ival <- interval(dat)
+    } else {
+      assert_that(has_interval(dat, ival))
+    }
+
+  } else if (is_df(dat) || all_fun(dat, Negate(is_ts_tbl))) {
+
+    ival <- NULL
+
+  } else {
+
+    if (is.null(ival)) {
+      for (x in dat) {
+        if (is_ts_tbl(x)) {
+          ival <- interval(x)
+          break
+        }
       }
     }
 
-    assert_that(all_fun(res, check_interval, ivl),
-                setequal(concepts, names(res)),
-                all_map(has_cols, res[concepts], concepts),
-                null_or(interval, all_equal, ivl))
+    assert_that(all_fun(dat, check_ival, ival))
+  }
 
-    attr(res, "interval") <- ivl
-
-    res
-  })
-
-  arg <- rep(list(bquote()), length(concepts))
-  names(arg) <- concepts
-
-  rlang::new_function(arg, body)
-}
-
-capture_data <- function(concepts, interval, ...) {
-  res <- capture_fun(concepts, interval)(...)
-  assign("interval", attr(res, "interval"), envir = caller_env())
-  res
+  invisible(ival)
 }
 
 #' Concept callback functions
@@ -172,9 +196,9 @@ pafi <- function(..., match_win = hours(2L),
   mode <- match.arg(mode)
 
   cnc <- c("po2", "fio2")
-  res <- capture_data(cnc, interval, ...)
+  res <- collect_dots(cnc, interval, ...)
 
-  assert_that(is_interval(match_win), match_win > interval,
+  assert_that(is_interval(match_win), match_win > check_interval(res),
               is.flag(fix_na_fio2))
 
   if (identical(mode, "match_vals")) {
@@ -230,7 +254,9 @@ vent <- function(..., match_win = hours(6L), min_length = mins(10L),
   final_int <- interval
 
   cnc <- c("vent_start", "vent_end")
-  res <- capture_data(cnc, NULL, ...)
+  res <- collect_dots(cnc, NULL, ...)
+
+  interval <- check_interval(res)
 
   if (is.null(final_int)) {
     final_int <- interval
@@ -280,9 +306,7 @@ vent <- function(..., match_win = hours(6L), min_length = mins(10L),
 sed <- function(..., interval = NULL) {
 
   cnc <- c("trach", "rass")
-  res <- capture_data(cnc, interval, ...)
-
-  res <- reduce(merge, res, all = TRUE)
+  res <- collect_dots(cnc, interval, ..., merge = TRUE)
 
   res <- res[, c("sed", cnc) := list(
     get(cnc[1L]) | get(cnc[2L]) <= -2, NULL, NULL)
@@ -305,12 +329,10 @@ gcs <- function(..., valid_win = hours(6L), set_sed_max = TRUE,
 
 
   cnc <- c("egcs", "vgcs", "mgcs", "tgcs", "sed")
-  res <- capture_data(cnc, interval, ...)
+  res <- collect_dots(cnc, interval, ..., merge = TRUE)
 
-  assert_that(is_interval(valid_win), valid_win > interval,
+  assert_that(is_interval(valid_win), valid_win > check_interval(res),
               is.flag(set_sed_max), is.flag(set_na_max))
-
-  res <- reduce(merge, res, all = TRUE)
 
   if (set_sed_max) {
     res <- res[is_true(get(cnc[5L])), c(cnc[-5L]) := list(4, 5, 6, 15)]
@@ -358,14 +380,10 @@ urine24 <- function(..., min_win = hours(12L), limits = NULL,
     else sum(x, na.rm = TRUE) * step_factor / length(x)
   }
 
-  res <- list(...)[[1L]]
+  res      <- collect_dots("urine", interval, ...)
+  interval <- check_interval(res)
 
-  if (is.null(interval)) {
-    interval <- interval(res)
-  }
-
-  assert_that(has_interval(res, interval), has_cols(res, "urine"),
-              is_interval(min_win), min_win > interval, min_win <= hours(24L))
+  assert_that(is_interval(min_win), min_win > interval, min_win <= hours(24L))
 
   min_steps   <- ceiling(convert_dt(min_win) / as.double(interval))
   step_factor <- convert_dt(hours(24L)) / as.double(interval)
@@ -382,70 +400,9 @@ urine24 <- function(..., min_win = hours(12L), limits = NULL,
   slide(res, !!expr, hours(24L))
 }
 
-rec_cb_dots <- function(concepts, ...) {
-
-  assert_that(is.character(concepts))
-
-  dots <- list(...)
-
-  if (length(concepts) == 1L) {
-    return(dots[[1L]])
-  }
-
-  if (length(dots) == 1L) {
-    dots <- dots[[1L]]
-  }
-
-  if (is.null(names(dots))) {
-    names(dots) <- concepts
-  }
-
-  if (not_null(names(concepts))) {
-    concepts <- chr_ply(concepts, grep, names(dots), value = TRUE,
-                        use_names = TRUE)
-  }
-
-  assert_that(setequal(names(dots), concepts))
-
-  res <- dots[concepts]
-
-  assert_that(all_map(has_col, res, concepts))
-
-  if (not_null(names(concepts))) {
-    names(res) <- names(concepts)
-  }
-
-  res
-}
-
-rec_cb_ival <- function(dat, ival = NULL) {
-
-  check_interval <- function(x, iv) {
-    is_df(x) && (!is_ts_tbl(x) || has_interval(x, iv))
-  }
-
-  if (is_df(dat)) {
-    dat <- list(dat)
-  }
-
-  if (is.null(ival)) {
-    for (x in dat) {
-      if (is_ts_tbl(x)) {
-        ival <- ival(x)
-        break
-      }
-    }
-  }
-
-  assert_that(all_fun(dat, check_interval, ival))
-
-  ival
-}
-
 vaso60 <- function(..., interval = NULL) {
 
-  dat <- rec_cb_dots(c(rate = "_rate$", dur = "_dur$"), ...)
-  interval <- rec_cb_ival(dat, interval)
+  dat <- collect_dots(c(rate = "_rate$", dur = "_dur$"), interval, ...)
 
   dur <- dat[["dur"]]
   dva <- data_vars(dur)

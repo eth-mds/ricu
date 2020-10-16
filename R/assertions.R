@@ -5,6 +5,25 @@
 #' @importFrom rlang as_label
 NULL
 
+assert_that <- function(..., env = parent.frame(), msg = NULL) {
+
+  res <- see_if(..., env = env)
+
+  if (isTRUE(res)) {
+    return(TRUE)
+  }
+
+  if (is.null(msg)) {
+    msg <- attr(res, "msg")
+  } else {
+    msg <- fmt_msg(msg, envir = env)
+  }
+
+  cls <- c(attr(msg, "assert_class"), "assertError", "ricu_err")
+
+  rlang::abort(msg, class = cls)
+}
+
 fail_type <- function(arg_name, class) {
 
   assertthat::assert_that(is.string(arg_name), is.string(class))

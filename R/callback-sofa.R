@@ -89,12 +89,9 @@
 sofa_score <- function(..., interval = NULL, win_fun = max_or_na,
                        explicit_wins = FALSE, win_length = hours(24L)) {
 
-  cncps    <- c("sofa_resp", "sofa_coag", "sofa_liver", "sofa_cardio",
-                "sofa_cns", "sofa_renal")
-  dat      <- rec_cb_dots(cncps, ...)
-  interval <- rec_cb_ival(dat, interval)
-
-  dat <- reduce(merge, dat, all = TRUE)
+  cnc <- c("sofa_resp", "sofa_coag", "sofa_liver", "sofa_cardio",
+           "sofa_cns", "sofa_renal")
+  dat <- collect_dots(cnc, interval, ..., merge = TRUE)
 
   expr <- substitute(lapply(.SD, fun), list(fun = win_fun))
 
@@ -102,7 +99,7 @@ sofa_score <- function(..., interval = NULL, win_fun = max_or_na,
 
     res <- fill_gaps(dat)
     res <- slide(res, !!expr, before = win_length, full_window = FALSE,
-                 .SDcols = cncps)
+                 .SDcols = cnc)
 
   } else {
 
@@ -115,17 +112,17 @@ sofa_score <- function(..., interval = NULL, win_fun = max_or_na,
       win <- dat[, list(max_time = max(get(ind))), by = c(id_vars(dat))]
       win <- win[, c("min_time") := get("max_time") - win_length]
 
-      res <- hop(dat, !!expr, win, .SDcols = cncps)
+      res <- hop(dat, !!expr, win, .SDcols = cnc)
 
     } else {
 
       res <- slide_index(dat, !!expr, explicit_wins, before = win_length,
-                         full_window = FALSE, .SDcols = cncps)
+                         full_window = FALSE, .SDcols = cnc)
     }
   }
 
-  res <- res[, c("sofa") := rowSums(.SD, na.rm = TRUE), .SDcols = cncps]
-  res <- rm_cols(res, cncps)
+  res <- res[, c("sofa") := rowSums(.SD, na.rm = TRUE), .SDcols = cnc]
+  res <- rm_cols(res, cnc)
 
   res
 }
@@ -146,48 +143,43 @@ sofa_resp <- function(..., interval = NULL) {
     )
   }
 
-  cncps    <- c("pafi", "vent")
-  dat      <- rec_cb_dots(cncps, ...)
-  interval <- rec_cb_ival(dat, interval)
-
-  dat <- reduce(merge, dat, all = TRUE)
+  cnc <- c("pafi", "vent")
+  dat <- collect_dots(cnc, interval, ..., merge = TRUE)
 
   dat <- dat[is_true(get("pafi") < 200) & !is_true(get("vent")),
              c("pafi") := 200]
   dat <- dat[, c("sofa_resp") := score_calc(get("pafi"))]
 
-  dat <- rm_cols(dat, cncps, by_ref = TRUE)
-
-  dat
-}
-
-#' @rdname callback_sofa
-#' @export
-sofa_coag <- function(..., interval = NULL) {
-
-  score_calc <- function(x) 4L - findInterval(x, c(20, 50, 100, 150))
-
-  cnc <- "plt"
-  dat <- rec_cb_dots(cnc, ...)
-  dat <- dat[, c("sofa_coag") := score_calc(get(cnc))]
   dat <- rm_cols(dat, cnc, by_ref = TRUE)
 
   dat
 }
 
+sofa_single <- function(cnc, nme, fun) {
+
+  assert_that(is.string(cnc), is.string(nme), is.function(fun))
+
+  function(..., interval = NULL) {
+
+    dat <- collect_dots(cnc, interval, ...)
+    dat <- dat[, c(nme) := fun(get(cnc))]
+    dat <- rm_cols(dat, cnc, by_ref = TRUE)
+
+    dat
+  }
+}
+
 #' @rdname callback_sofa
 #' @export
-sofa_liver <- function(..., interval = NULL) {
+sofa_coag <- sofa_single(
+  "plt", "sofa_coag", function(x) 4L - findInterval(x, c(20, 50, 100, 150))
+)
 
-  score_calc <- function(x) findInterval(x, c(1.2, 2, 6, 12))
-
-  cnc <- "bili"
-  dat <- rec_cb_dots(cnc, ...)
-  dat <- dat[, c("sofa_liver") := score_calc(get(cnc))]
-  dat <- rm_cols(dat, cnc, by_ref = TRUE)
-
-  dat
-}
+#' @rdname callback_sofa
+#' @export
+sofa_liver <- sofa_single(
+  "bili", "sofa_liver", function(x) findInterval(x, c(1.2, 2, 6, 12))
+)
 
 #' @rdname callback_sofa
 #' @export
@@ -205,32 +197,22 @@ sofa_cardio <- function(..., interval = NULL) {
     )
   }
 
-  cncps    <- c("map", "dopa60", "norepi60", "dobu60", "epi60")
-  dat      <- rec_cb_dots(cncps, ...)
-  interval <- rec_cb_ival(dat, interval)
-
-  dat <- reduce(merge, dat, all = TRUE)
+  cnc <- c("map", "dopa60", "norepi60", "dobu60", "epi60")
+  dat <- collect_dots(cnc, interval, ..., merge = TRUE)
 
   dat <- dat[, c("sofa_cardio") := score_calc(
     get("map"), get("dopa60"), get("norepi60"), get("dobu60"), get("epi60")
   )]
-  dat <- rm_cols(dat, cncps, by_ref = TRUE)
+  dat <- rm_cols(dat, cnc, by_ref = TRUE)
 
   dat
 }
 
 #' @rdname callback_sofa
 #' @export
-sofa_cns <- function(..., interval = NULL) {
-
-  score_calc <- function(x) 4L - findInterval(x, c(6, 10, 13, 15))
-
-  dat <- rec_cb_dots("gcs", ...)
-  dat <- dat[, c("sofa_cns") := score_calc(get("gcs"))]
-  dat <- rm_cols(dat, "gcs", by_ref = TRUE)
-
-  dat
-}
+sofa_cns <- sofa_single(
+  "gcs", "sofa_cns", function(x) 4L - findInterval(x, c(6, 10, 13, 15))
+)
 
 #' @rdname callback_sofa
 #' @export
@@ -248,14 +230,11 @@ sofa_renal <- function(..., interval = NULL) {
     )
   }
 
-  cncps    <- c("crea", "urine24")
-  dat      <- rec_cb_dots(cncps, ...)
-  interval <- rec_cb_ival(dat, interval)
-
-  dat <- reduce(merge, dat, all = TRUE)
+  cnc <- c("crea", "urine24")
+  dat <- collect_dots(cnc, interval, ..., merge = TRUE)
 
   dat <- dat[, c("sofa_renal") := score_calc(get("crea"), get("urine24"))]
-  dat <- rm_cols(dat, cncps, by_ref = TRUE)
+  dat <- rm_cols(dat, cnc, by_ref = TRUE)
 
   dat
 }
