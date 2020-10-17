@@ -13,13 +13,15 @@
 #' respective internally called function.
 #'
 #' @param ... Concept data, either passed as list or individual argument
-#' @param interval Time series interval (only used for checking consistency
-#' of input data, `NULL` will use the interval of the first data object)
 #' @param win_fun functions used to calculate worst values over windows
 #' @param explicit_wins The default `FALSE` iterates over all time steps,
 #' `TRUE` uses only the last time step per patient and a vector of times will
 #' iterate over these explicit time points
 #' @param win_length Time-frame to look back and apply the `win_fun`
+#' @param keep_components Logical flag indicating whether to return the
+#' individual components alongside the aggregated score
+#' @param interval Time series interval (only used for checking consistency
+#' of input data, `NULL` will use the interval of the first data object)
 #'
 #' @details
 #' The function `sofa_score()` calculates, for each component, the worst value
@@ -86,8 +88,9 @@
 #' @rdname callback_sofa
 #' @export
 #'
-sofa_score <- function(..., interval = NULL, win_fun = max_or_na,
-                       explicit_wins = FALSE, win_length = hours(24L)) {
+sofa_score <- function(..., win_fun = max_or_na, explicit_wins = FALSE,
+                       win_length = hours(24L), keep_components = FALSE,
+                       interval = NULL) {
 
   cnc <- c("sofa_resp", "sofa_coag", "sofa_liver", "sofa_cardio",
            "sofa_cns", "sofa_renal")
@@ -122,7 +125,10 @@ sofa_score <- function(..., interval = NULL, win_fun = max_or_na,
   }
 
   res <- res[, c("sofa") := rowSums(.SD, na.rm = TRUE), .SDcols = cnc]
-  res <- rm_cols(res, cnc)
+
+  if (!keep_components) {
+    res <- rm_cols(res, cnc, by_ref = TRUE)
+  }
 
   res
 }

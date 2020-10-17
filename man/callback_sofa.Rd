@@ -13,10 +13,11 @@
 \usage{
 sofa_score(
   ...,
-  interval = NULL,
   win_fun = max_or_na,
   explicit_wins = FALSE,
-  win_length = hours(24L)
+  win_length = hours(24L),
+  keep_components = FALSE,
+  interval = NULL
 )
 
 sofa_resp(..., interval = NULL)
@@ -34,9 +35,6 @@ sofa_renal(..., interval = NULL)
 \arguments{
 \item{...}{Concept data, either passed as list or individual argument}
 
-\item{interval}{Time series interval (only used for checking consistency
-of input data, \code{NULL} will use the interval of the first data object)}
-
 \item{win_fun}{functions used to calculate worst values over windows}
 
 \item{explicit_wins}{The default \code{FALSE} iterates over all time steps,
@@ -44,6 +42,12 @@ of input data, \code{NULL} will use the interval of the first data object)}
 iterate over these explicit time points}
 
 \item{win_length}{Time-frame to look back and apply the \code{win_fun}}
+
+\item{keep_components}{Logical flag indicating whether to return the
+individual components alongside the aggregated score}
+
+\item{interval}{Time series interval (only used for checking consistency
+of input data, \code{NULL} will use the interval of the first data object)}
 }
 \description{
 The SOFA (Sequential Organ Failure Assessment) score is a commonly used
