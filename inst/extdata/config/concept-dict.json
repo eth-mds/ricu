@@ -390,13 +390,6 @@
       ]
     }
   },
-  "avpu": {
-    "concepts": "gcs",
-    "description": "AVPU scale",
-    "category": "neurological",
-    "callback": "avpu",
-    "class": "rec_cncpt"
-  },
   "basos": {
     "unit": "%",
     "min": 0,
@@ -2593,13 +2586,6 @@
       ]
     }
   },
-  "mews": {
-    "concepts": ["sbp", "hr", "resp", "temp", "avpu"],
-    "description": "modified early warning score",
-    "category": "outcome",
-    "callback": "mews_score",
-    "class": "rec_cncpt"
-  },
   "mg": {
     "unit": "mg/dL",
     "min": 0.5,
@@ -2781,13 +2767,6 @@
         }
       ]
     }
-  },
-  "news": {
-    "concepts": ["resp", "o2sat", "supp_o2", "temp", "sbp", "hr", "avpu"],
-    "description": "national early warning score",
-    "category": "outcome",
-    "callback": "news_score",
-    "class": "rec_cncpt"
   },
   "norepi_dur": {
     "description": "norepinephrine duration",
@@ -3550,13 +3529,6 @@
     "callback": "sed",
     "class": "rec_cncpt"
   },
-  "sep3": {
-    "concepts": ["sofa", "susp_inf"],
-    "description": "sepsis-3 criterion",
-    "category": "outcome",
-    "callback": "sep3",
-    "class": "rec_cncpt"
-  },
   "sex": {
     "target": "id_tbl",
     "levels": ["Female", "Male"],
@@ -3603,13 +3575,6 @@
         }
       ]
     }
-  },
-  "sirs": {
-    "concepts": ["temp", "hr", "resp", "pco2", "wbc", "bnd"],
-    "description": "systemic inflammatory response syndrome score",
-    "category": "outcome",
-    "callback": "sirs_score",
-    "class": "rec_cncpt"
   },
   "sofa": {
     "concepts": ["sofa_resp", "sofa_coag", "sofa_liver", "sofa_cardio", "sofa_cns", "sofa_renal"],
@@ -3662,28 +3627,6 @@
     "description": "SOFA respiratory component",
     "category": "outcome",
     "callback": "sofa_resp",
-    "class": "rec_cncpt"
-  },
-  "supp_o2": {
-    "concepts": ["vent", "fio2"],
-    "description": "supplemental oxygen",
-    "category": "respiratory",
-    "callback": "supp_o2",
-    "class": "rec_cncpt"
-  },
-  "susp_inf": {
-    "concepts": ["abx", "samp"],
-    "description": "suspected infection",
-    "category": "outcome",
-    "aggregate": [
-      [
-        "sum"
-      ],
-      [
-        false
-      ]
-    ],
-    "callback": "susp_inf",
     "class": "rec_cncpt"
   },
   "tco2": {
