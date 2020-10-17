@@ -239,10 +239,15 @@ warn_arg <- function(args) {
              class = "arg_ignored")
 }
 
-warn_dots <- function(...) {
+warn_dots <- function(..., ok_args = NULL) {
 
   if (...length() > 0L) {
-    warn_arg("...")
+
+    args <- setdiff(names(match.call(expand.dots = FALSE)$`...`), ok_args)
+
+    if (has_length(args)) {
+      warn_arg("...")
+    }
   }
 
   invisible(NULL)

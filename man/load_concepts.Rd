@@ -13,7 +13,7 @@
 \alias{load_concepts.itm}
 \title{Load concept data}
 \usage{
-load_concepts(x, ...)
+load_concepts(x, ..., cache = TRUE)
 
 \method{load_concepts}{character}(
   x,
@@ -30,7 +30,8 @@ load_concepts(x, ...)
   aggregate = NULL,
   merge_data = TRUE,
   verbose = TRUE,
-  ...
+  ...,
+  cache = TRUE
 )
 
 \method{load_concepts}{cncpt}(x, aggregate = NULL, ..., progress = NULL)
@@ -48,7 +49,8 @@ load_concepts(x, ...)
   id_type = "icustay",
   interval = hours(1L),
   ...,
-  progress = NULL
+  progress = NULL,
+  cache = TRUE
 )
 
 \method{load_concepts}{item}(
@@ -72,6 +74,9 @@ load_concepts(x, ...)
 \item{x}{Object specifying the data to be loaded}
 
 \item{...}{Passed to downstream methods}
+
+\item{cache}{Logical flag indicating whether to cache concepts that are
+required multiple times}
 
 \item{src}{A character vector, used to subset the \code{concepts}; \code{NULL}
 means no subsetting}
