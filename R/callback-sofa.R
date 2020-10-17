@@ -128,6 +128,8 @@ sofa_score <- function(..., win_fun = max_or_na, explicit_wins = FALSE,
 
   if (!keep_components) {
     res <- rm_cols(res, cnc, by_ref = TRUE)
+  } else {
+    res <- rename_cols(res, paste0(cnc, "_comp"), cnc, by_ref = TRUE)
   }
 
   res

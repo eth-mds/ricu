@@ -578,7 +578,7 @@ load_concepts.item <- function(x, patient_ids = NULL, id_type = "icustay",
 load_concepts.itm <- function(x, patient_ids = NULL, id_type = "icustay",
                               interval = hours(1L), ...) {
 
-  warn_dots(..., ok_args = "cache")
+  warn_dots(..., ok_args = c("cache", "keep_components"))
 
   res <- do_itm_load(x, id_type, interval = interval)
   res <- merge_patid(res, patient_ids)
