@@ -460,3 +460,33 @@ vaso60 <- function(..., max_gap = mins(5L), interval = NULL) {
 
   aggregate(res, "max")
 }
+
+#' @rdname callback_cncpt
+#' @export
+supp_o2 <- function(..., interval = NULL) {
+
+  cnc <- c("vent", "fio2")
+  res <- collect_dots(cnc, interval, ..., merge = TRUE)
+
+  res <- res[, c("supp_o2", "vent", "fio2") := list(
+    get("vent") | get("fio2") > 21, NULL, NULL
+  )]
+
+  res
+}
+
+map_vals <- function(pts, vals) {
+  function(x) pts[findInterval(x, vals, left.open = TRUE) + 1]
+}
+
+#' @rdname callback_cncpt
+#' @export
+avpu <- function(..., interval = NULL) {
+
+  avpu_map <- map_vals(c(NA, "U", "P", "V", "A", NA), c(2, 3, 9, 13, 15))
+
+  res <- collect_dots("gcs", interval, ...)
+  res <- res[, c("avpu", "gcs") := list(avpu_map(get("gcs")), NULL)]
+
+  res
+}

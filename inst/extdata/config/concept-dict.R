@@ -1867,6 +1867,21 @@ cfg <- list(
     callback = "sofa_score",
     class = "rec_cncpt"
   ),
+  susp_inf = list(
+    concepts = c("abx", "samp"),
+    description = "suspected infection",
+    category = "outcome",
+    aggregate = lapply(list("sum", FALSE), list),
+    callback = "susp_inf",
+    class = "rec_cncpt"
+  ),
+  sep3 = list(
+    concepts = c("sofa", "susp_inf"),
+    description = "sepsis-3 criterion",
+    category = "outcome",
+    callback = "sep3",
+    class = "rec_cncpt"
+  ),
   bnd = list(
     description = "band form neutrophils",
     category = "hematology",
@@ -1882,6 +1897,41 @@ cfg <- list(
              class = "hrd_itm")
       )
     )
+  ),
+  sirs = list(
+    concepts = c("temp", "hr", "resp", "pco2", "wbc", "bnd"),
+    description = "systemic inflammatory response syndrome score",
+    category = "outcome",
+    callback = "sirs_score",
+    class = "rec_cncpt"
+  ),
+  supp_o2 = list(
+    concepts = c("vent", "fio2"),
+    description = "supplemental oxygen",
+    category = "respiratory",
+    callback = "supp_o2",
+    class = "rec_cncpt"
+  ),
+  avpu = list(
+    concepts = "gcs",
+    description = "AVPU scale",
+    category = "neurological",
+    callback = "avpu",
+    class = "rec_cncpt"
+  ),
+  news = list(
+    concepts = c("resp", "o2sat", "supp_o2", "temp", "sbp", "hr", "avpu"),
+    description = "national early warning score",
+    category = "outcome",
+    callback = "news_score",
+    class = "rec_cncpt"
+  ),
+  mews = list(
+    concepts = c("sbp", "hr", "resp", "temp","avpu"),
+    description = "modified early warning score",
+    category = "outcome",
+    callback = "mews_score",
+    class = "rec_cncpt"
   )
 )
 
