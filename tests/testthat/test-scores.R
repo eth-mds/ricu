@@ -56,6 +56,26 @@ test_that("sepsis 3", {
   expect_equal(interval(sep3), hours(1L))
 })
 
+qs_mi <- load_concepts("qsofa", "mimic_demo")
+qs_ei <- load_concepts("qsofa", "eicu_demo")
+
+test_that("qsofa", {
+
+  expect_is(qs_mi, "ts_tbl")
+  expect_true(is_ts_tbl(qs_mi))
+  expect_identical(id_vars(qs_mi), "icustay_id")
+  expect_identical(index_var(qs_mi), "charttime")
+  expect_equal(interval(qs_mi), hours(1L))
+  expect_identical(data_vars(qs_mi), "qsofa")
+
+  expect_is(qs_ei, "ts_tbl")
+  expect_true(is_ts_tbl(qs_ei))
+  expect_identical(id_vars(qs_ei), "patientunitstayid")
+  expect_identical(index_var(qs_ei), "nursingchartoffset")
+  expect_equal(interval(qs_ei), hours(1L))
+  expect_identical(data_vars(qs_ei), "qsofa")
+})
+
 sr_mi <- load_concepts("sirs", "mimic_demo")
 sr_ei <- load_concepts("sirs", "eicu_demo")
 

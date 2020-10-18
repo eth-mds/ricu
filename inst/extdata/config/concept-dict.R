@@ -1867,6 +1867,13 @@ cfg <- list(
     callback = "sofa_score",
     class = "rec_cncpt"
   ),
+  qsofa = list(
+    concepts = c("gcs", "sbp", "resp"),
+    description = "quick SOFA score",
+    category = "outcome",
+    callback = "qsofa_score",
+    class = "rec_cncpt"
+  ),
   susp_inf = list(
     concepts = c("abx", "samp"),
     description = "suspected infection",

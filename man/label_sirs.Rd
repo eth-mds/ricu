@@ -2,11 +2,19 @@
 % Please edit documentation in R/callback-scores.R
 \name{sirs_score}
 \alias{sirs_score}
+\alias{qsofa_score}
 \alias{news_score}
 \alias{mews_score}
 \title{SIRS score label}
 \usage{
 sirs_score(
+  ...,
+  win_length = hours(24L),
+  keep_components = FALSE,
+  interval = NULL
+)
+
+qsofa_score(
   ...,
   win_length = hours(24L),
   keep_components = FALSE,

@@ -26,16 +26,11 @@ sirs_score <- function(..., win_length = hours(24L), keep_components = FALSE,
 
   assert_that(is.flag(keep_components), is_interval(win_length))
 
-  cnc <- c("temp", "hr", "resp", "pco2", "wbc", "bnd")
+  cnc <- c("temp", "hr", "resp", "wbc", "pco2", "bnd")
   res <- collect_dots(cnc, interval, ..., merge_dat = TRUE)
 
-  expr <- substitute(
-    list(temp = fun(temp), hr = fun(hr), resp = fun(resp), pco2 = fun(pco2),
-         wbc = fun(wbc), bnd = fun(bnd)),
-    list(fun = locf)
-  )
-
-  res <- slide(res, !!expr, before = win_length)
+  exp <- substitute(lapply(.SD, fun), list(fun = locf))
+  res <- slide(res, !!exp, before = win_length, .SDcols = cnc)
 
   res <- res[, c(cnc) := list(
     tmpe(get("temp")), hrat(get("hr")),
@@ -43,10 +38,39 @@ sirs_score <- function(..., win_length = hours(24L), keep_components = FALSE,
     wbcn(get("wbc"), get("bnd")), NULL)
   ]
 
-  cnc <- data_vars(res)
+  cnc <- head(cnc, n = 4L)
+  res <- res[, c("sirs") := rowSums(.SD, na.rm = TRUE), .SDcols = cnc]
 
-  res <- setnafill(res, fill = 0L, cols = cnc)
-  res <- res[, c("sirs") := rowSums(.SD), .SDcols = cnc]
+  if (isTRUE(keep_components)) {
+    res <- rename_cols(res, paste0(cnc, "_comp"), cnc, by_ref = TRUE)
+  } else {
+    res <- rm_cols(res, cnc, by_ref = TRUE)
+  }
+
+  res
+}
+
+#' @rdname label_sirs
+#' @export
+qsofa_score <- function(..., win_length = hours(24L), keep_components = FALSE,
+                        interval = NULL) {
+
+  gte <- function(x, val) is_true(x >= val)
+  lte <- function(x, val) is_true(x <= val)
+
+  assert_that(is_interval(win_length), is.flag(keep_components))
+
+  cnc <- c("gcs", "sbp", "resp")
+  res <- collect_dots(cnc, interval, ..., merge_dat = TRUE)
+
+  exp <- substitute(lapply(.SD, fun), list(fun = locf))
+  res <- slide(res, !!exp, before = win_length, .SDcols = cnc)
+
+  res <- res[, c(cnc) := list(
+    lte(get("gcs"), 13), lte(get("sbp"), 100), gte(get("resp"), 22)
+  )]
+
+  res <- res[, c("qsofa") := rowSums(.SD, na.rm = TRUE), .SDcols = cnc]
 
   if (isTRUE(keep_components)) {
     res <- rename_cols(res, paste0(cnc, "_comp"), cnc, by_ref = TRUE)
@@ -77,14 +101,8 @@ news_score <- function(..., win_length = hours(24L), keep_components = FALSE,
   res <- collect_dots(cnc, interval, ..., merge_dat = TRUE)
   res <- res[is.na(get("supp_o2")), c("supp_o2") := FALSE]
 
-  expr <- substitute(
-    list(resp = fun(resp), avpu = fun(avpu),
-         o2sat = fun(o2sat), supp_o2 = fun(supp_o2),
-         temp = fun(temp), hr = fun(hr),
-         sbp = fun(sbp)), list(fun = locf)
-  )
-
-  res <- slide(res, !!expr, before = win_length)
+  exp <- substitute(lapply(.SD, fun), list(fun = locf))
+  res <- slide(res, !!exp, before = win_length, .SDcols = cnc)
 
   res <- res[, c(cnc) := list(
     heart(get("hr")), avpu(get("avpu")), suppo2(get("supp_o2")),
@@ -92,8 +110,7 @@ news_score <- function(..., win_length = hours(24L), keep_components = FALSE,
     sys_bp(get("sbp")), resp(get("resp")))
   ]
 
-  res <- setnafill(res, fill = 0L, cols = cnc)
-  res <- res[, c("news") := rowSums(.SD), .SDcols = cnc]
+  res <- res[, c("news") := rowSums(.SD, na.rm = TRUE), .SDcols = cnc]
 
   if (isTRUE(keep_components)) {
     res <- rename_cols(res, paste0(cnc, "_comp"), cnc, by_ref = TRUE)
@@ -121,20 +138,15 @@ mews_score <- function(..., win_length = hours(24L), keep_components = FALSE,
   cnc <- c("hr", "avpu", "temp", "sbp", "resp")
   res <- collect_dots(cnc, interval, ..., merge_dat = TRUE)
 
-  expr <- substitute(
-    list(hr = fun(hr), avpu = fun(avpu), temp = fun(temp), sbp = fun(sbp),
-         resp = fun(resp)), list(fun = locf)
-  )
-
-  res <- slide(res, !!expr, before = win_length)
+  exp <- substitute(lapply(.SD, fun), list(fun = locf))
+  res <- slide(res, !!exp, before = win_length, .SDcols = cnc)
 
   res <- res[, c(cnc) := list(
     heart(get("hr")), avpu(get("avpu")), temp(get("temp")), sys_bp(get("sbp")),
     resp(get("resp")))
   ]
 
-  res <- setnafill(res, fill = 0L, cols = cnc)
-  res <- res[, c("mews") := rowSums(.SD), .SDcols = cnc]
+  res <- res[, c("mews") := rowSums(.SD, na.rm = TRUE), .SDcols = cnc]
 
   if (isTRUE(keep_components)) {
     res <- rename_cols(res, paste0(cnc, "_comp"), cnc, by_ref = TRUE)
