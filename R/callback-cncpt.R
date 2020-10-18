@@ -420,6 +420,12 @@ vaso60 <- function(..., max_gap = mins(5L), interval = NULL) {
 
   dat <- collect_dots(c(rate = "_rate$", dur = "_dur$"), NULL, ...)
 
+  if (any(int_ply(dat, nrow) == 0L)) {
+    res <- dat[["rate"]]
+    rename_cols(res[0L], sub, data_vars(res), pattern = "_rate$",
+                replacement = "60")
+  }
+
   interval <- check_interval(dat)
 
   if (is.null(final_int)) {
@@ -450,8 +456,8 @@ vaso60 <- function(..., max_gap = mins(5L), interval = NULL) {
 
   res <- rate[dur, on = join, nomatch = NULL]
   res <- rm_cols(res, temp, by_ref = TRUE)
-  res <- rename_cols(res, sub("_rate$", "60", data_vars(res)), data_vars(res),
-                     by_ref = TRUE)
+  res <- rename_cols(res, sub, data_vars(res), by_ref = TRUE,
+                     pattern = "_rate$", replacement = "60")
   res <- change_interval(res, final_int, by_ref = TRUE)
 
   if (max_gap < 0L) {

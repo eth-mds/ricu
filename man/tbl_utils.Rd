@@ -15,7 +15,14 @@
 \alias{dt_gforce}
 \title{ICU class data utilities}
 \usage{
-rename_cols(x, new, old = colnames(x), skip_absent = FALSE, by_ref = FALSE)
+rename_cols(
+  x,
+  new,
+  old = colnames(x),
+  skip_absent = FALSE,
+  by_ref = FALSE,
+  ...
+)
 
 rm_cols(x, cols, skip_absent = FALSE, by_ref = FALSE)
 
@@ -70,6 +77,8 @@ columns}
 \item{by_ref}{Logical flag indicating whether to perform the operation by
 reference}
 
+\item{...}{Ignored}
+
 \item{cols}{Column names of columns to consider}
 
 \item{new_interval}{Replacement interval length specified as scalar-valued
@@ -86,8 +95,6 @@ suffices}
 
 \item{reorder_cols}{Logical flag indicating whether to move the \code{by}
 columns to the front.}
-
-\item{...}{Ignored}
 
 \item{incomparables}{Not used. Here for S3 method consistency}
 

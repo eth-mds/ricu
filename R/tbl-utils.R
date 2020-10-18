@@ -273,11 +273,19 @@ is_df <- is_type("data.frame")
 #' @param skip_absent Logical flag for ignoring non-existent column names
 #' @param by_ref Logical flag indicating whether to perform the operation by
 #' reference
+#' @param ... In case a function is passed as `new`, further arguments are
+#' forwarded to that function
 #'
 #' @rdname tbl_utils
 #' @export
 rename_cols <- function(x, new, old = colnames(x), skip_absent = FALSE,
-                        by_ref = FALSE) {
+                        by_ref = FALSE, ...) {
+
+  if (is.function(new)) {
+    new <- new(old, ...)
+  } else {
+    warn_dots(...)
+  }
 
   assert_that(is_unique(new), is_unique(old), same_length(new, old),
               is.flag(skip_absent), is.flag(by_ref),
@@ -287,12 +295,25 @@ rename_cols <- function(x, new, old = colnames(x), skip_absent = FALSE,
     return(x)
   }
 
-  UseMethod("rename_cols", x)
+  col_renamer(x, new, old, skip_absent, by_ref)
 }
 
+#' Internal utilities for ICU data classes
+#'
+#' @inheritParams rename_cols
+#'
+#' @keywords internal
 #' @export
-rename_cols.ts_tbl <- function(x, new, old = colnames(x), skip_absent = FALSE,
-                               by_ref = FALSE) {
+col_renamer <- function(x, new, old = colnames(x), skip_absent = FALSE,
+                        by_ref = FALSE) {
+
+  UseMethod("col_renamer", x)
+}
+
+#' @keywords internal
+#' @export
+col_renamer.ts_tbl <- function(x, new, old = colnames(x),
+                               skip_absent = FALSE, by_ref = FALSE) {
 
   old_ind <- index_var(x)
   intval  <- interval(x)
@@ -309,12 +330,13 @@ rename_cols.ts_tbl <- function(x, new, old = colnames(x), skip_absent = FALSE,
     x <- set_attributes(x, index_var = unname(new_ind))
   }
 
-  rename_cols.id_tbl(x, new, old, skip_absent, by_ref)
+  col_renamer.id_tbl(x, new, old, skip_absent, by_ref)
 }
 
+#' @keywords internal
 #' @export
-rename_cols.id_tbl <- function(x, new, old = colnames(x), skip_absent = FALSE,
-                               by_ref = FALSE) {
+col_renamer.id_tbl <- function(x, new, old = colnames(x),
+                              skip_absent = FALSE, by_ref = FALSE) {
 
   if (skip_absent) {
 
@@ -340,12 +362,13 @@ rename_cols.id_tbl <- function(x, new, old = colnames(x), skip_absent = FALSE,
     x <- set_attributes(x, id_vars = unname(new_id))
   }
 
-  rename_cols.data.table(x, new, old, skip_absent, by_ref)
+  col_renamer.data.table(x, new, old, skip_absent, by_ref)
 }
 
-#' @method rename_cols data.table
+#' @method col_renamer data.table
+#' @keywords internal
 #' @export
-rename_cols.data.table <- function(x, new, old = colnames(x),
+col_renamer.data.table <- function(x, new, old = colnames(x),
                                    skip_absent = FALSE, by_ref = FALSE) {
 
   if (!skip_absent) {
@@ -361,8 +384,9 @@ rename_cols.data.table <- function(x, new, old = colnames(x),
   check_valid(x)
 }
 
+#' @keywords internal
 #' @export
-rename_cols.default <- function(x, ...) stop_generic(x, .Generic)
+col_renamer.default <- function(x, ...) stop_generic(x, .Generic)
 
 #' @rdname tbl_utils
 #' @export
