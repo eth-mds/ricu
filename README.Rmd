@@ -23,6 +23,7 @@ old.hooks <- fansi::set_knit_hooks(knitr::knit_hooks)
 <!-- badges: start -->
 [![Lifecycle](https://img.shields.io/badge/lifecycle-maturing-blue.svg)](https://www.tidyverse.org/lifecycle/#maturing)
 [![R build status](https://github.com/septic-tank/ricu/workflows/build/badge.svg)](https://github.com/septic-tank/ricu/actions?query=workflow%3Abuild)
+[![R check status](https://github.com/septic-tank/ricu/workflows/check/badge.svg)](https://github.com/septic-tank/ricu/actions?query=workflow%3Acheck)
 [![pkgdown build status](https://github.com/septic-tank/ricu/workflows/pkgdown/badge.svg)](https://github.com/septic-tank/ricu/actions?query=workflow%3Apkgdown)
 [![covr status](https://github.com/septic-tank/ricu/workflows/coverage/badge.svg)](https://github.com/septic-tank/ricu/actions?query=workflow%3Acoverage)
 [![Codecov test coverage](https://codecov.io/gh/septic-tank/ricu/branch/master/graph/badge.svg?token=HvOM3yosW3)](https://codecov.io/gh/septic-tank/ricu)
@@ -80,7 +81,7 @@ mimic_demo$admissions
 and data can be loaded into an R session for example using
 
 ```{r mimic-ts}
-data_ts("mimic_demo", "labevents", itemid == 50862L, c("valuenum", "valueuom"))
+load_ts("labevents", "mimic_demo", itemid == 50862L, c("valuenum", "valueuom"))
 ```
 
 which returns time series data as `ts_tbl` object.
