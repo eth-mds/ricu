@@ -28,12 +28,14 @@ last_elem(x)
 
 first_elem(x)
 
-replace_na(x, val)
+replace_na(x, val, ...)
 }
 \arguments{
 \item{x}{Object to use}
 
 \item{val}{Value to compare against}
+
+\item{...}{Forwarded to other methods}
 }
 \description{
 Several utility functions exported for convenience.
@@ -51,7 +53,9 @@ results but no warning is thrown.
 
 Finally, \code{first_elem()} and \code{last_elem()} has the same semantics as
 \code{\link[utils:head]{utils::head()}} and \code{\link[utils:head]{utils::tail()}} with \code{n = 1L} and \code{replace_na()} will
-replace all occurrences of \code{NA} in \code{x} with \code{val.}
+replace all occurrences of \code{NA} in \code{x} with \code{val} and can be called on both
+objects inheriting from \code{data.table} in which case internally
+\code{\link[data.table:nafill]{data.table::setnafill()}} is called or other objects.
 }
 \examples{
 some_na <- c(NA, sample(1:10, 5), NA)
@@ -72,5 +76,9 @@ identical(last_elem(letters), tail(letters, n = 1L))
 replace_na(some_na, 11)
 replace_na(all_na, 11)
 replace_na(1:5, 11)
+
+tbl <- ts_tbl(a = 1:10, b = hours(1:10), c = c(NA, 1:5, NA, 8:9, NA))
+res <- replace_na(tbl, 0)
+identical(tbl, res)
 
 }
