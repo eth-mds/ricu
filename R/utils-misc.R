@@ -27,10 +27,13 @@ agg_or_na <- function(agg_fun) {
 #'
 #' Finally, `first_elem()` and `last_elem()` has the same semantics as
 #' [utils::head()] and [utils::tail()] with `n = 1L` and `replace_na()` will
-#' replace all occurrences of `NA` in `x` with `val.`
+#' replace all occurrences of `NA` in `x` with `val` and can be called on both
+#' objects inheriting from `data.table` in which case internally
+#' [data.table::setnafill()] is called or other objects.
 #'
 #' @param x Object to use
 #' @param val Value to compare against
+#' @param ... Forwarded to other methods
 #'
 #' @examples
 #' some_na <- c(NA, sample(1:10, 5), NA)
@@ -51,6 +54,10 @@ agg_or_na <- function(agg_fun) {
 #' replace_na(some_na, 11)
 #' replace_na(all_na, 11)
 #' replace_na(1:5, 11)
+#'
+#' tbl <- ts_tbl(a = 1:10, b = hours(1:10), c = c(NA, 1:5, NA, 8:9, NA))
+#' res <- replace_na(tbl, 0)
+#' identical(tbl, res)
 #'
 #' @rdname utils
 #' @export
@@ -104,10 +111,20 @@ null_or_subs <- function(x, where = parent.frame(1L)) {
   if (missing(x)) NULL else do.call("substitute", list(substitute(x), where))
 }
 
+#' @importFrom data.table setnafill
 #' @rdname utils
 #' @export
 #'
-replace_na <- function(x, val) replace(x, is.na(x), val)
+replace_na <- function(x, val, ...) {
+
+  if (is_dt(x)) {
+    res <- setnafill(x, type = "const", fill = val, ...)
+  } else {
+    res <- replace(x, is.na(x), val)
+  }
+
+  res
+}
 
 split_indices <- function(len, n_chunks) {
 
