@@ -13,20 +13,21 @@
 #' respective internally called function.
 #'
 #' @param ... Concept data, either passed as list or individual argument
-#' @param win_fun functions used to calculate worst values over windows
+#' @param worst_val_fun functions used to calculate worst values over windows
 #' @param explicit_wins The default `FALSE` iterates over all time steps,
 #' `TRUE` uses only the last time step per patient and a vector of times will
 #' iterate over these explicit time points
-#' @param win_length Time-frame to look back and apply the `win_fun`
+#' @param win_length Time-frame to look back and apply the `worst_val_fun`
 #' @param keep_components Logical flag indicating whether to return the
-#' individual components alongside the aggregated score
+#' individual components alongside the aggregated score (with a suffix `_comp`
+#' added to their names)
 #' @param interval Time series interval (only used for checking consistency
 #' of input data, `NULL` will use the interval of the first data object)
 #'
 #' @details
 #' The function `sofa_score()` calculates, for each component, the worst value
 #' over a moving window as specified by `win_length`, using the function
-#' passed as `win_fun`. The default functions `max_or_na()` return `NA`
+#' passed as `worst_val_fun`. The default functions `max_or_na()` return `NA`
 #' instead of `-Inf/Inf` in the case where no measurement is available over an
 #' entire window. When calculating the overall score by summing up components
 #' per time-step, a `NA` value is treated as 0.
@@ -88,7 +89,7 @@
 #' @rdname callback_sofa
 #' @export
 #'
-sofa_score <- function(..., win_fun = max_or_na, explicit_wins = FALSE,
+sofa_score <- function(..., worst_val_fun = max_or_na, explicit_wins = FALSE,
                        win_length = hours(24L), keep_components = FALSE,
                        interval = NULL) {
 
@@ -96,7 +97,7 @@ sofa_score <- function(..., win_fun = max_or_na, explicit_wins = FALSE,
            "sofa_cns", "sofa_renal")
   dat <- collect_dots(cnc, interval, ..., merge_dat = TRUE)
 
-  expr <- substitute(lapply(.SD, fun), list(fun = win_fun))
+  expr <- substitute(lapply(.SD, fun), list(fun = worst_val_fun))
 
   if (isFALSE(explicit_wins)) {
 
@@ -126,10 +127,10 @@ sofa_score <- function(..., win_fun = max_or_na, explicit_wins = FALSE,
 
   res <- res[, c("sofa") := rowSums(.SD, na.rm = TRUE), .SDcols = cnc]
 
-  if (!keep_components) {
-    res <- rm_cols(res, cnc, by_ref = TRUE)
-  } else {
+  if (isTRUE(keep_components)) {
     res <- rename_cols(res, paste0(cnc, "_comp"), cnc, by_ref = TRUE)
+  } else {
+    res <- rm_cols(res, cnc, by_ref = TRUE)
   }
 
   res

@@ -305,6 +305,11 @@ si_and <- function(abx, samp, abx_win, samp_win) {
     rm_cols(res, data_vars(res), by_ref = TRUE)
   }
 
+  assert_that(has_rows(abx), has_rows(samp), msg = "
+    calling `susp_inf()` with `si_mode = and` requires data from both `abx`
+    and `samp` concepts"
+  )
+
   abx  <- span_win(abx,  "abx",  abx_win)
   samp <- span_win(samp, "samp", samp_win)
 

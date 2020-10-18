@@ -48,7 +48,9 @@ sirs_score <- function(..., win_length = hours(24L), keep_components = FALSE,
   res <- setnafill(res, fill = 0L, cols = cnc)
   res <- res[, c("sirs") := rowSums(.SD), .SDcols = cnc]
 
-  if (!keep_components) {
+  if (isTRUE(keep_components)) {
+    res <- rename_cols(res, paste0(cnc, "_comp"), cnc, by_ref = TRUE)
+  } else {
     res <- rm_cols(res, cnc, by_ref = TRUE)
   }
 
@@ -93,14 +95,15 @@ news_score <- function(..., win_length = hours(24L), keep_components = FALSE,
   res <- setnafill(res, fill = 0L, cols = cnc)
   res <- res[, c("news") := rowSums(.SD), .SDcols = cnc]
 
-  if (!keep_components) {
+  if (isTRUE(keep_components)) {
+    res <- rename_cols(res, paste0(cnc, "_comp"), cnc, by_ref = TRUE)
+  } else {
     res <- rm_cols(res, cnc, by_ref = TRUE)
   }
 
   res
 }
 
-#' @importFrom data.table setnafill
 #' @rdname label_sirs
 #' @export
 mews_score <- function(..., win_length = hours(24L), keep_components = FALSE,
@@ -133,7 +136,9 @@ mews_score <- function(..., win_length = hours(24L), keep_components = FALSE,
   res <- setnafill(res, fill = 0L, cols = cnc)
   res <- res[, c("mews") := rowSums(.SD), .SDcols = cnc]
 
-  if (!keep_components) {
+  if (isTRUE(keep_components)) {
+    res <- rename_cols(res, paste0(cnc, "_comp"), cnc, by_ref = TRUE)
+  } else {
     res <- rm_cols(res, cnc, by_ref = TRUE)
   }
 
