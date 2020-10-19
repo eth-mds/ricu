@@ -341,12 +341,16 @@ load_one_concept_helper <- function(x, aggregate, ..., progress) {
 
     res <- load_concepts(x, aggregate, ..., progress = progress, cache = FALSE)
 
-    assert_that(has_name(res, name), type(res))
-
   } else {
 
     res <- setNames(list(integer(), numeric()), c("id_var", name))
     res <- as_id_tbl(res, by_ref = TRUE)
+  }
+
+  assert_that(has_name(res, name))
+
+  if (has_rows(res)) {
+    assert_that(type(res))
   }
 
   if (isTRUE(attr(x, "dup_cncpt"))) {
