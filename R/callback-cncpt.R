@@ -422,8 +422,9 @@ vaso60 <- function(..., max_gap = mins(5L), interval = NULL) {
 
   if (any(int_ply(dat, nrow) == 0L)) {
     res <- dat[["rate"]]
-    rename_cols(res[0L], sub, data_vars(res), pattern = "_rate$",
-                replacement = "60")
+    res <- rename_cols(res[0L], sub, data_vars(res), pattern = "_rate$",
+                       replacement = "60")
+    return(res)
   }
 
   interval <- check_interval(dat)
