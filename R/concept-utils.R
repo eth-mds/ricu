@@ -95,11 +95,15 @@
 #'             table = c("chartevents", "vitalperiodic"),
 #'             sub_var = list("itemid", NULL),
 #'             val_var = list(NULL, "heartrate"),
-#'             ids = list(c(211L, 220045L), NULL),
+#'             ids = list(c(211L, 220045L), FALSE),
 #'             class = c("sel_itm", "col_itm"))
+#'
+#' hr3 <- new_itm(src = "eicu_demo", table = "vitalperiodic",
+#'                val_var = "heartrate", class = "col_itm")
 #'
 #' identical(as_item(hr1), hr2[1])
 #' identical(new_item(list(hr1)), hr2[1])
+#' identical(hr2, as_item(list(hr1, hr3)))
 #' }
 #'
 #' @export
@@ -184,7 +188,7 @@ init_itm.hrd_itm <- function(x, table, sub_var, ids,
 #'
 #' @rdname data_items
 #' @export
-init_itm.col_itm <- function(x, table, unit_val = NULL,
+init_itm.col_itm <- function(x, table, sub_var, unit_val = NULL,
                              callback = "identity_callback", ...) {
 
   assert_that(is.string(table), null_or(unit_val, is.string))
@@ -237,6 +241,7 @@ init_itm.fun_itm <- function(x, callback, ...) {
 init_itm.itm <- function(x, ...) {
 
   dots <- list(...)
+  dots <- dots[lgl_ply(dots, not_null)]
 
   assert_that(is_disjoint(names(x), names(dots)))
 
