@@ -26,7 +26,14 @@ init_itm(x, ...)
 
 \method{init_itm}{hrd_itm}(x, table, sub_var, ids, callback = "identity_callback", ...)
 
-\method{init_itm}{col_itm}(x, table, unit_val = NULL, callback = "identity_callback", ...)
+\method{init_itm}{col_itm}(
+  x,
+  table,
+  sub_var,
+  unit_val = NULL,
+  callback = "identity_callback",
+  ...
+)
 
 \method{init_itm}{rgx_itm}(x, table, sub_var, regex, callback = "identity_callback", ...)
 
@@ -157,11 +164,15 @@ hr2 <- item(src = c("mimic_demo", "eicu_demo"),
             table = c("chartevents", "vitalperiodic"),
             sub_var = list("itemid", NULL),
             val_var = list(NULL, "heartrate"),
-            ids = list(c(211L, 220045L), NULL),
+            ids = list(c(211L, 220045L), FALSE),
             class = c("sel_itm", "col_itm"))
+
+hr3 <- new_itm(src = "eicu_demo", table = "vitalperiodic",
+               val_var = "heartrate", class = "col_itm")
 
 identical(as_item(hr1), hr2[1])
 identical(new_item(list(hr1)), hr2[1])
+identical(hr2, as_item(list(hr1, hr3)))
 }
 
 }
