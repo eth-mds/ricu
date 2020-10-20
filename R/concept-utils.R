@@ -437,6 +437,7 @@ set_callback.itm <- function(x, fun) {
 set_callback.default <- function(x, ...) stop_generic(x, .Generic)
 
 str_to_fun <- function(x) {
+  if (is.function(x)) return(x)
   res <- eval(parse(text = x))
   assert_that(is.function(res))
   res
@@ -589,7 +590,9 @@ new_item <- function(x) {
 #' @rdname data_items
 #' @export
 item <- function(...) {
-  new_item(do.call(map, c(list(new_itm), vec_recycle_common(...))))
+  dots <- lapply(list(...), wrap_list)
+  dots <- do.call(vec_recycle_common, dots)
+  new_item(do.call(Map, c(list(new_itm), dots)))
 }
 
 #' @rdname data_items
@@ -884,8 +887,9 @@ init_cncpt.rec_cncpt <- function(x, callback = "identity_callback",
 
   warn_dots(...)
 
-  assert_that(is_concept(x[["items"]]), is.string(callback),
-              null_or(interval, is.string))
+  assert_that(evals_to_fun(callback), null_or(interval, is.string))
+
+  x[["items"]] <- as_concept(x[["items"]])
 
   if (not_null(interval)) {
     interval <- as.difftime(interval)
@@ -943,10 +947,21 @@ new_concept <- function(x) {
   res
 }
 
+wrap_list <- function(x) {
+
+  if (length(x) > 1L || (is.list(x) && identical(class(x), "list"))) {
+    return(x)
+  }
+
+  list(x)
+}
+
 #' @rdname data_concepts
 #' @export
 concept <- function(...) {
-  new_concept(do.call(Map, c(list(new_cncpt), vec_recycle_common(...))))
+  dots <- lapply(list(...), wrap_list)
+  dots <- do.call(vec_recycle_common, dots)
+  new_concept(do.call(Map, c(list(new_cncpt), dots)))
 }
 
 #' @rdname data_concepts

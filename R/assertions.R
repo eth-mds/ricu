@@ -273,13 +273,14 @@ on_failure(null_or) <- function(call, env) {
 }
 
 evals_to_fun <- function(x) {
-  assert_that(is.string(x)) &&
+  is.function(x) || (is.string(x) &&
     is.function(tryCatch(eval(parse(text = x)), error = function(e) NULL))
+  )
 }
 
 on_failure(evals_to_fun) <- function(call, env) {
   format_assert(
-    "{as_label(call$x)} does not evaluate to a function",
+    "{as_label(call$x)} is neither a function nor evaluates to a function",
     "evals_fun_assert"
   )
 }
