@@ -72,33 +72,11 @@ bin_labels <- function(breaks, unit, lower0 = TRUE) {
   paste(x_labels, unit)
 }
 
-diabetes <- function(data_source = "mimic", id_type = NULL) {
-
-  regex <- "^250[.0123456789]"
-
-  if (grepl("mimic", data_source)) {
-
-    tbl <- load_id("diagnoses_icd", data_source)
-
-  } else if (grepl("eicu", data_source)) {
-
-    tbl <- load_id("diagnosis", data_source)
-    setnames(tbl, "icd9code", "icd9_code")
-
-  } else {
-
-    return(NULL)
-  }
-
-  who <- grep(regex, tbl[["icd9_code"]])
-
-  id_col(tbl)[who]
-}
 ```
 
 # Introduction
 
-Collection of electronic health records has seen a significant rise in the recent years \cite{evans2016electronic}, opening up an opportunities for a large body of data-driven research oriented towards improving patient care and outcomes, together with helping clinicians in decision-making \cite{jiang2017artificial}.
+Collection of electronic health records has seen a significant rise in the recent years \cite{evans2016electronic}, opening up opportunities and providing the grounds for a large body of data-driven research oriented towards improving patient care and health outcomes, together with helping clinicians in decision-making \cite{jiang2017artificial}.
 
 One example of a problem that has received much attention from the machine learning community is early prediction of sepsis in ICU \cite{desautels2016prediction, nemati2018interpretable, futoma2017improved, kam2017learning}. Interestingly, there is evidence that a large proportion of the publications are based on the same dataset \cite{fleuren2019machine}, the Medical Information Mart for Intensive Care (MIMIC) \cite{johnson2016mimic}, which shows a systematic lack of external validation. Part of this problem might well be the lack of a computational infrastructure handling multiple datasets. The MIMIC-III dataset consists of 26 different tables containing about 20GB of data. While much work and care has gone into data preprocessing in order to provide a self-contained ready to use data resource with MIMIC, seemingly simple tasks such as computing a SOFA score for patients \citep{vincent1996sofa}, remains a non trivial effort<!-- maybe add some citations and a sentence on label heterogeneity -->. This is only exacerbated when aiming to co-integrate multiple different datasets of this form is, spanning hospitals and even countries in order to capture effects of differing practice and demographics.
 
@@ -135,13 +113,16 @@ Death outcome, prolonged ICU stay outcome.
 
 We focus on two simple examples with which we try to cover most of the data types described in Section \ref{implementation}.
 
+```{r tcm_loader, include = FALSE}
+load_concepts <- cached_concept_loader("tcm")
+```
+
 ## Lactate and mortality
 The first example we look at is the association of lactate levels and mortality. This problem has been studied before and it is widely accepted that both static and dynamic lactate indices are associated with increased mortality \citep{haas2016severe, nichol2011dynamic, van2013cumulative}. We quickly look at how one might fit a time-varying proportional hazards Cox model \citep{therneau2015package} in order to investigate this problem. We additionally include the Sequential Organ Failure Assessment (SOFA) score \citep{vincent1996sofa} as a general predictor of illness severity.
 
 ```{r time_cox_model}
-source <- "mimic_demo"
 # data loading
-tbl <- load_concepts(c("lact", "death", "sofa"), source,
+tbl <- load_concepts(c("lact", "death", "sofa"), "mimic_demo",
                      verbose = FALSE)
 tbl <- tbl[, c(meta_vars(tbl), "lact", "sofa", "death"), with = FALSE]
 tbl <- tbl[, lact := nafill(lact, "locf")]
@@ -155,43 +136,68 @@ cox_time_mod <- coxph(
   data = tbl
 )
 ```
+
 We visualize the results of the model
+
 ```{r cox_plot, echo = FALSE, warning = FALSE, message = FALSE}
 forest_model(cox_time_mod)
 ```
 
 A simple exploration already shows that the increased values of lactate are associated with mortality, even after adjusting for the SOFA score.
 
+```{r diab_loader, include = FALSE}
+load_concepts <- cached_concept_loader("diab")
+```
+
 ## Diabetes and insulin treatment
 The next example we turn to covers the usage of co-morbidities and treatment related information. We look at the amount of insulin administered to patients in the first 24 hours from their ICU admission. In particular, we investigate if patients who are diabetic receive more insulin in the first day of their stay. We extract the data as follows:
+
 ```{r diabetes}
-source <- "mimic_demo"
 ins_breaks <- c(0.01, 10, 20, 30, 40)
 
-cohort <- stay_windows(source)
-ins_treat <- load_concepts("ins", source, verbose = FALSE)
-ins_treat <- ins_treat[get(index_var(ins_treat)) <= 24L]
+ins_cb <- function(ins, ...) {
 
-ins_treat <- ins_treat[,
-  list(ins_sum = .bincode(sum(ins), breaks = c(-Inf, ins_breaks, Inf)) - 1),
-  by = c(id_vars(ins_treat))
-]
+  idx_var <- index_var(ins)
+  ids_var <- id_vars(ins)
 
-cohort <- merge(cohort, ins_treat, by = id_vars(cohort), all.x = TRUE)
-cohort[, Diabetic := get(id_vars(cohort)) %in% diabetes(source)]
-cohort[is.na(ins_sum), "ins_sum"] <- 0
+  ins <- ins[get(idx_var) <= hours(24L), list(ins24 = sum(ins)),
+             by = c(ids_var)]
+  ins <- ins[, ins24 := list(
+             .bincode(ins24, breaks = c(-Inf, ins_breaks, Inf)) - 1)]
+
+  ins
+}
+
+grep_diab <- function(x) grepl("^250\\.?[0-9]{2}$", x)
+
+ins24 <- load_dictionary("mimic_demo", "ins")
+ins24 <- concept("ins24", ins24, "insulin in first 24h", aggregate = "sum",
+                 callback = ins_cb, target = "id_tbl", class = "rec_cncpt")
+diab  <- item("mimic_demo", table = "diagnoses_icd",
+              callback = transform_fun(grep_diab), class = "col_itm")
+diab  <- concept("diab", diab, "diabetes", target = "id_tbl",
+                 class = "lgl_cncpt")
+
+dat <- load_concepts(c(ins24, diab), id_type = "icustay", verbose = FALSE)
+dat <- replace_na(dat, 0, cols = "ins24")
 ```
+
 After this, we can visualize the difference between the two groups with a histogram:
+
 ```{r diabetes_visualize, echo = FALSE}
-p <- ggplot(cohort, aes(x = ins_sum, fill = Diabetic, colour = Diabetic)) +
-  geom_histogram(aes(y=..count../sum(..count..)), alpha=0.75, position = "dodge", bins = 1+max(cohort[["ins_sum"]])) +
-  xlab("Amount of administered insulin in first 24h of ICU stay") + theme_minimal(10) + ylab("Proportion of patients") +
-  scale_x_continuous(labels=bin_labels(ins_breaks, "units"), breaks = 0:length(ins_breaks)) +
+ggplot(dat, aes(x = ins24, fill = diab, colour = diab)) +
+  geom_histogram(aes(y = ..count.. / sum(..count..)), alpha = 0.75,
+                 position = "dodge", bins = 1 + length(ins_breaks)) +
+  xlab("Amount of administered insulin in first 24h of ICU stay") +
+  ylab("Proportion of patients") +
+  scale_x_continuous(labels = bin_labels(ins_breaks, "units"),
+                     breaks = c(0, seq_along(ins_breaks))) +
+  theme_minimal(10) +
   theme(legend.position = c(0.7, 0.7),
-    legend.background = element_blank(),
-    legend.box.background = element_rect(colour = "black"),
-    legend.text = element_text(size = 12),
-    legend.title = element_text(size = 16))
-p
+        legend.background = element_blank(),
+        legend.box.background = element_rect(colour = "black"),
+        legend.text = element_text(size = 12),
+        legend.title = element_text(size = 16))
 ```
+
 The plot might suggest that diabetic patients do receive more insulin that non-diabetic patients, in the first day of ICU stay.
