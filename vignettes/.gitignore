@@ -1,2 +1,5 @@
 *.html
 *.R
+*.pdf
+jss.cls
+jss.bst

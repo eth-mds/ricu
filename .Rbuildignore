@@ -1,7 +1,6 @@
 ^README\.Rmd$
 ^\.travis\.yml$
 ^LICENSE\.md$
-^azure-pipelines\.yml$
 ^_pkgdown\.yml$
 ^docs$
 ^pkgdown$
@@ -11,3 +10,4 @@
 ^Meta$
 ^cran-comments\.md$
 ^CRAN-RELEASE$
+^vignettes/jss\.(cls|bst)$
