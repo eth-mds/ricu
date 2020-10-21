@@ -351,8 +351,9 @@ load_ts.src_tbl <- function(x, rows, cols = colnames(x), id_var = id_vars(x),
   time_vars <- intersect(time_vars, colnames(res))
 
   res <- change_id(res, id_var, x, cols = time_vars, keep_old_id = FALSE)
+  res <- change_interval(res, interval, time_vars, by_ref = TRUE)
 
-  change_interval(res, interval, time_vars, by_ref = TRUE)
+  res
 }
 
 #' @rdname load_tbl

@@ -44,8 +44,7 @@ print.id_tbl <- function(x, ..., n = NULL, width = NULL, n_extra = NULL) {
 
 #' @export
 format.id_tbl <- function(x, ..., n = NULL, width = NULL, n_extra = NULL) {
-  mat <- prt::trunc_dt(x, n = n, width = width, n_extra = n_extra)
-  format(mat)
+  format(prt::trunc_dt(x, n = n, width = width, n_extra = n_extra))
 }
 
 #' @importFrom tibble tbl_sum

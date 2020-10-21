@@ -6,7 +6,7 @@
 #' @importFrom data.table first last
 #' @importFrom stats setNames na.omit median sd var
 #' @importFrom utils str head tail
-#' @importFrom cli cat_line cat_rule cat_bullet symbol no qty
+#' @importFrom cli symbol no qty
 #' @importFrom rlang !!
 #' @import vctrs
 "_PACKAGE"

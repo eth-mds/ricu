@@ -75,13 +75,16 @@ explicitly.
 Out of the box (provided the two data packages `mimic.demo` and `eicu.demo` are available), `ricu` provides access to the demo datasets corresponding to the PhysioNet Clinical Databases eICU and MIMIC-III. Tables are available as
 
 ```{r mimic-adm}
-mimic_demo$admissions
+print(mimic_demo$admissions)
 ```
 
 and data can be loaded into an R session for example using
 
 ```{r mimic-ts}
-load_ts("labevents", "mimic_demo", itemid == 50862L, c("valuenum", "valueuom"))
+print(
+  load_ts("labevents", "mimic_demo", itemid == 50862L,
+          cols = c("valuenum", "valueuom"))
+)
 ```
 
 which returns time series data as `ts_tbl` object.
