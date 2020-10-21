@@ -277,3 +277,8 @@ unlst <- function(x, recursive = FALSE, use_names = FALSE) {
 }
 
 rep_along <- function(x, times) rep(x, length(times))
+
+cat_line <- function(...) {
+  line <- trimws(paste0(...), "right")
+  cat(paste0(line, "\n"), sep = "")
+}

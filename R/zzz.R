@@ -63,14 +63,14 @@
   pkg <- methods::getPackageName()
   ver <- utils::packageVersion(pkg)
 
-  cat_line(file = con)
-  cat_rule(paste(pkg, ver), file = con)
+  cli::cat_line(file = con)
+  cli::cat_rule(paste(pkg, ver), file = con)
 
   stats <- src_data_avail()
 
   if (is.null(stats)) {
 
-    cat_line(
+    cli::cat_line(
       "\nCurrently no data sources are configured to be attached:\n",
       "(the environment variable `RICU_SRC_LOAD` controls this)",
       file = con
@@ -83,19 +83,19 @@
     srcs  <- paste0(stats[["name"]], ": ", stats[["tables"]], " of ",
                     stats[["total"]], " tables available")
 
-    cat_line(
+    cli::cat_line(
       "\nThe following data sources are configured to be attached:\n",
       "(the environment variable `RICU_SRC_LOAD` controls this)\n",
       file = con
     )
 
-    Map(cat_bullet, srcs, bullet = bull, bullet_col = color,
+    Map(cli::cat_bullet, srcs, bullet = bull, bullet_col = color,
         MoreArgs = list(file = con))
   }
 
-  cat_line(file = con)
-  cat_rule(file = con)
-  cat_line(file = con)
+  cli::cat_line(file = con)
+  cli::cat_rule(file = con)
+  cli::cat_line(file = con)
 
   packageStartupMessage(paste(out, collapse = "\n"))
 }
