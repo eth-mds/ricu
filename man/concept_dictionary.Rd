@@ -2,6 +2,7 @@
 % Please edit documentation in R/concept-utils.R
 \name{load_dictionary}
 \alias{load_dictionary}
+\alias{concept_availability}
 \title{Load concept dictionaries}
 \usage{
 load_dictionary(
@@ -10,6 +11,8 @@ load_dictionary(
   name = "concept-dict",
   cfg_dirs = NULL
 )
+
+concept_availability(dict = load_dictionary())
 }
 \arguments{
 \item{src}{\code{NULL} or the name of one or several data sources}
@@ -20,6 +23,8 @@ load_dictionary(
 \item{name}{Name of the dictionary to be read}
 
 \item{cfg_dirs}{File name of the dictionary}
+
+\item{dict}{A dictionary (\code{conncept} object)}
 }
 \description{
 Data concepts can be specified in JSON format as a concept dictionary which
@@ -81,6 +86,16 @@ specified by the JSON object, with the above corresponding to a call like\prefor
 The arguments \code{src} and \code{concepts} can be used to only load a subset of a
 dictionary by specifying a character vector of data sources and/or concept
 names.
+
+A summary of item availability for a set of concepts can be created using
+\code{concept_availability()}. This produces a logical matrix with \code{TRUE} entries
+corresponding to concepts where for the given data source, at least a single
+item has been defined. If data is loaded for a combination of concept and
+data source, where the corresponding entry is \code{FALSE}, this will yield
+either a zero-row \code{id_tbl} object or an object inheriting form \code{id_tbl}
+where the column corresponding to the concept is \code{NA} throughout, depending
+on whether the concept was loaded alongside other concepts where data is
+available or not.
 }
 \examples{
 if (require(mimic.demo)) {

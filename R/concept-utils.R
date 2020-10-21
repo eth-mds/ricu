@@ -1077,6 +1077,16 @@ n_tick.concept <- function(x) sum(int_ply(x, n_tick))
 #' dictionary by specifying a character vector of data sources and/or concept
 #' names.
 #'
+#' A summary of item availability for a set of concepts can be created using
+#' `concept_availability()`. This produces a logical matrix with `TRUE` entries
+#' corresponding to concepts where for the given data source, at least a single
+#' item has been defined. If data is loaded for a combination of concept and
+#' data source, where the corresponding entry is `FALSE`, this will yield
+#' either a zero-row `id_tbl` object or an object inheriting form `id_tbl`
+#' where the column corresponding to the concept is `NA` throughout, depending
+#' on whether the concept was loaded alongside other concepts where data is
+#' available or not.
+#'
 #' @param src `NULL` or the name of one or several data sources
 #' @param concepts A character vector used to subset the concept dictionary or
 #' `NULL` indicating no subsetting
@@ -1218,3 +1228,28 @@ parse_dictionary <- function(dict, src = NULL, concepts = NULL) {
 }
 
 identity_callback <- function(x, ...) x
+
+#' @rdname concept_dictionary
+#' @param dict A dictionary (`conncept` object)
+#' @export
+concept_availability <- function(dict = load_dictionary()) {
+
+  as_row <- function(x) c(table(src_name(x)))
+
+  assert_that(is_concept(dict))
+
+  non_rec <- lgl_ply(dict, Negate(inherits), "rec_cncpt")
+
+  res <- dict[non_rec]
+  res <- lapply(res, as_row)
+
+  all_srcs <- sort(unique(unlist(lapply(res, names))))
+
+  res <- lapply(res, `[`, all_srcs)
+  res <- lapply(res, `names<-`, all_srcs)
+  res <- do.call(rbind, res)
+
+  res[is.na(res)] <- 0L
+
+  res > 0L
+}
