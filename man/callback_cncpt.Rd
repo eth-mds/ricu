@@ -3,7 +3,8 @@
 \encoding{UTF-8}
 \name{pafi}
 \alias{pafi}
-\alias{vent}
+\alias{vent_dur}
+\alias{vent_ind}
 \alias{sed}
 \alias{gcs}
 \alias{urine24}
@@ -20,7 +21,9 @@ pafi(
   interval = NULL
 )
 
-vent(..., match_win = hours(6L), min_length = mins(10L), interval = NULL)
+vent_dur(..., match_win = hours(6L), min_length = mins(30L), interval = NULL)
+
+vent_ind(..., interval = NULL)
 
 sed(..., interval = NULL)
 
@@ -129,15 +132,17 @@ Finally, \code{fix_na_fio2} imputes all remaining missing FiO\ifelse{latex
 the percentage (by volume) of oxygen in (tropospheric) air.
 }
 
-\subsection{\code{vent}}{
+\subsection{\code{vent_dur} and \code{vent_ind}}{
 
-Building on the atomic concepts \code{vent_start} and \code{vent_end}, an binary
-indicator for ventilation status is constructed by combining start and end
-events that are separated by at most \code{match_win} and at least \code{min_length}.
-Time-points (as determined by \code{interval}) that fall into such ventilation
-windows are set to \code{TRUE}, while missingness (\code{NA}) or \code{FALSE} indicate no
-mechanical ventilation. Currently, no clear distinction between invasive
-an non-invasive ventilation is made.
+Building on the atomic concepts \code{vent_start} and \code{vent_end}, \code{vent_dur}
+determines time windows during which patients are mechanically ventilated
+by combining start and end events that are separated by at most \code{match_win}
+and at least \code{min_length}. Durations can be converted into an indicator
+varaible represented by \code{vent_ind}, where time-points (as determined by
+\code{interval}) that fall into such ventilation windows are set to \code{TRUE},
+while missingness (\code{NA}) or \code{FALSE} indicate no mechanical ventilation.
+Currently, no clear distinction between invasive an non-invasive
+ventilation is made.
 }
 
 \subsection{\code{sed}}{

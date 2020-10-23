@@ -3665,14 +3665,14 @@
     "class": "rec_cncpt"
   },
   "sofa_resp": {
-    "concepts": ["pafi", "vent"],
+    "concepts": ["pafi", "vent_ind"],
     "description": "SOFA respiratory component",
     "category": "outcome",
     "callback": "sofa_resp",
     "class": "rec_cncpt"
   },
   "supp_o2": {
-    "concepts": ["vent", "fio2"],
+    "concepts": ["vent_ind", "fio2"],
     "description": "supplemental oxygen",
     "category": "respiratory",
     "callback": "supp_o2",
@@ -4003,12 +4003,12 @@
     "callback": "urine24",
     "class": "rec_cncpt"
   },
-  "vent": {
+  "vent_dur": {
     "concepts": ["vent_start", "vent_end"],
-    "description": "ventilation status",
+    "description": "ventilation durations",
     "category": "respiratory",
     "interval": "00:01:00",
-    "callback": "vent",
+    "callback": "vent_dur",
     "class": "rec_cncpt"
   },
   "vent_end": {
@@ -4096,6 +4096,13 @@
         }
       ]
     }
+  },
+  "vent_ind": {
+    "concepts": "vent_dur",
+    "description": "ventilation indicator",
+    "category": "respiratory",
+    "callback": "vent_ind",
+    "class": "rec_cncpt"
   },
   "vent_start": {
     "class": "lgl_cncpt",

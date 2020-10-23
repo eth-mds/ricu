@@ -489,17 +489,35 @@ locf <- function(x) {
 }
 
 merge_ranges <- function(x, lwr_var = index_var(x), upr_var = data_vars(x),
-                         by_ref = FALSE) {
+                         max_gap = 0, by_ref = FALSE) {
 
-  assert_that(is_dt(x), has_col(x, lwr_var), has_col(x, upr_var))
+  assert_that(is_dt(x), has_col(x, lwr_var), has_col(x, upr_var),
+              is_scalar(max_gap), max_gap == 0 || is_interval(max_gap))
 
   tmp_var <- paste0("i.", upr_var)
 
   assert_that(!has_col(x, tmp_var))
 
-  x <- sort(x, by = c(id_vars(x), lwr_var, upr_var), by_ref = by_ref)
+  if (!isTRUE(by_ref)) {
+    x <- copy(x)
+  }
+
+  x <- sort(x, by = c(id_vars(x), lwr_var, upr_var), by_ref = TRUE)
+
+  if (max_gap != 0) {
+    x <- x[, c(upr_var) := get(upr_var) + max_gap]
+  }
+
   x <- reclass_tbl(data.table::foverlaps(x, x, mult = "first"), as_ptype(x))
-  x <- x[, setNames(list(max(get(tmp_var))), upr_var), by = c(meta_vars(x))]
+
+  expr <- quote(list(max(get(tmp_var))))
+  names(expr) <- c("", upr_var)
+
+  x <- x[, eval(expr), by = c(meta_vars(x))]
+
+  if (max_gap != 0) {
+    x <- x[, c(upr_var) := get(upr_var) - max_gap]
+  }
 
   x
 }

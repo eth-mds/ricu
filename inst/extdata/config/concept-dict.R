@@ -1782,12 +1782,19 @@ cfg <- list(
     callback = "pafi",
     class = "rec_cncpt"
   ),
-  vent = list(
+  vent_dur = list(
     concepts = c("vent_start", "vent_end"),
-    description = "ventilation status",
+    description = "ventilation durations",
     category = "respiratory",
     interval = "00:01:00",
-    callback = "vent",
+    callback = "vent_dur",
+    class = "rec_cncpt"
+  ),
+  vent_ind = list(
+    concepts = "vent_dur",
+    description = "ventilation indicator",
+    category = "respiratory",
+    callback = "vent_ind",
     class = "rec_cncpt"
   ),
   sed = list(
@@ -1814,7 +1821,7 @@ cfg <- list(
     class = "rec_cncpt"
   ),
   sofa_resp = list(
-    concepts = c("pafi", "vent"),
+    concepts = c("pafi", "vent_ind"),
     description = "SOFA respiratory component",
     category = "outcome",
     callback = "sofa_resp",
@@ -1913,7 +1920,7 @@ cfg <- list(
     class = "rec_cncpt"
   ),
   supp_o2 = list(
-    concepts = c("vent", "fio2"),
+    concepts = c("vent_ind", "fio2"),
     description = "supplemental oxygen",
     category = "respiratory",
     callback = "supp_o2",

@@ -152,10 +152,10 @@ sofa_resp <- function(..., interval = NULL) {
     )
   }
 
-  cnc <- c("pafi", "vent")
+  cnc <- c("pafi", "vent_ind")
   dat <- collect_dots(cnc, interval, ..., merge_dat = TRUE)
 
-  dat <- dat[is_true(get("pafi") < 200) & !is_true(get("vent")),
+  dat <- dat[is_true(get("pafi") < 200) & !is_true(get("vent_ind")),
              c("pafi") := 200]
   dat <- dat[, c("sofa_resp") := score_calc(get("pafi"))]
 

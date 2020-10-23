@@ -137,14 +137,16 @@ check_interval <- function(dat, ival = NULL) {
 #' }{\out{\textsubscript{2}}}{\ifelse{html}{\out{<sub>2</sub>}}{2}} with 21,
 #' the percentage (by volume) of oxygen in (tropospheric) air.
 #'
-#' ## `vent`
-#' Building on the atomic concepts `vent_start` and `vent_end`, an binary
-#' indicator for ventilation status is constructed by combining start and end
-#' events that are separated by at most `match_win` and at least `min_length`.
-#' Time-points (as determined by `interval`) that fall into such ventilation
-#' windows are set to `TRUE`, while missingness (`NA`) or `FALSE` indicate no
-#' mechanical ventilation. Currently, no clear distinction between invasive
-#' an non-invasive ventilation is made.
+#' ## `vent_dur` and `vent_ind`
+#' Building on the atomic concepts `vent_start` and `vent_end`, `vent_dur`
+#' determines time windows during which patients are mechanically ventilated
+#' by combining start and end events that are separated by at most `match_win`
+#' and at least `min_length`. Durations can be converted into an indicator
+#' varaible represented by `vent_ind`, where time-points (as determined by
+#' `interval`) that fall into such ventilation windows are set to `TRUE`,
+#' while missingness (`NA`) or `FALSE` indicate no mechanical ventilation.
+#' Currently, no clear distinction between invasive an non-invasive
+#' ventilation is made.
 #'
 #' ## `sed`
 #' In order to construct an indicator for patient sedation, information from
@@ -253,11 +255,11 @@ pafi <- function(..., match_win = hours(2L),
 #' @rdname callback_cncpt
 #' @export
 #'
-vent <- function(..., match_win = hours(6L), min_length = mins(10L),
-                 interval = NULL) {
+vent_dur <- function(..., match_win = hours(6L), min_length = mins(30L),
+                     interval = NULL) {
 
   subset_true <- function(x, col) x[is_true(get(col))]
-  copy_time <- function(x, new, old) x[, c(new) := get(old)]
+  calc_dur <- function(x, y) fifelse(is.na(y), x + match_win, y - x)
 
   final_int <- interval
 
@@ -279,31 +281,46 @@ vent <- function(..., match_win = hours(6L), min_length = mins(10L),
   units(min_length) <- units(interval)
 
   res <- Map(subset_true, res, cnc)
-  sst <- c("start_time", "stop_time")
+  var <- "vent_dur"
 
   if (has_rows(res[[2L]])) {
 
-    res <- Map(copy_time, res, sst, chr_ply(res, index_var))
-    jon <- unlist(
-      do.call(map, c(paste, rev(lapply(res, meta_vars)), sep = " == "))
-    )
+    idx_vars  <- chr_ply(res, index_var)
+    res[[2L]] <- res[[2L]][, c(var, idx_vars[2L]) := list(
+      get(idx_vars[2L]), get(idx_vars[2L]) - mins(1L))]
+
+    jon <- chr_ply(do.call(map, c("c", lapply(rev(res), meta_vars))), paste,
+                   collapse = " == ")
+
 
     res <- res[[2L]][res[[1L]], roll = -match_win, on = jon]
-    res <- res[is.na(get(sst[2L])), c(sst[2L]) := get(sst[1L]) + match_win]
+    res <- res[, c(var, cnc) := list(
+      calc_dur(get(idx_vars[2L]), get(var)), NULL, NULL)]
+    res <- res[get(var) >= min_length, ]
 
   } else {
 
-    ind <- index_var(res[[1L]])
-
-    res <- copy(res[[1L]])
-    res <- res[, c(sst) := list(get(ind), get(ind) + match_win)]
+    res <- res[[1L]][, c(var, "vent_start") := list(match_win, NULL)]
   }
 
-  res <- res[get(sst[2L]) - get(sst[1L]) >= min_length, ]
   res <- change_interval(res, final_int, by_ref = TRUE)
 
-  res <- unique(expand(res, start_var = sst[1L], end_var = sst[2L]))
-  res <- res[, c("vent") := TRUE]
+  aggregate(res, "max")
+}
+
+#' @rdname callback_cncpt
+#' @export
+#'
+vent_ind <- function(..., interval = NULL) {
+
+  cnc <- "vent_dur"
+  res <- collect_dots(cnc, interval, ...)
+  idx <- index_var(res)
+  res <- res[, c(cnc) := get(idx) + get(cnc)]
+
+  res <- expand(res, idx, cnc)
+  res <- unique(res)
+  res <- res[, c("vent_ind") := TRUE]
 
   res
 }
@@ -433,16 +450,15 @@ vaso60 <- function(..., max_gap = mins(5L), interval = NULL) {
     final_int <- interval
   }
 
-  assert_that(is_interval(final_int), is_interval(max_gap))
+  assert_that(is_interval(final_int))
 
   dur <- dat[["dur"]]
   dva <- data_vars(dur)
   idx <- index_var(dur)
   dur <- dur[get(dva) > 0, ]
 
-  dur <- dur[, c(dva) := get(idx) + get(dva) + max_gap]
-  dur <- merge_ranges(dur, idx, dva, by_ref = TRUE)
-  dur <- dur[, c(dva) := get(dva) - max_gap]
+  dur <- dur[, c(dva) := get(idx) + get(dva)]
+  dur <- merge_ranges(dur, idx, dva, max_gap = max_gap, by_ref = TRUE)
   dur <- dur[get(dva) - get(idx) >= hours(1L), ]
 
   rate <- dat[["rate"]]
@@ -472,11 +488,11 @@ vaso60 <- function(..., max_gap = mins(5L), interval = NULL) {
 #' @export
 supp_o2 <- function(..., interval = NULL) {
 
-  cnc <- c("vent", "fio2")
+  cnc <- c("vent_ind", "fio2")
   res <- collect_dots(cnc, interval, ..., merge = TRUE)
 
-  res <- res[, c("supp_o2", "vent", "fio2") := list(
-    get("vent") | get("fio2") > 21, NULL, NULL
+  res <- res[, c("supp_o2", "vent_ind", "fio2") := list(
+    get("vent_ind") | get("fio2") > 21, NULL, NULL
   )]
 
   res
