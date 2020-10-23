@@ -1797,6 +1797,13 @@ cfg <- list(
     callback = "vent_ind",
     class = "rec_cncpt"
   ),
+  vaso_ind = list(
+    concepts = c("dopa_dur", "norepi_dur", "dobu_dur", "epi_dur"),
+    description = "vasopressor indicator",
+    category = "medications",
+    callback = "vaso_ind",
+    class = "rec_cncpt"
+  ),
   sed = list(
     concepts = c("trach", "rass"),
     description = "sedation status",

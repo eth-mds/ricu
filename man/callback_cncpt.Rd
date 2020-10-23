@@ -9,6 +9,7 @@
 \alias{gcs}
 \alias{urine24}
 \alias{vaso60}
+\alias{vaso_ind}
 \alias{supp_o2}
 \alias{avpu}
 \title{Concept callback functions}
@@ -45,6 +46,8 @@ urine24(
 )
 
 vaso60(..., max_gap = mins(5L), interval = NULL)
+
+vaso_ind(..., interval = NULL)
 
 supp_o2(..., interval = NULL)
 

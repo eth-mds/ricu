@@ -486,6 +486,25 @@ vaso60 <- function(..., max_gap = mins(5L), interval = NULL) {
 
 #' @rdname callback_cncpt
 #' @export
+vaso_ind <- function(..., interval = NULL) {
+
+  cnc <- c("dopa_dur", "norepi_dur", "dobu_dur", "epi_dur")
+  res <- collect_dots(cnc, interval, ..., merge_dat = TRUE)
+
+  res <- res[, c("vaso_ind", cnc) := list(pmax(
+    get("dopa_dur"), get("norepi_dur"), get("dobu_dur"), get("epi_dur"),
+    na.rm = TRUE), NULL, NULL, NULL, NULL)
+  ]
+
+  res <- expand(res, index_var(res), "vaso_ind")
+  res <- unique(res)
+  res <- res[, c("vaso_ind") := TRUE]
+
+  res
+}
+
+#' @rdname callback_cncpt
+#' @export
 supp_o2 <- function(..., interval = NULL) {
 
   cnc <- c("vent_ind", "fio2")

@@ -4003,6 +4003,13 @@
     "callback": "urine24",
     "class": "rec_cncpt"
   },
+  "vaso_ind": {
+    "concepts": ["dopa_dur", "norepi_dur", "dobu_dur", "epi_dur"],
+    "description": "vasopressor indicator",
+    "category": "medications",
+    "callback": "vaso_ind",
+    "class": "rec_cncpt"
+  },
   "vent_dur": {
     "concepts": ["vent_start", "vent_end"],
     "description": "ventilation durations",
