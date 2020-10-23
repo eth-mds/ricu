@@ -365,23 +365,16 @@ download_check_data <- function(dest_folder, files, url, user, pass, src) {
     progress_bar = pba
   )
 
-  if (is_pkg_installed("openssl")) {
+  msg_ricu("Comparing checksums")
 
-    msg_ricu("Comparing checksums")
+  checks <- mapply(check_file_sha256, paths, chksums)
 
-    checks <- mapply(check_file_sha256, paths, chksums)
-
-    if (!all(checks)) {
-      warn_ricu(
-        c("Checksum mismatch for {qty(sum(!checks))} file{?s}:",
-          bullet(files[!checks])),
-        class = "checksum_mismatch", exdent = c(0L, rep(2L, sum(!checks)))
-      )
-    }
-
-  } else {
-
-    msg_ricu("The package openssl is required for comparing checksums.")
+  if (!all(checks)) {
+    warn_ricu(
+      c("Checksum mismatch for {qty(sum(!checks))} file{?s}:",
+        bullet(files[!checks])),
+      class = "checksum_mismatch", exdent = c(0L, rep(2L, sum(!checks)))
+    )
   }
 
   invisible(NULL)

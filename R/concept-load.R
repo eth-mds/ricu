@@ -224,13 +224,12 @@ mark_duplicate_concepts <- function(x) {
 
   mark_dups <- function(x, nmes) {
 
-    if (inherits(x, "cncpt") && x[["name"]] %in% nmes) {
-
-      attr(x, "dup_cncpt") <- TRUE
-
-    } else if (inherits(x, "rec_cncpt")) {
-
+    if (inherits(x, "rec_cncpt")) {
       x[["items"]] <- new_concept(lapply(x[["items"]], mark_dups, nmes))
+    }
+
+    if (inherits(x, "cncpt") && x[["name"]] %in% nmes) {
+      attr(x, "dup_cncpt") <- TRUE
     }
 
     x
@@ -326,10 +325,19 @@ load_one_concept_helper <- function(x, aggregate, ..., progress) {
 
   name <- x[["name"]]
 
-  res <- get0(name, envir = concept_lookup_env, inherits = FALSE)
+  if (isTRUE(attr(x, "dup_cncpt"))) {
 
-  if (not_null(res)) {
-    return(copy(res))
+    args <- as.list(match.call())[-1]
+    args[c("x", "patient_ids", "id_type", "progress")] <- NULL
+    args <- lapply(args, eval, parent.frame())
+    cach <- paste(name, as.character(openssl::md5(serialize(args, NULL))),
+                  sep = "_")
+
+    res <- get0(cach, envir = concept_lookup_env, inherits = FALSE)
+
+    if (not_null(res)) {
+      return(copy(res))
+    }
   }
 
   targ <- get_target(x)
@@ -354,7 +362,7 @@ load_one_concept_helper <- function(x, aggregate, ..., progress) {
   }
 
   if (isTRUE(attr(x, "dup_cncpt"))) {
-    assign(name, copy(res), envir = concept_lookup_env)
+    assign(cach, copy(res), envir = concept_lookup_env)
   }
 
   progress_tick(progress_bar = progress)

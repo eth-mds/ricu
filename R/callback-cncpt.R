@@ -508,7 +508,7 @@ vaso_ind <- function(..., interval = NULL) {
 supp_o2 <- function(..., interval = NULL) {
 
   cnc <- c("vent_ind", "fio2")
-  res <- collect_dots(cnc, interval, ..., merge = TRUE)
+  res <- collect_dots(cnc, interval, ..., merge_dat = TRUE)
 
   res <- res[, c("supp_o2", "vent_ind", "fio2") := list(
     get("vent_ind") | get("fio2") > 21, NULL, NULL

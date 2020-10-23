@@ -33,9 +33,8 @@ sirs_score <- function(..., win_length = hours(24L), keep_components = FALSE,
   res <- slide(res, !!exp, before = win_length, .SDcols = cnc)
 
   res <- res[, c(cnc) := list(
-    tmpe(get("temp")), hrat(get("hr")),
-    rspi(get("resp"), get("pco2")), NULL,
-    wbcn(get("wbc"), get("bnd")), NULL)
+    tmpe(get("temp")), hrat(get("hr")), rspi(get("resp"), get("pco2")),
+    wbcn(get("wbc"), get("bnd")), NULL, NULL)
   ]
 
   cnc <- head(cnc, n = 4L)

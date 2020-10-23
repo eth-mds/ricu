@@ -502,12 +502,11 @@ merge_ranges <- function(x, lwr_var = index_var(x), upr_var = data_vars(x),
     x <- copy(x)
   }
 
-  x <- sort(x, by = c(id_vars(x), lwr_var, upr_var), by_ref = TRUE)
-
   if (max_gap != 0) {
     x <- x[, c(upr_var) := get(upr_var) + max_gap]
   }
 
+  x <- sort(x, by = c(id_vars(x), lwr_var, upr_var), by_ref = TRUE)
   x <- reclass_tbl(data.table::foverlaps(x, x, mult = "first"), as_ptype(x))
 
   expr <- quote(list(max(get(tmp_var))))

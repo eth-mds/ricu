@@ -48,9 +48,9 @@ Imports:
     cli,
     glue,
     fansi,
+    openssl,
     utils
 Suggests:
-    openssl,
     xml2,
     covr,
     testthat (>= 2.1.0),

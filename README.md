@@ -55,7 +55,7 @@ instead, or by installing some of the utility packages (relevant for
 downloading and preprocessing PhysioNet datasets)
 
 ``` r
-install.packages(c("getPass", "keyring", "openssl", "xml2"))
+install.packages("xml2")
 ```
 
 and demo dataset packages
