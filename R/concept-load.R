@@ -328,7 +328,7 @@ load_one_concept_helper <- function(x, aggregate, ..., progress) {
   if (isTRUE(attr(x, "dup_cncpt"))) {
 
     args <- as.list(match.call())[-1]
-    args[c("x", "patient_ids", "id_type", "progress")] <- NULL
+    args[c("x", "patient_ids", "progress")] <- NULL
     args <- lapply(args, eval, parent.frame())
     cach <- paste(name, as.character(openssl::md5(serialize(args, NULL))),
                   sep = "_")

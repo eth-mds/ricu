@@ -21,7 +21,7 @@ cfg <- list(
     )
   ),
   sbp = list(
-    unit = "mmHg",
+    unit = c("mmHg", "mm Hg"),
     min = 0,
     max = 300,
     description = "systolic blood pressure",
@@ -42,7 +42,7 @@ cfg <- list(
     )
   ),
   dbp = list(
-    unit = "mmHg",
+    unit = c("mmHg", "mm Hg"),
     min = 0,
     max = 200,
     description = "diastolic blood pressure",
@@ -63,7 +63,7 @@ cfg <- list(
     )
   ),
   map = list(
-    unit = "mmHg",
+    unit = c("mmHg", "mm Hg"),
     min = 0,
     max = 250,
     description = "mean arterial pressure",
@@ -86,7 +86,7 @@ cfg <- list(
     )
   ),
   resp = list(
-    unit = "insp/min",
+    unit = c("insp/min", "/min"),
     min = 0,
     max = 120,
     description = "respiratory rate",
@@ -144,7 +144,7 @@ cfg <- list(
              sub_var = "respchartvaluelabel",
              callback = "transform_fun(percent_as_numeric)"),
         list(ids = "FiO2", table = "lab", sub_var = "labname",
-             callback = "convert_unit('mm(hg)', set_na, NA)")
+             callback = "convert_unit(set_na, '%', 'mm(hg)')")
       ),
       hirid = list(
         list(ids = 2010L, table = "observations", sub_var = "variableid",
@@ -164,12 +164,12 @@ cfg <- list(
       ),
       eicu = list(
         list(ids = "Total CO2", table = "lab", sub_var = "labname",
-             callback = "convert_unit('lpm', set_na, NA)")
+             callback = "convert_unit(set_na, 'mEq/L', 'lpm')")
       )
   )
   ),
   alt = list(
-    unit = "IU/L",
+    unit = c("IU/L", "U/l"),
     min = 0,
     description = "alanine aminotransferase",
     category = "chemistry",
@@ -187,7 +187,7 @@ cfg <- list(
     )
   ),
   ast = list(
-    unit = "IU/L",
+    unit = c("IU/L", "U/l"),
     min = 0,
     description = "aspartate aminotransferase",
     category = "chemistry",
@@ -219,7 +219,7 @@ cfg <- list(
       ),
       hirid = list(
         list(ids = 20002500L, table = "observations", sub_var = "variableid",
-             callback = "transform_fun(binary_op(`*`, 3.097521))",
+             callback = "convert_unit(binary_op(`*`, 3.097521), 'mg/dL')",
              class = "hrd_itm")
       )
     )
@@ -239,7 +239,7 @@ cfg <- list(
       ),
       hirid = list(
         list(ids = 20004100L, table = "observations", sub_var = "variableid",
-             callback = "transform_fun(binary_op(`*`, 2.8))",
+             callback = "convert_unit(binary_op(`*`, 2.8), 'mg/dL')",
              class = "hrd_itm")
       )
     )
@@ -277,7 +277,7 @@ cfg <- list(
       ),
       hirid = list(
         list(ids = 20004300L, table = "observations", sub_var = "variableid",
-             callback = "transform_fun(binary_op(`*`, 0.058467))",
+             callback = "convert_unit(binary_op(`*`, 0.058467), 'mg/dL')",
              class = "hrd_itm")
       )
     )
@@ -299,7 +299,7 @@ cfg <- list(
     )
   ),
   plt = list(
-    unit = "K/uL",
+    unit = c("K/uL", "G/l"),
     min = 5,
     max = 1200,
     description = "platelet count",
@@ -356,7 +356,7 @@ cfg <- list(
     )
   ),
   bicar = list(
-    unit = "mEq/L",
+    unit = c("mEq/L", "mmol/l"),
     min = 5,
     max = 50,
     description = "bicarbonate",
@@ -389,7 +389,7 @@ cfg <- list(
       ),
       hirid = list(
         list(ids = 20000600L, table = "observations", sub_var = "variableid",
-             callback = "transform_fun(binary_op(`*`, 0.011312))",
+             callback = "convert_unit(binary_op(`*`, 0.011312), 'mg/dL')",
              class = "hrd_itm")
       )
     )
@@ -424,7 +424,7 @@ cfg <- list(
     )
   ),
   alp = list(
-    unit = "IU/L",
+    unit = c("IU/L", "U/l"),
     min = 0,
     description = "alkaline phosphatase",
     category = "chemistry",
@@ -442,7 +442,7 @@ cfg <- list(
     )
   ),
   wbc = list(
-    unit = "K/uL",
+    unit = c("K/uL", "G/l"),
     min = 0,
     description = "white blood cell count",
     category = "hematology",
@@ -475,7 +475,7 @@ cfg <- list(
       hirid = list(
         list(ids = c(24000548L, 24000836L, 20000900L), table = "observations",
              sub_var = "variableid",
-             callback = "transform_fun(binary_op(`*`, 0.1))",
+             callback = "convert_unit(binary_op(`*`, 0.1), 'g/dL', 'g/l')",
              class = "hrd_itm")
       )
     )
@@ -496,7 +496,7 @@ cfg <- list(
     )
   ),
   pco2 = list(
-    unit = "mmHg",
+    unit = c("mmHg", "mm Hg"),
     min = 10,
     max = 150,
     description = "CO2 partial pressure",
@@ -515,7 +515,7 @@ cfg <- list(
     )
   ),
   po2 = list(
-    unit = "mmHg",
+    unit = c("mmHg", "mm Hg"),
     min = 40,
     max = 600,
     description = "O2 partial pressure",
@@ -619,17 +619,17 @@ cfg <- list(
       ),
       eicu = list(
         list(ids = "calcium", table = "lab", sub_var = "labname",
-             callback = "convert_unit('mmol/l', binary_op(`*`, 4), 'mg/dL')")
+             callback = "convert_unit(binary_op(`*`, 4), 'mg/dL', 'mmol/l')")
       ),
       hirid = list(
         list(ids = 20005100L, table = "observations", sub_var = "variableid",
-             callback = "transform_fun(binary_op(`*`, 4.008))",
+             callback = "convert_unit(binary_op(`*`, 4.008), 'mg/dL')",
              class = "hrd_itm")
       )
     )
   ),
   cl = list(
-    unit = "mEq/L",
+    unit = c("mEq/L", "mmol/l"),
     min = 80,
     max = 130,
     description = "chloride",
@@ -659,18 +659,18 @@ cfg <- list(
       ),
       eicu = list(
         list(ids = "magnesium", table = "lab", sub_var = "labname",
-          callback = "convert_unit('meq/l', binary_op(`/`, 1.215), 'mEq/L')"
+          callback = "convert_unit(binary_op(`/`, 1.215), 'mg/dL', 'mEq/L')"
         )
       ),
       hirid = list(
         list(ids = 24000230L, table = "observations", sub_var = "variableid",
-             callback = "transform_fun(binary_op(`*`, 2.431))",
+             callback = "convert_unit(binary_op(`*`, 2.431), 'mg/dL')",
              class = "hrd_itm")
       )
     )
   ),
   k = list(
-    unit = "mEq/L",
+    unit = c("mEq/L", "mmol/l"),
     min = 0,
     max = 10,
     description = "potassium",
@@ -689,7 +689,7 @@ cfg <- list(
     )
   ),
   na = list(
-    unit = "mEq/L",
+    unit = c("mEq/L", "mmol/l"),
     min = 110,
     max = 165,
     description = "sodium",
@@ -773,7 +773,7 @@ cfg <- list(
       hirid = list(
         list(ids = c(20005110L, 24000523L, 24000585L), table = "observations",
              sub_var = "variableid",
-             callback = "transform_fun(binary_op(`*`, 18.016))",
+             callback = "convert_unit(binary_op(`*`, 18.016), 'mg/dL')",
              class = "hrd_itm")
       )
     )
@@ -805,11 +805,11 @@ cfg <- list(
     sources = list(
       mimic = list(
         list(ids = 50889L, table = "labevents", sub_var = "itemid",
-             callback = "convert_unit('mg/dl', binary_op(`*`, 10), 'mg/L')")
+             callback = "convert_unit(binary_op(`*`, 10), 'mg/L', 'mg/dl')")
       ),
       eicu = list(
         list(ids = "CRP", table = "lab", sub_var = "labname",
-             callback = "convert_unit('mg/dl', binary_op(`*`, 10), 'mg/L')")
+             callback = "convert_unit(binary_op(`*`, 10), 'mg/L', 'mg/dl')")
       ),
       hirid = list(
         list(ids = 20002200L, table = "observations", sub_var = "variableid",
@@ -818,7 +818,7 @@ cfg <- list(
     )
   ),
   esr = list(
-    unit = "mm/hr",
+    unit = c("mm/hr", "mm/1h"),
     min = 0,
     max = 200,
     description = "erythrocyte sedimentation rate",
@@ -879,6 +879,7 @@ cfg <- list(
       ),
       hirid = list(
         list(ids = 24000806L, table = "observations", sub_var = "variableid",
+             callback = "convert_unit(binary_op(`/`, 1000), 'ng/mL')",
              class = "hrd_itm")
       )
     )
@@ -898,7 +899,7 @@ cfg <- list(
       ),
       hirid = list(
         list(ids = 24000605L, table = "observations", sub_var = "variableid",
-             callback = "transform_fun(binary_op(`*`, 0.1))",
+             callback = "convert_unit(binary_op(`*`, 0.1), 'g/dL')",
              class = "hrd_itm")
       )
     )
@@ -918,13 +919,13 @@ cfg <- list(
       ),
       hirid = list(
         list(ids = 24000536L, table = "observations", sub_var = "variableid",
-             callback = "transform_fun(binary_op(`*`, 100))",
+             callback = "convert_unit(binary_op(`*`, 100), 'mg/dL')",
              class = "hrd_itm")
       )
     )
   ),
   be = list(
-    unit = "mEq/L",
+    unit = c("mEq/L", "mmol/l"),
     min = -25,
     max = 25,
     description = "base excess",
@@ -958,7 +959,7 @@ cfg <- list(
     )
   ),
   ck = list(
-    unit = "IU/L",
+    unit = c("IU/L", "U/l"),
     min = 0,
     description = "creatine kinase",
     category = "chemistry",
@@ -1514,13 +1515,13 @@ cfg <- list(
       ),
       hirid = list(
         list(ids = 24000560L, table = "observations", sub_var = "variableid",
-             callback = "transform_fun(binary_op(`*`, 0.058467))",
+             callback = "convert_unit(binary_op(`*`, 0.058467), 'mg/dL')",
              class = "hrd_itm")
       )
     )
   ),
   temp = list(
-    unit = "C",
+    unit = c("C", "°C"),
     min = 32,
     max = 42,
     description = "temperature",
@@ -1530,7 +1531,8 @@ cfg <- list(
         list(ids = c(676L, 677L, 223762L), table = "chartevents",
              sub_var = "itemid"),
         list(ids = c(678L, 679L, 223761L, 224027L), table = "chartevents",
-             sub_var = "itemid", callback = "transform_fun(fahr_to_cels)")
+             sub_var = "itemid",
+             callback = "convert_unit(fahr_to_cels, 'C', 'f')")
       ),
       eicu = list(
         list(table = "vitalperiodic", val_var = "temperature",
@@ -1543,7 +1545,7 @@ cfg <- list(
     )
   ),
   etco2 = list(
-    unit = "mmHg",
+    unit = c("mmHg", "mm Hg"),
     min = 10,
     max = 60,
     description = "endtidal CO2",
@@ -1560,6 +1562,7 @@ cfg <- list(
     )
   ),
   ins = list(
+    unit = "units/hr",
     description = "insulin",
     category = "medications",
     sources = list(
@@ -1656,7 +1659,7 @@ cfg <- list(
       mimic = list(
         list(ids = c(920L, 1394L, 4187L, 3486L, 226707L),
              table = "chartevents", sub_var = "itemid",
-             callback = "transform_fun(binary_op(`*`, 2.54))"),
+             callback = "convert_unit(binary_op(`*`, 2.54), 'cm', '^in')"),
         list(ids = c(3485L, 4188L), table = "chartevents",
              sub_var = "itemid")
       ),
@@ -1904,6 +1907,7 @@ cfg <- list(
     class = "rec_cncpt"
   ),
   bnd = list(
+    unit = "%",
     description = "band form neutrophils",
     category = "hematology",
     sources = list(

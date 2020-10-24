@@ -238,7 +238,7 @@
           "ids": 24000605,
           "table": "observations",
           "sub_var": "variableid",
-          "callback": "transform_fun(binary_op(`*`, 0.1))",
+          "callback": "convert_unit(binary_op(`*`, 0.1), 'g/dL')",
           "class": "hrd_itm"
         }
       ],
@@ -259,7 +259,7 @@
     }
   },
   "alp": {
-    "unit": "IU/L",
+    "unit": ["IU/L", "U/l"],
     "min": 0,
     "description": "alkaline phosphatase",
     "category": "chemistry",
@@ -303,7 +303,7 @@
     }
   },
   "alt": {
-    "unit": "IU/L",
+    "unit": ["IU/L", "U/l"],
     "min": 0,
     "description": "alanine aminotransferase",
     "category": "chemistry",
@@ -347,7 +347,7 @@
     }
   },
   "ast": {
-    "unit": "IU/L",
+    "unit": ["IU/L", "U/l"],
     "min": 0,
     "description": "aspartate aminotransferase",
     "category": "chemistry",
@@ -435,7 +435,7 @@
     }
   },
   "be": {
-    "unit": "mEq/L",
+    "unit": ["mEq/L", "mmol/l"],
     "min": -25,
     "max": 25,
     "description": "base excess",
@@ -480,7 +480,7 @@
     }
   },
   "bicar": {
-    "unit": "mEq/L",
+    "unit": ["mEq/L", "mmol/l"],
     "min": 5,
     "max": 50,
     "description": "bicarbonate",
@@ -550,7 +550,7 @@
           "ids": 20004300,
           "table": "observations",
           "sub_var": "variableid",
-          "callback": "transform_fun(binary_op(`*`, 0.058467))",
+          "callback": "convert_unit(binary_op(`*`, 0.058467), 'mg/dL')",
           "class": "hrd_itm"
         }
       ],
@@ -596,7 +596,7 @@
           "ids": 24000560,
           "table": "observations",
           "sub_var": "variableid",
-          "callback": "transform_fun(binary_op(`*`, 0.058467))",
+          "callback": "convert_unit(binary_op(`*`, 0.058467), 'mg/dL')",
           "class": "hrd_itm"
         }
       ],
@@ -617,6 +617,7 @@
     }
   },
   "bnd": {
+    "unit": "%",
     "description": "band form neutrophils",
     "category": "hematology",
     "sources": {
@@ -684,7 +685,7 @@
           "ids": 20004100,
           "table": "observations",
           "sub_var": "variableid",
-          "callback": "transform_fun(binary_op(`*`, 2.8))",
+          "callback": "convert_unit(binary_op(`*`, 2.8), 'mg/dL')",
           "class": "hrd_itm"
         }
       ],
@@ -716,7 +717,7 @@
           "ids": "calcium",
           "table": "lab",
           "sub_var": "labname",
-          "callback": "convert_unit('mmol/l', binary_op(`*`, 4), 'mg/dL')"
+          "callback": "convert_unit(binary_op(`*`, 4), 'mg/dL', 'mmol/l')"
         }
       ],
       "eicu_demo": [
@@ -724,7 +725,7 @@
           "ids": "calcium",
           "table": "lab",
           "sub_var": "labname",
-          "callback": "convert_unit('mmol/l', binary_op(`*`, 4), 'mg/dL')"
+          "callback": "convert_unit(binary_op(`*`, 4), 'mg/dL', 'mmol/l')"
         }
       ],
       "hirid": [
@@ -732,7 +733,7 @@
           "ids": 20005100,
           "table": "observations",
           "sub_var": "variableid",
-          "callback": "transform_fun(binary_op(`*`, 4.008))",
+          "callback": "convert_unit(binary_op(`*`, 4.008), 'mg/dL')",
           "class": "hrd_itm"
         }
       ],
@@ -798,7 +799,7 @@
     }
   },
   "ck": {
-    "unit": "IU/L",
+    "unit": ["IU/L", "U/l"],
     "min": 0,
     "description": "creatine kinase",
     "category": "chemistry",
@@ -886,7 +887,7 @@
     }
   },
   "cl": {
-    "unit": "mEq/L",
+    "unit": ["mEq/L", "mmol/l"],
     "min": 80,
     "max": 130,
     "description": "chloride",
@@ -956,7 +957,7 @@
           "ids": 20000600,
           "table": "observations",
           "sub_var": "variableid",
-          "callback": "transform_fun(binary_op(`*`, 0.011312))",
+          "callback": "convert_unit(binary_op(`*`, 0.011312), 'mg/dL')",
           "class": "hrd_itm"
         }
       ],
@@ -987,7 +988,7 @@
           "ids": "CRP",
           "table": "lab",
           "sub_var": "labname",
-          "callback": "convert_unit('mg/dl', binary_op(`*`, 10), 'mg/L')"
+          "callback": "convert_unit(binary_op(`*`, 10), 'mg/L', 'mg/dl')"
         }
       ],
       "eicu_demo": [
@@ -995,7 +996,7 @@
           "ids": "CRP",
           "table": "lab",
           "sub_var": "labname",
-          "callback": "convert_unit('mg/dl', binary_op(`*`, 10), 'mg/L')"
+          "callback": "convert_unit(binary_op(`*`, 10), 'mg/L', 'mg/dl')"
         }
       ],
       "hirid": [
@@ -1011,7 +1012,7 @@
           "ids": 50889,
           "table": "labevents",
           "sub_var": "itemid",
-          "callback": "convert_unit('mg/dl', binary_op(`*`, 10), 'mg/L')"
+          "callback": "convert_unit(binary_op(`*`, 10), 'mg/L', 'mg/dl')"
         }
       ],
       "mimic_demo": [
@@ -1019,13 +1020,13 @@
           "ids": 50889,
           "table": "labevents",
           "sub_var": "itemid",
-          "callback": "convert_unit('mg/dl', binary_op(`*`, 10), 'mg/L')"
+          "callback": "convert_unit(binary_op(`*`, 10), 'mg/L', 'mg/dl')"
         }
       ]
     }
   },
   "dbp": {
-    "unit": "mmHg",
+    "unit": ["mmHg", "mm Hg"],
     "min": 0,
     "max": 200,
     "description": "diastolic blood pressure",
@@ -1597,7 +1598,7 @@
     "class": "rec_cncpt"
   },
   "esr": {
-    "unit": "mm/hr",
+    "unit": ["mm/hr", "mm/1h"],
     "min": 0,
     "max": 200,
     "description": "erythrocyte sedimentation rate",
@@ -1628,7 +1629,7 @@
     }
   },
   "etco2": {
-    "unit": "mmHg",
+    "unit": ["mmHg", "mm Hg"],
     "min": 10,
     "max": 60,
     "description": "endtidal CO2",
@@ -1684,7 +1685,7 @@
           "ids": 24000536,
           "table": "observations",
           "sub_var": "variableid",
-          "callback": "transform_fun(binary_op(`*`, 100))",
+          "callback": "convert_unit(binary_op(`*`, 100), 'mg/dL')",
           "class": "hrd_itm"
         }
       ],
@@ -1722,7 +1723,7 @@
           "ids": "FiO2",
           "table": "lab",
           "sub_var": "labname",
-          "callback": "convert_unit('mm(hg)', set_na, NA)"
+          "callback": "convert_unit(set_na, '%', 'mm(hg)')"
         }
       ],
       "eicu_demo": [
@@ -1736,7 +1737,7 @@
           "ids": "FiO2",
           "table": "lab",
           "sub_var": "labname",
-          "callback": "convert_unit('mm(hg)', set_na, NA)"
+          "callback": "convert_unit(set_na, '%', 'mm(hg)')"
         }
       ],
       "hirid": [
@@ -1807,7 +1808,7 @@
           "ids": [20005110, 24000523, 24000585],
           "table": "observations",
           "sub_var": "variableid",
-          "callback": "transform_fun(binary_op(`*`, 18.016))",
+          "callback": "convert_unit(binary_op(`*`, 18.016), 'mg/dL')",
           "class": "hrd_itm"
         }
       ],
@@ -1927,7 +1928,7 @@
           "ids": [920, 1394, 4187, 3486, 226707],
           "table": "chartevents",
           "sub_var": "itemid",
-          "callback": "transform_fun(binary_op(`*`, 2.54))"
+          "callback": "convert_unit(binary_op(`*`, 2.54), 'cm', '^in')"
         },
         {
           "ids": [3485, 4188],
@@ -1940,7 +1941,7 @@
           "ids": [920, 1394, 4187, 3486, 226707],
           "table": "chartevents",
           "sub_var": "itemid",
-          "callback": "transform_fun(binary_op(`*`, 2.54))"
+          "callback": "convert_unit(binary_op(`*`, 2.54), 'cm', '^in')"
         },
         {
           "ids": [3485, 4188],
@@ -1976,7 +1977,7 @@
           "ids": [24000548, 24000836, 20000900],
           "table": "observations",
           "sub_var": "variableid",
-          "callback": "transform_fun(binary_op(`*`, 0.1))",
+          "callback": "convert_unit(binary_op(`*`, 0.1), 'g/dL', 'g/l')",
           "class": "hrd_itm"
         }
       ],
@@ -2084,6 +2085,7 @@
     }
   },
   "ins": {
+    "unit": "units/hr",
     "description": "insulin",
     "category": "medications",
     "sources": {
@@ -2144,7 +2146,7 @@
     }
   },
   "k": {
-    "unit": "mEq/L",
+    "unit": ["mEq/L", "mmol/l"],
     "min": 0,
     "max": 10,
     "description": "potassium",
@@ -2360,7 +2362,7 @@
     }
   },
   "map": {
-    "unit": "mmHg",
+    "unit": ["mmHg", "mm Hg"],
     "min": 0,
     "max": 250,
     "description": "mean arterial pressure",
@@ -2612,7 +2614,7 @@
           "ids": "magnesium",
           "table": "lab",
           "sub_var": "labname",
-          "callback": "convert_unit('meq/l', binary_op(`/`, 1.215), 'mEq/L')"
+          "callback": "convert_unit(binary_op(`/`, 1.215), 'mg/dL', 'mEq/L')"
         }
       ],
       "eicu_demo": [
@@ -2620,7 +2622,7 @@
           "ids": "magnesium",
           "table": "lab",
           "sub_var": "labname",
-          "callback": "convert_unit('meq/l', binary_op(`/`, 1.215), 'mEq/L')"
+          "callback": "convert_unit(binary_op(`/`, 1.215), 'mg/dL', 'mEq/L')"
         }
       ],
       "hirid": [
@@ -2628,7 +2630,7 @@
           "ids": 24000230,
           "table": "observations",
           "sub_var": "variableid",
-          "callback": "transform_fun(binary_op(`*`, 2.431))",
+          "callback": "convert_unit(binary_op(`*`, 2.431), 'mg/dL')",
           "class": "hrd_itm"
         }
       ],
@@ -2693,7 +2695,7 @@
     }
   },
   "na": {
-    "unit": "mEq/L",
+    "unit": ["mEq/L", "mmol/l"],
     "min": 110,
     "max": 165,
     "description": "sodium",
@@ -2992,7 +2994,7 @@
     "class": "rec_cncpt"
   },
   "pco2": {
-    "unit": "mmHg",
+    "unit": ["mmHg", "mm Hg"],
     "min": 10,
     "max": 150,
     "description": "CO2 partial pressure",
@@ -3106,7 +3108,7 @@
           "ids": 20002500,
           "table": "observations",
           "sub_var": "variableid",
-          "callback": "transform_fun(binary_op(`*`, 3.097521))",
+          "callback": "convert_unit(binary_op(`*`, 3.097521), 'mg/dL')",
           "class": "hrd_itm"
         }
       ],
@@ -3127,7 +3129,7 @@
     }
   },
   "plt": {
-    "unit": "K/uL",
+    "unit": ["K/uL", "G/l"],
     "min": 5,
     "max": 1200,
     "description": "platelet count",
@@ -3172,7 +3174,7 @@
     }
   },
   "po2": {
-    "unit": "mmHg",
+    "unit": ["mmHg", "mm Hg"],
     "min": 40,
     "max": 600,
     "description": "O2 partial pressure",
@@ -3420,7 +3422,7 @@
     }
   },
   "resp": {
-    "unit": "insp/min",
+    "unit": ["insp/min", "/min"],
     "min": 0,
     "max": 120,
     "description": "respiratory rate",
@@ -3505,7 +3507,7 @@
     }
   },
   "sbp": {
-    "unit": "mmHg",
+    "unit": ["mmHg", "mm Hg"],
     "min": 0,
     "max": 300,
     "description": "systolic blood pressure",
@@ -3705,7 +3707,7 @@
           "ids": "Total CO2",
           "table": "lab",
           "sub_var": "labname",
-          "callback": "convert_unit('lpm', set_na, NA)"
+          "callback": "convert_unit(set_na, 'mEq/L', 'lpm')"
         }
       ],
       "eicu_demo": [
@@ -3713,7 +3715,7 @@
           "ids": "Total CO2",
           "table": "lab",
           "sub_var": "labname",
-          "callback": "convert_unit('lpm', set_na, NA)"
+          "callback": "convert_unit(set_na, 'mEq/L', 'lpm')"
         }
       ],
       "mimic": [
@@ -3733,7 +3735,7 @@
     }
   },
   "temp": {
-    "unit": "C",
+    "unit": ["C", "°C"],
     "min": 32,
     "max": 42,
     "description": "temperature",
@@ -3771,7 +3773,7 @@
           "ids": [678, 679, 223761, 224027],
           "table": "chartevents",
           "sub_var": "itemid",
-          "callback": "transform_fun(fahr_to_cels)"
+          "callback": "convert_unit(fahr_to_cels, 'C', 'f')"
         }
       ],
       "mimic_demo": [
@@ -3784,7 +3786,7 @@
           "ids": [678, 679, 223761, 224027],
           "table": "chartevents",
           "sub_var": "itemid",
-          "callback": "transform_fun(fahr_to_cels)"
+          "callback": "convert_unit(fahr_to_cels, 'C', 'f')"
         }
       ]
     }
@@ -3850,6 +3852,7 @@
           "ids": 24000806,
           "table": "observations",
           "sub_var": "variableid",
+          "callback": "convert_unit(binary_op(`/`, 1000), 'ng/mL')",
           "class": "hrd_itm"
         }
       ],
@@ -4228,7 +4231,7 @@
     }
   },
   "wbc": {
-    "unit": "K/uL",
+    "unit": ["K/uL", "G/l"],
     "min": 0,
     "description": "white blood cell count",
     "category": "hematology",

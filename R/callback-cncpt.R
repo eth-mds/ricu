@@ -490,7 +490,9 @@ vaso_ind <- function(..., interval = NULL) {
 
   cnc <- c("dopa_dur", "norepi_dur", "dobu_dur", "epi_dur")
   res <- collect_dots(cnc, interval, ..., merge_dat = TRUE)
+  unt <- time_unit(res)
 
+  res <- res[, c(cnc) := lapply(.SD, as.difftime, units = unt), .SDcols = cnc]
   res <- res[, c("vaso_ind", cnc) := list(pmax(
     get("dopa_dur"), get("norepi_dur"), get("dobu_dur"), get("epi_dur"),
     na.rm = TRUE), NULL, NULL, NULL, NULL)

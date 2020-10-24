@@ -257,15 +257,15 @@ apply_map <- function(map) {
   }
 }
 
-#' @param rgx Regular expression(s) used for identifying observations based on
-#' their current unit of measurement
 #' @param fun Function(s) used for transforming matching values
 #' @param new Name(s) of transformed units
+#' @param rgx Regular expression(s) used for identifying observations based on
+#' their current unit of measurement, `NULL` means everything
 #' @param ignore_case Forwarded to [base::grep()]
 #'
 #' @rdname callback_itm
 #' @export
-convert_unit <- function(rgx, fun, new, ignore_case = TRUE, ...) {
+convert_unit <- function(fun, new, rgx = NULL, ignore_case = TRUE, ...) {
 
   chr_to_fun <- function(a) {
 
@@ -280,6 +280,10 @@ convert_unit <- function(rgx, fun, new, ignore_case = TRUE, ...) {
     fun <- list(fun)
   }
 
+  if (is.null(rgx)) {
+    rgx <- rep(list(NULL), length(fun))
+  }
+
   new <- lapply(new, chr_to_fun)
 
   assert_that(all_fun(fun, is.function))
@@ -290,9 +294,20 @@ convert_unit <- function(rgx, fun, new, ignore_case = TRUE, ...) {
   function(x, val_var, unit_var, ...) {
 
     for (i in seq_len(len)) {
-      rows <- do.call(grep, c(list(rgx[[i]], x[[unit_var]]), xtr))
-      vals <- list(fun[[i]](x[[val_var]][rows]), new[[i]](x[[unit_var]][rows]))
-      set(x, i = rows, j = c(val_var, unit_var), value = vals)
+
+      if (is.null(rgx[[i]])) {
+
+        vals <- list(fun[[i]](x[[val_var]]), new[[i]](x[[unit_var]]))
+        set(x, j = c(val_var, unit_var), value = vals)
+
+      } else {
+
+        rows <- do.call(grep, c(list(rgx[[i]], x[[unit_var]]), xtr))
+        vals <- list(fun[[i]](x[[val_var]][rows]),
+                     new[[i]](x[[unit_var]][rows]))
+
+        set(x, i = rows, j = c(val_var, unit_var), value = vals)
+      }
     }
 
     x
@@ -387,12 +402,12 @@ eicu_vaso_rate <- function(ml_to_mcg) {
   function(x, sub_var, val_var, weight_var, env, ...) {
 
     fix_units <- convert_unit(
-      c("/hr$", "^mg/", "^units/", "^ml/", "^nanograms/", "^Unknown$", "^ml$"),
       c(binary_op(`/`, 60), binary_op(`*`, 1000), set_na,
         binary_op(`*`, ml_to_mcg), binary_op(`/`, 1000), set_na, set_na),
       c(sub_trans("/hr$", "/min"), sub_trans("^mg/", "mcg/"),
         "mcg/kg/min", sub_trans("^ml/", "mcg/"),
-        sub_trans("^nanograms/", "mcg/"), "mcg/kg/min", "mcg/kg/min")
+        sub_trans("^nanograms/", "mcg/"), "mcg/kg/min", "mcg/kg/min"),
+      c("/hr$", "^mg/", "^units/", "^ml/", "^nanograms/", "^Unknown$", "^ml$")
     )
 
     add_kg <- sub_trans("/", "/kg/")
