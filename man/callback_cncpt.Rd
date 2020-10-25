@@ -79,6 +79,9 @@ beyond first and last measurements}
 \item{max_gap}{Maximum time gap between administration windows that are
 merged (can be negative).}
 }
+\value{
+Either an \code{id_tbl} or \code{ts_tbl} depending on the type of concept.
+}
 \description{
 Owing to increased complexity and more diverse applications, recursive
 concepts (class \code{\link[=new_cncpt]{rec_cncpt}}) may specify callback functions

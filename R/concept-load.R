@@ -143,6 +143,9 @@
 #' @param cache Logical flag indicating whether to cache concepts that are
 #' required multiple times
 #'
+#' @return An `id_tbl`/`ts_tbl` or a list thereof, depending on loaded
+#' concepts and the value passed as `merge_data`.
+#'
 #' @examples
 #' if (require(mimic.demo)) {
 #' dat <- load_concepts("glu", "mimic_demo")

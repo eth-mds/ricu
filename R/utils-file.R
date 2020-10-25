@@ -71,6 +71,12 @@
 #'
 #' @rdname file_utils
 #'
+#' @return Functions `data_dir()`, `src_data_dir()` and `config_paths()` return
+#' file paths as character vectors, `auto_load_src_names()` returns a character
+#' vector of data source names and `src_data_avail()` a `data.frame` describing
+#' availability of data sources. Configuration utilitites `get_config()` and
+#' `set_config()` read and write list objects to/from JSON format.
+#'
 #' @examples
 #' Sys.setenv(RICU_DATA_PATH = tempdir())
 #' identical(data_dir(), tempdir())

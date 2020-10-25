@@ -54,6 +54,13 @@ prefix)}
 
 \item{src_env}{The data source environment (as \code{src_env} object)}
 }
+\value{
+The constructors \code{new_src_env()}/\code{new_src_tbl()} as well as coercion
+functions \code{as_src_env()}/\code{as_src_tbl()} return \code{src_env} and \code{src_tbl}
+objects respectively. The function \code{attach_src()} is called for side
+effects and returns \code{NULL} invisibly, while \code{setup_src_env()} instantiates
+and returns a \code{src_env} object.
+}
 \description{
 Making a dataset available to \code{ricu} consists of 3 steps: downloading
 (\code{\link[=download_src]{download_src()}}), importing (\code{\link[=import_src]{import_src()}}) and attaching

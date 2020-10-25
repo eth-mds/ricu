@@ -104,6 +104,10 @@ are closed (default) or open.}
 \item{eval_env}{Environment in which \code{expr} is substituted; \code{NULL} resolves
 to the environment in which \code{expr} was created}
 }
+\value{
+Most functions return \code{ts_tbl} objects with the exception of
+\code{has_gaps()}/\code{has_no_gaps()}/\code{is_regular()}, which return logical flags.
+}
 \description{
 ICU data as handled by \code{ricu} is mostly comprised of time series data and as
 such, several utility functions are available for working with time series

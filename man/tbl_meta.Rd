@@ -45,6 +45,13 @@ time_vars(x)
 \arguments{
 \item{x}{Object to query}
 }
+\value{
+Mostly column names as character vectors, in case of \code{id_var()},
+\code{index_var()}, \code{data_var()} and \code{time_unit()} of length 1, else of variable
+length. Functions \code{id_col()}, \code{index_col()} and \code{data_col()} return table
+columns as vectors, while \code{interval()} returns a scalar valued \code{difftime}
+object and \code{time_step()} a number.
+}
 \description{
 The two data classes \code{id_tbl} and \code{ts_tbl}, used by \code{ricu} to represent ICU
 patient data, consist of a \code{data.table} alongside some meta data. This

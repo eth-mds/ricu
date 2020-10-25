@@ -37,6 +37,12 @@ their current unit of measurement}
 
 \item{ignore_case}{Forwarded to \code{\link[base:grep]{base::grep()}}}
 }
+\value{
+Callback function factories such as \code{transform_fun()}, \code{apply_map()}
+or \code{convert_unit()} return functions suitable as item callback functions,
+while transform function generators such as \code{binary_op()}, \code{comp_na()}
+return functions that apply a transformation to a vector.
+}
 \description{
 For concept loading, item callback functions are used in order to handle
 item-specific post-processing steps, such as converting measurement units,

@@ -109,6 +109,9 @@ as.data.frame.id_tbl <- function(x, row.names = NULL, optional = FALSE, ...) {
 #' @param keep.rownames,check.names,key,stringsAsFactors Forwarded to
 #' [data.table::data.table]
 #'
+#' @return Either `id_tbl` or `ts_tbl` objects (depending on inputs) or lists
+#' thereof in case of `split()` and `unmerge()`.
+#'
 #' @rdname tbl_reshape
 #' @keywords internal
 #'

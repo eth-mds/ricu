@@ -22,6 +22,10 @@ if \code{NULL}, data is written as-is}
 
 \item{id_var}{Name of the id column (IDs are generated from file names)}
 }
+\value{
+While \code{write_psv()} is called for side effects and returns \code{NULL}
+invisibly, \code{read_psv()} returns an object inheriting from \code{id_tbl}.
+}
 \description{
 Support for reading from and writing to pipe separated values (\code{.psv})
 files as used for the PhysioNet Sepsis Challenge.

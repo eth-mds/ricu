@@ -33,6 +33,9 @@ download_src(x, ...)
 variables \code{RICU_PHYSIONET_USER}/\code{RICU_PHYSIONET_PASS} are not set, user
 input is required}
 }
+\value{
+Called for side effects and returns \code{NULL} invisibly.
+}
 \description{
 Making a dataset available to \code{ricu} consists of 3 steps: downloading
 (\code{\link[=download_src]{download_src()}}), importing (\code{\link[=import_src]{import_src()}}) and attaching

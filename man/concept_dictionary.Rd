@@ -21,6 +21,10 @@ load_dictionary(
 
 \item{cfg_dirs}{File name of the dictionary}
 }
+\value{
+A \code{concept} object containing several data concepts as \code{cncpt}
+objects.
+}
 \description{
 Data concepts can be specified in JSON format as a concept dictionary which
 can be read and parsed into \code{concept}/\code{item} objects. Dictionary loading

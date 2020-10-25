@@ -45,6 +45,9 @@ iterate over these explicit time points}
 
 \item{win_length}{Time-frame to look back and apply the \code{win_fun}}
 }
+\value{
+A \code{ts_tbl} object.
+}
 \description{
 The SOFA (Sequential Organ Failure Assessment) score is a commonly used
 assessment tool for tracking a patient's status during a stay at an ICU.

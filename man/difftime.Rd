@@ -21,6 +21,9 @@ weeks(x)
 \arguments{
 \item{x}{Numeric vector to coerce to \code{\link[base:difftime]{base::difftime()}}}
 }
+\value{
+Vector valued time differences as \code{difftime} object.
+}
 \description{
 As \code{\link[base:difftime]{base::difftime()}} vectors are used throughout \code{ricu}, a set of wrapper
 functions are exported for convenience of instantiation \code{\link[base:difftime]{base::difftime()}}

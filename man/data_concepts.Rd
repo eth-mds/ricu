@@ -81,6 +81,10 @@ for data cleanup operations}
 \item{interval}{Time interval used for data loading; if NULL, the respective
 interval passed as argument to \code{\link[=load_concepts]{load_concepts()}} is taken}
 }
+\value{
+Constructors and coercion functions return \code{cncpt} and \code{concept}
+objects, while inheritance tester functions return logical flags.
+}
 \description{
 Concept objects are used in \code{ricu} as a way to specify how a clinical
 concept, such as heart rate can be loaded from a data source and are mainly

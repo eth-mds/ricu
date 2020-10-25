@@ -39,6 +39,9 @@ column}
 
 \item{cols}{Column names that require time-adjustment}
 }
+\value{
+An object of the same type as \code{x} with modified IDs.
+}
 \description{
 ICU datasets such as MIMIC-III or eICU typically represent patients by
 multiple ID systems such as patient IDs, hospital stay IDs and ICU

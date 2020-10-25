@@ -25,6 +25,11 @@ stay_windows(
 \item{interval}{The time interval used to discretize time stamps with,
 specified as \code{\link[base:difftime]{base::difftime()}} object}
 }
+\value{
+An \code{id_tbl} containing the selected IDs and depending on values
+passed as \code{in_time} and \code{out_time}, start and end times of the ID passed as
+\code{win_var}.
+}
 \description{
 Building on functionality offered by the (internal) function \code{\link[=id_map]{id_map()}},
 stay windows as well as (in case of differing values being passed as

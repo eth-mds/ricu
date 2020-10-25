@@ -105,6 +105,10 @@ with}
 \item{interval}{The time interval used to discretize time stamps with,
 specified as \code{\link[base:difftime]{base::difftime()}} object}
 }
+\value{
+An \code{id_tbl}/\code{ts_tbl} or a list thereof, depending on loaded
+concepts and the value passed as \code{merge_data}.
+}
 \description{
 Concept objects are used in \code{ricu} as a way to specify how a clinical
 concept, such as heart rate can be loaded from a data source. Building on

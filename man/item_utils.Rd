@@ -42,7 +42,27 @@ get_target(x)
 \item{interval}{The time interval used to discretize time stamps with,
 specified as \code{\link[base:difftime]{base::difftime()}} object}
 }
+\value{
+\itemize{
+\item \code{prepare_query()}: an unevaluated expression used for row-subsetting
+\item \code{try_add_vars()}: a (potentially) modified item object with added
+variables
+\item \code{get_itm_var()}: character vector of \code{itm} variables
+\item \code{set_callback()}: a modified object with added callback function
+\item \code{do_callback()}: result of the callback function applied to data, most
+likely (\code{id_tbl}/\code{ts_tbl})
+\item \code{do_itm_load()}: result of item loading (\code{id_tbl}/\code{ts_tbl})
+\item \code{n_tick()}: Integer valued number of progress bar ticks
+\item \code{set_target()}: a modified object with newly set target class
+\item \code{get_target()}: string valued target class of an object
+}
+}
 \description{
-Internal utilities for \code{item}/\code{concept} objects
+Several internal utilities for modifying and querying item and concept
+objects, including getters and setters for \code{itm} variables, callback
+functions, \code{cncpt} target classes, as well as utilities for data loading
+such as \code{prepare_query()} which creates a row-subsetting expression,
+\code{do_callback()}, which applies a callback function to data or
+\code{do_itm_load()}, which performs data loading corresponding to an \code{itm}.
 }
 \keyword{internal}

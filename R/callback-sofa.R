@@ -77,6 +77,8 @@
 #' `hours(24, 48)` will yield for every patient a score at hours 24 and 48
 #' relative to the orgin of the current ID system (for example ICU stay).
 #'
+#' @return A `ts_tbl` object.
+#'
 #' @references
 #' Vincent, J.-L., Moreno, R., Takala, J. et al. The SOFA (Sepsis-related Organ
 #' Failure Assessment) score to describe organ dysfunction/failure. Intensive

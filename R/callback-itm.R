@@ -141,6 +141,11 @@ mimic_sampling <- function(x, val_var, aux_time, ...) {
 #' @param fun Function to be used for data transformation
 #' @param ... Further arguments passed to downstream function
 #'
+#' @return Callback function factories such as `transform_fun()`, `apply_map()`
+#' or `convert_unit()` return functions suitable as item callback functions,
+#' while transform function generators such as `binary_op()`, `comp_na()`
+#' return functions that apply a transformation to a vector.
+#'
 #' @examples
 #' dat <- ts_tbl(x = rep(1:2, each = 5), y = hours(rep(1:5, 2)), z = 1:10)
 #'
@@ -331,6 +336,8 @@ weight_env <- new.env()
 #' @param env Data source environment as available as `env` in callback
 #' functions
 #' @param weight_var String valued name of the newly added weight column
+#'
+#' @return An `id_tbl` or `ts_tbl` object, potentially modified by reference.
 #'
 #' @rdname callback_int
 #' @keywords internal

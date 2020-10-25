@@ -60,6 +60,15 @@
 #' @param class_prefix A character vector of class prefixes that are added to
 #' the instantiated classes
 #'
+#' @return Constructors `new_*()` as well as coercion functions `as_*()`
+#' return the respective objects, while inheritance tester functions `is_*()`
+#' return a logical flag.
+#'
+#' * `src_url()`: string valued data source URL
+#' * `id_var_opts()`: character vector of ID variable options
+#' * `src_name()`: string valued data source name
+#' * `tbl_name()`: string valued table name
+#'
 #' @rdname src_cfg
 #' @keywords internal
 #'
@@ -413,6 +422,8 @@ new_tbl_cfg <- function(table, src, files = NULL, cols = NULL, num_rows = NULL,
 #' @param name String valued name of a config file which will be looked up in
 #' the default config directors
 #' @param cfg_dirs Additional directory/ies to look for configuration files
+#'
+#' @return A list of data source configurations as `src_cfg` objects.
 #'
 #' @examples
 #' cfg <- load_src_cfg("mimic_demo")

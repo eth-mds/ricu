@@ -83,6 +83,9 @@ timestamps and thus returned as \code{\link[base:difftime]{base::difftime()}} ve
 
 \item{index_var}{The column defining the index of \code{ts_tbl} objects}
 }
+\value{
+An \code{id_tbl} or a \code{ts_tbl} object.
+}
 \description{
 Building on functionality provided by \code{\link[=load_src]{load_src()}} and \code{\link[=load_difftime]{load_difftime()}},
 \code{load_id()} and \code{load_ts()} load data from disk as \code{id_tbl} and \code{ts_tbl}
