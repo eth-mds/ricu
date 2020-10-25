@@ -141,7 +141,7 @@
 #' @param x Object specifying the data to be loaded
 #' @param ... Passed to downstream methods
 #' @param cache Logical flag indicating whether to cache concepts that are
-#' required multiple times
+#' required multiple times (experimental)
 #'
 #' @return An `id_tbl`/`ts_tbl` or a list thereof, depending on loaded
 #' concepts and the value passed as `merge_data`.
@@ -162,9 +162,10 @@
 #'
 #' @rdname load_concepts
 #' @export
-load_concepts <- function(x, ..., cache = TRUE) {
+load_concepts <- function(x, ..., cache = FALSE) {
 
   if (isTRUE(cache)) {
+    warn_ricu("current concept memoization is experimental.")
     on.exit(rm_all(concept_lookup_env))
   }
 
@@ -254,7 +255,7 @@ mark_duplicate_concepts <- function(x) {
 #' @export
 load_concepts.concept <- function(x, src = NULL, aggregate = NULL,
                                   merge_data = TRUE, verbose = TRUE, ...,
-                                  cache = TRUE) {
+                                  cache = FALSE) {
 
   get_src <- function(x) x[names(x) == src]
 
@@ -526,7 +527,7 @@ load_concepts.lgl_cncpt <- function(x, aggregate = NULL, ...,
 #' @export
 load_concepts.rec_cncpt <- function(x, aggregate = NULL, patient_ids = NULL,
                                     id_type = "icustay", interval = hours(1L),
-                                    ..., progress = NULL, cache = TRUE) {
+                                    ..., progress = NULL, cache = FALSE) {
 
   ext <- list(patient_ids = patient_ids, id_type = id_type,
               interval = coalesce(x[["interval"]], interval),
