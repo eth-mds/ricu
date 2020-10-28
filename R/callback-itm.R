@@ -58,10 +58,10 @@ eicu_body_weight <- function(x, val_var, weight_var, env, ...) {
   rm_cols(x, "admissionweight")
 }
 
-combine_date_time <- function(x, date_var, date_shift = hours(12L), ...) {
+combine_date_time <- function(x, time_var, date_shift = hours(12L), ...) {
   idx <- index_var(x)
-  x[, c(idx) := fifelse(is.na(get(idx)),
-                        get(date_var) + date_shift, get(idx))]
+  x[, c(idx) := fifelse(is.na(get(time_var)),
+                        get(idx) + date_shift, get(time_var))]
 }
 
 shift_all_date <- function(x, shift = hours(12L), ...) {

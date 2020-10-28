@@ -325,25 +325,28 @@ load_one_concept_helper <- function(x, aggregate, ..., progress) {
 
   name <- x[["name"]]
 
+  progress_tick(name, progress, 0L)
+
   if (isTRUE(attr(x, "dup_cncpt"))) {
 
     args <- as.list(match.call())[-1]
     args[c("x", "patient_ids", "progress")] <- NULL
     args <- lapply(args, eval, parent.frame())
+    args[["interval"]] <- coalesce(args[["interval"]], hours(1L))
+    args[["id_type"]] <- coalesce(args[["id_type"]], "icustay")
     cach <- paste(name, as.character(openssl::md5(serialize(args, NULL))),
                   sep = "_")
 
     res <- get0(cach, envir = concept_lookup_env, inherits = FALSE)
 
     if (not_null(res)) {
+      msg_progress("using cached data")
       return(copy(res))
     }
   }
 
   targ <- get_target(x)
   type <- is_type(targ)
-
-  progress_tick(name, progress, 0L)
 
   if (has_length(as_item(x))) {
 
