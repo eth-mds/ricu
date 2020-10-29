@@ -1957,6 +1957,16 @@ cfg <- list(
     category = "outcome",
     callback = "mews_score",
     class = "rec_cncpt"
+  ),
+  hba1c = list(
+    unit = "%",
+    description = "Hemoglobin A1C",
+    category = "hematology",
+    source = list(
+      mimic = list(
+        list(ids = 50852L, table = "labevents", sub_var = "itemid")
+      )
+    )
   )
 )
 

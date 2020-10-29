@@ -178,7 +178,7 @@ delta_min <- function(x, shifts = seq.int(0L, 23L)) {
 #'   `samp_win` hours
 #'
 #'    ```
-#'           samp_win
+#'           abx_win
 #'       |---------------|
 #'      ABX           sampling (last possible)
 #'    ```
@@ -187,7 +187,7 @@ delta_min <- function(x, shifts = seq.int(0L, 23L)) {
 #'   `abx_win` hours
 #'
 #'    ```
-#'                          abx_win
+#'                         samp_win
 #'       |---------------------------------------------|
 #'    sampling                                        ABX (last possible)
 #'    ```
@@ -278,42 +278,19 @@ si_samp <- function(x) {
 
 si_and <- function(abx, samp, abx_win, samp_win) {
 
-  span_win <- function(x, col, win) {
-    ind_vr <- index_var(x)
-    x <- x[, c("win_end", "time_copy") := list(get(ind_vr) + win, get(ind_vr))]
-    x[is_true(get(col)), ]
-  }
-
-  min_fun <- function(x) if (length(x) == 0L) x else min(x)
-
-  join_clause <- function(x, y) {
-    c(paste(id_vars(x), "==", id_vars(y)),
-      paste(c("win_end >=", "time_copy <="), index_var(y)))
-  }
-
-  mk_expr <- function(x) {
-    idx <- index_var(x)
-    res <- substitute(list(min_fun(get(var))), list(var = idx))
-    names(res) <- c("", idx)
-    res
-  }
-
-  do_join <- function(x, y) {
-    expr <- mk_expr(x)
-    res <- x[y, eval(expr), on = join_clause(x, y), by = .EACHI,
-             nomatch = NULL]
-    rm_cols(res, data_vars(res), by_ref = TRUE)
-  }
-
   assert_that(has_rows(abx), has_rows(samp), msg = "
     calling `susp_inf()` with `si_mode = and` requires data from both `abx`
     and `samp` concepts"
   )
 
-  abx  <- span_win(abx,  "abx",  abx_win)
-  samp <- span_win(samp, "samp", samp_win)
+  do_roll <- function(x, y, win) {
+    met_y <- meta_vars(y)
+    y[x, met_y, with = FALSE, roll = -win, nomatch = NULL,
+      on = paste(met_y, meta_vars(x), sep = " == ")]
+  }
 
-  res <- unique(rbind(do_join(abx, samp), do_join(samp, abx)))
+  res <- unique(rbind(do_roll(abx, samp, hours(24L)),
+                      do_roll(samp, abx, hours(72L))))
   res <- res[, c("susp_inf") := TRUE]
 
   res

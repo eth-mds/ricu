@@ -1828,6 +1828,20 @@
       ]
     }
   },
+  "hba1c": {
+    "unit": "%",
+    "description": "Hemoglobin A1C",
+    "category": "hematology",
+    "source": {
+      "mimic": [
+        {
+          "ids": 50852,
+          "table": "labevents",
+          "sub_var": "itemid"
+        }
+      ]
+    }
+  },
   "hbco": {
     "description": "carboxyhemoglobin",
     "category": "blood gas",
