@@ -16,31 +16,8 @@ knitr::opts_chunk$set(
 library(ricu)
 library(ggplot2)
 
-on_cran <- function() !identical(Sys.getenv("NOT_CRAN"), "true")
+load_concepts <- cached_concept_loader("uom")
 
-create_filename <- function(base_dir, src) {
-  paste0(file.path(base_dir, "extdata", "vignettes", "uom", src), ".rds")
-}
-
-load_concepts <- function(concepts, src, ...) {
-
-  cached_file <- create_filename(system.file(package = "ricu"), src)
-
-  if (file.exists(cached_file) && on_cran()) {
-    return(readRDS(cached_file))
-  }
-
-  res <- ricu::load_concepts(concepts, src, ...)
-  dst <- create_filename(file.path("..", "inst"), src)
-
-  if (!dir.exists(dirname(dst))) {
-    dir.create(dirname(dst), recursive = TRUE)
-  }
-
-  saveRDS(res, dst, version = 2L)
-
-  res
-}
 ```
 
 ### Possible mismatch in units
