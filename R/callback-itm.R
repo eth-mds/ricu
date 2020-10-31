@@ -1,8 +1,4 @@
 
-set_true <- function(x) rep(TRUE, length(x))
-
-set_na <- function(x) rep(NA, length(x))
-
 vent_flag <- function(x, val_var, ...) {
   x <- x[as.logical(get(val_var)), ]
   set(x, j = c(index_var(x), val_var),
@@ -70,7 +66,7 @@ shift_all_date <- function(x, shift = hours(12L), ...) {
 }
 
 mimic_abx_shift_flag <- function(x, val_var, ...) {
-  transform_fun(set_true)(shift_all_date(x, hours(12L)), val_var)
+  transform_fun(set_val(TRUE))(shift_all_date(x, hours(12L)), val_var)
 }
 
 mimic_sampling <- function(x, val_var, aux_time, ...) {
@@ -183,6 +179,12 @@ binary_op <- function(op, y) function(x) op(x, y)
 #' @rdname callback_itm
 #' @export
 comp_na <- function(op, y) function(x) !is.na(x) & op(x, y)
+
+#' @param val Value to replace every element of x with
+#'
+#' @rdname callback_itm
+#' @export
+set_val <- function(val) function(x) rep(val, length(x))
 
 distribute_amount <- function(x, val_var, unit_var, end_var, ...) {
 
@@ -402,8 +404,8 @@ eicu_vaso_rate <- function(ml_to_mcg) {
   function(x, sub_var, val_var, weight_var, env, ...) {
 
     fix_units <- convert_unit(
-      c(binary_op(`/`, 60), binary_op(`*`, 1000), set_na,
-        binary_op(`*`, ml_to_mcg), binary_op(`/`, 1000), set_na, set_na),
+      c(binary_op(`/`, 60), binary_op(`*`, 1000), set_val(NA),
+        binary_op(`*`, ml_to_mcg), binary_op(`/`, 1000), set_val(NA), set_val(NA)),
       c(sub_trans("/hr$", "/min"), sub_trans("^mg/", "mcg/"),
         "mcg/kg/min", sub_trans("^ml/", "mcg/"),
         sub_trans("^nanograms/", "mcg/"), "mcg/kg/min", "mcg/kg/min"),

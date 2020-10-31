@@ -144,7 +144,7 @@ cfg <- list(
              sub_var = "respchartvaluelabel",
              callback = "transform_fun(percent_as_numeric)"),
         list(ids = "FiO2", table = "lab", sub_var = "labname",
-             callback = "convert_unit(set_na, '%', 'mm(hg)')")
+             callback = "convert_unit(set_val(NA), '%', 'mm\\(hg\\)')")
       ),
       hirid = list(
         list(ids = 2010L, table = "observations", sub_var = "variableid",
@@ -164,7 +164,7 @@ cfg <- list(
       ),
       eicu = list(
         list(ids = "Total CO2", table = "lab", sub_var = "labname",
-             callback = "convert_unit(set_na, 'mEq/L', 'lpm')")
+             callback = "convert_unit(set_val(NA), 'mEq/L', 'lpm')")
       )
   )
   ),
@@ -1328,7 +1328,7 @@ cfg <- list(
            224703L, 224704L, 224705L, 224706L, 224707L, 224709L, 224738L,
            224746L, 224747L, 224750L, 226873L, 227187L),
            table = "chartevents", sub_var = "itemid",
-           callback = "transform_fun(set_true)"
+           callback = "transform_fun(set_val(TRUE))"
         )
       ),
       eicu = list(
@@ -1338,7 +1338,7 @@ cfg <- list(
              callback = "vent_flag", class = "col_itm"),
         list(ids = c("Start", "Continued", "respFlowPtVentData"),
              table = "respiratorycharting", sub_var = "respcharttypecat",
-             callback = "transform_fun(set_true)")
+             callback = "transform_fun(set_val(TRUE))")
       ),
       hirid = list(
         list(ids = 15001552L, table = "observations", sub_var = "variableid",
@@ -1353,9 +1353,9 @@ cfg <- list(
     sources = list(
       mimic = list(
         list(ids = c(225468L, 225477L, 227194L), table = "procedureevents_mv",
-             sub_var = "itemid", callback = "transform_fun(set_true)"),
+             sub_var = "itemid", callback = "transform_fun(set_val(TRUE))"),
         list(ids = c(467L, 469L, 226732L), table = "chartevents",
-             sub_var = "itemid", callback = "transform_fun(set_true)")
+             sub_var = "itemid", callback = "transform_fun(set_val(TRUE))")
       ),
       eicu = list(
         list(table = "respiratorycare", val_var = "ventendoffset",
@@ -1364,7 +1364,7 @@ cfg <- list(
              callback = "vent_flag", class = "col_itm"),
         list(ids = c("off", "Off", "Suspended"), table = "respiratorycharting",
              sub_var = "respchartvalue", val_var = "respchartvaluelabel",
-             callback = "transform_fun(set_true)")
+             callback = "transform_fun(set_val(TRUE))")
       ),
       hirid = list(
         list(ids = 15001552L, table = "observations", sub_var = "variableid",
@@ -1379,7 +1379,7 @@ cfg <- list(
     sources = list(
       mimic = list(
         list(ids = c("1.0 ET/Trach", "No Response-ETT"), table = "chartevents",
-             sub_var = "value", callback = "transform_fun(set_true)")
+             sub_var = "value", callback = "transform_fun(set_val(TRUE))")
       ),
       hirid = list(
         list(ids = 15001552L, table = "observations", sub_var = "variableid",
@@ -1432,7 +1432,7 @@ cfg <- list(
           225888L, 225889L, 225890L, 225892L, 225893L, 225895L, 225896L,
           225897L, 225898L, 225899L, 225900L, 225902L, 225903L, 225905L,
           227691L, 228003L), table = "inputevents_mv", sub_var = "itemid",
-          callback = "transform_fun(set_true)"
+          callback = "transform_fun(set_val(TRUE))"
         )
       ),
       eicu = list(
@@ -1441,7 +1441,7 @@ cfg <- list(
           "(((amika", "cleo", "ofloxa)", "(azithro", "clinda", "tobra",
           "vanco)my)c", "(ampi", "oxa", "peni", "pipera)cill", "cefazol",
           "levaqu", "rifamp)in", sep = "|"), table = "infusiondrug",
-          sub_var = "drugname", callback = "transform_fun(set_true)",
+          sub_var = "drugname", callback = "transform_fun(set_val(TRUE))",
           class = "rgx_itm"
         ),
         list(regex = paste(
@@ -1449,7 +1449,7 @@ cfg <- list(
           "zosyn", "cef(azolin", "epime)", "(((azithro", "clinda", "vanco)my",
           "ofloxa", "vanco)c", "levaqu", "piperacill", "roceph)in", sep = "|"),
           table = "medication", sub_var = "drugname",
-          callback = "transform_fun(set_true)", class = "rgx_itm"
+          callback = "transform_fun(set_val(TRUE))", class = "rgx_itm"
         )
       ),
       hirid = list(
@@ -1466,7 +1466,7 @@ cfg <- list(
           1000894L, 1001005L, 1001068L, 1001075L, 1001079L, 1001084L, 1001086L,
           1001095L, 1001096L, 1001097L, 1001098L, 1001168L, 1001169L, 1001170L,
           1001171L, 1001173L, 1001193L, 1001198L), table = "pharma",
-          sub_var = "pharmaid", callback = "transform_fun(set_true)")
+          sub_var = "pharmaid", callback = "transform_fun(set_val(TRUE))")
       )
     )
   ),

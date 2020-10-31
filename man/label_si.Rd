@@ -47,12 +47,12 @@ and body-fluid sampling.
 Suspected infection can occur in one of the two following ways:
 \itemize{
 \item administration of antibiotics followed by a culture sampling within
-\code{samp_win} hours\preformatted{       samp_win
+\code{samp_win} hours\preformatted{       abx_win
    |---------------|
   ABX           sampling (last possible)
 }
 \item culture sampling followed by an antibiotic administration within
-\code{abx_win} hours\preformatted{                      abx_win
+\code{abx_win} hours\preformatted{                     samp_win
    |---------------------------------------------|
 sampling                                        ABX (last possible)
 }

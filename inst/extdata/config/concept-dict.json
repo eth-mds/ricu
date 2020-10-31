@@ -9,14 +9,14 @@
           "regex": "bactrim|cipro|flagyl|metronidazole|zithromax|zosyn|(((amika|cleo|ofloxa)|(azithro|clinda|tobra|vanco)my)c|(ampi|oxa|peni|pipera)cill|cefazol|levaqu|rifamp)in",
           "table": "infusiondrug",
           "sub_var": "drugname",
-          "callback": "transform_fun(set_true)",
+          "callback": "transform_fun(set_val(TRUE))",
           "class": "rgx_itm"
         },
         {
           "regex": "cipro|flagyl|maxipime|metronidazole|tazobactam|zosyn|cef(azolin|epime)|(((azithro|clinda|vanco)my|ofloxa|vanco)c|levaqu|piperacill|roceph)in",
           "table": "medication",
           "sub_var": "drugname",
-          "callback": "transform_fun(set_true)",
+          "callback": "transform_fun(set_val(TRUE))",
           "class": "rgx_itm"
         }
       ],
@@ -25,14 +25,14 @@
           "regex": "bactrim|cipro|flagyl|metronidazole|zithromax|zosyn|(((amika|cleo|ofloxa)|(azithro|clinda|tobra|vanco)my)c|(ampi|oxa|peni|pipera)cill|cefazol|levaqu|rifamp)in",
           "table": "infusiondrug",
           "sub_var": "drugname",
-          "callback": "transform_fun(set_true)",
+          "callback": "transform_fun(set_val(TRUE))",
           "class": "rgx_itm"
         },
         {
           "regex": "cipro|flagyl|maxipime|metronidazole|tazobactam|zosyn|cef(azolin|epime)|(((azithro|clinda|vanco)my|ofloxa|vanco)c|levaqu|piperacill|roceph)in",
           "table": "medication",
           "sub_var": "drugname",
-          "callback": "transform_fun(set_true)",
+          "callback": "transform_fun(set_val(TRUE))",
           "class": "rgx_itm"
         }
       ],
@@ -41,7 +41,7 @@
           "ids": [163, 176, 181, 186, 189, 300, 326, 331, 351, 405, 1000234, 1000272, 1000273, 1000274, 1000284, 1000299, 1000300, 1000302, 1000304, 1000305, 1000306, 1000315, 1000317, 1000318, 1000320, 1000321, 1000322, 1000335, 1000348, 1000352, 1000363, 1000365, 1000390, 1000407, 1000408, 1000424, 1000425, 1000426, 1000437, 1000483, 1000507, 1000508, 1000518, 1000519, 1000549, 1000601, 1000648, 1000666, 1000670, 1000671, 1000760, 1000781, 1000791, 1000797, 1000812, 1000825, 1000829, 1000830, 1000837, 1000838, 1000854, 1000855, 1000893, 1000894, 1001005, 1001068, 1001075, 1001079, 1001084, 1001086, 1001095, 1001096, 1001097, 1001098, 1001168, 1001169, 1001170, 1001171, 1001173, 1001193, 1001198],
           "table": "pharma",
           "sub_var": "pharmaid",
-          "callback": "transform_fun(set_true)"
+          "callback": "transform_fun(set_val(TRUE))"
         }
       ],
       "mimic": [
@@ -56,7 +56,7 @@
           "ids": [225798, 225837, 225838, 225840, 225842, 225843, 225844, 225845, 225847, 225848, 225850, 225851, 225853, 225855, 225857, 225859, 225860, 225862, 225863, 225865, 225866, 225868, 225869, 225871, 225873, 225875, 225876, 225877, 225879, 225881, 225882, 225883, 225884, 225885, 225886, 225888, 225889, 225890, 225892, 225893, 225895, 225896, 225897, 225898, 225899, 225900, 225902, 225903, 225905, 227691, 228003],
           "table": "inputevents_mv",
           "sub_var": "itemid",
-          "callback": "transform_fun(set_true)"
+          "callback": "transform_fun(set_val(TRUE))"
         }
       ],
       "mimic_demo": [
@@ -71,7 +71,7 @@
           "ids": [225798, 225837, 225838, 225840, 225842, 225843, 225844, 225845, 225847, 225848, 225850, 225851, 225853, 225855, 225857, 225859, 225860, 225862, 225863, 225865, 225866, 225868, 225869, 225871, 225873, 225875, 225876, 225877, 225879, 225881, 225882, 225883, 225884, 225885, 225886, 225888, 225889, 225890, 225892, 225893, 225895, 225896, 225897, 225898, 225899, 225900, 225902, 225903, 225905, 227691, 228003],
           "table": "inputevents_mv",
           "sub_var": "itemid",
-          "callback": "transform_fun(set_true)"
+          "callback": "transform_fun(set_val(TRUE))"
         }
       ]
     }
@@ -1723,7 +1723,7 @@
           "ids": "FiO2",
           "table": "lab",
           "sub_var": "labname",
-          "callback": "convert_unit(set_na, '%', 'mm(hg)')"
+          "callback": "convert_unit(set_val(NA), '%', 'mm\\(hg\\)')"
         }
       ],
       "eicu_demo": [
@@ -1737,7 +1737,7 @@
           "ids": "FiO2",
           "table": "lab",
           "sub_var": "labname",
-          "callback": "convert_unit(set_na, '%', 'mm(hg)')"
+          "callback": "convert_unit(set_val(NA), '%', 'mm\\(hg\\)')"
         }
       ],
       "hirid": [
@@ -3721,7 +3721,7 @@
           "ids": "Total CO2",
           "table": "lab",
           "sub_var": "labname",
-          "callback": "convert_unit(set_na, 'mEq/L', 'lpm')"
+          "callback": "convert_unit(set_val(NA), 'mEq/L', 'lpm')"
         }
       ],
       "eicu_demo": [
@@ -3729,7 +3729,7 @@
           "ids": "Total CO2",
           "table": "lab",
           "sub_var": "labname",
-          "callback": "convert_unit(set_na, 'mEq/L', 'lpm')"
+          "callback": "convert_unit(set_val(NA), 'mEq/L', 'lpm')"
         }
       ],
       "mimic": [
@@ -3905,7 +3905,7 @@
           "ids": ["1.0 ET/Trach", "No Response-ETT"],
           "table": "chartevents",
           "sub_var": "value",
-          "callback": "transform_fun(set_true)"
+          "callback": "transform_fun(set_val(TRUE))"
         }
       ],
       "mimic_demo": [
@@ -3913,7 +3913,7 @@
           "ids": ["1.0 ET/Trach", "No Response-ETT"],
           "table": "chartevents",
           "sub_var": "value",
-          "callback": "transform_fun(set_true)"
+          "callback": "transform_fun(set_val(TRUE))"
         }
       ]
     }
@@ -4058,7 +4058,7 @@
           "table": "respiratorycharting",
           "sub_var": "respchartvalue",
           "val_var": "respchartvaluelabel",
-          "callback": "transform_fun(set_true)"
+          "callback": "transform_fun(set_val(TRUE))"
         }
       ],
       "eicu_demo": [
@@ -4079,7 +4079,7 @@
           "table": "respiratorycharting",
           "sub_var": "respchartvalue",
           "val_var": "respchartvaluelabel",
-          "callback": "transform_fun(set_true)"
+          "callback": "transform_fun(set_val(TRUE))"
         }
       ],
       "hirid": [
@@ -4096,13 +4096,13 @@
           "ids": [225468, 225477, 227194],
           "table": "procedureevents_mv",
           "sub_var": "itemid",
-          "callback": "transform_fun(set_true)"
+          "callback": "transform_fun(set_val(TRUE))"
         },
         {
           "ids": [467, 469, 226732],
           "table": "chartevents",
           "sub_var": "itemid",
-          "callback": "transform_fun(set_true)"
+          "callback": "transform_fun(set_val(TRUE))"
         }
       ],
       "mimic_demo": [
@@ -4110,13 +4110,13 @@
           "ids": [225468, 225477, 227194],
           "table": "procedureevents_mv",
           "sub_var": "itemid",
-          "callback": "transform_fun(set_true)"
+          "callback": "transform_fun(set_val(TRUE))"
         },
         {
           "ids": [467, 469, 226732],
           "table": "chartevents",
           "sub_var": "itemid",
-          "callback": "transform_fun(set_true)"
+          "callback": "transform_fun(set_val(TRUE))"
         }
       ]
     }
@@ -4150,7 +4150,7 @@
           "ids": ["Start", "Continued", "respFlowPtVentData"],
           "table": "respiratorycharting",
           "sub_var": "respcharttypecat",
-          "callback": "transform_fun(set_true)"
+          "callback": "transform_fun(set_val(TRUE))"
         }
       ],
       "eicu_demo": [
@@ -4170,7 +4170,7 @@
           "ids": ["Start", "Continued", "respFlowPtVentData"],
           "table": "respiratorycharting",
           "sub_var": "respcharttypecat",
-          "callback": "transform_fun(set_true)"
+          "callback": "transform_fun(set_val(TRUE))"
         }
       ],
       "hirid": [
@@ -4187,7 +4187,7 @@
           "ids": [1, 60, 218, 221, 223, 436, 437, 444, 445, 448, 449, 450, 459, 501, 502, 503, 505, 506, 535, 543, 639, 654, 667, 668, 669, 670, 671, 672, 681, 682, 683, 684, 686, 1211, 1340, 1486, 1600, 1655, 2000, 3459, 5865, 5866, 220339, 223848, 223849, 224419, 224684, 224685, 224686, 224687, 224695, 224696, 224697, 224700, 224701, 224702, 224703, 224704, 224705, 224706, 224707, 224709, 224738, 224746, 224747, 224750, 226873, 227187],
           "table": "chartevents",
           "sub_var": "itemid",
-          "callback": "transform_fun(set_true)"
+          "callback": "transform_fun(set_val(TRUE))"
         }
       ],
       "mimic_demo": [
@@ -4195,7 +4195,7 @@
           "ids": [1, 60, 218, 221, 223, 436, 437, 444, 445, 448, 449, 450, 459, 501, 502, 503, 505, 506, 535, 543, 639, 654, 667, 668, 669, 670, 671, 672, 681, 682, 683, 684, 686, 1211, 1340, 1486, 1600, 1655, 2000, 3459, 5865, 5866, 220339, 223848, 223849, 224419, 224684, 224685, 224686, 224687, 224695, 224696, 224697, 224700, 224701, 224702, 224703, 224704, 224705, 224706, 224707, 224709, 224738, 224746, 224747, 224750, 226873, 227187],
           "table": "chartevents",
           "sub_var": "itemid",
-          "callback": "transform_fun(set_true)"
+          "callback": "transform_fun(set_val(TRUE))"
         }
       ]
     }

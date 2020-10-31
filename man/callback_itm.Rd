@@ -4,6 +4,7 @@
 \alias{transform_fun}
 \alias{binary_op}
 \alias{comp_na}
+\alias{set_val}
 \alias{apply_map}
 \alias{convert_unit}
 \title{Item callback utilities}
@@ -13,6 +14,8 @@ transform_fun(fun, ...)
 binary_op(op, y)
 
 comp_na(op, y)
+
+set_val(val)
 
 apply_map(map)
 
@@ -26,6 +29,8 @@ convert_unit(fun, new, rgx = NULL, ignore_case = TRUE, ...)
 \item{op}{Function taking two arguments, such as \code{+}}
 
 \item{y}{Value passed as second argument to function \code{op}}
+
+\item{val}{Value to replace every element of x with}
 
 \item{map}{Named atomic vector used for mapping a set of values (the names
 of \code{map}) to a different set (the values of \code{map})}
