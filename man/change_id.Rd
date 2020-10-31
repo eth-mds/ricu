@@ -11,7 +11,7 @@
 \alias{downgrade_id.id_tbl}
 \title{Switch between id types}
 \usage{
-change_id(x, target_id, src, ..., keep_old_id = TRUE)
+change_id(x, target_id, src, ..., keep_old_id = TRUE, id_type = FALSE)
 
 upgrade_id(x, target_id, src, cols = time_vars(x), ...)
 
@@ -36,6 +36,9 @@ downgrade_id(x, target_id, src, cols = time_vars(x), ...)
 
 \item{keep_old_id}{Logical flag indicating whether to keep the previous ID
 column}
+
+\item{id_type}{Logical flag indicating whether \code{target_id} is specified as
+ID name (e.g. \code{icustay_id} on MIMIC) or ID type (e.g. \code{icustay})}
 
 \item{cols}{Column names that require time-adjustment}
 }

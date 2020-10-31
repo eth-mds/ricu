@@ -140,6 +140,8 @@ id_name_to_type <- function(x, name) {
   names(id_cfg)[id_opts == name]
 }
 
+id_type_to_name <- function(x, name) id_var_opts(as_id_cfg(x)[name])
+
 val_var <- function(x) as_col_cfg(x)[["val_var"]]
 
 unit_var <- function(x) as_col_cfg(x)[["unit_var"]]

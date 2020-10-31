@@ -65,10 +65,6 @@ shift_all_date <- function(x, shift = hours(12L), ...) {
   x[, c(idx) := get(idx) + shift]
 }
 
-mimic_abx_shift_flag <- function(x, val_var, ...) {
-  transform_fun(set_val(TRUE))(shift_all_date(x, hours(12L)), val_var)
-}
-
 mimic_sampling <- function(x, val_var, aux_time, ...) {
   x <- combine_date_time(x, aux_time, hours(12L))
   set(x, j = val_var, value = !is.na(x[[val_var]]))
@@ -566,6 +562,29 @@ los_callback <- function(x, id_type, interval) {
       res <- unique(res)
     }
   }
+
+  res
+}
+
+mimic_abx_presc <- function(x, id_type, interval) {
+
+  itm_cb <- function(x, val_var, ...) {
+
+    idx <- index_var(x)
+
+    x <- x[, c(idx, val_var) := list(get(idx) + mins(720L), TRUE)]
+    x
+  }
+
+  itm <- set_callback(x, itm_cb)
+  itm <- do.call(new_itm, c(itm, list(class = "rgx_itm")))
+  res <- do_itm_load(itm, "hadm", mins(1L))
+
+  res <- change_id(res, id_type, src_name(x), keep_old_id = FALSE,
+                   id_type = TRUE)
+
+  res <- do_callback(itm, res)
+  res <- change_interval(res, interval, by_ref = TRUE)
 
   res
 }

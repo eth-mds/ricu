@@ -1421,7 +1421,7 @@ cfg <- list(
           "uroxime)", "(doxy", "mino", "tetra)cycline", "(levofl", "moxifl",
           "ofl)oxacin", "macro(bid", "dantin)", "(una", "zo)syn", sep = "|"),
           table = "prescriptions", sub_var = "drug",
-          callback = "mimic_abx_shift_flag", class = "rgx_itm"
+          callback = "mimic_abx_presc", class = "fun_itm"
         ),
         list(ids = c(
           225798L, 225837L, 225838L, 225840L, 225842L, 225843L, 225844L,

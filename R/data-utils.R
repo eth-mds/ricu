@@ -429,6 +429,8 @@ stay_windows <- function(x, id_type = "icustay", win_type = id_type,
 #' @param ... Passed to `upgrade_id()`/`downgrade_id()`
 #' @param keep_old_id Logical flag indicating whether to keep the previous ID
 #' column
+#' @param id_type Logical flag indicating whether `target_id` is specified as
+#' ID name (e.g. `icustay_id` on MIMIC) or ID type (e.g. `icustay`)
 #'
 #' @examples
 #' if (require(mimic.demo)) {
@@ -443,17 +445,22 @@ stay_windows <- function(x, id_type = "icustay", win_type = id_type,
 #' @rdname change_id
 #' @export
 #'
-change_id <- function(x, target_id, src, ..., keep_old_id = TRUE) {
+change_id <- function(x, target_id, src, ..., keep_old_id = TRUE,
+                      id_type = FALSE) {
 
   assert_that(is.string(target_id), is.flag(keep_old_id))
+
+  id_cfg <- as_id_cfg(src)
+
+  if (isTRUE(id_type)) {
+    target_id <- id_type_to_name(id_cfg, target_id)
+  }
 
   orig_id <- id_var(x)
 
   if (identical(orig_id, target_id)) {
     return(x)
   }
-
-  id_cfg <- as_id_cfg(src)
 
   opt <- id_var_opts(id_cfg)
   ori <- id_cfg[orig_id   == opt]
