@@ -203,7 +203,7 @@ id_win_helper.hirid_env <- function(x) {
 
   ind_fun <- function(id, index) {
 
-    tmp <- data.table::setDT(list(id = id, index = index))
+    tmp <- setDT(list(id = id, index = index))
 
     ind <- tmp[, .I[which.max(get("index"))], by = "id"][["V1"]]
 
@@ -229,6 +229,36 @@ id_win_helper.hirid_env <- function(x) {
              .SDcols = c(sta, "datetime")]
 
   order_rename(res, ids, sta, "datetime")
+}
+
+#' @rdname data_utils
+#' @export
+id_win_helper.aumc_env <- function(x) {
+
+  cfg <- sort(as_id_cfg(x), decreasing = TRUE)
+
+  ids <- field(cfg, "id")
+  sta <- field(cfg, "start")
+  end <- field(cfg, "end")
+
+  tbl <- as_src_tbl(x, unique(field(cfg, "table")))
+  mis <- setdiff(sta, colnames(tbl))
+
+  assert_that(length(mis) >= 1L)
+
+  res <- tbl[, c(ids, intersect(sta, colnames(tbl)), end)]
+
+  if (length(mis) > 0L) {
+    res[, c(mis) := 0L]
+  }
+
+  res <- res[, c(sta, end) := lapply(.SD, ms_as_min), .SDcols = c(sta, end)]
+
+  res <- setcolorder(res, c(ids, sta, end))
+  res <- rename_cols(res, c(ids, paste0(ids, "_start"),
+                                 paste0(ids, "_end")), by_ref = TRUE)
+
+  as_id_tbl(res, ids[2L], by_ref = TRUE)
 }
 
 #' @export

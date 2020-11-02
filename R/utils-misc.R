@@ -282,3 +282,6 @@ cat_line <- function(...) {
   line <- trimws(paste0(...), "right")
   cat(paste0(line, "\n"), sep = "")
 }
+
+ms_as_min <- function(x) as.difftime(as.integer(x / 6e4), units = "mins")
+

@@ -166,7 +166,7 @@ cfg <- list(
              sub_var = "respchartvaluelabel",
              callback = "transform_fun(percent_as_numeric)"),
         list(ids = "FiO2", table = "lab", sub_var = "labname",
-             callback = "convert_unit(set_val(NA), '%', 'mm\\(hg\\)')")
+             callback = "convert_unit(set_val(NA), '%', 'mm\\\\(hg\\\\)')")
       ),
       hirid = list(
         list(ids = 2010L, table = "observations", sub_var = "variableid",
@@ -1126,7 +1126,7 @@ cfg <- list(
       ),
       aumc = list(
         list(ids = c(6807L, 9994L), table = "numericitems",
-             sub_var = "itemid", dir_var = "tag", callback = "aumc_bexcess")
+             sub_var = "itemid", dir_var = "tag", callback = "aumc_bxs")
       )
     )
   ),
@@ -1707,7 +1707,7 @@ cfg <- list(
       ),
       aumc = list(
         list(ids = 14444L, sub_var = "itemid", table = "listitems",
-             callback = "transform_fun(aumc_rass_transform)")
+             callback = "transform_fun(aumc_rass)")
       )
     )
   ),

@@ -621,9 +621,9 @@ aumc_death <- function(x, val_var, ...) {
   x
 }
 
-aumc_base_excess <- function(x, val_var, dir_var, ...) {
+aumc_bxs <- function(x, val_var, dir_var, ...) {
   x <- x[get(dir_var) == "-", c(val_var) := -1L * get(val_var)]
   x
 }
 
-aumc_rass_transform <- function(x) as.integer(substr(x, 1L, 2L))
+aumc_rass <- function(x) as.integer(substr(x, 1L, 2L))

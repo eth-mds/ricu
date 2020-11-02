@@ -514,7 +514,7 @@
           "table": "numericitems",
           "sub_var": "itemid",
           "dir_var": "tag",
-          "callback": "aumc_bexcess"
+          "callback": "aumc_bxs"
         }
       ],
       "eicu": [
@@ -2013,7 +2013,7 @@
           "ids": "FiO2",
           "table": "lab",
           "sub_var": "labname",
-          "callback": "convert_unit(set_val(NA), '%', 'mm\\(hg\\)')"
+          "callback": "convert_unit(set_val(NA), '%', 'mm\\\\(hg\\\\)')"
         }
       ],
       "eicu_demo": [
@@ -2027,7 +2027,7 @@
           "ids": "FiO2",
           "table": "lab",
           "sub_var": "labname",
-          "callback": "convert_unit(set_val(NA), '%', 'mm\\(hg\\)')"
+          "callback": "convert_unit(set_val(NA), '%', 'mm\\\\(hg\\\\)')"
         }
       ],
       "hirid": [
@@ -3862,7 +3862,7 @@
           "ids": 14444,
           "sub_var": "itemid",
           "table": "listitems",
-          "callback": "transform_fun(aumc_rass_transform)"
+          "callback": "transform_fun(aumc_rass)"
         }
       ],
       "eicu": [
