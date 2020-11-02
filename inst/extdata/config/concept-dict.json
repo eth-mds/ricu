@@ -4,6 +4,14 @@
     "description": "antibiotics",
     "category": "medication",
     "sources": {
+      "aumc": [
+        {
+          "ids": [2, 13, 19, 24, 28, 29, 57, 59, 82, 103, 240, 247, 333, 1133, 1199, 1300, 1371, 1795, 2284, 2834, 3237, 3741, 5576, 6834, 6847, 6871, 6919, 6948, 6953, 6958, 7044, 7064, 7185, 7187, 7208, 7227, 7235, 8064, 8394, 8942, 9029, 9030, 9052, 9070, 9117, 9128, 9133, 9142, 9151, 9152, 12262, 12389, 12398, 12956, 12997, 13057, 13094, 13102, 15591, 18860, 19137, 19773, 20563, 23166, 24241, 25776, 27617, 29321],
+          "table": "drugitems",
+          "sub_var": "itemid",
+          "callback": "transform_fun(set_val(TRUE))"
+        }
+      ],
       "eicu": [
         {
           "regex": "bactrim|cipro|flagyl|metronidazole|zithromax|zosyn|(((amika|cleo|ofloxa)|(azithro|clinda|tobra|vanco)my)c|(ampi|oxa|peni|pipera)cill|cefazol|levaqu|rifamp)in",
@@ -81,6 +89,13 @@
     "description": "vasopressin",
     "category": "medications",
     "sources": {
+      "aumc": [
+        {
+          "ids": 12467,
+          "sub_var": "itemid",
+          "table": "drugitems"
+        }
+      ],
       "eicu": [
         {
           "ids": ["Vasopressin (ml/hr)", "Vasopressin (units/min)", "Vasopressin ()"],
@@ -129,6 +144,14 @@
     "description": "patient admission type",
     "category": "demographics",
     "sources": {
+      "aumc": [
+        {
+          "val_var": "specialty",
+          "table": "admissions",
+          "callback": "apply_map( c(Cardiochirurgie = 'surg', Cardiologie = 'med', ders = 'other', Gynaecologie = 'other', `Heelkunde Gastro-enterologie` = 'surg', `Heelkunde Longen/Oncologie` = 'surg', `Heelkunde Oncologie` = 'surg', Hematologie = 'med', `Intensive Care Volwassenen` = 'other', Inwendig = 'med', `Keel, Neus & Oorarts` = 'surg', Longziekte = 'med', `Maag-,Darm-,Leverziekten` = 'med', Mondheelkunde = 'surg', Nefrologie = 'med', Neurochirurgie = 'surg', Neurologie = 'med', Obstetrie = 'other', `Oncologie Inwendig` = 'med', Oogheelkunde = 'surg', Orthopedie = 'surg', `Plastische chirurgie` = 'surg', Reumatologie = 'med', Traumatologie = 'surg', Urologie = 'surg', Vaatchirurgie = 'surg', Verloskunde = 'other'))",
+          "class": "col_itm"
+        }
+      ],
       "eicu": [
         {
           "table": "admissiondx",
@@ -171,6 +194,14 @@
     "description": "patient age",
     "category": "demographics",
     "sources": {
+      "aumc": [
+        {
+          "val_var": "agegroup",
+          "table": "admissions",
+          "callback": "apply_map(c(`18-39` = 30, `40-49` = 45, `50-59` = 55, `60-69` = 65, `70-79` = 75, `80+` = 90))",
+          "class": "col_itm"
+        }
+      ],
       "eicu": [
         {
           "table": "patient",
@@ -219,6 +250,14 @@
     "description": "albumin",
     "category": "chemistry",
     "sources": {
+      "aumc": [
+        {
+          "ids": [6801, 9937],
+          "table": "numericitems",
+          "sub_var": "itemid",
+          "callback": "convert_unit(binary_op(`*`, 0.1), 'g/dL')"
+        }
+      ],
       "eicu": [
         {
           "ids": "albumin",
@@ -264,6 +303,13 @@
     "description": "alkaline phosphatase",
     "category": "chemistry",
     "sources": {
+      "aumc": [
+        {
+          "ids": [6803, 11984],
+          "table": "numericitems",
+          "sub_var": "itemid"
+        }
+      ],
       "eicu": [
         {
           "ids": "alkaline phos.",
@@ -308,6 +354,13 @@
     "description": "alanine aminotransferase",
     "category": "chemistry",
     "sources": {
+      "aumc": [
+        {
+          "ids": [6800, 11978],
+          "table": "numericitems",
+          "sub_var": "itemid"
+        }
+      ],
       "eicu": [
         {
           "ids": "ALT (SGPT)",
@@ -352,6 +405,13 @@
     "description": "aspartate aminotransferase",
     "category": "chemistry",
     "sources": {
+      "aumc": [
+        {
+          "ids": [6806, 11990],
+          "table": "numericitems",
+          "sub_var": "itemid"
+        }
+      ],
       "eicu": [
         {
           "ids": "AST (SGOT)",
@@ -404,6 +464,13 @@
     "description": "basophils",
     "category": "hematology",
     "sources": {
+      "aumc": [
+        {
+          "ids": 14256,
+          "table": "numericitems",
+          "sub_var": "itemid"
+        }
+      ],
       "eicu": [
         {
           "ids": "-basos",
@@ -441,6 +508,15 @@
     "description": "base excess",
     "category": "blood gas",
     "sources": {
+      "aumc": [
+        {
+          "ids": [6807, 9994],
+          "table": "numericitems",
+          "sub_var": "itemid",
+          "dir_var": "tag",
+          "callback": "aumc_bexcess"
+        }
+      ],
       "eicu": [
         {
           "ids": "Base Excess",
@@ -486,6 +562,13 @@
     "description": "bicarbonate",
     "category": "chemistry",
     "sources": {
+      "aumc": [
+        {
+          "ids": [6810, 9992],
+          "table": "numericitems",
+          "sub_var": "itemid"
+        }
+      ],
       "eicu": [
         {
           "ids": "bicarbonate",
@@ -531,6 +614,14 @@
     "description": "total bilirubin",
     "category": "chemistry",
     "sources": {
+      "aumc": [
+        {
+          "ids": [6813, 9945],
+          "table": "numericitems",
+          "sub_var": "itemid",
+          "callback": "convert_unit(binary_op(`*`, 0.058467), 'mg/dL')"
+        }
+      ],
       "eicu": [
         {
           "ids": "total bilirubin",
@@ -577,6 +668,13 @@
     "description": "bilirubin direct",
     "category": "chemistry",
     "sources": {
+      "aumc": [
+        {
+          "ids": 6812,
+          "table": "numericitems",
+          "sub_var": "itemid"
+        }
+      ],
       "eicu": [
         {
           "ids": "direct bilirubin",
@@ -621,6 +719,13 @@
     "description": "band form neutrophils",
     "category": "hematology",
     "sources": {
+      "aumc": [
+        {
+          "ids": [6796, 11586],
+          "table": "numericitems",
+          "sub_var": "itemid"
+        }
+      ],
       "eicu": [
         {
           "ids": "-bands",
@@ -666,6 +771,14 @@
     "description": "blood urea nitrogen",
     "category": "chemistry",
     "sources": {
+      "aumc": [
+        {
+          "ids": [6850, 9943],
+          "table": "numericitems",
+          "sub_var": "itemid",
+          "callback": "convert_unit(binary_op(`*`, 2.8), 'mg/dL')"
+        }
+      ],
       "eicu": [
         {
           "ids": "BUN",
@@ -712,6 +825,14 @@
     "description": "calcium",
     "category": "chemistry",
     "sources": {
+      "aumc": [
+        {
+          "ids": [6817, 9933],
+          "table": "numericitems",
+          "sub_var": "itemid",
+          "callback": "convert_unit(binary_op(`*`, 4.008), 'mg/dL')"
+        }
+      ],
       "eicu": [
         {
           "ids": "calcium",
@@ -760,6 +881,13 @@
     "description": "calcium ionized",
     "category": "blood gas",
     "sources": {
+      "aumc": [
+        {
+          "ids": [6815, 8915, 9560, 9561, 10267],
+          "table": "numericitems",
+          "sub_var": "itemid"
+        }
+      ],
       "eicu": [
         {
           "ids": "ionized calcium",
@@ -804,6 +932,13 @@
     "description": "creatine kinase",
     "category": "chemistry",
     "sources": {
+      "aumc": [
+        {
+          "ids": [6822, 11998],
+          "table": "numericitems",
+          "sub_var": "itemid"
+        }
+      ],
       "eicu": [
         {
           "ids": "CPK",
@@ -848,6 +983,13 @@
     "description": "creatine kinase MB",
     "category": "chemistry",
     "sources": {
+      "aumc": [
+        {
+          "ids": 6824,
+          "table": "numericitems",
+          "sub_var": "itemid"
+        }
+      ],
       "eicu": [
         {
           "ids": "CPK-MB",
@@ -893,6 +1035,13 @@
     "description": "chloride",
     "category": "chemistry",
     "sources": {
+      "aumc": [
+        {
+          "ids": 9930,
+          "table": "numericitems",
+          "sub_var": "itemid"
+        }
+      ],
       "eicu": [
         {
           "ids": "chloride",
@@ -938,6 +1087,14 @@
     "description": "creatinine",
     "category": "chemistry",
     "sources": {
+      "aumc": [
+        {
+          "ids": [6836, 9941, 14216],
+          "table": "numericitems",
+          "sub_var": "itemid",
+          "callback": "convert_unit(binary_op(`*`, 0.011309), 'mg/dL')"
+        }
+      ],
       "eicu": [
         {
           "ids": "creatinine",
@@ -983,6 +1140,13 @@
     "description": "C-reactive protein",
     "category": "chemistry",
     "sources": {
+      "aumc": [
+        {
+          "ids": [6825, 10079],
+          "table": "numericitems",
+          "sub_var": "itemid"
+        }
+      ],
       "eicu": [
         {
           "ids": "CRP",
@@ -1032,6 +1196,13 @@
     "description": "diastolic blood pressure",
     "category": "routine vital signs",
     "sources": {
+      "aumc": [
+        {
+          "ids": 6643,
+          "table": "numericitems",
+          "sub_var": "itemid"
+        }
+      ],
       "eicu": [
         {
           "table": "vitalperiodic",
@@ -1075,6 +1246,15 @@
     "description": "in hospital mortality",
     "category": "outcome",
     "sources": {
+      "aumc": [
+        {
+          "table": "admissions",
+          "index_var": "dateofdeath",
+          "val_var": "dischargedat",
+          "callback": "aumc_death",
+          "class": "col_itm"
+        }
+      ],
       "eicu": [
         {
           "table": "patient",
@@ -1127,6 +1307,16 @@
     "category": "medications",
     "aggregate": "max",
     "sources": {
+      "aumc": [
+        {
+          "ids": 7178,
+          "table": "drugitems",
+          "sub_var": "itemid",
+          "stop_var": "stop",
+          "grp_var": "orderid",
+          "callback": "aumc_dur"
+        }
+      ],
       "eicu": [
         {
           "regex": "^dobu",
@@ -1197,6 +1387,16 @@
     "description": "dobutamine rate",
     "category": "medications",
     "sources": {
+      "aumc": [
+        {
+          "ids": 7178,
+          "table": "drugitems",
+          "sub_var": "itemid",
+          "rel_weight": "doserateperkg",
+          "rate_uom": "doserateunit",
+          "callback": "aumc_rate"
+        }
+      ],
       "eicu": [
         {
           "regex": "^dobu.*\\(.+\\)$",
@@ -1264,6 +1464,16 @@
     "category": "medications",
     "aggregate": "max",
     "sources": {
+      "aumc": [
+        {
+          "ids": 7179,
+          "table": "drugitems",
+          "sub_var": "itemid",
+          "stop_var": "stop",
+          "grp_var": "orderid",
+          "callback": "aumc_dur"
+        }
+      ],
       "eicu": [
         {
           "regex": "^dopa",
@@ -1325,6 +1535,16 @@
     "description": "dopamine rate",
     "category": "medications",
     "sources": {
+      "aumc": [
+        {
+          "ids": 7179,
+          "table": "drugitems",
+          "sub_var": "itemid",
+          "rel_weight": "doserateperkg",
+          "rate_uom": "doserateunit",
+          "callback": "aumc_rate"
+        }
+      ],
       "eicu": [
         {
           "regex": "^dopa.*\\(.+\\)$",
@@ -1385,6 +1605,20 @@
     "description": "GCS eye",
     "category": "neurological",
     "sources": {
+      "aumc": [
+        {
+          "ids": 6732,
+          "table": "listitems",
+          "sub_var": "itemid",
+          "callback": "apply_map( c(`Geen reactie` = 1, `Reactie op pijnprikkel` = 2, `Reactie op verbale prikkel` = 3, `Spontane reactie` = 4) )"
+        },
+        {
+          "ids": 13077,
+          "table": "listitems",
+          "sub_var": "itemid",
+          "callback": "apply_map( c(`Niet` = 1, `Op pijn` = 2, `Op aanspreken` = 3, `Spontaan` = 4) )"
+        }
+      ],
       "eicu": [
         {
           "ids": "Eyes",
@@ -1430,6 +1664,13 @@
     "description": "eosinophils",
     "category": "hematology",
     "sources": {
+      "aumc": [
+        {
+          "ids": 6773,
+          "table": "numericitems",
+          "sub_var": "itemid"
+        }
+      ],
       "eicu": [
         {
           "ids": "-eos",
@@ -1465,6 +1706,16 @@
     "category": "medications",
     "aggregate": "max",
     "sources": {
+      "aumc": [
+        {
+          "ids": 6818,
+          "table": "drugitems",
+          "sub_var": "itemid",
+          "stop_var": "stop",
+          "grp_var": "orderid",
+          "callback": "aumc_dur"
+        }
+      ],
       "eicu": [
         {
           "regex": "^epi( |n)",
@@ -1535,6 +1786,16 @@
     "description": "epinephrine rate",
     "category": "medications",
     "sources": {
+      "aumc": [
+        {
+          "ids": 6818,
+          "table": "drugitems",
+          "sub_var": "itemid",
+          "rel_weight": "doserateperkg",
+          "rate_uom": "doserateunit",
+          "callback": "aumc_rate"
+        }
+      ],
       "eicu": [
         {
           "regex": "^epi( |n).*\\(.+\\)$",
@@ -1604,6 +1865,13 @@
     "description": "erythrocyte sedimentation rate",
     "category": "hematology",
     "sources": {
+      "aumc": [
+        {
+          "ids": [6808, 11902],
+          "table": "numericitems",
+          "sub_var": "itemid"
+        }
+      ],
       "hirid": [
         {
           "ids": 24000668,
@@ -1635,6 +1903,14 @@
     "description": "endtidal CO2",
     "category": "routine vital signs",
     "sources": {
+      "aumc": [
+        {
+          "ids": [6707, 8884, 8885, 9658, 12805, 12356],
+          "table": "numericitems",
+          "sub_var": "itemid",
+          "callback": "convert_unit(binary_op(`*`, 7.6), 'mmHg', 'None|Geen')"
+        }
+      ],
       "hirid": [
         {
           "ids": [2200, 8290, 30010009],
@@ -1666,6 +1942,13 @@
     "description": "fibrinogen",
     "category": "hematology",
     "sources": {
+      "aumc": [
+        {
+          "ids": [6776, 9989, 10175],
+          "table": "numericitems",
+          "sub_var": "itemid"
+        }
+      ],
       "eicu": [
         {
           "ids": "fibrinogen",
@@ -1712,6 +1995,13 @@
     "description": "fraction of inspired oxygen",
     "category": "blood gas",
     "sources": {
+      "aumc": [
+        {
+          "ids": 12279,
+          "table": "numericitems",
+          "sub_var": "itemid"
+        }
+      ],
       "eicu": [
         {
           "ids": "FiO2",
@@ -1779,6 +2069,14 @@
     "description": "glucose",
     "category": "chemistry",
     "sources": {
+      "aumc": [
+        {
+          "ids": [6833, 9557, 9947],
+          "table": "numericitems",
+          "sub_var": "itemid",
+          "callback": "convert_unit(binary_op(`*`, 18.016), 'mg/dL')"
+        }
+      ],
       "eicu": [
         {
           "ids": "glucose",
@@ -1839,6 +2137,13 @@
           "table": "labevents",
           "sub_var": "itemid"
         }
+      ],
+      "aumc": [
+        {
+          "ids": [11812, 16166],
+          "table": "numericitems",
+          "sub_var": "itemid"
+        }
       ]
     }
   },
@@ -1846,6 +2151,13 @@
     "description": "carboxyhemoglobin",
     "category": "blood gas",
     "sources": {
+      "aumc": [
+        {
+          "ids": 11690,
+          "table": "numericitems",
+          "sub_var": "itemid"
+        }
+      ],
       "eicu": [
         {
           "ids": "Carboxyhemoglobin",
@@ -1877,6 +2189,13 @@
     "description": "hematocrit",
     "category": "hematology",
     "sources": {
+      "aumc": [
+        {
+          "ids": [6777, 11423, 11545],
+          "table": "numericitems",
+          "sub_var": "itemid"
+        }
+      ],
       "eicu": [
         {
           "ids": "Hct",
@@ -1915,6 +2234,14 @@
     "description": "patient height",
     "category": "demographics",
     "sources": {
+      "aumc": [
+        {
+          "val_var": "heightgroup",
+          "table": "admissions",
+          "callback": "apply_map(c(`159-` = 150, `160-169` = 165, `170-179` = 175, `180-189` = 185, `190+` = 200))",
+          "class": "col_itm"
+        }
+      ],
       "eicu": [
         {
           "table": "patient",
@@ -1972,6 +2299,14 @@
     "description": "hemoglobin",
     "category": "hematology",
     "sources": {
+      "aumc": [
+        {
+          "ids": [6778, 9553, 9960, 10286, 19703],
+          "table": "numericitems",
+          "sub_var": "itemid",
+          "callback": "convert_unit(binary_op(`*`, 1.611344), 'g/dL')"
+        }
+      ],
       "eicu": [
         {
           "ids": "Hgb",
@@ -2018,6 +2353,13 @@
     "description": "heart rate",
     "category": "routine vital signs",
     "sources": {
+      "aumc": [
+        {
+          "ids": 6640,
+          "table": "numericitems",
+          "sub_var": "itemid"
+        }
+      ],
       "eicu": [
         {
           "table": "vitalperiodic",
@@ -2060,6 +2402,13 @@
     "description": "prothrombin time/international normalized ratio",
     "category": "hematology",
     "sources": {
+      "aumc": [
+        {
+          "ids": 11893,
+          "table": "numericitems",
+          "sub_var": "itemid"
+        }
+      ],
       "eicu": [
         {
           "ids": "PT - INR",
@@ -2103,6 +2452,13 @@
     "description": "insulin",
     "category": "medications",
     "sources": {
+      "aumc": [
+        {
+          "ids": [7624, 9014, 19129],
+          "sub_var": "itemid",
+          "table": "drugitems"
+        }
+      ],
       "eicu": [
         {
           "regex": "^insulin (250.+)?\\(((ml|units)/hr)?\\)$",
@@ -2166,6 +2522,13 @@
     "description": "potassium",
     "category": "chemistry",
     "sources": {
+      "aumc": [
+        {
+          "ids": [6835, 9556, 9927, 10285],
+          "table": "numericitems",
+          "sub_var": "itemid"
+        }
+      ],
       "eicu": [
         {
           "ids": "potassium",
@@ -2211,6 +2574,13 @@
     "description": "lactate",
     "category": "blood gas",
     "sources": {
+      "aumc": [
+        {
+          "ids": [6837, 9580, 10053],
+          "table": "numericitems",
+          "sub_var": "itemid"
+        }
+      ],
       "eicu": [
         {
           "ids": "lactate",
@@ -2293,6 +2663,13 @@
     "description": "ICU length of stay",
     "category": "outcome",
     "sources": {
+      "aumc": [
+        {
+          "callback": "los_callback",
+          "win_type": "icustay",
+          "class": "fun_itm"
+        }
+      ],
       "eicu": [
         {
           "callback": "los_callback",
@@ -2337,6 +2714,13 @@
     "description": "lymphocytes",
     "category": "hematology",
     "sources": {
+      "aumc": [
+        {
+          "ids": 14258,
+          "table": "numericitems",
+          "sub_var": "itemid"
+        }
+      ],
       "eicu": [
         {
           "ids": "-lymphs",
@@ -2382,6 +2766,13 @@
     "description": "mean arterial pressure",
     "category": "routine vital signs",
     "sources": {
+      "aumc": [
+        {
+          "ids": 6642,
+          "table": "numericitems",
+          "sub_var": "itemid"
+        }
+      ],
       "eicu": [
         {
           "table": "vitalperiodic",
@@ -2436,6 +2827,14 @@
     "description": "mean cell hemoglobin",
     "category": "hematology",
     "sources": {
+      "aumc": [
+        {
+          "ids": 11679,
+          "table": "numericitems",
+          "sub_var": "itemid",
+          "callback": "transform_fun(binary_op(`*`, 0.016114))"
+        }
+      ],
       "eicu": [
         {
           "ids": "MCH",
@@ -2481,6 +2880,14 @@
     "description": "mean corpuscular hemoglobin concentration",
     "category": "hematology",
     "sources": {
+      "aumc": [
+        {
+          "ids": 18666,
+          "table": "numericitems",
+          "sub_var": "itemid",
+          "callback": "transform_fun(binary_op(`*`, 1.611344))"
+        }
+      ],
       "eicu": [
         {
           "ids": "MCHC",
@@ -2526,6 +2933,13 @@
     "description": "mean corpuscular volume",
     "category": "hematology",
     "sources": {
+      "aumc": [
+        {
+          "ids": 9968,
+          "table": "numericitems",
+          "sub_var": "itemid"
+        }
+      ],
       "eicu": [
         {
           "ids": "MCV",
@@ -2571,6 +2985,13 @@
     "description": "methemoglobin",
     "category": "blood gas",
     "sources": {
+      "aumc": [
+        {
+          "ids": 11692,
+          "table": "numericitems",
+          "sub_var": "itemid"
+        }
+      ],
       "eicu": [
         {
           "ids": "Methemoglobin",
@@ -2623,6 +3044,14 @@
     "description": "magnesium",
     "category": "chemistry",
     "sources": {
+      "aumc": [
+        {
+          "ids": [6839, 9952],
+          "table": "numericitems",
+          "sub_var": "itemid",
+          "callback": "convert_unit(binary_op(`*`, 2.431), 'mg/dL')"
+        }
+      ],
       "eicu": [
         {
           "ids": "magnesium",
@@ -2670,6 +3099,20 @@
     "description": "GCS motor",
     "category": "neurological",
     "sources": {
+      "aumc": [
+        {
+          "ids": 6734,
+          "table": "listitems",
+          "sub_var": "itemid",
+          "callback": "apply_map( c(`Geen reactie` = 1, `Strekken` = 2, `Decortatie reflex (abnormaal buigen)` = 3, `Spastische reactie (terugtrekken)` = 4, `Localiseert pijn` = 5, `Volgt verbale commando's op` = 6) )"
+        },
+        {
+          "ids": 13072,
+          "table": "listitems",
+          "sub_var": "itemid",
+          "callback": "apply_map( c(`Geen reactie` = 1, `Strekken op pijn` = 2, `Abnormaal buigen bij pijn` = 3, `Terugtrekken bij pijn` = 4, `Localiseren pijn` = 5, `Voert opdrachten uit` = 6) )"
+        }
+      ],
       "eicu": [
         {
           "ids": "Motor",
@@ -2715,6 +3158,13 @@
     "description": "sodium",
     "category": "chemistry",
     "sources": {
+      "aumc": [
+        {
+          "ids": [6840, 9555, 9924, 10284],
+          "table": "numericitems",
+          "sub_var": "itemid"
+        }
+      ],
       "eicu": [
         {
           "ids": "sodium",
@@ -2760,6 +3210,13 @@
     "description": "neutrophils",
     "category": "hematology",
     "sources": {
+      "aumc": [
+        {
+          "ids": 6786,
+          "table": "numericitems",
+          "sub_var": "itemid"
+        }
+      ],
       "eicu": [
         {
           "ids": "-polys",
@@ -2810,6 +3267,16 @@
     "category": "medications",
     "aggregate": "max",
     "sources": {
+      "aumc": [
+        {
+          "ids": 7229,
+          "table": "drugitems",
+          "sub_var": "itemid",
+          "stop_var": "stop",
+          "grp_var": "orderid",
+          "callback": "aumc_dur"
+        }
+      ],
       "eicu": [
         {
           "regex": "^norepi",
@@ -2880,6 +3347,16 @@
     "description": "norepinephrine rate",
     "category": "medications",
     "sources": {
+      "aumc": [
+        {
+          "ids": 7229,
+          "table": "drugitems",
+          "sub_var": "itemid",
+          "rel_weight": "doserateperkg",
+          "rate_uom": "doserateunit",
+          "callback": "aumc_rate"
+        }
+      ],
       "eicu": [
         {
           "regex": "^norepi.*\\(.+\\)$",
@@ -2949,6 +3426,13 @@
     "description": "oxygen saturation",
     "category": "respiratory",
     "sources": {
+      "aumc": [
+        {
+          "ids": [6709, 12311, 8903],
+          "table": "numericitems",
+          "sub_var": "itemid"
+        }
+      ],
       "eicu": [
         {
           "table": "vitalperiodic",
@@ -3014,6 +3498,13 @@
     "description": "CO2 partial pressure",
     "category": "blood gas",
     "sources": {
+      "aumc": [
+        {
+          "ids": [6846, 9990, 21213],
+          "table": "numericitems",
+          "sub_var": "itemid"
+        }
+      ],
       "eicu": [
         {
           "ids": "paCO2",
@@ -3058,6 +3549,13 @@
     "description": "pH of blood",
     "category": "blood gas",
     "sources": {
+      "aumc": [
+        {
+          "ids": [6848, 12310],
+          "table": "numericitems",
+          "sub_var": "itemid"
+        }
+      ],
       "eicu": [
         {
           "ids": "pH",
@@ -3103,6 +3601,14 @@
     "description": "phosphate",
     "category": "chemistry",
     "sources": {
+      "aumc": [
+        {
+          "ids": [6828, 9935],
+          "table": "numericitems",
+          "sub_var": "itemid",
+          "callback": "convert_unit(binary_op(`*`, 3.097521), 'mg/dL')"
+        }
+      ],
       "eicu": [
         {
           "ids": "phosphate",
@@ -3149,6 +3655,13 @@
     "description": "platelet count",
     "category": "hematology",
     "sources": {
+      "aumc": [
+        {
+          "ids": [6797, 9964, 10409, 14252],
+          "table": "numericitems",
+          "sub_var": "itemid"
+        }
+      ],
       "eicu": [
         {
           "ids": "platelets x 1000",
@@ -3194,6 +3707,13 @@
     "description": "O2 partial pressure",
     "category": "blood gas",
     "sources": {
+      "aumc": [
+        {
+          "ids": [7433, 9996, 21214],
+          "table": "numericitems",
+          "sub_var": "itemid"
+        }
+      ],
       "eicu": [
         {
           "ids": "paO2",
@@ -3238,6 +3758,13 @@
     "description": "prothrombine time",
     "category": "hematology",
     "sources": {
+      "aumc": [
+        {
+          "ids": 6789,
+          "table": "numericitems",
+          "sub_var": "itemid"
+        }
+      ],
       "eicu": [
         {
           "ids": "PT",
@@ -3274,6 +3801,13 @@
     "description": "partial thromboplastin time",
     "category": "hematology",
     "sources": {
+      "aumc": [
+        {
+          "ids": 17982,
+          "table": "numericitems",
+          "sub_var": "itemid"
+        }
+      ],
       "eicu": [
         {
           "ids": "PTT",
@@ -3323,6 +3857,14 @@
     "description": "Richmond agitation sedation scale",
     "category": "neurological",
     "sources": {
+      "aumc": [
+        {
+          "ids": 14444,
+          "sub_var": "itemid",
+          "table": "listitems",
+          "callback": "transform_fun(aumc_rass_transform)"
+        }
+      ],
       "eicu": [
         {
           "ids": "Sedation Score",
@@ -3368,6 +3910,13 @@
     "description": "red blood cell count",
     "category": "hematology",
     "sources": {
+      "aumc": [
+        {
+          "ids": [6774, 9962],
+          "table": "numericitems",
+          "sub_var": "itemid"
+        }
+      ],
       "eicu": [
         {
           "ids": "RBC",
@@ -3405,6 +3954,13 @@
     "description": "erythrocyte distribution width",
     "category": "hematology",
     "sources": {
+      "aumc": [
+        {
+          "ids": 18952,
+          "table": "numericitems",
+          "sub_var": "itemid"
+        }
+      ],
       "eicu": [
         {
           "ids": "RDW",
@@ -3442,6 +3998,13 @@
     "description": "respiratory rate",
     "category": "respiratory",
     "sources": {
+      "aumc": [
+        {
+          "ids": [8874, 12266],
+          "table": "numericitems",
+          "sub_var": "itemid"
+        }
+      ],
       "eicu": [
         {
           "table": "vitalperiodic",
@@ -3484,6 +4047,14 @@
     "class": "lgl_cncpt",
     "description": "fluid sampling",
     "sources": {
+      "aumc": [
+        {
+          "ids": [8097, 8418, 8588, 9189, 9190, 9191, 9192, 9193, 9194, 9195, 9197, 9198, 9200, 9202, 9203, 9204, 9205, 13024, 19663, 19664],
+          "table": "procedureorderitems",
+          "sub_var": "itemid",
+          "callback": "transform_fun(set_val(TRUE))"
+        }
+      ],
       "eicu": [
         {
           "table": "microlab",
@@ -3527,6 +4098,13 @@
     "description": "systolic blood pressure",
     "category": "routine vital signs",
     "sources": {
+      "aumc": [
+        {
+          "ids": 6641,
+          "table": "numericitems",
+          "sub_var": "itemid"
+        }
+      ],
       "eicu": [
         {
           "table": "vitalperiodic",
@@ -3587,6 +4165,14 @@
     "description": "patient sex",
     "category": "demographics",
     "sources": {
+      "aumc": [
+        {
+          "val_var": "gender",
+          "table": "admissions",
+          "callback": "apply_map(c(Vrouw = 'Female', Man = 'Male'))",
+          "class": "col_itm"
+        }
+      ],
       "eicu": [
         {
           "table": "patient",
@@ -3755,6 +4341,13 @@
     "description": "temperature",
     "category": "routine vital signs",
     "sources": {
+      "aumc": [
+        {
+          "ids": [8658, 13952, 16110],
+          "table": "numericitems",
+          "sub_var": "itemid"
+        }
+      ],
       "eicu": [
         {
           "table": "vitalperiodic",
@@ -3847,6 +4440,13 @@
     "description": "troponin t",
     "category": "chemistry",
     "sources": {
+      "aumc": [
+        {
+          "ids": 10407,
+          "table": "numericitems",
+          "sub_var": "itemid"
+        }
+      ],
       "eicu": [
         {
           "ids": "troponin - T",
@@ -3891,6 +4491,14 @@
     "description": "tracheostomy",
     "category": "respiratory",
     "sources": {
+      "aumc": [
+        {
+          "ids": 6735,
+          "table": "listitems",
+          "sub_var": "itemid",
+          "callback": "transform_fun(comp_na(`==`, 'Geïntubeerd'))"
+        }
+      ],
       "hirid": [
         {
           "ids": 15001552,
@@ -3962,6 +4570,13 @@
     "description": "urine output",
     "category": "output",
     "sources": {
+      "aumc": [
+        {
+          "ids": 8794,
+          "table": "numericitems",
+          "sub_var": "itemid"
+        }
+      ],
       "eicu": [
         {
           "ids": ["Urine", "URINE CATHETER"],
@@ -4040,6 +4655,15 @@
     "description": "ventilation end",
     "category": "respiratory",
     "sources": {
+      "aumc": [
+        {
+          "ids": 9328,
+          "sub_var": "itemid",
+          "index_var": "stop",
+          "table": "processitems",
+          "callback": "transform_fun(set_val(TRUE))"
+        }
+      ],
       "eicu": [
         {
           "table": "respiratorycare",
@@ -4133,6 +4757,14 @@
     "description": "ventilation start",
     "category": "respiratory",
     "sources": {
+      "aumc": [
+        {
+          "ids": 9328,
+          "sub_var": "itemid",
+          "table": "processitems",
+          "callback": "transform_fun(set_val(TRUE))"
+        }
+      ],
       "eicu": [
         {
           "table": "respiratorycare",
@@ -4206,6 +4838,20 @@
     "description": "GCS verbal",
     "category": "neurological",
     "sources": {
+      "aumc": [
+        {
+          "ids": 6735,
+          "table": "listitems",
+          "sub_var": "itemid",
+          "callback": "apply_map( c(`Geen reactie (geen zichtbare poging tot praten)` = 1, `Onbegrijpelijke geluiden` = 2, `Onduidelijke woorden (pogingen tot communicatie, maar onduidelijk)` = 3, `Verwarde conversatie` = 4, `Helder en adequaat (communicatie mogelijk)` = 5) )"
+        },
+        {
+          "ids": 13066,
+          "table": "listitems",
+          "sub_var": "itemid",
+          "callback": "apply_map( c(`Geen geluid` = 1, `Onverstaanbare woorden` = 2, `Onjuiste woorden` = 3, `Verwarde taal` = 4, `Georiënteerd` = 5) )"
+        }
+      ],
       "eicu": [
         {
           "ids": "Verbal",
@@ -4250,6 +4896,13 @@
     "description": "white blood cell count",
     "category": "hematology",
     "sources": {
+      "aumc": [
+        {
+          "ids": [6779, 9965],
+          "table": "numericitems",
+          "sub_var": "itemid"
+        }
+      ],
       "eicu": [
         {
           "ids": "WBC x 1000",
@@ -4296,6 +4949,14 @@
     "description": "patient weight",
     "category": "demographics",
     "sources": {
+      "aumc": [
+        {
+          "val_var": "weightgroup",
+          "table": "admissions",
+          "callback": "apply_map(c(`59-` = 50, `60-69` = 65, `70-79` = 75, `80-89` = 85, `90-99` = 95, `100-109` = 105, `110+` = 120))",
+          "class": "col_itm"
+        }
+      ],
       "eicu": [
         {
           "table": "patient",
