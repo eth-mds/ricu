@@ -292,23 +292,18 @@ id_map_helper.src_env <- function(x, id_var, win_var) {
   map    <- id_windows(x)
   map_id <- id_vars(map)
 
-  if (identical(id_var, map_id)) {
-    ori <- NULL
-  } else {
-    ori <- paste0(id_var, "_start")
+  io_vars <- paste0(win_var, c("_start", "_end"))
+
+  if (!identical(id_var, map_id)) {
+    ori <- new_names(map)
+    map <- map[, c(ori) := get(paste0(id_var, "_start"))]
+    map <- map[, unique(c(id_var, win_var, io_vars, ori)), with = FALSE]
+    map <- map[, c(io_vars) := lapply(.SD, `-`, get(ori)),
+               .SDcols = c(io_vars)]
   }
 
-  inn <- paste0(win_var, "_start")
-  out <- paste0(win_var, "_end")
-
-  map <- map[, unique(c(id_var, win_var, inn, out, ori)), with = FALSE]
-
-  if (not_null(ori)) {
-    map <- map[, c(inn, out) := lapply(.SD, `-`, get(ori)),
-               .SDcols = c(inn, out)]
-    map <- rm_cols(map, ori, by_ref = TRUE)
-  }
-
+  kep <- setdiff(colnames(map), unique(c(id_var, win_var, io_vars)))
+  map <- rm_cols(map, kep, by_ref = TRUE)
   map <- unique(map)
 
   as_id_tbl(map, id_var, by_ref = TRUE)
