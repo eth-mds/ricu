@@ -1103,7 +1103,8 @@ cfg <- list(
       ),
       aumc = list(
         list(ids = c(6776L, 9989L, 10175L), table = "numericitems",
-             sub_var = "itemid")
+             sub_var = "itemid",
+             callback = "convert_unit(binary_op(`*`, 0.058467), 'mg/dL')")
       )
     )
   ),
@@ -1846,7 +1847,8 @@ cfg <- list(
              class = "hrd_itm")
       ),
       aumc = list(
-        list(ids = 6812L, table = "numericitems", sub_var = "itemid")
+        list(ids = 6812L, table = "numericitems", sub_var = "itemid",
+             callback = "convert_unit(binary_op(`*`, 0.058467), 'mg/dL')")
       )
     )
   ),

@@ -7259,7 +7259,6 @@
   },
   {
     "name": "aumc",
-    "url": "https://www.amsterdammedicaldatascience.nl",
     "id_cfg": {
       "patient": {
         "id": "patientid",

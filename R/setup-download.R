@@ -278,7 +278,7 @@ download_pysionet_file <- function(url, dest = NULL, user = NULL,
 
     handle <- handle_setopt(handle, nobody = TRUE)
 
-  } else if (file.exists(dest)) {
+  } else if (not_null(dest) && file.exists(dest)) {
 
     handle <- handle_setopt(handle,
       timevalue = file.mtime(dest), timecondition = TRUE

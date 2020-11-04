@@ -672,7 +672,8 @@
         {
           "ids": 6812,
           "table": "numericitems",
-          "sub_var": "itemid"
+          "sub_var": "itemid",
+          "callback": "convert_unit(binary_op(`*`, 0.058467), 'mg/dL')"
         }
       ],
       "eicu": [
@@ -1946,7 +1947,8 @@
         {
           "ids": [6776, 9989, 10175],
           "table": "numericitems",
-          "sub_var": "itemid"
+          "sub_var": "itemid",
+          "callback": "convert_unit(binary_op(`*`, 0.058467), 'mg/dL')"
         }
       ],
       "eicu": [

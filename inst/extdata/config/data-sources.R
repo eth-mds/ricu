@@ -873,7 +873,6 @@ cfg <- list(
   ),
   list(
     name = "aumc",
-    url = "https://www.amsterdammedicaldatascience.nl",
     id_cfg = list(
       patient = list(id = "patientid", position = 1L,
                      start = "firstadmittedat", end = "dateofdeath",
