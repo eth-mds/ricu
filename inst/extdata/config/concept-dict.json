@@ -1723,7 +1723,7 @@
           "ids": "FiO2",
           "table": "lab",
           "sub_var": "labname",
-          "callback": "convert_unit(set_val(NA), '%', 'mm\\(hg\\)')"
+          "callback": "convert_unit(set_val(NA), '%', 'mm\\\\(hg\\\\)')"
         }
       ],
       "eicu_demo": [
@@ -1737,7 +1737,7 @@
           "ids": "FiO2",
           "table": "lab",
           "sub_var": "labname",
-          "callback": "convert_unit(set_val(NA), '%', 'mm\\(hg\\)')"
+          "callback": "convert_unit(set_val(NA), '%', 'mm\\\\(hg\\\\)')"
         }
       ],
       "hirid": [

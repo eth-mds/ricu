@@ -144,7 +144,7 @@ cfg <- list(
              sub_var = "respchartvaluelabel",
              callback = "transform_fun(percent_as_numeric)"),
         list(ids = "FiO2", table = "lab", sub_var = "labname",
-             callback = "convert_unit(set_val(NA), '%', 'mm\\(hg\\)')")
+             callback = "convert_unit(set_val(NA), '%', 'mm\\\\(hg\\\\)')")
       ),
       hirid = list(
         list(ids = 2010L, table = "observations", sub_var = "variableid",
