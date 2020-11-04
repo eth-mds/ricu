@@ -141,10 +141,71 @@ download_src.hirid_cfg <- function(x, data_dir = src_data_dir(x),
   invisible(NULL)
 }
 
+#' @importFrom xml2 read_html xml_attr xml_find_first xml_child
+#'
+#' @export
+download_src.aumc_cfg <- function(x, data_dir = src_data_dir(x),
+                                  tables = NULL, force = FALSE, user = NULL,
+                                  pass = NULL, ...) {
+
+  warn_dots(...)
+
+  tbl <- determine_tables(x, data_dir, tables, force)
+
+  if (length(tbl) == 0L) {
+    msg_ricu("The requested tables have already been downloaded")
+    return(invisible(NULL))
+  }
+
+  tok <- get_cred(pass, "RICU_AUMC_TOKEN", "token: ")
+
+  url <- paste0("https://filesender.surf.nl/?s=download&token=", tok)
+  res <- download_file(url)
+
+  if (res[["status_code"]] == 200 &&
+      requireNamespace("xml2", quietly = TRUE)) {
+
+    info <- read_html(rawToChar(res[["content"]]))
+
+    size <- xml_find_first(info, "//div[contains(@class, 'general box')]")
+    size <- as.numeric(xml_attr(size, "data-transfer-size"))
+
+    info <- xml_find_first(info,
+      "//div[contains(@class, 'files box')]/div[contains(@class, 'file')]"
+    )
+
+    name <- xml_attr(info, "data-name")
+    url  <- xml_attr(xml_child(info, "a"), "href")
+
+    if (!is.na(size) && !is.na(name) && !is.na(info)) {
+
+      tmp <- ensure_dirs(tempfile())
+      on.exit(unlink(tmp, recursive = TRUE))
+      fil <- file.path(tmp, name)
+      prg <- progress_init(size, msg = "Donwloading `aumc` data")
+
+      res <- download_file(url, dest = fil, progr = prg)
+
+      if (res[["status_code"]] == 200) {
+        unzip(fil, exdir = data_dir)
+        return(invisible(NULL))
+      }
+    }
+  }
+
+  stop_ricu("Could not successfully download `aumc` data. Please download and
+             extract the corresponding .zip Archive manually to {data_dir}.",
+            class = "aumc_dl")
+}
+
 #' @export
 download_src.character <- function(x, data_dir = src_data_dir(x),
                                    tables = NULL, force = FALSE,
                                    user = NULL, pass = NULL, ...) {
+
+  if (is.null(tables)) {
+    tables <- list(tables)
+  }
 
   Map(download_src, load_src_cfg(x, ...), data_dir, tables,
       MoreArgs = list(force = force, user = user, pass = pass))
@@ -174,11 +235,33 @@ determine_tables <- function(x, dir, tables, force) {
   x[tables]
 }
 
+download_file <- function(url, handle = new_handle(), dest = NULL,
+                          progr = NULL) {
+
+  if (is.null(dest)) {
+    return(curl_fetch_memory(url, handle))
+  }
+
+  if (is.null(progr)) {
+    return(curl_fetch_disk(url, dest, handle = handle))
+  }
+
+  con <- file(dest, "ab", blocking = FALSE)
+  on.exit(close(con))
+
+  prog_fun <- function(x) {
+    progress_tick(NULL, progr, length(x))
+    writeBin(x, con)
+  }
+
+  curl_fetch_stream(url, prog_fun, handle = handle)
+}
+
 download_pysionet_file <- function(url, dest = NULL, user = NULL,
                                    pass = NULL, head_only = FALSE,
                                    progress = NULL) {
 
-  assert_that(is.string(url), is.flag(head_only))
+  assert_that(is.string(url), null_or(dest, is.string), is.flag(head_only))
 
   handle <- new_handle(useragent = "Wget/")
 
@@ -191,52 +274,27 @@ download_pysionet_file <- function(url, dest = NULL, user = NULL,
     handle <- handle_setopt(handle, username = user, password = pass)
   }
 
-  if (is.null(dest)) {
+  if (is.null(dest) && head_only) {
 
-    assert_that(is.null(progress))
+    handle <- handle_setopt(handle, nobody = TRUE)
 
-    if (head_only) {
-      handle <- handle_setopt(handle, nobody = TRUE)
-    }
+  } else if (file.exists(dest)) {
 
-    res <- curl_fetch_memory(url, handle)
-
-  } else {
-
-    assert_that(is.string(dest), !head_only)
-
-    if (file.exists(dest)) {
-      handle <- handle_setopt(handle,
-        timevalue = file.mtime(dest), timecondition = TRUE
-      )
-    }
-
-    if (is.null(progress)) {
-
-      res <- curl_fetch_disk(url, dest, handle = handle)
-
-    } else {
-
-      con <- file(dest, "ab", blocking = FALSE)
-      on.exit(close(con))
-
-      prog_fun <- function(x) {
-        progress_tick(NULL, progress, length(x))
-        writeBin(x, con)
-      }
-
-      res <- curl_fetch_stream(url, prog_fun, handle = handle)
-    }
-
-    if (res[["status_code"]] == 304) {
-      msg_ricu("Skipped download of {basename(url)}")
-      return(invisible(NULL))
-    }
+    handle <- handle_setopt(handle,
+      timevalue = file.mtime(dest), timecondition = TRUE
+    )
   }
+
+  res <- download_file(url, handle, dest, progress)
 
   status <- res[["status_code"]]
 
-  if (status == 401) {
+  if (status == 304) {
+
+    msg_ricu("Skipped download of {basename(url)}")
+    return(invisible(NULL))
+
+  } else if (status == 401) {
 
     stop_ricu("Access to the requested resource was denied. Please set up an
                account at https://physionet.org/ and apply for data access.",
