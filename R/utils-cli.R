@@ -3,7 +3,7 @@ is_interactive <- function() {
   !isTRUE(getOption('knitr.in.progress')) && interactive()
 }
 
-progress_init <- function(lenth = NULL, msg = "loading", ...) {
+progress_init <- function(lenth = NULL, msg = "loading", what = TRUE, ...) {
 
   cb_fun <- function(x) {
 
@@ -20,9 +20,15 @@ progress_init <- function(lenth = NULL, msg = "loading", ...) {
 
   if (is_interactive() && is_pkg_installed("progress") && lenth > 1L) {
 
-    res <- progress::progress_bar$new(
-      format = ":what [:bar] :percent", total = lenth, callback = cb_fun, ...
-    )
+    if (isTRUE(what)) {
+      res <- progress::progress_bar$new(
+        format = ":what [:bar] :percent", total = lenth, callback = cb_fun, ...
+      )
+    } else {
+      res <- progress::progress_bar$new(
+        format = "[:bar] :percent", total = lenth, callback = cb_fun, ...
+      )
+    }
 
   } else {
     res <- NULL

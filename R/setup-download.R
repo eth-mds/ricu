@@ -182,8 +182,7 @@ download_src.aumc_cfg <- function(x, data_dir = src_data_dir(x),
       tmp <- ensure_dirs(tempfile())
       on.exit(unlink(tmp, recursive = TRUE))
       fil <- file.path(tmp, name)
-      prg <- progress_init(size, msg = "Donwloading `aumc` data")
-
+      prg <- progress_init(size, msg = "Donwloading `aumc` data", what = FALSE)
       res <- download_file(url, dest = fil, progr = prg)
 
       if (res[["status_code"]] == 200) {
