@@ -1253,3 +1253,18 @@ concept_availability <- function(dict = load_dictionary()) {
 
   res > 0L
 }
+
+#' @rdname concept_dictionary
+#' @export
+explain_dictionary <- function(dict = load_dictionary(),
+                               cols = c("name", "category", "description")) {
+
+  chr_ply_inv <- function(i, x) chr_ply(x, `[[`, i)
+
+  assert_that(is_concept(dict), is.character(cols), has_length(cols))
+
+  res <- lapply(cols, chr_ply_inv, dict)
+  names(res) <- cols
+
+  as.data.frame(res, stringsAsFactors = FALSE)
+}

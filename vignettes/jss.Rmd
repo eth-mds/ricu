@@ -76,6 +76,10 @@ The structure of the manuscript is as follows. In Section \ref{implementation} w
 
 # Implementation
 
+## Data sources
+
+## Data concepts
+
 In this Section we go over the categories of data useful for research problems related to intensive care medicine. The categories we define are fairly broad and somewhat loosely defined, as this is not the main focus of the manuscript.
 
 ## Physiological data
