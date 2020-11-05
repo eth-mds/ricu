@@ -458,6 +458,9 @@ change_id <- function(x, target_id, src, ..., keep_old_id = TRUE,
   }
 
   opt <- id_var_opts(id_cfg)
+
+  assert_that(is_in(orig_id, opt), is_in(target_id, opt))
+
   ori <- id_cfg[orig_id   == opt]
   fin <- id_cfg[target_id == opt]
 

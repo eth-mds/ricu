@@ -1254,6 +1254,8 @@ concept_availability <- function(dict = load_dictionary()) {
   res > 0L
 }
 
+#' @param cols Columns to include in the output of `explain_dictionary()`
+#'
 #' @rdname concept_dictionary
 #' @export
 explain_dictionary <- function(dict = load_dictionary(),
