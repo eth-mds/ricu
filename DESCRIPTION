@@ -61,7 +61,9 @@ Suggests:
     progress,
     knitr,
     rmarkdown,
-    ggplot2
+    ggplot2,
+    survival,
+    forestmodel
 RoxygenNote: 7.1.1
 Additional_repositories: https://septic-tank.github.io/physionet-demo
 VignetteBuilder: knitr

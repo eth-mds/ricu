@@ -71,7 +71,7 @@ Given the somewhat narrow focus of the targeted datasets, combined with the fact
 
 The following sections serve to introduce \pkg{ricu} by first giving an overview of particularities of the four default dataset, followed by some implementation details on how datasets are stored and how external data sources can be made accessible by \pkg{ricu} (\ref{data_srcs}). The next section is concerned with ...
 
-# Data sources {# data_srcs}
+# Data sources {#data_srcs}
 
 ## Ready to use datasets
 
