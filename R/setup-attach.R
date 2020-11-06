@@ -87,6 +87,12 @@
 #' @param x Data source to attach
 #' @param ... Forwarded to further calls to `attach_src()`
 #'
+#' @return The constructors `new_src_env()`/`new_src_tbl()` as well as coercion
+#' functions `as_src_env()`/`as_src_tbl()` return `src_env` and `src_tbl`
+#' objects respectively. The function `attach_src()` is called for side
+#' effects and returns `NULL` invisibly, while `setup_src_env()` instantiates
+#' and returns a `src_env` object.
+#'
 #' @export
 #'
 attach_src <- function(x, ...) UseMethod("attach_src", x)

@@ -45,6 +45,10 @@ non-by columns}
 \item{na_rm}{Logical flag indicating whether to remove rows that have all
 missing entries in the respective \code{col_groups} group}
 }
+\value{
+Either \code{id_tbl} or \code{ts_tbl} objects (depending on inputs) or lists
+thereof in case of \code{split()} and \code{unmerge()}.
+}
 \description{
 Utilities for reshaping \code{id_tbl} and \code{ts_tbl} objects.
 }

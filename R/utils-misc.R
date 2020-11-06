@@ -35,6 +35,13 @@ agg_or_na <- function(agg_fun) {
 #' @param val Value to compare against
 #' @param ... Forwarded to other methods
 #'
+#' @return
+#' * `min_or_na()`/`max_or_na()`: scalar-valued extrema of a vector
+#' * `is_val()`/`not_val()`/`is_true()`/`is_false()`: Logical vector of the
+#'    same length as the object passed as `x`
+#' * `first_elem()`/`last_elem()`: single element of the object passed as `x`
+#' * `replace_na()`: modified version of the object passed as `x`
+#'
 #' @examples
 #' some_na <- c(NA, sample(1:10, 5), NA)
 #' identical(min(some_na, na.rm = TRUE), min_or_na(some_na))

@@ -134,6 +134,12 @@
 #' @param ... forwarded to [data.table::data.table()] or generic consistency
 #' @param id_vars Column name(s) to be used as `id` column(s)
 #'
+#' @return Constructors `id_tbl()`/`ts_tbl()`, as well as coercion functions
+#' `as_id_tbl()`/`as_ts_tbl()` return `id_tbl`/`ts_tbl` objects respectively,
+#' while inheritance testers `is_id_tbl()`/`is_ts_tbl()` return logical flags
+#' and `validate_tbl()` returns either `TRUE` or a string describing the
+#' validation failure.
+#'
 #' @rdname id_tbl
 #' @export
 id_tbl <- function(..., id_vars = 1L) {
@@ -348,6 +354,12 @@ strip_class <- function(x, what = class(x)[1L]) setdiff(class(x), what)
 #' creates an empty object with the appropriate attributes.
 #'
 #' @param x Object to modify/query
+#'
+#' @return
+#' * `unclass_tbl()`: a `data.table`
+#' * `reclass_tbl()`: either an `id_tbl` or a `ts_tbl` depending on the type
+#'    of the object passed as `template`
+#' * `as_ptype()`: an object of the same type as `x`, but with on data
 #'
 #' @rdname tbl_internal
 #' @keywords internal

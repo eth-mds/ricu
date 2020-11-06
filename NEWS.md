@@ -1,3 +1,9 @@
+# ricu 0.1.2
+
+* restructure SOFA computation
+* add concept caching
+* add `\value{}` entries to docs
+
 # ricu 0.1.1
 
 * make CRAN compliant (`.GlobalEnv` default in `attach_src()`)

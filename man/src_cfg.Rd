@@ -121,6 +121,17 @@ vector of numeric values that are passed as \code{vec} argument to
 
 \item{x}{Object to coerce/query}
 }
+\value{
+Constructors \verb{new_*()} as well as coercion functions \verb{as_*()}
+return the respective objects, while inheritance tester functions \verb{is_*()}
+return a logical flag.
+\itemize{
+\item \code{src_url()}: string valued data source URL
+\item \code{id_var_opts()}: character vector of ID variable options
+\item \code{src_name()}: string valued data source name
+\item \code{tbl_name()}: string valued table name
+}
+}
 \description{
 Data source configuration objects store information on data sources used
 throughout \code{ricu}. This includes URLs for data set downloading, Column

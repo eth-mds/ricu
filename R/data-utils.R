@@ -35,6 +35,15 @@
 #' @param copy Logical flag indicating whether to return a copy of the memoized
 #' `0data.table` for safety
 #'
+#' @return
+#' * `id_origin()`/`id_orig_helper()`: an `id_tbl` with admission time stamps
+#'    corresponding to the selected ID
+#' * `id_windows()`/`id_win_helper()`: an `id_tbl` holding all IDs and their
+#'    respective start and end times
+#' * `id_map()`/`id_map_helper()`: an `id_tbl` containing the selected IDs and
+#'    depending on values passed as `in_time` and `out_time`, start and end
+#'    times of the ID passed as `win_var`
+#'
 #' @rdname data_utils
 #' @keywords internal
 #' @export
@@ -327,6 +336,10 @@ id_map_helper.default <- function(x, ...) stop_generic(x, .Generic)
 #' @param interval The time interval used to discretize time stamps with,
 #' specified as [base::difftime()] object
 #'
+#' @return An `id_tbl` containing the selected IDs and depending on values
+#' passed as `in_time` and `out_time`, start and end times of the ID passed as
+#' `win_var`.
+#'
 #' @export
 stay_windows <- function(x, id_type = "icustay", win_type = id_type,
                          in_time = "start", out_time = "end",
@@ -426,6 +439,8 @@ stay_windows <- function(x, id_type = "icustay", win_type = id_type,
 #' column
 #' @param id_type Logical flag indicating whether `target_id` is specified as
 #' ID name (e.g. `icustay_id` on MIMIC) or ID type (e.g. `icustay`)
+#'
+#' @return An object of the same type as `x` with modified IDs.
 #'
 #' @examples
 #' if (require(mimic.demo)) {

@@ -77,6 +77,9 @@
 #' class requirement
 #' @param class Sub class for customizing `itm` behavior
 #'
+#' @return Constructors and coercion functions return `itm` and `item` objects,
+#' while inheritance tester functions return logical flags.
+#'
 #' @rdname data_items
 #'
 #' @examples
@@ -255,7 +258,27 @@ init_itm.default <- function(x, ...) stop_generic(x, .Generic)
 
 #' Internal utilities for `item`/`concept` objects
 #'
+#' Several internal utilities for modifying and querying item and concept
+#' objects, including getters and setters for `itm` variables, callback
+#' functions, `cncpt` target classes, as well as utilities for data loading
+#' such as `prepare_query()` which creates a row-subsetting expression,
+#' `do_callback()`, which applies a callback function to data or
+#' `do_itm_load()`, which performs data loading corresponding to an `itm`.
+#'
 #' @param x Object defining the row-subsetting
+#'
+#' @return
+#' * `prepare_query()`: an unevaluated expression used for row-subsetting
+#' * `try_add_vars()`: a (potentially) modified item object with added
+#'    variables
+#' * `get_itm_var()`: character vector of `itm` variables
+#' * `set_callback()`: a modified object with added callback function
+#' * `do_callback()`: result of the callback function applied to data, most
+#'    likely (`id_tbl`/`ts_tbl`)
+#' * `do_itm_load()`: result of item loading (`id_tbl`/`ts_tbl`)
+#' * `n_tick()`: Integer valued number of progress bar ticks
+#' * `set_target()`: a modified object with newly set target class
+#' * `get_target()`: string valued target class of an object
 #'
 #' @rdname item_utils
 #' @keywords internal
@@ -760,6 +783,9 @@ get_target.default <- function(x) stop_generic(x, .Generic)
 #'
 #' @rdname data_concepts
 #'
+#' @return Constructors and coercion functions return `cncpt` and `concept`
+#' objects, while inheritance tester functions return logical flags.
+#'
 #' @examples
 #' if (require(mimic.demo)) {
 #' gluc <- concept("glu",
@@ -1094,6 +1120,9 @@ n_tick.concept <- function(x) sum(int_ply(x, n_tick))
 #' @param cfg_dirs File name of the dictionary
 #'
 #' @rdname concept_dictionary
+#'
+#' @return A `concept` object containing several data concepts as `cncpt`
+#' objects.
 #'
 #' @examples
 #' if (require(mimic.demo)) {

@@ -64,6 +64,9 @@ load_difftime(x, ...)
 \item{time_vars}{Character vector enumerating the columns to be treated as
 timestamps and thus returned as \code{\link[base:difftime]{base::difftime()}} vectors}
 }
+\value{
+A \code{data.table} object.
+}
 \description{
 Data loading involves a cascade of S3 generic functions, which can
 individually be adapted to the specifics of individual data sources. A the

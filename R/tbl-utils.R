@@ -52,6 +52,12 @@
 #'
 #' @param x Object to query
 #'
+#' @return Mostly column names as character vectors, in case of `id_var()`,
+#' `index_var()`, `data_var()` and `time_unit()` of length 1, else of variable
+#' length. Functions `id_col()`, `index_col()` and `data_col()` return table
+#' columns as vectors, while `interval()` returns a scalar valued `difftime`
+#' object and `time_step()` a number.
+#'
 #' @examples
 #' tbl <- id_tbl(a = rep(1:2, each = 5), b = rep(1:5, 2), c = rnorm(10),
 #'               id_vars = c("a", "b"))
@@ -275,6 +281,12 @@ is_df <- is_type("data.frame")
 #' reference
 #' @param ... In case a function is passed as `new`, further arguments are
 #' forwarded to that function
+#'
+#' @return Most of the utility functions return either an `id_tbl` or a
+#' `ts_tbl`, potentially modified by reference, depending on the type of the
+#' object passed as `x`. The functions `is_sorted()`, `anyDuplicated()` and
+#' `is_unique()` return logical flags, while `duplicated()` returns a logical
+#' vector of the length `nrow(x)`.
 #'
 #' @rdname tbl_utils
 #' @export

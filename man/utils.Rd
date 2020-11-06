@@ -37,6 +37,15 @@ replace_na(x, val, ...)
 
 \item{...}{Forwarded to other methods}
 }
+\value{
+\itemize{
+\item \code{min_or_na()}/\code{max_or_na()}: scalar-valued extrema of a vector
+\item \code{is_val()}/\code{not_val()}/\code{is_true()}/\code{is_false()}: Logical vector of the
+same length as the object passed as \code{x}
+\item \code{first_elem()}/\code{last_elem()}: single element of the object passed as \code{x}
+\item \code{replace_na()}: modified version of the object passed as \code{x}
+}
+}
 \description{
 Several utility functions exported for convenience.
 }

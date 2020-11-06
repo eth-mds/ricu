@@ -62,6 +62,8 @@
 #' @importFrom curl new_handle handle_setopt parse_headers
 #' @importFrom curl curl_fetch_disk curl_fetch_stream curl_fetch_memory
 #'
+#' @return Called for side effects and returns `NULL` invisibly.
+#'
 #' @examples
 #' \dontrun{
 #'

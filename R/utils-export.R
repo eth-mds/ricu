@@ -18,6 +18,9 @@
 #' if `FALSE`, rows where all data columns entries are missing are removed and
 #' if `NULL`, data is written as-is
 #'
+#' @return While `write_psv()` is called for side effects and returns `NULL`
+#' invisibly, `read_psv()` returns an object inheriting from `id_tbl`.
+#'
 #' @references
 #' Reyna, M., Josef, C., Jeter, R., Shashikumar, S., Moody, B., Westover, M.
 #' B., Sharma, A., Nemati, S., & Clifford, G. (2019). Early Prediction of
