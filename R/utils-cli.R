@@ -112,6 +112,8 @@ combine_messages <- function(x) {
 #' @param ... Passed to [base::.makeMessage()]
 #' @param envir Passed to [glue::glue()].
 #'
+#' @return Called for side effects and returns `NULL` invisibly.
+#'
 #' @examples
 #' msg_progress("Foo", "bar")
 #'

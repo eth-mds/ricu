@@ -78,6 +78,10 @@ available for the given table}
 \item{regex}{String-valued regular expression which will be evaluated by
 \code{\link[base:grep]{base::grepl()}} with \code{ignore.case = TRUE}}
 }
+\value{
+Constructors and coercion functions return \code{itm} and \code{item} objects,
+while inheritance tester functions return logical flags.
+}
 \description{
 Item objects are used in \code{ricu} as a way to specify how individual data
 items corresponding to clinical concepts (see also \code{\link[=concept]{concept()}}), such as

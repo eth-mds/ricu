@@ -2801,7 +2801,7 @@
       ],
       "hirid": [
         {
-          "ids": 110,
+          "ids": [110, 610],
           "table": "observations",
           "sub_var": "variableid",
           "class": "hrd_itm"

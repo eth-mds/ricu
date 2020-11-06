@@ -39,6 +39,13 @@ reference}
 \item{interval}{Time series interval length specified as scalar-valued
 \code{difftime} object}
 }
+\value{
+Constructors \code{id_tbl()}/\code{ts_tbl()}, as well as coercion functions
+\code{as_id_tbl()}/\code{as_ts_tbl()} return \code{id_tbl}/\code{ts_tbl} objects respectively,
+while inheritance testers \code{is_id_tbl()}/\code{is_ts_tbl()} return logical flags
+and \code{validate_tbl()} returns either \code{TRUE} or a string describing the
+validation failure.
+}
 \description{
 In order to simplify handling or tabular ICU data, \code{ricu} provides two
 S3 classes, \code{id_tbl} and \code{ts_tbl}. The two classes essentially

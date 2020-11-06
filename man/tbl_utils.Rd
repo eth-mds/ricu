@@ -108,6 +108,13 @@ columns to the front.}
 
 \item{na_rm}{Logical flag indicating how to treat \code{NA} values}
 }
+\value{
+Most of the utility functions return either an \code{id_tbl} or a
+\code{ts_tbl}, potentially modified by reference, depending on the type of the
+object passed as \code{x}. The functions \code{is_sorted()}, \code{anyDuplicated()} and
+\code{is_unique()} return logical flags, while \code{duplicated()} returns a logical
+vector of the length \code{nrow(x)}.
+}
 \description{
 Several utility functions for working with \code{id_tbl} and \code{ts_tbl} objects
 are available, including functions for changing column names, removing

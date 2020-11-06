@@ -56,6 +56,17 @@ column}
 
 \item{in_time, out_time}{column names of the returned in/out times}
 }
+\value{
+\itemize{
+\item \code{id_origin()}/\code{id_orig_helper()}: an \code{id_tbl} with admission time stamps
+corresponding to the selected ID
+\item \code{id_windows()}/\code{id_win_helper()}: an \code{id_tbl} holding all IDs and their
+respective start and end times
+\item \code{id_map()}/\code{id_map_helper()}: an \code{id_tbl} containing the selected IDs and
+depending on values passed as \code{in_time} and \code{out_time}, start and end
+times of the ID passed as \code{win_var}
+}
+}
 \description{
 Two important tools for smoothing out differences among used datasets are
 \code{id_origin()} which returns origin times for a given ID and \code{id_map()}

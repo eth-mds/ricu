@@ -50,6 +50,9 @@ added to their names)}
 \item{interval}{Time series interval (only used for checking consistency
 of input data, \code{NULL} will use the interval of the first data object)}
 }
+\value{
+A \code{ts_tbl} object.
+}
 \description{
 The SOFA (Sequential Organ Failure Assessment) score is a commonly used
 assessment tool for tracking a patient's status during a stay at an ICU.

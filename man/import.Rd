@@ -30,6 +30,9 @@ tables}
 \item{progress}{Either \code{NULL} or a progress bar as created by
 \code{\link[progress:progress_bar]{progress::progress_bar()}}}
 }
+\value{
+Called for side effects and returns \code{NULL} invisibly.
+}
 \description{
 Making a dataset available to \code{ricu} consists of 3 steps: downloading
 (\code{\link[=download_src]{download_src()}}), importing (\code{\link[=import_src]{import_src()}}) and attaching

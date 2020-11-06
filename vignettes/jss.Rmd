@@ -48,7 +48,6 @@ pkgdown:
 ---
 
 ```{r setup, include = FALSE}
-
 knitr::opts_chunk$set(echo = TRUE)
 
 library(ricu)
@@ -56,25 +55,31 @@ library(data.table)
 library(forestmodel)
 library(survival)
 library(ggplot2)
-
-last_event <- function(x) c(rep(0, length(x)-1), max(x))
-
-
 ```
 
 # Introduction
 
 Collection of electronic health records has seen a significant rise in the recent years \cite{evans2016electronic}, opening up opportunities and providing the grounds for a large body of data-driven research oriented towards helping clinicians in decision-making and therefore improving patient care and health outcomes \cite{jiang2017artificial}.
 
-One example of a problem that has received much attention from the machine learning community is early prediction of sepsis in ICU \cite{desautels2016prediction, nemati2018interpretable, futoma2017improved, kam2017learning}. Interestingly, there is evidence that a large proportion of the publications are based on the same dataset \cite{fleuren2019machine}, the Medical Information Mart for Intensive Care (MIMIC) \cite{johnson2016mimic}, which shows a systematic lack of external validation. Part of this problem might well be the lack of a computational infrastructure handling multiple datasets. The MIMIC-III dataset consists of 26 different tables containing about 20GB of data. While much work and care has gone into data preprocessing in order to provide a self-contained ready to use data resource with MIMIC, seemingly simple tasks such as computing a SOFA score for patients \citep{vincent1996sofa}, remains a non trivial effort<!-- maybe add some citations and a sentence on label heterogeneity -->. This is only exacerbated when aiming to co-integrate multiple different datasets of this form is, spanning hospitals and even countries in order to capture effects of differing practice and demographics.
+One example of a problem that has received much attention from the machine learning community is early prediction of sepsis in ICU \cite{desautels2016prediction, nemati2018interpretable, futoma2017improved, kam2017learning}. Interestingly, there is evidence that a large proportion of the publications are based on the same dataset \cite{fleuren2019machine}, the Medical Information Mart for Intensive Care (MIMIC) \cite{johnson2016mimic}, which shows a systematic lack of external validation. Part of this problem might well be the lack of a computational infrastructure handling multiple datasets. The MIMIC-III dataset consists of 26 different tables containing about 20GB of data. While much work and care has gone into data preprocessing in order to provide a self-contained ready to use data resource with MIMIC-III, seemingly simple tasks such as computing a SOFA score for patients \citep{vincent1996sofa}, remains a non trivial effort^[There is considerable heterogeneity in number of patients satisfying the Sepsis-3 criterion among studies investigating MIMIC-III. Reported Sepsis-3 prevalence ranges from 11.3% \cite{desautels2016prediction}, over 23.9% \cite{nemati2018interpretable} and 25.4% \cite{wang2018}, up to 49.1% \cite{johnson2018}. While some of this variation may be explained by varying patient inclusion criteria, differences in label implementations must also contribute significantly.]. This is only exacerbated when aiming to co-integrate multiple different datasets of this form, spanning hospitals and even countries, in order to capture effects of differing practice and demographics.
 
-The aim of the \pkg{ricu} package is to provide computational infrastructure allowing users to access complex research questions as easily as possible. The package also aims to enable users to write dataset-agnostic code which can simplify implementation and shorten the necessary time for prototyping code to different datasets. In particular, the package handles three large, publicly available intensive care databases: the already mentioned MIMIC-III database from the Beth Israel Deaconess Medical Center in Boston, Massachusetts, the eICU Collaborative Research Database \cite{pollard2018eicu}, containing data collected from 208 hospitals across the United States, and the HiRID database \cite{faltys2020hirid} from the Department of Intensive Care Medicine of the Bern University Hospital, Switzerland. Together with this, much of the functionality used is also aimed to accommodate for addition of possible additional datasets, provided by the user. The work most similar to ours is that of \cite{adibuzzaman2016closing} and \cite{wang2020mimic}. However, these works address only the MIMIC-III dataset and do not have an emphasis on dataset inter-operability.
+The aim of the \pkg{ricu} package is to provide computational infrastructure allowing users to access complex research questions as easily as possible by providing a unified interface to a heterogeneous set of datasets. The package enables users to write dataset-agnostic code which can simplify implementation and shorten the necessary time prototyping code for different datasets. In its current form, the package handles four large-scale, publicly available intensive care databases out of the box: MIMIC-III from the Beth Israel Deaconess Medical Center in Boston, Massachusetts \cite{johnson2016mimic}, the eICU Collaborative Research Database \cite{pollard2018eicu}, containing data collected from 208 hospitals across the United States, HiRID from the Department of Intensive Care Medicine of the Bern University Hospital, Switzerland \cite{faltys2020hirid} and AmsterdamUMCdb from the Amsterdam University Medical Center \cite{aumc}. Furthermore, \pkg{ricu} was designed with extensibility in mind such that adding further public and or private user-provided datasets is possible.
 
-<!-- paragraph on observed differences between datasets: absolute vs relative times, difftime intervals, id systems, etc. -->
+To our knowledge, infrastructure that provides a common interface to multiple such datasets is a novel contribution. While there have been efforts such as \cite{adibuzzaman2016closing} and \cite{wang2020mimic} attempting to abstract away some specifics of a dataset, these have so far exclusively focused on MIMIC-III, the most popular of public ICU datsets and have not been designed with dataset interoperability in mind.
 
-The structure of the manuscript is as follows. In Section \ref{implementation} we outline the different types of data useful for research related to intensive care medicine. We explain the most important parts of the package functionality which are used to handle the different data types. In Section \ref{examples} we provide simple examples which illustrate how some simple research questions can be explored in only a couple of lines of code.
+Given the somewhat narrow focus of the targeted datasets, combined with the fact that in some cases data is even extracted from identical systems, it may come as a surprise as to how heterogeneous the resulting datasets are. In MIMIC-III and HiRID, for example, time-stamps are reported as absolute times (albeit randomly shifted due to data privacy concerns), whereas eICU and AUMC use relative times (with origins being admission times). Furthermore, while relative times in eICU are reported in minutes, AUMC uses millisecond resolution. Another example, involves different types of patient identifiers and their use among datasets. Common to all is the notion on an ICU admission ID, but apart from that, the amount of available information varies. While ICU readmissions for a given patient can be identified in both eICU and MIMIC-III, this is not possible on either HiRID or AUMC. Similarly, individual patients can be identified on AUMC and MIMIC-III, but not on eICU or HiRID. In this sense, MIMIC-III is the most complete dataset of the four, but this comes with issues of its own: ID availability among tables varies, requiring extra processing steps for retrieving data with common IDs.
 
-# Implementation
+The following sections serve to introduce \pkg{ricu} by first giving an overview of particularities of the four default dataset, followed by some implementation details on how datasets are stored and how external data sources can be made accessible by \pkg{ricu} (\ref{data_srcs}). The next section is concerned with ...
+
+# Data sources {# data_srcs}
+
+## Ready to use datasets
+
+## Implementation details
+
+## Adding external datasets
+
+# Data concepts
 
 In this Section we go over the categories of data useful for research problems related to intensive care medicine. The categories we define are fairly broad and somewhat loosely defined, as this is not the main focus of the manuscript.
 
@@ -97,6 +102,8 @@ Age, gender, other demograpichs, patient stay information.
 ## Outcomes
 Death outcome, prolonged ICU stay outcome.
 
+## Implementation details
+
 # Examples
 
 We focus on two simple examples with which we try to cover most of the data types described in Section \ref{implementation}.
@@ -109,6 +116,7 @@ load_concepts <- cached_concept_loader("tcm")
 The first example we look at is the association of lactate levels and mortality. This problem has been studied before and it is widely accepted that both static and dynamic lactate indices are associated with increased mortality \citep{haas2016severe, nichol2011dynamic, van2013cumulative}. We quickly look at how one might fit a time-varying proportional hazards Cox model \citep{therneau2015package} in order to investigate this problem. We additionally include the Sequential Organ Failure Assessment (SOFA) score \citep{vincent1996sofa} as a general predictor of illness severity.
 
 ```{r time_cox_model}
+last_event <- function(x) c(rep(0, length(x)-1), max(x))
 # data loading
 tbl <- load_concepts(c("lact", "death", "sofa"), "mimic_demo",
                      verbose = FALSE)

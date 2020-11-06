@@ -45,6 +45,8 @@
 #' @param x Object for which to load data
 #' @param ... Generic consistency
 #'
+#' @return A `data.table` object.
+#'
 #' @examples
 #' if (require(mimic.demo)) {
 #' tbl <- mimic_demo$labevents
@@ -309,6 +311,8 @@ load_eicu <- function(x, rows, cols, id_hint, time_vars) {
 #' @param id_var The column defining the id of `ts_tbl` and `id_tbl` objects
 #' @param interval The time interval used to discretize time stamps with,
 #' specified as [base::difftime()] object
+#'
+#' @return An `id_tbl` or a `ts_tbl` object.
 #'
 #' @examples
 #' if (require(mimic.demo)) {

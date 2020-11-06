@@ -14,6 +14,9 @@ the default config directors}
 
 \item{cfg_dirs}{Additional directory/ies to look for configuration files}
 }
+\value{
+A list of data source configurations as \code{src_cfg} objects.
+}
 \description{
 For a data source to be accessible by \code{ricu}, a configuration object
 inheriting from the S3 class \code{src_cfg} is required. Such objects can be

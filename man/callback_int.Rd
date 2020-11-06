@@ -23,6 +23,9 @@ functions}
 
 \item{grp_var}{Optional grouping variable (for example linking infusions)}
 }
+\value{
+An \code{id_tbl} or \code{ts_tbl} object, potentially modified by reference.
+}
 \description{
 The utility function \code{add_weight()} is exported for convenience when adding
 external datasets and integrating concepts such as vasopressor rates which

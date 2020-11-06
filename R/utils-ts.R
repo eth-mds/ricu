@@ -52,6 +52,9 @@
 #' @param new_index Name of the new index column
 #' @param keep_vars Names of the columns to hold onto
 #'
+#' @return Most functions return `ts_tbl` objects with the exception of
+#' `has_gaps()`/`has_no_gaps()`/`is_regular()`, which return logical flags.
+#'
 #' @examples
 #' tbl <- ts_tbl(x = 1:5, y = hours(1:5), z = hours(2:6), val = rnorm(5),
 #'               index_var = "y")
@@ -432,6 +435,8 @@ hopper <- function(x, expr, windows, full_window = FALSE,
 #' vectors with given time units.
 #'
 #' @param x Numeric vector to coerce to [base::difftime()]
+#'
+#' @return Vector valued time differences as `difftime` object.
 #'
 #' @examples
 #' hours(1L)

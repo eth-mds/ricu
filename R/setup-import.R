@@ -47,6 +47,8 @@
 #' @param ... Passed to downstream methods (finally to
 #' [readr::read_csv]/[readr::read_csv_chunked])/generic consistency
 #'
+#' @return Called for side effects and returns `NULL` invisibly.
+#'
 #' @examples
 #' \dontrun{
 #'

@@ -91,8 +91,8 @@ cfg <- list(
              class = "col_itm")
       ),
       hirid = list(
-        list(ids = 110L, table = "observations", sub_var = "variableid",
-             class = "hrd_itm")
+        list(ids = c(110L, 610L), table = "observations",
+             sub_var = "variableid", class = "hrd_itm")
       ),
       aumc = list(
         list(ids = 6642L, table = "numericitems", sub_var = "itemid")

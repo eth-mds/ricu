@@ -3,6 +3,7 @@
 \name{load_dictionary}
 \alias{load_dictionary}
 \alias{concept_availability}
+\alias{explain_dictionary}
 \title{Load concept dictionaries}
 \usage{
 load_dictionary(
@@ -13,6 +14,11 @@ load_dictionary(
 )
 
 concept_availability(dict = load_dictionary())
+
+explain_dictionary(
+  dict = load_dictionary(),
+  cols = c("name", "category", "description")
+)
 }
 \arguments{
 \item{src}{\code{NULL} or the name of one or several data sources}
@@ -25,6 +31,12 @@ concept_availability(dict = load_dictionary())
 \item{cfg_dirs}{File name of the dictionary}
 
 \item{dict}{A dictionary (\code{conncept} object)}
+
+\item{cols}{Columns to include in the output of \code{explain_dictionary()}}
+}
+\value{
+A \code{concept} object containing several data concepts as \code{cncpt}
+objects.
 }
 \description{
 Data concepts can be specified in JSON format as a concept dictionary which

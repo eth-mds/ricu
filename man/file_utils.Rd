@@ -46,6 +46,13 @@ returned lists}
 
 \item{dir}{Directory to write the file to (created if non-existent)}
 }
+\value{
+Functions \code{data_dir()}, \code{src_data_dir()} and \code{config_paths()} return
+file paths as character vectors, \code{auto_load_src_names()} returns a character
+vector of data source names and \code{src_data_avail()} a \code{data.frame} describing
+availability of data sources. Configuration utilitites \code{get_config()} and
+\code{set_config()} read and write list objects to/from JSON format.
+}
 \description{
 Determine the location where to place data meant to persist between
 individual sessions.

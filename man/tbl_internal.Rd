@@ -20,6 +20,14 @@ as_ptype(x)
 \item{stop_on_fail}{Logical flag indicating whether to consider failed
 object validation as error}
 }
+\value{
+\itemize{
+\item \code{unclass_tbl()}: a \code{data.table}
+\item \code{reclass_tbl()}: either an \code{id_tbl} or a \code{ts_tbl} depending on the type
+of the object passed as \code{template}
+\item \code{as_ptype()}: an object of the same type as \code{x}, but with on data
+}
+}
 \description{
 In order to remove all \code{id_tbl}/\code{ts_tbl}-related attributes, as well as
 extra class-labels, the exported but marked internal function

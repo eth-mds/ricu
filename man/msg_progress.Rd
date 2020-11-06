@@ -11,6 +11,9 @@ msg_progress(..., envir = parent.frame())
 
 \item{envir}{Passed to \code{\link[glue:glue]{glue::glue()}}.}
 }
+\value{
+Called for side effects and returns \code{NULL} invisibly.
+}
 \description{
 In order to not interrupt progress reporting by a \link[progress:progress_bar]{progress::progress_bar},
 messages are wrapped with class \code{msg_progress} which causes them to be

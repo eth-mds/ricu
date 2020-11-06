@@ -195,6 +195,8 @@ check_interval <- function(dat, ival = NULL) {
 #' @param interval Expected time series step size (determined from data if
 #' `NULL`)
 #'
+#' @return Either an `id_tbl` or `ts_tbl` depending on the type of concept.
+#'
 #' @encoding UTF-8
 #' @rdname callback_cncpt
 #' @export
