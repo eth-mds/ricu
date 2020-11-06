@@ -143,8 +143,6 @@ download_src.hirid_cfg <- function(x, data_dir = src_data_dir(x),
   invisible(NULL)
 }
 
-#' @importFrom xml2 read_html xml_attr xml_find_first xml_child
-#'
 #' @export
 download_src.aumc_cfg <- function(x, data_dir = src_data_dir(x),
                                   tables = NULL, force = FALSE, user = NULL,
@@ -167,17 +165,18 @@ download_src.aumc_cfg <- function(x, data_dir = src_data_dir(x),
   if (res[["status_code"]] == 200 &&
       requireNamespace("xml2", quietly = TRUE)) {
 
-    info <- read_html(rawToChar(res[["content"]]))
+    info <- xml2::read_html(rawToChar(res[["content"]]))
 
-    size <- xml_find_first(info, "//div[contains(@class, 'general box')]")
-    size <- as.numeric(xml_attr(size, "data-transfer-size"))
+    size <- xml2::xml_find_first(info,
+                                 "//div[contains(@class, 'general box')]")
+    size <- as.numeric(xml2::xml_attr(size, "data-transfer-size"))
 
-    info <- xml_find_first(info,
+    info <- xml2::xml_find_first(info,
       "//div[contains(@class, 'files box')]/div[contains(@class, 'file')]"
     )
 
-    name <- xml_attr(info, "data-name")
-    url  <- xml_attr(xml_child(info, "a"), "href")
+    name <- xml2::xml_attr(info, "data-name")
+    url  <- xml2::xml_attr(xml2::xml_child(info, "a"), "href")
 
     if (!is.na(size) && !is.na(name) && !is.na(info)) {
 
@@ -188,7 +187,7 @@ download_src.aumc_cfg <- function(x, data_dir = src_data_dir(x),
       res <- download_file(url, dest = fil, progr = prg)
 
       if (res[["status_code"]] == 200) {
-        unzip(fil, exdir = data_dir)
+        utils::unzip(fil, exdir = data_dir)
         return(invisible(NULL))
       }
     }

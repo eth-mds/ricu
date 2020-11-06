@@ -180,6 +180,10 @@ NULL
 #' @rdname data_env
 NULL
 
+#' @name aumc
+#' @rdname data_env
+NULL
+
 data_env <- function() get("data", envir = pkg_env(), mode = "environment")
 
 get_from_data_env <- function(source) {
