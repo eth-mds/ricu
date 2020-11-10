@@ -69,13 +69,12 @@ progress_tick <- function(info = NULL, progress_bar = NULL, length = 1L) {
       token <- sprintf("%-15s", info)
     }
 
-    progress_bar$tick(len = length, tokens = list(what = token))
-    attr(progress_bar, "token") <- token
-
-
+    attr(progress_bar, "token")    <- token
     attr(progress_bar, "output")   <- combine_messages(progress_bar)
     attr(progress_bar, "header")   <- info
     attr(progress_bar, "messages") <- character(0L)
+
+    progress_bar$tick(len = length, tokens = list(what = token))
 
   } else if (not_null(old_token)) {
 

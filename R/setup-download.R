@@ -150,6 +150,17 @@ download_src.aumc_cfg <- function(x, data_dir = src_data_dir(x),
 
   warn_dots(...)
 
+  deps <- c(
+    `the command line utility 7z` = nzchar(Sys.which("7z")),
+    `the R package xml2` = requireNamespace("xml2", quietly = TRUE)
+  )
+
+  if (!all(deps)) {
+    stop_ricu("Download of `aumc` data requires {deps}. Please either make sure
+               all dependencies are available or download and unzip the data
+               manually to {data_dir}")
+  }
+
   tbl <- determine_tables(x, data_dir, tables, force)
 
   if (length(tbl) == 0L) {
@@ -162,8 +173,7 @@ download_src.aumc_cfg <- function(x, data_dir = src_data_dir(x),
   url <- paste0("https://filesender.surf.nl/?s=download&token=", tok)
   res <- download_file(url)
 
-  if (res[["status_code"]] == 200 &&
-      requireNamespace("xml2", quietly = TRUE)) {
+  if (res[["status_code"]] == 200) {
 
     info <- xml2::read_html(rawToChar(res[["content"]]))
 
@@ -187,7 +197,21 @@ download_src.aumc_cfg <- function(x, data_dir = src_data_dir(x),
       res <- download_file(url, dest = fil, progr = prg)
 
       if (res[["status_code"]] == 200) {
-        utils::unzip(fil, exdir = data_dir)
+
+        tbl <- chr_ply(tbl, raw_file_names)
+        unlink(file.path(data_dir, tbl))
+
+        res <- suppressWarnings(
+          system2("7z", c("e", fil, paste0("-o", data_dir), "-tzip", tbl),
+                  stdout = NULL, stderr = TRUE)
+        )
+
+        if (attr(res, "status") != 0) {
+          msg_ricu(c("7z terminated with non-zero exit status:", res),
+                   indent = c(0L, rep_along(2L, res)),
+                   exdent = c(0L, rep_along(2L, res)))
+        }
+
         return(invisible(NULL))
       }
     }
@@ -228,7 +252,8 @@ determine_tables <- function(x, dir, tables, force) {
               is.dir(dir), is.flag(force))
 
   if (!force) {
-    avail  <- names(x)[src_file_exist(x, "fst") | src_file_exist(x, "raw")]
+    avail  <- names(x)[src_file_exist(x, data_dir, "fst") |
+                       src_file_exist(x, data_dir, "raw")]
     tables <- setdiff(tables, avail)
   }
 

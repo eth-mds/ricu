@@ -1952,8 +1952,8 @@ cfg <- list(
       ),
       aumc = list(
         list(val_var = "gender", table = "admissions",
-             callback = strip_ws("apply_map(c(Vrouw     = 'Female',
-                                              Man       = 'Male'))"),
+             callback = strip_ws("apply_map(c(Vrouw = 'Female',
+                                              Man   = 'Male'))"),
              class = "col_itm")
       )
     )
@@ -1979,12 +1979,12 @@ cfg <- list(
       ),
       aumc = list(
         list(val_var = "agegroup", table = "admissions",
-             callback = strip_ws("apply_map(c(`18-39`   = 30,
-                                              `40-49`   = 45,
-                                              `50-59`   = 55,
-                                              `60-69`   = 65,
-                                              `70-79`   = 75,
-                                              `80+`     = 90))"),
+             callback = strip_ws("apply_map(c(`18-39` = 30,
+                                              `40-49` = 45,
+                                              `50-59` = 55,
+                                              `60-69` = 65,
+                                              `70-79` = 75,
+                                              `80+`   = 90))"),
              class = "col_itm")
       )
     )

@@ -82,8 +82,8 @@ import_src.src_cfg <- function(x, data_dir = src_data_dir(x), force = FALSE,
 
   tbl <- as_tbl_cfg(x)
 
-  todo <- src_file_exist(tbl, "raw")
-  done <- src_file_exist(tbl, "fst")
+  todo <- src_file_exist(tbl, data_dir, "raw")
+  done <- src_file_exist(tbl, data_dir, "fst")
   skip <- done & todo
 
   if (!force && any(skip)) {
@@ -113,6 +113,14 @@ import_src.src_cfg <- function(x, data_dir = src_data_dir(x), force = FALSE,
   msg_ricu("Successfully imported {length(tbl)} table{?s}")
 
   invisible(NULL)
+}
+
+#' @rdname import
+#' @export
+import_src.aumc_cfg <- function(x, data_dir = src_data_dir(x), force = FALSE,
+                                ...) {
+
+  NextMethod(locale = readr::locale(encoding = "latin1"))
 }
 
 #' @export
