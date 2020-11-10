@@ -1,4 +1,6 @@
 
+strip_ws <- function(x) gsub("\\s+", " ", x)
+
 cfg <- list(
   hr = list(
     unit = c("bpm", "/min"),
@@ -17,6 +19,9 @@ cfg <- list(
       hirid = list(
         list(ids = 200L, table = "observations", sub_var = "variableid",
              class = "hrd_itm")
+      ),
+      aumc = list(
+        list(ids = 6640L, table = "numericitems", sub_var = "itemid")
       )
     )
   ),
@@ -38,6 +43,9 @@ cfg <- list(
       hirid = list(
         list(ids = 100L, table = "observations", sub_var = "variableid",
              class = "hrd_itm")
+      ),
+      aumc = list(
+        list(ids = 6641L, table = "numericitems", sub_var = "itemid")
       )
     )
   ),
@@ -59,6 +67,9 @@ cfg <- list(
       hirid = list(
         list(ids = 120L, table = "observations", sub_var = "variableid",
              class = "hrd_itm")
+      ),
+      aumc = list(
+        list(ids = 6643L, table = "numericitems", sub_var = "itemid")
       )
     )
   ),
@@ -82,6 +93,9 @@ cfg <- list(
       hirid = list(
         list(ids = c(110L, 610L), table = "observations",
              sub_var = "variableid", class = "hrd_itm")
+      ),
+      aumc = list(
+        list(ids = 6642L, table = "numericitems", sub_var = "itemid")
       )
     )
   ),
@@ -103,6 +117,10 @@ cfg <- list(
       hirid = list(
         list(ids = c(300L, 310L), table = "observations",
              sub_var = "variableid", class = "hrd_itm")
+      ),
+      aumc = list(
+        list(ids = c(8874L, 12266L), table = "numericitems",
+             sub_var = "itemid")
       )
     )
   ),
@@ -125,6 +143,10 @@ cfg <- list(
       hirid = list(
         list(ids = c(4000L, 8280L, 20000800L), table = "observations",
              sub_var = "variableid", class = "hrd_itm")
+      ),
+      aumc = list(
+        list(ids = c(6709L, 12311L, 8903L), table = "numericitems",
+             sub_var = "itemid")
       )
     )
   ),
@@ -149,6 +171,9 @@ cfg <- list(
       hirid = list(
         list(ids = 2010L, table = "observations", sub_var = "variableid",
              class = "hrd_itm")
+      ),
+      aumc = list(
+        list(ids = 12279L, table = "numericitems", sub_var = "itemid")
       )
     )
   ),
@@ -166,7 +191,7 @@ cfg <- list(
         list(ids = "Total CO2", table = "lab", sub_var = "labname",
              callback = "convert_unit(set_val(NA), 'mEq/L', 'lpm')")
       )
-  )
+    )
   ),
   alt = list(
     unit = c("IU/L", "U/l"),
@@ -183,6 +208,10 @@ cfg <- list(
       hirid = list(
         list(ids = 20002600L, table = "observations", sub_var = "variableid",
              class = "hrd_itm")
+      ),
+      aumc = list(
+        list(ids = c(6800L, 11978L), table = "numericitems",
+             sub_var = "itemid")
       )
     )
   ),
@@ -201,6 +230,10 @@ cfg <- list(
       hirid = list(
         list(ids = 24000330L, table = "observations", sub_var = "variableid",
              class = "hrd_itm")
+      ),
+      aumc = list(
+        list(ids = c(6806L, 11990L), table = "numericitems",
+             sub_var = "itemid")
       )
     )
   ),
@@ -221,6 +254,11 @@ cfg <- list(
         list(ids = 20002500L, table = "observations", sub_var = "variableid",
              callback = "convert_unit(binary_op(`*`, 3.097521), 'mg/dL')",
              class = "hrd_itm")
+      ),
+      aumc = list(
+        list(ids = c(6828L, 9935L), table = "numericitems",
+             sub_var = "itemid",
+             callback = "convert_unit(binary_op(`*`, 3.097521), 'mg/dL')")
       )
     )
   ),
@@ -241,6 +279,11 @@ cfg <- list(
         list(ids = 20004100L, table = "observations", sub_var = "variableid",
              callback = "convert_unit(binary_op(`*`, 2.8), 'mg/dL')",
              class = "hrd_itm")
+      ),
+      aumc = list(
+        list(ids = c(6850L, 9943L), table = "numericitems",
+             sub_var = "itemid",
+             callback = "convert_unit(binary_op(`*`, 2.8), 'mg/dL')")
       )
     )
   ),
@@ -259,6 +302,10 @@ cfg <- list(
       hirid = list(
         list(ids = 20000300L, table = "observations", sub_var = "variableid",
              class = "hrd_itm")
+      ),
+      aumc = list(
+        list(ids = c(6848L, 12310L), table = "numericitems",
+             sub_var = "itemid")
       )
     )
   ),
@@ -279,6 +326,11 @@ cfg <- list(
         list(ids = 20004300L, table = "observations", sub_var = "variableid",
              callback = "convert_unit(binary_op(`*`, 0.058467), 'mg/dL')",
              class = "hrd_itm")
+      ),
+      aumc = list(
+        list(ids = c(6813L, 9945L), table = "numericitems",
+             sub_var = "itemid",
+             callback = "convert_unit(binary_op(`*`, 0.058467), 'mg/dL')")
       )
     )
   ),
@@ -295,6 +347,9 @@ cfg <- list(
       hirid = list(
         list(ids = 24000567L, table = "observations", sub_var = "variableid",
              class = "hrd_itm")
+      ),
+      aumc = list(
+        list(ids = 11893L, table = "numericitems", sub_var = "itemid")
       )
     )
   ),
@@ -314,6 +369,10 @@ cfg <- list(
       hirid = list(
         list(ids = 20000110L, table = "observations", sub_var = "variableid",
              class = "hrd_itm")
+      ),
+      aumc = list(
+        list(ids = c(6797L, 9964L, 10409L, 14252L), table = "numericitems",
+             sub_var = "itemid")
       )
     )
   ),
@@ -333,6 +392,10 @@ cfg <- list(
       hirid = list(
         list(ids = 24000524L, table = "observations", sub_var = "variableid",
              class = "hrd_itm")
+      ),
+      aumc = list(
+        list(ids = c(6837L, 9580L, 10053L), table = "numericitems",
+             sub_var = "itemid")
       )
     )
   ),
@@ -352,6 +415,9 @@ cfg <- list(
       hirid = list(
         list(ids = 24000480L, table = "observations", sub_var = "variableid",
              class = "hrd_itm")
+      ),
+      aumc = list(
+        list(ids = 14258L, table = "numericitems", sub_var = "itemid")
       )
     )
   ),
@@ -371,6 +437,10 @@ cfg <- list(
       hirid = list(
         list(ids = 20004200L, table = "observations", sub_var = "variableid",
              class = "hrd_itm")
+      ),
+      aumc = list(
+        list(ids = c(6810L, 9992L), table = "numericitems",
+             sub_var = "itemid")
       )
     )
   ),
@@ -391,6 +461,11 @@ cfg <- list(
         list(ids = 20000600L, table = "observations", sub_var = "variableid",
              callback = "convert_unit(binary_op(`*`, 0.011312), 'mg/dL')",
              class = "hrd_itm")
+      ),
+      aumc = list(
+        list(ids = c(6836L, 9941L, 14216L), table = "numericitems",
+             sub_var = "itemid",
+             callback = "convert_unit(binary_op(`*`, 0.011309), 'mg/dL')")
       )
     )
   ),
@@ -405,6 +480,9 @@ cfg <- list(
       ),
       eicu = list(
         list(ids = "PT", table = "lab", sub_var = "labname")
+      ),
+      aumc = list(
+        list(ids = 6789L, table = "numericitems", sub_var = "itemid")
       )
     )
   ),
@@ -420,6 +498,9 @@ cfg <- list(
       ),
         eicu = list(
         list(ids = "RDW", table = "lab", sub_var = "labname")
+      ),
+      aumc = list(
+        list(ids = 18952L, table = "numericitems", sub_var = "itemid")
       )
     )
   ),
@@ -438,6 +519,10 @@ cfg <- list(
       hirid = list(
         list(ids = 20002700L, table = "observations", sub_var = "variableid",
              class = "hrd_itm")
+      ),
+      aumc = list(
+        list(ids = c(6803L, 11984L), table = "numericitems",
+             sub_var = "itemid")
       )
     )
   ),
@@ -456,6 +541,10 @@ cfg <- list(
       hirid = list(
         list(ids = 20000700L, table = "observations", sub_var = "variableid",
              class = "hrd_itm")
+      ),
+      aumc = list(
+        list(ids = c(6779L, 9965L), table = "numericitems",
+             sub_var = "itemid")
       )
     )
   ),
@@ -477,6 +566,11 @@ cfg <- list(
              sub_var = "variableid",
              callback = "convert_unit(binary_op(`*`, 0.1), 'g/dL', 'g/l')",
              class = "hrd_itm")
+      ),
+      aumc = list(
+        list(ids = c(6778L, 9553L, 9960L, 10286L, 19703L),
+             table = "numericitems", sub_var = "itemid",
+             callback = "convert_unit(binary_op(`*`, 1.611344), 'g/dL')")
       )
     )
   ),
@@ -492,6 +586,10 @@ cfg <- list(
       ),
       eicu = list(
         list(ids = "Hct", table = "lab", sub_var = "labname")
+      ),
+      aumc = list(
+        list(ids = c(6777L, 11423L, 11545L), table = "numericitems",
+             sub_var = "itemid")
       )
     )
   ),
@@ -511,6 +609,10 @@ cfg <- list(
       hirid = list(
         list(ids = 20001200L, table = "observations", sub_var = "variableid",
              class = "hrd_itm")
+      ),
+      aumc = list(
+        list(ids = c(6846L, 9990L, 21213L), table = "numericitems",
+             sub_var = "itemid")
       )
     )
   ),
@@ -530,6 +632,10 @@ cfg <- list(
       hirid = list(
         list(ids = 20000200L, table = "observations", sub_var = "variableid",
              class = "hrd_itm")
+      ),
+      aumc = list(
+        list(ids = c(7433L, 9996L, 21214L), table = "numericitems",
+             sub_var = "itemid")
       )
     )
   ),
@@ -548,6 +654,10 @@ cfg <- list(
       hirid = list(
         list(ids = 24000160L, table = "observations", sub_var = "variableid",
              class = "hrd_itm")
+      ),
+      aumc = list(
+        list(ids = 11679L, table = "numericitems", sub_var = "itemid",
+             callback = "transform_fun(binary_op(`*`, 0.016114))")
       )
     )
   ),
@@ -567,6 +677,10 @@ cfg <- list(
       hirid = list(
         list(ids = 24000170L, table = "observations", sub_var = "variableid",
              class = "hrd_itm")
+      ),
+      aumc = list(
+        list(ids = 18666L, table = "numericitems", sub_var = "itemid",
+             callback = "transform_fun(binary_op(`*`, 1.611344))")
       )
     )
   ),
@@ -586,6 +700,9 @@ cfg <- list(
       hirid = list(
         list(ids = 24000150L, table = "observations", sub_var = "variableid",
              class = "hrd_itm")
+      ),
+      aumc = list(
+        list(ids = 9968L, table = "numericitems", sub_var = "itemid")
       )
     )
   ),
@@ -604,6 +721,9 @@ cfg <- list(
       hirid = list(
         list(ids = 20004410L, table = "observations", sub_var = "variableid",
              class = "hrd_itm")
+      ),
+      aumc = list(
+        list(ids = 17982L, table = "numericitems", sub_var = "itemid")
       )
     )
   ),
@@ -625,6 +745,10 @@ cfg <- list(
         list(ids = 20005100L, table = "observations", sub_var = "variableid",
              callback = "convert_unit(binary_op(`*`, 4.008), 'mg/dL')",
              class = "hrd_itm")
+      ),
+      aumc = list(
+        list(ids = c(6817L, 9933L), table = "numericitems", sub_var = "itemid",
+             callback = "convert_unit(binary_op(`*`, 4.008), 'mg/dL')")
       )
     )
   ),
@@ -644,6 +768,9 @@ cfg <- list(
       hirid = list(
         list(ids = c(24000439L, 24000521L), table = "observations",
              sub_var = "variableid", class = "hrd_itm")
+      ),
+      aumc = list(
+        list(ids = 9930L, table = "numericitems", sub_var = "itemid")
       )
     )
   ),
@@ -666,6 +793,10 @@ cfg <- list(
         list(ids = 24000230L, table = "observations", sub_var = "variableid",
              callback = "convert_unit(binary_op(`*`, 2.431), 'mg/dL')",
              class = "hrd_itm")
+      ),
+      aumc = list(
+        list(ids = c(6839L, 9952L), table = "numericitems", sub_var = "itemid",
+             callback = "convert_unit(binary_op(`*`, 2.431), 'mg/dL')")
       )
     )
   ),
@@ -685,6 +816,10 @@ cfg <- list(
       hirid = list(
         list(ids = c(20000500L, 24000520L, 24000833L, 24000867L),
              table = "observations", sub_var = "variableid", class = "hrd_itm")
+      ),
+      aumc = list(
+        list(ids = c(6835, 9556, 9927, 10285), table = "numericitems",
+             sub_var = "itemid")
       )
     )
   ),
@@ -704,6 +839,10 @@ cfg <- list(
       hirid = list(
         list(ids = c(20000400L, 24000519L, 24000658L, 24000835L, 24000866L),
              table = "observations", sub_var = "variableid", class = "hrd_itm")
+      ),
+      aumc = list(
+        list(ids = c(6840, 9555, 9924, 10284), table = "numericitems",
+             sub_var = "itemid")
       )
     )
   ),
@@ -719,6 +858,9 @@ cfg <- list(
       ),
       eicu = list(
         list(ids = "-basos", table = "lab", sub_var = "labname")
+      ),
+      aumc = list(
+        list(ids = 14256L, table = "numericitems", sub_var = "itemid")
       )
     )
   ),
@@ -734,8 +876,11 @@ cfg <- list(
       ),
       eicu = list(
         list(ids = "-eos", table = "lab", sub_var = "labname")
+      ),
+      aumc = list(
+        list(ids = 6773L, table = "numericitems", sub_var = "itemid")
       )
-  )
+    )
   ),
   neut = list(
     unit = "%",
@@ -753,6 +898,9 @@ cfg <- list(
       hirid = list(
         list(ids = 24000550L, table = "observations", sub_var = "variableid",
              class = "hrd_itm")
+      ),
+      aumc = list(
+        list(ids = 6786L, table = "numericitems", sub_var = "itemid")
       )
     )
   ),
@@ -775,6 +923,11 @@ cfg <- list(
              sub_var = "variableid",
              callback = "convert_unit(binary_op(`*`, 18.016), 'mg/dL')",
              class = "hrd_itm")
+      ),
+      aumc = list(
+        list(ids = c(6833L, 9557L, 9947L), table = "numericitems",
+             sub_var = "itemid",
+             callback = "convert_unit(binary_op(`*`, 18.016), 'mg/dL')")
       )
     )
   ),
@@ -794,6 +947,10 @@ cfg <- list(
       hirid = list(
         list(ids = 24000522L, table = "observations", sub_var = "variableid",
              class = "hrd_itm")
+      ),
+      aumc = list(
+        list(ids = c(6815L, 8915L, 9560L, 9561L, 10267L),
+             table = "numericitems", sub_var = "itemid")
       )
     )
   ),
@@ -814,6 +971,10 @@ cfg <- list(
       hirid = list(
         list(ids = 20002200L, table = "observations", sub_var = "variableid",
              class = "hrd_itm")
+      ),
+      aumc = list(
+        list(ids = c(6825L, 10079L), table = "numericitems",
+             sub_var = "itemid")
       )
     )
   ),
@@ -830,6 +991,10 @@ cfg <- list(
       hirid = list(
         list(ids = 24000668L, table = "observations", sub_var = "variableid",
              class = "hrd_itm")
+      ),
+      aumc = list(
+        list(ids = c(6808L, 11902L), table = "numericitems",
+             sub_var = "itemid")
       )
     )
   ),
@@ -843,6 +1008,9 @@ cfg <- list(
       hirid = list(
         list(ids = 24000526L, table = "observations", sub_var = "variableid",
              class = "hrd_itm")
+      ),
+      aumc = list(
+        list(ids = 11690L, table = "numericitems", sub_var = "itemid")
       )
     )
   ),
@@ -862,6 +1030,9 @@ cfg <- list(
       hirid = list(
         list(ids = 24000549L, table = "observations", sub_var = "variableid",
              class = "hrd_itm")
+      ),
+      aumc = list(
+        list(ids = 11692L, table = "numericitems", sub_var = "itemid")
       )
     )
   ),
@@ -881,6 +1052,9 @@ cfg <- list(
         list(ids = 24000806L, table = "observations", sub_var = "variableid",
              callback = "convert_unit(binary_op(`/`, 1000), 'ng/mL')",
              class = "hrd_itm")
+      ),
+      aumc = list(
+        list(ids = 10407L, table = "numericitems", sub_var = "itemid")
       )
     )
   ),
@@ -901,6 +1075,11 @@ cfg <- list(
         list(ids = 24000605L, table = "observations", sub_var = "variableid",
              callback = "convert_unit(binary_op(`*`, 0.1), 'g/dL')",
              class = "hrd_itm")
+      ),
+      aumc = list(
+        list(ids = c(6801L, 9937L), table = "numericitems",
+             sub_var = "itemid",
+             callback = "convert_unit(binary_op(`*`, 0.1), 'g/dL')")
       )
     )
   ),
@@ -921,6 +1100,11 @@ cfg <- list(
         list(ids = 24000536L, table = "observations", sub_var = "variableid",
              callback = "convert_unit(binary_op(`*`, 100), 'mg/dL')",
              class = "hrd_itm")
+      ),
+      aumc = list(
+        list(ids = c(6776L, 9989L, 10175L), table = "numericitems",
+             sub_var = "itemid",
+             callback = "convert_unit(binary_op(`*`, 0.058467), 'mg/dL')")
       )
     )
   ),
@@ -940,6 +1124,10 @@ cfg <- list(
       hirid = list(
         list(ids = 20001300L, table = "observations", sub_var = "variableid",
              class = "hrd_itm")
+      ),
+      aumc = list(
+        list(ids = c(6807L, 9994L), table = "numericitems",
+             sub_var = "itemid", dir_var = "tag", callback = "aumc_bxs")
       )
     )
   ),
@@ -955,6 +1143,9 @@ cfg <- list(
       ),
       eicu = list(
         list(ids = "RBC", table = "lab", sub_var = "labname")
+      ),
+      aumc = list(
+        list(ids = c(6774L, 9962L), table = "numericitems", sub_var = "itemid")
       )
     )
   ),
@@ -973,6 +1164,10 @@ cfg <- list(
       hirid = list(
         list(ids = 24000210L, table = "observations", sub_var = "variableid",
              class = "hrd_itm")
+      ),
+      aumc = list(
+        list(ids = c(6822L, 11998L), table = "numericitems",
+             sub_var = "itemid")
       )
     )
   ),
@@ -991,6 +1186,9 @@ cfg <- list(
       hirid = list(
         list(ids = 24000220L, table = "observations", sub_var = "variableid",
              class = "hrd_itm")
+      ),
+      aumc = list(
+        list(ids = 6824L, table = "numericitems", sub_var = "itemid")
       )
     )
   ),
@@ -1010,6 +1208,22 @@ cfg <- list(
       hirid = list(
         list(ids = 10000300L, table = "observations", sub_var = "variableid",
              class = "hrd_itm")
+      ),
+      aumc = list(
+        list(ids = 6732L, table = "listitems", sub_var = "itemid",
+             callback = strip_ws("apply_map(
+              c(`Geen reactie`               = 1,
+                `Reactie op pijnprikkel`     = 2,
+                `Reactie op verbale prikkel` = 3,
+                `Spontane reactie`           = 4)
+              )")),
+        list(ids = 13077L, table = "listitems", sub_var = "itemid",
+             callback = strip_ws("apply_map(
+              c(`Niet`                       = 1,
+                `Op pijn`                    = 2,
+                `Op aanspreken`              = 3,
+                `Spontaan`                   = 4)
+            )"))
       )
     )
   ),
@@ -1029,6 +1243,25 @@ cfg <- list(
       hirid = list(
         list(ids = 10000100L, table = "observations", sub_var = "variableid",
              class = "hrd_itm")
+      ),
+      aumc = list(
+        list(ids = 6735L, table = "listitems", sub_var = "itemid",
+             callback = strip_ws("apply_map(
+              c(`Geen reactie (geen zichtbare poging tot praten)` = 1,
+                `Onbegrijpelijke geluiden`                        = 2,
+                `Onduidelijke woorden (pogingen tot communicatie,
+                 maar onduidelijk)`                               = 3,
+                `Verwarde conversatie`                            = 4,
+                `Helder en adequaat (communicatie mogelijk)`      = 5)
+              )")),
+        list(ids = 13066L, table = "listitems", sub_var = "itemid",
+             callback = strip_ws("apply_map(
+              c(`Geen geluid`            = 1,
+                `Onverstaanbare woorden` = 2,
+                `Onjuiste woorden`       = 3,
+                `Verwarde taal`          = 4,
+                `Georiënteerd`           = 5)
+            )"))
       )
     )
   ),
@@ -1048,6 +1281,26 @@ cfg <- list(
       hirid = list(
         list(ids = 10000200L, table = "observations", sub_var = "variableid",
              class = "hrd_itm")
+      ),
+      aumc = list(
+        list(ids = 6734L, table = "listitems", sub_var = "itemid",
+             callback = strip_ws("apply_map(
+              c(`Geen reactie`                         = 1,
+                `Strekken`                             = 2,
+                `Decortatie reflex (abnormaal buigen)` = 3,
+                `Spastische reactie (terugtrekken)`    = 4,
+                `Localiseert pijn`                     = 5,
+                `Volgt verbale commando's op`          = 6)
+              )")),
+        list(ids = 13072L, table = "listitems", sub_var = "itemid",
+             callback = strip_ws("apply_map(
+              c(`Geen reactie`              = 1,
+                `Strekken op pijn`          = 2,
+                `Abnormaal buigen bij pijn` = 3,
+                `Terugtrekken bij pijn`     = 4,
+                `Localiseren pijn`          = 5,
+                `Voert opdrachten uit`      = 6)
+            )"))
       )
     )
   ),
@@ -1091,6 +1344,9 @@ cfg <- list(
       hirid = list(
         list(ids = 30005110L, table = "observations", sub_var = "variableid",
              callback = "hirid_urine", class = "hrd_itm")
+      ),
+      aumc = list(
+        list(ids = 8794L, table = "numericitems", sub_var = "itemid")
       )
     )
   ),
@@ -1115,6 +1371,11 @@ cfg <- list(
       hirid = list(
         list(ids = 426L, table = "pharma", sub_var = "pharmaid",
              callback = "hirid_vaso_rate")
+      ),
+      aumc = list(
+        list(ids = 7178L, table = "drugitems", sub_var = "itemid",
+             rel_weight = "doserateperkg", rate_uom = "doserateunit",
+             callback = "aumc_rate")
       )
     )
   ),
@@ -1139,6 +1400,10 @@ cfg <- list(
       hirid = list(
         list(ids = 426L, table = "pharma", sub_var = "pharmaid",
              grp_var = "infusionid", callback = "hirid_duration")
+      ),
+      aumc = list(
+        list(ids = 7178L, table = "drugitems", sub_var = "itemid",
+             stop_var = "stop", grp_var = "orderid", callback = "aumc_dur")
       )
     )
   ),
@@ -1166,6 +1431,11 @@ cfg <- list(
         list(regex = "^dopa.*\\(.+\\)$", table = "infusiondrug",
              sub_var = "drugname", weight_var = "patientweight",
              callback = "eicu_vaso_rate(ml_to_mcg = 1600)", class = "rgx_itm")
+      ),
+      aumc = list(
+        list(ids = 7179L, table = "drugitems", sub_var = "itemid",
+             rel_weight = "doserateperkg", rate_uom = "doserateunit",
+             callback = "aumc_rate")
       )
     )
   ),
@@ -1186,6 +1456,10 @@ cfg <- list(
         list(regex = "^dopa", table = "infusiondrug", sub_var = "drugname",
              callback = "eicu_duration(gap_length = hours(5L))",
              class = "rgx_itm")
+      ),
+      aumc = list(
+        list(ids = 7179L, table = "drugitems", sub_var = "itemid",
+             stop_var = "stop", grp_var = "orderid", callback = "aumc_dur")
       )
     )
   ),
@@ -1217,6 +1491,11 @@ cfg <- list(
       hirid = list(
         list(ids = c(1000462L, 1000656L, 1000657L, 1000658L), table = "pharma",
              sub_var = "pharmaid", callback = "hirid_vaso_rate")
+      ),
+      aumc = list(
+        list(ids = 7229L, table = "drugitems", sub_var = "itemid",
+             rel_weight = "doserateperkg", rate_uom = "doserateunit",
+             callback = "aumc_rate")
       )
     )
   ),
@@ -1242,6 +1521,10 @@ cfg <- list(
         list(ids = c(1000462L, 1000656L, 1000657L, 1000658L), table = "pharma",
              sub_var = "pharmaid", grp_var = "infusionid",
              callback = "hirid_duration")
+      ),
+      aumc = list(
+        list(ids = 7229L, table = "drugitems", sub_var = "itemid",
+             stop_var = "stop", grp_var = "orderid", callback = "aumc_dur")
       )
     )
   ),
@@ -1274,6 +1557,11 @@ cfg <- list(
         list(ids = c(71L, 1000649L, 1000650L, 1000655L, 1000750L),
              table = "pharma", sub_var = "pharmaid",
              callback = "hirid_vaso_rate")
+      ),
+      aumc = list(
+        list(ids = 6818L, table = "drugitems", sub_var = "itemid",
+             rel_weight = "doserateperkg", rate_uom = "doserateunit",
+             callback = "aumc_rate")
       )
     )
   ),
@@ -1299,6 +1587,10 @@ cfg <- list(
         list(ids = c(71L, 1000649L, 1000650L, 1000655L, 1000750L),
              table = "pharma", sub_var = "pharmaid", grp_var = "infusionid",
              callback = "hirid_duration")
+      ),
+      aumc = list(
+        list(ids = 6818L, table = "drugitems", sub_var = "itemid",
+             stop_var = "stop", grp_var = "orderid", callback = "aumc_dur")
       )
     )
   ),
@@ -1343,6 +1635,10 @@ cfg <- list(
       hirid = list(
         list(ids = 15001552L, table = "observations", sub_var = "variableid",
              callback = "transform_fun(comp_na(`==`, 1))", class = "hrd_itm")
+      ),
+      aumc = list(
+        list(ids = 9328L, sub_var = "itemid", table = "processitems",
+             callback = "transform_fun(set_val(TRUE))")
       )
     )
   ),
@@ -1369,6 +1665,10 @@ cfg <- list(
       hirid = list(
         list(ids = 15001552L, table = "observations", sub_var = "variableid",
              callback = "transform_fun(comp_na(`>`, 2))", class = "hrd_itm")
+      ),
+      aumc = list(
+        list(ids = 9328L, sub_var = "itemid", index_var = "stop",
+             table = "processitems", callback = "transform_fun(set_val(TRUE))")
       )
     )
   ),
@@ -1384,6 +1684,10 @@ cfg <- list(
       hirid = list(
         list(ids = 15001552L, table = "observations", sub_var = "variableid",
              callback = "transform_fun(comp_na(`==`, 2))", class = "hrd_itm")
+      ),
+      aumc = list(
+        list(ids = 6735L, table = "listitems", sub_var = "itemid",
+             callback = "transform_fun(comp_na(`==`, 'Geïntubeerd'))")
       )
     )
   ),
@@ -1401,6 +1705,10 @@ cfg <- list(
       hirid = list(
         list(ids = 15001565L, table = "observations", sub_var = "variableid",
              class = "hrd_itm")
+      ),
+      aumc = list(
+        list(ids = 14444L, sub_var = "itemid", table = "listitems",
+             callback = "transform_fun(aumc_rass)")
       )
     )
   ),
@@ -1467,6 +1775,19 @@ cfg <- list(
           1001095L, 1001096L, 1001097L, 1001098L, 1001168L, 1001169L, 1001170L,
           1001171L, 1001173L, 1001193L, 1001198L), table = "pharma",
           sub_var = "pharmaid", callback = "transform_fun(set_val(TRUE))")
+      ),
+      aumc = list(
+        list(ids = c(
+              2L,    13L,    19L,    24L,    28L,    29L,    57L,    59L,
+             82L,   103L,   240L,   247L,   333L,  1133L,  1199L,  1300L,
+           1371L,  1795L,  2284L,  2834L,  3237L,  3741L,  5576L,  6834L,
+           6847L,  6871L,  6919L,  6948L,  6953L,  6958L,  7044L,  7064L,
+           7185L,  7187L,  7208L,  7227L,  7235L,  8064L,  8394L,  8942L,
+           9029L,  9030L,  9052L,  9070L,  9117L,  9128L,  9133L,  9142L,
+           9151L,  9152L, 12262L, 12389L, 12398L, 12956L, 12997L, 13057L,
+          13094L, 13102L, 15591L, 18860L, 19137L, 19773L, 20563L, 23166L,
+          24241L, 25776L, 27617L, 29321L), table = "drugitems",
+        sub_var = "itemid", callback = "transform_fun(set_val(TRUE))")
       )
     )
   ),
@@ -1483,6 +1804,13 @@ cfg <- list(
         list(table = "microlab", val_var = "organism",
              callback = "transform_fun(comp_na(`!=`, 'no growth'))",
              class = "col_itm")
+      ),
+      aumc = list(
+        list(ids = c(
+           8097L,  8418L, 8588L, 9189L, 9190L, 9191L, 9192L, 9193L,  9194L,
+           9195L,  9197L, 9198L, 9200L, 9202L, 9203L, 9204L, 9205L, 13024L,
+          19663L, 19664L), table = "procedureorderitems", sub_var = "itemid",
+        callback = "transform_fun(set_val(TRUE))")
       )
     )
   ),
@@ -1517,6 +1845,10 @@ cfg <- list(
         list(ids = 24000560L, table = "observations", sub_var = "variableid",
              callback = "convert_unit(binary_op(`*`, 0.058467), 'mg/dL')",
              class = "hrd_itm")
+      ),
+      aumc = list(
+        list(ids = 6812L, table = "numericitems", sub_var = "itemid",
+             callback = "convert_unit(binary_op(`*`, 0.058467), 'mg/dL')")
       )
     )
   ),
@@ -1541,6 +1873,10 @@ cfg <- list(
       hirid = list(
         list(ids = c(410L, 400L, 7100L), table = "observations",
              sub_var = "variableid", class = "hrd_itm")
+      ),
+      aumc = list(
+        list(ids = c(8658L, 13952L, 16110L), table = "numericitems",
+             sub_var = "itemid")
       )
     )
   ),
@@ -1558,6 +1894,13 @@ cfg <- list(
       hirid = list(
         list(ids = c(2200L, 8290L, 30010009L), table = "observations",
              sub_var = "variableid", class = "hrd_itm")
+      ),
+      aumc = list(
+        list(
+          ids = c(6707L, 8884L, 8885L, 9658L, 12805L, 12356L),
+          table = "numericitems", sub_var = "itemid",
+          callback = "convert_unit(binary_op(`*`, 7.6), 'mmHg', 'None|Geen')"
+        )
       )
     )
   ),
@@ -1580,6 +1923,10 @@ cfg <- list(
       hirid = list(
         list(ids = c(15L, 1000724L), table = "pharma", sub_var = "pharmaid",
              callback = "aggregate_fun('sum', 'units')")
+      ),
+      aumc = list(
+        list(ids = c(7624L, 9014L, 19129L), sub_var = "itemid",
+             table = "drugitems")
       )
     )
   ),
@@ -1602,6 +1949,12 @@ cfg <- list(
         list(table = "general", val_var = "sex",
              callback = "apply_map(c(M = 'Male', F = 'Female'))",
              class = "col_itm")
+      ),
+      aumc = list(
+        list(val_var = "gender", table = "admissions",
+             callback = strip_ws("apply_map(c(Vrouw = 'Female',
+                                              Man   = 'Male'))"),
+             class = "col_itm")
       )
     )
   ),
@@ -1623,6 +1976,16 @@ cfg <- list(
       ),
       hirid = list(
         list(table = "general", val_var = "age", class = "col_itm")
+      ),
+      aumc = list(
+        list(val_var = "agegroup", table = "admissions",
+             callback = strip_ws("apply_map(c(`18-39` = 30,
+                                              `40-49` = 45,
+                                              `50-59` = 55,
+                                              `60-69` = 65,
+                                              `70-79` = 75,
+                                              `80+`   = 90))"),
+             class = "col_itm")
       )
     )
   ),
@@ -1645,6 +2008,17 @@ cfg <- list(
       hirid = list(
         list(ids = 10000400L, table = "observations",
              sub_var = "variableid", class = "hrd_itm")
+      ),
+      aumc = list(
+        list(val_var = "weightgroup", table = "admissions",
+             callback = strip_ws("apply_map(c(`59-`     = 50,
+                                              `60-69`   = 65,
+                                              `70-79`   = 75,
+                                              `80-89`   = 85,
+                                              `90-99`   = 95,
+                                              `100-109` = 105,
+                                              `110+`    = 120))"),
+             class = "col_itm")
       )
     )
   ),
@@ -1670,6 +2044,15 @@ cfg <- list(
       hirid = list(
         list(ids = 10000450L, table = "observations",
              sub_var = "variableid", class = "hrd_itm")
+      ),
+      aumc = list(
+        list(val_var = "heightgroup", table = "admissions",
+             callback = strip_ws("apply_map(c(`159-`    = 150,
+                                              `160-169` = 165,
+                                              `170-179` = 175,
+                                              `180-189` = 185,
+                                              `190+`    = 200))"),
+             class = "col_itm")
       )
     )
   ),
@@ -1690,6 +2073,9 @@ cfg <- list(
       ),
       hirid = list(
         list(ids = c(112L, 113L), table = "pharma", sub_var = "pharmaid")
+      ),
+      aumc = list(
+        list(ids = 12467, sub_var = "itemid", table = "drugitems")
       )
     )
   ),
@@ -1713,6 +2099,11 @@ cfg <- list(
         list(ids = c(110L, 200L), table = "observations",
              sub_var = "variableid", callback = "hirid_death",
              class = "hrd_itm")
+      ),
+      aumc = list(
+        list(table = "admissions", index_var = "dateofdeath",
+             val_var = "dischargedat", callback = "aumc_death",
+             class = "col_itm")
       )
     )
   ),
@@ -1738,6 +2129,38 @@ cfg <- list(
       eicu = list(
         list(table = "admissiondx", val_var = "admitdxpath",
              callback = "eicu_adx", class = "col_itm")
+      ),
+      aumc = list(
+        list(val_var = "specialty", table = "admissions",
+             callback = strip_ws("apply_map(
+              c(Cardiochirurgie                = 'surg',
+                Cardiologie                    = 'med',
+                ders                           = 'other',
+                Gynaecologie                   = 'other',
+                `Heelkunde Gastro-enterologie` = 'surg',
+                `Heelkunde Longen/Oncologie`   = 'surg',
+                `Heelkunde Oncologie`          = 'surg',
+                Hematologie                    = 'med',
+                `Intensive Care Volwassenen`   = 'other',
+                Inwendig                       = 'med',
+                `Keel, Neus & Oorarts`         = 'surg',
+                Longziekte                     = 'med',
+                `Maag-,Darm-,Leverziekten`     = 'med',
+                Mondheelkunde                  = 'surg',
+                Nefrologie                     = 'med',
+                Neurochirurgie                 = 'surg',
+                Neurologie                     = 'med',
+                Obstetrie                      = 'other',
+                `Oncologie Inwendig`           = 'med',
+                Oogheelkunde                   = 'surg',
+                Orthopedie                     = 'surg',
+                `Plastische chirurgie`         = 'surg',
+                Reumatologie                   = 'med',
+                Traumatologie                  = 'surg',
+                Urologie                       = 'surg',
+                Vaatchirurgie                  = 'surg',
+                Verloskunde                    = 'other'))"),
+              class = "col_itm")
       )
     )
   ),
@@ -1757,6 +2180,10 @@ cfg <- list(
              class = "fun_itm")
       ),
       hirid = list(
+        list(callback = "los_callback", win_type = "icustay",
+             class = "fun_itm")
+      ),
+      aumc = list(
         list(callback = "los_callback", win_type = "icustay",
              class = "fun_itm")
       )
@@ -1920,6 +2347,10 @@ cfg <- list(
       hirid = list(
         list(ids = 24000557L, table = "observations", sub_var = "variableid",
              class = "hrd_itm")
+      ),
+      aumc = list(
+        list(ids = c(6796L, 11586L), table = "numericitems",
+             sub_var = "itemid")
       )
     )
   ),
@@ -1965,6 +2396,10 @@ cfg <- list(
     source = list(
       mimic = list(
         list(ids = 50852L, table = "labevents", sub_var = "itemid")
+      ),
+      aumc = list(
+        list(ids = c(11812L, 16166L), table = "numericitems",
+             sub_var = "itemid")
       )
     )
   ),

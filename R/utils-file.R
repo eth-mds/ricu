@@ -186,7 +186,7 @@ auto_load_src_names <- function() {
   res <- Sys.getenv("RICU_SRC_LOAD", unset = NA_character_)
 
   if (is.na(res)) {
-    c("mimic", "mimic_demo", "eicu", "eicu_demo", "hirid")
+    c("mimic", "mimic_demo", "eicu", "eicu_demo", "hirid", "aumc")
   } else {
     strsplit(res, ",")[[1L]]
   }

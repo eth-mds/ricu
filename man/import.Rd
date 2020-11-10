@@ -3,6 +3,7 @@
 \name{import_src}
 \alias{import_src}
 \alias{import_src.src_cfg}
+\alias{import_src.aumc_cfg}
 \alias{import_tbl}
 \alias{import_tbl.tbl_cfg}
 \title{Data import utilities}
@@ -10,6 +11,8 @@
 import_src(x, ...)
 
 \method{import_src}{src_cfg}(x, data_dir = src_data_dir(x), force = FALSE, ...)
+
+\method{import_src}{aumc_cfg}(x, data_dir = src_data_dir(x), force = FALSE, ...)
 
 import_tbl(x, ...)
 

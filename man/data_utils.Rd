@@ -9,6 +9,7 @@
 \alias{id_win_helper.mimic_env}
 \alias{id_win_helper.eicu_env}
 \alias{id_win_helper.hirid_env}
+\alias{id_win_helper.aumc_env}
 \alias{id_map}
 \alias{id_map_helper}
 \alias{id_map_helper.src_env}
@@ -29,6 +30,8 @@ id_win_helper(x)
 \method{id_win_helper}{eicu_env}(x)
 
 \method{id_win_helper}{hirid_env}(x)
+
+\method{id_win_helper}{aumc_env}(x)
 
 id_map(x, id_var, win_var, in_time = NULL, out_time = NULL)
 

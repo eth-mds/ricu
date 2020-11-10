@@ -148,6 +148,47 @@ load_difftime.hirid_tbl <- function(x, rows, cols = colnames(x),
 
 #' @rdname load_src
 #' @export
+load_difftime.aumc_tbl <- function(x, rows, cols = colnames(x),
+                                   id_hint = id_vars(x),
+                                   time_vars = ricu::time_vars(x), ...) {
+
+  if (id_hint %in% colnames(x)) {
+    id_col <- id_hint
+  } else {
+    id_col <- "admissionid"
+  }
+
+  if (!id_col %in% cols) {
+    cols <- c(id_col, cols)
+  }
+
+  time_vars <- intersect(time_vars, cols)
+
+  dat <- load_src(x, {{ rows }}, cols)
+
+  if (!identical(id_hint, id_col)) {
+    dat <- merge(dat, id_map(x, id_hint, id_col), by = id_col)
+  }
+
+  if (length(time_vars)) {
+
+    if (!identical(id_col, "patientid")) {
+
+      dat <- merge(dat, id_origin(x, id_col, "time_origin"), by = id_col)
+      on.exit(rm_cols(dat, "time_origin", by_ref = TRUE))
+
+      dat <- dat[, c(time_vars) := lapply(.SD, `-`, get("time_origin")),
+                 .SDcols = time_vars]
+    }
+
+    dat <- dat[, c(time_vars) := lapply(.SD, ms_as_min), .SDcols = time_vars]
+  }
+
+  as_id_tbl(dat, id_vars = id_hint, by_ref = TRUE)
+}
+
+#' @rdname load_src
+#' @export
 load_difftime.character <- function(x, src, ...) {
   load_difftime(as_src_tbl(x, src), ...)
 }

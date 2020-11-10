@@ -144,9 +144,92 @@ download_src.hirid_cfg <- function(x, data_dir = src_data_dir(x),
 }
 
 #' @export
+download_src.aumc_cfg <- function(x, data_dir = src_data_dir(x),
+                                  tables = NULL, force = FALSE, user = NULL,
+                                  pass = NULL, ...) {
+
+  warn_dots(...)
+
+  deps <- c(
+    `the command line utility 7z` = nzchar(Sys.which("7z")),
+    `the R package xml2` = requireNamespace("xml2", quietly = TRUE)
+  )
+
+  if (!all(deps)) {
+    stop_ricu("Download of `aumc` data requires {deps}. Please either make sure
+               all dependencies are available or download and unzip the data
+               manually to {data_dir}")
+  }
+
+  tbl <- determine_tables(x, data_dir, tables, force)
+
+  if (length(tbl) == 0L) {
+    msg_ricu("The requested tables have already been downloaded")
+    return(invisible(NULL))
+  }
+
+  tok <- get_cred(pass, "RICU_AUMC_TOKEN", "token: ")
+
+  url <- paste0("https://filesender.surf.nl/?s=download&token=", tok)
+  res <- download_file(url)
+
+  if (res[["status_code"]] == 200) {
+
+    info <- xml2::read_html(rawToChar(res[["content"]]))
+
+    size <- xml2::xml_find_first(info,
+                                 "//div[contains(@class, 'general box')]")
+    size <- as.numeric(xml2::xml_attr(size, "data-transfer-size"))
+
+    info <- xml2::xml_find_first(info,
+      "//div[contains(@class, 'files box')]/div[contains(@class, 'file')]"
+    )
+
+    name <- xml2::xml_attr(info, "data-name")
+    url  <- xml2::xml_attr(xml2::xml_child(info, "a"), "href")
+
+    if (!is.na(size) && !is.na(name) && !is.na(info)) {
+
+      tmp <- ensure_dirs(tempfile())
+      on.exit(unlink(tmp, recursive = TRUE))
+      fil <- file.path(tmp, name)
+      prg <- progress_init(size, msg = "Donwloading `aumc` data", what = FALSE)
+      res <- download_file(url, dest = fil, progr = prg)
+
+      if (res[["status_code"]] == 200) {
+
+        tbl <- chr_ply(tbl, raw_file_names)
+        unlink(file.path(data_dir, tbl))
+
+        res <- suppressWarnings(
+          system2("7z", c("e", fil, paste0("-o", data_dir), "-tzip", tbl),
+                  stdout = NULL, stderr = TRUE)
+        )
+
+        if (attr(res, "status") != 0) {
+          msg_ricu(c("7z terminated with non-zero exit status:", res),
+                   indent = c(0L, rep_along(2L, res)),
+                   exdent = c(0L, rep_along(2L, res)))
+        }
+
+        return(invisible(NULL))
+      }
+    }
+  }
+
+  stop_ricu("Could not successfully download `aumc` data. Please download and
+             extract the corresponding .zip Archive manually to {data_dir}.",
+            class = "aumc_dl")
+}
+
+#' @export
 download_src.character <- function(x, data_dir = src_data_dir(x),
                                    tables = NULL, force = FALSE,
                                    user = NULL, pass = NULL, ...) {
+
+  if (is.null(tables)) {
+    tables <- list(tables)
+  }
 
   Map(download_src, load_src_cfg(x, ...), data_dir, tables,
       MoreArgs = list(force = force, user = user, pass = pass))
@@ -169,18 +252,41 @@ determine_tables <- function(x, dir, tables, force) {
               is.dir(dir), is.flag(force))
 
   if (!force) {
-    avail  <- names(x)[src_file_exist(x, "fst") | src_file_exist(x, "raw")]
+    avail  <- names(x)[src_file_exist(x, data_dir, "fst") |
+                       src_file_exist(x, data_dir, "raw")]
     tables <- setdiff(tables, avail)
   }
 
   x[tables]
 }
 
+download_file <- function(url, handle = new_handle(), dest = NULL,
+                          progr = NULL) {
+
+  if (is.null(dest)) {
+    return(curl_fetch_memory(url, handle))
+  }
+
+  if (is.null(progr)) {
+    return(curl_fetch_disk(url, dest, handle = handle))
+  }
+
+  con <- file(dest, "ab", blocking = FALSE)
+  on.exit(close(con))
+
+  prog_fun <- function(x) {
+    progress_tick(NULL, progr, length(x))
+    writeBin(x, con)
+  }
+
+  curl_fetch_stream(url, prog_fun, handle = handle)
+}
+
 download_pysionet_file <- function(url, dest = NULL, user = NULL,
                                    pass = NULL, head_only = FALSE,
                                    progress = NULL) {
 
-  assert_that(is.string(url), is.flag(head_only))
+  assert_that(is.string(url), null_or(dest, is.string), is.flag(head_only))
 
   handle <- new_handle(useragent = "Wget/")
 
@@ -193,52 +299,27 @@ download_pysionet_file <- function(url, dest = NULL, user = NULL,
     handle <- handle_setopt(handle, username = user, password = pass)
   }
 
-  if (is.null(dest)) {
+  if (is.null(dest) && head_only) {
 
-    assert_that(is.null(progress))
+    handle <- handle_setopt(handle, nobody = TRUE)
 
-    if (head_only) {
-      handle <- handle_setopt(handle, nobody = TRUE)
-    }
+  } else if (not_null(dest) && file.exists(dest)) {
 
-    res <- curl_fetch_memory(url, handle)
-
-  } else {
-
-    assert_that(is.string(dest), !head_only)
-
-    if (file.exists(dest)) {
-      handle <- handle_setopt(handle,
-        timevalue = file.mtime(dest), timecondition = TRUE
-      )
-    }
-
-    if (is.null(progress)) {
-
-      res <- curl_fetch_disk(url, dest, handle = handle)
-
-    } else {
-
-      con <- file(dest, "ab", blocking = FALSE)
-      on.exit(close(con))
-
-      prog_fun <- function(x) {
-        progress_tick(NULL, progress, length(x))
-        writeBin(x, con)
-      }
-
-      res <- curl_fetch_stream(url, prog_fun, handle = handle)
-    }
-
-    if (res[["status_code"]] == 304) {
-      msg_ricu("Skipped download of {basename(url)}")
-      return(invisible(NULL))
-    }
+    handle <- handle_setopt(handle,
+      timevalue = file.mtime(dest), timecondition = TRUE
+    )
   }
+
+  res <- download_file(url, handle, dest, progress)
 
   status <- res[["status_code"]]
 
-  if (status == 401) {
+  if (status == 304) {
+
+    msg_ricu("Skipped download of {basename(url)}")
+    return(invisible(NULL))
+
+  } else if (status == 401) {
 
     stop_ricu("Access to the requested resource was denied. Please set up an
                account at https://physionet.org/ and apply for data access.",

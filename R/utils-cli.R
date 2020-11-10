@@ -3,7 +3,7 @@ is_interactive <- function() {
   !isTRUE(getOption('knitr.in.progress')) && interactive()
 }
 
-progress_init <- function(lenth = NULL, msg = "loading", ...) {
+progress_init <- function(lenth = NULL, msg = "loading", what = TRUE, ...) {
 
   cb_fun <- function(x) {
 
@@ -20,9 +20,15 @@ progress_init <- function(lenth = NULL, msg = "loading", ...) {
 
   if (is_interactive() && is_pkg_installed("progress") && lenth > 1L) {
 
-    res <- progress::progress_bar$new(
-      format = ":what [:bar] :percent", total = lenth, callback = cb_fun, ...
-    )
+    if (isTRUE(what)) {
+      res <- progress::progress_bar$new(
+        format = ":what [:bar] :percent", total = lenth, callback = cb_fun, ...
+      )
+    } else {
+      res <- progress::progress_bar$new(
+        format = "[:bar] :percent", total = lenth, callback = cb_fun, ...
+      )
+    }
 
   } else {
     res <- NULL
@@ -63,13 +69,12 @@ progress_tick <- function(info = NULL, progress_bar = NULL, length = 1L) {
       token <- sprintf("%-15s", info)
     }
 
-    progress_bar$tick(len = length, tokens = list(what = token))
-    attr(progress_bar, "token") <- token
-
-
+    attr(progress_bar, "token")    <- token
     attr(progress_bar, "output")   <- combine_messages(progress_bar)
     attr(progress_bar, "header")   <- info
     attr(progress_bar, "messages") <- character(0L)
+
+    progress_bar$tick(len = length, tokens = list(what = token))
 
   } else if (not_null(old_token)) {
 

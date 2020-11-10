@@ -9,6 +9,7 @@
 \alias{eicu}
 \alias{eicu_demo}
 \alias{hirid}
+\alias{aumc}
 \title{ICU datasets}
 \format{
 The exported \code{data} environment contains all datasets that have been made
