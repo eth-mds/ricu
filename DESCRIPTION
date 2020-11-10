@@ -63,7 +63,8 @@ Suggests:
     rmarkdown,
     ggplot2,
     survival,
-    forestmodel
+    forestmodel,
+    rticles
 RoxygenNote: 7.1.1
 Additional_repositories: https://septic-tank.github.io/physionet-demo
 VignetteBuilder: knitr
