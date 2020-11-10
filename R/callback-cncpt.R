@@ -536,3 +536,14 @@ avpu <- function(..., interval = NULL) {
 
   res
 }
+
+#' @rdname callback_cncpt
+#' @export
+bmi <- function(..., interval = NULL) {
+
+  cnc <- c("weight", "height")
+  res <- collect_dots(cnc, interval, ..., merge_dat = TRUE)
+  res <- res[, c("bmi", cnc) := get("weight") / get("height") ^ 2]
+
+  res
+}

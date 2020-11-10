@@ -1967,6 +1967,13 @@ cfg <- list(
         list(ids = 50852L, table = "labevents", sub_var = "itemid")
       )
     )
+  ),
+  bmi = list(
+    concepts = c("weight", "height"),
+    description = "patient body mass index",
+    category = "demographics",
+    callback = "bmi",
+    class = "rec_cncpt"
   )
 )
 

@@ -12,6 +12,7 @@
 \alias{vaso_ind}
 \alias{supp_o2}
 \alias{avpu}
+\alias{bmi}
 \title{Concept callback functions}
 \usage{
 pafi(
@@ -52,6 +53,8 @@ vaso_ind(..., interval = NULL)
 supp_o2(..., interval = NULL)
 
 avpu(..., interval = NULL)
+
+bmi(..., interval = NULL)
 }
 \arguments{
 \item{...}{Data input used for concept calculation}

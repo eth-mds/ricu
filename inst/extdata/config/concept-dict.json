@@ -616,6 +616,13 @@
       ]
     }
   },
+  "bmi": {
+    "concepts": ["weight", "height"],
+    "description": "patient body mass index",
+    "category": "demographics",
+    "callback": "bmi",
+    "class": "rec_cncpt"
+  },
   "bnd": {
     "unit": "%",
     "description": "band form neutrophils",
