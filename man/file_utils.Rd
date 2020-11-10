@@ -5,6 +5,7 @@
 \alias{src_data_dir}
 \alias{auto_load_src_names}
 \alias{src_data_avail}
+\alias{is_data_avail}
 \alias{config_paths}
 \alias{get_config}
 \alias{set_config}
@@ -17,6 +18,8 @@ src_data_dir(srcs)
 auto_load_src_names()
 
 src_data_avail(src = auto_load_src_names())
+
+is_data_avail(src = auto_load_src_names())
 
 config_paths()
 
@@ -49,9 +52,10 @@ returned lists}
 \value{
 Functions \code{data_dir()}, \code{src_data_dir()} and \code{config_paths()} return
 file paths as character vectors, \code{auto_load_src_names()} returns a character
-vector of data source names and \code{src_data_avail()} a \code{data.frame} describing
-availability of data sources. Configuration utilitites \code{get_config()} and
-\code{set_config()} read and write list objects to/from JSON format.
+vector of data source names, \code{src_data_avail()} returns a \code{data.frame}
+describing availability of data sources and \code{is_data_avail()} a named
+logical vector. Configuration utilities \code{get_config()} and \code{set_config()}
+read and write list objects to/from JSON format.
 }
 \description{
 Determine the location where to place data meant to persist between
@@ -113,7 +117,8 @@ availability is printed using the utility functions \code{auto_load_src_names()}
 and \code{src_data_avail()}. While the former simply returns a character vector
 of data sources that are configures for automatically being set up on
 package loading, the latter returns a summary of the number of available
-tables per dataset.
+tables per dataset.m Finally, \code{is_data_avail()} returns a named logical
+vector indicating which data sources have all required data available.
 }
 \examples{
 Sys.setenv(RICU_DATA_PATH = tempdir())
