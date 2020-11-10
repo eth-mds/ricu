@@ -13,7 +13,7 @@ load_dictionary(
   cfg_dirs = NULL
 )
 
-concept_availability(dict = load_dictionary())
+concept_availability(dict = load_dictionary(), include_rec = FALSE)
 
 explain_dictionary(
   dict = load_dictionary(),
@@ -31,6 +31,9 @@ explain_dictionary(
 \item{cfg_dirs}{File name of the dictionary}
 
 \item{dict}{A dictionary (\code{conncept} object)}
+
+\item{include_rec}{Logical flag indicating whether to include \code{rec_cncpt}
+concepts as well}
 
 \item{cols}{Columns to include in the output of \code{explain_dictionary()}}
 }
@@ -108,6 +111,15 @@ either a zero-row \code{id_tbl} object or an object inheriting form \code{id_tbl
 where the column corresponding to the concept is \code{NA} throughout, depending
 on whether the concept was loaded alongside other concepts where data is
 available or not.
+
+Whether to include \code{rec_cncpt} concepts in the overview produced by
+\code{concept_availability()} can be controlled via the logical flag
+\code{include_rec}. A recursive concept is considered available simply if all its
+building blocks are available. This can, however lead to slightly confusing
+output as a recursive concept might not strictly depend on one of its
+sub-concepts but handle such missingness by design. In such a scenario, the
+availability summary might report \code{FALSE} even though data can still be
+produced.
 }
 \examples{
 if (require(mimic.demo)) {

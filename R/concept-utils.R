@@ -1113,6 +1113,15 @@ n_tick.concept <- function(x) sum(int_ply(x, n_tick))
 #' on whether the concept was loaded alongside other concepts where data is
 #' available or not.
 #'
+#' Whether to include `rec_cncpt` concepts in the overview produced by
+#' `concept_availability()` can be controlled via the logical flag
+#' `include_rec`. A recursive concept is considered available simply if all its
+#' building blocks are available. This can, however lead to slightly confusing
+#' output as a recursive concept might not strictly depend on one of its
+#' sub-concepts but handle such missingness by design. In such a scenario, the
+#' availability summary might report `FALSE` even though data can still be
+#' produced.
+#'
 #' @param src `NULL` or the name of one or several data sources
 #' @param concepts A character vector used to subset the concept dictionary or
 #' `NULL` indicating no subsetting
@@ -1260,27 +1269,45 @@ identity_callback <- function(x, ...) x
 
 #' @rdname concept_dictionary
 #' @param dict A dictionary (`conncept` object)
+#' @param include_rec Logical flag indicating whether to include `rec_cncpt`
+#' concepts as well
 #' @export
-concept_availability <- function(dict = load_dictionary()) {
+concept_availability <- function(dict = load_dictionary(),
+                                 include_rec = FALSE) {
 
-  as_row <- function(x) c(table(src_name(x)))
+  rbind_avail <- function(x) {
 
-  assert_that(is_concept(dict))
+    all_srcs <- sort(unique(unlist(lapply(x, names))))
 
-  non_rec <- lgl_ply(dict, Negate(inherits), "rec_cncpt")
+    res <- lapply(x, `[`, all_srcs)
+    res <- lapply(res, `names<-`, all_srcs)
 
-  res <- dict[non_rec]
-  res <- lapply(res, as_row)
+    do.call(rbind, res)
+  }
 
-  all_srcs <- sort(unique(unlist(lapply(res, names))))
+  all_true <- function(x) all(is_true(x))
 
-  res <- lapply(res, `[`, all_srcs)
-  res <- lapply(res, `names<-`, all_srcs)
-  res <- do.call(rbind, res)
+  is_avail <- function(x) {
 
-  res[is.na(res)] <- 0L
+    if (inherits(x, "rec_cncpt")) {
 
-  res > 0L
+      res <- lapply(as_item(x), is_avail)
+      res <- rbind_avail(res)
+
+      apply(res, 2L, all_true)
+
+    } else {
+
+      c(table(src_name(x))) > 0L
+    }
+  }
+
+  res <- lapply(dict, is_avail)
+  res <- rbind_avail(res)
+
+  res[is.na(res)] <- FALSE
+
+  res
 }
 
 #' @param cols Columns to include in the output of `explain_dictionary()`
