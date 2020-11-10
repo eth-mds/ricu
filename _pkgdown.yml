@@ -85,6 +85,7 @@ reference:
     - download_src
     - import_src
     - attach_src
+    - setup_src_data
     - load_src_cfg
     - data_dir
 - title: Utilities

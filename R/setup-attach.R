@@ -262,51 +262,7 @@ setup_src_env.src_cfg <- function(x, env, data_dir = src_data_dir(x), ...) {
       )
     }
 
-    if (data_pkg_avail(x)) {
-
-      src_dir <- src_data_dir(x)
-
-      if (!identical(data_dir, src_dir)) {
-        warn_ricu("data will be saved to {src_dir} instead of {data_dir}",
-                  class = "pkg_src_dir")
-      }
-
-      install_data_pkgs(x)
-
-    } else {
-
-      ensure_dirs(
-        unique(dirname(unlist(fst_paths, recursive = FALSE)))
-      )
-
-      tmp <- ensure_dirs(tempfile())
-      on.exit(unlink(tmp, recursive = TRUE))
-
-      download_src(x, tmp, tables = todo)
-      import_src(x, tmp)
-
-      done <- Map(file.rename, Map(file.path, tmp, fst_files[missing]),
-                  fst_paths[missing])
-      done <- lgl_ply(done, all)
-
-      if (!all(done)) {
-        stop_ricu(
-          c("The following {qty(sum(!done))} table{?s} could be moved to
-             directory {data_dir}:", bullet(quote_bt(todo[!done]))),
-          class = "tbl_mv_err", exdent = c(0L, rep(2L, sum(!done)))
-        )
-      }
-    }
-
-    done <- lgl_ply(fst_paths, all_fun, file.exists)
-
-    if (!all(done)) {
-      stop_ricu(
-        c("The following {qty(sum(!done))} table{?s} were not successfully
-           downloaded and imported:", bullet(quote_bt(todo[!done]))),
-        class = "tbl_dl_err", exdent = c(0L, rep(2L, sum(!done)))
-      )
-    }
+    setup_src_data(x, data_dir = data_dir)
   }
 
   dat_tbls <- Map(new_src_tbl, fst_paths, as_col_cfg(x), as_tbl_cfg(x),
@@ -314,6 +270,130 @@ setup_src_env.src_cfg <- function(x, env, data_dir = src_data_dir(x), ...) {
   names(dat_tbls) <- tables
 
   list2env(dat_tbls, envir = env)
+}
+
+#' @export
+setup_src_env.default <- function(x, ...) stop_generic(x, .Generic)
+
+#' Data setup
+#'
+#' Making a dataset available to `ricu` consists of 3 steps: downloading
+#' ([download_src()]), importing ([import_src()]) and attaching
+#' ([attach_src()]). While downloading and importing are one-time procedures,
+#' attaching of the dataset is repeated every time the package is loaded.
+#' Briefly, downloading loads the raw dataset from the internet (most likely
+#' in `.csv` format), importing consists of some preprocessing to make the
+#' data available more efficiently and attaching sets up the data for use by
+#' the package. The download and import steps can be combined using
+#' `setup_src_data()`.
+#'
+#' @details
+#' If `setup_src_data()` is called on data sources that have all data available
+#' with `force = FALSE`, nothing happens apart of a message being raised. If
+#' only a subset of tables is missing, only these tables are downloaded
+#' (whenever possible) and imported. Finally, if the data source is available
+#' as a data package.
+#'
+#' In most scenarios, `setup_src_data()` does not need to be called by users,
+#' as upon package loading, all configured data sources are set up in a way
+#' that enables download of missing data upon first access (and barring user
+#' consent). However, instead of accessing all data sources where data
+#' missingness should be resolved one by one, `setup_src_data()` is exported
+#' for convenience.
+#'
+#' @inheritParams import_src
+#' @param ... Forwarded to [load_src_cfg()] if `x` is a character vector
+#'
+#' @return Called for side effects and returns `NULL` invisibly.
+#'
+#' @export
+setup_src_data <- function(x, ...) UseMethod("setup_src_data", x)
+
+#' @export
+setup_src_data.src_env <- function(x, data_dir = src_data_dir(x),
+                                   force = FALSE, ...) {
+
+  warn_dots(...)
+
+  tbl <- as_tbl_cfg(x)
+
+  fst_files <- lapply(tbl, fst_file_names)
+  fst_paths <- Map(file.path, data_dir, fst_files)
+
+  tables  <- chr_ply(tbl, tbl_name)
+
+  if (force) {
+    missing <- rep(TRUE, length(tables))
+  } else {
+    missing <- lgl_ply(fst_paths, all_fun, Negate(file.exists))
+  }
+
+  if (!any(missing)) {
+    msg_ricu("all required tables for `{src_name(x)}` are available from
+             {data_dir}")
+
+    return(invisible(NULL))
+  }
+
+  todo <- tables[missing]
+
+  if (data_pkg_avail(x)) {
+
+    src_dir <- src_data_dir(x)
+
+    if (!identical(data_dir, src_dir)) {
+      warn_ricu("data will be saved to {src_dir} instead of {data_dir}",
+                class = "pkg_src_dir")
+    }
+
+    install_data_pkgs(x)
+
+  } else {
+
+    ensure_dirs(
+      unique(dirname(unlist(fst_paths, recursive = FALSE)))
+    )
+
+    tmp <- ensure_dirs(tempfile())
+    on.exit(unlink(tmp, recursive = TRUE))
+
+    download_src(x, tmp, tables = todo, force = force)
+    import_src(x, tmp, force = force)
+
+    done <- Map(file.rename, Map(file.path, tmp, fst_files[missing]),
+                fst_paths[missing])
+    done <- lgl_ply(done, all)
+
+    if (!all(done)) {
+      stop_ricu(
+        c("The following {qty(sum(!done))} table{?s} could be moved to
+           directory {data_dir}:", bullet(quote_bt(todo[!done]))),
+        class = "tbl_mv_err", exdent = c(0L, rep(2L, sum(!done)))
+      )
+    }
+  }
+
+  done <- lgl_ply(fst_paths, all_fun, file.exists)
+
+  if (!all(done)) {
+    stop_ricu(
+      c("The following {qty(sum(!done))} table{?s} were not successfully
+         downloaded and imported:", bullet(quote_bt(todo[!done]))),
+      class = "tbl_dl_err", exdent = c(0L, rep(2L, sum(!done)))
+    )
+  }
+
+  invisible(NULL)
+}
+
+#' @export
+setup_src_data.character <- function(x, data_dir = src_data_dir(x),
+                                     force = FALSE, ...) {
+
+  Map(setup_src_data, load_src_cfg(x, ...), data_dir,
+      MoreArgs = list(force = force))
+
+  invisible(NULL)
 }
 
 #' @export
