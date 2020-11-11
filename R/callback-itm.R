@@ -334,57 +334,95 @@ eicu_adx <- function(x, val_var, ...) {
   set(x, j = val_var, value = cats)
 }
 
-weight_env <- new.env()
+add_concept_env <- new.env()
 
 #' Internal item callback utilities
 #'
-#' The utility function `add_weight()` is exported for convenience when adding
-#' external datasets and integrating concepts such as vasopressor rates which
-#' rely on patient weight. For this to function, the newly added dataset must
-#' offer a `weight` concept. For performance reasons, the weight concept is
-#' internally cached, as this might be used unchanged many times, when loading
-#' several concepts that need to pull in patient weight data.
+#' The utility function `add_concept()` is exported for convenience when adding
+#' external datasets and integrating concepts that require other concepts.
+#' While this could be solves by defining a `rec_concpt`, in some scenarios
+#' this might not be ideal, as it might be only required that `itm`
+#' implementations for certain data sources require additional information.
+#' Examples for this include vasopressor rates which might rely on patient
+#' weight, and blood cell counts when expressed as ratio. For performance
+#' reasons, the pulled in concept is internally cached, as this might be used
+#' unchanged many times, when loading several concepts that need to pull in
+#' the given concept. Persistence of cache is session-level and therefore this
+#' utility is intended to be used somewhat sparingly.
 #'
 #' @param x Object in loading
 #' @param env Data source environment as available as `env` in callback
 #' functions
-#' @param weight_var String valued name of the newly added weight column
+#' @param concept String valued concept name that will be loaded from the
+#' default dictionary
+#' @param var_name String valued variable name
+#' @param aggregate Forwarded to [load_concepts()]
 #'
-#' @return An `id_tbl` or `ts_tbl` object, potentially modified by reference.
+#' @return A copy of `x` with the requested concept merged in.
 #'
 #' @rdname callback_int
 #' @keywords internal
 #' @export
-add_weight <- function(x, env, weight_var = "weight") {
+add_concept <- function(x, env, concept, var_name = concept,
+                        aggregate = NULL) {
 
-  assert_that(is_id_tbl(x), is_src_env(env), is.string(weight_var))
+  assert_that(is_id_tbl(x), is_src_env(env), is.string(concept),
+              is.string(var_name), is_disjoint(var_name, colnames(x)))
 
-  cache  <- paste(src_name(env), id_vars(x), sep = "_")
-  weight <- get0(cache, envir = weight_env, inherits = FALSE)
+  idtyp <- id_name_to_type(env, id_var(x))
+  inval <- interval(x)
+  cache <- digest(concept, src_name(env), idtyp, inval, aggregate)
 
-  if (is.null(weight)) {
-    weight <- load_concepts("weight", src_name(env), verbose = FALSE,
-                            id_type = id_name_to_type(env, id_var(x)))
-    assign(cache, weight, envir = weight_env)
+  res <- get0(cache, envir = add_concept_env, inherits = FALSE)
+
+  if (is.null(res)) {
+
+    res <- load_concepts(concept, src_name(env), aggregate = aggregate,
+                         verbose = FALSE, id_type = idtyp, interval = inval)
+
+    assign(cache, res, envir = add_concept_env)
   }
 
-  if (is_in(weight_var, colnames(x))) {
-    tmp_var <- new_names(c(colnames(x), colnames(weight)))
+  if (!identical(concept, var_name)) {
+    res <- rename_cols(res, var_name, concept)
+  }
+
+  merge(x, res, all.x = TRUE)
+}
+
+#' @rdname callback_int
+#' @keywords internal
+#' @export
+add_weight <- function(x, env, var_name = "weight") {
+
+  var_exists <- is_in(var_name, colnames(x))
+
+  if (var_exists) {
+    tmp_var <- new_names(x)
   } else {
-    tmp_var <- weight_var
+    tmp_var <- var_name
   }
 
-  weight <- rename_cols(weight, tmp_var, "weight")
-  res    <- merge(x, weight, by = id_var(x), all.x = TRUE)
+  x <- add_concept(x, env, "weight", tmp_var)
 
-  if (is_in(weight_var, colnames(x))) {
-    res <- res[, c(weight_var) := silent_as_num(get(weight_var))]
-    res <- res[, c(weight_var, tmp_var) := list(
-      fifelse(is.na(get(weight_var)), get(tmp_var), get(weight_var)), NULL
+  if (var_exists) {
+    x <- x[, c(var_name) := silent_as_num(get(var_name))]
+    x <- x[, c(var_name, tmp_var) := list(
+      fifelse(is.na(get(var_name)), get(tmp_var), get(var_name)), NULL
     )]
   }
 
-  res
+  x
+}
+
+blood_cell_ratio <- function(x, val_var, unit_var, env, ...) {
+
+  x <- add_concept(x, env, "wbc")
+  x <- x[, c(val_var, "wbc", unit_var) := list(
+    get(val_var) / get("wbc"), NULL, "%"
+  )]
+
+  x
 }
 
 eicu_extract_unit <- function(x) {

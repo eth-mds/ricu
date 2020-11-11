@@ -466,9 +466,15 @@
     "sources": {
       "aumc": [
         {
-          "ids": 14256,
+          "ids": 11710,
           "table": "numericitems",
           "sub_var": "itemid"
+        },
+        {
+          "ids": 14256,
+          "table": "numericitems",
+          "sub_var": "itemid",
+          "callback": "blood_cell_ratio"
         }
       ],
       "eicu": [
@@ -2725,9 +2731,15 @@
     "sources": {
       "aumc": [
         {
-          "ids": 14258,
+          "ids": 11846,
           "table": "numericitems",
           "sub_var": "itemid"
+        },
+        {
+          "ids": 14258,
+          "table": "numericitems",
+          "sub_var": "itemid",
+          "callback": "blood_cell_ratio"
         }
       ],
       "eicu": [

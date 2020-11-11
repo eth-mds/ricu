@@ -336,12 +336,14 @@ load_one_concept_helper <- function(x, aggregate, ..., progress) {
     args <- as.list(match.call())[-1]
     args[c("x", "patient_ids", "progress")] <- NULL
     args <- lapply(args, eval, parent.frame())
-    args[["interval"]] <- coalesce(args[["interval"]], hours(1L))
-    args[["id_type"]] <- coalesce(args[["id_type"]], "icustay")
-    cach <- paste(name, as.character(openssl::md5(serialize(args, NULL))),
-                  sep = "_")
 
-    res <- get0(cach, envir = concept_lookup_env, inherits = FALSE)
+    args[["name"]] <- name
+    args[["interval"]] <- as.double(coalesce(args[["interval"]], hours(1L)),
+                                    units = "mins")
+    args[["id_type"]] <- coalesce(args[["id_type"]], "icustay")
+
+    cach <- digest_lst(args)
+    res  <- get0(cach, envir = concept_lookup_env, inherits = FALSE)
 
     if (not_null(res)) {
       msg_progress("using cached data")

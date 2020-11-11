@@ -417,7 +417,9 @@ cfg <- list(
              class = "hrd_itm")
       ),
       aumc = list(
-        list(ids = 14258L, table = "numericitems", sub_var = "itemid")
+        list(ids = 11846L, table = "numericitems", sub_var = "itemid"),
+        list(ids = 14258L, table = "numericitems", sub_var = "itemid",
+             callback = "blood_cell_ratio")
       )
     )
   ),
@@ -860,7 +862,9 @@ cfg <- list(
         list(ids = "-basos", table = "lab", sub_var = "labname")
       ),
       aumc = list(
-        list(ids = 14256L, table = "numericitems", sub_var = "itemid")
+        list(ids = 11710L, table = "numericitems", sub_var = "itemid"),
+        list(ids = 14256L, table = "numericitems", sub_var = "itemid",
+             callback = "blood_cell_ratio")
       )
     )
   ),
