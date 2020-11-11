@@ -50,20 +50,35 @@ format.id_tbl <- function(x, ..., n = NULL, width = NULL, n_extra = NULL) {
 #' @importFrom tibble tbl_sum
 #' @export
 tbl_sum.ts_tbl <- function(x) {
-  ids <- id_vars(x)
-  setNames(
-    c(dim_desc(x), concat(quote_bt(ids)),
-      paste0(quote_bt(index_var(x)), " (", format(interval(x)), ")")),
-    c("A `ts_tbl`", paste0("Id var", if (length(ids) > 1L) "s"), "Index var")
-  )
+  idx <- paste0(quote_bt(index_var(x)), " (", format(interval(x)), ")")
+  c(NextMethod(), `Index var` = idx)
 }
 
 #' @importFrom tibble tbl_sum
 #' @export
 tbl_sum.id_tbl <- function(x) {
+
+  get_unit <- function(x) {
+    if (inherits(x, "difftime")) ""
+    else if (has_attr(x, "units")) attr(x, "units")
+    else ""
+  }
+
   ids <- id_vars(x)
-  setNames(c(dim_desc(x), concat(quote_bt(ids))),
-           c("An `id_tbl`", paste0("Id var", if (length(ids) > 1L) "s")))
+
+  res <- setNames(
+    c(dim_desc(x), concat(quote_bt(ids))),
+    c("An `id_tbl`", paste0("Id var", if (length(ids) > 1L) "s"))
+  )
+
+  unt <- chr_ply(x, get_unit, use_names = TRUE)
+  unt <- unt[nzchar(unt)]
+
+  if (has_length(unt)) {
+    res <- c(res, Units = concat("`", names(unt), "` [", unt, "]"))
+  }
+
+  res
 }
 
 #' @export
