@@ -145,8 +145,10 @@ cfg <- list(
              sub_var = "variableid", class = "hrd_itm")
       ),
       aumc = list(
-        list(ids = c(6709L, 12311L, 8903L), table = "numericitems",
-             sub_var = "itemid")
+        list(ids = c(6709L, 8903L), table = "numericitems",
+             sub_var = "itemid"),
+        list(ids = 12311L, table = "numericitems", sub_var = "itemid",
+             callback = "transform_fun(binary_op(`*`, 100))")
       )
     )
   ),
@@ -414,7 +416,7 @@ cfg <- list(
       ),
       hirid = list(
         list(ids = 24000480L, table = "observations", sub_var = "variableid",
-             class = "hrd_itm")
+             callback = "blood_cell_ratio", class = "hrd_itm")
       ),
       aumc = list(
         list(ids = 11846L, table = "numericitems", sub_var = "itemid"),
@@ -591,7 +593,8 @@ cfg <- list(
       ),
       aumc = list(
         list(ids = c(6777L, 11423L, 11545L), table = "numericitems",
-             sub_var = "itemid")
+             sub_var = "itemid",
+             callback = "transform_fun(binary_op(`*`, 100))")
       )
     )
   ),
@@ -659,7 +662,7 @@ cfg <- list(
       ),
       aumc = list(
         list(ids = 11679L, table = "numericitems", sub_var = "itemid",
-             callback = "transform_fun(binary_op(`*`, 0.016114))")
+             callback = "convert_unit(binary_op(`*`, 0.016113), 'pg')")
       )
     )
   ),
@@ -682,7 +685,7 @@ cfg <- list(
       ),
       aumc = list(
         list(ids = 18666L, table = "numericitems", sub_var = "itemid",
-             callback = "transform_fun(binary_op(`*`, 1.611344))")
+             callback = "convert_unit(binary_op(`*`, 1.611344), '%')")
       )
     )
   ),

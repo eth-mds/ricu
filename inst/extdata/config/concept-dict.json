@@ -2208,7 +2208,8 @@
         {
           "ids": [6777, 11423, 11545],
           "table": "numericitems",
-          "sub_var": "itemid"
+          "sub_var": "itemid",
+          "callback": "transform_fun(binary_op(`*`, 100))"
         }
       ],
       "eicu": [
@@ -2761,6 +2762,7 @@
           "ids": 24000480,
           "table": "observations",
           "sub_var": "variableid",
+          "callback": "blood_cell_ratio",
           "class": "hrd_itm"
         }
       ],
@@ -2853,7 +2855,7 @@
           "ids": 11679,
           "table": "numericitems",
           "sub_var": "itemid",
-          "callback": "transform_fun(binary_op(`*`, 0.016114))"
+          "callback": "convert_unit(binary_op(`*`, 0.016113), 'pg')"
         }
       ],
       "eicu": [
@@ -2906,7 +2908,7 @@
           "ids": 18666,
           "table": "numericitems",
           "sub_var": "itemid",
-          "callback": "transform_fun(binary_op(`*`, 1.611344))"
+          "callback": "convert_unit(binary_op(`*`, 1.611344), '%')"
         }
       ],
       "eicu": [
@@ -3449,9 +3451,15 @@
     "sources": {
       "aumc": [
         {
-          "ids": [6709, 12311, 8903],
+          "ids": [6709, 8903],
           "table": "numericitems",
           "sub_var": "itemid"
+        },
+        {
+          "ids": 12311,
+          "table": "numericitems",
+          "sub_var": "itemid",
+          "callback": "transform_fun(binary_op(`*`, 100))"
         }
       ],
       "eicu": [
