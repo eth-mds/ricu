@@ -84,59 +84,6 @@
       ]
     }
   },
-  "adh": {
-    "unit": "mcg/kg/min",
-    "description": "vasopressin",
-    "category": "medications",
-    "sources": {
-      "aumc": [
-        {
-          "ids": 12467,
-          "sub_var": "itemid",
-          "table": "drugitems"
-        }
-      ],
-      "eicu": [
-        {
-          "ids": ["Vasopressin (ml/hr)", "Vasopressin (units/min)", "Vasopressin ()"],
-          "table": "infusiondrug",
-          "sub_var": "drugname",
-          "callback": "eicu_body_weight",
-          "weight_var": "patientweight"
-        }
-      ],
-      "eicu_demo": [
-        {
-          "ids": ["Vasopressin (ml/hr)", "Vasopressin (units/min)", "Vasopressin ()"],
-          "table": "infusiondrug",
-          "sub_var": "drugname",
-          "callback": "eicu_body_weight",
-          "weight_var": "patientweight"
-        }
-      ],
-      "hirid": [
-        {
-          "ids": [112, 113],
-          "table": "pharma",
-          "sub_var": "pharmaid"
-        }
-      ],
-      "mimic": [
-        {
-          "ids": [30051, 222315],
-          "table": "inputevents_mv",
-          "sub_var": "itemid"
-        }
-      ],
-      "mimic_demo": [
-        {
-          "ids": [30051, 222315],
-          "table": "inputevents_mv",
-          "sub_var": "itemid"
-        }
-      ]
-    }
-  },
   "adm": {
     "target": "id_tbl",
     "levels": ["med", "surg", "other"],
@@ -206,7 +153,7 @@
         {
           "table": "patient",
           "val_var": "age",
-          "callback": "eicu_age",
+          "callback": "transform_fun(eicu_age)",
           "class": "col_itm"
         }
       ],
@@ -214,7 +161,7 @@
         {
           "table": "patient",
           "val_var": "age",
-          "callback": "eicu_age",
+          "callback": "transform_fun(eicu_age)",
           "class": "col_itm"
         }
       ],
@@ -229,7 +176,7 @@
         {
           "table": "patients",
           "val_var": "dob",
-          "callback": "mimic_age",
+          "callback": "transform_fun(mimic_age)",
           "class": "col_itm"
         }
       ],
@@ -237,7 +184,7 @@
         {
           "table": "patients",
           "val_var": "dob",
-          "callback": "mimic_age",
+          "callback": "transform_fun(mimic_age)",
           "class": "col_itm"
         }
       ]
@@ -2908,7 +2855,7 @@
           "ids": 18666,
           "table": "numericitems",
           "sub_var": "itemid",
-          "callback": "convert_unit(binary_op(`*`, 1.611344), '%')"
+          "callback": "convert_unit(binary_op(`*`, 1.611), '%')"
         }
       ],
       "eicu": [
@@ -2930,6 +2877,7 @@
           "ids": 24000170,
           "table": "observations",
           "sub_var": "variableid",
+          "callback": "convert_unit(binary_op(`*`, 0.16114), '%')",
           "class": "hrd_itm"
         }
       ],
@@ -3883,6 +3831,8 @@
     "class": "rec_cncpt"
   },
   "rass": {
+    "min": -5,
+    "max": 4,
     "description": "Richmond agitation sedation scale",
     "category": "neurological",
     "sources": {
@@ -3913,6 +3863,7 @@
           "ids": 15001565,
           "table": "observations",
           "sub_var": "variableid",
+          "callback": "transform_fun(floor)",
           "class": "hrd_itm"
         }
       ],

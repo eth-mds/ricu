@@ -681,11 +681,12 @@ cfg <- list(
       ),
       hirid = list(
         list(ids = 24000170L, table = "observations", sub_var = "variableid",
+             callback = "convert_unit(binary_op(`*`, 0.16114), '%')",
              class = "hrd_itm")
       ),
       aumc = list(
         list(ids = 18666L, table = "numericitems", sub_var = "itemid",
-             callback = "convert_unit(binary_op(`*`, 1.611344), '%')")
+             callback = "convert_unit(binary_op(`*`, 1.611), '%')")
       )
     )
   ),
@@ -1699,6 +1700,8 @@ cfg <- list(
     )
   ),
   rass = list(
+    min = -5,
+    max = 4,
     description = "Richmond agitation sedation scale",
     category = "neurological",
     sources = list(
@@ -1711,7 +1714,7 @@ cfg <- list(
       ),
       hirid = list(
         list(ids = 15001565L, table = "observations", sub_var = "variableid",
-             class = "hrd_itm")
+             callback = "transform_fun(floor)", class = "hrd_itm")
       ),
       aumc = list(
         list(ids = 14444L, sub_var = "itemid", table = "listitems",
@@ -1974,12 +1977,12 @@ cfg <- list(
     category = "demographics",
     sources = list(
       mimic = list(
-        list(table = "patients", val_var = "dob", callback = "mimic_age",
-             class = "col_itm")
+        list(table = "patients", val_var = "dob",
+             callback = "transform_fun(mimic_age)", class = "col_itm")
       ),
       eicu = list(
-        list(table = "patient", val_var = "age", callback = "eicu_age",
-             class = "col_itm")
+        list(table = "patient", val_var = "age",
+             callback = "transform_fun(eicu_age)", class = "col_itm")
       ),
       hirid = list(
         list(table = "general", val_var = "age", class = "col_itm")
@@ -2060,29 +2063,6 @@ cfg <- list(
                                               `180-189` = 185,
                                               `190+`    = 200))"),
              class = "col_itm")
-      )
-    )
-  ),
-  adh = list(
-    unit = "mcg/kg/min",
-    description = "vasopressin",
-    category = "medications",
-    sources = list(
-      mimic = list(
-        list(ids = c(30051L, 222315L), table = "inputevents_mv",
-             sub_var = "itemid")
-      ),
-      eicu = list(
-        list(ids = c("Vasopressin (ml/hr)", "Vasopressin (units/min)",
-                     "Vasopressin ()"),
-             table = "infusiondrug", sub_var = "drugname",
-             callback = "eicu_body_weight", weight_var = "patientweight")
-      ),
-      hirid = list(
-        list(ids = c(112L, 113L), table = "pharma", sub_var = "pharmaid")
-      ),
-      aumc = list(
-        list(ids = 12467, sub_var = "itemid", table = "drugitems")
       )
     )
   ),

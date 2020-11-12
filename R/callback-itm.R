@@ -33,27 +33,6 @@ force_type <- function(type) {
   }
 }
 
-eicu_body_weight <- function(x, val_var, weight_var, env, ...) {
-
-  do_calc <- function(rate, w1, w2) rate / fifelse(is.na(w1), w2, w1)
-
-  idc <- id_vars(x)
-
-  weight <- load_id("patient", env, cols = "admissionweight", id_var = idc)
-
-  x <- merge(x, weight, all.x = TRUE, by = idc)
-
-  force_num <- force_type("numeric")
-
-  x <- set(x, j = val_var, value = force_num(x[[val_var]]))
-  x <- set(x, j = weight_var, value = force_num(x[[weight_var]]))
-
-  x <- x[, c(val_var) := do_calc(get(val_var), get(weight_var),
-                                 get("admissionweight"))]
-
-  rm_cols(x, "admissionweight")
-}
-
 combine_date_time <- function(x, time_var, date_shift = hours(12L), ...) {
   idx <- index_var(x)
   x[, c(idx) := fifelse(is.na(get(time_var)),
@@ -220,18 +199,12 @@ aggregate_amount <- function(x, val_var, unit_var, ...) {
   res
 }
 
-mimic_age <- function(x, val_var, ...) {
-  x <- set(x, j = val_var,
-    value = as.double(`units<-`(x[[val_var]], "days") / -365))
-  x <- set(x, i = which(x[[val_var]] > 90), j = val_var, value = 90)
-  x
+mimic_age <- function(x) {
+  x <- as.double(x, units = "days") / -365
+  ifelse(x > 90, 90, x)
 }
 
-eicu_age <- function(x, val_var, ...) {
-  x <- set(x, which(x[[val_var]] == "> 89"), j = val_var, value = 90)
-  x <- set(x, j = val_var, value = as.numeric(x[[val_var]]))
-  x
-}
+eicu_age <- function(x) as.numeric(ifelse(x == "> 89", 90, x))
 
 hirid_death <- function(x, val_var, sub_var, ...) {
 
@@ -419,7 +392,7 @@ blood_cell_ratio <- function(x, val_var, unit_var, env, ...) {
 
   x <- add_concept(x, env, "wbc")
   x <- x[, c(val_var, "wbc", unit_var) := list(
-    get(val_var) / get("wbc"), NULL, "%"
+    100 * get(val_var) / get("wbc"), NULL, "%"
   )]
 
   x
