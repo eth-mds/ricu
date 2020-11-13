@@ -18,53 +18,59 @@
 #' configuration setting (see [load_src_cfg()]). All `src_env` objects created
 #' by calling `attach_src()` represent environments that are direct
 #' descendants of the `data` environment and are bound to the respective
-#' dataset name within that environment. While `attach_src()` does not
-#' immediately instantiate a `src_env` object, it rather creates a promise
-#' using [base::delayedAssign()] which evaluates to a `src_env` upon first
-#' access. This allows for data sources to be set up where the data is missing
-#' in a way that prompts the user to download and import the data when first
-#' accessed.
-#'
-#' Additionally, `attach_src()` creates an active binding using
-#' [base::makeActiveBinding()], binding a function to the dataset name within
-#' the environment passed as `assign_env`, which retrieves the respective
-#' `src_env` from the `data` environment. This shortcut is set up for
-#' convenience, such that for example the MIMIC-III demo dataset not only is
-#' available as `ricu::data::mimic_demo`, but also as `ricu::mimic_demo` (or if
-#' the package namespace is attached, simply as `mimic_demo`). The `ricu`
-#' namespace contains objects `mimic`, `mimic_demo`, `eicu`, etc. which are
-#' used as such links when loading the package. However, new data sets can be
-#' set up an accessed in the same way.
+#' dataset name within that environment. For more information on `src_env` and
+#' `src_tbl` objects, refer to [new_src_tbl()].
 #'
 #' If set up correctly, it is not necessary for the user to directly call
-#' `attach_src()`. When the package is loaded, the default data sources are
-#' attached automatically. This default can be controlled by setting as
-#' environment variable `RICU_SRC_LOAD` a comma separated list of data source
-#' names before loading the library. Setting this environment variable as
+#' `attach_src()`. When the package is loaded, the default data sources (see
+#' [auto_attach_srcs()]) are attached automatically. This default can be
+#' controlled by setting as environment variable `RICU_SRC_LOAD` a comma
+#' separated list of data source names before loading the library. Setting
+#' this environment variable as
 #'
 #' ```
 #' Sys.setenv(RICU_SRC_LOAD = "mimic_demo,eciu_demo")
 #' ```
 #'
 #' will change the default of loading both MIMIC-III and eICU, alongside the
-#' respective demo datasets, and HiRID, to just the two demo datasets. For
-#' setting an environment variable upon startup of the R session, refer to
-#' [base::.First.sys()].
+#' respective demo datasets, as well as HiRID and AUMC, to just the two demo
+#' datasets. For setting an environment variable upon startup of the R
+#' session, refer to [base::.First.sys()].
 #'
-#' The `src_env` promise for each data source is created using the S3 generic
-#' function `setup_src_env()`. This function checks if all required files are
-#' available from `data_dir`. If files are missing the user is prompted for
-#' download in interactive sessions and an error is thrown otherwise. As soon
-#' as all required data is available, a `src_tbl` object is created per table
-#' and assigned to the `src_env`.
+#' Attaching a dataset during package namespace loading will both instantiate
+#' a corresponding `src_env` in the `data` environment and for convenience
+#' also assign this object into the package namespace, such that for example
+#' the MIMIC-III demo dataset not only is available as
+#' `ricu::data::mimic_demo`, but also as `ricu::mimic_demo` (or if the package
+#' namespace is attached, simply as `mimic_demo`). Dataset attaching using
+#' `attach_src()` does not need to happen during namespace loading, but can be
+#' triggered by the user at any time. If such a convenience link as described
+#' above is desired by the user, an environment such as `.GlobalEnv` has to be
+#' passed as `assign_env` to `attach_src()`.
 #'
-#' The S3 class `src_tbl` inherits from [`prt`][prt::new_prt()], which
-#' represents a partitioned [`fst`][fst::fst()] file. In addition to the `prt`
-#' object, meta data in the form of `col_cfg` and `tbl_cfg` is associated with
-#' a `src_tbl` object (see [load_src_cfg()]). Furthermore, as with `src_env`,
-#' sub-classes are added as specified by the source configuration
-#' `class_prefix` entry. This allows certain functionality, for example data
-#' loading, to be adapted to data source-specific requirements.
+#' Data sets are set up as `src_env` objects irrespectively of whether all (or
+#' any) of the required data is available. If some (or all) data is missing,
+#' the user is asked for permission to download in interactive sessions and an
+#' error is thrown in non-interactive sessions. Downloading demo datasets
+#' requires no further information but access to full-scale datasets (even
+#' though they are publicly available) is guarded by access credentials (see
+#' [download_src()]).
+#'
+#' While `attach_src()` provides the main entry point, `src_env` objects are
+#' instantiated by the S3 generic function `setup_src_env()` and the wrapping
+#' function serves to catch errors that might be caused by config file parsing
+#' issues as to not break attaching of the package namespace. Apart form this,
+#' `attach_src()` also provides the convenience linking into the package
+#' namespace (or a user-specified environment) described above.
+#'
+#' A `src_env` object created by `setup_src_env()` does not directly contain
+#' `src_tbl` objects bound to names, but rather an active binding (see
+#' [base::makeActiveBinding()]) per table. These active bindings check for
+#' availability of required files and evaluate to corresponding `src_tbl`
+#' objects if these checks are passed and ask for user input otherwise. As
+#' `src_tbl` objects are intended to be read-only, assignment is not possible
+#' except for the value `NULL` which resets the internally cached `src_tbl`
+#' that is created on first successful access.
 #'
 #' @examples
 #' \dontrun{
@@ -75,7 +81,7 @@
 #' ls(envir = data)
 #' exists("mimic_demo")
 #'
-#' attach_src("mimic_demo")
+#' attach_src("mimic_demo", assign_env = .GlobalEnv)
 #'
 #' ls(envir = data)
 #' exists("mimic_demo")
@@ -87,19 +93,17 @@
 #' @param x Data source to attach
 #' @param ... Forwarded to further calls to `attach_src()`
 #'
-#' @return The constructors `new_src_env()`/`new_src_tbl()` as well as coercion
-#' functions `as_src_env()`/`as_src_tbl()` return `src_env` and `src_tbl`
-#' objects respectively. The function `attach_src()` is called for side
-#' effects and returns `NULL` invisibly, while `setup_src_env()` instantiates
-#' and returns a `src_env` object.
+#' @return Both `attach_src()` and `setup_src_env()` are called for side
+#' effects and therefore return invisibly. While `attach_src()` returns `NULL`,
+#' `setup_src_env()` returns the newly created `src_env` object.
 #'
 #' @export
 #'
 attach_src <- function(x, ...) UseMethod("attach_src", x)
 
+#' @param assign_env Environment in which the data source will become available
 #' @param data_dir Directory used to look for [fst::fst()] files; `NULL` calls
 #' [data_dir()] using the source name as `subdir` argument
-#' @param assign_env Environment in which the data source will become available
 #'
 #' @rdname attach_src
 #'
@@ -116,14 +120,10 @@ attach_src.src_cfg <- function(x, assign_env = NULL,
 
     assert_that(is.string(data_dir), null_or(assign_env, is.environment))
 
-    dat_env <- data_env()
-    src_env <- new_src_env(x, env = new.env(parent = dat_env))
-
-    delayedAssign(src, setup_src_env(x, src_env, data_dir),
-                  assign.env = dat_env)
+    src_env <- setup_src_env(x, data_dir)
 
     if (is.environment(assign_env)) {
-      makeActiveBinding(src, get_from_data_env(src), assign_env)
+      assign(src, src_env, envir = assign_env)
     }
 
   }, error = function(err) {
@@ -209,67 +209,77 @@ attach_src.character <- function(x, assign_env = NULL,
 #' @export
 attach_src.default <- function(x, ...) stop_generic(x, .Generic)
 
-#' @param env Environment where data proxy objects are created
-#'
 #' @rdname attach_src
-#'
 #' @export
-#'
-setup_src_env <- function(x, env, ...) {
+setup_src_env <- function(x, ...) {
   UseMethod("setup_src_env", x)
 }
 
 #' @rdname attach_src
 #' @export
-setup_src_env.src_cfg <- function(x, env, data_dir = src_data_dir(x), ...) {
+setup_src_env.src_cfg <- function(x, data_dir = src_data_dir(x), ...) {
 
-  assert_that(is_src_env(env), is.string(data_dir))
+  tbl_setup <- function(tbl, col, src, env, dir) {
 
-  tbl <- as_tbl_cfg(x)
+    table <- tbl_name(tbl)
+    files <- file.path(dir, fst_file_names(tbl))
 
-  fst_files <- lapply(tbl, fst_file_names)
-  fst_paths <- Map(file.path, data_dir, fst_files)
+    nme <- src_name(src)
+    pre <- src[["prefix"]]
 
-  tables  <- chr_ply(tbl, tbl_name)
-  missing <- lgl_ply(fst_paths, all_fun, Negate(file.exists))
+    src_tbl_cache <- NULL
 
-  if (any(missing)) {
+    function(value) {
 
-    todo <- tables[missing]
+      if (!missing(value)) {
 
-    if (is_interactive()) {
-
-      msg_ricu(
-        c("The following {qty(length(todo))} table{?s} {?is/are} missing from
-           directory {data_dir}:", bullet(quote_bt(todo))), "miss_tbl_msg",
-        exdent = c(0L, rep_along(2L, todo)),
-        tbl_ok = setNames(!missing, tables)
-      )
-
-      resp <- readline("Download now (Y/n)? ")
-
-      if (!identical(resp, "Y")) {
-        stop_ricu("Cannot continue with missing tables for `{src_name(x)}`",
-                  "tbl_dl_abort")
+        if (is.null(value)) {
+          src_tbl_cache <<- NULL
+        } else {
+          warn_ricu("Cannot update read-only table `{table}` of data source
+                    `{nme}`.", "assign_src_tbl")
+        }
       }
 
-    } else {
+      if (all(file.exists(files))) {
 
-      stop_ricu(
-        c("The following {qty(length(todo))} table{?s} {?is/are}
-           missing from directory {data_dir}:", bullet(quote_bt(todo))),
-        class = "miss_tbl_err", exdent = c(0L, rep_along(2L, todo))
-      )
+        if (is.null(src_tbl_cache)) {
+          src_tbl_cache <<- new_src_tbl(files, col, tbl, pre, env)
+        }
+
+        return(src_tbl_cache)
+      }
+
+      msg_ricu("Data for `{nme}` is missing", "miss_tbl_msg")
+
+      if (is_interactive()) {
+
+        resp <- readline("Download now (Y/n)? ")
+
+        if (identical(resp, "Y")) {
+          setup_src_data(src, data_dir = dir)
+        }
+      }
+
+      stop_ricu("Cannot continue with missing data for `{nme}`. Data can be
+                 downloaded and set up using `setup_src_data()`.",
+                "miss_tbl_err")
     }
-
-    setup_src_data(x, data_dir = data_dir)
   }
 
-  dat_tbls <- Map(new_src_tbl, fst_paths, as_col_cfg(x), as_tbl_cfg(x),
-                  MoreArgs = list(prefix = x[["prefix"]], src_env = env))
-  names(dat_tbls) <- tables
+  assert_that(is.string(data_dir))
 
-  list2env(dat_tbls, envir = env)
+  tbls <- as_tbl_cfg(x)
+  cols <- as_col_cfg(x)
+
+  src_env <- new_src_env(x, env = new.env(parent = data_env()))
+  tbl_fun <- Map(tbl_setup, tbls, cols,
+                 MoreArgs = list(src = x, env = src_env, dir = data_dir))
+
+  Map(makeActiveBinding, chr_ply(tbls, tbl_name), tbl_fun,
+      MoreArgs = list(env = src_env))
+
+  invisible(src_env)
 }
 
 #' @export
@@ -289,10 +299,12 @@ setup_src_env.default <- function(x, ...) stop_generic(x, .Generic)
 #'
 #' @details
 #' If `setup_src_data()` is called on data sources that have all data available
-#' with `force = FALSE`, nothing happens apart of a message being raised. If
+#' with `force = FALSE`, nothing happens apart of a message being displayed. If
 #' only a subset of tables is missing, only these tables are downloaded
-#' (whenever possible) and imported. Finally, if the data source is available
-#' as a data package.
+#' (whenever possible) and imported. Passing `force = TRUE` attempts to re-
+#' download and import the entire data set. If the data source is available
+#' as a data package (as is the case for the two demo datasets), data is not
+#' downloaded and imported, but this package is installed.
 #'
 #' In most scenarios, `setup_src_data()` does not need to be called by users,
 #' as upon package loading, all configured data sources are set up in a way
@@ -398,212 +410,3 @@ setup_src_data.character <- function(x, data_dir = src_data_dir(x),
 
 #' @export
 setup_src_env.default <- function(x, ...) stop_generic(x, .Generic)
-
-#' @param files File names of `fst` files that will be used to create a `prt`
-#' object (see also [prt::new_prt()])
-#' @param col_cfg Coerced to `col_cfg` by calling [as_col_cfg()]
-#' @param tbl_cfg Coerced to `tbl_cfg` by calling [as_tbl_cfg()]
-#' @param prefix Character vector valued data source name(s) (used as class
-#' prefix)
-#' @param src_env The data source environment (as `src_env` object)
-#'
-#' @rdname attach_src
-#' @export
-new_src_tbl <- function(files, col_cfg, tbl_cfg, prefix, src_env) {
-
-  assert_that(is_src_env(src_env))
-
-  res <- prt::new_prt(files)
-  class(res) <- c(paste0(c(prefix, "src"), "_tbl"), class(res))
-
-  attr(res, "col_cfg") <- as_col_cfg(col_cfg)
-  attr(res, "tbl_cfg") <- as_tbl_cfg(tbl_cfg)
-  attr(res, "src_env") <- src_env
-
-  res
-}
-
-is_src_tbl <- is_type("src_tbl")
-
-#' @export
-id_vars.src_tbl <- function(x) {
-  coalesce(id_vars(as_col_cfg(x)), id_vars(as_id_cfg(x)))
-}
-
-#' @export
-index_var.src_tbl <- function(x) index_var(as_col_cfg(x))
-
-#' @export
-time_vars.src_tbl <- function(x) time_vars(as_col_cfg(x))
-
-#' @importFrom tibble tbl_sum
-#' @export
-tbl_sum.src_tbl <- function(x) {
-
-  out <- setNames(dim_brak(x), paste0("<", class(x)[2L], ">"))
-
-  if (not_null(prt <- part_desc(x))) {
-    out <- c(out, Partitions = prt)
-  }
-
-  ids <- id_var_opts(x)
-
-  if (length(ids) > 1L && any(ids %in% colnames(x))) {
-    out <- c(out, "ID options" = id_desc(x))
-  }
-
-  c(out, "Defaults" = def_desc(x), "Time vars" = tim_desc(x))
-}
-
-tim_desc <- function(x) {
-
-  x <- time_vars(x)
-
-  if (has_length(x)) {
-    concat(x)
-  } else {
-    NULL
-  }
-}
-
-def_desc <- function(x) {
-
-  x <- as_col_cfg(x)
-
-  res <- c(id = id_vars(x), index = index_var(x), value = val_var(x),
-           unit = unit_var(x))
-
-  if (has_length(res)) {
-    paste0(res, " (", names(res), ")", collapse = ", ")
-  } else {
-    NULL
-  }
-}
-
-id_desc <- function(x) {
-  id <- sort(as_id_cfg(x))
-  paste0(id_var_opts(id), " (", names(id), ")", id_cfg_op(id), collapse = " ")
-}
-
-part_desc <- function(x) {
-
-  part_nrow <- prt::part_nrow(x)
-
-  if (length(part_nrow) > 1L) {
-    paste0("[", concat(chr_ply(part_nrow, big_mark)), "] rows")
-  } else {
-    NULL
-  }
-}
-
-#' @export
-src_name.src_tbl <- function(x) src_name(as_col_cfg(x))
-
-#' @export
-tbl_name.src_tbl <- function(x) tbl_name(as_col_cfg(x))
-
-#' @rdname attach_src
-#' @export
-as_src_tbl <- function(x, ...) UseMethod("as_src_tbl", x)
-
-#' @export
-as_src_tbl.src_tbl <- function(x, ...) warn_dot_ident(x, ...)
-
-#' @export
-as_src_tbl.src_env <- function(x, tbl, ...) {
-
-  warn_dots(...)
-
-  assert_that(is.string(tbl))
-
-  res <- get0(tbl, envir = x, inherits = FALSE, ifnotfound = NULL)
-
-  if (is.null(res)) {
-
-    opts <- ls(envir = x)
-
-    stop_ricu(
-      c("Table `{tbl}` not found for `{src_name(x)}`. Available are:",
-        bullet(quote_bt(opts))),
-      class = "src_tbl_not_found", exdent = c(0L, rep_along(2L, opts))
-    )
-  }
-
-  res
-}
-
-#' @export
-as_src_tbl.character <- function(x, env, ...) {
-  as_src_tbl(as_src_env(env), x, ...)
-}
-
-#' @export
-as_src_tbl.default <- function(x, ...) stop_generic(x, .Generic)
-
-#' @rdname attach_src
-#' @export
-new_src_env <- function(x, env = new.env(parent = data_env())) {
-
-  assert_that(is_src_cfg(x), is.environment(env))
-
-  structure(env, class = paste0(c(x[["prefix"]], "src"), "_env"),
-            src_name = src_name(x), id_cfg = as_id_cfg(x))
-}
-
-is_src_env <- is_type("src_env")
-
-#' @export
-print.src_env <- function(x, ...) {
-  cat_line("<", class(x)[1L], "[", length(x), "]>")
-  print(setNames(format(x), names(x)), quote = FALSE)
-  invisible(x)
-}
-
-#' @export
-format.src_env <- function(x, ...) {
-  chr_ply(eapply(x, dim_brak), identity)
-}
-
-dim_desc <- function(x) {
-  paste0(vapply(dim(x), big_mark, character(1L)),
-         collapse = paste0(" ", symbol$cross, " "))
-}
-
-dim_brak <- function(x) paste0("[", dim_desc(x), "]")
-
-#' @importFrom utils ls.str
-#' @export
-str.src_env <- function(object, ...) ls.str(object)
-
-#' @export
-src_name.src_env <- function(x) attr(x, "src_name")
-
-#' @rdname attach_src
-#' @export
-as_src_env <- function(x) UseMethod("as_src_env", x)
-
-#' @export
-as_src_env.src_env <- function(x) x
-
-#' @export
-as_src_env.character <- function(x) {
-
-  assert_that(is.string(x))
-
-  env <- data_env()
-
-  res <- get0(x, envir = env, mode = "environment", ifnotfound = NULL)
-
-  if (is.null(res)) {
-    stop_ricu("Source `{x}` not found in {format(env)}",
-              class = "src_env_not_found")
-  }
-
-  res
-}
-
-#' @export
-as_src_env.default <- function(x) as_src_env(src_name(x))
-
-#' @export
-as_src_env.src_tbl <- function(x) attr(x, "src_env")

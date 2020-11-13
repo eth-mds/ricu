@@ -29,7 +29,7 @@
 
   backports::import(pkgname)
 
-  srcs <- auto_load_src_names()
+  srcs <- auto_attach_srcs()
 
   if (has_length(srcs)) {
     attach_src(srcs, assign_env = pkg_env())
@@ -71,7 +71,7 @@
   if (is.null(stats)) {
 
     cli::cat_line(
-      "\nCurrently no data sources are configured to be attached:\n",
+      "\nCurrently no data sources are configured to be attached.\n",
       "(the environment variable `RICU_SRC_LOAD` controls this)",
       file = con
     )

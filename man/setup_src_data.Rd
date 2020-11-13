@@ -27,10 +27,12 @@ the package. The download and import steps can be combined using
 }
 \details{
 If \code{setup_src_data()} is called on data sources that have all data available
-with \code{force = FALSE}, nothing happens apart of a message being raised. If
+with \code{force = FALSE}, nothing happens apart of a message being displayed. If
 only a subset of tables is missing, only these tables are downloaded
-(whenever possible) and imported. Finally, if the data source is available
-as a data package.
+(whenever possible) and imported. Passing \code{force = TRUE} attempts to re-
+download and import the entire data set. If the data source is available
+as a data package (as is the case for the two demo datasets), data is not
+downloaded and imported, but this package is installed.
 
 In most scenarios, \code{setup_src_data()} does not need to be called by users,
 as upon package loading, all configured data sources are set up in a way

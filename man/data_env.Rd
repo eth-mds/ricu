@@ -62,20 +62,20 @@ explored by typing its name into the console and individual tables can be
 inspected using the \code{$} function. For example for the MIMIC-III demo
 dataset and the \code{icustays} table, this gives\if{html}{\out{<div class="r">}}\preformatted{mimic_demo
 }\if{html}{\out{</div>}}\preformatted{## <mimic_demo_env[25]>
-##           icustays     procedures_icd              d_cpt            d_items 
-##         [136 x 12]          [506 x 5]          [134 x 9]      [12,487 x 10] 
-##      diagnoses_icd     datetimeevents        chartevents         admissions 
-##        [1,761 x 5]      [15,551 x 14]     [758,355 x 15]         [129 x 19] 
-##     inputevents_cv         d_labitems microbiologyevents       outputevents 
-##      [34,799 x 22]          [753 x 6]       [2,003 x 16]      [11,320 x 13] 
-## procedureevents_mv            callout    d_icd_diagnoses          cptevents 
-##         [753 x 25]          [77 x 24]       [14,567 x 4]       [1,579 x 12] 
-##      prescriptions         caregivers           drgcodes          transfers 
-##      [10,398 x 19]        [7,567 x 4]          [297 x 8]         [524 x 13] 
-##           patients          labevents   d_icd_procedures           services 
-##          [100 x 8]       [76,074 x 9]        [3,882 x 4]          [163 x 6] 
-##     inputevents_mv 
-##      [13,224 x 31]
+##         admissions            callout         caregivers        chartevents 
+##         [129 x 19]          [77 x 24]        [7,567 x 4]     [758,355 x 15] 
+##          cptevents              d_cpt    d_icd_diagnoses   d_icd_procedures 
+##       [1,579 x 12]          [134 x 9]       [14,567 x 4]        [3,882 x 4] 
+##            d_items         d_labitems     datetimeevents      diagnoses_icd 
+##      [12,487 x 10]          [753 x 6]      [15,551 x 14]        [1,761 x 5] 
+##           drgcodes           icustays     inputevents_cv     inputevents_mv 
+##          [297 x 8]         [136 x 12]      [34,799 x 22]      [13,224 x 31] 
+##          labevents microbiologyevents       outputevents           patients 
+##       [76,074 x 9]       [2,003 x 16]      [11,320 x 13]          [100 x 8] 
+##      prescriptions procedureevents_mv     procedures_icd           services 
+##      [10,398 x 19]         [753 x 25]          [506 x 5]          [163 x 6] 
+##          transfers 
+##         [524 x 13]
 }\if{html}{\out{<div class="r">}}\preformatted{mimic_demo$icustays
 }\if{html}{\out{</div>}}\preformatted{## # <mimic_tbl>: [136 x 12]
 ## # ID options:  subject_id (patient) < hadm_id (hadm) < icustay_id (icustay)

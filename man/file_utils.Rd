@@ -3,9 +3,7 @@
 \name{data_dir}
 \alias{data_dir}
 \alias{src_data_dir}
-\alias{auto_load_src_names}
-\alias{src_data_avail}
-\alias{is_data_avail}
+\alias{auto_attach_srcs}
 \alias{config_paths}
 \alias{get_config}
 \alias{set_config}
@@ -15,11 +13,7 @@ data_dir(subdir = NULL, create = TRUE)
 
 src_data_dir(srcs)
 
-auto_load_src_names()
-
-src_data_avail(src = auto_load_src_names())
-
-is_data_avail(src = auto_load_src_names())
+auto_attach_srcs()
 
 config_paths()
 
@@ -34,7 +28,8 @@ exist below the data directory.}
 \item{create}{Logical flag indicating whether to create the specified
 directory}
 
-\item{src, srcs}{Character vector of data source names}
+\item{srcs}{Character vector of data source names, an object for which an
+\code{src_name()} method is defined or an arbitrary-length list thereof.}
 
 \item{name}{File name of the configuration file (\code{.json} will be appended)}
 
@@ -51,7 +46,7 @@ returned lists}
 }
 \value{
 Functions \code{data_dir()}, \code{src_data_dir()} and \code{config_paths()} return
-file paths as character vectors, \code{auto_load_src_names()} returns a character
+file paths as character vectors, \code{auto_attach_srcs()} returns a character
 vector of data source names, \code{src_data_avail()} returns a \code{data.frame}
 describing availability of data sources and \code{is_data_avail()} a named
 logical vector. Configuration utilities \code{get_config()} and \code{set_config()}
@@ -113,7 +108,7 @@ The utility function \code{set_config()} writes the list passed as \code{x} to f
 defaults (which can be overridden by passing arguments as \code{...}): \code{null = "null"}, \code{auto_unbox = TRUE} and \code{pretty = TRUE}.
 
 Whenever the package namespace is attached, a summary of dataset
-availability is printed using the utility functions \code{auto_load_src_names()}
+availability is printed using the utility functions \code{auto_attach_srcs()}
 and \code{src_data_avail()}. While the former simply returns a character vector
 of data sources that are configures for automatically being set up on
 package loading, the latter returns a summary of the number of available

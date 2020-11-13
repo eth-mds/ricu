@@ -22,7 +22,8 @@ download_src(x, ...)
 
 \item{...}{Generic consistency}
 
-\item{data_dir}{Destination directory where the downloaded data is written to.}
+\item{data_dir}{Destination directory where the downloaded data is written
+to.}
 
 \item{tables}{Character vector specifying the tables to download. If
 \code{NULL}, all available tables are downloaded.}

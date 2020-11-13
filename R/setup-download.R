@@ -82,7 +82,8 @@
 #'
 download_src <- function(x, ...) UseMethod("download_src", x)
 
-#' @param data_dir Destination directory where the downloaded data is written to.
+#' @param data_dir Destination directory where the downloaded data is written
+#' to.
 #' @param tables Character vector specifying the tables to download. If
 #' `NULL`, all available tables are downloaded.
 #' @param force Logical flag; if `TRUE`, existing data will be re-downloaded
