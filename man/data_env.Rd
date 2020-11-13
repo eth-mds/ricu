@@ -36,7 +36,9 @@ either downloaded in full (\href{https://physionet.org/content/mimiciii/1.4/}{MI
 third data set is available only in full (\href{https://physionet.org/content/hirid/1.0/}{HiRID }). While demo data sets are
 freely available, full download requires credentialed access which can be
 gained by applying for an account with \href{https://physionet.org/register/}{PhysioNet }. Even though registration is required,
-the described datasets are all publicly available.
+the described datasets are all publicly available. With \href{https://amsterdammedicaldatascience.nl/#amsterdamumcdb}{AmsterdamUMCdb }, a non-PhysioNet
+hosted data source is available as well. As with the PhysioNet datasets,
+access is public but has to be granted by the data collectors.
 }
 \details{
 Setting up a dataset for use with \code{ricu} requires a configuration object.
@@ -174,6 +176,19 @@ period from January 2008 to June 2016. Dependent on the type of measurement,
 time resolution can be on the order of 2 minutes.
 }
 
+\section{AmsterdamUMCdb}{
+
+With similar time-resolution (for vital-sign measurements) as HiRID,
+\href{https://amsterdammedicaldatascience.nl/#amsterdamumcdb}{AmsterdamUMCdb}
+contains data from 23,000 admissions of adult patients from 2003-2016 to
+the department of Intensive Care, of Amsterdam University Medical Center.
+In total, nearly 10^9^ individual observations consisting of vitals signs,
+clinical scoring systems, device data and lab results data, as well as
+nearly 5*10^6^ million medication entries, alongside de-identified
+demographic information corresponding to the 20,000 individual patients
+is spread over 7 tables.
+}
+
 \references{
 Johnson, A., Pollard, T., & Mark, R. (2016). MIMIC-III Clinical Database
 (version 1.4). PhysioNet. https://doi.org/10.13026/C2XW26.
@@ -198,5 +213,12 @@ PhysioNet. https://doi.org/10.13026/hz5m-md48.
 Hyland, S.L., Faltys, M., Hüser, M. et al. Early prediction of circulatory
 failure in the intensive care unit using machine learning. Nat Med 26,
 364–373 (2020). https://doi.org/10.1038/s41591-020-0789-4
+
+Thoral PJ, Peppink JM, Driessen RH, et al (2020) AmsterdamUMCdb: The First
+Freely Accessible European Intensive Care Database from the ESICM Data
+Sharing Initiative. https://www.amsterdammedicaldatascience.nl.
+
+Elbers, Dr. P.W.G. (Amsterdam UMC) (2019): AmsterdamUMCdb v1.0.2. DANS.
+https://doi.org/10.17026/dans-22u-f8vd
 }
 \keyword{datasets}

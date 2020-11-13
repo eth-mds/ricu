@@ -87,6 +87,24 @@ PhysioNet, \code{download_src()} is an S3 generic function that can be extended
 to new classes. Method dispatch is intended to occur on objects that
 inherit from or can be coerced to \code{src_cfg}. For more information on data
 source configuration, refer to \code{\link[=load_src_cfg]{load_src_cfg()}}.
+
+As such, with the addition of the AmsterdamUMCdb dataset, which
+unfortunately is not hosted on PhysioNet, A separate downloader for that
+dataset is available as well. Currently this requires both availability of
+the CRAN package \code{xml2}, as well as the command line utility 7zip.
+Furthermore, data access has to be \href{https://amsterdammedicaldatascience.nl/#amsterdamumcdb}{requested } and for
+non-interactive download the download token has to be made available as
+environment variable \code{RICU_AUMC_TOKEN} or passed as \code{pass} argument to
+\code{download_src()}. The download token can be retrieved from the URL provided
+when granted access as by extracting the string followed by \verb{token=}:\preformatted{https://example.org/?s=download&token=0c27af59-72d1-0349-aa59-00000a8076d9
+}
+
+would translate to\if{html}{\out{<div class="r">}}\preformatted{Sys.setenv(RICU_AUMC_TOKEN = "0c27af59-72d1-0349-aa59-00000a8076d9")
+}\if{html}{\out{</div>}}
+
+If the dependencies outlined above are not fulfilled, download and archive
+extraction can be carried out manually into the corresponding folder and
+\code{\link[=import_src]{import_src()}} can be run.
 }
 \examples{
 \dontrun{

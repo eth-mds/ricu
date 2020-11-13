@@ -55,6 +55,31 @@
 #' inherit from or can be coerced to `src_cfg`. For more information on data
 #' source configuration, refer to [load_src_cfg()].
 #'
+#' As such, with the addition of the AmsterdamUMCdb dataset, which
+#' unfortunately is not hosted on PhysioNet, A separate downloader for that
+#' dataset is available as well. Currently this requires both availability of
+#' the CRAN package `xml2`, as well as the command line utility 7zip.
+#' Furthermore, data access has to be [requested
+#' ](https://amsterdammedicaldatascience.nl/#amsterdamumcdb) and for
+#' non-interactive download the download token has to be made available as
+#' environment variable `RICU_AUMC_TOKEN` or passed as `pass` argument to
+#' `download_src()`. The download token can be retrieved from the URL provided
+#' when granted access as by extracting the string followed by `token=`:
+#'
+#' ```
+#' https://example.org/?s=download&token=0c27af59-72d1-0349-aa59-00000a8076d9
+#' ```
+#'
+#' would translate to
+#'
+#' ```{r}
+#' Sys.setenv(RICU_AUMC_TOKEN = "0c27af59-72d1-0349-aa59-00000a8076d9")
+#' ```
+#'
+#' If the dependencies outlined above are not fulfilled, download and archive
+#' extraction can be carried out manually into the corresponding folder and
+#' [import_src()] can be run.
+#'
 #' @param x Object specifying the source configuration
 #' @param ... Generic consistency
 #'
