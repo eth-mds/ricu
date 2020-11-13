@@ -214,7 +214,7 @@ new_tbl_cfg <- function(table, src, files = NULL, cols = NULL, num_rows = NULL,
   }
 
   if (has_length(class_prefix)) {
-    class_prefix <- paste0(class_prefix, "_cols")
+    class_prefix <- paste0(class_prefix, "_tbl")
   }
 
   if (not_null(cols)) {
