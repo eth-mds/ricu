@@ -6,7 +6,7 @@ Description: Focused on (but not exclusive to) data sets hosted on PhysioNet
     functions for running arbitrary queries against available data sets, a
     system for defining clinical concepts and encoding their representations
     in tabular ICU data is presented.
-Version: 0.2.1
+Version: 0.3.0
 Authors@R: c(
     person(given = "Nicolas",
            family = "Bennett",
