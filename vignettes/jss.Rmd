@@ -1,6 +1,6 @@
 ---
 title:
-  formatted: "\\pkg{ricu}: \\proglang{R}'s interface for ICU data"
+  formatted: "\\pkg{ricu}: \\proglang{R}'s interface to ICU data"
   plain:     "ricu: R's interface for ICU data"
   short:     "\\pkg{ricu}: R meets ICU data"
 author:
@@ -67,7 +67,7 @@ if (!srcs_avail(srcs)) {
     "Note: Examples in this vignette require that one or more of datasets",
     paste("`", srcs, "`", collapse = ", "), "are available. Chunks that",
     "depend on certain datasets will not be evaluated if the corresponding",
-    "dataset is missing. In order to download data, have a look at",
+    "dataset is missing. In order to download and setup data, have a look at",
     "`?setup_src_data`."
   )
   msg <- paste(strwrap(msg), collapse="\n")
@@ -92,9 +92,9 @@ The following sections serve to introduce \pkg{ricu} by first giving an overview
 
 # Data sources {#data_srcs}
 
-In order to make data available from different data sources, \pkg{ricu} provides abstractions using JSON-formatted configuration files and a set of S3 generic functions. This system is designed with extensibility in mind, allowing for incorporation of a wide variety of datasets. Provisions for several large-scale publicly available datasets in terms of required configuration information alongside class-specific implementations of the needed S3 generic functions are part of \pkg{ricu}, opening up access to theses datasets. Data itself, however, is not part of \pkg{ricu} but rather can be downloaded form the Internet using tools provided by \pkg{ricu}. While the datasets are publicly available, access has to be granted by the dataset creators individually. Three datasets, MIMIC-III, eICU and HiRID are hosted by [Physionet](https://physionet.org), access to which requires an [account](https://physionet.org/register/), while the fourth, AmsterdamUMCdb is currently distributed via a separate platform, requiring a [download link](https://amsterdammedicaldatascience.nl/#amsterdamumcdb).
+In order to make data available from different data sources, \pkg{ricu} provides abstractions using JSON-formatted configuration files and a set of S3 generic functions. This system is designed with extensibility in mind, allowing for incorporation of a wide variety of datasets. Provisions for several large-scale publicly available datasets in terms of required configuration information alongside class-specific implementations of the needed S3 generic functions are part of \pkg{ricu}, opening up access to theses datasets. Data itself, however, is not part of \pkg{ricu} but rather can be downloaded form the Internet using tools provided by \pkg{ricu}. While the datasets are publicly available, access has to be granted by the dataset creators individually. Three datasets, MIMIC-III, eICU and HiRID are hosted by [PhysioNet](https://physionet.org), access to which requires an [account](https://physionet.org/register/), while the fourth, AmsterdamUMCdb is currently distributed via a separate platform, requiring a [download link](https://amsterdammedicaldatascience.nl/#amsterdamumcdb).
 
-For both MIMIC-III and eICU, small subsets of data are available as demo datasets that do not require credentialed access to Physionet. As the terms for distribution of those demo datasets are less restrictive, they can be made available as data packages \pkg{mimic.demo} and \pkg{eicu.demo}. Due to size constraints, however they are not available via CRAN, but can be installed from Github as
+For both MIMIC-III and eICU, small subsets of data are available as demo datasets that do not require credentialed access to PhysioNet. As the terms for distribution of those demo datasets are less restrictive, they can be made available as data packages \pkg{mimic.demo} and \pkg{eicu.demo}. Due to size constraints, however they are not available via CRAN, but can be installed from Github as
 
 ```{r demo-data, eval = FALSE}
 install.packages(
@@ -103,7 +103,35 @@ install.packages(
 )
 ```
 
+Provisions for datasets configured to be attached during package loading are made irrespectively of whether data is actually available. Upon first access of a dataset with some (or all) data missing, the user is asked for permission to download in interactive sessions and an error is thrown otherwise. Credentials can either be provided as environment variables (as `RICU_PHYSIONET_USER` and `RICU_PHYSIONET_PASS` for access to PhysioNet data, as well as `RICU_AUMC_TOKEN` for AmsterdamUMCdb) and if the corresponding variables are unset, user input is again required in interactive sessions. For non-interactive sessions, functionality is exported such that data can be downloaded and set up ahead of first access (see [setup_src_data()]), which requires the environment variables to be set or credentials to be passed as function arguments.
+
 ## Ready to use datasets
+
+Contingent on being granted access by the data owners 4 large-scale ICU datasets collected from multiple hospitals in the US and Europe can be set up for access using \pkg{ricu} with minimal user intervention. Download requires a stable Internet connection as the amount of downloaded data ranges from 5 to 10 GB per dataset, as well as 50 to 100 GB of temporary disk storage for unpacking and preparing the data for efficient access. In terms of permanent storage, again 5 to 10 GB per dataset are required. Despite uncompressed sizes of 50 to 100 GB for some of the larger tables, memory requirements easily permit importing (and working with) these tables using Laptop class hardware as only subsets of rows are read at the time.
+
+The following paragraphs serve to give quick introductions to the datasets to offer some guidance on where to start, outlining some strengths and weaknesses of each of the datasets. Especially the PhysioNet datasets [MIMIC-III](https://physionet.org/content/mimiciii/1.4/) and [eICU](https://physionet.org/content/eicu-crd/2.0/) offer good documentation on the respective websites.
+
+### MIMIC-III
+The Medical Information Mart for Intensive Care III ([MIMIC-III](https://physionet.org/content/mimiciii/1.4/)) represents the third iteration of the arguably most influential initiative for collecting and providing to the public large-scale ICU data. The initial MIMIC (at the time short for Multi-parameter Intelligent Monitoring for Intensive Care) data release dates back 20 years and contains data on roughly 100 patients recorded from patient monitors in the medical, surgical, and cardiac intensive care units of Boston's Beth Israel Hospital during the years 1992-1999 \cite{moody1996}. Building on lessons learnt and significantly broadened in scope, MIMIC-II was released 10 years after, now including data on almost 27,000 adult hospital admissions collected from ICUs of Beth Israel Deaconess Medical Center (BIDMC) from 2001 to 2008 \cite{lee2011}. Continuing the success of this storied line of ICU data releases, MIMIC-IV is just around the corner with a first development version having been released in summer 2020. Now including data of ICUs and emergency departments of BIDMC from the years 2008-2019, this iteration of MIMIC too is planned to be included with \pkg{ricu} as soon a first stable version is released.
+
+The to-date most comprehensive iteration of MIMIC data releases, MIMIC-III, comprises de-identified health related data of roughly 46,000 patients admitted to critical care units of BIDMC during the years 2001-1012. Amounting to just over 61,000 individual ICU admission, data is available on demographics, routine vital sign measurements (at approximately 1 hour resolution), laboratory tests, medication, as well as critical care procedures, organized as a 26-table relational structure.
+
+```{r mimic-tables, eval = srcs_avail("mimic")}
+mimic
+```
+
+One thing of note from a data-organizational perspective is that a change in electronic health care systems occurred in 2008. Owing to this, roughly 48,000 ICU admissions spanning the years 2001 though 2008 are documented using the CareVue system, while for 2008 and onwards, data was extracted from the MetaVision system. Item identifiers differ between the two systems, requiring queries to consider both ID mappings (heart rate for example being available both under `itemid` `211L` for CareVue and `220045L` for MetaVision) as does documentation of infusions and other procedures that are considered as input events (c.f. `inputevents_cv` and `inputevents_mv` tables). Especially with respect to such inputs, MetaVision data generally is of superior quality.
+
+In terms of patient identifiers, MIMIC-III allows for identifying both individual patients (`subject_id`) across hospital admissions (`hadm_id`) and for connecting ICU (re-)admissions (`icustay_id`) to hospital admissions. Using the respective one-to-many relationships, \pkg{ricu} can retrieve patient data using any of the above IDs, irrespective of how the raw data is organized.
+
+### eICU
+[eICU](https://physionet.org/content/eicu-crd/2.0/)
+
+### HiRID
+[HiRID](https://physionet.org/content/hirid/1.0/)
+
+### AmsterdamUMCdb
+[AmsterdamUMCdb](https://amsterdammedicaldatascience.nl/#amsterdamumcdb)
 
 ## Implementation details
 
