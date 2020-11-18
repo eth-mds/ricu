@@ -256,17 +256,10 @@ load_concepts.concept <- function(x, src = NULL, aggregate = NULL,
                                   merge_data = TRUE, verbose = TRUE, ...,
                                   cache = FALSE) {
 
-  get_src <- function(x) x[names(x) == src]
-
   assert_that(is.flag(merge_data), is.flag(verbose))
 
   if (not_null(src)) {
-
-    assert_that(is.string(src))
-
-    x <- new_concept(
-      Map(`[[<-`, x, "items", lapply(lst_xtr(x, "items"), get_src))
-    )
+    x <- subset_src(x, src)
   }
 
   srcs <- unlst(src_name(x), recursive = TRUE)
@@ -546,6 +539,13 @@ load_concepts.rec_cncpt <- function(x, aggregate = NULL, patient_ids = NULL,
                                     id_type = "icustay", interval = hours(1L),
                                     ..., progress = NULL, cache = FALSE) {
 
+  do_load_one <- function(x, aggregate, extra, ..., progress) {
+    do.call(load_one_concept_helper,
+      c(list(x = x, aggregate = aggregate), extra, list(...),
+        list(progress = progress))
+    )
+  }
+
   ext <- list(patient_ids = patient_ids, id_type = id_type,
               interval = coalesce(x[["interval"]], interval),
               progress = progress)
@@ -560,7 +560,7 @@ load_concepts.rec_cncpt <- function(x, aggregate = NULL, patient_ids = NULL,
     itm <- mark_duplicate_concepts(itm)
   }
 
-  dat <- Map(load_one_concept_helper, itm, agg, MoreArgs = ext)
+  dat <- Map(do_load_one, itm, agg, x[["extra"]], MoreArgs = ext)
 
   do_callback(x, dat, ..., interval = interval)
 }

@@ -354,7 +354,6 @@ sed <- function(..., interval = NULL) {
 gcs <- function(..., valid_win = hours(6L), set_sed_max = TRUE,
                 set_na_max = TRUE, interval = NULL) {
 
-
   cnc <- c("egcs", "vgcs", "mgcs", "tgcs", "sed")
   res <- collect_dots(cnc, interval, ..., merge_dat = TRUE)
 

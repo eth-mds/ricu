@@ -258,8 +258,14 @@ rep_arg <- function(arg, names) {
     len <- length(names)
   }
 
-  if (length(arg) <= 1L) {
-    arg <- rep(list(arg), len)
+  if (length(arg) != len) {
+    if (len == 1L) {
+      arg <- list(arg)
+    } else if (length(arg) <= 1L) {
+      arg <- rep(list(arg), len)
+    } else {
+      arg <- as.list(arg)
+    }
   }
 
   assert_that(all_equal(length(arg), len))

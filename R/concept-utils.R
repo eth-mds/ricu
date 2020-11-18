@@ -258,12 +258,12 @@ init_itm.default <- function(x, ...) stop_generic(x, .Generic)
 
 #' Internal utilities for `item`/`concept` objects
 #'
-#' Several internal utilities for modifying and querying item and concept
-#' objects, including getters and setters for `itm` variables, callback
-#' functions, `cncpt` target classes, as well as utilities for data loading
-#' such as `prepare_query()` which creates a row-subsetting expression,
-#' `do_callback()`, which applies a callback function to data or
-#' `do_itm_load()`, which performs data loading corresponding to an `itm`.
+#' Several internal utilities for modifying, querying ans subsetting item and
+#' concept objects, including getters and setters for `itm` variables,
+#' callback functions, `cncpt` target classes, as well as utilities for data
+#' loading such as `prepare_query()` which creates a row-subsetting
+#' expression, `do_callback()`, which applies a callback function to data or
+#' `do_itm_load()`, which performs data loading corresponding to an `itm`
 #'
 #' @param x Object defining the row-subsetting
 #'
@@ -279,6 +279,7 @@ init_itm.default <- function(x, ...) stop_generic(x, .Generic)
 #' * `n_tick()`: Integer valued number of progress bar ticks
 #' * `set_target()`: a modified object with newly set target class
 #' * `get_target()`: string valued target class of an object
+#' * `subset_src()`: an object of the same type as the object passed as `x`
 #'
 #' @rdname item_utils
 #' @keywords internal
@@ -911,8 +912,6 @@ init_cncpt.rec_cncpt <- function(x, callback = "identity_callback",
 
   really_na <- function(x) not_null(x) && is.na(x)
 
-  warn_dots(...)
-
   assert_that(evals_to_fun(callback), null_or(interval, is.string))
 
   x[["items"]] <- as_concept(x[["items"]])
@@ -927,6 +926,24 @@ init_cncpt.rec_cncpt <- function(x, callback = "identity_callback",
   x[["aggregate"]] <- agg
 
   todo <- c("callback", "interval")
+  x[todo] <- mget(todo)
+
+  if (...length() > 0L) {
+
+    extra <- list(...)
+
+    if (length(x[["items"]]) == 1L) {
+      extra <- list(extra)
+    }
+
+    extra <- rep_arg(extra, names(x[["items"]]))
+
+  } else {
+
+    extra <- list(NULL)
+  }
+
+  todo <- c("callback", "interval", "extra")
   x[todo] <- mget(todo)
 
   x
@@ -1265,7 +1282,7 @@ parse_dictionary <- function(dict, src = NULL, concepts = NULL) {
   do_new(concepts, dict)
 }
 
-identity_callback <- function(x, ...) x
+identity_callback <- function(...) ..1
 
 #' @rdname concept_dictionary
 #' @param dict A dictionary (`conncept` object)
@@ -1326,3 +1343,33 @@ explain_dictionary <- function(dict = load_dictionary(),
 
   as.data.frame(res, stringsAsFactors = FALSE)
 }
+
+#' @param src Character vector of data source name(s)
+#'
+#' @rdname item_utils
+#' @keywords internal
+#' @export
+subset_src <- function(x, src) {
+
+  assert_that(is.character(src))
+
+  UseMethod("subset_src", x)
+}
+
+#' @rdname item_utils
+#' @keywords internal
+#' @export
+subset_src.item <- function(x, src) x[names(x) == src]
+
+#' @rdname item_utils
+#' @keywords internal
+#' @export
+subset_src.cncpt <- function(x, src) {
+  x[["items"]] <- subset_src(x[["items"]], src)
+  x
+}
+
+#' @rdname item_utils
+#' @keywords internal
+#' @export
+subset_src.concept <- function(x, src) new_concept(lapply(x, subset_src, src))
