@@ -94,6 +94,10 @@ check_interval <- function(dat, ival = NULL) {
   invisible(ival)
 }
 
+rename_data_var <- function(new_name, old_name = NULL) {
+  function(...) rename_cols(..1, new_name, coalesce(old_name, data_var(..1)))
+}
+
 #' Concept callback functions
 #'
 #' Owing to increased complexity and more diverse applications, recursive

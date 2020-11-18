@@ -907,8 +907,9 @@ init_cncpt.cncpt <- function(x, ...) {
 #'
 #' @rdname data_concepts
 #' @export
-init_cncpt.rec_cncpt <- function(x, callback = "identity_callback",
-                                 interval = NULL, ...) {
+init_cncpt.rec_cncpt <- function(x,
+  callback = paste0("rename_data_var('", x[["name"]], "')"),
+  interval = NULL, ...) {
 
   really_na <- function(x) not_null(x) && is.na(x)
 

@@ -30,7 +30,7 @@ test_that("suspicion of infection", {
   expect_is(si_mi, "ts_tbl")
   expect_true(is_ts_tbl(si_mi))
   expect_identical(id_vars(si_mi), "icustay_id")
-  expect_identical(index_var(si_mi), "startdate")
+  expect_identical(index_var(si_mi), "chartdate")
   expect_identical(data_vars(si_mi), "susp_inf")
   expect_equal(interval(si_mi), hours(1L))
 

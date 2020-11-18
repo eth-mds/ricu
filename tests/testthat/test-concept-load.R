@@ -77,4 +77,14 @@ test_that("load concepts", {
   dat6 <- load_concepts(gluc2)
 
   expect_identical(dat1, dat6)
+
+  gcs_raw <- concept("gcs_raw", load_dictionary(concepts = "gcs"),
+                     set_sed_max = FALSE, class = "rec_cncpt")
+
+  dat7 <- load_concepts(gcs_raw, "mimic_demo")
+
+  expect_is(dat7, "ts_tbl")
+  expect_true(is_ts_tbl(dat7))
+  expect_identical(colnames(dat7), c("icustay_id", "charttime", "gcs_raw"))
+  expect_equal(interval(dat7), hours(1L))
 })
