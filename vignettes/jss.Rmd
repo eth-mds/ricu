@@ -144,14 +144,18 @@ Developed for early prediction of circulatory failure \cite{hyland2020}, the [hi
 hirid
 ```
 
-Collected during the period of January 2008 through June 2016, roughly 700 distinct variables covering routine vital signs, diagnostic test results and treatment parameters are available with up to two minute time resolution. In terms of demographic information and patient identifier systems, however the data is limited. It is not possible to identify ICU admissions corresponding to an individual patient and apart from patient age, sex, weight and height, very little information is available to characterize patients. There is no medical history, no admission diagnoses, no mortality information, no unstructured patient data and no information on patient discharge. Furthermore, data on body fluid sampling has been omitted, complicating for example the construction of a Sepsis-3 label \cite{singer2016}.
+Collected during the period of January 2008 through June 2016, roughly 700 distinct variables covering routine vital signs, diagnostic test results and treatment parameters are available with variables monitored at the bedside being recorded with two minute time resolution. In terms of demographic information and patient identifier systems, however the data is limited. It is not possible to identify ICU admissions corresponding to individual patients and apart from patient age, sex, weight and height, very little information is available to characterize patients. There is no medical history, no admission diagnoses, no mortality information, no unstructured patient data and no information on patient discharge. Furthermore, data on body fluid sampling has been omitted, complicating for example the construction of a Sepsis-3 label \citep{singer2016}.
+
+The data is available in three states: as raw data and in preprocessed form, with preprocessed data being represented by two intermediary pipeline stages from \cite{hyland2020}. While \pkg{ricu} focuses exclusively on raw data, the *merged* stage represents a selection of variables that were deemed most predictive for determining circulatory failure, which are then merged into 18 meta-variables, representing different clinical concepts. Time stamps in *merged* data are left unchanged, yielding irregular time series, whereas for the *imputed* stage, data is down-sampled to a 5 minute grid and missing values are imputed using a scheme discussed in \cite{hyland2020}.
 
 ### AmsterdamUMCdb
-[AmsterdamUMCdb](https://amsterdammedicaldatascience.nl/#amsterdamumcdb)
+As a second European dataset, also focusing on increased time-resolution over the US datasets, [AmsterdamUMCdb](https://amsterdammedicaldatascience.nl/#amsterdamumcdb) has been made available in late 2019, containing data on over 23,000 intensive care unit and high dependency unit admissions of adult patients during the years 2003 through 2016. The department of Intensive Care at Amsterdam University Medical Center is a mixed medical-surgical ICU with 34 available beds. Covering middle ground between the US datasets and HiRID in terms if breadth of included data, while providing a maximal time-resolution of 1 minute, AmsterdamUMCdb constitutes a well organized high quality ICU data resource organized as 7-table relational structure.
 
 ```{r aumc-tables, eval = srcs_avail("aumc")}
 aumc
 ```
+
+A slightly different approach to data anonymization was chosen for this dataset, leading to having demographic information such as patient weight, height and age only available as binned variables. Apart from this, there is information on patient origin, mortality, admission diagnoses, as well as numerical measurements including vital parameters, lab results, outputs from drains and catheters (in `numericitems`), information on administered medication (in `drugitems`), and other medical procedures (see `processitems` and `procedureorderitems`). In terms of patient identifiers, it is possible to link ICU admissions corresponding to the same individual, but it is not possible to identify separate hospital admissions.
 
 ## Implementation details
 
