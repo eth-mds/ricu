@@ -561,11 +561,11 @@ norepi_equiv <- function(..., interval = NULL) {
     x
   }
 
-  cnc <- c("epi_rate", "norepi_rate", "dopa_rate", "adh_rate")
+  cnc <- c("epi_rate", "norepi_rate", "dopa_rate", "adh_rate", "phn_rate")
   res <- collect_dots(cnc, interval, ...)
-  res <- map(multiply_rename, res, 1 / c(1, 1, 150, 0.4), cnc)
+  res <- map(multiply_rename, res, 1 / c(1, 1, 150, 0.4, 10), cnc)
 
-  res <- rbind_lst(res)
+  res <- rbind_lst(res, fill = TRUE)
 
   aggregate(res)
 }

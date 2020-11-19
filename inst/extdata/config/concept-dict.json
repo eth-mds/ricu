@@ -95,7 +95,7 @@
           "table": "drugitems",
           "sub_var": "itemid",
           "rate_uom": "doserateunit",
-          "callback": "aumc_rate(0.53)"
+          "callback": "aumc_rate_units(0.53)"
         }
       ],
       "eicu": [
@@ -103,7 +103,7 @@
           "regex": "^vasopressin.*\\(.+/.+\\)$",
           "table": "infusiondrug",
           "sub_var": "drugname",
-          "callback": "eicu_rate(ml_to_mcg = 2.65, mcg_to_units = 0.53)",
+          "callback": "eicu_rate_units(2.65, 0.53)",
           "class": "rgx_itm"
         }
       ],
@@ -112,7 +112,7 @@
           "regex": "^vasopressin.*\\(.+/.+\\)$",
           "table": "infusiondrug",
           "sub_var": "drugname",
-          "callback": "eicu_rate(ml_to_mcg = 2.65, mcg_to_units = 0.53)",
+          "callback": "eicu_rate_units(2.65, 0.53)",
           "class": "rgx_itm"
         }
       ],
@@ -3382,9 +3382,9 @@
     }
   },
   "norepi_equiv": {
-    "description": "norepinephrine quivalents",
+    "description": "norepinephrine equivalents",
     "category": "medications",
-    "concepts": ["epi_rate", "norepi_rate", "dopa_rate", "adh_rate"],
+    "concepts": ["epi_rate", "norepi_rate", "dopa_rate", "adh_rate", "phn_rate"],
     "callback": "norepi_equiv",
     "class": "rec_cncpt"
   },
@@ -3643,6 +3643,69 @@
         {
           "ids": 50820,
           "table": "labevents",
+          "sub_var": "itemid"
+        }
+      ]
+    }
+  },
+  "phn_rate": {
+    "unit": "mcg/kg/min",
+    "description": "phenylephrine rate",
+    "category": "medications",
+    "sources": {
+      "eicu": [
+        {
+          "regex": "^phenylephrine.*\\(.+\\)$",
+          "table": "infusiondrug",
+          "sub_var": "drugname",
+          "weight_var": "patientweight",
+          "callback": "eicu_rate_kg(ml_to_mcg = 200)",
+          "class": "rgx_itm"
+        }
+      ],
+      "eicu_demo": [
+        {
+          "regex": "^phenylephrine.*\\(.+\\)$",
+          "table": "infusiondrug",
+          "sub_var": "drugname",
+          "weight_var": "patientweight",
+          "callback": "eicu_rate_kg(ml_to_mcg = 200)",
+          "class": "rgx_itm"
+        }
+      ],
+      "mimic": [
+        {
+          "ids": 30127,
+          "table": "inputevents_cv",
+          "sub_var": "itemid",
+          "callback": "cv_rate_kg"
+        },
+        {
+          "ids": 30128,
+          "table": "inputevents_cv",
+          "sub_var": "itemid"
+        },
+        {
+          "ids": 221749,
+          "table": "inputevents_mv",
+          "sub_var": "itemid"
+        }
+      ],
+      "mimic_demo": [
+        {
+          "ids": 30127,
+          "table": "inputevents_cv",
+          "sub_var": "itemid",
+          "callback": "cv_rate_kg"
+        },
+        {
+          "ids": 30128,
+          "table": "inputevents_cv",
+          "sub_var": "itemid"
+        },
+        {
+          "ids": 221749,
+          "table": "inputevents_mv",
           "sub_var": "itemid"
         }
       ]

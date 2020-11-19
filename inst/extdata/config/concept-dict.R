@@ -2413,7 +2413,7 @@ cfg <- list(
       eicu = list(
         list(regex = "^vasopressin.*\\(.+/.+\\)$",
              table = "infusiondrug", sub_var = "drugname",
-             callback = "eicu_rate(ml_to_mcg = 2.65, mcg_to_units = 0.53)",
+             callback = "eicu_rate_units(2.65, 0.53)",
              class = "rgx_itm")
       ),
       hirid = list(
@@ -2422,14 +2422,33 @@ cfg <- list(
       ),
       aumc = list(
         list(ids = 12467L, table = "drugitems", sub_var = "itemid",
-             rate_uom = "doserateunit", callback = "aumc_rate(0.53)")
+             rate_uom = "doserateunit", callback = "aumc_rate_units(0.53)")
+      )
+    )
+  ),
+  phn_rate = list(
+    unit = "mcg/kg/min",
+    description = "phenylephrine rate",
+    category = "medications",
+    sources = list(
+      mimic = list(
+        list(ids = 30127L, table = "inputevents_cv", sub_var = "itemid",
+             callback = "cv_rate_kg"),
+        list(ids = 30128L, table = "inputevents_cv", sub_var = "itemid"),
+        list(ids = 221749L, table = "inputevents_mv", sub_var = "itemid")
+      ),
+      eicu = list(
+        list(regex = "^phenylephrine.*\\(.+\\)$", table = "infusiondrug",
+             sub_var = "drugname", weight_var = "patientweight",
+             callback = "eicu_rate_kg(ml_to_mcg = 200)", class = "rgx_itm")
       )
     )
   ),
   norepi_equiv = list(
-    description = "norepinephrine quivalents",
+    description = "norepinephrine equivalents",
     category = "medications",
-    concepts = c("epi_rate", "norepi_rate", "dopa_rate", "adh_rate"),
+    concepts = c("epi_rate", "norepi_rate", "dopa_rate", "adh_rate",
+                 "phn_rate"),
     callback = "norepi_equiv",
     class = "rec_cncpt"
   )

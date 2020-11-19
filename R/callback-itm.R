@@ -411,6 +411,16 @@ sub_trans <- function(regex, repl) {
   function(x) sub(regex, repl, x, ignore.case = TRUE)
 }
 
+cv_rate_kg <- function(x, val_var, unit_var, env, ...) {
+
+  x <- add_weight(x, env, "weight")
+  x <- x[, c(val_var, unit_var) := list(
+    get(val_var) / get("weight"), sub("mcgmin", "mcg/kg/min", get(unit_var))
+  )]
+
+  x
+}
+
 eicu_rate_kg <- function(ml_to_mcg) {
 
   assert_that(is_number(ml_to_mcg))
@@ -443,7 +453,7 @@ eicu_rate_kg <- function(ml_to_mcg) {
   }
 }
 
-eicu_rate <- function(ml_to_mcg, mcg_to_units) {
+eicu_rate_units <- function(ml_to_mcg, mcg_to_units) {
 
   assert_that(is_number(ml_to_mcg), is_number(mcg_to_units))
 
@@ -530,7 +540,7 @@ aumc_rate_kg <- function(x, val_var, unit_var, rel_weight, rate_uom, env,
   res
 }
 
-aumc_rate <- function(mcg_to_units) {
+aumc_rate_units <- function(mcg_to_units) {
 
   assert_that(is_number(mcg_to_units))
 
