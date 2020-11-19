@@ -550,3 +550,22 @@ bmi <- function(..., interval = NULL) {
 
   res
 }
+
+#' @rdname callback_cncpt
+#' @export
+norepi_equiv <- function(..., interval = NULL) {
+
+  multiply_rename <- function(x, fact, col) {
+    x <- x[, c(col) := get(col) * fact]
+    x <- rename_cols(x, "norepi_equiv", col)
+    x
+  }
+
+  cnc <- c("epi_rate", "norepi_rate", "dopa_rate", "adh_rate")
+  res <- collect_dots(cnc, interval, ...)
+  res <- map(multiply_rename, res, 1 / c(1, 1, 150, 0.4), cnc)
+
+  res <- rbind_lst(res)
+
+  aggregate(res)
+}

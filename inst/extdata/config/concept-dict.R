@@ -1374,16 +1374,16 @@ cfg <- list(
       eicu = list(
         list(regex = "^dobu.*\\(.+\\)$", table = "infusiondrug",
              sub_var = "drugname", weight_var = "patientweight",
-             callback = "eicu_vaso_rate(ml_to_mcg = 2000)", class = "rgx_itm")
+             callback = "eicu_rate_kg(ml_to_mcg = 2000)", class = "rgx_itm")
       ),
       hirid = list(
         list(ids = 426L, table = "pharma", sub_var = "pharmaid",
-             callback = "hirid_vaso_rate")
+             callback = "hirid_rate_kg")
       ),
       aumc = list(
         list(ids = 7178L, table = "drugitems", sub_var = "itemid",
              rel_weight = "doserateperkg", rate_uom = "doserateunit",
-             callback = "aumc_rate")
+             callback = "aumc_rate_kg")
       )
     )
   ),
@@ -1438,12 +1438,12 @@ cfg <- list(
       eicu = list(
         list(regex = "^dopa.*\\(.+\\)$", table = "infusiondrug",
              sub_var = "drugname", weight_var = "patientweight",
-             callback = "eicu_vaso_rate(ml_to_mcg = 1600)", class = "rgx_itm")
+             callback = "eicu_rate_kg(ml_to_mcg = 1600)", class = "rgx_itm")
       ),
       aumc = list(
         list(ids = 7179L, table = "drugitems", sub_var = "itemid",
              rel_weight = "doserateperkg", rate_uom = "doserateunit",
-             callback = "aumc_rate")
+             callback = "aumc_rate_kg")
       )
     )
   ),
@@ -1494,16 +1494,16 @@ cfg <- list(
       eicu = list(
         list(regex = "^norepi.*\\(.+\\)$", table = "infusiondrug",
              sub_var = "drugname", weight_var = "patientweight",
-             callback = "eicu_vaso_rate(ml_to_mcg = 32)", class = "rgx_itm")
+             callback = "eicu_rate_kg(ml_to_mcg = 32)", class = "rgx_itm")
       ),
       hirid = list(
         list(ids = c(1000462L, 1000656L, 1000657L, 1000658L), table = "pharma",
-             sub_var = "pharmaid", callback = "hirid_vaso_rate")
+             sub_var = "pharmaid", callback = "hirid_rate_kg")
       ),
       aumc = list(
         list(ids = 7229L, table = "drugitems", sub_var = "itemid",
              rel_weight = "doserateperkg", rate_uom = "doserateunit",
-             callback = "aumc_rate")
+             callback = "aumc_rate_kg")
       )
     )
   ),
@@ -1559,17 +1559,17 @@ cfg <- list(
       eicu = list(
         list(regex = "^epi( |n).*\\(.+\\)$", table = "infusiondrug",
              sub_var = "drugname", weight_var = "patientweight",
-             callback = "eicu_vaso_rate(ml_to_mcg = 40)", class = "rgx_itm")
+             callback = "eicu_rate_kg(ml_to_mcg = 40)", class = "rgx_itm")
       ),
       hirid = list(
         list(ids = c(71L, 1000649L, 1000650L, 1000655L, 1000750L),
              table = "pharma", sub_var = "pharmaid",
-             callback = "hirid_vaso_rate")
+             callback = "hirid_rate_kg")
       ),
       aumc = list(
         list(ids = 6818L, table = "drugitems", sub_var = "itemid",
              rel_weight = "doserateperkg", rate_uom = "doserateunit",
-             callback = "aumc_rate")
+             callback = "aumc_rate_kg")
       )
     )
   ),
@@ -2395,6 +2395,42 @@ cfg <- list(
     description = "patient body mass index",
     category = "demographics",
     callback = "bmi",
+    class = "rec_cncpt"
+  ),
+  adh_rate = list(
+    unit = "units/min",
+    description = "vasopressin rate",
+    category = "medications",
+    sources = list(
+      mimic = list(
+        list(ids = 30051L, table = "inputevents_cv", sub_var = "itemid",
+             callback = "convert_unit(binary_op(`/`, 60), 'units/min',
+                         'Uhr')"),
+        list(ids = 222315L, table = "inputevents_mv", sub_var = "itemid",
+             callback = "convert_unit(binary_op(`/`, 60), 'units/min',
+                         'units/hour')")
+      ),
+      eicu = list(
+        list(regex = "^vasopressin.*\\(.+/.+\\)$",
+             table = "infusiondrug", sub_var = "drugname",
+             callback = "eicu_rate(ml_to_mcg = 2.65, mcg_to_units = 0.53)",
+             class = "rgx_itm")
+      ),
+      hirid = list(
+        list(ids = c(112L, 113L), table = "pharma", sub_var = "pharmaid",
+             callback = "hirid_rate")
+      ),
+      aumc = list(
+        list(ids = 12467L, table = "drugitems", sub_var = "itemid",
+             rate_uom = "doserateunit", callback = "aumc_rate(0.53)")
+      )
+    )
+  ),
+  norepi_equiv = list(
+    description = "norepinephrine quivalents",
+    category = "medications",
+    concepts = c("epi_rate", "norepi_rate", "dopa_rate", "adh_rate"),
+    callback = "norepi_equiv",
     class = "rec_cncpt"
   )
 )

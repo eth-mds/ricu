@@ -411,9 +411,9 @@ sub_trans <- function(regex, repl) {
   function(x) sub(regex, repl, x, ignore.case = TRUE)
 }
 
-eicu_vaso_rate <- function(ml_to_mcg) {
+eicu_rate_kg <- function(ml_to_mcg) {
 
-  assert_that(is.count(ml_to_mcg))
+  assert_that(is_number(ml_to_mcg))
 
   function(x, sub_var, val_var, weight_var, env, ...) {
 
@@ -443,7 +443,28 @@ eicu_vaso_rate <- function(ml_to_mcg) {
   }
 }
 
-hirid_vaso_rate <- function(x, val_var, unit_var, env, ...) {
+eicu_rate <- function(ml_to_mcg, mcg_to_units) {
+
+  assert_that(is_number(ml_to_mcg), is_number(mcg_to_units))
+
+  function(x, sub_var, val_var, env, ...) {
+
+    fix_units <- convert_unit(
+      c(binary_op(`/`, 60), binary_op(`*`, 1000), set_val(NA),
+        binary_op(`*`, ml_to_mcg), binary_op(`*`, mcg_to_units)),
+      c(sub_trans("/hr$", "/min"), sub_trans("^mg/", "mcg/"),
+        "units/min", sub_trans("^ml/", "mcg/"), sub_trans("^mcg/", "units/")),
+      c("/hr$", "^mg/", "/kg/", "^ml/", "^mcg/")
+    )
+
+    x <- x[, c(val_var) := silent_as_num(get(val_var))]
+    x <- x[, c("unit_var") := eicu_extract_unit(get(sub_var))]
+
+    fix_units(x, val_var, "unit_var")
+  }
+}
+
+hirid_rate_kg <- function(x, val_var, unit_var, env, ...) {
 
   x <- x[get(unit_var) == "mg",
     c(val_var, unit_var) := list(1000 * get(val_var), "\u00b5g")
@@ -468,12 +489,76 @@ hirid_vaso_rate <- function(x, val_var, unit_var, env, ...) {
   ]
 }
 
+hirid_rate <- function(x, val_var, unit_var, env, ...) {
+
+  frac <- 1 / as.double(interval(x), units = "mins")
+
+  x <- dt_gforce(x, "sum", vars = val_var)
+  x <- x[, c(val_var, unit_var) := list(
+    frac * get(val_var), paste(get(unit_var), "min", sep = "/")
+  )]
+
+  x
+}
+
 mimic_dur_incv <- function(x, val_var, grp_var, ...) {
   calc_dur(x, val_var, index_var(x), index_var(x), grp_var)
 }
 
 mimic_dur_inmv <- function(x, val_var, grp_var, stop_var, ...) {
   calc_dur(x, val_var, index_var(x), stop_var, grp_var)
+}
+
+aumc_rate_kg <- function(x, val_var, unit_var, rel_weight, rate_uom, env,
+                         ...) {
+
+  mg_to_mcg <- convert_unit(binary_op(`*`, 1000), "mcg", "mg")
+  hr_to_min <- convert_unit(binary_op(`/`, 60),   "min", "uur")
+
+  res <- rm_na(x, c(unit_var, rate_uom), "any")
+  res <- mg_to_mcg(res, val_var, unit_var)
+  res <- hr_to_min(res, val_var, rate_uom)
+
+  res <- add_weight(res, env, "weight")
+
+  res <- res[!get(rel_weight), c(val_var) := get(val_var) / get("weight")]
+  res <- res[get(unit_var) == "\u00b5g", c(unit_var) := "mcg"]
+  res <- res[, c(unit_var) := paste(
+    get(unit_var), get(rate_uom), sep = "/kg/"
+  )]
+
+  res
+}
+
+aumc_rate <- function(mcg_to_units) {
+
+  assert_that(is_number(mcg_to_units))
+
+  function(x, val_var, unit_var, rate_uom, env, ...) {
+
+    frac <- 1 / as.double(interval(x), units = "mins")
+
+    to_units <- convert_unit(
+      c(identity, binary_op(`*`, 1000), binary_op(`*`, mcg_to_units)),
+      c("mcg", "mcg", "units"),
+      c("\u00b5g", "mg", "mcg")
+    )
+
+    to_min <- convert_unit(
+      c(binary_op(`/`, 24), binary_op(`/`, 60)),
+      c("uur", "min"),
+      c("dag", "uur")
+    )
+
+    x <- x[is.na(get(rate_uom)), c(val_var, rate_uom) := list(
+      sum(get(val_var)) * frac, "min"), by = c(meta_vars(x))
+    ]
+
+    x <- to_units(to_min(x, val_var, rate_uom), val_var, unit_var)
+    x <- x[, c(unit_var) := paste(get(unit_var), get(rate_uom), sep = "/")]
+
+    x
+  }
 }
 
 eicu_duration <- function(gap_length) {
@@ -508,6 +593,10 @@ eicu_duration <- function(gap_length) {
 
 hirid_duration <- function(x, val_var, grp_var, ...) {
   calc_dur(x, val_var, index_var(x), index_var(x), grp_var)
+}
+
+aumc_dur <- function(x, val_var, stop_var, grp_var, ...) {
+  calc_dur(x, val_var, index_var(x), stop_var, grp_var)
 }
 
 #' Used for determining vasopressor durations, `calc_dur()` will calculate
@@ -605,30 +694,6 @@ mimic_abx_presc <- function(x, id_type, interval) {
   res <- change_interval(res, interval, by_ref = TRUE)
 
   res
-}
-
-aumc_rate <- function(x, val_var, unit_var, rel_weight, rate_uom, env, ...) {
-
-  mg_to_mcg <- convert_unit(binary_op(`*`, 1000), "mcg", "mg")
-  hr_to_min <- convert_unit(binary_op(`/`, 60),   "min", "uur")
-
-  res <- rm_na(x, c(unit_var, rate_uom), "any")
-  res <- mg_to_mcg(res, val_var, unit_var)
-  res <- hr_to_min(res, val_var, rate_uom)
-
-  res <- add_weight(res, env, "weight")
-
-  res <- res[!get(rel_weight), c(val_var) := get(val_var) / get("weight")]
-  res <- res[get(unit_var) == "\u00b5g", c(unit_var) := "mcg"]
-  res <- res[, c(unit_var) := paste(
-    get(unit_var), get(rate_uom), sep = "/kg/"
-  )]
-
-  res
-}
-
-aumc_dur <- function(x, val_var, stop_var, grp_var, ...) {
-  calc_dur(x, val_var, index_var(x), stop_var, grp_var)
 }
 
 aumc_death <- function(x, val_var, ...) {

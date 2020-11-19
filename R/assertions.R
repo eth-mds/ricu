@@ -50,6 +50,13 @@ on_failure(is_scalar) <- function(call, env) {
   format_assert("{as_label(call$x)} is not a scalar", "is_scalar_assert")
 }
 
+is_number <- function(x) is_scalar(x) && is.numeric(x)
+
+on_failure(is_number) <- function(call, env) {
+  format_assert("{as_label(call$x)} is not a scalar number",
+                "is_number_assert")
+}
+
 is_intish <- function(x) {
   is.integer(x) || (is.numeric(x) && all(x == trunc(x)) && !is.na(x))
 }

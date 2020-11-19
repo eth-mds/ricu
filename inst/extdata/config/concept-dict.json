@@ -84,6 +84,76 @@
       ]
     }
   },
+  "adh_rate": {
+    "unit": "units/min",
+    "description": "vasopressin rate",
+    "category": "medications",
+    "sources": {
+      "aumc": [
+        {
+          "ids": 12467,
+          "table": "drugitems",
+          "sub_var": "itemid",
+          "rate_uom": "doserateunit",
+          "callback": "aumc_rate(0.53)"
+        }
+      ],
+      "eicu": [
+        {
+          "regex": "^vasopressin.*\\(.+/.+\\)$",
+          "table": "infusiondrug",
+          "sub_var": "drugname",
+          "callback": "eicu_rate(ml_to_mcg = 2.65, mcg_to_units = 0.53)",
+          "class": "rgx_itm"
+        }
+      ],
+      "eicu_demo": [
+        {
+          "regex": "^vasopressin.*\\(.+/.+\\)$",
+          "table": "infusiondrug",
+          "sub_var": "drugname",
+          "callback": "eicu_rate(ml_to_mcg = 2.65, mcg_to_units = 0.53)",
+          "class": "rgx_itm"
+        }
+      ],
+      "hirid": [
+        {
+          "ids": [112, 113],
+          "table": "pharma",
+          "sub_var": "pharmaid",
+          "callback": "hirid_rate"
+        }
+      ],
+      "mimic": [
+        {
+          "ids": 30051,
+          "table": "inputevents_cv",
+          "sub_var": "itemid",
+          "callback": "convert_unit(binary_op(`/`, 60), 'units/min',\n                         'Uhr')"
+        },
+        {
+          "ids": 222315,
+          "table": "inputevents_mv",
+          "sub_var": "itemid",
+          "callback": "convert_unit(binary_op(`/`, 60), 'units/min',\n                         'units/hour')"
+        }
+      ],
+      "mimic_demo": [
+        {
+          "ids": 30051,
+          "table": "inputevents_cv",
+          "sub_var": "itemid",
+          "callback": "convert_unit(binary_op(`/`, 60), 'units/min',\n                         'Uhr')"
+        },
+        {
+          "ids": 222315,
+          "table": "inputevents_mv",
+          "sub_var": "itemid",
+          "callback": "convert_unit(binary_op(`/`, 60), 'units/min',\n                         'units/hour')"
+        }
+      ]
+    }
+  },
   "adm": {
     "target": "id_tbl",
     "levels": ["med", "surg", "other"],
@@ -1355,7 +1425,7 @@
           "sub_var": "itemid",
           "rel_weight": "doserateperkg",
           "rate_uom": "doserateunit",
-          "callback": "aumc_rate"
+          "callback": "aumc_rate_kg"
         }
       ],
       "eicu": [
@@ -1364,7 +1434,7 @@
           "table": "infusiondrug",
           "sub_var": "drugname",
           "weight_var": "patientweight",
-          "callback": "eicu_vaso_rate(ml_to_mcg = 2000)",
+          "callback": "eicu_rate_kg(ml_to_mcg = 2000)",
           "class": "rgx_itm"
         }
       ],
@@ -1374,7 +1444,7 @@
           "table": "infusiondrug",
           "sub_var": "drugname",
           "weight_var": "patientweight",
-          "callback": "eicu_vaso_rate(ml_to_mcg = 2000)",
+          "callback": "eicu_rate_kg(ml_to_mcg = 2000)",
           "class": "rgx_itm"
         }
       ],
@@ -1383,7 +1453,7 @@
           "ids": 426,
           "table": "pharma",
           "sub_var": "pharmaid",
-          "callback": "hirid_vaso_rate"
+          "callback": "hirid_rate_kg"
         }
       ],
       "mimic": [
@@ -1503,7 +1573,7 @@
           "sub_var": "itemid",
           "rel_weight": "doserateperkg",
           "rate_uom": "doserateunit",
-          "callback": "aumc_rate"
+          "callback": "aumc_rate_kg"
         }
       ],
       "eicu": [
@@ -1512,7 +1582,7 @@
           "table": "infusiondrug",
           "sub_var": "drugname",
           "weight_var": "patientweight",
-          "callback": "eicu_vaso_rate(ml_to_mcg = 1600)",
+          "callback": "eicu_rate_kg(ml_to_mcg = 1600)",
           "class": "rgx_itm"
         }
       ],
@@ -1522,7 +1592,7 @@
           "table": "infusiondrug",
           "sub_var": "drugname",
           "weight_var": "patientweight",
-          "callback": "eicu_vaso_rate(ml_to_mcg = 1600)",
+          "callback": "eicu_rate_kg(ml_to_mcg = 1600)",
           "class": "rgx_itm"
         }
       ],
@@ -1754,7 +1824,7 @@
           "sub_var": "itemid",
           "rel_weight": "doserateperkg",
           "rate_uom": "doserateunit",
-          "callback": "aumc_rate"
+          "callback": "aumc_rate_kg"
         }
       ],
       "eicu": [
@@ -1763,7 +1833,7 @@
           "table": "infusiondrug",
           "sub_var": "drugname",
           "weight_var": "patientweight",
-          "callback": "eicu_vaso_rate(ml_to_mcg = 40)",
+          "callback": "eicu_rate_kg(ml_to_mcg = 40)",
           "class": "rgx_itm"
         }
       ],
@@ -1773,7 +1843,7 @@
           "table": "infusiondrug",
           "sub_var": "drugname",
           "weight_var": "patientweight",
-          "callback": "eicu_vaso_rate(ml_to_mcg = 40)",
+          "callback": "eicu_rate_kg(ml_to_mcg = 40)",
           "class": "rgx_itm"
         }
       ],
@@ -1782,7 +1852,7 @@
           "ids": [71, 1000649, 1000650, 1000655, 1000750],
           "table": "pharma",
           "sub_var": "pharmaid",
-          "callback": "hirid_vaso_rate"
+          "callback": "hirid_rate_kg"
         }
       ],
       "mimic": [
@@ -3311,6 +3381,13 @@
       ]
     }
   },
+  "norepi_equiv": {
+    "description": "norepinephrine quivalents",
+    "category": "medications",
+    "concepts": ["epi_rate", "norepi_rate", "dopa_rate", "adh_rate"],
+    "callback": "norepi_equiv",
+    "class": "rec_cncpt"
+  },
   "norepi_rate": {
     "unit": ["mcg/kg/min", "mcgkgmin"],
     "min": 0,
@@ -3325,7 +3402,7 @@
           "sub_var": "itemid",
           "rel_weight": "doserateperkg",
           "rate_uom": "doserateunit",
-          "callback": "aumc_rate"
+          "callback": "aumc_rate_kg"
         }
       ],
       "eicu": [
@@ -3334,7 +3411,7 @@
           "table": "infusiondrug",
           "sub_var": "drugname",
           "weight_var": "patientweight",
-          "callback": "eicu_vaso_rate(ml_to_mcg = 32)",
+          "callback": "eicu_rate_kg(ml_to_mcg = 32)",
           "class": "rgx_itm"
         }
       ],
@@ -3344,7 +3421,7 @@
           "table": "infusiondrug",
           "sub_var": "drugname",
           "weight_var": "patientweight",
-          "callback": "eicu_vaso_rate(ml_to_mcg = 32)",
+          "callback": "eicu_rate_kg(ml_to_mcg = 32)",
           "class": "rgx_itm"
         }
       ],
@@ -3353,7 +3430,7 @@
           "ids": [1000462, 1000656, 1000657, 1000658],
           "table": "pharma",
           "sub_var": "pharmaid",
-          "callback": "hirid_vaso_rate"
+          "callback": "hirid_rate_kg"
         }
       ],
       "mimic": [
