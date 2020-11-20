@@ -512,12 +512,27 @@ safe_tbl_get <- function(x, env) {
 
   assert_that(is.string(x))
 
-  env <- as_src_env(env)
+  env <- safe_src_get(env)
+
+  if (is.null(env)) {
+    return(NULL)
+  }
 
   tryCatch(
     get0(x, envir = env, inherits = FALSE),
     miss_tbl_msg = function(msg) NULL
   )
+}
+
+safe_src_get <- function(src) {
+
+  if (is.character(src)) {
+    assert_that(is.string(src))
+  } else {
+    src <- src_name(src)
+  }
+
+  get0(src, envir = data_env(), mode = "environment", ifnotfound = NULL)
 }
 
 #' @keywords internal
@@ -532,7 +547,11 @@ is_tbl_avail <- function(tbl, env) is_src_tbl(safe_tbl_get(tbl, env))
 #' @export
 src_tbl_avail <- function(env, tbls = ls(envir = env)) {
 
-  env <- as_src_env(env)
+  env <- safe_src_get(env)
+
+  if (is.null(env)) {
+    return(NA)
+  }
 
   if (!is.character(tbls)) {
 
@@ -554,6 +573,9 @@ src_tbl_avail <- function(env, tbls = ls(envir = env)) {
 #' @export
 src_data_avail <- function(src = auto_attach_srcs()) {
 
+  num_non_na <- function(x) sum(x & !x)
+  all_true   <- function(x) all(is_true(x))
+
   if (identical(length(src), 0L)) {
     return(NULL)
   }
@@ -568,8 +590,9 @@ src_data_avail <- function(src = auto_attach_srcs()) {
     src <- chr_ply(src, src_name)
   }
 
-  data.frame(name = src, available = lgl_ply(tbls, all),
-             tables = int_ply(tbls, sum), total = int_ply(tbls, length))
+  data.frame(name = src, available = lgl_ply(tbls, all_true),
+             tables = int_ply(tbls, sum, na.rm = TRUE),
+             total = int_ply(tbls, num_non_na))
 }
 
 #' @keywords internal
