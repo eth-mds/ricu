@@ -320,19 +320,19 @@ load_concepts.concept <- function(x, src = NULL, aggregate = NULL,
 
 load_one_concept_helper <- function(x, aggregate, ..., progress) {
 
+  args <- as.list(match.call())[-1]
+  args[c("x", "patient_ids", "progress")] <- NULL
+  args <- lapply(args, eval, parent.frame())
+
   name <- x[["name"]]
+  ival <- coalesce(args[["interval"]], hours(1L))
 
   progress_tick(name, progress, 0L)
 
   if (isTRUE(attr(x, "dup_cncpt"))) {
 
-    args <- as.list(match.call())[-1]
-    args[c("x", "patient_ids", "progress")] <- NULL
-    args <- lapply(args, eval, parent.frame())
-
     args[["name"]] <- name
-    args[["interval"]] <- as.double(coalesce(args[["interval"]], hours(1L)),
-                                    units = "mins")
+    args[["interval"]] <- as.double(ival, units = "mins")
     args[["id_type"]] <- coalesce(args[["id_type"]], "icustay")
 
     cach <- digest_lst(args)
@@ -355,6 +355,11 @@ load_one_concept_helper <- function(x, aggregate, ..., progress) {
 
     res <- setNames(list(integer(), numeric()), c("id_var", name))
     res <- as_id_tbl(res, by_ref = TRUE)
+
+    if (identical(targ, "ts_tbl")) {
+      res <- res[, c("index_var") := ival[0L]]
+      res <- as_ts_tbl(res, interval = ival, by_ref = TRUE)
+    }
   }
 
   assert_that(has_name(res, name))
