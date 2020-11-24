@@ -6,47 +6,38 @@
 \alias{new_col_cfg}
 \alias{new_tbl_cfg}
 \alias{is_src_cfg}
-\alias{is_id_cfg}
-\alias{is_col_cfg}
-\alias{is_tbl_cfg}
 \alias{as_src_cfg}
+\alias{is_id_cfg}
 \alias{as_id_cfg}
+\alias{is_col_cfg}
 \alias{as_col_cfg}
+\alias{is_tbl_cfg}
 \alias{as_tbl_cfg}
-\alias{src_url}
-\alias{id_var_opts}
 \alias{src_name}
 \alias{tbl_name}
+\alias{src_url}
+\alias{id_var_opts}
+\alias{default_vars}
 \title{Internal utilities for working with data source configurations}
 \usage{
 new_src_cfg(name, id_cfg, col_cfg, tbl_cfg = NULL, ..., class_prefix = name)
 
 new_id_cfg(
-  name,
   src,
+  name,
   id,
   pos,
-  start = NA_character_,
-  end = NA_character_,
-  table = NA_character_,
+  start = NULL,
+  end = NULL,
+  table = NULL,
   class_prefix = src
 )
 
-new_col_cfg(
-  table,
-  src,
-  id_var = NULL,
-  index_var = NULL,
-  val_var = NULL,
-  unit_var = NULL,
-  time_vars = NULL,
-  ...,
-  class_prefix = src
-)
+new_col_cfg(src, table, ..., class_prefix = src)
 
 new_tbl_cfg(
-  table,
   src,
+  table,
   files = NULL,
   cols = NULL,
   num_rows = NULL,
@@ -57,27 +48,29 @@ new_tbl_cfg(
 
 is_src_cfg(x)
 
-is_id_cfg(x)
-
-is_col_cfg(x)
-
-is_tbl_cfg(x)
-
 as_src_cfg(x)
+
+is_id_cfg(x)
 
 as_id_cfg(x)
 
+is_col_cfg(x)
+
 as_col_cfg(x)
 
+is_tbl_cfg(x)
+
 as_tbl_cfg(x)
+
+src_name(x)
+
+tbl_name(x)
 
 src_url(x)
 
 id_var_opts(x)
 
-src_name(x)
-
-tbl_name(x)
+default_vars(x, type)
 }
 \arguments{
 \item{name}{Name of the data source}
@@ -103,9 +96,6 @@ and end timestamps}
 \item{pos}{Integer valued position, ordering IDs by their cardinality}
 
 \item{table}{Table name}
-
-\item{id_var, index_var, val_var, unit_var, time_vars}{Names of columns with
-respective meanings}
 
 \item{cols}{List containing a list per column each holding string valued
 entries \code{name} (column name as used by \code{ricu}), \code{col} (column name as used

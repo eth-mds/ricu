@@ -177,6 +177,8 @@ big_mark <- function(x, ...) {
 
 quote_bt <- function(x) encodeString(x, quote = "`")
 
+enbraket <- function(x) paste0("[", x, "]")
+
 concat <- function(...) paste0(..., collapse = ", ")
 
 prcnt <- function(x, tot = sum(x)) {

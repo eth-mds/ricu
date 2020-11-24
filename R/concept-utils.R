@@ -358,7 +358,7 @@ try_add_vars.itm <- function(x, ...) {
 
       if (isTRUE(cur)) {
         if (is.null(tbl_name(x))) next
-        cur <- as_col_cfg(x)[[var]]
+        cur <- default_vars(as_src_tbl(x), var)
       }
 
       old <- if (has_name(x[["vars"]], var)) x[["vars"]][[var]] else NULL

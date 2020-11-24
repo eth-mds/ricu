@@ -7,18 +7,6 @@ is_src_cfg <- is_type("src_cfg")
 
 #' @rdname src_cfg
 #' @keywords internal
-is_id_cfg <- is_type("id_cfg")
-
-#' @rdname src_cfg
-#' @keywords internal
-is_col_cfg <- is_type("col_cfg")
-
-#' @rdname src_cfg
-#' @keywords internal
-is_tbl_cfg <- is_type("tbl_cfg")
-
-#' @rdname src_cfg
-#' @keywords internal
 #' @export
 as_src_cfg <- function(x) UseMethod("as_src_cfg", x)
 
@@ -33,6 +21,10 @@ as_src_cfg.src_env <- function(x) {
 
 #' @export
 as_src_cfg.default <- function(x) as_src_cfg(as_src_env(x))
+
+#' @rdname src_cfg
+#' @keywords internal
+is_id_cfg <- is_type("id_cfg")
 
 #' @rdname src_cfg
 #' @keywords internal
@@ -51,6 +43,27 @@ as_id_cfg.src_env <- function(x) attr(x, "id_cfg")
 #' @export
 as_id_cfg.default <- function(x) as_id_cfg(as_src_env(x))
 
+#' @export
+vec_ptype_abbr.id_cfg <- function(x, ...) main_class(x)
+
+#' @export
+vec_ptype_full.id_cfg <- function(x, ...) {
+  class_descr(x, names(x), id_cfg_op(x), sep = "", collapse = " ")
+}
+
+#' @export
+format.id_cfg <- function(x, ...) quote_bt(field(x, "id"))
+
+#' @export
+names.id_cfg <- function(x) field(x, "name")
+
+#' @export
+vec_proxy_compare.id_cfg <- function(x, ...) field(x, "pos")
+
+#' @rdname src_cfg
+#' @keywords internal
+is_col_cfg <- is_type("col_cfg")
+
 #' @rdname src_cfg
 #' @keywords internal
 #' @export
@@ -67,6 +80,29 @@ as_col_cfg.src_tbl <- function(x) attr(x, "col_cfg")
 
 #' @export
 as_col_cfg.default <- function(x) as_col_cfg(as_src_tbl(x))
+
+#' @export
+vec_ptype_abbr.col_cfg <- function(x, ...) main_class(x)
+
+#' @export
+vec_ptype_full.col_cfg <- function(x, ...) {
+  class_descr(x, quote_bt(default_var_names(x)), collapse = ", ")
+}
+
+#' @export
+format.col_cfg <- function(x, ...) {
+
+  lens <- lapply(unclass(x)[default_var_names(x)], lengths)
+
+  enbraket(do_call(lens, paste, sep = ", "))
+}
+
+#' @export
+names.col_cfg <- function(x) field(x, "table")
+
+#' @rdname src_cfg
+#' @keywords internal
+is_tbl_cfg <- is_type("tbl_cfg")
 
 #' @rdname src_cfg
 #' @keywords internal
@@ -85,108 +121,21 @@ as_tbl_cfg.src_tbl <- function(x) attr(x, "tbl_cfg")
 #' @export
 as_tbl_cfg.default <- function(x) as_tbl_cfg(as_src_tbl(x))
 
-#' @rdname src_cfg
-#' @keywords internal
-#'
-src_url <- function(x) {
-  assert_that(is_src_cfg(x))
-  x[["url"]]
+#' @export
+vec_ptype_abbr.tbl_cfg <- function(x, ...) main_class(x)
+
+#' @export
+vec_ptype_full.tbl_cfg <- function(x, ...) {
+  class_descr(x, "rows", symbol$cross, "cols; partitions")
 }
 
 #' @export
-vec_ptype_full.id_cfg <- function(x, ...) {
-  x <- sort(x)
-  paste0(class(x)[2L], "{", src_name(x), ": ",
-         paste0(names(x), id_cfg_op(x), collapse = " "), "}")
-}
-
-id_cfg_op <- function(x) {
-  op <- setNames(c(" <", " =", " >"), c("-1", "0", "1"))
-  c(op[as.character(vec_compare(x[-length(x)], x[-1L]))], "")
+format.tbl_cfg <- function(x, ...) {
+  paste0("[", dim_desc(x), "; ", n_part(x), "]")
 }
 
 #' @export
-vec_ptype_abbr.id_cfg <- function(x, ...) class(x)[2L]
-
-#' @export
-format.id_cfg <- function(x, ...) paste0("`", field(x, "id"), "`")
-
-#' @export
-vec_proxy_compare.id_cfg <- function(x, ...) field(x, "pos")
-
-#' @export
-names.id_cfg <- function(x) field(x, "name")
-
-#' @export
-as.list.id_cfg <- function(x, ...) {
-  warn_dots(...)
-  vec_chop(x)
-}
-
-#' @rdname src_cfg
-#' @keywords internal
-#' @export
-id_var_opts <- function(x) {
-  field(as_id_cfg(x), "id")
-}
-
-id_name_to_type <- function(x, name) {
-
-  id_cfg  <- as_id_cfg(x)
-  id_opts <- id_var_opts(id_cfg)
-
-  assert_that(is_in(name, id_opts))
-
-  names(id_cfg)[id_opts == name]
-}
-
-id_type_to_name <- function(x, name) id_var_opts(as_id_cfg(x)[name])
-
-val_var <- function(x) as_col_cfg(x)[["val_var"]]
-
-unit_var <- function(x) as_col_cfg(x)[["unit_var"]]
-
-#' @export
-dim.tbl_cfg <- function(x) {
-  c(x[["nrow"]], length(x[["cols"]]))
-}
-
-n_partitions <- function(x) {
-  assert_that(is_tbl_cfg(x))
-  length(x[["partitioning"]][["breaks"]]) + 1L
-}
-
-raw_file_names <- function(x) {
-  assert_that(is_tbl_cfg(x))
-  x[["files"]]
-}
-
-fst_file_names <- function(x) {
-
-  assert_that(is_tbl_cfg(x))
-
-  n_part  <- n_partitions(x)
-  tbl_nme <- tbl_name(x)
-
-  if (n_part > 1L) {
-    tbl_nme <- file.path(tbl_nme, seq_len(n_part))
-  }
-
-  paste0(tbl_nme, ".fst")
-}
-
-src_file_exist <- function(x, dir, type = c("fst", "raw")) {
-
-  are_avail <- function(x) all(file.exists(file.path(dir, x)))
-
-  fun <- switch(match.arg(type), fst = fst_file_names, raw = raw_file_names)
-
-  if (is_tbl_cfg(x)) {
-    are_avail(fun(x))
-  } else {
-    lgl_ply(lapply(x, fun), are_avail)
-  }
-}
+names.tbl_cfg <- function(x) field(x, "table")
 
 col_spec <- function(x) {
   assert_that(is_tbl_cfg(x))
@@ -218,7 +167,7 @@ col_names <- function(x) {
 
 partition_fun <- function(x, orig_names = FALSE) {
 
-  assert_that(is_tbl_cfg(x), n_partitions(x) > 1L)
+  assert_that(is_tbl_cfg(x), n_part(x) > 1L)
 
   part <- x[["partitioning"]]
 
@@ -232,7 +181,7 @@ partition_fun <- function(x, orig_names = FALSE) {
 
 partition_col <- function(x, orig_names = FALSE) {
 
-  assert_that(is_tbl_cfg(x), is.flag(orig_names), n_partitions(x) > 1L)
+  assert_that(is_tbl_cfg(x), is.flag(orig_names), n_part(x) > 1L)
 
   part <- x[["partitioning"]]
 
@@ -248,18 +197,6 @@ partition_col <- function(x, orig_names = FALSE) {
   col
 }
 
-#' @export
-id_vars.col_cfg <- function(x) x[["id_var"]]
-
-#' @export
-id_vars.id_cfg <- function(x) field(max(x), "id")
-
-#' @export
-index_var.col_cfg <- function(x) x[["index_var"]]
-
-#' @export
-time_vars.col_cfg <- function(x) x[["time_vars"]]
-
 #' @rdname src_cfg
 #' @keywords internal
 #' @export
@@ -272,10 +209,10 @@ src_name.src_cfg <- function(x) x[["name"]]
 src_name.id_cfg <- function(x) attr(x, "src")
 
 #' @export
-src_name.col_cfg <- function(x) x[["src"]]
+src_name.col_cfg <- function(x) attr(x, "src")
 
 #' @export
-src_name.tbl_cfg <- function(x) x[["src"]]
+src_name.tbl_cfg <- function(x) attr(x, "src")
 
 #' @export
 src_name.default <- function(x) stop_generic(x, .Generic)
@@ -286,10 +223,114 @@ src_name.default <- function(x) stop_generic(x, .Generic)
 tbl_name <- function(x) UseMethod("tbl_name", x)
 
 #' @export
-tbl_name.col_cfg <- function(x) x[["table"]]
+tbl_name.col_cfg <- function(x) field(x, "table")
 
 #' @export
-tbl_name.tbl_cfg <- function(x) x[["table"]]
+tbl_name.tbl_cfg <- function(x) field(x, "table")
 
 #' @export
 tbl_name.default <- function(x) stop_generic(x, .Generic)
+
+class_descr <- function(x, ...) {
+  paste0(main_class(x), "<", src_name(x), "[", paste(...), "]>")
+}
+
+main_class <- function(x) {
+  tail(strip_class(x, c("vctrs_rcrd", "vctrs_vctr")), n = 1L)
+}
+
+class_prefix <- function(x) as_src_cfg(x)[["prefix"]]
+
+id_cfg_op <- function(x) {
+  x <- sort(as_id_cfg(x))
+  c(c(" =", " <")[abs(vec_compare(x[-length(x)], x[-1L])) + 1L], "")
+}
+
+n_row <- function(x) {
+  field(as_tbl_cfg(x), "num_rows")
+}
+
+n_col <- function(x) {
+  lengths(field(as_tbl_cfg(x), "cols"))
+}
+
+n_part <- function(x) {
+  lengths(lst_xtr(field(as_tbl_cfg(x), "partitioning"), "breaks")) + 1L
+}
+
+fst_file_names <- function(x) {
+
+  multi_part <- function(nme, len) {
+    paste0(if (len > 1L) file.path(nme, seq_len(len)) else nme, ".fst")
+  }
+
+  x <- as_tbl_cfg(x)
+
+  map(multi_part, tbl_name(x), n_part(x))
+}
+
+raw_file_names <- function(x) field(as_tbl_cfg(x), "files")
+
+src_file_exist <- function(x, dir, type = c("fst", "raw")) {
+
+  are_avail <- function(x, d) all(file.exists(file.path(d, x)))
+
+  files <- switch(match.arg(type), fst = fst_file_names(x),
+                                   raw = raw_file_names(x))
+
+  lgl_ply(files, are_avail, dir)
+}
+
+#' @rdname src_cfg
+#' @keywords internal
+#'
+src_url <- function(x) as_src_cfg(x)[["url"]]
+
+#' @rdname src_cfg
+#' @keywords internal
+#' @export
+id_var_opts <- function(x) field(as_id_cfg(x), "id")
+
+id_name_to_type <- function(x, name) {
+
+  id_cfg  <- as_id_cfg(x)
+  id_opts <- id_var_opts(id_cfg)
+
+  assert_that(is_in(name, id_opts))
+
+  names(id_cfg)[id_opts == name]
+}
+
+id_type_to_name <- function(x, type) id_var_opts(as_id_cfg(x)[type])
+
+default_var_names <- function(x) setdiff(fields(as_col_cfg(x)), "table")
+
+#' @rdname src_cfg
+#' @keywords internal
+#' @export
+default_vars <- function(x, type) {
+  assert_that(is.string(type))
+  UseMethod("default_vars", x)
+}
+
+#' @export
+default_vars.col_cfg <- function(x, type) {
+  setNames(field(x, match.arg(type, fields(x))), names(x))
+}
+
+val_var <- function(x) default_vars(x, "val_var")
+
+unit_var <- function(x) default_vars(x, "unit_var")
+
+#' @export
+id_vars.col_cfg <- function(x) default_vars(x, "id_var")
+
+#' @export
+id_vars.id_cfg <- function(x) field(max(x), "id")
+
+#' @export
+index_var.col_cfg <- function(x) default_vars(x, "index_var")
+
+#' @export
+time_vars.col_cfg <- function(x) default_vars(x, "time_vars")
+

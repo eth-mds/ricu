@@ -224,12 +224,14 @@ xtr_null <- function(x, i, null_val) {
   if (is.null(res <- x[[i]])) null_val else res
 }
 
+lst_inv <- function(x) {
+  nms <- sort(unique(unlist(lapply(x, names))))
+  lapply(setNames(nms, nms), function(y) lst_xtr(x, y))
+}
+
 map <- function(f, ...) Map(f, ..., USE.NAMES = FALSE)
 
-do_call <- function(x, fun, args = NULL) {
-  if (is.null(args)) do.call(fun, x)
-  else do.call(fun, unname(x[args]))
-}
+do_call <- function(x, fun, ...) do.call(fun, c(x, list(...)))
 
 wrap_null <- function(...) {
 

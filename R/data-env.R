@@ -46,7 +46,7 @@
 #' inspected using the `$` function. For example for the MIMIC-III demo
 #' dataset and the `icustays` table, this gives
 #'
-#' ```{r}
+#' ```{r, eval = is_data_avail("mimic_demo")}
 #' mimic_demo
 #' mimic_demo$icustays
 #' ```
@@ -61,7 +61,7 @@
 #' with `subject_id == 10124` are of interest, the respective data can be
 #' loaded as
 #'
-#' ```{r}
+#' ```{r, eval = is_data_avail("mimic_demo")}
 #' subset(mimic_demo$icustays, subject_id == 10124)
 #' ```
 #'
@@ -302,25 +302,38 @@ new_src_tbl <- function(files, col_cfg, tbl_cfg, prefix, src_env) {
 is_src_tbl <- is_type("src_tbl")
 
 #' @export
-id_vars.src_tbl <- function(x) {
-  coalesce(id_vars(as_col_cfg(x)), id_vars(as_id_cfg(x)))
+default_vars.src_tbl <- function(x, type) {
+
+  res <- default_vars(as_col_cfg(x), type)
+
+  assert_that(is.list(res), length(res) == 1L)
+
+  res <- res[[1L]]
+
+  if (not_null(res)) {
+    assert_that(is.character(res), has_length(res), !anyNA(res))
+  }
+
+  res
 }
 
 #' @export
-index_var.src_tbl <- function(x) index_var(as_col_cfg(x))
+id_vars.src_tbl <- function(x) {
+  coalesce(default_vars(x, "id_var"), id_vars(as_id_cfg(x)))
+}
 
 #' @export
-time_vars.src_tbl <- function(x) time_vars(as_col_cfg(x))
+index_var.src_tbl <- function(x) default_vars(x, "index_var")
+
+#' @export
+time_vars.src_tbl <- function(x) default_vars(x, "time_vars")
 
 #' @importFrom tibble tbl_sum
 #' @export
 tbl_sum.src_tbl <- function(x) {
 
-  out <- setNames(dim_brak(x), paste0("<", class(x)[2L], ">"))
-
-  if (not_null(prt <- part_desc(x))) {
-    out <- c(out, Partitions = prt)
-  }
+  out <- c(setNames(dim_brak(x), paste0("<", class(x)[2L], ">")),
+           Partitions = part_desc(x))
 
   ids <- id_var_opts(x)
 
@@ -328,37 +341,7 @@ tbl_sum.src_tbl <- function(x) {
     out <- c(out, "ID options" = id_desc(x))
   }
 
-  c(out, "Defaults" = def_desc(x), "Time vars" = tim_desc(x))
-}
-
-tim_desc <- function(x) {
-
-  x <- time_vars(x)
-
-  if (has_length(x)) {
-    concat(x)
-  } else {
-    NULL
-  }
-}
-
-def_desc <- function(x) {
-
-  x <- as_col_cfg(x)
-
-  res <- c(id = id_vars(x), index = index_var(x), value = val_var(x),
-           unit = unit_var(x))
-
-  if (has_length(res)) {
-    paste0(res, " (", names(res), ")", collapse = ", ")
-  } else {
-    NULL
-  }
-}
-
-id_desc <- function(x) {
-  id <- sort(as_id_cfg(x))
-  paste0(id_var_opts(id), " (", names(id), ")", id_cfg_op(id), collapse = " ")
+  c(out, def_desc(x))
 }
 
 part_desc <- function(x) {
@@ -370,6 +353,37 @@ part_desc <- function(x) {
   } else {
     NULL
   }
+}
+
+id_desc <- function(x) {
+  id <- as_id_cfg(x)
+  paste0(id_var_opts(id), " (", names(id), ")", id_cfg_op(id), collapse = " ")
+}
+
+def_desc <- function(x) {
+
+  var_def <- function(var, y) default_vars(y, var)
+  cap_str <- function(x) paste0(toupper(substr(x, 1L, 1L)), substring(x, 2L))
+
+  vars <- setdiff(default_var_names(x), "id_var")
+  vars <- Filter(Negate(is.null), setNames(lapply(vars, var_def, x), vars))
+
+  scal <- unlist(filter_vars(vars, "scalar"))
+  vctr <- filter_vars(vars, "vector")
+
+  if (has_length(scal)) {
+    scal <- paste0(quote_bt(scal), " (", sub("_var$", "", names(scal)), ")",
+                   collapse = ", ")
+    scal <- list(Defaults = scal)
+  }
+
+  if (has_length(vctr)) {
+    vctr <- lapply(vctr, quote_bt)
+    vctr <- chr_ply(vctr, concat, use_names = TRUE)
+    names(vctr) <- cap_str(sub("_", " ", names(vctr)))
+  }
+
+  c(scal, vctr)
 }
 
 #' @export
@@ -453,16 +467,19 @@ format.src_env <- function(x, ...) {
   chr_ply(lapply(ls(envir = x), safe_tbl_get, x), dim_brak)
 }
 
+dim_str <- function(x) ifelse(is.na(x), "??", big_mark(x))
+
 dim_desc <- function(x) {
 
-  res <- dim(x)
-
-  if (length(res) < 2L) {
-    res <- rep("??", 2L)
+  if (is.null(x)) {
+    res <- rep(NA, 2L)
+  } else if (is_df(x) || is_fst(x) || is_prt(x)) {
+    res <- dim(x)
+  } else {
+    res <- c(n_row(x), n_col(x))
   }
 
-  paste0(vapply(res, big_mark, character(1L)),
-         collapse = paste0(" ", symbol$cross, " "))
+  do_call(chr_ply(res, dim_str), paste, sep = paste0(" ", symbol$cross, " "))
 }
 
 dim_brak <- function(x) paste0("[", dim_desc(x), "]")
@@ -573,7 +590,7 @@ src_tbl_avail <- function(env, tbls = ls(envir = env)) {
 #' @export
 src_data_avail <- function(src = auto_attach_srcs()) {
 
-  num_non_na <- function(x) sum(x & !x)
+  num_non_na <- function(x) sum(x | !x)
   all_true   <- function(x) all(is_true(x))
 
   if (identical(length(src), 0L)) {

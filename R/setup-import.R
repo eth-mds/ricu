@@ -150,7 +150,7 @@ import_tbl.tbl_cfg <- function(x, data_dir = src_data_dir(x), progress = NULL,
 
   assert_that(is.dir(data_dir))
 
-  if (n_partitions(x) > 1L) {
+  if (n_part(x) > 1L) {
     partition_table(x, data_dir, progress, ...)
   } else {
     csv_to_fst(x, data_dir, progress, ...)
@@ -205,7 +205,7 @@ split_write <- function(x, part_fun, dir, chunk_no, prog, nme) {
 partition_table <- function(x, dir, progress = NULL, chunk_length = 10 ^ 7,
                             ...) {
 
-  assert_that(n_partitions(x) > 1L)
+  assert_that(n_part(x) > 1L)
 
   tempdir <- ensure_dirs(tempfile())
   on.exit(unlink(tempdir, recursive = TRUE))

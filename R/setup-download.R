@@ -72,7 +72,7 @@
 #'
 #' would translate to
 #'
-#' ```{r}
+#' ```{r, eval = FALSE}
 #' Sys.setenv(RICU_AUMC_TOKEN = "0c27af59-72d1-0349-aa59-00000a8076d9")
 #' ```
 #'

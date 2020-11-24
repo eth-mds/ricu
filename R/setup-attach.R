@@ -219,13 +219,9 @@ setup_src_env <- function(x, ...) {
 #' @export
 setup_src_env.src_cfg <- function(x, data_dir = src_data_dir(x), ...) {
 
-  tbl_setup <- function(tbl, col, src, env, dir) {
+  tbl_setup <- function(tbl, col, fil, src, env, dir) {
 
-    table <- tbl_name(tbl)
-    files <- file.path(dir, fst_file_names(tbl))
-
-    nme <- src_name(src)
-    pre <- src[["prefix"]]
+    fil <- file.path(dir, fil)
 
     src_tbl_cache <- NULL
 
@@ -236,21 +232,21 @@ setup_src_env.src_cfg <- function(x, data_dir = src_data_dir(x), ...) {
         if (is.null(value)) {
           src_tbl_cache <<- NULL
         } else {
-          warn_ricu("Cannot update read-only table `{table}` of data source
-                    `{nme}`.", "assign_src_tbl")
+          warn_ricu("Cannot update read-only table `{tbl_name(tbl)}` of data
+                     source `{src_name(src)}`.", "assign_src_tbl")
         }
       }
 
-      if (all(file.exists(files))) {
+      if (all(file.exists(fil))) {
 
         if (is.null(src_tbl_cache)) {
-          src_tbl_cache <<- new_src_tbl(files, col, tbl, pre, env)
+          src_tbl_cache <<- new_src_tbl(fil, col, tbl, class_prefix(src), env)
         }
 
         return(src_tbl_cache)
       }
 
-      msg_ricu("Data for `{nme}` is missing", "miss_tbl_msg")
+      msg_ricu("Data for `{src_name(src)}` is missing", "miss_tbl_msg")
 
       if (is_interactive()) {
 
@@ -261,8 +257,8 @@ setup_src_env.src_cfg <- function(x, data_dir = src_data_dir(x), ...) {
         }
       }
 
-      stop_ricu("Cannot continue with missing data for `{nme}`. Data can be
-                 downloaded and set up using `setup_src_data()`.",
+      stop_ricu("Cannot continue with missing data for `{src_name(src)}`. Data
+                 can be downloaded and set up using `setup_src_data()`.",
                 "miss_tbl_err")
     }
   }
@@ -273,11 +269,13 @@ setup_src_env.src_cfg <- function(x, data_dir = src_data_dir(x), ...) {
   cols <- as_col_cfg(x)
 
   src_env <- new_src_env(x, env = new.env(parent = data_env()))
-  tbl_fun <- Map(tbl_setup, tbls, cols,
-                 MoreArgs = list(src = x, env = src_env, dir = data_dir))
 
-  Map(makeActiveBinding, chr_ply(tbls, tbl_name), tbl_fun,
-      MoreArgs = list(env = src_env))
+  tbl_fun <- Map(
+    tbl_setup, vec_chop(tbls), vec_chop(cols), fst_file_names(tbls),
+    MoreArgs = list(src = x, env = src_env, dir = data_dir)
+  )
+
+  Map(makeActiveBinding, names(tbls), tbl_fun, MoreArgs = list(env = src_env))
 
   invisible(src_env)
 }
@@ -329,10 +327,10 @@ setup_src_data.src_env <- function(x, data_dir = src_data_dir(x),
 
   tbl <- as_tbl_cfg(x)
 
-  fst_files <- lapply(tbl, fst_file_names)
+  fst_files <- fst_file_names(tbl)
   fst_paths <- Map(file.path, data_dir, fst_files)
 
-  tables  <- chr_ply(tbl, tbl_name)
+  tables  <- tbl_name(tbl)
 
   if (force) {
     missing <- rep(TRUE, length(tables))

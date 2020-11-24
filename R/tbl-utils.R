@@ -195,6 +195,10 @@ is_dt <- is_type("data.table")
 
 is_df <- is_type("data.frame")
 
+is_fst <- is_type("fst_table")
+
+is_prt <- is_type("prt")
+
 #' ICU class data utilities
 #'
 #' Several utility functions for working with `id_tbl` and `ts_tbl` objects

@@ -241,7 +241,7 @@ on_failure(all_map) <- function(call, env) {
 all_null <- function(x) all_fun(x, is.null)
 
 on_failure(all_null) <- function(call, env) {
-  format_assert("some of {as_label(call$x)} are not NULL", "all_null_assert")
+  format_assert("some of {as_label(call$x)} are not `NULL`", "all_null_assert")
 }
 
 same_length <- function(x, y) identical(length(x), length(y))

@@ -13,6 +13,7 @@
 \alias{supp_o2}
 \alias{avpu}
 \alias{bmi}
+\alias{norepi_equiv}
 \title{Concept callback functions}
 \usage{
 pafi(
@@ -55,6 +56,8 @@ supp_o2(..., interval = NULL)
 avpu(..., interval = NULL)
 
 bmi(..., interval = NULL)
+
+norepi_equiv(..., interval = NULL)
 }
 \arguments{
 \item{...}{Data input used for concept calculation}

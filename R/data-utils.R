@@ -413,7 +413,7 @@ stay_windows <- function(x, id_type = "icustay", win_type = id_type,
 #' example, we request for `mimic_demo`, with ICU stay IDs as source and
 #' hospital admissions as destination IDs.
 #'
-#' ```{r}
+#' ```{r, eval = is_data_avail("mimic_demo")}
 #' id_map_helper(mimic_demo, "icustay_id", "hadm_id")
 #' ```
 #'

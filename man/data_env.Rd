@@ -81,8 +81,8 @@ dataset and the \code{icustays} table, this gives\if{html}{\out{<div class="r">}
 }\if{html}{\out{<div class="r">}}\preformatted{mimic_demo$icustays
 }\if{html}{\out{</div>}}\preformatted{## # <mimic_tbl>: [136 x 12]
 ## # ID options:  subject_id (patient) < hadm_id (hadm) < icustay_id (icustay)
-## # Defaults:    intime (index), last_careunit (value)
-## # Time vars:   intime, outtime
+## # Defaults:    `intime` (index), `last_careunit` (val)
+## # Time vars:   `intime`, `outtime`
 ##     row_id subject_id hadm_id icustay_id dbsource first_careunit last_careunit
 ##      <int>      <int>   <int>      <int> <chr>    <chr>          <chr>
 ## 1    12742      10006  142345     206504 carevue  MICU           MICU

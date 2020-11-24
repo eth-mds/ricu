@@ -190,8 +190,8 @@ cfg <- cfg[["mimic_demo"]]
 str(cfg, max.level = 1L)
 
 cols <- as_col_cfg(cfg)
-index_var(cols[["chartevents"]])
-time_vars(cols[["chartevents"]])
+index_var(head(cols))
+time_vars(head(cols))
 
 as_id_cfg(cfg)
 
