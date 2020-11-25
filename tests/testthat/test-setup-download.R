@@ -1,5 +1,5 @@
 
-curl_mock_fm <- function(url, handle) {
+curl_mock_fm <- function(url, handle, ...) {
 
   file <- system.file("testdata", paste0(basename(url), ".rds"),
                       package = "ricu")
@@ -9,7 +9,7 @@ curl_mock_fm <- function(url, handle) {
   readRDS(file)
 }
 
-curl_mock_fd <- function(url, path, handle) {
+curl_mock_fd <- function(url, path, handle, ...) {
 
   dat <- curl_mock_fm(url, handle)
 
@@ -21,33 +21,58 @@ curl_mock_fd <- function(url, path, handle) {
   dat
 }
 
+curl_mock_st <- function(url, fun, handle, ...) {
+
+  dat <- curl_mock_fm(url, handle)
+
+  fun(dat[["content"]])
+
+  dat
+}
+
 tmp <- tempfile()
 
 setup(dir.create(tmp))
-teardown(unlink(tmp, recursive = TRUE))
 
-test_that("file download", {
+teardown({
+  unlink(tmp, recursive = TRUE)
+  Sys.unsetenv("FOO_VAR")
+})
 
-  dat_mem <- with_mock(
+test_that("credentials", {
+
+  Sys.setenv(FOO_VAR = "bar_val")
+
+  expect_silent(crd <- get_cred("foo_val", "FOO_VAR", "input"))
+  expect_identical(crd, "foo_val")
+
+  expect_silent(crd <- get_cred(NULL, "FOO_VAR", "input"))
+  expect_identical(crd, "bar_val")
+
+  Sys.unsetenv("FOO_VAR")
+
+  crd <- with_mock(
+    readline = function(prompt = "") {
+      stopifnot(identical(prompt, "input"))
+      "baz_val"
+    },
+    get_cred(NULL, "BAR_VAR", "input")
+  )
+
+  expect_identical(crd, "baz_val")
+})
+
+test_that("file size", {
+
+  pat_siz <- with_mock(
     `curl::curl_fetch_memory` = curl_mock_fm,
     `curl::curl_fetch_disk` = function(...) stop("error"),
     `curl::curl_fetch_stream` = function(...) stop("error"),
-    download_pysionet_file("foo/bar/SHA256SUMS.txt")
+    get_file_size("foo/bar/patients.csv", NULL, NULL)
   )
 
-  expect_is(dat_mem, "raw")
-  expect_length(list.files(tmp), 0L)
-
-  dat_disk <- with_mock(
-    `curl::curl_fetch_memory` = function(...) stop("error"),
-    `curl::curl_fetch_disk` = curl_mock_fd,
-    `curl::curl_fetch_stream` = function(...) stop("error"),
-    download_pysionet_file("foo/bar/SHA256SUMS.txt",
-                           file.path(tmp, "SHA256SUMS.txt"))
-  )
-
-  expect_is(dat_disk, "NULL")
-  expect_length(list.files(tmp, "SHA256SUMS.txt"), 1L)
+  expect_is(pat_siz, "numeric")
+  expect_length(pat_siz, 1L)
 })
 
 test_that("hash checking", {
@@ -60,6 +85,7 @@ test_that("hash checking", {
   )
 
   expect_is(sha, "list")
+
   for (x in sha) {
     expect_is(x, "character")
     expect_length(x, 2L)
@@ -80,5 +106,66 @@ test_that("hash checking", {
   )
   expect_false(
     check_file_sha256(file.path(tmp, sha[[2L]][2L]), sha[[1L]][1L])
+  )
+})
+
+test_that("file download", {
+
+  unlink(list.files(tmp, full.names = TRUE))
+
+  dat_mem <- with_mock(
+    `curl::curl_fetch_memory` = curl_mock_fm,
+    `curl::curl_fetch_disk` = function(...) stop("error"),
+    `curl::curl_fetch_stream` = function(...) stop("error"),
+    download_pysionet_file("foo/bar/SHA256SUMS.txt")
+  )
+
+  expect_is(dat_mem, "raw")
+  expect_identical(list.files(tmp), character(0L))
+
+  unlink(list.files(tmp, full.names = TRUE))
+
+  dat_disk <- with_mock(
+    `curl::curl_fetch_memory` = function(...) stop("error"),
+    `curl::curl_fetch_disk` = curl_mock_fd,
+    `curl::curl_fetch_stream` = function(...) stop("error"),
+    download_pysionet_file("foo/bar/SHA256SUMS.txt",
+                           file.path(tmp, "SHA256SUMS.txt"))
+  )
+
+  expect_is(dat_disk, "NULL")
+  expect_identical(list.files(tmp, "SHA256SUMS.txt"), "SHA256SUMS.txt")
+
+  unlink(list.files(tmp, full.names = TRUE))
+
+  tables <- c("patients.csv", "services.csv")
+
+  with_mock_curl <- function(...) {
+    with_mock(
+      `curl::curl_fetch_memory` = curl_mock_fm,
+      `curl::curl_fetch_disk` = curl_mock_fd,
+      `curl::curl_fetch_stream` = curl_mock_st,
+      ...
+    )
+  }
+
+  res <- with_mock_curl(
+    download_check_data(tmp, tables, "foo/bar", NULL, NULL, "foo")
+  )
+
+  expect_null(res)
+  expect_setequal(list.files(tmp), tables)
+
+  expect_warning(
+    with_mock_curl(
+      check_file_sha256 = function(...) FALSE,
+      download_check_data(tmp, tables, "foo/bar", NULL, NULL, "foo")
+    ), class = "checksum_mismatch"
+  )
+
+  expect_error(
+    with_mock_curl(
+      download_check_data(tmp, toupper(tables), "foo/bar", NULL, NULL, "foo")
+    ), class = "are_in_assert"
   )
 })

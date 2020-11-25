@@ -141,3 +141,14 @@ test_that("expect_fsetequal", {
 
 cpy <- data.table::copy
 assign("ident_cb", function(x, ...) x, envir = .GlobalEnv)
+
+skip_if_srcs_missing <- function(srcs) {
+
+  avail <- is_data_avail(srcs)
+
+  skip_if_not(
+    all(avail),
+    fmt_msg("Data source{?s} {srcs[!avail]} {?is/are} missing but required for
+             tests")
+  )
+}

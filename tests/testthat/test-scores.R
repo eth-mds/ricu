@@ -1,5 +1,5 @@
 
-skip_on_cran()
+skip_if_srcs_missing(c("mimic_demo", "eicu_demo"))
 
 so_mi <- load_concepts("sofa", "mimic_demo")
 so_ei <- load_concepts("sofa", "eicu_demo")

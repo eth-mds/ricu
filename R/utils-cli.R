@@ -122,6 +122,7 @@ combine_messages <- function(x) {
 #'
 #' tryCatch(msg_progress("Foo", "bar"), msg_progress = capt_fun)
 #'
+#' @rdname cli_output
 #' @export
 msg_progress <- function(..., envir = parent.frame()) {
   msg_ricu(.makeMessage(...), "msg_progress", envir = envir)
@@ -190,6 +191,12 @@ bullet <- function(..., level = 1L) {
   paste0(switch(level, symbol$bullet, symbol$circle, "-"), " ", ...)
 }
 
+#' @param msg String valued message
+#' @param envir Environment in this objects from `msg` are evaluated
+#' @param indent,exdent Vector valued and mapped to [fansi::strwrap2_ctl()]
+#'
+#' @rdname cli_output
+#' @export
 fmt_msg <- function(msg, envir = parent.frame(), indent = 0L, exdent = 0L) {
 
   msg <- chr_ply(msg, pluralize, .envir = envir)

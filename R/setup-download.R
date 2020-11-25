@@ -462,6 +462,7 @@ download_check_data <- function(dest_folder, files, url, user, pass, src) {
   urls    <- file.path(url, files, fsep = "/")
 
   ensure_dirs(dirname(paths))
+  unlink(paths)
 
   sizes <- dbl_ply(urls, get_file_size, user, pass)
 

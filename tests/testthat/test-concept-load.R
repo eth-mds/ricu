@@ -1,5 +1,5 @@
 
-skip_on_cran()
+skip_if_srcs_missing("mimic_demo")
 
 test_that("load concepts", {
 

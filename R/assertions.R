@@ -98,7 +98,8 @@ in_failure <- function(call, env) {
     format_assert(
       c("None of the following were found among the provided options.
          Did you possibly mean:",
-         bullet(concat("'", sug, "'"), " instead of '", names(sug), "'")),
+         bullet(chr_ply(sug, function(x) concat("'", x, "'")), " instead of '",
+                names(sug), "'")),
       "are_in_assert", exdent = c(0L, rep_along(2L, sug)))
   }
 }
