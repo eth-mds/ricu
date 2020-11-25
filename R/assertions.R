@@ -5,7 +5,7 @@
 #' @importFrom rlang as_label
 NULL
 
-assert_that <- function(..., env = parent.frame(), msg = NULL) {
+assert_that <- function(..., env = parent.frame(), msg = NULL, class = NULL) {
 
   res <- see_if(..., env = env)
 
@@ -19,7 +19,7 @@ assert_that <- function(..., env = parent.frame(), msg = NULL) {
     msg <- fmt_msg(msg, envir = env)
   }
 
-  cls <- c(attr(msg, "assert_class"), "assertError", "ricu_err")
+  cls <- c(class, attr(msg, "assert_class"), "assertError", "ricu_err")
 
   rlang::abort(msg, class = cls)
 }

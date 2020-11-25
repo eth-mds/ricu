@@ -1,21 +1,21 @@
 
-tmp <- tempfile()
+tmp_cars <- tempfile()
 
 setup({
 
-  dir.create(tmp)
+  dir.create(tmp_cars)
 
-  write.csv(mtcars, file.path(tmp, "mtcars.csv"), row.names = FALSE)
+  write.csv(mtcars, file.path(tmp_cars, "mtcars.csv"), row.names = FALSE)
 
   Map(
     write.csv,
     split(mtcars, mtcars$vs),
-    file.path(tmp, paste0("cars_", unique(mtcars$vs), ".csv")),
+    file.path(tmp_cars, paste0("cars_", unique(mtcars$vs), ".csv")),
     row.names = FALSE
   )
 })
 
-teardown(unlink(tmp, recursive = TRUE))
+teardown(unlink(tmp_cars, recursive = TRUE))
 
 spec <- list(
   trans = list(name = "am", spec = "col_integer"),
@@ -35,9 +35,9 @@ test_that("import csv", {
 
   cfg <- new_tbl_cfg("cars", "foo", "mtcars.csv", spec, 32L)
 
-  expect_null(csv_to_fst(cfg, tmp))
-  expect_true("foo.fst" %in% list.files(tmp))
-  expect_equal(mtcars, fst::read_fst(file.path(tmp, "foo.fst")),
+  expect_null(csv_to_fst(cfg, tmp_cars))
+  expect_true("foo.fst" %in% list.files(tmp_cars))
+  expect_equal(mtcars, fst::read_fst(file.path(tmp_cars, "foo.fst")),
                check.attributes = FALSE)
 })
 
@@ -47,19 +47,19 @@ test_that("import partitioned", {
   file <- paste0(seq_len(2L), ".fst")
 
   tbf <- "foo"
-  foo <- file.path(tmp, tbf)
+  foo <- file.path(tmp_cars, tbf)
   cfg <- new_tbl_cfg("cars", tbf, "mtcars.csv", spec, 32L, part)
 
-  expect_null(partition_table(cfg, tmp, chunk_length = 5))
+  expect_null(partition_table(cfg, tmp_cars, chunk_length = 5))
   expect_true(dir.exists(foo))
   expect_setequal(list.files(foo), file)
 
   tbb <- "bar"
-  bar <- file.path(tmp, tbb)
+  bar <- file.path(tmp_cars, tbb)
   cfg <- new_tbl_cfg("cars", tbb, c("cars_0.csv", "cars_1.csv"), spec, 32L,
                      part)
 
-  expect_null(partition_table(cfg, tmp, chunk_length = 5))
+  expect_null(partition_table(cfg, tmp_cars, chunk_length = 5))
   expect_true(dir.exists(bar))
   expect_setequal(list.files(bar), file)
 
@@ -69,4 +69,69 @@ test_that("import partitioned", {
       fst::read_fst(file.path(bar, x), as.data.table = TRUE)
     )
   }
+})
+
+tmp_srcs <- tempfile()
+
+copy_test_file <- function(x, dir) {
+
+  res <- readRDS(
+    system.file("testdata", paste0(x, ".rds"), package = "ricu")
+  )
+
+  writeBin(res[["content"]], file.path(dir, x))
+}
+
+setup({
+  dir.create(tmp_srcs)
+  lapply(c("patients.csv", "services.csv"), copy_test_file, tmp_srcs)
+})
+
+teardown(unlink(tmp_srcs, recursive = TRUE))
+
+test_that("import src", {
+
+  tbls <- list.files(tmp_srcs, "\\.csv")
+  fstf <- file.path(tmp_srcs, sub("\\.csv", ".fst", tbls))
+
+  expect_invisible(res <- import_src("mimic_demo", tmp_srcs))
+  expect_null(res)
+
+  expect_true(all(file.exists(fstf)))
+
+  expect_warning(import_src("mimic_demo", tmp_srcs), class = "no_import")
+  expect_invisible(res <- import_src("mimic_demo", tmp_srcs, force = TRUE))
+  expect_null(res)
+
+  unlink(fstf)
+
+  expect_invisible(
+    res <- import_src("mimic_demo", tmp_srcs,
+                      tables = sub("\\.csv", "", tbls[1L]))
+  )
+  expect_null(res)
+
+  expect_true(file.exists(fstf[1L]))
+  expect_false(file.exists(fstf[2L]))
+
+  expect_error(import_src("mimic_demo", tmp_srcs, tables = "foo"),
+                class = "missing_download")
+
+  mock_aumc <- function(...) {
+    with_mock(
+      src_file_exist = function(x, dir, type) {
+        if (identical(type, "raw")) rep(TRUE, length(x))
+        else rep(FALSE, length(x))
+      },
+      import_tbl = function(x, data_dir, progress, ...) {
+        assert_that(is_tbl_cfg(x), is.string(data_dir),
+                    inherits(list(...)[["locale"]], "locale"))
+        invisible(NULL)
+      },
+      ...
+    )
+  }
+
+  expect_null(mock_aumc(import_src("aumc", tmp_srcs)))
+  expect_null(mock_aumc(import_src("aumc", tmp_srcs, force = TRUE)))
 })

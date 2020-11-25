@@ -368,7 +368,7 @@ setup_src_data.src_env <- function(x, data_dir = src_data_dir(x),
     on.exit(unlink(tmp, recursive = TRUE))
 
     download_src(x, tmp, tables = todo, force = force)
-    import_src(x, tmp, force = force)
+    import_src(x, tmp, tables = todo, force = force)
 
     done <- Map(file.rename, Map(file.path, tmp, fst_files[missing]),
                 fst_paths[missing])

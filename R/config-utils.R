@@ -289,27 +289,6 @@ orig_cols <- function(x) names(col_spec(x)[["cols"]])
 
 ricu_cols <- function(x) get_one(field(as_tbl_cfg(x), "cols"))
 
-check_n_row <- function(x, n_row) {
-
-  x <- as_tbl_cfg(x)
-
-  assert_that(is.count(n_row))
-
-  expec <- nrow(x)
-
-  if (is.null(expec)) {
-    return(invisible(n_row))
-  }
-
-  if (!all_equal(expec, n_row)) {
-    warn_ricu("Table {quote_bt(tbl_name(x))} has {big_mark(n_row)} instead of
-               {big_mark(expec)} {qty(expec)} row{?s}",
-              class = "src_tbl_row_mismatch")
-  }
-
-  invisible(n_row)
-}
-
 partition_fun <- function(x, orig_names = FALSE) {
 
   x <- as_tbl_cfg(x)
@@ -343,4 +322,13 @@ partition_col <- function(x, orig_names = FALSE) {
   assert_that(is.string(col))
 
   col
+}
+
+#' @export
+n_tick.tbl_cfg <- function(x) {
+
+  n_pt <- n_part(x)
+  n_pt <- ifelse(n_pt > 1L, n_pt + int_ply(raw_file_names(x), lengths), 1L)
+
+  sum(ifelse(is.na(n_row(x)), n_pt, n_row(x)))
 }
