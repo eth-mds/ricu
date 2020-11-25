@@ -169,3 +169,46 @@ test_that("file download", {
     ), class = "are_in_assert"
   )
 })
+
+test_that("src download", {
+
+  srcs <- c("mimic_demo", "eicu_demo")
+  dirs <- file.path(tmp, srcs)
+
+  expect_true(all(lgl_ply(dirs, dir.create)))
+
+  with_mock_dl_check <- function(...) {
+    with_mock(
+      download_check_data = function(dest_folder, files, url, user, pass,
+                                     src) {
+        assert_that(
+          is.character(files), has_length(files), is.string(dest_folder),
+          is.string(url), identical(basename(dest_folder), src)
+        )
+        invisible(NULL)
+      },
+      ...
+    )
+  }
+
+  expect_invisible(res <- with_mock_dl_check(download_src(srcs, dirs)))
+  expect_null(res)
+
+  src <- "hirid"
+  dir <- file.path(tmp, src)
+
+  expect_true(dir.create(dir))
+
+  res <- with_mock_dl_check(
+    untar = function(tarfile, files, exdir, ...) {
+      assert_that(
+        is.string(tarfile), is.character(files), has_length(files),
+        is.string(exdir)
+      )
+      invisible(0L)
+    },
+    download_src(src, dir)
+  )
+
+  expect_null(res)
+})

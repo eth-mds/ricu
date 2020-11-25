@@ -476,10 +476,10 @@ dim_desc <- function(x) {
   } else if (is_df(x) || is_fst(x) || is_prt(x)) {
     res <- dim(x)
   } else {
-    res <- c(n_row(x), n_col(x))
+    res <- list(n_row(x), n_col(x))
   }
 
-  do_call(chr_ply(res, dim_str), paste, sep = paste0(" ", symbol$cross, " "))
+  do_call(lapply(res, dim_str), paste, sep = paste0(" ", symbol$cross, " "))
 }
 
 dim_brak <- function(x) paste0("[", dim_desc(x), "]")

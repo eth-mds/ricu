@@ -131,7 +131,7 @@ download_src.src_cfg <- function(x, data_dir = src_data_dir(x), tables = NULL,
     return(invisible(NULL))
   }
 
-  download_check_data(data_dir, chr_ply(tbl, raw_file_names),
+  download_check_data(data_dir, unlst_str(raw_file_names(tbl)),
                       src_url(x), user, pass, src_name(x))
 
   invisible(NULL)
@@ -151,20 +151,18 @@ download_src.hirid_cfg <- function(x, data_dir = src_data_dir(x),
     return(invisible(NULL))
   }
 
-  todo <- chr_xtr(tbl, "zip_file")
+  todo <- field(tbl, "zip_file")
+  fils <- unique(unlst_str(todo))
 
-  download_check_data(data_dir, unique(todo), src_url(x), user, pass,
+  download_check_data(data_dir, fils, src_url(x), user, pass,
                       src_name(x))
 
-  todo <- file.path(data_dir, todo)
-  done <- lapply(tbl, raw_file_names)
+  res <- Map(untar, Map(file.path, data_dir, todo), raw_file_names(tbl),
+             MoreArgs = list(exdir = data_dir))
 
-  assert_that(
-    all_fun(Map(untar, todo, done, MoreArgs = list(exdir = data_dir)),
-            identical, 0L)
-  )
+  assert_that(all_fun(res, identical, 0L))
 
-  unlink(unique(todo))
+  unlink(fils)
 
   invisible(NULL)
 }
@@ -224,7 +222,7 @@ download_src.aumc_cfg <- function(x, data_dir = src_data_dir(x),
 
       if (res[["status_code"]] == 200) {
 
-        tbl <- chr_ply(tbl, raw_file_names)
+        tbl <- unlst_str(raw_file_names(tbl))
         unlink(file.path(data_dir, tbl))
 
         res <- suppressWarnings(
@@ -278,8 +276,8 @@ determine_tables <- function(x, dir, tables, force) {
               is.dir(dir), is.flag(force))
 
   if (!force) {
-    avail  <- names(x)[src_file_exist(x, data_dir, "fst") |
-                       src_file_exist(x, data_dir, "raw")]
+    avail  <- names(x)[src_file_exist(x, dir, "fst") |
+                       src_file_exist(x, dir, "raw")]
     tables <- setdiff(tables, avail)
   }
 

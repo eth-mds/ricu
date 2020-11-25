@@ -289,6 +289,8 @@ unlst <- function(x, recursive = FALSE, use_names = FALSE) {
   unlist(x, recursive = recursive, use.names = use_names)
 }
 
+unlst_str <- function(x) chr_ply(x, identity)
+
 rep_along <- function(x, times) rep(x, length(times))
 
 cat_line <- function(...) {

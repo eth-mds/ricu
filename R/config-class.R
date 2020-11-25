@@ -283,13 +283,13 @@ new_tbl_cfg <- function(src, table, files = NULL, cols = NULL, num_rows = NULL,
     partitioning <- list(NULL)
   }
 
-  res <- vec_recycle_common(
+  res <- list(
     table = check_scalar(table, FALSE), files = check_vector(files),
     cols = check_vector(cols), spec = spec, partitioning = partitioning,
     num_rows = check_scalar(num_rows, mode = "int")
   )
 
-  new_rcrd(res, src = src,
+  new_rcrd(do.call(vec_recycle_common, c(res, list(...))), src = src,
            class = c(check_prefix(class_prefix, "tbls"), "tbl_cfg"))
 }
 
