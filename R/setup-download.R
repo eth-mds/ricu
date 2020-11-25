@@ -131,8 +131,9 @@ download_src.src_cfg <- function(x, data_dir = src_data_dir(x), tables = NULL,
     return(invisible(NULL))
   }
 
-  download_check_data(data_dir, unlst_str(raw_file_names(tbl)),
-                      src_url(x), user, pass, src_name(x))
+  download_check_data(
+    data_dir, raw_file_name(tbl), src_url(x), user, pass, src_name(x)
+  )
 
   invisible(NULL)
 }
@@ -154,15 +155,15 @@ download_src.hirid_cfg <- function(x, data_dir = src_data_dir(x),
   todo <- field(tbl, "zip_file")
   fils <- unique(unlst_str(todo))
 
-  download_check_data(data_dir, fils, src_url(x), user, pass,
-                      src_name(x))
+  tmp <- ensure_dirs(tempfile())
+  on.exit(unlink(tmp, recursive = TRUE))
 
-  res <- Map(untar, Map(file.path, data_dir, todo), raw_file_names(tbl),
+  download_check_data(tmp, fils, src_url(x), user, pass, src_name(x))
+
+  res <- Map(untar, Map(file.path, tmp, todo), raw_file_names(tbl),
              MoreArgs = list(exdir = data_dir))
 
   assert_that(all_fun(res, identical, 0L))
-
-  unlink(fils)
 
   invisible(NULL)
 }
@@ -222,7 +223,7 @@ download_src.aumc_cfg <- function(x, data_dir = src_data_dir(x),
 
       if (res[["status_code"]] == 200) {
 
-        tbl <- unlst_str(raw_file_names(tbl))
+        tbl <- raw_file_name(tbl)
         unlink(file.path(data_dir, tbl))
 
         res <- suppressWarnings(

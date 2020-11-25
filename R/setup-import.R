@@ -160,9 +160,9 @@ import_tbl.tbl_cfg <- function(x, data_dir = src_data_dir(x), progress = NULL,
 #' @export
 import_tbl.default <- function(x, ...) stop_generic(x, .Generic)
 
-merge_fst_chunks <- function(src_dir, targ_dir, cols, sort_col, prog, nme) {
+merge_fst_chunks <- function(src, targ, new, old, sort_col, prog, nme) {
 
-  files <- list.files(src_dir, full.names = TRUE)
+  files <- list.files(src, full.names = TRUE)
 
   sort_ind <- order(
     as.integer(sub("^chunk_", "", sub("\\.fst$", "", basename(files))))
@@ -171,10 +171,10 @@ merge_fst_chunks <- function(src_dir, targ_dir, cols, sort_col, prog, nme) {
   dat <- lapply(files[sort_ind], fst::read_fst, as.data.table = TRUE)
   dat <- rbindlist(dat)
   dat <- data.table::setorderv(dat, sort_col)
-  dat <- setnames(dat, names(cols), cols)
+  dat <- rename_cols(dat, new, old)
 
-  part_no  <- sub("part_", "", basename(src_dir))
-  new_file <- file.path(ensure_dirs(targ_dir), paste0(part_no, ".fst"))
+  part_no  <- sub("part_", "", basename(src))
+  new_file <- file.path(ensure_dirs(targ), paste0(part_no, ".fst"))
 
   fst::write_fst(dat, new_file, compress = 100L)
 
@@ -205,15 +205,13 @@ split_write <- function(x, part_fun, dir, chunk_no, prog, nme) {
 partition_table <- function(x, dir, progress = NULL, chunk_length = 10 ^ 7,
                             ...) {
 
-  assert_that(n_part(x) > 1L)
-
   tempdir <- ensure_dirs(tempfile())
   on.exit(unlink(tempdir, recursive = TRUE))
 
   spec <- col_spec(x)
   pfun <- partition_fun(x, orig_names = TRUE)
   pcol <- partition_col(x, orig_names = TRUE)
-  file <- file.path(dir, raw_file_names(x))
+  file <- file.path(dir, raw_file_name(x))
   name <- tbl_name(x)
 
   if (length(file) == 1L) {
@@ -238,14 +236,15 @@ partition_table <- function(x, dir, progress = NULL, chunk_length = 10 ^ 7,
     }
   }
 
-  cols <- col_names(x)
   targ <- file.path(dir, name)
+  newc <- ricu_cols(x)
+  oldc <- orig_cols(x)
 
   for (src_dir in list.files(tempdir, full.names = TRUE)) {
-    merge_fst_chunks(src_dir, targ, cols, pcol, progress, name)
+    merge_fst_chunks(src_dir, targ, newc, oldc, pcol, progress, name)
   }
 
-  fst_tables <- lapply(file.path(dir, fst_file_names(x)), fst::fst)
+  fst_tables <- lapply(file.path(dir, fst_file_name(x)), fst::fst)
 
   check_n_row(x, sum(dbl_ply(fst_tables, nrow)))
 
@@ -254,16 +253,15 @@ partition_table <- function(x, dir, progress = NULL, chunk_length = 10 ^ 7,
 
 csv_to_fst <- function(x, dir, progress = NULL, ...) {
 
-  src <- file.path(dir, raw_file_names(x))
-  dst <- file.path(dir, fst_file_names(x))
+  src <- file.path(dir, raw_file_name(x))
+  dst <- file.path(dir, fst_file_name(x))
 
-  assert_that(length(src) == 1L, length(dst) == 1L)
+  assert_that(length(x) == 1L, length(src) == 1L, length(dst) == 1L)
 
   dat  <- readr::read_csv(src, col_types = col_spec(x), progress = FALSE, ...)
   readr::stop_for_problems(dat)
 
-  cols <- col_names(x)
-  dat  <- setnames(dat, names(cols), cols)
+  dat <- rename_cols(dat, ricu_cols(x), orig_cols(x))
 
   fst::write_fst(dat, dst, compress = 100L)
 

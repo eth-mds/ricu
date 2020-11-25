@@ -153,8 +153,8 @@ check_vector <- function(x, allow_null = TRUE,
     x
   }
 
-  if (is.null(x)) {
-    x <- list(NULL)
+  if (!is.list(x)) {
+    x <- list(x)
   }
 
   lapply(unname(x), check_one)
@@ -186,18 +186,20 @@ check_prefix <- function(x, suffix) {
 new_id_cfg <- function(src, name, id, pos, start = NULL, end = NULL,
                        table = NULL, class_prefix = src) {
 
-  assert_that(is.string(src))
+  name <- check_scalar(name, FALSE)
 
-  res <- vec_recycle_common(
-    name = check_scalar(name, FALSE), id = check_scalar(id, FALSE),
-    pos = check_scalar(pos, FALSE, "int"), start = check_scalar(start),
-    end = check_scalar(end), table = check_scalar(table)
+  assert_that(is.string(src), is_unique(name))
+
+  res <- list(
+    id = check_scalar(id, FALSE), pos = check_scalar(pos, FALSE, "int"),
+    start = check_scalar(start), end = check_scalar(end),
+    table = check_scalar(table)
   )
 
-  res <- new_rcrd(res, src = src,
-                  class = c(check_prefix(class_prefix, "ids"), "id_cfg"))
+  res <- lapply(res, vec_recycle, length(name))
 
-  assert_that(is_unique(names(res)))
+  res <- new_rcrd(c(list(name = name), res), src = src,
+                  class = c(check_prefix(class_prefix, "ids"), "id_cfg"))
 
   check <- ifelse(is.na(field(res, "start")) & is.na(field(res, "end")),
                   is.na(field(res, "table")), !is.na(field(res, "table")))
@@ -217,7 +219,9 @@ new_col_cfg <- function(src, table, ..., class_prefix = src) {
 
   sca_ok <- function(x) all(lengths(x) <= 1L)
 
-  assert_that(is.string(src))
+  table <- check_scalar(table, FALSE)
+
+  assert_that(is.string(src), is_unique(table))
 
   vars <- lapply(list(...), check_vector)
   scal <- filter_vars(vars, "scalar")
@@ -229,9 +233,9 @@ new_col_cfg <- function(src, table, ..., class_prefix = src) {
 
   assert_that(all_fun(scal, all_fun, sca_ok))
 
-  vars <- c(list(table = check_scalar(table, FALSE)), vars)
+  vars <- lapply(vars, vec_recycle, length(table))
 
-  new_rcrd(do.call(vec_recycle_common, vars), src = src,
+  new_rcrd(c(list(table = table), vars), src = src,
            class = c(check_prefix(class_prefix, "cols"), "col_cfg"))
 }
 
@@ -267,30 +271,49 @@ new_tbl_cfg <- function(src, table, files = NULL, cols = NULL, num_rows = NULL,
     eval(do.call(tbl_spc, res), envir = asNamespace("readr"))
   }
 
-  assert_that(is.string(src))
+  table <- check_scalar(table, FALSE)
+
+  assert_that(is.string(src), is_unique(table))
 
   if (not_null(cols)) {
+
+    if (length(table) == 1L && length(cols) != 1L) {
+      cols <- list(cols)
+    }
+
     assert_that(all_fun(cols, all_fun, null_or, has_name, c("name", "spec")))
+
     spec <- lapply(cols, mak_spc)
-    cols <- lapply(cols, chr_xtr, "name")
+    cols <- lapply(cols, names)
+
   } else {
+
     spec <- list(NULL)
   }
 
   if (not_null(partitioning)) {
+
+    if (length(table) == 1L && length(partitioning) != 1L) {
+      partitioning <- list(partitioning)
+    }
+
     assert_that(all_fun(partitioning, null_or, has_name, c("col", "breaks")))
+
   } else {
+
     partitioning <- list(NULL)
   }
 
   res <- list(
-    table = check_scalar(table, FALSE), files = check_vector(files),
-    cols = check_vector(cols), spec = spec, partitioning = partitioning,
+    files = check_vector(files), cols = check_vector(cols),
+    spec = spec, partitioning = partitioning,
     num_rows = check_scalar(num_rows, mode = "int")
   )
 
-  new_rcrd(do.call(vec_recycle_common, c(res, list(...))), src = src,
-           class = c(check_prefix(class_prefix, "tbls"), "tbl_cfg"))
+  res <- lapply(c(res, list(...)), vec_recycle, length(table))
+  cls <- c(check_prefix(class_prefix, "tbls"), "tbl_cfg")
+
+  new_rcrd(c(list(table = table), res), src = src, class = cls)
 }
 
 #' Load configuration for a data source

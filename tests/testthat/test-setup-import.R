@@ -36,18 +36,37 @@ test_that("import csv", {
   cfg <- new_tbl_cfg("cars", "foo", "mtcars.csv", spec, 32L)
 
   expect_null(csv_to_fst(cfg, tmp))
+  expect_true("foo.fst" %in% list.files(tmp))
+  expect_equal(mtcars, fst::read_fst(file.path(tmp, "foo.fst")),
+               check.attributes = FALSE)
 })
 
 test_that("import partitioned", {
 
   part <- list(col = "carbu", breaks = 4)
+  file <- paste0(seq_len(2L), ".fst")
 
-  cfg <- new_tbl_cfg("cars", "foo", "mtcars.csv", spec, 32L, part)
+  tbf <- "foo"
+  foo <- file.path(tmp, tbf)
+  cfg <- new_tbl_cfg("cars", tbf, "mtcars.csv", spec, 32L, part)
 
   expect_null(partition_table(cfg, tmp, chunk_length = 5))
+  expect_true(dir.exists(foo))
+  expect_setequal(list.files(foo), file)
 
-  cfg <- new_tbl_cfg("cars", "foo", c("cars_0.csv", "cars_1.csv"), spec, 32L,
+  tbb <- "bar"
+  bar <- file.path(tmp, tbb)
+  cfg <- new_tbl_cfg("cars", tbb, c("cars_0.csv", "cars_1.csv"), spec, 32L,
                      part)
 
   expect_null(partition_table(cfg, tmp, chunk_length = 5))
+  expect_true(dir.exists(bar))
+  expect_setequal(list.files(bar), file)
+
+  for (x in file) {
+    expect_fsetequal(
+      fst::read_fst(file.path(foo, x), as.data.table = TRUE),
+      fst::read_fst(file.path(bar, x), as.data.table = TRUE)
+    )
+  }
 })

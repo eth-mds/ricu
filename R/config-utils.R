@@ -137,66 +137,6 @@ format.tbl_cfg <- function(x, ...) {
 #' @export
 names.tbl_cfg <- function(x) field(x, "table")
 
-col_spec <- function(x) {
-  assert_that(is_tbl_cfg(x))
-  x[["spec"]]
-}
-
-check_n_row <- function(x, n_row) {
-
-  assert_that(is_tbl_cfg(x), is.count(n_row))
-
-  expec <- nrow(x)
-
-  if (is.null(expec)) {
-    return(invisible(n_row))
-  }
-
-  if (!all_equal(expec, n_row)) {
-    warn_ricu("Table {quote_bt(tbl_name(x))} has {big_mark(n_row)} instead of
-               {big_mark(expec)} {qty(expec)} row{?s}",
-              class = "src_tbl_row_mismatch")
-  }
-
-  invisible(n_row)
-}
-
-col_names <- function(x) {
-  setNames(x[["cols"]], names(col_spec(x)[["cols"]]))
-}
-
-partition_fun <- function(x, orig_names = FALSE) {
-
-  assert_that(is_tbl_cfg(x), n_part(x) > 1L)
-
-  part <- x[["partitioning"]]
-
-  col <- partition_col(x, orig_names)
-  breaks <- force(part[["breaks"]])
-
-  function(x) {
-    findInterval(x[[col]], breaks) + 1L
-  }
-}
-
-partition_col <- function(x, orig_names = FALSE) {
-
-  assert_that(is_tbl_cfg(x), is.flag(orig_names), n_part(x) > 1L)
-
-  part <- x[["partitioning"]]
-
-  col <- part[["col"]]
-
-  if (orig_names) {
-    nms <- col_names(x)
-    col <- names(nms[nms == col])
-  }
-
-  assert_that(is.string(col))
-
-  col
-}
-
 #' @rdname src_cfg
 #' @keywords internal
 #' @export
@@ -271,6 +211,10 @@ fst_file_names <- function(x) {
 
 raw_file_names <- function(x) field(as_tbl_cfg(x), "files")
 
+fst_file_name <- function(x) get_one(fst_file_names(x))
+
+raw_file_name <- function(x) get_one(raw_file_names(x))
+
 src_file_exist <- function(x, dir, type = c("fst", "raw")) {
 
   are_avail <- function(x, d) all(file.exists(file.path(d, x)))
@@ -334,3 +278,69 @@ index_var.col_cfg <- function(x) default_vars(x, "index_var")
 #' @export
 time_vars.col_cfg <- function(x) default_vars(x, "time_vars")
 
+get_one <- function(x) {
+  assert_that(length(x) == 1L)
+  x[[1L]]
+}
+
+col_spec <- function(x) get_one(field(as_tbl_cfg(x), "spec"))
+
+orig_cols <- function(x) names(col_spec(x)[["cols"]])
+
+ricu_cols <- function(x) get_one(field(as_tbl_cfg(x), "cols"))
+
+check_n_row <- function(x, n_row) {
+
+  x <- as_tbl_cfg(x)
+
+  assert_that(is.count(n_row))
+
+  expec <- nrow(x)
+
+  if (is.null(expec)) {
+    return(invisible(n_row))
+  }
+
+  if (!all_equal(expec, n_row)) {
+    warn_ricu("Table {quote_bt(tbl_name(x))} has {big_mark(n_row)} instead of
+               {big_mark(expec)} {qty(expec)} row{?s}",
+              class = "src_tbl_row_mismatch")
+  }
+
+  invisible(n_row)
+}
+
+partition_fun <- function(x, orig_names = FALSE) {
+
+  x <- as_tbl_cfg(x)
+
+  assert_that(length(x) == 1L, n_part(x) > 1L)
+
+  part <- field(x, "partitioning")[[1L]]
+
+  col <- partition_col(x, orig_names)
+  breaks <- force(part[["breaks"]])
+
+  function(x) {
+    findInterval(x[[col]], breaks) + 1L
+  }
+}
+
+partition_col <- function(x, orig_names = FALSE) {
+
+  x <- as_tbl_cfg(x)
+
+  assert_that(length(x) == 1L, n_part(x) > 1L, is.flag(orig_names))
+
+  part <- field(x, "partitioning")[[1L]]
+
+  col <- part[["col"]]
+
+  if (orig_names) {
+    col <- orig_cols(x)[match(col, ricu_cols(x))]
+  }
+
+  assert_that(is.string(col))
+
+  col
+}
