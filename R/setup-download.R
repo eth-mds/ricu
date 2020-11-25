@@ -131,9 +131,9 @@ download_src.src_cfg <- function(x, data_dir = src_data_dir(x), tables = NULL,
     return(invisible(NULL))
   }
 
-  download_check_data(
-    data_dir, raw_file_name(tbl), src_url(x), user, pass, src_name(x)
-  )
+  files <- unlst_str(raw_file_names(tbl))
+
+  download_check_data(data_dir, files, src_url(x), user, pass, src_name(x))
 
   invisible(NULL)
 }

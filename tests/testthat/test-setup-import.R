@@ -115,7 +115,7 @@ test_that("import src", {
   expect_false(file.exists(fstf[2L]))
 
   expect_error(import_src("mimic_demo", tmp_srcs, tables = "foo"),
-                class = "missing_download")
+                class = "are_in_assert")
 
   mock_aumc <- function(...) {
     with_mock(

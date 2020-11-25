@@ -183,7 +183,7 @@ test_that("src download", {
                                      src) {
         assert_that(
           is.character(files), has_length(files), is.string(dest_folder),
-          is.string(url), identical(basename(dest_folder), src)
+          is.string(url)
         )
         invisible(NULL)
       },

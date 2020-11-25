@@ -84,7 +84,8 @@ import_src.src_cfg <- function(x, data_dir = src_data_dir(x), tables = NULL,
 
   } else {
 
-    assert_that(is.character(tables), has_length(tables))
+    assert_that(is.character(tables), has_length(tables),
+                are_in(tables, names(tbl)))
 
     todo <- names(tbl) %in% tables
   }
@@ -105,12 +106,6 @@ import_src.src_cfg <- function(x, data_dir = src_data_dir(x), tables = NULL,
   }
 
   tbl <- tbl[todo]
-  xst <- src_file_exist(tbl, data_dir, "raw")
-
-  assert_that(all(xst), msg = "
-    Tables {names(tbl)[!xst]} are requested for import but have not been
-    downloaded yet.", class = "missing_download"
-  )
 
   pba <- progress_init(n_tick(tbl),
     msg = "Importing {length(tbl)} table{?s} for {quote_bt(src_name(x))}"
@@ -195,7 +190,7 @@ merge_fst_chunks <- function(src, targ, new, old, sort_col, prog, nme, tick) {
 
   dat <- lapply(files[sort_ind], fst::read_fst, as.data.table = TRUE)
   dat <- rbindlist(dat)
-  dat <- data.table::setorderv(dat, sort_col)
+  dat <- setorderv(dat, sort_col)
   dat <- rename_cols(dat, new, old)
 
   part_no  <- sub("part_", "", basename(src))
@@ -309,7 +304,7 @@ csv_to_fst <- function(x, dir, progress = NULL, ...) {
   dat  <- readr::read_csv(src, col_types = col_spec(x), progress = FALSE, ...)
   readr::stop_for_problems(dat)
 
-  dat <- rename_cols(dat, ricu_cols(x), orig_cols(x))
+  dat <- rename_cols(setDT(dat), ricu_cols(x), orig_cols(x))
 
   fst::write_fst(dat, dst, compress = 100L)
 

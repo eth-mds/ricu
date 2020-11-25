@@ -21,16 +21,11 @@ test_that("config classes", {
   expect_s3_class(id, c("mimic_demo_ids", "mimic_ids", "id_cfg"))
   expect_identical(as_id_cfg(id), id)
 
-  expect_type(co, "list")
-  expect_type(tb, "list")
+  expect_s3_class(co, c("mimic_demo_cols", "mimic_cols", "col_cfg"))
+  expect_identical(as_col_cfg(co), co)
 
-  for (x in co) {
-    expect_s3_class(x, c("mimic_demo_cols", "mimic_cols", "col_cfg"))
-    expect_identical(as_col_cfg(x), x)
-  }
+  expect_s3_class(tb, c("mimic_demo_tbl", "mimic_tbl", "tbl_cfg"))
+  expect_identical(as_tbl_cfg(tb), tb)
 
-  for (x in tb) {
-    expect_s3_class(x, c("mimic_demo_tbl", "mimic_tbl", "tbl_cfg"))
-    expect_identical(as_tbl_cfg(x), x)
-  }
+  expect_identical(length(co), length(tb))
 })

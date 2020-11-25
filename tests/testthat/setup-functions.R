@@ -145,10 +145,14 @@ assign("ident_cb", function(x, ...) x, envir = .GlobalEnv)
 skip_if_srcs_missing <- function(srcs) {
 
   avail <- is_data_avail(srcs)
+  skip  <- !all(avail)
 
-  skip_if_not(
-    all(avail),
-    fmt_msg("Data source{?s} {srcs[!avail]} {?is/are} missing but required for
-             tests")
-  )
+  if (skip) {
+    msg <- fmt_msg("Data source{?s} {quote_bt(srcs[!avail])} {?is/are} missing
+                    but required for tests")
+  } else {
+    msg <- NULL
+  }
+
+  skip_if(skip, msg)
 }
