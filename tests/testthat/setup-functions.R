@@ -139,6 +139,118 @@ test_that("expect_fsetequal", {
   expect_failure(expect_fsetequal(dt1, dt1[-1L, ]))
 })
 
+stubs <- function(where, ..., depth = 1L, envir = parent.frame()) {
+
+  call <- match.call()
+
+  newc <- call[seq_len(2L)]
+  newc[[1L]] <- quote(mockery::stub)
+
+  for (i in seq_len(...length()) + 2L) {
+    newc[[3L]] <- names(call)[i]
+    newc[[4L]] <- call[[i]]
+    eval(newc, envir)
+  }
+
+  invisible(NULL)
+}
+
+reset_stubs <- function(where, what, depth = 1L, envir = parent.frame()) {
+
+  stopifnot(is.character(where), length(where) == 1L,
+            is.character(what),  length(what)  >= 1L)
+
+  args <- lapply(what, as.symbol)
+  names(args) <- what
+
+  args <- c(list(where = as.symbol(where)), args,
+            list(depth = depth, envir = envir))
+
+  do.call("stubs", args)
+}
+
+with_stubs <- function(where, ..., depth = 1L, envir = parent.frame()) {
+
+  call <- match.call()
+  ndot <- ...length()
+  last <- ndot + 2L
+
+  wher <- deparse(substitute(where))
+  funs <- names(call)[seq(3L, last - 1L)]
+
+  stopifnot(identical(nzchar(names(call)[last]), FALSE), ndot >= 1L)
+
+  code <- call[[last]]
+
+  call[[1L]] <- quote(stubs)
+  call[[last]] <- NULL
+
+  on.exit(reset_stubs(wher, funs, depth = depth, envir = envir))
+
+  eval(call, envir)
+  eval(code, envir)
+}
+
+local_stubs <- function(where, ..., depth = 1L, envir = parent.frame()) {
+
+  call <- match.call()
+  wher <- deparse(substitute(where))
+  funs <- names(call)[seq(3L, ...length() + 2L)]
+
+  call[[1L]] <- quote(stubs)
+
+  res <- eval(call, envir)
+
+  defer(reset_stubs(wher, funs, depth = depth, envir = envir), envir = envir)
+
+  invisible(res)
+}
+
+test_that("stubs", {
+
+  fun_f <- function(x) x + 10
+  fun_g <- function(y) y + 20
+  fun_h <- function(z) fun_f(z) + fun_g(z)
+
+  stubs(fun_h, fun_f = 300, fun_g = 500)
+
+  expect_equal(fun_h(1), 800)
+
+  reset_stubs("fun_h", c("fun_f", "fun_g"))
+
+  expect_equal(fun_h(1), 32)
+})
+
+test_that("with_stubs", {
+
+  fun_f <- function(x) x + 10
+  fun_g <- function(y) y + 20
+  fun_h <- function(z) fun_f(z) + fun_g(z)
+
+  with_stubs(fun_h, fun_f = 300, fun_g = 500, {
+    expect_equal(fun_h(1), 800)
+  })
+
+  expect_equal(fun_h(1), 32)
+})
+
+stub_test_fun_f <- function(x) x + 10
+stub_test_fun_g <- function(y) y + 20
+stub_test_fun_h <- function(z) stub_test_fun_f(z) + stub_test_fun_g(z)
+
+test_that("local_stubs 1", {
+
+  expect_equal(stub_test_fun_h(1), 32)
+
+  local_stubs(stub_test_fun_h, stub_test_fun_f = 300, stub_test_fun_g = 500)
+
+  expect_equal(stub_test_fun_h(1), 800)
+})
+
+test_that("local_stubs 2", {
+  expect_equal(stub_test_fun_h(1), 32)
+})
+
 cpy <- data.table::copy
 assign("ident_cb", function(x, ...) x, envir = .GlobalEnv)
 
