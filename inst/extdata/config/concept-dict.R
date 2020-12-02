@@ -2395,6 +2395,7 @@ cfg <- list(
     description = "patient body mass index",
     category = "demographics",
     callback = "bmi",
+    target = "id_tbl",
     class = "rec_cncpt"
   ),
   adh_rate = list(
