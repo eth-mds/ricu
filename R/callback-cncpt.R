@@ -547,10 +547,10 @@ bmi <- function(..., interval = NULL) {
   cnc <- c("weight", "height")
   res <- collect_dots(cnc, interval, ..., merge_dat = TRUE)
   res <- res[, c("bmi", cnc) := list(
-    get("weight") / get("height") ^ 2, NULL, NULL
+    get("weight") / (get("height") / 100) ^ 2, NULL, NULL
   )]
 
-  setattr(data_col(res), "units", "kg/cm^2")
+  setattr(data_col(res), "units", "kg/m^2")
 
   res
 }
