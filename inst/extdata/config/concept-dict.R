@@ -1367,9 +1367,10 @@ cfg <- list(
     sources = list(
       mimic = list(
         list(ids = c(30042L, 30306L), table = "inputevents_cv",
-             sub_var = "itemid"),
-        list(ids = 221653L, table = "inputevents_mv",
-             sub_var = "itemid")
+             sub_var = "itemid", grp_var = "linkorderid",
+             callback = "mimic_rate_cv"),
+        list(ids = 221653L, table = "inputevents_mv", sub_var = "itemid",
+             stop_var = "endtime", callback = "mimic_rate_mv")
       ),
       eicu = list(
         list(regex = "^dobu.*\\(.+\\)$", table = "infusiondrug",
@@ -1378,12 +1379,12 @@ cfg <- list(
       ),
       hirid = list(
         list(ids = 426L, table = "pharma", sub_var = "pharmaid",
-             callback = "hirid_rate_kg")
+             grp_var = "infusionid", callback = "hirid_rate_kg")
       ),
       aumc = list(
         list(ids = 7178L, table = "drugitems", sub_var = "itemid",
              rel_weight = "doserateperkg", rate_uom = "doserateunit",
-             callback = "aumc_rate_kg")
+             stop_var = "stop", callback = "aumc_rate_kg")
       )
     )
   ),
@@ -1432,8 +1433,10 @@ cfg <- list(
     sources = list(
       mimic = list(
         list(ids = c(30043L, 30125L, 30307L), table = "inputevents_cv",
-             sub_var = "itemid"),
-        list(ids = 221662L, table = "inputevents_mv", sub_var = "itemid")
+             sub_var = "itemid", grp_var = "linkorderid",
+             callback = "mimic_rate_cv"),
+        list(ids = 221662L, table = "inputevents_mv", sub_var = "itemid",
+             stop_var = "endtime", callback = "mimic_rate_mv")
       ),
       eicu = list(
         list(regex = "^dopa.*\\(.+\\)$", table = "infusiondrug",
@@ -1443,7 +1446,7 @@ cfg <- list(
       aumc = list(
         list(ids = 7179L, table = "drugitems", sub_var = "itemid",
              rel_weight = "doserateperkg", rate_uom = "doserateunit",
-             callback = "aumc_rate_kg")
+             stop_var = "stop", callback = "aumc_rate_kg")
       )
     )
   ),
@@ -1488,8 +1491,10 @@ cfg <- list(
     sources = list(
       mimic = list(
         list(ids = c(30047L, 30120L), table = "inputevents_cv",
-             sub_var = "itemid"),
-        list(ids = 221906L, table = "inputevents_mv", sub_var = "itemid")
+             sub_var = "itemid", grp_var = "linkorderid",
+             callback = "mimic_rate_cv"),
+        list(ids = 221906L, table = "inputevents_mv", sub_var = "itemid",
+             stop_var = "endtime", callback = "mimic_rate_mv")
       ),
       eicu = list(
         list(regex = "^norepi.*\\(.+\\)$", table = "infusiondrug",
@@ -1498,12 +1503,13 @@ cfg <- list(
       ),
       hirid = list(
         list(ids = c(1000462L, 1000656L, 1000657L, 1000658L), table = "pharma",
-             sub_var = "pharmaid", callback = "hirid_rate_kg")
+             sub_var = "pharmaid", grp_var = "infusionid",
+             callback = "hirid_rate_kg")
       ),
       aumc = list(
         list(ids = 7229L, table = "drugitems", sub_var = "itemid",
              rel_weight = "doserateperkg", rate_uom = "doserateunit",
-             callback = "aumc_rate_kg")
+             stop_var = "stop", callback = "aumc_rate_kg")
       )
     )
   ),
@@ -1553,8 +1559,10 @@ cfg <- list(
     sources = list(
       mimic = list(
         list(ids = c(30044L, 30119L, 30309L), table = "inputevents_cv",
-             sub_var = "itemid"),
-        list(ids = 221289L, table = "inputevents_mv", sub_var = "itemid")
+             sub_var = "itemid", grp_var = "linkorderid",
+             callback = "mimic_rate_cv"),
+        list(ids = 221289L, table = "inputevents_mv", sub_var = "itemid",
+             stop_var = "endtime", callback = "mimic_rate_mv")
       ),
       eicu = list(
         list(regex = "^epi( |n).*\\(.+\\)$", table = "infusiondrug",
@@ -1564,12 +1572,12 @@ cfg <- list(
       hirid = list(
         list(ids = c(71L, 1000649L, 1000650L, 1000655L, 1000750L),
              table = "pharma", sub_var = "pharmaid",
-             callback = "hirid_rate_kg")
+             grp_var = "infusionid", callback = "hirid_rate_kg")
       ),
       aumc = list(
         list(ids = 6818L, table = "drugitems", sub_var = "itemid",
              rel_weight = "doserateperkg", rate_uom = "doserateunit",
-             callback = "aumc_rate_kg")
+             stop_var = "stop", callback = "aumc_rate_kg")
       )
     )
   ),
@@ -1725,7 +1733,7 @@ cfg <- list(
   abx = list(
     class = "lgl_cncpt",
     description = "antibiotics",
-    category = "medication",
+    category = "medications",
     sources = list(
       mimic = list(
         list(regex = paste(
@@ -2405,11 +2413,15 @@ cfg <- list(
     sources = list(
       mimic = list(
         list(ids = 30051L, table = "inputevents_cv", sub_var = "itemid",
-             callback = "convert_unit(binary_op(`/`, 60), 'units/min',
-                         'Uhr')"),
+             grp_var = "linkorderid", callback = "combine_callbacks(
+               convert_unit(binary_op(`/`, 60), 'units/min', 'Uhr'),
+               mimic_rate_cv
+             )"),
         list(ids = 222315L, table = "inputevents_mv", sub_var = "itemid",
-             callback = "convert_unit(binary_op(`/`, 60), 'units/min',
-                         'units/hour')")
+             stop_var = "endtime", callback = "combine_callbacks(
+               convert_unit(binary_op(`/`, 60), 'units/min', 'units/hour'),
+               mimic_rate_mv
+             )")
       ),
       eicu = list(
         list(regex = "^vasopressin.*\\(.+/.+\\)$",
@@ -2419,11 +2431,12 @@ cfg <- list(
       ),
       hirid = list(
         list(ids = c(112L, 113L), table = "pharma", sub_var = "pharmaid",
-             callback = "hirid_rate")
+             grp_var = "infusionid", callback = "hirid_rate")
       ),
       aumc = list(
         list(ids = 12467L, table = "drugitems", sub_var = "itemid",
-             rate_uom = "doserateunit", callback = "aumc_rate_units(0.53)")
+             rate_uom = "doserateunit", stop_var = "stop",
+             callback = "aumc_rate_units(0.53)")
       )
     )
   ),
@@ -2434,9 +2447,13 @@ cfg <- list(
     sources = list(
       mimic = list(
         list(ids = 30127L, table = "inputevents_cv", sub_var = "itemid",
-             callback = "cv_rate_kg"),
-        list(ids = 30128L, table = "inputevents_cv", sub_var = "itemid"),
-        list(ids = 221749L, table = "inputevents_mv", sub_var = "itemid")
+             grp_var = "linkorderid", callback = "combine_callbacks(
+               mimic_kg_rate, mimic_rate_cv)
+             "),
+        list(ids = 30128L, table = "inputevents_cv", sub_var = "itemid",
+             grp_var = "linkorderid", callback = "mimic_rate_cv"),
+        list(ids = 221749L, table = "inputevents_mv", sub_var = "itemid",
+             stop_var = "endtime", callback = "mimic_rate_mv")
       ),
       eicu = list(
         list(regex = "^phenylephrine.*\\(.+\\)$", table = "infusiondrug",

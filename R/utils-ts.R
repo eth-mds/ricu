@@ -525,3 +525,65 @@ merge_ranges <- function(x, lwr_var = index_var(x), upr_var = data_vars(x),
 
   x
 }
+
+group_measurements <- function(x, max_gap = hours(6L), group_var = "grp_var") {
+
+  time_diff <- function(x) x - data.table::shift(x)
+
+  grp_calc  <- function(x) {
+    tmp <- rle(is_true(x <= max_gap))
+    val <- tmp[["values"]]
+    tmp[["values"]][val] <- seq_len(sum(val))
+    inverse.rle(tmp)
+  }
+
+  assert_that(is_ts_tbl(x), is_interval(max_gap), is_scalar(max_gap),
+              is.string(group_var), is_disjoint(group_var, colnames(x)))
+
+  id_vars   <- id_vars(x)
+  index_var <- index_var(x)
+
+  if (interval(x) > max_gap) {
+    warn_ricu("splitting durations by gaps of length {format(max_gap)}
+               using data with a time resolution of {format(interval(x))}")
+  }
+
+  x <- x[, c(group_var) := time_diff(get(index_var)), by = c(id_vars)]
+  x <- x[, c(group_var) := grp_calc(get(group_var))]
+
+  x
+}
+
+padded_diff <- function(x, final) c(diff(x), final)
+
+trunc_time <- function(x, min, max) {
+
+  if (not_null(min)) {
+    replace(x, x < min, min)
+  }
+
+  if (not_null(max)) {
+    replace(x, x > max, max)
+  }
+
+  x
+}
+
+create_intervals <- function(x, by_vars = id_vars(x), overhang = hours(1L),
+                             max_len = hours(6L), end_var = "endtime") {
+
+  assert_that(is_ts_tbl(x), has_cols(x, by_vars),
+              is_interval(overhang), is_scalar(overhang),
+              is_interval(max_len), is_scalar(max_len),
+              is.string(end_var), is_disjoint(end_var, colnames(x)))
+
+  idx_var <- index_var(x)
+  inteval <- interval(x)
+
+  x <- x[, c(end_var) := padded_diff(get(idx_var), overhang), by = c(by_vars)]
+  x <- x[, c(end_var) := `units<-`(
+         trunc_time(get(end_var), 0L, max_len) - inteval, units(inteval))]
+  x <- x[, c(end_var) := get(idx_var) + get(end_var)]
+
+  x
+}

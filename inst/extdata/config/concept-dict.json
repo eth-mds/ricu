@@ -2,7 +2,7 @@
   "abx": {
     "class": "lgl_cncpt",
     "description": "antibiotics",
-    "category": "medication",
+    "category": "medications",
     "sources": {
       "aumc": [
         {
@@ -95,6 +95,7 @@
           "table": "drugitems",
           "sub_var": "itemid",
           "rate_uom": "doserateunit",
+          "stop_var": "stop",
           "callback": "aumc_rate_units(0.53)"
         }
       ],
@@ -121,6 +122,7 @@
           "ids": [112, 113],
           "table": "pharma",
           "sub_var": "pharmaid",
+          "grp_var": "infusionid",
           "callback": "hirid_rate"
         }
       ],
@@ -129,13 +131,15 @@
           "ids": 30051,
           "table": "inputevents_cv",
           "sub_var": "itemid",
-          "callback": "convert_unit(binary_op(`/`, 60), 'units/min',\n                         'Uhr')"
+          "grp_var": "linkorderid",
+          "callback": "combine_callbacks(\n               convert_unit(binary_op(`/`, 60), 'units/min', 'Uhr'),\n               mimic_rate_cv\n             )"
         },
         {
           "ids": 222315,
           "table": "inputevents_mv",
           "sub_var": "itemid",
-          "callback": "convert_unit(binary_op(`/`, 60), 'units/min',\n                         'units/hour')"
+          "stop_var": "endtime",
+          "callback": "combine_callbacks(\n               convert_unit(binary_op(`/`, 60), 'units/min', 'units/hour'),\n               mimic_rate_mv\n             )"
         }
       ],
       "mimic_demo": [
@@ -143,13 +147,15 @@
           "ids": 30051,
           "table": "inputevents_cv",
           "sub_var": "itemid",
-          "callback": "convert_unit(binary_op(`/`, 60), 'units/min',\n                         'Uhr')"
+          "grp_var": "linkorderid",
+          "callback": "combine_callbacks(\n               convert_unit(binary_op(`/`, 60), 'units/min', 'Uhr'),\n               mimic_rate_cv\n             )"
         },
         {
           "ids": 222315,
           "table": "inputevents_mv",
           "sub_var": "itemid",
-          "callback": "convert_unit(binary_op(`/`, 60), 'units/min',\n                         'units/hour')"
+          "stop_var": "endtime",
+          "callback": "combine_callbacks(\n               convert_unit(binary_op(`/`, 60), 'units/min', 'units/hour'),\n               mimic_rate_mv\n             )"
         }
       ]
     }
@@ -1426,6 +1432,7 @@
           "sub_var": "itemid",
           "rel_weight": "doserateperkg",
           "rate_uom": "doserateunit",
+          "stop_var": "stop",
           "callback": "aumc_rate_kg"
         }
       ],
@@ -1454,6 +1461,7 @@
           "ids": 426,
           "table": "pharma",
           "sub_var": "pharmaid",
+          "grp_var": "infusionid",
           "callback": "hirid_rate_kg"
         }
       ],
@@ -1461,24 +1469,32 @@
         {
           "ids": [30042, 30306],
           "table": "inputevents_cv",
-          "sub_var": "itemid"
+          "sub_var": "itemid",
+          "grp_var": "linkorderid",
+          "callback": "mimic_rate_cv"
         },
         {
           "ids": 221653,
           "table": "inputevents_mv",
-          "sub_var": "itemid"
+          "sub_var": "itemid",
+          "stop_var": "endtime",
+          "callback": "mimic_rate_mv"
         }
       ],
       "mimic_demo": [
         {
           "ids": [30042, 30306],
           "table": "inputevents_cv",
-          "sub_var": "itemid"
+          "sub_var": "itemid",
+          "grp_var": "linkorderid",
+          "callback": "mimic_rate_cv"
         },
         {
           "ids": 221653,
           "table": "inputevents_mv",
-          "sub_var": "itemid"
+          "sub_var": "itemid",
+          "stop_var": "endtime",
+          "callback": "mimic_rate_mv"
         }
       ]
     }
@@ -1574,6 +1590,7 @@
           "sub_var": "itemid",
           "rel_weight": "doserateperkg",
           "rate_uom": "doserateunit",
+          "stop_var": "stop",
           "callback": "aumc_rate_kg"
         }
       ],
@@ -1601,24 +1618,32 @@
         {
           "ids": [30043, 30125, 30307],
           "table": "inputevents_cv",
-          "sub_var": "itemid"
+          "sub_var": "itemid",
+          "grp_var": "linkorderid",
+          "callback": "mimic_rate_cv"
         },
         {
           "ids": 221662,
           "table": "inputevents_mv",
-          "sub_var": "itemid"
+          "sub_var": "itemid",
+          "stop_var": "endtime",
+          "callback": "mimic_rate_mv"
         }
       ],
       "mimic_demo": [
         {
           "ids": [30043, 30125, 30307],
           "table": "inputevents_cv",
-          "sub_var": "itemid"
+          "sub_var": "itemid",
+          "grp_var": "linkorderid",
+          "callback": "mimic_rate_cv"
         },
         {
           "ids": 221662,
           "table": "inputevents_mv",
-          "sub_var": "itemid"
+          "sub_var": "itemid",
+          "stop_var": "endtime",
+          "callback": "mimic_rate_mv"
         }
       ]
     }
@@ -1825,6 +1850,7 @@
           "sub_var": "itemid",
           "rel_weight": "doserateperkg",
           "rate_uom": "doserateunit",
+          "stop_var": "stop",
           "callback": "aumc_rate_kg"
         }
       ],
@@ -1853,6 +1879,7 @@
           "ids": [71, 1000649, 1000650, 1000655, 1000750],
           "table": "pharma",
           "sub_var": "pharmaid",
+          "grp_var": "infusionid",
           "callback": "hirid_rate_kg"
         }
       ],
@@ -1860,24 +1887,32 @@
         {
           "ids": [30044, 30119, 30309],
           "table": "inputevents_cv",
-          "sub_var": "itemid"
+          "sub_var": "itemid",
+          "grp_var": "linkorderid",
+          "callback": "mimic_rate_cv"
         },
         {
           "ids": 221289,
           "table": "inputevents_mv",
-          "sub_var": "itemid"
+          "sub_var": "itemid",
+          "stop_var": "endtime",
+          "callback": "mimic_rate_mv"
         }
       ],
       "mimic_demo": [
         {
           "ids": [30044, 30119, 30309],
           "table": "inputevents_cv",
-          "sub_var": "itemid"
+          "sub_var": "itemid",
+          "grp_var": "linkorderid",
+          "callback": "mimic_rate_cv"
         },
         {
           "ids": 221289,
           "table": "inputevents_mv",
-          "sub_var": "itemid"
+          "sub_var": "itemid",
+          "stop_var": "endtime",
+          "callback": "mimic_rate_mv"
         }
       ]
     }
@@ -3403,6 +3438,7 @@
           "sub_var": "itemid",
           "rel_weight": "doserateperkg",
           "rate_uom": "doserateunit",
+          "stop_var": "stop",
           "callback": "aumc_rate_kg"
         }
       ],
@@ -3431,6 +3467,7 @@
           "ids": [1000462, 1000656, 1000657, 1000658],
           "table": "pharma",
           "sub_var": "pharmaid",
+          "grp_var": "infusionid",
           "callback": "hirid_rate_kg"
         }
       ],
@@ -3438,24 +3475,32 @@
         {
           "ids": [30047, 30120],
           "table": "inputevents_cv",
-          "sub_var": "itemid"
+          "sub_var": "itemid",
+          "grp_var": "linkorderid",
+          "callback": "mimic_rate_cv"
         },
         {
           "ids": 221906,
           "table": "inputevents_mv",
-          "sub_var": "itemid"
+          "sub_var": "itemid",
+          "stop_var": "endtime",
+          "callback": "mimic_rate_mv"
         }
       ],
       "mimic_demo": [
         {
           "ids": [30047, 30120],
           "table": "inputevents_cv",
-          "sub_var": "itemid"
+          "sub_var": "itemid",
+          "grp_var": "linkorderid",
+          "callback": "mimic_rate_cv"
         },
         {
           "ids": 221906,
           "table": "inputevents_mv",
-          "sub_var": "itemid"
+          "sub_var": "itemid",
+          "stop_var": "endtime",
+          "callback": "mimic_rate_mv"
         }
       ]
     }
@@ -3679,17 +3724,22 @@
           "ids": 30127,
           "table": "inputevents_cv",
           "sub_var": "itemid",
-          "callback": "cv_rate_kg"
+          "grp_var": "linkorderid",
+          "callback": "combine_callbacks(\n               mimic_kg_rate, mimic_rate_cv)\n             "
         },
         {
           "ids": 30128,
           "table": "inputevents_cv",
-          "sub_var": "itemid"
+          "sub_var": "itemid",
+          "grp_var": "linkorderid",
+          "callback": "mimic_rate_cv"
         },
         {
           "ids": 221749,
           "table": "inputevents_mv",
-          "sub_var": "itemid"
+          "sub_var": "itemid",
+          "stop_var": "endtime",
+          "callback": "mimic_rate_mv"
         }
       ],
       "mimic_demo": [
@@ -3697,17 +3747,22 @@
           "ids": 30127,
           "table": "inputevents_cv",
           "sub_var": "itemid",
-          "callback": "cv_rate_kg"
+          "grp_var": "linkorderid",
+          "callback": "combine_callbacks(\n               mimic_kg_rate, mimic_rate_cv)\n             "
         },
         {
           "ids": 30128,
           "table": "inputevents_cv",
-          "sub_var": "itemid"
+          "sub_var": "itemid",
+          "grp_var": "linkorderid",
+          "callback": "mimic_rate_cv"
         },
         {
           "ids": 221749,
           "table": "inputevents_mv",
-          "sub_var": "itemid"
+          "sub_var": "itemid",
+          "stop_var": "endtime",
+          "callback": "mimic_rate_mv"
         }
       ]
     }

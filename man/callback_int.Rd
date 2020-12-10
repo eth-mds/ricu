@@ -4,6 +4,7 @@
 \alias{add_concept}
 \alias{add_weight}
 \alias{calc_dur}
+\alias{combine_callbacks}
 \title{Internal item callback utilities}
 \usage{
 add_concept(x, env, concept, var_name = concept, aggregate = NULL)
@@ -11,6 +12,8 @@ add_concept(x, env, concept, var_name = concept, aggregate = NULL)
 add_weight(x, env, var_name = "weight")
 
 calc_dur(x, val_var, min_var, max_var, grp_var = NULL)
+
+combine_callbacks(...)
 }
 \arguments{
 \item{x}{Object in loading}
@@ -30,6 +33,8 @@ default dictionary}
 \item{min_var, max_var}{Column names denoting start and end times}
 
 \item{grp_var}{Optional grouping variable (for example linking infusions)}
+
+\item{...}{Functions which will be successively applied}
 }
 \value{
 A copy of \code{x} with the requested concept merged in.

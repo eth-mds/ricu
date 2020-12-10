@@ -411,7 +411,25 @@ sub_trans <- function(regex, repl) {
   function(x) sub(regex, repl, x, ignore.case = TRUE)
 }
 
-cv_rate_kg <- function(x, val_var, unit_var, env, ...) {
+expand_intervals <- function(x, keep_vars = NULL, grp_var = NULL) {
+
+  x <- create_intervals(x, c(id_vars(x), grp_var), overhang = hours(1L),
+                        max_len = hours(6L), end_var = "endtime")
+  x <- expand(x, index_var(x), "endtime",
+              keep_vars = c(id_vars(x), keep_vars))
+  x
+}
+
+mimic_rate_cv <- function(x, val_var, grp_var, unit_var, ...) {
+  expand_intervals(x, c(val_var, unit_var), grp_var)
+}
+
+mimic_rate_mv <- function(x, val_var, unit_var, stop_var, ...) {
+  expand(x, index_var(x), stop_var,
+         keep_vars = c(id_vars(x), val_var, unit_var))
+}
+
+mimic_kg_rate <- function(x, val_var, unit_var, env, ...) {
 
   x <- add_weight(x, env, "weight")
   x <- x[, c(val_var, unit_var) := list(
@@ -449,7 +467,10 @@ eicu_rate_kg <- function(ml_to_mcg) {
       )
     ]
 
-    fix_units(x, val_var, "unit_var")
+    x <- fix_units(x, val_var, "unit_var")
+    x <- expand_intervals(x, c(val_var, "unit_var"))
+
+    x
   }
 }
 
@@ -470,11 +491,14 @@ eicu_rate_units <- function(ml_to_mcg, mcg_to_units) {
     x <- x[, c(val_var) := silent_as_num(get(val_var))]
     x <- x[, c("unit_var") := eicu_extract_unit(get(sub_var))]
 
-    fix_units(x, val_var, "unit_var")
+    x <- fix_units(x, val_var, "unit_var")
+    x <- expand_intervals(x, c(val_var, "unit_var"))
+
+    x
   }
 }
 
-hirid_rate_kg <- function(x, val_var, unit_var, env, ...) {
+hirid_rate_kg <- function(x, val_var, unit_var, grp_var, env, ...) {
 
   x <- x[get(unit_var) == "mg",
     c(val_var, unit_var) := list(1000 * get(val_var), "\u00b5g")
@@ -494,12 +518,14 @@ hirid_rate_kg <- function(x, val_var, unit_var, env, ...) {
 
   frac <- 1 / as.double(interval(x), units = "mins")
 
-  x[, c(val_var, unit_var, "weight") := list(
+  x <- x[, c(val_var, unit_var, "weight") := list(
     frac * get(val_var) / get("weight"), "mcg/kg/min", NULL)
   ]
+
+  expand_intervals(x, c(val_var, unit_var), grp_var)
 }
 
-hirid_rate <- function(x, val_var, unit_var, env, ...) {
+hirid_rate <- function(x, val_var, unit_var, grp_var, env, ...) {
 
   frac <- 1 / as.double(interval(x), units = "mins")
 
@@ -508,7 +534,7 @@ hirid_rate <- function(x, val_var, unit_var, env, ...) {
     frac * get(val_var), paste(get(unit_var), "min", sep = "/")
   )]
 
-  x
+  expand_intervals(x, c(val_var, unit_var), grp_var)
 }
 
 mimic_dur_incv <- function(x, val_var, grp_var, ...) {
@@ -519,8 +545,8 @@ mimic_dur_inmv <- function(x, val_var, grp_var, stop_var, ...) {
   calc_dur(x, val_var, index_var(x), stop_var, grp_var)
 }
 
-aumc_rate_kg <- function(x, val_var, unit_var, rel_weight, rate_uom, env,
-                         ...) {
+aumc_rate_kg <- function(x, val_var, unit_var, rel_weight, rate_uom, stop_var,
+                         env, ...) {
 
   mg_to_mcg <- convert_unit(binary_op(`*`, 1000), "mcg", "mg")
   hr_to_min <- convert_unit(binary_op(`/`, 60),   "min", "uur")
@@ -537,14 +563,15 @@ aumc_rate_kg <- function(x, val_var, unit_var, rel_weight, rate_uom, env,
     get(unit_var), get(rate_uom), sep = "/kg/"
   )]
 
-  res
+  expand(res, index_var(x), stop_var,
+         keep_vars = c(id_vars(x), val_var, unit_var))
 }
 
 aumc_rate_units <- function(mcg_to_units) {
 
   assert_that(is_number(mcg_to_units))
 
-  function(x, val_var, unit_var, rate_uom, env, ...) {
+  function(x, val_var, unit_var, rate_uom, stop_var, env, ...) {
 
     frac <- 1 / as.double(interval(x), units = "mins")
 
@@ -567,7 +594,8 @@ aumc_rate_units <- function(mcg_to_units) {
     x <- to_units(to_min(x, val_var, rate_uom), val_var, unit_var)
     x <- x[, c(unit_var) := paste(get(unit_var), get(rate_uom), sep = "/")]
 
-    x
+    expand(x, index_var(x), stop_var,
+           keep_vars = c(id_vars(x), val_var, unit_var))
   }
 }
 
@@ -577,27 +605,10 @@ eicu_duration <- function(gap_length) {
 
   function(x, val_var, ...) {
 
-    time_diff <- function(x) x - data.table::shift(x)
+    x <- group_measurements(x, gap_length, "grp_var")
+    x <- calc_dur(x, val_var, index_var, index_var, "grp_var")
 
-    grp_calc  <- function(x) {
-      tmp <- rle(is_true(x <= gap_length))
-      val <- tmp[["values"]]
-      tmp[["values"]][val] <- seq_len(sum(val))
-      inverse.rle(tmp)
-    }
-
-    id_vars   <- id_vars(x)
-    index_var <- index_var(x)
-
-    if (interval(x) > gap_length) {
-      warn_ricu("splitting durations by gaps of length {format(gap_length)}
-                 using data with a time resolution of {format(interval(x))}")
-    }
-
-    x <- x[, c("time_diff") := time_diff(get(index_var)), by = c(id_vars)]
-    x <- x[, c("grp_var") := grp_calc(get("time_diff"))]
-
-    calc_dur(x, val_var, index_var, index_var, "grp_var")
+    x
   }
 }
 
@@ -637,6 +648,31 @@ calc_dur <- function(x, val_var, min_var, max_var, grp_var = NULL) {
   res <- res[, c(val_var) := get(val_var) - get(index_var)]
 
   res
+}
+
+#' Callback functions can be combined into an aggregated-callback function,
+#' which iterates over all functions passed as `...`, passing the result of
+#' one sub-callback function as argument `x` to the next.
+#'
+#' @param ... Functions which will be successively applied
+#'
+#' @rdname callback_int
+#' @keywords internal
+#' @export
+combine_callbacks <- function(...) {
+
+  funs <- list(...)
+
+  assert_that(all_fun(funs, is.function))
+
+  function(x, ...) {
+
+    for (fun in funs) {
+      x <- fun(x, ...)
+    }
+
+    x
+  }
 }
 
 hirid_urine <- function(x, val_var, unit_var, ...) {
