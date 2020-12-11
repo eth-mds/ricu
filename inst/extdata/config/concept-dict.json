@@ -1118,6 +1118,29 @@
       ]
     }
   },
+  "cort": {
+    "class": "lgl_cncpt",
+    "description": "corticosteroids",
+    "category": "medications",
+    "sources": {
+      "aumc": [
+        {
+          "ids": [6922, 6995, 7106, 8132, 9042, 9130, 10628],
+          "table": "drugitems",
+          "sub_var": "itemid",
+          "callback": "transform_fun(set_val(TRUE))"
+        }
+      ],
+      "hirid": [
+        {
+          "ids": [146, 151, 1000325, 1000383, 1000431, 1000432, 1000433, 1000434, 1000435, 1000486, 1000487, 1000488, 1000769, 1000770, 1000929],
+          "table": "pharma",
+          "sub_var": "pharmaid",
+          "callback": "transform_fun(set_val(TRUE))"
+        }
+      ]
+    }
+  },
   "crea": {
     "unit": "mg/dL",
     "min": 0,

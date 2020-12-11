@@ -2469,6 +2469,25 @@ cfg <- list(
                  "phn_rate"),
     callback = "norepi_equiv",
     class = "rec_cncpt"
+  ),
+  cort = list(
+    class = "lgl_cncpt",
+    description = "corticosteroids",
+    category = "medications",
+    sources = list(
+      hirid = list(
+        list(ids = c(    146L,     151L, 1000325L, 1000383L, 1000431L,
+                     1000432L, 1000433L, 1000434L, 1000435L, 1000486L,
+                     1000487L, 1000488L, 1000769L, 1000770L, 1000929L),
+             table = "pharma", sub_var = "pharmaid",
+             callback = "transform_fun(set_val(TRUE))")
+      ),
+      aumc = list(
+        list(ids = c(6922L, 6995L, 7106L, 8132L, 9042L, 9130L, 10628L),
+             table = "drugitems", sub_var = "itemid",
+             callback = "transform_fun(set_val(TRUE))")
+      )
+    )
   )
 )
 
