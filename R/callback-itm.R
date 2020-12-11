@@ -606,7 +606,7 @@ eicu_duration <- function(gap_length) {
   function(x, val_var, ...) {
 
     x <- group_measurements(x, gap_length, "grp_var")
-    x <- calc_dur(x, val_var, index_var, index_var, "grp_var")
+    x <- calc_dur(x, val_var, index_var(x), index_var(x), "grp_var")
 
     x
   }
