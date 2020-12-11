@@ -68,7 +68,7 @@ test_that("file size", {
     `curl::curl_fetch_memory` = curl_mock_fm,
     `curl::curl_fetch_disk` = function(...) stop("error"),
     `curl::curl_fetch_stream` = function(...) stop("error"),
-    get_file_size("foo/bar/patients.csv", NULL, NULL)
+    get_file_size("foo/bar/PATIENTS.csv", NULL, NULL)
   )
 
   expect_is(pat_siz, "numeric")
@@ -95,16 +95,16 @@ test_that("hash checking", {
     `curl::curl_fetch_memory` = function(...) stop("error"),
     `curl::curl_fetch_disk` = curl_mock_fd,
     `curl::curl_fetch_stream` = function(...) stop("error"),
-    download_pysionet_file("foo/bar/patients.csv",
+    download_pysionet_file("foo/bar/PATIENTS.csv",
                            file.path(tmp, sha[[2L]][2L]))
   )
 
   expect_null(res)
 
-  expect_true(
+  expect_false(
     check_file_sha256(file.path(tmp, sha[[2L]][2L]), sha[[2L]][1L])
   )
-  expect_false(
+  expect_true(
     check_file_sha256(file.path(tmp, sha[[2L]][2L]), sha[[1L]][1L])
   )
 })
@@ -138,7 +138,7 @@ test_that("file download", {
 
   unlink(list.files(tmp, full.names = TRUE))
 
-  tables <- c("patients.csv", "services.csv")
+  tables <- c("PATIENTS.csv", "SERVICES.csv")
 
   with_mock_curl <- function(...) {
     with_mock(

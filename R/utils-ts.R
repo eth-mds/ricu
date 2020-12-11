@@ -528,13 +528,20 @@ merge_ranges <- function(x, lwr_var = index_var(x), upr_var = data_vars(x),
 
 group_measurements <- function(x, max_gap = hours(6L), group_var = "grp_var") {
 
-  time_diff <- function(x) x - data.table::shift(x)
-
   grp_calc  <- function(x) {
-    tmp <- rle(is_true(x <= max_gap))
+
+    tmp <- rle(x <= max_gap)
+
     val <- tmp[["values"]]
-    tmp[["values"]][val] <- seq_len(sum(val))
-    inverse.rle(tmp)
+    len <- tmp[["lengths"]]
+
+    len[ val] <- len[ val] + 1L
+    len[!val] <- len[!val] - 1L
+
+    if (!val[1L]) len[1L] <- len[1L] + 1L
+
+    res <- rep.int(ifelse(val, len, 1L), ifelse(val, 1L, len))
+    rep(seq_along(res), res)
   }
 
   assert_that(is_ts_tbl(x), is_interval(max_gap), is_scalar(max_gap),
@@ -548,7 +555,8 @@ group_measurements <- function(x, max_gap = hours(6L), group_var = "grp_var") {
                using data with a time resolution of {format(interval(x))}")
   }
 
-  x <- x[, c(group_var) := time_diff(get(index_var)), by = c(id_vars)]
+  x <- x[, c(group_var) := padded_diff(get(index_var), Inf),
+         by = c(id_vars)]
   x <- x[, c(group_var) := grp_calc(get(group_var))]
 
   x
