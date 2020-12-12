@@ -5,7 +5,7 @@ mock_fetch_memory <- function(url, handle, ...) {
                       package = "ricu")
 
   if (identical(file, "")) {
-    stop("file ", file, "not found")
+    stop("file ", url, "not found")
   }
 
   readRDS(file)
