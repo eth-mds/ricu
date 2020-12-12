@@ -7,22 +7,22 @@ test_that("load concepts", {
     item("mimic_demo", "labevents", "itemid", list(c(50809L, 50931L)))
   )
 
-  dat1 <- load_concepts(gluc)
+  dat1 <- load_concepts(gluc, verbose = FALSE)
 
-  expect_is(dat1, "ts_tbl")
+  expect_s3_class(dat1, "ts_tbl")
   expect_true(is_ts_tbl(dat1))
   expect_identical(colnames(dat1), c("icustay_id", "charttime", "gluc"))
   expect_equal(interval(dat1), hours(1L))
 
   albu <- concept("albu", item("mimic_demo", "labevents", "itemid", 50862L))
 
-  dat2 <- load_concepts(c(albu, gluc))
+  dat2 <- load_concepts(c(albu, gluc), verbose = FALSE)
 
   expect_setequal(data_vars(dat2), c("gluc", "albu"))
 
-  dat3 <- load_concepts(gluc, merge_data = FALSE)
+  dat3 <- load_concepts(gluc, merge_data = FALSE, verbose = FALSE)
 
-  expect_is(dat3, "list")
+  expect_type(dat3, "list")
   expect_length(dat3, 1L)
 
   dat3 <- dat3[[1L]]
@@ -31,9 +31,10 @@ test_that("load concepts", {
   expect_identical(colnames(dat3), c("icustay_id", "charttime", "gluc"))
   expect_equal(interval(dat3), hours(1L))
 
-  dat4 <- load_concepts(gluc, aggregate = FALSE, merge_data = FALSE)
+  dat4 <- load_concepts(gluc, aggregate = FALSE, merge_data = FALSE,
+                        verbose = FALSE)
 
-  expect_is(dat4, "list")
+  expect_type(dat4, "list")
   expect_length(dat4, 1L)
 
   dat4 <- dat4[[1L]]
@@ -46,19 +47,20 @@ test_that("load concepts", {
     dat4[, list(gluc = median(gluc)), by = c(meta_vars(dat4))]
   )
 
-  dat5 <- load_concepts(gluc, aggregate = identity, merge_data = FALSE)
+  dat5 <- load_concepts(gluc, aggregate = identity, merge_data = FALSE,
+                        verbose = FALSE)
 
-  expect_is(dat5, "list")
+  expect_type(dat5, "list")
   expect_length(dat5, 1L)
   expect_identical(dat4, dat5[[1L]])
 
   expect_error(
-    load_concepts(gluc, aggregate = "identity")
+    load_concepts(gluc, aggregate = "identity", verbose = FALSE)
   )
 
-  static <- load_concepts(c("sex", "age"), "mimic_demo")
+  static <- load_concepts(c("sex", "age"), "mimic_demo", verbose = FALSE)
 
-  expect_is(static, "id_tbl")
+  expect_s3_class(static, "id_tbl")
   expect_true(is_id_tbl(static))
   expect_setequal(colnames(static), c("icustay_id", "sex", "age"))
   expect_type(static[["age"]], "double")
@@ -74,16 +76,16 @@ test_that("load concepts", {
     list(item("mimic_demo", "labevents", "itemid", c(50809L, 50931L)))
   )
 
-  dat6 <- load_concepts(gluc2)
+  dat6 <- load_concepts(gluc2, verbose = FALSE)
 
   expect_identical(dat1, dat6)
 
   gcs_raw <- concept("gcs_raw", load_dictionary(concepts = "gcs"),
                      set_sed_max = FALSE, class = "rec_cncpt")
 
-  dat7 <- load_concepts(gcs_raw, "mimic_demo")
+  dat7 <- load_concepts(gcs_raw, "mimic_demo", verbose = FALSE)
 
-  expect_is(dat7, "ts_tbl")
+  expect_s3_class(dat7, "ts_tbl")
   expect_true(is_ts_tbl(dat7))
   expect_identical(colnames(dat7), c("icustay_id", "charttime", "gcs_raw"))
   expect_equal(interval(dat7), hours(1L))

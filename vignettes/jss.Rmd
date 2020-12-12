@@ -159,6 +159,10 @@ A slightly different approach to data anonymization was chosen for this dataset,
 
 ## Implementation details
 
+Every dataset is represented by an environment with class attributes and associated metadata objects stored as object attributes to that environment. Dataset environments all inherit from `src_env` and from any number of class names constructed from data source name(s) with a suffix `_env` attached. The environment representing MIMIC-III, for example inherits from `src_env` and `mimic_env`, while the corresponding demo dataset inherits from `src_env`, `mimic_env` and `mimic_demo_env`. These sub-classes are later used for adapting the process of data loading to particularities of individual datasets.
+
+Data source environments are constructed from source configuration objects, list-based structures, inheriting from `src_cfg` and from any number of data source-specific class names with suffix `_cfg` appended in the same way as with `src_env` objects as explained above.
+
 ## Adding external datasets
 
 # Data concepts

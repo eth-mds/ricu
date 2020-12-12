@@ -103,3 +103,5 @@ skip_if_srcs_missing <- function(srcs) {
 
   skip_if(skip, msg)
 }
+
+with_mock <- function(...) mockthat::with_mock(..., .env = asNamespace("ricu"))

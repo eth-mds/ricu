@@ -10,7 +10,14 @@
 \usage{
 import_src(x, ...)
 
-\method{import_src}{src_cfg}(x, data_dir = src_data_dir(x), tables = NULL, force = FALSE, ...)
+\method{import_src}{src_cfg}(
+  x,
+  data_dir = src_data_dir(x),
+  tables = NULL,
+  force = FALSE,
+  verbose = TRUE,
+  ...
+)
 
 \method{import_src}{aumc_cfg}(x, ...)
 
@@ -31,6 +38,8 @@ to.}
 \code{NULL}, all available tables are downloaded.}
 
 \item{force}{Logical flag; if \code{TRUE}, existing data will be re-downloaded}
+
+\item{verbose}{Logical flag indicating whether to print progress information}
 
 \item{progress}{Either \code{NULL} or a progress bar as created by
 \code{\link[progress:progress_bar]{progress::progress_bar()}}}

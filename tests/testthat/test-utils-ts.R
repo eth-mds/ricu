@@ -7,14 +7,14 @@ test_that("collapse/expand", {
   exp <- expand(tbl, "y", "z", step_size = 1L, new_index = "y",
                 keep_vars = c("x", "val"))
 
-  expect_is(exp, "ts_tbl")
+  expect_s3_class(exp, "ts_tbl")
   expect_identical(meta_vars(tbl), meta_vars(exp))
   expect_identical(nrow(exp), sum(as.integer(tbl$z - tbl$x)) + nrow(tbl))
 
   col <- collapse(exp, start_var = "y", end_var = "z", val = unique(val))
 
-  expect_is(col, "ts_tbl")
-  expect_equal(tbl, col, check.attributes = FALSE)
+  expect_s3_class(col, "ts_tbl")
+  expect_equal(tbl, col, ignore_attr = TRUE)
 })
 
 test_that("slide", {
@@ -27,7 +27,7 @@ test_that("slide", {
 
   res <- slide(tbl, sum(z), before = hours(3L))
 
-  expect_is(res, "ts_tbl")
+  expect_s3_class(res, "ts_tbl")
   expect_identical(ncol(tbl), ncol(tbl))
 
   expect_identical(res, slide(tbl, fun(z), before = hours(3L)))
@@ -47,7 +47,7 @@ test_that("slide", {
 
   res <- slide_index(tbl, sum(z), hours(c(2L, 6L)), before = hours(3L))
 
-  expect_is(res, "ts_tbl")
+  expect_s3_class(res, "ts_tbl")
 
   expect_identical(res, slide_index(tbl, fun(z), hours(c(2L, 6L)),
                                     before = hours(3L)))
@@ -61,7 +61,7 @@ test_that("slide", {
 
   res <- hop(tbl, sum(z), wins)
 
-  expect_is(res, "id_tbl")
+  expect_s3_class(res, "id_tbl")
 
   expect_identical(res, hop(tbl, fun(z), wins))
 

@@ -3,7 +3,7 @@ test_that("id_tbl constructors", {
 
   tbl <- id_tbl(a = 1:10, b = rnorm(10))
 
-  expect_is(tbl, "id_tbl")
+  expect_s3_class(tbl, "id_tbl")
   expect_true(is_id_tbl(tbl))
   expect_identical(id_vars(tbl), "a")
   expect_identical(data_vars(tbl), "b")
@@ -17,8 +17,8 @@ test_that("id_tbl constructors", {
   dat <- data.frame(a = 1:10, b = hours(1:10), c = rnorm(10))
   tbl <- as_id_tbl(dat)
 
-  expect_is(dat, "data.frame")
-  expect_is(tbl, "id_tbl")
+  expect_s3_class(dat, "data.frame")
+  expect_s3_class(tbl, "id_tbl")
   expect_true(is_id_tbl(tbl))
   expect_identical(id_vars(tbl), "a")
   expect_identical(data_vars(tbl), c("b", "c"))
@@ -35,7 +35,7 @@ test_that("id_tbl constructors", {
 
   expect_identical(nrow(id_tbl(a = c(1:5, NA, 7:10), b = rnorm(10))), 9L)
 
-  expect_is(as_id_tbl(as.matrix(dat)), "id_tbl")
+  expect_s3_class(as_id_tbl(as.matrix(dat)), "id_tbl")
   expect_error(as_id_tbl(as.matrix(dat), by_ref = TRUE), "should be a")
 
   expect_error(as_id_tbl(dat, "d"), class = "has_cols_assert")
@@ -45,15 +45,15 @@ test_that("id_tbl constructors", {
   dat <- data.table::data.table(a = 1:10, b = hours(1:10), c = rnorm(10))
   tbl <- as_id_tbl(dat, by_ref = TRUE)
 
-  expect_is(tbl, "id_tbl")
-  expect_is(dat, "id_tbl")
+  expect_s3_class(tbl, "id_tbl")
+  expect_s3_class(dat, "id_tbl")
 })
 
 test_that("ts_tbl constructors", {
 
   tbl <- ts_tbl(a = 1:10, b = hours(1:10))
 
-  expect_is(tbl, "ts_tbl")
+  expect_s3_class(tbl, "ts_tbl")
   expect_true(is_ts_tbl(tbl))
   expect_identical(id_vars(tbl), "a")
   expect_identical(index_var(tbl), "b")
@@ -64,8 +64,8 @@ test_that("ts_tbl constructors", {
 
   expect_identical(as_ts_tbl(c(dat), "a"), tbl)
 
-  expect_is(dat, "data.frame")
-  expect_is(tbl, "id_tbl")
+  expect_s3_class(dat, "data.frame")
+  expect_s3_class(tbl, "id_tbl")
   expect_true(is_ts_tbl(tbl))
   expect_identical(id_vars(tbl), "a")
   expect_identical(index_var(tbl), "b")

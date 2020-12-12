@@ -1,14 +1,7 @@
 
 library(testthat)
+library(ricu)
 
-if (requireNamespace("xml2")) {
-  reporter <- MultiReporter$new(
-    reporters = list(JunitReporter$new(file = "test-results.xml"),
-                     CheckReporter$new()
-    )
-  )
-} else {
-  reporter <- check_reporter()
-}
+# for running interactively, do Sys.setenv(TESTTHAT_PKG = "ricu")
 
-test_package("ricu", reporter = reporter)
+test_check("ricu")

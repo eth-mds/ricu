@@ -21,9 +21,9 @@ test_that("mimic load_difftime()", {
   alb1 <- load_difftime("labevents", "mimic_demo", is_val(itemid, 50862L),
                         cols)
 
-  expect_is(alb1, "id_tbl")
+  expect_s3_class(alb1, "id_tbl")
   expect_named(alb1, cols)
-  expect_is(alb1[["charttime"]], "difftime")
+  expect_s3_class(alb1[["charttime"]], "difftime")
   expect_identical(units(alb1[["charttime"]]), "mins")
 
   alb2 <- load_difftime("labevents", "mimic_demo", is_val(itemid, 50862L),
@@ -34,7 +34,7 @@ test_that("mimic load_difftime()", {
                         cols[-1L])
   expect_fsetequal(alb1, alb2)
 
-  expect_is(alb2, "id_tbl")
+  expect_s3_class(alb2, "id_tbl")
   expect_named(alb2, cols)
   expect_identical(units(alb1[["charttime"]]), "mins")
 
@@ -51,9 +51,9 @@ test_that("eicu load_difftime()", {
 
   alb1 <- load_difftime("lab", "eicu_demo", is_val(labname, "albumin"), cols)
 
-  expect_is(alb1, "id_tbl")
+  expect_s3_class(alb1, "id_tbl")
   expect_named(alb1, cols)
-  expect_is(alb1[["labresultoffset"]], "difftime")
+  expect_s3_class(alb1[["labresultoffset"]], "difftime")
   expect_identical(units(alb1[["labresultoffset"]]), "mins")
 
   alb2 <- load_difftime("lab", "eicu_demo", is_val(labname, "albumin"),
@@ -65,7 +65,7 @@ test_that("eicu load_difftime()", {
                         cols[-1L])
   expect_fsetequal(alb1, alb2)
 
-  expect_is(alb2, "id_tbl")
+  expect_s3_class(alb2, "id_tbl")
   expect_named(alb2, cols)
   expect_identical(units(alb1[["labresultoffset"]]), "mins")
 
@@ -83,7 +83,7 @@ test_that("mimic load_id()", {
 
   alb1 <- load_id("labevents", "mimic_demo", is_val(itemid, 50862L), cols)
 
-  expect_is(alb1, "id_tbl")
+  expect_s3_class(alb1, "id_tbl")
   expect_identical(units(alb1[["charttime"]]), "hours")
 
   alb2 <- load_id("labevents", "mimic_demo", is_val(itemid, 50862L), cols,
@@ -102,7 +102,7 @@ test_that("eicu load_id()", {
 
   alb1 <- load_id("lab", "eicu_demo", is_val(labname, "albumin"), cols)
 
-  expect_is(alb1, "id_tbl")
+  expect_s3_class(alb1, "id_tbl")
   expect_identical(units(alb1[["labresultoffset"]]), "hours")
 
   alb2 <- load_id("lab", "eicu_demo", is_val(labname, "albumin"), cols,

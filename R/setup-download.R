@@ -62,7 +62,7 @@
 #' Furthermore, data access has to be [requested
 #' ](https://amsterdammedicaldatascience.nl/#amsterdamumcdb) and for
 #' non-interactive download the download token has to be made available as
-#' environment variable `RICU_AUMC_TOKEN` or passed as `pass` argument to
+#' environment variable `RICU_AUMC_TOKEN` or passed as `token` argument to
 #' `download_src()`. The download token can be retrieved from the URL provided
 #' when granted access as by extracting the string followed by `token=`:
 #'
@@ -85,7 +85,6 @@
 #'
 #' @importFrom utils untar
 #' @importFrom curl new_handle handle_setopt parse_headers
-#' @importFrom curl curl_fetch_disk curl_fetch_stream curl_fetch_memory
 #'
 #' @return Called for side effects and returns `NULL` invisibly.
 #'
@@ -112,17 +111,11 @@ download_src <- function(x, ...) UseMethod("download_src", x)
 #' @param tables Character vector specifying the tables to download. If
 #' `NULL`, all available tables are downloaded.
 #' @param force Logical flag; if `TRUE`, existing data will be re-downloaded
-#' @param user,pass PhysioNet credentials; if `NULL` and environment
-#' variables `RICU_PHYSIONET_USER`/`RICU_PHYSIONET_PASS` are not set, user
-#' input is required
 #'
 #' @rdname download
 #' @export
 download_src.src_cfg <- function(x, data_dir = src_data_dir(x), tables = NULL,
-                                 force = FALSE, user = NULL, pass = NULL,
-                                 ...) {
-
-  warn_dots(...)
+                                 force = FALSE, ...) {
 
   tbl <- determine_tables(x, data_dir, tables, force)
 
@@ -133,17 +126,14 @@ download_src.src_cfg <- function(x, data_dir = src_data_dir(x), tables = NULL,
 
   files <- unlst_str(raw_file_names(tbl))
 
-  download_check_data(data_dir, files, src_url(x), user, pass, src_name(x))
+  download_check_data(data_dir, files, src_url(x), src_name(x), ...)
 
   invisible(NULL)
 }
 
 #' @export
 download_src.hirid_cfg <- function(x, data_dir = src_data_dir(x),
-                                   tables = NULL, force = FALSE, user = NULL,
-                                   pass = NULL, ...) {
-
-  warn_dots(...)
+                                   tables = NULL, force = FALSE, ...) {
 
   tbl <- determine_tables(x, data_dir, tables, force)
 
@@ -158,7 +148,7 @@ download_src.hirid_cfg <- function(x, data_dir = src_data_dir(x),
   tmp <- ensure_dirs(tempfile())
   on.exit(unlink(tmp, recursive = TRUE))
 
-  download_check_data(tmp, fils, src_url(x), user, pass, src_name(x))
+  download_check_data(tmp, fils, src_url(x), src_name(x), ...)
 
   res <- Map(untar, Map(file.path, tmp, todo), raw_file_names(tbl),
              MoreArgs = list(exdir = data_dir))
@@ -168,12 +158,16 @@ download_src.hirid_cfg <- function(x, data_dir = src_data_dir(x),
   invisible(NULL)
 }
 
+#' @param token Download token for AmsterdamUMCdb (see 'Details')
+#' @param verbose Logical flag indicating whether to print progress information
+#'
+#' @rdname download
 #' @export
 download_src.aumc_cfg <- function(x, data_dir = src_data_dir(x),
-                                  tables = NULL, force = FALSE, user = NULL,
-                                  pass = NULL, ...) {
+                                  tables = NULL, force = FALSE, token = NULL,
+                                  verbose = TRUE, ...) {
 
-  warn_dots(...)
+  warn_dots(..., ok_args = c("user", "pass"))
 
   deps <- c(
     `the command line utility 7z` = nzchar(Sys.which("7z")),
@@ -217,8 +211,16 @@ download_src.aumc_cfg <- function(x, data_dir = src_data_dir(x),
 
       tmp <- ensure_dirs(tempfile())
       on.exit(unlink(tmp, recursive = TRUE))
+
       fil <- file.path(tmp, name)
-      prg <- progress_init(size, msg = "Donwloading `aumc` data", what = FALSE)
+
+      if (isTRUE(verbose)) {
+        prg <- progress_init(size, msg = "Donwloading `aumc` data",
+                             what = FALSE)
+      } else {
+        prg <- FALSE
+      }
+
       res <- download_file(url, dest = fil, progr = prg)
 
       if (res[["status_code"]] == 200) {
@@ -247,17 +249,24 @@ download_src.aumc_cfg <- function(x, data_dir = src_data_dir(x),
             class = "aumc_dl")
 }
 
+#' @param user,pass PhysioNet credentials; if `NULL` and environment
+#' variables `RICU_PHYSIONET_USER`/`RICU_PHYSIONET_PASS` are not set, user
+#' input is required
+#'
+#' @rdname download
 #' @export
 download_src.character <- function(x, data_dir = src_data_dir(x),
                                    tables = NULL, force = FALSE,
-                                   user = NULL, pass = NULL, ...) {
+                                   user = NULL, pass = NULL, verbose = TRUE,
+                                   ...) {
 
   if (is.null(tables)) {
     tables <- list(tables)
   }
 
   Map(download_src, load_src_cfg(x, ...), data_dir, tables,
-      MoreArgs = list(force = force, user = user, pass = pass))
+    MoreArgs = list(force = force, user = user, pass = pass, verbose = verbose)
+  )
 
   invisible(NULL)
 }
@@ -289,11 +298,11 @@ download_file <- function(url, handle = new_handle(), dest = NULL,
                           progr = NULL) {
 
   if (is.null(dest)) {
-    return(curl_fetch_memory(url, handle))
+    return(curl::curl_fetch_memory(url, handle))
   }
 
   if (is.null(progr)) {
-    return(curl_fetch_disk(url, dest, handle = handle))
+    return(curl::curl_fetch_disk(url, dest, handle = handle))
   }
 
   con <- file(dest, "ab", blocking = FALSE)
@@ -304,7 +313,7 @@ download_file <- function(url, handle = new_handle(), dest = NULL,
     writeBin(x, con)
   }
 
-  curl_fetch_stream(url, prog_fun, handle = handle)
+  curl::curl_fetch_stream(url, prog_fun, handle = handle)
 }
 
 download_pysionet_file <- function(url, dest = NULL, user = NULL,
@@ -402,7 +411,7 @@ get_cred <- function(x, env, msg) {
         stop_ricu("User input is required")
       }
 
-      x <- readline(msg)
+      x <- read_line(msg)
     }
   }
 
@@ -410,6 +419,8 @@ get_cred <- function(x, env, msg) {
 
   x
 }
+
+read_line <- function(prompt = "") readline(prompt)
 
 get_file_size <- function(url, user, pass) {
 
@@ -425,7 +436,9 @@ get_file_size <- function(url, user, pass) {
   as.numeric(sub("^Content-Length: ", "", resp[hit], ignore.case = TRUE))
 }
 
-download_check_data <- function(dest_folder, files, url, user, pass, src) {
+download_check_data <- function(dest_folder, files, url, src,
+                                user = NULL, pass = NULL, verbose = TRUE,
+                                ...) {
 
   dl_one <- function(url, size, path, prog) {
 
@@ -435,6 +448,8 @@ download_check_data <- function(dest_folder, files, url, user, pass, src) {
 
     invisible(NULL)
   }
+
+  warn_dots(..., ok_args = "token")
 
   chksums <- tryCatch(
     get_sha256(url, user, pass),
@@ -465,16 +480,22 @@ download_check_data <- function(dest_folder, files, url, user, pass, src) {
 
   sizes <- dbl_ply(urls, get_file_size, user, pass)
 
-  pba <- progress_init(sum(sizes),
-    msg = "Downloading {length(files)} file{?s} for {quote_bt(src)}"
-  )
+  if (isTRUE(verbose)) {
+    pba <- progress_init(sum(sizes),
+      msg = "Downloading {length(files)} file{?s} for {quote_bt(src)}"
+    )
+  } else {
+    pba <- FALSE
+  }
 
   with_progress(
     Map(dl_one, urls, sizes, paths, MoreArgs = list(prog = pba)),
     progress_bar = pba
   )
 
-  msg_ricu("Comparing checksums")
+  if (isTRUE(verbose)) {
+    msg_ricu("Comparing checksums")
+  }
 
   checks <- mapply(check_file_sha256, paths, chksums)
 

@@ -3,17 +3,32 @@
 \name{download_src}
 \alias{download_src}
 \alias{download_src.src_cfg}
+\alias{download_src.aumc_cfg}
+\alias{download_src.character}
 \title{Data download utilities}
 \usage{
 download_src(x, ...)
 
-\method{download_src}{src_cfg}(
+\method{download_src}{src_cfg}(x, data_dir = src_data_dir(x), tables = NULL, force = FALSE, ...)
+
+\method{download_src}{aumc_cfg}(
+  x,
+  data_dir = src_data_dir(x),
+  tables = NULL,
+  force = FALSE,
+  token = NULL,
+  verbose = TRUE,
+  ...
+)
+
+\method{download_src}{character}(
   x,
   data_dir = src_data_dir(x),
   tables = NULL,
   force = FALSE,
   user = NULL,
   pass = NULL,
+  verbose = TRUE,
   ...
 )
 }
@@ -29,6 +44,10 @@ to.}
 \code{NULL}, all available tables are downloaded.}
 
 \item{force}{Logical flag; if \code{TRUE}, existing data will be re-downloaded}
+
+\item{token}{Download token for AmsterdamUMCdb (see 'Details')}
+
+\item{verbose}{Logical flag indicating whether to print progress information}
 
 \item{user, pass}{PhysioNet credentials; if \code{NULL} and environment
 variables \code{RICU_PHYSIONET_USER}/\code{RICU_PHYSIONET_PASS} are not set, user
@@ -94,7 +113,7 @@ dataset is available as well. Currently this requires both availability of
 the CRAN package \code{xml2}, as well as the command line utility 7zip.
 Furthermore, data access has to be \href{https://amsterdammedicaldatascience.nl/#amsterdamumcdb}{requested } and for
 non-interactive download the download token has to be made available as
-environment variable \code{RICU_AUMC_TOKEN} or passed as \code{pass} argument to
+environment variable \code{RICU_AUMC_TOKEN} or passed as \code{token} argument to
 \code{download_src()}. The download token can be retrieved from the URL provided
 when granted access as by extracting the string followed by \verb{token=}:\preformatted{https://example.org/?s=download&token=0c27af59-72d1-0349-aa59-00000a8076d9
 }

@@ -72,11 +72,12 @@ import_src <- function(x, ...) UseMethod("import_src", x)
 #' @rdname import
 #' @export
 import_src.src_cfg <- function(x, data_dir = src_data_dir(x), tables = NULL,
-                               force = FALSE, ...) {
+                               force = FALSE, verbose = TRUE, ...) {
 
   assert_that(is.dir(data_dir), is.flag(force))
 
   tbl <- as_tbl_cfg(x)
+  ver <- isTRUE(verbose)
 
   if (is.null(tables)) {
 
@@ -94,8 +95,12 @@ import_src.src_cfg <- function(x, data_dir = src_data_dir(x), tables = NULL,
   skip <- done & todo
 
   if (!force && any(skip)) {
-    msg_ricu("Table{?s} {quote_bt(names(tbl)[skip])} ha{?s/ve} already been
-             imported and will be skipped")
+
+    if (ver) {
+      msg_ricu("Table{?s} {quote_bt(names(tbl)[skip])} ha{?s/ve} already been
+               imported and will be skipped")
+    }
+
     todo <- todo & !skip
   }
 
@@ -107,19 +112,24 @@ import_src.src_cfg <- function(x, data_dir = src_data_dir(x), tables = NULL,
 
   tbl <- tbl[todo]
 
-  pba <- progress_init(n_tick(tbl),
-    msg = "Importing {length(tbl)} table{?s} for {quote_bt(src_name(x))}"
-  )
-
-  for(table in vec_chop(tbl)) {
-    import_tbl(table, data_dir = data_dir, progress = pba, ...)
+  if (ver) {
+    pba <- progress_init(n_tick(tbl),
+      msg = "Importing {length(tbl)} table{?s} for {quote_bt(src_name(x))}"
+    )
+  } else {
+    pba <- FALSE
   }
 
-  if (!(is.null(pba) || pba$finished)) {
-    pba$update(1)
-  }
+  with_progress({
+    for(table in vec_chop(tbl)) {
+      import_tbl(table, data_dir = data_dir, progress = pba, ...)
+    }
+  }, progress_bar = pba)
 
-  msg_ricu("Successfully imported {length(tbl)} table{?s}")
+
+  if (ver) {
+    msg_ricu("Successfully imported {length(tbl)} table{?s}")
+  }
 
   invisible(NULL)
 }
@@ -133,7 +143,7 @@ import_src.aumc_cfg <- function(x, ...) {
 
 #' @export
 import_src.character <- function(x, data_dir = src_data_dir(x), tables = NULL,
-                                 force = FALSE, ...) {
+                                 force = FALSE, verbose = TRUE, ...) {
 
   if (is.character(tables)) {
 
@@ -148,7 +158,8 @@ import_src.character <- function(x, data_dir = src_data_dir(x), tables = NULL,
 
   assert_that(is.list(tables))
 
-  Map(import_src, load_src_cfg(x, ...), data_dir, tables, force)
+  Map(import_src, load_src_cfg(x, ...), data_dir, tables, force,
+      MoreArgs = list(verbose = verbose))
 
   invisible(NULL)
 }

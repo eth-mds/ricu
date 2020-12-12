@@ -55,6 +55,7 @@ Suggests:
     covr,
     testthat (>= 3.0.0),
     withr,
+    mockthat,
     pkgload,
     mimic.demo,
     eicu.demo,
@@ -66,5 +67,7 @@ Suggests:
     forestmodel,
     rticles
 RoxygenNote: 7.1.1
+Remotes: nbenn/mockthat
 Additional_repositories: https://septic-tank.github.io/physionet-demo
 VignetteBuilder: knitr
+Config/testthat/edition: 3
