@@ -1749,6 +1749,12 @@
           "ids": 6773,
           "table": "numericitems",
           "sub_var": "itemid"
+        },
+        {
+          "ids": 9967,
+          "table": "numericitems",
+          "sub_var": "itemid",
+          "callback": "blood_cell_ratio"
         }
       ],
       "eicu": [

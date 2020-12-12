@@ -84,7 +84,7 @@ for (x in c("PATIENTS.csv", "SERVICES.csv")) {
 test_that("import src", {
 
   tbls <- list.files(tmp_srcs, "\\.csv")
-  fstf <- file.path(tmp_srcs, sub("\\.csv", ".fst", tbls))
+  fstf <- file.path(tmp_srcs, sub("\\.csv", ".fst", tolower(tbls)))
 
   expect_invisible(
     res <- import_src("mimic_demo", tmp_srcs, verbose = FALSE)

@@ -886,7 +886,9 @@ cfg <- list(
         list(ids = "-eos", table = "lab", sub_var = "labname")
       ),
       aumc = list(
-        list(ids = 6773L, table = "numericitems", sub_var = "itemid")
+        list(ids = 6773L, table = "numericitems", sub_var = "itemid"),
+        list(ids = 9967L, table = "numericitems", sub_var = "itemid",
+             callback = "blood_cell_ratio")
       )
     )
   ),
