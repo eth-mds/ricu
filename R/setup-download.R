@@ -83,7 +83,6 @@
 #' @param x Object specifying the source configuration
 #' @param ... Generic consistency
 #'
-#' @importFrom utils untar
 #' @importFrom curl new_handle handle_setopt parse_headers
 #'
 #' @return Called for side effects and returns `NULL` invisibly.
@@ -150,13 +149,15 @@ download_src.hirid_cfg <- function(x, data_dir = src_data_dir(x),
 
   download_check_data(tmp, fils, src_url(x), src_name(x), ...)
 
-  res <- Map(untar, Map(file.path, tmp, todo), raw_file_names(tbl),
+  res <- Map(ricu_untar, Map(file.path, tmp, todo), raw_file_names(tbl),
              MoreArgs = list(exdir = data_dir))
 
   assert_that(all_fun(res, identical, 0L))
 
   invisible(NULL)
 }
+
+ricu_untar <- function(...) utils::untar(...)
 
 #' @param token Download token for AmsterdamUMCdb (see 'Details')
 #' @param verbose Logical flag indicating whether to print progress information
@@ -187,7 +188,7 @@ download_src.aumc_cfg <- function(x, data_dir = src_data_dir(x),
     return(invisible(NULL))
   }
 
-  tok <- get_cred(pass, "RICU_AUMC_TOKEN", "token: ")
+  tok <- get_cred(token, "RICU_AUMC_TOKEN", "token: ")
 
   url <- paste0("https://filesender.surf.nl/?s=download&token=", tok)
   res <- download_file(url)

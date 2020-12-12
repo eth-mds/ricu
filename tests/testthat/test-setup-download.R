@@ -212,7 +212,7 @@ test_that("src download", {
   expect_invisible(
     res <- mockthat::with_mock(
       download_check_data = NULL,
-      untar = 0L,
+      ricu_untar = 0L,
       download_src(src, dir)
     )
   )
