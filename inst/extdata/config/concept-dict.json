@@ -85,7 +85,7 @@
     }
   },
   "adh_rate": {
-    "unit": "units/min",
+    "unit": ["units/min", "U/min"],
     "description": "vasopressin rate",
     "category": "medications",
     "sources": {

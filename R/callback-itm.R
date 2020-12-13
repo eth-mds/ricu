@@ -513,7 +513,7 @@ hirid_rate_kg <- function(x, val_var, unit_var, grp_var, env, ...) {
                   unexpected units")
   }
 
-  x <- dt_gforce(x, "sum", vars = val_var)
+  x <- dt_gforce(x, "sum", by = c(meta_vars(x), grp_var), vars = val_var)
   x <- add_weight(x, env, "weight")
 
   frac <- 1 / as.double(interval(x), units = "mins")
@@ -522,17 +522,29 @@ hirid_rate_kg <- function(x, val_var, unit_var, grp_var, env, ...) {
     frac * get(val_var) / get("weight"), "mcg/kg/min", NULL)
   ]
 
-  expand_intervals(x, c(val_var, unit_var), grp_var)
+  expand_intervals(x, val_var, grp_var)
 }
 
 hirid_rate <- function(x, val_var, unit_var, grp_var, env, ...) {
 
-  frac <- 1 / as.double(interval(x), units = "mins")
+  unit <- table(x[[unit_var]])
+  unit <- names(unit)[which.max(unit)]
 
-  x <- dt_gforce(x, "sum", vars = val_var)
-  x <- x[, c(val_var, unit_var) := list(
-    frac * get(val_var), paste(get(unit_var), "min", sep = "/")
-  )]
+  old_row <- nrow(x)
+  x <- x[get(unit_var) == unit, ]
+  dif_row <- old_row - nrow(x)
+
+  if (dif_row > 0) {
+    msg_progress("lost {dif_row} ({prcnt(dif_row, old_row)}) entries due to
+                  unexpected units")
+  }
+
+  x <- dt_gforce(x, "sum", by = c(meta_vars(x), grp_var), vars = val_var)
+
+  frac <- 1 / as.double(interval(x), units = "mins")
+  unit <- paste(unit, "min", sep = "/")
+
+  x <- x[, c(val_var, unit_var) := list(frac * get(val_var), unit)]
 
   expand_intervals(x, c(val_var, unit_var), grp_var)
 }

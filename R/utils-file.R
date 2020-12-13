@@ -242,7 +242,7 @@ user_config_path <- function() {
   if (is.na(res)) {
     NULL
   } else {
-    res
+    strsplit(res, ",")[[1L]]
   }
 }
 

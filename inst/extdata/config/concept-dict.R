@@ -2412,7 +2412,7 @@ cfg <- list(
     class = "rec_cncpt"
   ),
   adh_rate = list(
-    unit = "units/min",
+    unit = c("units/min", "U/min"),
     description = "vasopressin rate",
     category = "medications",
     sources = list(

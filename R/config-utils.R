@@ -86,7 +86,7 @@ vec_ptype_abbr.col_cfg <- function(x, ...) main_class(x)
 
 #' @export
 vec_ptype_full.col_cfg <- function(x, ...) {
-  class_descr(x, quote_bt(default_var_names(x)), collapse = ", ")
+  class_descr(x, default_var_names(x), collapse = ", ")
 }
 
 #' @export
