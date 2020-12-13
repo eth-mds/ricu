@@ -160,9 +160,21 @@ A slightly different approach to data anonymization was chosen for this dataset,
 
 Every dataset is represented by an environment with class attributes and associated metadata objects stored as object attributes to that environment. Dataset environments all inherit from `src_env` and from any number of class names constructed from data source name(s) with a suffix `_env` attached. The environment representing MIMIC-III, for example inherits from `src_env` and `mimic_env`, while the corresponding demo dataset inherits from `src_env`, `mimic_env` and `mimic_demo_env`. These sub-classes are later used for adapting the process of data loading to particularities of individual datasets.
 
+A `src_env` contains an active binding per contained table, which returns a `src_tbl` object representing the requested table after having checked that the required data is locally available (and querying the user for download if not). As is the case for `src_env` objects, `src_tbl` object inherit from additional classes such that certain per-dataset behavior can be customized. The `admissions` table of the MIMIC-III demo dataset for example inherits (among other classes) from `mimic_demo_tbl` and `mimic_tbl`.
+
+```{r mimic-adm, eval = srcs_avail("mimic_demo")}
+mimic_demo$admissions
+```
+
+Powered by the \pkg{prt} package, `src_tbl` objects can be subsetted via the base R S3 generic function [base::subset()] and using non-standard evaluation:
+
+```{r mimic-sub, eval = srcs_avail("mimic_demo")}
+subset(mimic_demo$admissions, subject_id > 44000, language:ethnicity)
+```
+
 ### Data source configuration
 
-Data source environments are constructed from source configuration objects, list-based structures, inheriting from `src_cfg` and from any number of data source-specific class names with suffix `_cfg` appended in the same way as with `src_env` objects as explained above. The exported function `load_src_cfg()` reads a JSON formatted file and creates `src_cfg` and therein contained objects.
+Data source environments (and corresponding `src_tbl`) are constructed from source configuration objects, list-based structures, inheriting from `src_cfg` and from any number of data source-specific class names with suffix `_cfg` appended in the same way as with `src_env` objects as explained above. The exported function `load_src_cfg()` reads a JSON formatted file using \pkg{jsonlite} \citep{ooms2014}, and creates `src_cfg` and therein contained objects.
 
 ```{r mimic-cfg}
 cfg <- load_src_cfg("mimic_demo")
@@ -194,11 +206,11 @@ Each table may for example have a default `index_var`, i.e. a column that is use
 
 #### Table configuration
 
-Finally, `tbl_cfg` objects are used during the initial set-up of a data source. In order to create a representation of a table that is accessible from `ricu` from raw data, several key pieces of information are required:
+Finally, `tbl_cfg` objects are used during the initial set-up of a data source. In order to create a representation of a table that is accessible from \pkg{ricu} from raw data, several key pieces of information are required:
 
 * File name(s): In the simplest case, a single file corresponds to a single table. Other scenarios that have been encountered include tables partitioned into multiple files and .tar archives containing multiple tables.
 
-* Column specification: For each column, the expected data type has to be known, as well as a pair of names, one corresponding to the raw data column name and one corresponding to the column name to be used within `ricu`.
+* Column specification: For each column, the expected data type has to be known, as well as a pair of names, one corresponding to the raw data column name and one corresponding to the column name to be used within \pkg{ricu}.
 
 * (Optional) number of rows: Used as sanity check whenever available.
 
@@ -209,6 +221,23 @@ as_tbl_cfg(mi_cfg)
 ```
 
 For the `chartevents` table of the MIMIC-III demo dataset, for example, rows are partitioned into 2 groups and the expected number of rows is unknown as this is missing from the corresponding `tbl_cfg` object.
+
+### Data source set-up
+
+In order to make a dataset accessible to \pkg{ricu}, three steps are necessary, each handled by an exported S3 generic function: `download_scr()`, `import_src()` and `attach_src()`. While the first two steps, download and import are one-time procedures, attaching is carried out every time the package namespace is loaded. By default, all data sources known to \pkg{ricu} are configured to be attached and in case some (or all) data is missing for a given data source, the missing data is downloaded and imported on first access (and pending user consent). For download to run through without user interaction, several environment variables can be configured:
+
+* `RICU_PHYSIONET_USER`/`RICU_PHYSIONET_PASS`: PhysioNet user name and password with access to the requested dataset.
+* `RICU_AUMC_TOKEN`: Download token, extracted from the download URL received when requesting data access.
+
+If any of the required access credentials are not available as environment variables, the user is queried in interactive sessions. Each of the datasets requires 5-10 GB disk space for permanent storage. In addition to that, 50-75 GB of temporary dist storage are required during download and import of any of the datasets, roughly corresponding to the respective maximum table sizes (uncompressed). Memory requirements are kept low by performing all set-up operations only on subsets of rows at the time, such that laptop-class hardware is sufficient for handling these datasets.
+
+Further environment variable can be set to customize certain aspect of \pkg{ricu} data handling:
+
+* `RICU_DATA_PATH`: Data storage location (can be queried by calling `data_dir()`).
+* `RICU_CONFIG_PATH`: Comma-separated paths to directories containing configuration files (in addition to the default location; retrievable using `config_paths()`).
+* `RICU_SRC_LOAD`: Comma-separated data source names that are set up for being automatically attached on namespace loading (the current set of data sources is available as `auto_attach_srcs()`).
+
+After successful data download, importing prepares tables for efficient random row-access, for which the raw data format (.csv) is not well suited. Tables are read in using \pkg{readr} \citep{hester2020}, potentially partitioned row-wise, and re-saved using \pkg{fst} \citep{klik2020}. Finally, attaching a dataset creates a corresponding `src_env` object which together with associated meta-data is used by \pkg{ricu} to run queries against the data.
 
 # Data concepts
 
