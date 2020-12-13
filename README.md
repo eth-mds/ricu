@@ -80,8 +80,8 @@ print(mimic_demo$admissions)
 
 <PRE class="fansi fansi-output"><CODE>#&gt; <span style='color: #949494;'># &lt;mimic_tbl&gt;: [129 ✖ 19]</span><span>
 #&gt; </span><span style='color: #949494;'># ID options:  subject_id (patient) &lt; hadm_id (hadm) &lt; icustay_id (icustay)</span><span>
-#&gt; </span><span style='color: #949494;'># Defaults:    admission_type (value)</span><span>
-#&gt; </span><span style='color: #949494;'># Time vars:   admittime, dischtime, deathtime, edregtime, edouttime</span><span>
+#&gt; </span><span style='color: #949494;'># Defaults:    `admission_type` (val)</span><span>
+#&gt; </span><span style='color: #949494;'># Time vars:   `admittime`, `dischtime`, `deathtime`, `edregtime`, `edouttime`</span><span>
 #&gt;     row_id subject_id hadm_id admittime           dischtime
 #&gt;      </span><span style='color: #949494;font-style: italic;'>&lt;int&gt;</span><span>      </span><span style='color: #949494;font-style: italic;'>&lt;int&gt;</span><span>   </span><span style='color: #949494;font-style: italic;'>&lt;int&gt;</span><span> </span><span style='color: #949494;font-style: italic;'>&lt;dttm&gt;</span><span>              </span><span style='color: #949494;font-style: italic;'>&lt;dttm&gt;</span><span>
 #&gt; </span><span style='color: #949494;'>1</span><span>    </span><span style='text-decoration: underline;'>12</span><span>258      </span><span style='text-decoration: underline;'>10</span><span>006  </span><span style='text-decoration: underline;'>142</span><span>345 2164-10-23 </span><span style='color: #949494;'>21:09:00</span><span> 2164-11-01 </span><span style='color: #949494;'>17:15:00</span><span>
@@ -111,9 +111,9 @@ print(
 )
 ```
 
-<PRE class="fansi fansi-output"><CODE>#&gt; <span style='color: #949494;'># A `ts_tbl`: 299 ✖ 4</span><span>
-#&gt; </span><span style='color: #949494;'># Id var:     `icustay_id`</span><span>
-#&gt; </span><span style='color: #949494;'># Index var:  `charttime` (1 hours)</span><span>
+<PRE class="fansi fansi-output"><CODE>#&gt; <span style='color: #949494;'># An `id_tbl`: 299 ✖ 4</span><span>
+#&gt; </span><span style='color: #949494;'># Id var:      `icustay_id`</span><span>
+#&gt; </span><span style='color: #949494;'># Index var:   `charttime` (1 hours)</span><span>
 #&gt;     icustay_id charttime valuenum valueuom
 #&gt;          </span><span style='color: #949494;font-style: italic;'>&lt;int&gt;</span><span> </span><span style='color: #949494;font-style: italic;'>&lt;drtn&gt;</span><span>       </span><span style='color: #949494;font-style: italic;'>&lt;dbl&gt;</span><span> </span><span style='color: #949494;font-style: italic;'>&lt;chr&gt;</span><span>
 #&gt; </span><span style='color: #949494;'>1</span><span>       </span><span style='text-decoration: underline;'>201</span><span>006   0 hours      2.4 g/dL
