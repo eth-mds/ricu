@@ -3318,9 +3318,15 @@
     "sources": {
       "aumc": [
         {
-          "ids": 6786,
+          "ids": [6786, 11856],
           "table": "numericitems",
           "sub_var": "itemid"
+        },
+        {
+          "ids": 14254,
+          "table": "numericitems",
+          "sub_var": "itemid",
+          "callback": "blood_cell_ratio"
         }
       ],
       "eicu": [

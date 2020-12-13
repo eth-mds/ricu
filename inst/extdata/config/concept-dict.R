@@ -910,7 +910,10 @@ cfg <- list(
              class = "hrd_itm")
       ),
       aumc = list(
-        list(ids = 6786L, table = "numericitems", sub_var = "itemid")
+        list(ids = c(6786L, 11856L), table = "numericitems",
+             sub_var = "itemid"),
+        list(ids = 14254L, table = "numericitems", sub_var = "itemid",
+             callback = "blood_cell_ratio")
       )
     )
   ),
