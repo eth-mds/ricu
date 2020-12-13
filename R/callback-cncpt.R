@@ -446,6 +446,11 @@ vaso60 <- function(..., max_gap = mins(5L), interval = NULL) {
     res <- dat[["rate"]]
     res <- rename_cols(res[0L], sub, data_vars(res), pattern = "_rate$",
                        replacement = "60")
+
+    if (is_ts_tbl(res)) {
+      res <- rm_cols(res, index_var(res))
+    }
+
     return(res)
   }
 
