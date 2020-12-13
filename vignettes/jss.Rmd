@@ -73,7 +73,6 @@ if (!srcs_avail(srcs)) {
   msg <- paste(strwrap(msg), collapse="\n")
   message(msg)
 }
-
 ```
 
 # Introduction
@@ -149,7 +148,7 @@ Collected during the period of January 2008 through June 2016, roughly 700 disti
 The data is available in three states: as raw data and in preprocessed form, with preprocessed data being represented by two intermediary pipeline stages from \cite{hyland2020}. While \pkg{ricu} focuses exclusively on raw data, the *merged* stage represents a selection of variables that were deemed most predictive for determining circulatory failure, which are then merged into 18 meta-variables, representing different clinical concepts. Time stamps in *merged* data are left unchanged, yielding irregular time series, whereas for the *imputed* stage, data is down-sampled to a 5 minute grid and missing values are imputed using a scheme discussed in \cite{hyland2020}.
 
 ### AmsterdamUMCdb
-As a second European dataset, also focusing on increased time-resolution over the US datasets, [AmsterdamUMCdb](https://amsterdammedicaldatascience.nl/#amsterdamumcdb) has been made available in late 2019, containing data on over 23,000 intensive care unit and high dependency unit admissions of adult patients during the years 2003 through 2016. The department of Intensive Care at Amsterdam University Medical Center is a mixed medical-surgical ICU with 34 available beds. Covering middle ground between the US datasets and HiRID in terms if breadth of included data, while providing a maximal time-resolution of 1 minute, AmsterdamUMCdb constitutes a well organized high quality ICU data resource organized as 7-table relational structure.
+As a second European dataset, also focusing on increased time-resolution over the US datasets, [AmsterdamUMCdb](https://amsterdammedicaldatascience.nl/#amsterdamumcdb) has been made available in late 2019, containing data on over 23,000 intensive care unit and high dependency unit admissions of adult patients during the years 2003 through 2016. The department of Intensive Care at Amsterdam University Medical Center is a mixed medical-surgical ICU with up to 32 bed ICU and 12 bed high dependency units with an average of 1000-2000 yearly admission. Covering middle ground between the US datasets and HiRID in terms if breadth of included data, while providing a maximal time-resolution of 1 minute, AmsterdamUMCdb constitutes a well organized high quality ICU data resource organized as 7-table relational structure.
 
 ```{r aumc-tables, eval = srcs_avail("aumc")}
 aumc
@@ -161,9 +160,55 @@ A slightly different approach to data anonymization was chosen for this dataset,
 
 Every dataset is represented by an environment with class attributes and associated metadata objects stored as object attributes to that environment. Dataset environments all inherit from `src_env` and from any number of class names constructed from data source name(s) with a suffix `_env` attached. The environment representing MIMIC-III, for example inherits from `src_env` and `mimic_env`, while the corresponding demo dataset inherits from `src_env`, `mimic_env` and `mimic_demo_env`. These sub-classes are later used for adapting the process of data loading to particularities of individual datasets.
 
-Data source environments are constructed from source configuration objects, list-based structures, inheriting from `src_cfg` and from any number of data source-specific class names with suffix `_cfg` appended in the same way as with `src_env` objects as explained above.
+### Data source configuration
 
-## Adding external datasets
+Data source environments are constructed from source configuration objects, list-based structures, inheriting from `src_cfg` and from any number of data source-specific class names with suffix `_cfg` appended in the same way as with `src_env` objects as explained above. The exported function `load_src_cfg()` reads a JSON formatted file and creates `src_cfg` and therein contained objects.
+
+```{r mimic-cfg}
+cfg <- load_src_cfg("mimic_demo")
+str(cfg, max.level = 2L, width = 70L)
+mi_cfg <- cfg[["mimic_demo"]]
+```
+
+In addition to required fields `name` and `prefix` (used as class prefix as explained above), as well as further arbitrary fields (`url` in this case), several additional configuration objects are part of `src_cfg`.
+
+#### ID configuration
+
+An `id_cfg` object contains an ordered set of key-value pairs representing patient ID systems in a dataset. An implicit assumption currently is that a given patient ID system is used consistently throughout a dataset, meaning that for example an ICU stay ID is always referred to by the same name throughout all tables containing a corresponding column. Owing to the relational origins of these datasets this has been fulfilled in all instances encountered so far. In MIMIC-III, ID systems
+
+```{r mimic-ids}
+as_id_cfg(mi_cfg)
+```
+
+are available, allowing for identification of individual patients, their (potentially multiple) hospital admissions over the course of the years and their corresponding ICU admissions (as well as potential re-admissions). Ordering corresponds to cardinality: moving to larger values implies moving along a one-to-many relationship. This information is used in data-loading, whenever the target ID system is not contained in the raw data.
+
+#### Default column configuration
+
+Again used in data-loading, this per-table set of key-value pairs specifies column defaults as `col_cfg` object.
+
+```{r mimic-col}
+as_col_cfg(mi_cfg)
+```
+
+Each table may for example have a default `index_var`, i.e. a column that is used to define an ordering in time over rows, or a default set of `time_vars`, which will be treated as time variables (important for converting between ID systems for example), but not as time-series indices. For the `admissions` table, for example, there is no default `index_var` defined, but a total of 5 columns are considered to be time variables, while for the `inputevents_mv`, one of the 4 available time variables makes sense as default index variable. During data-loading, there per-table defaults can be overridden and they mainly serve to reduce verbosity of calls in data-loading. In addition to the presently available column defaults, arbitrary further keys can be added.
+
+#### Table configuration
+
+Finally, `tbl_cfg` objects are used during the initial set-up of a data source. In order to create a representation of a table that is accessible from `ricu` from raw data, several key pieces of information are required:
+
+* File name(s): In the simplest case, a single file corresponds to a single table. Other scenarios that have been encountered include tables partitioned into multiple files and .tar archives containing multiple tables.
+
+* Column specification: For each column, the expected data type has to be known, as well as a pair of names, one corresponding to the raw data column name and one corresponding to the column name to be used within `ricu`.
+
+* (Optional) number of rows: Used as sanity check whenever available.
+
+* (Optional) partitioning information: For very *long* tables it can be useful to specify a row-partitioning. This currently is only possible for numeric columns by providing a vector of break points.
+
+```{r mimic-tbl}
+as_tbl_cfg(mi_cfg)
+```
+
+For the `chartevents` table of the MIMIC-III demo dataset, for example, rows are partitioned into 2 groups and the expected number of rows is unknown as this is missing from the corresponding `tbl_cfg` object.
 
 # Data concepts
 
