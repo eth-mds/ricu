@@ -555,6 +555,8 @@ bmi <- function(..., interval = NULL) {
     get("weight") / (get("height") / 100) ^ 2, NULL, NULL
   )]
 
+  res <- filter_bounds(res, "bmi", 10, 100)
+
   setattr(data_col(res), "units", "kg/m^2")
 
   res

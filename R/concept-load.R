@@ -407,18 +407,40 @@ load_concepts.cncpt <- function(x, aggregate = NULL, ..., progress = NULL) {
   stats::aggregate(x, res, aggregate)
 }
 
+filter_bounds <- function(x, col, min, max) {
+
+  check_bound <- function(vc, val, op) {
+
+    nna <- !is.na(vc)
+
+    if (is.null(val)) {
+      return(nna)
+    }
+
+    nna & op(vc, val)
+  }
+
+  keep  <- check_bound(x[[col]], min, `>=`) & check_bound(x[[col]], max, `<=`)
+  n_row <- nrow(x)
+
+  x <- x[keep, ]
+
+  n_rm <- n_row - nrow(x)
+
+  if (n_rm > 0L) {
+    msg_progress("removed {n_rm} ({prcnt(n_rm, n_row)}) of rows due to out
+                  of range entries")
+  }
+
+  x
+}
+
 #' @rdname load_concepts
 #' @export
 load_concepts.num_cncpt <- function(x, aggregate = NULL, ...,
                                     progress = NULL) {
 
   force_num <- force_type("double")
-
-  check_bound <- function(x, val, op) {
-    vc  <- x[["val_var"]]
-    nna <- !is.na(vc)
-    if (is.null(val)) nna else nna & op(vc, val)
-  }
 
   report_unit <- function(x, unt) {
 
@@ -446,21 +468,7 @@ load_concepts.num_cncpt <- function(x, aggregate = NULL, ...,
   res <- load_concepts(as_item(x), ..., progress = progress)
   res <- rm_na_val_var(res)
   res <- set(res, j = "val_var", value = force_num(res[["val_var"]]))
-
-  keep <- check_bound(res, x[["min"]], `>=`) &
-          check_bound(res, x[["max"]], `<=`)
-
-  if (!all(keep)) {
-
-    n_row <- nrow(res)
-
-    res <- res[keep, ]
-
-    n_rm <- n_row - nrow(res)
-
-    msg_progress("removed {n_rm} ({prcnt(n_rm, n_row)}) of rows due to out
-                  of range entries")
-  }
+  res <- filter_bounds(res, "val_var", x[["min"]], x[["max"]])
 
   unit <- x[["unit"]]
 
