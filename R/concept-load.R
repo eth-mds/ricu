@@ -429,7 +429,37 @@ filter_bounds <- function(x, col, min, max) {
 
   if (n_rm > 0L) {
     msg_progress("removed {n_rm} ({prcnt(n_rm, n_row)}) of rows due to out
-                  of range entries")
+                  of range (or `NA`) entries")
+  }
+
+  x
+}
+
+report_set_unit <- function(x, unit_var, val_var, unit) {
+
+  if (has_name(x, unit_var)) {
+
+    ct  <- table(x[[unit_var]], useNA = "ifany")
+    nm  <- names(ct)
+    pct <- prcnt(ct)
+
+    if (has_length(unit)) {
+
+      ok <- tolower(nm) %in% tolower(unit)
+
+      if (!all(ok)) {
+        msg_progress("not all units are in {concat('[', unit, ']')}:
+                      {concat(nm[!ok])} ({pct[!ok]})")
+      }
+
+    } else if (length(nm) > 1L) {
+
+      msg_progress("multiple units detected: {concat(nm, ' (', pct, ')')}")
+    }
+  }
+
+  if (not_null(unit)) {
+    setattr(x[[val_var]], "units", unit[1L])
   }
 
   x
@@ -442,43 +472,11 @@ load_concepts.num_cncpt <- function(x, aggregate = NULL, ...,
 
   force_num <- force_type("double")
 
-  report_unit <- function(x, unt) {
-
-    ct  <- table(x[["unit_var"]], useNA = "ifany")
-    nm  <- names(ct)
-    pct <- prcnt(ct)
-
-    if (has_length(unt)) {
-
-      ok <- tolower(nm) %in% tolower(unt)
-
-      if (all(ok)) {
-        return(NULL)
-      }
-
-      msg_progress("not all units are in {concat('[', unt, ']')}:
-                    {concat(nm[!ok])} ({pct[!ok]})")
-
-    } else if (length(nm) > 1L) {
-
-      msg_progress("multiple units detected: {concat(nm, ' (', pct, ')')}")
-    }
-  }
-
   res <- load_concepts(as_item(x), ..., progress = progress)
-  res <- rm_na_val_var(res)
   res <- set(res, j = "val_var", value = force_num(res[["val_var"]]))
+
   res <- filter_bounds(res, "val_var", x[["min"]], x[["max"]])
-
-  unit <- x[["unit"]]
-
-  if (has_name(res, "unit_var")) {
-    report_unit(res, unit)
-  }
-
-  if (not_null(unit)) {
-    setattr(res[["val_var"]], "units", unit[1L])
-  }
+  res <- report_set_unit(res, "unit_var", "val_var", x[["unit"]])
 
   res <- rm_cols(res, setdiff(data_vars(res), "val_var"), by_ref = TRUE)
   res <- rename_cols(res, x[["name"]], "val_var", by_ref = TRUE)

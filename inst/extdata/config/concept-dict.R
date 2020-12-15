@@ -2054,11 +2054,9 @@ cfg <- list(
     category = "demographics",
     sources = list(
       mimic = list(
-        list(ids = c(920L, 1394L, 4187L, 3486L, 226707L),
+        list(ids = c(920L, 1394L, 3485L, 4187L, 4188L, 3486L, 226707L),
              table = "chartevents", sub_var = "itemid",
-             callback = "convert_unit(binary_op(`*`, 2.54), 'cm', '^in')"),
-        list(ids = c(3485L, 4188L), table = "chartevents",
-             sub_var = "itemid")
+             callback = "convert_unit(binary_op(`*`, 2.54), 'cm', '^in')")
       ),
       eicu = list(
         list(table = "patient", val_var = "admissionheight",

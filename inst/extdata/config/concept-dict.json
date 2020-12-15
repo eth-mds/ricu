@@ -2364,28 +2364,18 @@
       ],
       "mimic": [
         {
-          "ids": [920, 1394, 4187, 3486, 226707],
+          "ids": [920, 1394, 3485, 4187, 4188, 3486, 226707],
           "table": "chartevents",
           "sub_var": "itemid",
           "callback": "convert_unit(binary_op(`*`, 2.54), 'cm', '^in')"
-        },
-        {
-          "ids": [3485, 4188],
-          "table": "chartevents",
-          "sub_var": "itemid"
         }
       ],
       "mimic_demo": [
         {
-          "ids": [920, 1394, 4187, 3486, 226707],
+          "ids": [920, 1394, 3485, 4187, 4188, 3486, 226707],
           "table": "chartevents",
           "sub_var": "itemid",
           "callback": "convert_unit(binary_op(`*`, 2.54), 'cm', '^in')"
-        },
-        {
-          "ids": [3485, 4188],
-          "table": "chartevents",
-          "sub_var": "itemid"
         }
       ]
     }
