@@ -1929,6 +1929,7 @@ cfg <- list(
   ),
   ins = list(
     unit = "units/hr",
+    min = 0,
     description = "insulin",
     category = "medications",
     sources = list(
