@@ -2368,6 +2368,13 @@
           "table": "chartevents",
           "sub_var": "itemid",
           "callback": "convert_unit(binary_op(`*`, 2.54), 'cm', '^in')"
+        },
+        {
+          "regex": "height:",
+          "table": "noteevents",
+          "sub_var": "text",
+          "callback": "transform_fun(noteevents_weights)",
+          "class": "rgx_itm"
         }
       ],
       "mimic_demo": [
@@ -2376,6 +2383,13 @@
           "table": "chartevents",
           "sub_var": "itemid",
           "callback": "convert_unit(binary_op(`*`, 2.54), 'cm', '^in')"
+        },
+        {
+          "regex": "height:",
+          "table": "noteevents",
+          "sub_var": "text",
+          "callback": "transform_fun(noteevents_weights)",
+          "class": "rgx_itm"
         }
       ]
     }

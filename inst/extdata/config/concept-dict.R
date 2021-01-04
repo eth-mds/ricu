@@ -2056,7 +2056,10 @@ cfg <- list(
       mimic = list(
         list(ids = c(920L, 1394L, 3485L, 4187L, 4188L, 3486L, 226707L),
              table = "chartevents", sub_var = "itemid",
-             callback = "convert_unit(binary_op(`*`, 2.54), 'cm', '^in')")
+             callback = "convert_unit(binary_op(`*`, 2.54), 'cm', '^in')"),
+        list(regex = "height:", table = "noteevents", sub_var = "text",
+             callback = "transform_fun(noteevents_weights)",
+             class = "rgx_itm")
       ),
       eicu = list(
         list(table = "patient", val_var = "admissionheight",

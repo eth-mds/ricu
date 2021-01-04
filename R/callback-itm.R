@@ -768,3 +768,8 @@ aumc_bxs <- function(x, val_var, dir_var, ...) {
 }
 
 aumc_rass <- function(x) as.integer(substr(x, 1L, 2L))
+
+noteevents_weights <- function(x) {
+  sub(".*(?:height:)\\s?(?:\\(in\\))?\\s?(\\S*)\\s+.*", "\\1", x,
+      ignore.case = TRUE)
+}
