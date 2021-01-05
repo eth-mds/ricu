@@ -160,17 +160,27 @@ A slightly different approach to data anonymization was chosen for this dataset,
 
 Every dataset is represented by an environment with class attributes and associated metadata objects stored as object attributes to that environment. Dataset environments all inherit from `src_env` and from any number of class names constructed from data source name(s) with a suffix `_env` attached. The environment representing MIMIC-III, for example inherits from `src_env` and `mimic_env`, while the corresponding demo dataset inherits from `src_env`, `mimic_env` and `mimic_demo_env`. These sub-classes are later used for adapting the process of data loading to particularities of individual datasets.
 
-A `src_env` contains an active binding per contained table, which returns a `src_tbl` object representing the requested table after having checked that the required data is locally available (and querying the user for download if not). As is the case for `src_env` objects, `src_tbl` object inherit from additional classes such that certain per-dataset behavior can be customized. The `admissions` table of the MIMIC-III demo dataset for example inherits (among other classes) from `mimic_demo_tbl` and `mimic_tbl`.
+A `src_env` contains an active binding per contained table, which returns a `src_tbl` object representing the requested table after having checked that the required data is locally available (and querying the user for download if not). As is the case for `src_env` objects, `src_tbl` object inherit from additional classes such that certain per-dataset behavior can be customized. The `admissions` table of the MIMIC-III demo dataset for example inherits from `mimic_demo_tbl` and `mimic_tbl` (alongside classes `src_tbl` and `prt`).
 
 ```{r mimic-adm, eval = srcs_avail("mimic_demo")}
 mimic_demo$admissions
 ```
 
-Powered by the \pkg{prt} package, `src_tbl` objects can be subsetted via the base R S3 generic function [base::subset()] and using non-standard evaluation:
+Powered by the \pkg{prt} package, `src_tbl` objects represent tabular data stored as a single or row-partitioned into multiple binary files created by \pkg{fst} \citep{klik2020}. In addition to standard subsetting, `prt` objects can be subsetted via the base R S3 generic function `subset()` and using non-standard evaluation:
 
 ```{r mimic-sub, eval = srcs_avail("mimic_demo")}
 subset(mimic_demo$admissions, subject_id > 44000, language:ethnicity)
 ```
+
+This syntax makes it possible to read row-subsets of *long* tables into memory with little memory overhead. While terseness of such an API does introduce potential ambiguity, this is mostly overcome by using the tidy eval framework provided by \pkg{rlang} \citep{wickham2020}:
+
+```{r mimic-tidy, eval = srcs_avail("mimic_demo")}
+subject_id <- 44000:45000
+subset(mimic_demo$admissions, .data$subject_id %in% .env$subject_id,
+       subject_id:dischtime)
+```
+
+By using so-called pronouns (`.data` and `.env`), the distinction between a name referring to an object within the context of the data and an object within the context of the calling environment can readily be made.
 
 ### Data source configuration
 
@@ -214,7 +224,7 @@ Finally, `tbl_cfg` objects are used during the initial set-up of a data source. 
 
 * (Optional) number of rows: Used as sanity check whenever available.
 
-* (Optional) partitioning information: For very *long* tables it can be useful to specify a row-partitioning. This currently is only possible for numeric columns by providing a vector of break points.
+* (Optional) partitioning information: For very *long* tables it can be useful to specify a row-partitioning. This currently is only possible by applying a vector of break points to a single numeric columns, thereby defining a grouping.
 
 ```{r mimic-tbl}
 as_tbl_cfg(mi_cfg)
@@ -237,7 +247,34 @@ Further environment variable can be set to customize certain aspect of \pkg{ricu
 * `RICU_CONFIG_PATH`: Comma-separated paths to directories containing configuration files (in addition to the default location; retrievable using `config_paths()`).
 * `RICU_SRC_LOAD`: Comma-separated data source names that are set up for being automatically attached on namespace loading (the current set of data sources is available as `auto_attach_srcs()`).
 
-After successful data download, importing prepares tables for efficient random row-access, for which the raw data format (.csv) is not well suited. Tables are read in using \pkg{readr} \citep{hester2020}, potentially partitioned row-wise, and re-saved using \pkg{fst} \citep{klik2020}. Finally, attaching a dataset creates a corresponding `src_env` object which together with associated meta-data is used by \pkg{ricu} to run queries against the data.
+After successful data download, importing prepares tables for efficient random row-access, for which the raw data format (.csv) is not well suited. Tables are read in using \pkg{readr} \citep{hester2020}, potentially partitioned row-wise, and re-saved using \pkg{fst}. Finally, attaching a dataset creates a corresponding `src_env` object which together with associated meta-data is used by \pkg{ricu} to run queries against the data.
+
+### Data loading
+
+The lowest level of data access is direct subsetting of `src_tbl` objects as shown at the start of this section (\ref{implementation-details}). Building on that, several S3 generic functions successively homogenize data representations, starting with `load_src()`, which provides a string-based interface to `subset()` for all but the row-subsetting expression (intended for non-interactive use).
+
+```{r load-src, eval = srcs_avail("mimic_demo")}
+load_src("admissions", "mimic_demo", subject_id > 44000,
+         c("subject_id", "hadm_id","admittime", "dischtime"))
+```
+
+As data sources differ in their representation of time-stamps, a next step in data homogenization is to converge to a common format: the time difference to the origin time-point of a given ID system.
+
+```{r load-dt, eval = srcs_avail("mimic_demo")}
+load_difftime("admissions", "mimic_demo", subject_id > 44000,
+              c("subject_id", "hadm_id", "admittime", "dischtime"))
+```
+
+The function `load_difftime()` is expected to return timestamps as base R `difftime` vectors (using `mins` as time unit). The argument `id_hint` can be used to specify a preferred ID system but if not available in raw data, `load_difftime()` will return data using the ID system with highest cardinality. In the above example, if `icustay_id` were requested, data would be returned using `hadm_id`, whereas the a `subject_id` request would be honored.
+
+Building on `load_difftime()` functionality, `load_id()` (and analogously `load_ts()`) returns an `id_tbl` (or `ts_tbl`) object with the requested ID system (passed as `id_var` argument). This uses raw data IDs if available or calls `change_id()` in order to convert to the desired IDs. Similarly, where `load_difftime()` returns data with fixed time interval, `load_id()` allows for arbitrary time intervals (using `change_interval()`).
+
+```{r load-id, eval = srcs_avail("mimic_demo")}
+load_id("admissions", "mimic_demo", subject_id > 44000,
+        cols = c("admittime", "dischtime"), id_var = "hadm_id")
+```
+
+## Adding external datasets
 
 # Data concepts
 
@@ -266,7 +303,7 @@ Death outcome, prolonged ICU stay outcome.
 
 # Examples
 
-We focus on two simple examples with which we try to cover most of the data types described in Section \ref{implementation}.
+We focus on two simple examples with which we try to cover most of the data types described in Section \ref{implementation-details}.
 
 ## Lactate and mortality
 The first example we look at is the association of lactate levels and mortality. This problem has been studied before and it is widely accepted that both static and dynamic lactate indices are associated with increased mortality \citep{haas2016, nichol2011, van2013}. We quickly look at how one might fit a time-varying proportional hazards Cox model \citep{therneau2000, therneau2015} in order to investigate this problem. We additionally include the Sequential Organ Failure Assessment (SOFA) score \citep{vincent1996} as a general predictor of illness severity.
