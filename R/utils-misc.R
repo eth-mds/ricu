@@ -298,7 +298,9 @@ cat_line <- function(...) {
   cat(paste0(line, "\n"), sep = "")
 }
 
-ms_as_min <- function(x) as.difftime(as.integer(x / 6e4), units = "mins")
+ms_as_mins <- function(x) min_as_mins(as.integer(x / 6e4))
+
+min_as_mins <- function(x) as.difftime(x, units = "mins")
 
 digest_lst <- function(x) as.character(openssl::md5(serialize(x, NULL)))
 

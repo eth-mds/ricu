@@ -112,7 +112,7 @@ is_in <- function(x, opts, na_rm = FALSE) {
 
 on_failure(is_in) <- in_failure
 
-has_col <- function(x, cols) has_cols(x, cols, 1L)
+has_col <- function(x, col) has_cols(x, col, 1L)
 
 has_cols <- function(x, cols, length = NA) {
   if (is.na(length)) {
