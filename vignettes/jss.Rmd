@@ -278,32 +278,47 @@ For the `chartevents` table of the MIMIC-III demo dataset, for example, rows are
 
 In order to add a new dataset to \pkg{ricu}, several aspects outlined in the previous subsections require consideration. For illustration purposes, code for integrating AmsterdamUMCdb as external dataset is available from [Github](https://github.com/septic-tank/aumc). While this is no longer needed for using the `aumc` data source, this repository will remain as it might serve as template to integration of new datasets.
 
-Using a configuration file as described in section \ref{data-source-configuration} and accordingly setting the `RICU_CONFIG_PATH` environment variable, data can be prepared for use with \pkg{ricu} using `import_src()` and made available to \pkg{ricu} using `attach_src()`. In addition to providing a configuration file, dataset-specific implementations of some of the S3 generic functions involved in data-loading might be required. In the case of AmsterdamUMCdb, a class-specific implementation of `load_difftime()` is required, as raw time-stamps are recoded in milliseconds (instead of minutes), as well as a class-specific implementation of the S3 generic function `id_win_helper()`, which is used as part of `change_id()` whenever the requested ID system is not available in raw data^[A component central to conversion between patient ID systems is a table which contains patient IDs as columns alongside columns with start and end-points for each, thereby specifying a mapping between ID systems. Dataset-specific construction of such a table is handled by the S3 generic function `id_win_helper()`.].
+Using a configuration file as described in section \ref{data-source-configuration} and accordingly setting the `RICU_CONFIG_PATH` environment variable, data can be prepared for use with \pkg{ricu} using `import_src()` and made available to \pkg{ricu} using `attach_src()`. In addition to providing a configuration file, dataset-specific implementations of some of the S3 generic functions involved in data-loading might be required. In the case of AmsterdamUMCdb, a class-specific implementation of `load_difftime()` is required, as raw time-stamps are recoded in milliseconds (instead of minutes), as well as a class-specific implementation of the S3 generic function `id_win_helper()`, which is used as part of `change_id()` whenever the requested ID system is not available in raw data^[A component central to conversion between patient ID systems is a table which contains patient IDs as columns alongside columns with start and end-points for each, thereby specifying a mapping between ID systems. Dataset-specific construction of such a table is handled by the S3 generic function `id_win_helper()`. As construction of such tables can be expensive (involving several merge operations of tables with 10^4-10^5 rows) and used frequently (potentially with every single data request), the resulting table is cached in memory with session persistence.].
 
 # Data concepts
 
+One of the key components of \pkg{ricu} is a scheme for specifying how to retrieve data corresponding to a clinical concept from a given dataset, in turn enabling dataset agnostic code for analysis. Heart rate, for example can be loaded using the `hr` concept as
+
+```{r, eval = srcs_avail(c("mimic_demo", "eicu_demo"))}
+load_concepts("hr", c("mimic_demo", "eicu_demo"), verbose = FALSE)
+```
+
+## Concept specification
+
+## Data classes
+
+## Clinical concepts
+
 In this Section we go over the categories of data useful for research problems related to intensive care medicine. The categories we define are fairly broad and somewhat loosely defined, as this is not the main focus of the manuscript.
 
-## Physiological data
+### Physiological data
+
 Labs, vitals. Could introduce the \code{ts_tbl} here.
 
-## Treatment-related information
+### Treatment-related information
+
 Antibiotics, vasopressors, mechanical ventilation... could introduce the \code{win_tbl} here.
 
-## Co-morbidities
+### Co-morbidities
 
 Based on ICD-9 codes. Should enable the extraction of co-morbidities used for the Charlson and Elixhauser scores.
 
-## Admission diagnoses
+### Admission diagnoses
+
 Categorizing into surgical, non-surgical and other might be sufficient for now.
 
-## Patient information
+### Patient information
+
 Age, gender, other demograpichs, patient stay information.
 
-## Outcomes
-Death outcome, prolonged ICU stay outcome.
+### Outcomes
 
-## Implementation details
+Death outcome, prolonged ICU stay outcome.
 
 # Examples
 
