@@ -258,15 +258,28 @@ load_concepts.concept <- function(x, src = NULL, aggregate = NULL,
 
   assert_that(is.flag(merge_data), is.flag(verbose))
 
-  if (not_null(src)) {
-    x <- subset_src(x, src)
+  if (is.null(src)) {
+    srcs <- unlst(src_name(x), recursive = TRUE)
+  } else {
+    srcs <- src
   }
 
-  srcs <- unlst(src_name(x), recursive = TRUE)
+  if (length(srcs) > 1L) {
 
-  if (!all_fun(srcs, identical, srcs[1L])) {
-    stop_ricu("Only concept data from a single data source can be loaded a the
-               time. Please choose one of {unique(srcs)}.", "multi_src_load")
+    res <- lapply(srcs, function(data_source) {
+      one <- load_concepts(
+        x, data_source, aggregate, merge_data, verbose, ..., cache = cache
+      )
+      one <- one[, c("source") := data_source]
+      one <- set_id_vars(one, c("source", id_vars(one)))
+      one
+    })
+
+    return(rbind_lst(res))
+  }
+
+  if (not_null(src)) {
+    x <- subset_src(x, src)
   }
 
   aggregate <- rep_arg(aggregate, names(x))
@@ -282,7 +295,8 @@ load_concepts.concept <- function(x, src = NULL, aggregate = NULL,
   }
 
   if (verbose) {
-    pba <- progress_init(n_tick(x), "Loading {length(x)} concept{?s}")
+    pba <- progress_init(n_tick(x), "Loading {length(x)} concept{?s} from data
+                                     source {srcs}")
   } else {
     pba <- FALSE
   }
