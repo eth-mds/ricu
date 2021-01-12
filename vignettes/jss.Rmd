@@ -334,7 +334,13 @@ Specification of how data can be retrieved from a data source is encoded by data
 
 Analogously to how different types of concepts are used to represent different types of data, different types of items handle different types of data loading. The most common scenario is selecting a subset of rows from a table by matching a set of ID values (`sub_itm`). In the above example, heart rate data in MIMIC-III can be located by searching for ID values 211 and 220045 in column `itemid` of table `chartevents` (heart rate data is stored in *long* format). Conversely, heart rate data in eICU is stored in *wide* format, requiring no row-subsetting. Column `heartrate` of table `vitalperiodic` contains all corresponding data and such data situations are handled by the `col_itm` class. Other item classes include `rgx_itm` where a regular expression is used for selecting rows and `fun_itm` where an arbitrary function can be used for data loading.
 
+<!-- extension mechanisms (to new datasets, and new concepts), callbacks? -->
+
 ## Data classes
+
+In order to represent tabular ICU data, \pkg{ricu} provides several classes inheriting from `data.table`. The most basic of which, an `id_tbl`, marks one (or several) columns as `id_vars` which serve to define a grouping (i.e. identify patients or unit stays). Inheriting from `id_tbl`, `ts_tbl` is capable of representing grouped time-series data. In addition to `id_var` column(s), a single column is marked as `index_var` and is required to hold a base R `difftime` vector. Furthermore, `ts_tbl` contain a scalar-valued `difftime` object as `interval` attribute, specifying the time-series step size^[As further extension, a `win_tbl` object is being considered for inclusion, capable of representing time intervals. Such an object could prove convenient for example when dealing with infusions as infusion parameters such as medication rate frequently are specified with begin and end times.].
+
+Utilizing the attached meta-data, several utility functions can be called with concise semantics. This includes sorting (`sort()`) and checking if data is sorted (`is_sorted()`), checking for duplicated keys (`duplicated()`, `anyDuplicated()`, `unique()`, `is_unique()`), aggregating data per combination of `id_vars` (and time-step) using `aggregate()`, and for `ts_tbl` objects, checking the time series for gaps (`has_gaps()`/`has_no_gaps()`), verifying whether the time-series is regular and converting between irregular and regular time-series (`is_regular()`/`fill_gaps()`/`remove_gaps()`), as well as functions for several types of moving window operations (`slide()`/`slide_index()`/`hop()`).
 
 ## Clinical concepts
 
