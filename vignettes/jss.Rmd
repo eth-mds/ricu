@@ -288,7 +288,51 @@ One of the key components of \pkg{ricu} is a scheme for specifying how to retrie
 load_concepts("hr", c("mimic_demo", "eicu_demo"), verbose = FALSE)
 ```
 
+This requires some form of infrastructure for concisely specifying how to retrieve data subsets (section \ref{concept-specification}), with is both extensible (to new concepts and new datasets) and flexible enough to handle  concept-specific pre-processing. Additionally, \pkg{ricu} has included a dictionary with over 100 concepts implemented for all four supported datasets (where possible; section \ref{clinical-concepts}).
+
 ## Concept specification
+
+Similarly to data source configuration (see section \ref{data-source-configuration}), concept specification relies on JSON-formatted text files. A default dictionary of concepts is included with \pkg{ricu} containing a selection of commonly used clinical concepts. Several types of concepts exists within \pkg{ricu} and implemented with extensibility in mind, new types can be added. All concepts consist of certain meta-data entries such as a name, as well as (optional) `description` and `category` information. Adding to that, the most widespread type of concepts, representing numeric data (type `num_cncpt`), cam also encode a unit of measurement as well as a minimal and maximal plausible value. The concept for heart rate data (`hr`) for example can be specified as
+
+```
+{
+  "hr": {
+    "unit": ["bpm", "/min"],
+    "min": 0,
+    "max": 300,
+    "description": "heart rate",
+    "category": "routine vital signs",
+    "sources": {
+      ...
+    }
+  }
+}
+```
+
+Meta-data is used during concept loading for data-preprocessing and in the case of numeric concepts, the specified measurement unit is compared to that of the data (if available), with messages being displayed in case of mismatches, while the range of plausible values is used to filter out measurements that fall outside the specified interval. Other types of concepts include categorical concepts (`fct_cncpt`), concept representing binary data (`lgl_cncpt`), as well as recursive concepts (`rec_cncpt`), which build on other *atomic* concepts^[An example for a recursive concept is the PaO~2~/FiO~2~ ratio, used for instance to assess patients with acute respiratory distress syndrome (ARDS) or for sepsis-related organ failure assessment (SOFA) \citep{villar2013, vincent1996}. Given both PaO~2~ and FiO~2~ as individual concepts, the PaO~2~/FiO~2~ ratio is provided by \pkg{ricu} as a recursive concept (`pafi`), requesting the two atomic concepts `pao2` and `fio2` and performing some form of imputation for when at a given time step one or both values are missing.].
+
+Specification of how data can be retrieved from a data source is encoded by data *items*. Lists of data items (associated with data source names) are provided as `sources` element (instead of `...` in the above code block). For the demo datasets corresponding eICU and MIMIC-III, heart rate data retrieval is specified as
+
+```
+{
+  "eicu_demo": [
+    {
+      "table": "vitalperiodic",
+      "val_var": "heartrate",
+      "class": "col_itm"
+    }
+  ],
+  "mimic_demo": [
+    {
+      "ids": [211, 220045],
+      "table": "chartevents",
+      "sub_var": "itemid"
+    }
+  ]
+}
+```
+
+Analogously to how different types of concepts are used to represent different types of data, different types of items handle different types of data loading. The most common scenario is selecting a subset of rows from a table by matching a set of ID values (`sub_itm`). In the above example, heart rate data in MIMIC-III can be located by searching for ID values 211 and 220045 in column `itemid` of table `chartevents` (heart rate data is stored in *long* format). Conversely, heart rate data in eICU is stored in *wide* format, requiring no row-subsetting. Column `heartrate` of table `vitalperiodic` contains all corresponding data and such data situations are handled by the `col_itm` class. Other item classes include `rgx_itm` where a regular expression is used for selecting rows and `fun_itm` where an arbitrary function can be used for data loading.
 
 ## Data classes
 
