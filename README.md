@@ -131,3 +131,10 @@ print(
 </span></CODE></PRE>
 
 which returns time series data as `ts_tbl` object.
+
+## Acknowledgments
+
+This work was supported by grant \#2017-110 of the Strategic Focal Area
+“Personalized Health and Related Technologies (PHRT)” of the ETH
+Domain for the SPHN/PHRT Driver Project “Personalized Swiss Sepsis
+Study”.
