@@ -65,10 +65,12 @@ tbl_sum.id_tbl <- function(x) {
   }
 
   ids <- id_vars(x)
+  cls <- class(x)[1L]
+  cls <- paste0(approx_art(cls), " `", cls, "`")
 
   res <- setNames(
     c(dim_desc(x), concat(quote_bt(ids))),
-    c("An `id_tbl`", paste0("Id var", if (length(ids) > 1L) "s"))
+    c(cls, paste0("Id var", if (length(ids) > 1L) "s"))
   )
 
   unt <- chr_ply(x, get_unit, use_names = TRUE)
@@ -79,6 +81,10 @@ tbl_sum.id_tbl <- function(x) {
   }
 
   res
+}
+
+approx_art <- function(x) {
+  if (substr(x, 1L, 1L) %in% c("a", "e", "i", "o", "u")) "An" else "A"
 }
 
 #' @export
