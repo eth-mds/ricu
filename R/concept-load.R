@@ -258,26 +258,6 @@ load_concepts.concept <- function(x, src = NULL, aggregate = NULL,
 
   assert_that(is.flag(merge_data), is.flag(verbose))
 
-  if (is.null(src)) {
-    srcs <- unlst(src_name(x), recursive = TRUE)
-  } else {
-    srcs <- src
-  }
-
-  if (length(srcs) > 1L) {
-
-    res <- lapply(srcs, function(data_source) {
-      one <- load_concepts(
-        x, data_source, aggregate, merge_data, verbose, ..., cache = cache
-      )
-      one <- one[, c("source") := data_source]
-      one <- set_id_vars(one, c("source", id_vars(one)))
-      one
-    })
-
-    return(rbind_lst(res))
-  }
-
   if (not_null(src)) {
     x <- subset_src(x, src)
   }
@@ -295,8 +275,7 @@ load_concepts.concept <- function(x, src = NULL, aggregate = NULL,
   }
 
   if (verbose) {
-    pba <- progress_init(n_tick(x), "Loading {length(x)} concept{?s} from data
-                                     source {srcs}")
+    pba <- progress_init(n_tick(x), "Loading {length(x)} concept{?s}")
   } else {
     pba <- FALSE
   }
@@ -605,10 +584,19 @@ load_concepts.item <- function(x, patient_ids = NULL, id_type = "icustay",
 
     progress_tick(progress_bar = prog)
 
-    load_concepts(x, ...)
+    res <- load_concepts(x, ...)
+
+    if (mulit_src) {
+      res <- res[, c("source") := src_name(x)]
+      res <- set_id_vars(res, c("source", id_vars(res)))
+    }
+
+    res
   }
 
   assert_that(has_length(x))
+
+  mulit_src <- length(unique(src_name(x))) > 1L
 
   # slightly inefficient, as cols might get filled which were only relevant
   # during callback
