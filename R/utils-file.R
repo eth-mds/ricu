@@ -156,7 +156,7 @@ src_data_dir <- function(srcs) {
   } else if (data_pkg_avail(pkg)) {
     file.path(.libPaths()[1L], pkg, "extdata")
   } else {
-    data_dir(srcs)
+    data_dir(srcs, create = FALSE)
   }
 }
 

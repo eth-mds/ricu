@@ -81,6 +81,8 @@
 #' [import_src()] can be run.
 #'
 #' @param x Object specifying the source configuration
+#' @param data_dir Destination directory where the downloaded data is written
+#' to.
 #' @param ... Generic consistency
 #'
 #' @importFrom curl new_handle handle_setopt parse_headers
@@ -103,10 +105,13 @@
 #' @rdname download
 #' @export
 #'
-download_src <- function(x, ...) UseMethod("download_src", x)
+download_src <- function(x, data_dir = src_data_dir(x), ...) {
 
-#' @param data_dir Destination directory where the downloaded data is written
-#' to.
+  assert_that(is.string(ensure_dirs(data_dir)))
+
+  UseMethod("download_src", x)
+}
+
 #' @param tables Character vector specifying the tables to download. If
 #' `NULL`, all available tables are downloaded.
 #' @param force Logical flag; if `TRUE`, existing data will be re-downloaded
