@@ -7,7 +7,7 @@ cfg <- list(
     min = 0,
     max = 300,
     description = "heart rate",
-    category = "routine vital signs",
+    category = "vitals",
     sources = list(
       mimic = list(
         list(ids = c(211L, 220045L), table = "chartevents", sub_var = "itemid")
@@ -30,7 +30,7 @@ cfg <- list(
     min = 0,
     max = 300,
     description = "systolic blood pressure",
-    category = "routine vital signs",
+    category = "vitals",
     sources = list(
       mimic = list(
         list(ids = c(51L, 455L, 6701L, 220050L, 220179L),
@@ -54,7 +54,7 @@ cfg <- list(
     min = 0,
     max = 200,
     description = "diastolic blood pressure",
-    category = "routine vital signs",
+    category = "vitals",
     sources = list(
       mimic = list(
         list(ids = c(8368L, 8441L, 8555L, 220051L, 220180L),
@@ -78,7 +78,7 @@ cfg <- list(
     min = 0,
     max = 250,
     description = "mean arterial pressure",
-    category = "routine vital signs",
+    category = "vitals",
     sources = list(
       mimic = list(
         list(ids = c(52L, 443L, 456L, 6072L, 220052L, 220181L, 225312L),
@@ -1816,6 +1816,7 @@ cfg <- list(
   ),
   samp = list(
     class = "lgl_cncpt",
+    category = "microbiology",
     description = "fluid sampling",
     sources = list(
       mimic = list(
@@ -1880,7 +1881,7 @@ cfg <- list(
     min = 32,
     max = 42,
     description = "temperature",
-    category = "routine vital signs",
+    category = "vitals",
     sources = list(
       mimic = list(
         list(ids = c(676L, 677L, 223762L), table = "chartevents",
@@ -1908,7 +1909,7 @@ cfg <- list(
     min = 10,
     max = 60,
     description = "endtidal CO2",
-    category = "routine vital signs",
+    category = "vitals",
     sources = list(
       mimic = list(
         list(ids = c(1817L, 228640L), table = "chartevents",

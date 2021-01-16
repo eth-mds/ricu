@@ -1255,7 +1255,7 @@
     "min": 0,
     "max": 200,
     "description": "diastolic blood pressure",
-    "category": "routine vital signs",
+    "category": "vitals",
     "sources": {
       "aumc": [
         {
@@ -1997,7 +1997,7 @@
     "min": 10,
     "max": 60,
     "description": "endtidal CO2",
-    "category": "routine vital signs",
+    "category": "vitals",
     "sources": {
       "aumc": [
         {
@@ -2439,7 +2439,7 @@
     "min": 0,
     "max": 300,
     "description": "heart rate",
-    "category": "routine vital signs",
+    "category": "vitals",
     "sources": {
       "aumc": [
         {
@@ -2860,7 +2860,7 @@
     "min": 0,
     "max": 250,
     "description": "mean arterial pressure",
-    "category": "routine vital signs",
+    "category": "vitals",
     "sources": {
       "aumc": [
         {
@@ -4247,6 +4247,7 @@
   },
   "samp": {
     "class": "lgl_cncpt",
+    "category": "microbiology",
     "description": "fluid sampling",
     "sources": {
       "aumc": [
@@ -4298,7 +4299,7 @@
     "min": 0,
     "max": 300,
     "description": "systolic blood pressure",
-    "category": "routine vital signs",
+    "category": "vitals",
     "sources": {
       "aumc": [
         {
@@ -4541,7 +4542,7 @@
     "min": 32,
     "max": 42,
     "description": "temperature",
-    "category": "routine vital signs",
+    "category": "vitals",
     "sources": {
       "aumc": [
         {
