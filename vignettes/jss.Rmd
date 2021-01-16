@@ -338,33 +338,46 @@ Analogously to how different types of concepts are used to represent different t
 
 ## Data classes
 
-In order to represent tabular ICU data, \pkg{ricu} provides several classes inheriting from `data.table`. The most basic of which, an `id_tbl`, marks one (or several) columns as `id_vars` which serve to define a grouping (i.e. identify patients or unit stays). Inheriting from `id_tbl`, `ts_tbl` is capable of representing grouped time-series data. In addition to `id_var` column(s), a single column is marked as `index_var` and is required to hold a base R `difftime` vector. Furthermore, `ts_tbl` contain a scalar-valued `difftime` object as `interval` attribute, specifying the time-series step size^[As further extension, a `win_tbl` object is being considered for inclusion, capable of representing time intervals. Such an object could prove convenient for example when dealing with infusions as infusion parameters such as medication rate frequently are specified with begin and end times.].
+In order to represent tabular ICU data, \pkg{ricu} provides several classes inheriting from `data.table`. The most basic of which, `id_tbl`, marks one (or several) columns as `id_vars` which serve to define a grouping (i.e. identify patients or unit stays). Inheriting from `id_tbl`, `ts_tbl` is capable of representing grouped time-series data. In addition to `id_var` column(s), a single column is marked as `index_var` and is required to hold a base R `difftime` vector. Furthermore, `ts_tbl` contain a scalar-valued `difftime` object as `interval` attribute, specifying the time-series step size^[As further extension, a `win_tbl` object is being considered for inclusion, capable of representing time intervals. Such an object could prove convenient for example when dealing with infusions as infusion parameters such as medication rate frequently are specified with explicit begin and end times.].
 
 Utilizing the attached meta-data, several utility functions can be called with concise semantics. This includes sorting (`sort()`) and checking if data is sorted (`is_sorted()`), checking for duplicated keys (`duplicated()`, `anyDuplicated()`, `unique()`, `is_unique()`), aggregating data per combination of `id_vars` (and time-step) using `aggregate()`, and for `ts_tbl` objects, checking the time series for gaps (`has_gaps()`/`has_no_gaps()`), verifying whether the time-series is regular and converting between irregular and regular time-series (`is_regular()`/`fill_gaps()`/`remove_gaps()`), as well as functions for several types of moving window operations (`slide()`/`slide_index()`/`hop()`).
 
 ## Clinical concepts
 
-In this Section we go over the categories of data useful for research problems related to intensive care medicine. The categories we define are fairly broad and somewhat loosely defined, as this is not the main focus of the manuscript.
+The current selection of clinical concepts that is included with \pkg{ricu} covers many physiological parameters that are available from the considered datasets. Treatement-related information on the other hand, being more heterogenous in nature and therefore harder to harmonize across datasets, has been added on the basis of being required for certain data analysis tasks and therefore is more limited in breadth.
+
+Available concepts can be enumerated using `load_dictionary()` and the utility function `explain_dictionary()` can be used to display some concept meta-data.
+
+```{r, eval = srcs_avail(c("mimic_demo", "eicu_demo"))}
+dict <- load_dictionary(c("mimic_demo", "eicu_demo"))
+head(dict)
+explain_dictionary(head(dict))
+```
+
+The following sub-sections serve to introduce some of the included concepts as well as highlight some limitations that come with current implementations. Grouping the available concepts by category yields the following counts
+
+```{r, eval = srcs_avail(c("mimic_demo", "eicu_demo"))}
+table(vapply(dict, `[[`, character(1L), "category"))
+```
 
 ### Physiological data
 
-Labs, vitals. Could introduce the \code{ts_tbl} here.
+The largest and most well established group of concepts includes physiological patient measurements such as routine vital signs, respiratory variables, as well as many kinds of laboratory tests such as blood gas measurements, chemical analysis of body fluids and hematology assays.
 
-### Treatment-related information
+```{r, eval = srcs_avail("mimic_demo")}
+load_concepts(c("alb", "glu"), "mimic_demo", interval = mins(15L),
+              verbose = FALSE)
+```
 
-Antibiotics, vasopressors, mechanical ventilation... could introduce the \code{win_tbl} here.
-
-### Co-morbidities
-
-Based on ICD-9 codes. Should enable the extraction of co-morbidities used for the Charlson and Elixhauser scores.
-
-### Admission diagnoses
-
-Categorizing into surgical, non-surgical and other might be sufficient for now.
+Most concepts of this kind will be represented by `num_cncpt` objects with an associated unit of measurement and a range of permissible values. Data is returned as `ts_tbl` objects as these concepts represent time-dependent observations. Apart from conversion to a common unit (mostly using the `convert_unit()` callback function), little has to be done in terms of pre-processing: values are simply reported at time-stamps rounded to the requested interval.
 
 ### Patient information
 
 Age, gender, other demograpichs, patient stay information.
+
+### Treatment-related information
+
+Antibiotics, vasopressors, mechanical ventilation... could introduce the \code{win_tbl} here.
 
 ### Outcomes
 
@@ -479,3 +492,7 @@ ggplot(dat, aes(x = ins24, fill = diab, colour = diab)) +
 ```
 
 The plot might suggest that diabetic patients do receive more insulin that non-diabetic patients, in the first day of ICU stay.
+
+## Acknowledgments
+
+This work was supported by grant #2017-110 of the Strategic Focal Area "Personalized Health and Related Technologies (PHRT)" of the ETH Domain for the SPHN/PHRT Driver Project "Personalized Swiss Sepsis Study".
