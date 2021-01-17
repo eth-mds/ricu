@@ -338,7 +338,9 @@ Analogously to how different types of concepts are used to represent different t
 
 ## Data classes
 
-In order to represent tabular ICU data, \pkg{ricu} provides several classes inheriting from `data.table`. The most basic of which, `id_tbl`, marks one (or several) columns as `id_vars` which serve to define a grouping (i.e. identify patients or unit stays). Inheriting from `id_tbl`, `ts_tbl` is capable of representing grouped time-series data. In addition to `id_var` column(s), a single column is marked as `index_var` and is required to hold a base R `difftime` vector. Furthermore, `ts_tbl` contain a scalar-valued `difftime` object as `interval` attribute, specifying the time-series step size^[As further extension, a `win_tbl` object is being considered for inclusion, capable of representing time intervals. Such an object could prove convenient for example when dealing with infusions as infusion parameters such as medication rate frequently are specified with explicit begin and end times.].
+In order to represent tabular ICU data, \pkg{ricu} provides several classes inheriting from `data.table`. The most basic of which, `id_tbl`, marks one (or several) columns as `id_vars` which serve to define a grouping (i.e. identify patients or unit stays). Inheriting from `id_tbl`, `ts_tbl` is capable of representing grouped time-series data. In addition to `id_var` column(s), a single column is marked as `index_var` and is required to hold a base R `difftime` vector. Furthermore, `ts_tbl` contain a scalar-valued `difftime` object as `interval` attribute, specifying the time-series step size^[As further extension, a `win_tbl` object is being considered for inclusion, capable of representing time intervals. Such an object could prove convenient for example when dealing with infusions as infusion parameters such as medication rate frequently are specified with explicit begin and end times (see section \ref{treatment-related-information}).].
+
+<!-- data.table compatibility, auto as.data.table() -->
 
 Utilizing the attached meta-data, several utility functions can be called with concise semantics. This includes sorting (`sort()`) and checking if data is sorted (`is_sorted()`), checking for duplicated keys (`duplicated()`, `anyDuplicated()`, `unique()`, `is_unique()`), aggregating data per combination of `id_vars` (and time-step) using `aggregate()`, and for `ts_tbl` objects, checking the time series for gaps (`has_gaps()`/`has_no_gaps()`), verifying whether the time-series is regular and converting between irregular and regular time-series (`is_regular()`/`fill_gaps()`/`remove_gaps()`), as well as functions for several types of moving window operations (`slide()`/`slide_index()`/`hop()`).
 
@@ -362,26 +364,56 @@ table(vapply(dict, `[[`, character(1L), "category"))
 
 ### Physiological data
 
-The largest and most well established group of concepts includes physiological patient measurements such as routine vital signs, respiratory variables, as well as many kinds of laboratory tests such as blood gas measurements, chemical analysis of body fluids and hematology assays.
+The largest and most well established group of concepts (covering more than half of all currently included concepts) includes physiological patient measurements such as routine vital signs, respiratory variables, fluid discharge amounts, as well as many kinds of laboratory tests such as blood gas measurements, chemical analysis of body fluids and hematology assays.
 
 ```{r, eval = srcs_avail("mimic_demo")}
 load_concepts(c("alb", "glu"), "mimic_demo", interval = mins(15L),
               verbose = FALSE)
 ```
 
-Most concepts of this kind will be represented by `num_cncpt` objects with an associated unit of measurement and a range of permissible values. Data is returned as `ts_tbl` objects as these concepts represent time-dependent observations. Apart from conversion to a common unit (mostly using the `convert_unit()` callback function), little has to be done in terms of pre-processing: values are simply reported at time-stamps rounded to the requested interval.
+Most concepts of this kind will be represented by `num_cncpt` objects with an associated unit of measurement and a range of permissible values. Data is returned as `ts_tbl` objects as these concepts represent time-dependent observations. Apart from conversion to a common unit (mostly using the `convert_unit()` callback function), little has to be done in terms of pre-processing: values are simply reported at time-points rounded to the requested interval.
 
-### Patient information
+### Patient demographics
 
-Age, gender, other demograpichs, patient stay information.
+Moving on from dynamic, time-varying patient data, this group of concepts focuses on static patient information. While the assumption of remaining constant throughout a stay is likely to hold for variables such as patient sex or height this is only approximately true for others including age or weight. Nevertheless such effects are ignored and concepts of this group will be mainly returned as `id_tbl` objects with no time information.
+
+When requesting other concepts which are returned with associated time-stamps alongside time-constant data, merging will duplicate static data over all time-points.
+
+```{r, eval = srcs_avail("mimic_demo")}
+load_concepts(c("age", "glu"), "mimic_demo", verbose = FALSE)
+```
+
+Despite a best-effort approach, data availability can be a limiting factor. While for physiological variables, there is good agreement even across continents, data-privacy considerations, as well as lack of a common standard for data encoding, may cause insurmountable discrepancies between datasets. In some cases, this can be somewhat mitigated while in others, this is a limitation to be kept in mind. In AmsterdamUMCdb, for example, patient age, height and weight is not available as continuous variable, but as factor with patients binned into groups and a value approximately at the respective mid-point of groups is returned by the corresponding concepts for `aumc`^[Prioritizing consistency over accuracy, one could apply the same binning to datasets which report numeric values, but the concepts included with \pkg{ricu} attempt to strike a balance between consistency and amount of applied pre-processing. With the extensible architecture of data concepts however, such categorical variants of patient demographic concepts could easily be added.]. Other concepts, such as `adm` (categorizing admission types) or `icd` (diagnoses as ICD-9 codes) can only return data if available in some form and both `aumc` and `hirid` simply do not contain ICD-9 encoded diagnoses.
 
 ### Treatment-related information
 
-Antibiotics, vasopressors, mechanical ventilation... could introduce the \code{win_tbl} here.
+The largest group of concepts dealing with treatment-related information is described by the `medications` category. In addition to drug administrations, only basic ventilation information is currently provided as ready to use concept. Just like availability of common ICU procedures, patient medication is also underdeveloped, covering mainly vasopressor administrations, as well as corticosteroids and antibiotics. The current concepts retrieving treatment-related information are mostly focused on providing data required for constructing clinical scores described in section \ref{outcomes}.
+
+Ventilation is represented by several concepts: a ventilation indicator variable (`vent_ind`), as well as ventilation durations (`vent_dur`) are constructed from start and events (`vent_start`/`vent_end`). This includes any kind of mechanical ventilcation (invasive via an endotracheal or tracheostomy tube), as well as non-invasive ventilation via face or nasal masks. In line with other concepts belonging to this group, the current state is far from being comprehensive and expansion to further ventilation parameters is desirable.
+
+The singular concept addressing antibiotics (`abx`) returns an indicator signaling whenever an antibiotic was administered. This includes any route of administration (intravenous, oral, topical, etc.) and does neither report dosage, nor active ingredient.
+
+Finally, vasopressor administration again is reported by several concepts representing different vasoactive drugs (including dopamine, dobutamine, epinephrine, noreponephrine), as well as different administration aspects such as rate, duration (and for use in SOFA scoring, rate administered for at least 60 minutes).
+
+```{r, eval = srcs_avail("mimic_demo")}
+load_concepts(c("abx", "vent_ind", "norepi_rate", "norepi_dur"), "mimic_demo",
+              verbose = FALSE)
+```
+
+As cautioned in section \ref{patient-demographics}, variability in data reporting across datasets can lead to issues: the `prescriptions` table included with MIMIC-III, for example, reports time-stamps as dates only, yielding a discrepancy of up to 24 hours when merged with data where time-accuracy is on the order of minutes. This effect is somewhat mitigated by shifting time-stamps from midnight to mid-day, but the issue of course remains. Another problem exists with concepts that attempt to report administration windows, as some datasets do not report infusions with clear cut start/endpoints but rather report infusion parameters at (somewhat) regular time intervals. This can cause artifacts when the requested time step-size deviates from the dataset inherent time grid.
 
 ### Outcomes
 
-Death outcome, prolonged ICU stay outcome.
+A group of more loosely associated concepts attempts to describe patient state at a higher level of abstraction. This includes fairly straightforward criteria such as patient mortality or stay length, as well as clinical scoring systems including SOFA, the systemic inflammatory response syndrome \citep[SIRS;][ ]{accp-sccm1992} criterion, the National Early Warning Score \citep[NEWS;][ ]{jones2012} and the Modified Early Warning Score \citep[MEWS;][ ]{subbe2001}.
+
+While the more simple outcomes can be retrieved directly from data, clinical scores often incorporate multiple variables, based upon which a numeric score is constructed according to a given ruleset. This can typically be achieved by using concepts of type `rec_cncpt`, specifying the needed components and supplying a callback function that applies rules for score construction.
+
+```{r, eval = srcs_avail("mimic_demo")}
+load_concepts(c("sirs", "death"), "mimic_demo", verbose = FALSE,
+              keep_components = TRUE)
+```
+
+Callback functions can become rather involved (especially for more complex concepts such as SOFA) and may include arbitrary arguments to tune their behavior. As such callback functions are typically internally called from `load_concepts()`, arguments such as `keep_components` (causing not only the score column, but also individual score components to be retained) are forwarded^[Some care has to be taken as when requesting multiple concepts within the same call to `load_concepts()` all involved callback functions will be called with the same forwarded arguments. When for example requesting multiple scores, it is currently not possible to enable `keep_components` for only a subset thereof.].
 
 # Examples
 
@@ -493,6 +525,6 @@ ggplot(dat, aes(x = ins24, fill = diab, colour = diab)) +
 
 The plot might suggest that diabetic patients do receive more insulin that non-diabetic patients, in the first day of ICU stay.
 
-## Acknowledgments
+# Acknowledgments
 
 This work was supported by grant #2017-110 of the Strategic Focal Area "Personalized Health and Related Technologies (PHRT)" of the ETH Domain for the SPHN/PHRT Driver Project "Personalized Swiss Sepsis Study".
