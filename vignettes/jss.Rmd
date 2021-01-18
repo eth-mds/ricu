@@ -383,7 +383,7 @@ When requesting other concepts which are returned with associated time-stamps al
 load_concepts(c("age", "glu"), "mimic_demo", verbose = FALSE)
 ```
 
-Despite a best-effort approach, data availability can be a limiting factor. While for physiological variables, there is good agreement even across continents, data-privacy considerations, as well as lack of a common standard for data encoding, may cause insurmountable discrepancies between datasets. In some cases, this can be somewhat mitigated while in others, this is a limitation to be kept in mind. In AmsterdamUMCdb, for example, patient age, height and weight is not available as continuous variable, but as factor with patients binned into groups and a value approximately at the respective mid-point of groups is returned by the corresponding concepts for `aumc`^[Prioritizing consistency over accuracy, one could apply the same binning to datasets which report numeric values, but the concepts included with \pkg{ricu} attempt to strike a balance between consistency and amount of applied pre-processing. With the extensible architecture of data concepts however, such categorical variants of patient demographic concepts could easily be added.]. Other concepts, such as `adm` (categorizing admission types) or `icd` (diagnoses as ICD-9 codes) can only return data if available in some form and both `aumc` and `hirid` simply do not contain ICD-9 encoded diagnoses.
+Despite a best-effort approach, data availability can be a limiting factor. While for physiological variables, there is good agreement even across continents, data-privacy considerations, as well as lack of a common standard for data encoding, may cause insurmountable discrepancies between datasets. In some cases, this can be somewhat mitigated while in others, this is a limitation to be kept in mind. In AmsterdamUMCdb, for example, patient age, height and weight is not available as continuous variable, but as factor with patients binned into groups and a value approximately at the respective mid-point of groups is returned by the corresponding concepts for `aumc`^[Prioritizing consistency over accuracy, one could apply the same binning to datasets which report numeric values, but the concepts included with \pkg{ricu} attempt to strike a balance between consistency and amount of applied pre-processing. With the extensible architecture of data concepts however, such categorical variants of patient demographic concepts could easily be added.]. Other concepts, such as `adm` (categorizing admission types) or a prospective `icd` concept (diagnoses as ICD-9 codes) can only return data if available in some form and both `aumc` and `hirid` simply do not contain ICD-9 encoded diagnoses.
 
 ### Treatment-related information
 
@@ -417,39 +417,38 @@ Callback functions can become rather involved (especially for more complex conce
 
 # Examples
 
-We focus on two simple examples with which we try to cover most of the data types described in Section \ref{implementation-details}.
+In order to briefly illustrate how \pkg{ricu} could be applied to real-world clinical questions, two toy examples are provided. While the first example fully relies on data concepts that are included with \pkg{ricu}, the second one explores both how some data pre-processing can be added to an existing concept and how to create an entirely new data concept.
 
 ## Lactate and mortality
-The first example we look at is the association of lactate levels and mortality. This problem has been studied before and it is widely accepted that both static and dynamic lactate indices are associated with increased mortality \citep{haas2016, nichol2011, van2013}. We quickly look at how one might fit a time-varying proportional hazards Cox model \citep{therneau2000, therneau2015} in order to investigate this problem. We additionally include the Sequential Organ Failure Assessment (SOFA) score \citep{vincent1996} as a general predictor of illness severity.
+
+First, we look at the association of lactate levels and mortality. This problem has been studied before and it is widely accepted that both static and dynamic lactate indices are associated with increased mortality \citep{haas2016, nichol2011, van2013}. We quickly look at how one might fit a time-varying proportional hazards Cox model \citep{therneau2000, therneau2015} in order to investigate this problem. We additionally include the SOFA score as a general predictor of illness severity.
 
 ```{r time_cox_model, eval = srcs_avail("mimic_demo")}
-last_event <- function(x) c(rep(0, length(x)-1), max(x))
-# data loading
-tbl <- load_concepts(c("lact", "death", "sofa"), "mimic_demo",
+dat <- load_concepts(c("lact", "death", "sofa"), "mimic_demo",
                      verbose = FALSE)
-tbl <- tbl[, c(meta_vars(tbl), "lact", "sofa", "death"), with = FALSE]
-tbl <- tbl[, lact := nafill(lact, "locf")]
-tbl <- tbl[, lact := nafill(lact, fill = 1)]
-tbl[, event := as.integer(sum(death, na.rm = TRUE) > 0), by = c(id_vars(tbl))]
-tbl[, event := last_event(event), by = c(id_vars(tbl))]
-tbl[, next_charttime := charttime+1L]
-# model fitting
-cox_time_mod <- coxph(
-  Surv(charttime, next_charttime, event) ~ lact + sofa,
-  data = tbl
+
+dat <- dat[, head(.SD, n = match(TRUE, death, .N)), by = c(id_vars(dat))]
+
+dat <- replace_na(dat, c(NA, FALSE), type = c("locf", "const"), by_ref = TRUE,
+                  vars = c("lact", "death"), by = id_vars(dat))
+
+cox_mod <- coxph(
+  Surv(charttime, charttime + 1L, death) ~ lact + sofa,
+  data = dat
 )
 ```
 
 We visualize the results of the model
 
 ```{r cox_plot, echo = FALSE, warning = FALSE, message = FALSE}
-forest_model(cox_time_mod)
+forest_model(cox_mod)
 ```
 
 A simple exploration already shows that the increased values of lactate are associated with mortality, even after adjusting for the SOFA score.
 
 ## Diabetes and insulin treatment
-The next example we turn to covers the usage of co-morbidities and treatment related information. We look at the amount of insulin administered to patients in the first 24 hours from their ICU admission. In particular, we investigate if patients who are diabetic receive more insulin in the first day of their stay. For this we create two concepts: `ins24`, a binned variable representing the cumulative amount of insulin administered within the first 24 hours of an ICU admission, and `diab`, a logical variable encoding diabetes co-morbidity.
+
+The next example we turn to the usage of co-morbidities and treatment related information. We look at the amount of insulin administered to patients in the first 24 hours from their ICU admission. In particular, we investigate if patients who are diabetic receive more insulin in the first day of their stay. For this we create two concepts: `ins24`, a binned variable representing the cumulative amount of insulin administered within the first 24 hours of an ICU admission, and `diab`, a logical variable encoding diabetes co-morbidity.
 
 As there already is a concept available, capable of retrieving raw insulin administration, `ins24` can be implemented as `rec_cncpt`, making sure that `ins` is loaded with aggregation set to `sum()` and injecting the callback function `ins_cb()` into the loading process. The callback function takes care of the pre-processing steps outlined above: first data is subsetted to fall into the the first 24 hours of ICU admissions, followed by binning of summed values.
 
@@ -487,7 +486,7 @@ diab  <- concept("diab", diab, "diabetes", target = "id_tbl",
                  class = "lgl_cncpt")
 
 dat <- load_concepts(c(ins24, diab), id_type = "icustay", verbose = FALSE)
-dat <- replace_na(dat, 0, cols = "ins24")
+dat <- replace_na(dat, 0, vars = "ins24")
 dat
 ```
 
