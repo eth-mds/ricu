@@ -107,7 +107,7 @@
 #'
 download_src <- function(x, data_dir = src_data_dir(x), ...) {
 
-  assert_that(is.string(ensure_dirs(data_dir)))
+  assert_that(has_length(ensure_dirs(data_dir)))
 
   UseMethod("download_src", x)
 }

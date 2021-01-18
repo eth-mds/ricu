@@ -261,7 +261,7 @@ id_win_helper.aumc_env <- function(x) {
     res[, c(mis) := 0L]
   }
 
-  res <- res[, c(sta, end) := lapply(.SD, ms_as_min), .SDcols = c(sta, end)]
+  res <- res[, c(sta, end) := lapply(.SD, ms_as_mins), .SDcols = c(sta, end)]
 
   res <- setcolorder(res, c(ids, sta, end))
   res <- rename_cols(res, c(ids, paste0(ids, "_start"),
