@@ -28,12 +28,14 @@ last_elem(x)
 
 first_elem(x)
 
-replace_na(x, val, ...)
+replace_na(x, val, type = "const", ...)
 }
 \arguments{
 \item{x}{Object to use}
 
-\item{val}{Value to compare against}
+\item{val}{Value to compare against or to use as replacement}
+
+\item{type}{ character, one of \emph{"const"}, \emph{"locf"} or \emph{"nocb"}. Defaults to \code{"const"}. }
 
 \item{...}{Forwarded to other methods}
 }

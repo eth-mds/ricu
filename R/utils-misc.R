@@ -32,7 +32,7 @@ agg_or_na <- function(agg_fun) {
 #' [data.table::setnafill()] is called or other objects.
 #'
 #' @param x Object to use
-#' @param val Value to compare against
+#' @param val Value to compare against or to use as replacement
 #' @param ... Forwarded to other methods
 #'
 #' @return
@@ -68,12 +68,10 @@ agg_or_na <- function(agg_fun) {
 #'
 #' @rdname utils
 #' @export
-#'
 min_or_na <- agg_or_na(min)
 
 #' @rdname utils
 #' @export
-#'
 max_or_na <- agg_or_na(max)
 
 reduce <- function(f, x, ...) Reduce(function(x, y) f(x, y, ...), x)
@@ -84,53 +82,88 @@ round_to <- function(x, to = 1) {
 
 #' @rdname utils
 #' @export
-#'
 is_val <- function(x, val) !is.na(x) & x == val
 
 #' @rdname utils
 #' @export
-#'
 not_val <- function(x, val) !is.na(x) & x != val
 
 val_or_na <- function(x, val) is.na(x) | x == val
 
 #' @rdname utils
 #' @export
-#'
 is_true <- function(x) !is.na(x) & x
 
 #' @rdname utils
 #' @export
-#'
 is_false <- function(x) !(is.na(x) | x)
 
 #' @rdname utils
 #' @export
-#'
 last_elem <- function(x) x[length(x)]
 
 #' @rdname utils
 #' @export
-#'
 first_elem <- function(x) x[1L]
 
 null_or_subs <- function(x, where = parent.frame(1L)) {
   if (missing(x)) NULL else do.call("substitute", list(substitute(x), where))
 }
 
-#' @importFrom data.table setnafill
+#' @inheritParams data.table::nafill
 #' @rdname utils
 #' @export
-#'
-replace_na <- function(x, val, ...) {
+replace_na <- function(x, val, type = "const", ...) UseMethod("replace_na", x)
 
-  if (is_dt(x)) {
-    res <- setnafill(x, type = "const", fill = val, ...)
+#' @export
+replace_na.numeric <- function(x, val, type = "const", ...) {
+
+  if (identical(type, "const")) {
+    data.table::nafill(x, type, val, ...)
   } else {
-    res <- replace(x, is.na(x), val)
+    data.table::nafill(x, type, ...)
+  }
+}
+
+#' @export
+replace_na.logical <- function(x, val, type = "const", ...) {
+
+  if (identical(type, "const")) {
+    NextMethod()
+  } else {
+    as.logical(replace_na(as.integer(x), type = type, ...))
+  }
+}
+
+#' @export
+replace_na.default <- function(x, val, type = "const", ...) {
+
+  warn_dots(...)
+
+  assert_that(identical(type, "const"), msg = "currently only \"const\"
+    replacement is possible (data.table#3992)"
+  )
+
+  replace(x, is.na(x), val)
+}
+
+#' @export
+replace_na.data.table <- function(x, val, type = "const", by_ref = FALSE,
+                                  vars = colnames(x), by = NULL, ...) {
+
+  assert_that(is.flag(by_ref))
+
+  if (isFALSE(by_ref)) {
+    x <- copy(x)
   }
 
-  res
+  if (missing(val) && !any(type == "const")) {
+    val <- NA
+  }
+
+  x <- x[, c(vars) := Map(replace_na, .SD, val, type, MoreArgs = list(...)),
+         .SDcols = vars, by = by]
+  x
 }
 
 split_indices <- function(len, n_chunks) {
