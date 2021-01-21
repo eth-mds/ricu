@@ -75,7 +75,7 @@ corresponding to the PhysioNet Clinical Databases eICU and MIMIC-III.
 Tables are available as
 
 ``` r
-print(mimic_demo$admissions)
+mimic_demo$admissions
 ```
 
 <PRE class="fansi fansi-output"><CODE>#&gt; <span style='color: #949494;'># &lt;mimic_tbl&gt;: [129 ✖ 19]</span><span>
@@ -105,15 +105,13 @@ print(mimic_demo$admissions)
 and data can be loaded into an R session for example using
 
 ``` r
-print(
-  load_ts("labevents", "mimic_demo", itemid == 50862L,
-          cols = c("valuenum", "valueuom"))
-)
+load_ts("labevents", "mimic_demo", itemid == 50862L,
+        cols = c("valuenum", "valueuom"))
 ```
 
-<PRE class="fansi fansi-output"><CODE>#&gt; <span style='color: #949494;'># An `id_tbl`: 299 ✖ 4</span><span>
-#&gt; </span><span style='color: #949494;'># Id var:      `icustay_id`</span><span>
-#&gt; </span><span style='color: #949494;'># Index var:   `charttime` (1 hours)</span><span>
+<PRE class="fansi fansi-output"><CODE>#&gt; <span style='color: #949494;'># A `ts_tbl`: 299 ✖ 4</span><span>
+#&gt; </span><span style='color: #949494;'># Id var:     `icustay_id`</span><span>
+#&gt; </span><span style='color: #949494;'># Index var:  `charttime` (1 hours)</span><span>
 #&gt;     icustay_id charttime valuenum valueuom
 #&gt;          </span><span style='color: #949494;font-style: italic;'>&lt;int&gt;</span><span> </span><span style='color: #949494;font-style: italic;'>&lt;drtn&gt;</span><span>       </span><span style='color: #949494;font-style: italic;'>&lt;dbl&gt;</span><span> </span><span style='color: #949494;font-style: italic;'>&lt;chr&gt;</span><span>
 #&gt; </span><span style='color: #949494;'>1</span><span>       </span><span style='text-decoration: underline;'>201</span><span>006   0 hours      2.4 g/dL
