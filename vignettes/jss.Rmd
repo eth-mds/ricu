@@ -41,7 +41,7 @@ author:
       CH-8092 Zurich
     email: \email{peter.buehlmann@stat.math.ethz.ch}
 abstract: >
-  Providing computational infrastructure for handling diverse intensive care unit (ICU) datasets, the \proglang{R} package \pkg{ricu} enables writing dataset-agnostic analysis code, thereby facilitating multi-center training and validation of machine learning models. The package is designed with an emphasis on extensibility both to new datasets as well as clinical data concepts, and currently supports the loading of around 100 patient variables corresponding to a total of 319,402 ICU admissions from 4 data sources collected in Europe and the United States. By allowing for the addition of user-specified medical concepts and data sources the aim of \pkg{ricu} is to foster robust intensive care research, allowing the user to externally validate their method or conclusion with relative ease."
+  Providing computational infrastructure for handling diverse intensive care unit (ICU) datasets, the \proglang{R} package \pkg{ricu} enables writing dataset-agnostic analysis code, thereby facilitating multi-center training and validation of machine learning models. The package is designed with an emphasis on extensibility both to new datasets as well as clinical data concepts, and currently supports the loading of around 100 patient variables corresponding to a total of 319,402 ICU admissions from 4 data sources collected in Europe and the United States. By allowing for the addition of user-specified medical concepts and data sources the aim of \pkg{ricu} is to foster robust intensive care research, allowing the user to externally validate their method or conclusion with relative ease.
 keywords:
   formatted: [medicine, intensive care, computational physiology]
   plain:     [medicine, intensive care, computational physiology]
@@ -167,6 +167,47 @@ aumc
 ```
 
 A slightly different approach to data anonymization was chosen for this dataset, yielding demographic information such as patient weight, height and age only available as binned variables instead of raw numeric values. Apart from this, there is information on patient origin, mortality, admission diagnoses, as well as numerical measurements including vital parameters, lab results, outputs from drains and catheters (in `numericitems`), information on administered medication (in `drugitems`), and other medical procedures (see `processitems` and `procedureorderitems`). In terms of patient identifiers, it is possible to link ICU admissions corresponding to the same individual, but it is not possible to identify separate hospital admissions.
+
+<!-- compare datasets in table:
+
+### Dataset comparison
+
+Closing this section of introducing datasets supported by \pkg{ricu} is a table highlighting some of the major similarities and distinguishing features among the four data sources.
+
+```{r src-overview, eval = srcs_avail(c("mimic", "eicu", "hirid", "aumc")), echo = FALSE, results = "asis"}
+as_quant <- function(x) {
+  if (identical(length(x), 0L)) return("-")
+  res <- format(quantile(x, probs = seq(0.25, 0.75, 0.25), na.rm = TRUE),
+                TRUE, 3)
+  paste0(res[2L], " (", res[1L], " - ", res[3L], ")")
+}
+
+big_mark <- function(x) formatC(x, big.mark = ",", format = "d")
+
+summarize <- function(src) {
+  los_icu <- load_concepts("los_icu", src, verbose = FALSE)
+  hosp_len <- load_concepts("los_hosp", src, verbose = FALSE)
+  c(`Number of tables` = big_mark(length(as_src_env(src))),
+    `Number of ICU admissions` = big_mark(nrow(los_icu)),
+    `ICU stay length [days]` = as_quant(data_col(los_icu)),
+    `Hospital stay length [days]` = as_quant(data_col(hosp_len))
+  )
+}
+
+srcs <- c("MIMIC", "eICU", "HiRID", "AUMC")
+summ <- vapply(tolower(srcs), summarize, character(4L))
+knitr::kable(summ, format = "latex")
+```
+              |    MIMIC    |     eICU    |     HiRID     |      AUMC
+----------------------------------------------------------------------------
+# tables      |
+# ICU stays   |
+Subject ID    |
+Hospital Adm  |
+ICU Admission |
+mortality     |
+
+-->
 
 ## Implementation details
 
@@ -489,7 +530,7 @@ load_concepts(c("sirs", "death"), "mimic_demo", verbose = FALSE,
               keep_components = TRUE)
 ```
 
-Callback functions can become rather involved (especially for more complex concepts such as SOFA) and may include arbitrary arguments to tune their behavior. As callback functions to `rec_cncpt` objects are typically called internally from `load_concepts()`, arguments not used by `load_concepts()`, such as `keep_components` in the above example (causing not only the score column, but also individual score components to be retained) are forwarded^[Some care has to be taken as when requesting multiple concepts within the same call to `load_concepts()` all involved callback functions will be called with the same forwarded arguments. When for example requesting multiple scores, it is currently not possible to enable `keep_components` for only a subset thereof.].
+Callback functions can become rather involved (especially for more complex concepts such as SOFA) and may include arbitrary arguments to tune their behavior. As callback functions to `rec_cncpt` objects are typically called internally from `load_concepts()`, arguments not used by `load_concepts()`, such as `keep_components` in the above example (causing not only the score column, but also individual score components to be retained) are forwarded^[Some care has to be taken as when requesting multiple concepts within the same call to `load_concepts()` all involved callback functions will be called with the same forwarded arguments. When for example requesting multiple scores, it is currently not possible to enable `keep_components` for only a subset thereof. Furthermore this set-up implies that ].
 
 # Examples
 
@@ -587,16 +628,28 @@ After this, we can visualize the difference between the two groups with a histog
 
 ```{r diabetes_visualize, echo = FALSE, eval = srcs_avail("mimic"), fig.height = 3}
 dat <- dat[, weight := 1 / .N, by = diab]
-ggplot(dat, aes(x = ins24, fill = diab, colour = diab)) +
-  stat_count(aes(weight = weight), alpha = 0.75,
-           position = "dodge") +
+ggplot(dat, aes(x = ins24, fill = diab)) +
+  stat_count(aes(weight = weight), alpha = 0.75, position = "dodge") +
   labs(x = "Amount of administered insulin in first 24h of ICU stay [units]",
        y = "Proportion of patients",
-       fill = "Diabetic", colour = "Diabetic") +
+       fill = "Diabetic") +
   theme_bw(10)
 ```
 
 The plot suggests that during the first day of ICU stay, diabetic patients might receive more insulin compared to non-diabetic patients, especially as insulin dose increases.
+
+<!-- do we need a discussion/summary section?
+
+# Discussion
+
+In its current form, \pkg{ricu} is not yet a comprehensive solution for ICU data analysis. More work is required expanding the library of clinical concepts, as well as integrating new data sources as they inevitably will become available. Future changes to some architectural features might very well become necessary as implicit assumptions on structuring of datasets might no longer hold for newly encountered data resources. Considerable effort has been invested into extensibility but naturally, some design decisions have been made exclusively on the basis of currently available datasets.
+
+But given the lack of efforts aiming to co-integrate multiple data sources, paired with the obvious benefits of having available a platform facilitating external validation, as well as training on multiple data sources, it is our hope that the initial release of \pkg{ricu} may provide a starting point in an iterative process toward such a goal.
+
+- extensibility: best effort, but unforseen limitations of new data might require some changes
+- more work required for treatement-related concepts
+- flexibility offered by ricu comes at a cost: more involved concepts might run into issues for non-hourly interval sizes
+-->
 
 # Acknowledgments
 
