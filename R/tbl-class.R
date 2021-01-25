@@ -286,6 +286,88 @@ new_ts_tbl <- function(x, id_vars, index_var = NULL, interval = NULL,
              ..., class = c(class, "ts_tbl"))
 }
 
+#' @param win_var Column name of the window duration column
+#'
+#' @rdname id_tbl
+#' @export
+win_tbl <- function(..., id_vars = 1L, index_var = NULL, win_var = NULL,
+                    interval = NULL) {
+
+  as_win_tbl(list(...), id_vars, index_var, win_var, interval, by_ref = TRUE)
+}
+
+#' @rdname id_tbl
+#' @export
+is_win_tbl <- is_type("win_tbl")
+
+#' @rdname id_tbl
+#' @export
+as_win_tbl <- function(x, id_vars = NULL, index_var = NULL, win_var = NULL,
+                       interval = NULL, by_ref = FALSE) {
+
+  UseMethod("as_win_tbl", x)
+}
+
+#' @export
+as_win_tbl.win_tbl <- function(x, id_vars = NULL, index_var = NULL,
+                               win_var = NULL, interval = NULL, ...) {
+
+  as_win_tbl.id_tbl(x, id_vars, coalesce(index_var, index_var(x)),
+                   coalesce(interval, interval(x)), ...)
+}
+
+#' @export
+as_win_tbl.id_tbl <- function(x, id_vars = NULL, ...) {
+  as_win_tbl.data.table(x, coalesce(id_vars, id_vars(x)), ...)
+}
+
+#' @method as_win_tbl data.table
+#' @export
+as_win_tbl.data.table <- function(x, id_vars = NULL, index_var = NULL,
+                                 interval = NULL, by_ref = FALSE) {
+
+  new_win_tbl(x, id_vars, index_var, interval, by_ref = by_ref)
+}
+
+#' @export
+as_win_tbl.default <- function(x, id_vars = NULL, index_var = NULL,
+                              interval = NULL, by_ref = FALSE) {
+
+  if (isTRUE(by_ref)) {
+    x <- setDT(x)
+  } else {
+    x <- as.data.table(x)
+  }
+
+  as_win_tbl(x, id_vars = id_vars, index_var = index_var, interval = interval,
+            by_ref = by_ref)
+}
+
+new_win_tbl <- function(x, id_vars, index_var = NULL, win_var = NULL,
+                        ..., class = character()) {
+
+  if (is.null(index_var) || is.null(win_var)) {
+
+    opts <- time_vars(x)
+
+    if (not_null(index_var)) {
+      win_var <- setdiff(opts, index_var)
+    } else if (not_null(win_var)) {
+      index_var <- setdiff(opts, win_var)
+    } else {
+      index_var <- opts[1L]
+      win_var   <- opts[-1L]
+    }
+  }
+
+  if (is.numeric(win_var) || is.logical(win_var)) {
+    win_var <- colnames(x)[win_var]
+  }
+
+  new_ts_tbl(x, id_vars, index_var, ..., win_var = unname(win_var),
+             class = c(class, "win_tbl"))
+}
+
 new_tbl <- function(x, ..., class, by_ref = TRUE) {
 
   assert_that(is.list(x), is.flag(by_ref), is_unique(names(x)))
