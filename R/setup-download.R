@@ -56,6 +56,8 @@
 #' source configuration, refer to [load_src_cfg()].
 #'
 #' @param x Object specifying the source configuration
+#' @param data_dir Destination directory where the downloaded data is written
+#' to.
 #' @param ... Generic consistency
 #'
 #' @importFrom utils untar
@@ -80,9 +82,13 @@
 #' @rdname download
 #' @export
 #'
-download_src <- function(x, ...) UseMethod("download_src", x)
+download_src <- function(x, data_dir = src_data_dir(x), ...) {
 
-#' @param data_dir Destination directory where the downloaded data is written to.
+  assert_that(has_length(ensure_dirs(data_dir)))
+
+  UseMethod("download_src", x)
+}
+
 #' @param tables Character vector specifying the tables to download. If
 #' `NULL`, all available tables are downloaded.
 #' @param force Logical flag; if `TRUE`, existing data will be re-downloaded

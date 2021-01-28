@@ -5,7 +5,7 @@
 \alias{download_src.src_cfg}
 \title{Data download utilities}
 \usage{
-download_src(x, ...)
+download_src(x, data_dir = src_data_dir(x), ...)
 
 \method{download_src}{src_cfg}(
   x,
@@ -20,9 +20,10 @@ download_src(x, ...)
 \arguments{
 \item{x}{Object specifying the source configuration}
 
-\item{...}{Generic consistency}
+\item{data_dir}{Destination directory where the downloaded data is written
+to.}
 
-\item{data_dir}{Destination directory where the downloaded data is written to.}
+\item{...}{Generic consistency}
 
 \item{tables}{Character vector specifying the tables to download. If
 \code{NULL}, all available tables are downloaded.}
