@@ -1,3 +1,7 @@
+# ricu 0.1.3
+
+* fix CRAN policy violation
+
 # ricu 0.1.2
 
 * restructure SOFA computation
