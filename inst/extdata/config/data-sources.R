@@ -487,7 +487,8 @@ hirid_tbl_cfg <- function() {
       admissiontime = list(spec = "col_datetime",
                            format = "%Y-%m-%d %H:%M:%S"),
       sex = list(spec = "col_character"),
-      age = list(spec = "col_integer")
+      age = list(spec = "col_integer"),
+      discharge_status = list(spec = "col_character")
     ),
     observations = list(
       patientid = list(spec = "col_integer"),
@@ -859,7 +860,7 @@ cfg <- list(
   ),
   list(
     name = "hirid",
-    url = "https://physionet.org/files/hirid/1.0",
+    url = "https://physionet.org/files/hirid/1.1",
     unzip = c(
       "reference_data.tar.gz",
       "raw_stage/observation_tables_csv.tar.gz",

@@ -257,6 +257,13 @@ setup_src_env.src_cfg <- function(x, data_dir = src_data_dir(x), ...) {
         }
       }
 
+      if (all(file.exists(fil))) {
+
+        src_tbl_cache <<- new_src_tbl(fil, col, tbl, class_prefix(src), env)
+
+        return(src_tbl_cache)
+      }
+
       stop_ricu("Cannot continue with missing data for `{src_name(src)}`. Data
                  can be downloaded and set up using `setup_src_data()`.",
                 "miss_tbl_err")
@@ -320,7 +327,7 @@ setup_src_env.default <- function(x, ...) stop_generic(x, .Generic)
 setup_src_data <- function(x, ...) UseMethod("setup_src_data", x)
 
 #' @export
-setup_src_data.src_env <- function(x, data_dir = src_data_dir(x),
+setup_src_data.src_cfg <- function(x, data_dir = src_data_dir(x),
                                    force = FALSE, ...) {
 
   warn_dots(...)

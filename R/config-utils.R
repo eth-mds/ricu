@@ -328,7 +328,7 @@ partition_col <- function(x, orig_names = FALSE) {
 n_tick.tbl_cfg <- function(x) {
 
   n_pt <- n_part(x)
-  n_pt <- ifelse(n_pt > 1L, n_pt + int_ply(raw_file_names(x), lengths), 1L)
+  n_pt <- ifelse(n_pt > 1L, n_pt + lengths(raw_file_names(x)), 1L)
 
   sum(ifelse(is.na(n_row(x)), n_pt, n_row(x)))
 }

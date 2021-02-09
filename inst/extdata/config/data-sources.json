@@ -7039,7 +7039,7 @@
   },
   {
     "name": "hirid",
-    "url": "https://physionet.org/files/hirid/1.0",
+    "url": "https://physionet.org/files/hirid/1.1",
     "unzip": ["reference_data.tar.gz", "raw_stage/observation_tables_csv.tar.gz", "raw_stage/pharma_records_csv.tar.gz"],
     "id_cfg": {
       "icustay": {
@@ -7073,6 +7073,10 @@
           "age": {
             "name": "age",
             "spec": "col_integer"
+          },
+          "discharge_status": {
+            "name": "discharge_status",
+            "spec": "col_character"
           }
         },
         "num_rows": 33905,
