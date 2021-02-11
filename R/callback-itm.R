@@ -206,16 +206,20 @@ mimic_age <- function(x) {
 
 eicu_age <- function(x) as.numeric(ifelse(x == "> 89", 90, x))
 
-hirid_death <- function(x, val_var, sub_var, ...) {
+hirid_death <- function(x, val_var, sub_var, env, ...) {
+
+  dis <- "discharge_status"
 
   idx <- index_var(x)
   idc <- id_vars(x)
 
-  tmp <- dt_gforce(x, "last", by = c(idc, sub_var), vars = c(idx, val_var))
-  tmp <- tmp[, list(max(get(idx)), any(get(val_var) <= 40)), by = c(idc)]
-  tmp <- rename_cols(tmp, c(idc, idx, val_var), by_ref = TRUE)
+  res <- dt_gforce(x, "last", by = idc, vars = idx)
+  tmp <- load_id(env[["general"]], cols = dis)
 
-  as_ts_tbl(tmp, index_var = idx, interval = interval(x), by_ref = TRUE)
+  res <- merge(res, tmp[is_true(get(dis) == "dead"), ])
+  res <- res[, c(val_var, dis) := list(TRUE, NULL)]
+
+  res
 }
 
 #' @param map Named atomic vector used for mapping a set of values (the names
