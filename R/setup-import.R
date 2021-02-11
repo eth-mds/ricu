@@ -137,7 +137,6 @@ import_src.src_cfg <- function(x, data_dir = src_data_dir(x), tables = NULL,
 #' @rdname import
 #' @export
 import_src.aumc_cfg <- function(x, ...) {
-
   NextMethod(locale = readr::locale(encoding = "latin1"))
 }
 
@@ -169,6 +168,8 @@ import_src.default <- function(x, ...) stop_generic(x, .Generic)
 
 #' @param progress Either `NULL` or a progress bar as created by
 #' [progress::progress_bar()]
+#' @param cleanup Logical flag indicating whether to remove raw csv files after
+#' conversion to fst
 #'
 #' @rdname import
 #' @export
@@ -177,15 +178,21 @@ import_tbl <- function(x, ...) UseMethod("import_tbl", x)
 #' @rdname import
 #' @export
 import_tbl.tbl_cfg <- function(x, data_dir = src_data_dir(x), progress = NULL,
-                               ...) {
+                               cleanup = FALSE, ...) {
 
-  assert_that(is.dir(data_dir))
+  assert_that(is.dir(data_dir), is.flag(cleanup))
 
   if (n_part(x) > 1L) {
     partition_table(x, data_dir, progress, ...)
   } else {
     csv_to_fst(x, data_dir, progress, ...)
   }
+
+  if (cleanup) {
+    unlink(file.path(data_dir, raw_file_name(x)))
+  }
+
+  invisible(NULL)
 }
 
 #' @export

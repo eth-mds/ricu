@@ -3,7 +3,7 @@ agg_or_na <- function(agg_fun) {
   function(x) {
     if (all(is.na(x))) return(x[1L])
     res <- agg_fun(x, na.rm = TRUE)
-    if(is.na(res)) x[1L] else res
+    if (is.na(res)) x[1L] else res
   }
 }
 

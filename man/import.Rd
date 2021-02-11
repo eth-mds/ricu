@@ -23,7 +23,13 @@ import_src(x, ...)
 
 import_tbl(x, ...)
 
-\method{import_tbl}{tbl_cfg}(x, data_dir = src_data_dir(x), progress = NULL, ...)
+\method{import_tbl}{tbl_cfg}(
+  x,
+  data_dir = src_data_dir(x),
+  progress = NULL,
+  cleanup = FALSE,
+  ...
+)
 }
 \arguments{
 \item{x}{Object specifying the source configuration}
@@ -43,6 +49,9 @@ to.}
 
 \item{progress}{Either \code{NULL} or a progress bar as created by
 \code{\link[progress:progress_bar]{progress::progress_bar()}}}
+
+\item{cleanup}{Logical flag indicating whether to remove raw csv files after
+conversion to fst}
 }
 \value{
 Called for side effects and returns \code{NULL} invisibly.

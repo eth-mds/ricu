@@ -250,7 +250,7 @@ setup_src_env.src_cfg <- function(x, data_dir = src_data_dir(x), ...) {
 
       if (is_interactive()) {
 
-        resp <- readline("Download now (Y/n)? ")
+        resp <- readline("Setup now (Y/n)? ")
 
         if (identical(resp, "Y")) {
           setup_src_data(src, data_dir = dir)
@@ -371,23 +371,8 @@ setup_src_data.src_cfg <- function(x, data_dir = src_data_dir(x),
       unique(dirname(unlist(fst_paths, recursive = FALSE)))
     )
 
-    tmp <- ensure_dirs(tempfile())
-    on.exit(unlink(tmp, recursive = TRUE))
-
-    download_src(x, tmp, tables = todo, force = force)
-    import_src(x, tmp, tables = todo, force = force)
-
-    done <- Map(file.rename, Map(file.path, tmp, fst_files[missing]),
-                fst_paths[missing])
-    done <- lgl_ply(done, all)
-
-    if (!all(done)) {
-      stop_ricu(
-        c("The following {qty(sum(!done))} table{?s} could be moved to
-           directory {data_dir}:", bullet(quote_bt(todo[!done]))),
-        class = "tbl_mv_err", exdent = c(0L, rep(2L, sum(!done)))
-      )
-    }
+    download_src(x, data_dir, tables = todo, force = force)
+    import_src(x, data_dir, tables = todo, force = force, cleanup = TRUE)
   }
 
   done <- lgl_ply(fst_paths, all_fun, file.exists)
