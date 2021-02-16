@@ -1268,6 +1268,8 @@ parse_dictionary <- function(dict, src = NULL, concepts = NULL) {
 
     } else {
 
+      sources <- sources[src]
+
       itms <- do.call(c, Map(do_itm, names(sources), sources))
       itms <- new_item(itms)
       itms <- subset_src(itms, src)
