@@ -259,7 +259,14 @@ default_vars <- function(x, type) {
 
 #' @export
 default_vars.col_cfg <- function(x, type) {
-  setNames(field(x, match.arg(type, fields(x))), names(x))
+
+  if (type %in% fields(x)) {
+    res <- field(x, type)
+  } else {
+    res <- rep_along(list(NULL), x)
+  }
+
+  setNames(res, names(x))
 }
 
 val_var <- function(x) default_vars(x, "val_var")
