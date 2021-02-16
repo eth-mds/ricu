@@ -139,6 +139,9 @@ tbl_name.itm <- function(x) {
 tbl_name.fun_itm <- function(x) NULL
 
 #' @export
+tbl_name.nul_itm <- function(x) NULL
+
+#' @export
 as_src_tbl.itm <- function(x, ...) as_src_tbl(tbl_name(x), src_name(x), ...)
 
 #' @rdname data_items
@@ -461,7 +464,15 @@ set_callback.itm <- function(x, fun) {
 set_callback.default <- function(x, ...) stop_generic(x, .Generic)
 
 str_to_fun <- function(x) {
-  if (is.function(x)) return(x)
+
+  if (is.null(x)) {
+    return(identity_callback)
+  }
+
+  if (is.function(x)) {
+    return(x)
+  }
+
   res <- eval(parse(text = x))
   assert_that(is.function(res))
   res
@@ -580,6 +591,20 @@ do_itm_load.fun_itm <- function(x, id_type = "icustay", interval = hours(1L)) {
 }
 
 #' @export
+do_itm_load.nul_itm <- function(x, id_type = "icustay", interval = hours(1L)) {
+
+  res <- setNames(list(integer(), numeric()), c("id_var", "val_var"))
+  res <- as_id_tbl(res, by_ref = TRUE)
+
+  if (identical(get_target(x), "ts_tbl")) {
+    res <- res[, c("index_var") := interval[0L]]
+    res <- as_ts_tbl(res, interval = interval, by_ref = TRUE)
+  }
+
+  res
+}
+
+#' @export
 do_itm_load.default <- function(x, ...) stop_generic(x, .Generic)
 
 #' @export
@@ -695,6 +720,12 @@ set_target.itm <- function(x, target) {
   x
 }
 
+#' @export
+set_target.cncpt <- function(x, target) {
+  x[["items"]] <- set_target(x[["items"]], target)
+  x
+}
+
 set_target.default <- function(x, target) stop_generic(x, .Generic)
 
 #' @rdname item_utils
@@ -710,6 +741,8 @@ get_target.itm <- function(x) x[["target"]]
 
 #' @export
 get_target.default <- function(x) stop_generic(x, .Generic)
+
+is_target <- function(x, dat) is_type(get_target(x))(dat)
 
 #' Data Concepts
 #'
@@ -1229,12 +1262,9 @@ parse_dictionary <- function(dict, src = NULL, concepts = NULL) {
 
     } else {
 
-      if (not_null(src)) {
-        sources <- sources[src]
-      }
-
       itms <- do.call(c, Map(do_itm, names(sources), sources))
       itms <- new_item(itms)
+      itms <- subset_src(itms, src)
     }
 
     cncpt_info <- list(name = name, items = itms, target = target)
@@ -1352,6 +1382,10 @@ explain_dictionary <- function(dict = load_dictionary(),
 #' @export
 subset_src <- function(x, src) {
 
+  if (is.null(src)) {
+    return(x)
+  }
+
   assert_that(is.character(src))
 
   UseMethod("subset_src", x)
@@ -1360,14 +1394,23 @@ subset_src <- function(x, src) {
 #' @rdname item_utils
 #' @keywords internal
 #' @export
-subset_src.item <- function(x, src) x[names(x) == src]
+subset_src.item <- function(x, src) {
+
+  hits <- src %in% names(x)
+
+  if (!all(hits)) {
+    x <- c(x, new_item(lapply(src[!hits], new_itm, class = "nul_itm")))
+  }
+
+  x[names(x) %in% src]
+}
 
 #' @rdname item_utils
 #' @keywords internal
 #' @export
 subset_src.cncpt <- function(x, src) {
   x[["items"]] <- subset_src(x[["items"]], src)
-  x
+  set_target(x, get_target(x))
 }
 
 #' @rdname item_utils

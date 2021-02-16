@@ -258,9 +258,7 @@ load_concepts.concept <- function(x, src = NULL, aggregate = NULL,
 
   assert_that(is.flag(merge_data), is.flag(verbose))
 
-  if (not_null(src)) {
-    x <- subset_src(x, src)
-  }
+  x <- subset_src(x, src)
 
   aggregate <- rep_arg(aggregate, names(x))
 
@@ -337,29 +335,9 @@ load_one_concept_helper <- function(x, aggregate, ..., progress) {
     }
   }
 
-  targ <- get_target(x)
-  type <- is_type(targ)
+  res <- load_concepts(x, aggregate, ..., progress = progress, cache = FALSE)
 
-  if (has_length(as_item(x))) {
-
-    res <- load_concepts(x, aggregate, ..., progress = progress, cache = FALSE)
-
-  } else {
-
-    res <- setNames(list(integer(), numeric()), c("id_var", name))
-    res <- as_id_tbl(res, by_ref = TRUE)
-
-    if (identical(targ, "ts_tbl")) {
-      res <- res[, c("index_var") := ival[0L]]
-      res <- as_ts_tbl(res, interval = ival, by_ref = TRUE)
-    }
-  }
-
-  assert_that(has_name(res, name))
-
-  if (has_rows(res)) {
-    assert_that(type(res))
-  }
+  assert_that(has_name(res, name), is_target(x, res))
 
   if (isTRUE(attr(x, "dup_cncpt"))) {
     assign(cach, copy(res), envir = concept_lookup_env)
