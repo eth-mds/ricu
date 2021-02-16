@@ -1194,7 +1194,7 @@ n_tick.concept <- function(x) sum(int_ply(x, n_tick))
 load_dictionary <- function(src = NULL, concepts = NULL,
                             name = "concept-dict", cfg_dirs = NULL) {
 
-  avail <- src_data_avail()
+  avail <- src_data_avail(attached_srcs())
   avail <- setNames(avail[["available"]], avail[["name"]])
 
   if (is.null(src)) {
