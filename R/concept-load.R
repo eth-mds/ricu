@@ -562,10 +562,11 @@ load_concepts.item <- function(x, patient_ids = NULL, id_type = "icustay",
 
     progress_tick(progress_bar = prog)
 
-    res <- load_concepts(x, ...)
+    src <- src_name(x)
+    res <- load_concepts(x, patient_ids[[src]], ...)
 
     if (mulit_src) {
-      res <- res[, c("source") := src_name(x)]
+      res <- res[, c("source") := src]
       res <- set_id_vars(res, c("source", id_vars(res)))
     }
 
@@ -574,13 +575,33 @@ load_concepts.item <- function(x, patient_ids = NULL, id_type = "icustay",
 
   assert_that(has_length(x))
 
-  mulit_src <- length(unique(src_name(x))) > 1L
+  srcs <- unique(src_name(x))
+  mulit_src <- length(srcs) > 1L
+
+  if (mulit_src && not_null(patient_ids)) {
+
+    if (is_df(patient_ids)) {
+
+      assert_that(has_col(patient_ids, "source"))
+
+      if (is_dt(patient_ids)) {
+        patient_ids <- split(patient_ids, by = "source")
+      } else {
+        patient_ids <- split(patient_ids, patient_ids[["source"]])
+      }
+    }
+
+    assert_that(is.list(patient_ids), has_name(patient_ids, srcs))
+
+  } else {
+    patient_ids[srcs] <- list(patient_ids)
+  }
 
   # slightly inefficient, as cols might get filled which were only relevant
   # during callback
 
   rbind_lst(
-    lapply(x, load_one, progress, patient_ids, id_type, interval, ...),
+    lapply(x, load_one, progress, id_type, interval, ...),
     fill = TRUE
   )
 }
@@ -614,5 +635,9 @@ merge_patid <- function(x, patid) {
     patid <- setnames(setDT(list(unique(patid))), id_col)
   }
 
-  merge(x, patid, by = id_col, all = FALSE)
+  if (is_id_tbl(patid)) {
+    merge(x, patid, all = FALSE)
+  } else {
+    merge(x, patid, by = id_col, all = FALSE)
+  }
 }
