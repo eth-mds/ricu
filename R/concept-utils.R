@@ -1208,12 +1208,18 @@ load_dictionary <- function(src = NULL, concepts = NULL,
 
 read_dictionary <- function(name = "data-sources", cfg_dirs = NULL) {
 
-  combine_sources <- function(x, y) {
+  combine_sources <- function(x, y, nme) {
 
-    assert_that(
-      !identical(x[["class"]], "rec_cncpt"), not_null(names(y[["sources"]])),
-      length(y) == 1L, has_name(y, "sources"), is.list(y[["sources"]])
-    )
+    if (identical(x[["class"]], "rec_cncpt")) {
+      stop_ricu("Cannot merge recursive concept `{nme}`", "extend_dict_err")
+    }
+
+    if (is.null(names(y[["sources"]])) || length(y) != 1L ||
+        !has_name(y, "sources") || !is.list(y[["sources"]])) {
+
+      stop_ricu("Cannot merge concept `{nme}` due to malformed `sources`
+                 entry", "extend_dict_err")
+    }
 
     new_sources    <- c(y[["sources"]], x[["sources"]])
     x[["sources"]] <- new_sources[!duplicated(names(new_sources))]
@@ -1234,7 +1240,7 @@ read_dictionary <- function(name = "data-sources", cfg_dirs = NULL) {
     dups <- intersect(names(x), names(y))
 
     if (has_length(dups)) {
-      x[dups] <- map(combine_sources, x[dups], y[dups])
+      x[dups] <- map(combine_sources, x[dups], y[dups], dups)
       y[dups] <- NULL
     }
 
