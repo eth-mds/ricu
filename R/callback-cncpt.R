@@ -442,18 +442,6 @@ vaso60 <- function(..., max_gap = mins(5L), interval = NULL) {
 
   dat <- collect_dots(c(rate = "_rate$", dur = "_dur$"), NULL, ...)
 
-  if (any(int_ply(dat, nrow) == 0L)) {
-    res <- dat[["rate"]]
-    res <- rename_cols(res[0L], sub, data_vars(res), pattern = "_rate$",
-                       replacement = "60")
-
-    if (is_ts_tbl(res)) {
-      res <- rm_cols(res, index_var(res))
-    }
-
-    return(res)
-  }
-
   interval <- check_interval(dat)
 
   if (is.null(final_int)) {
@@ -461,6 +449,16 @@ vaso60 <- function(..., max_gap = mins(5L), interval = NULL) {
   }
 
   assert_that(is_interval(final_int))
+
+  if (any(int_ply(dat, nrow) == 0L)) {
+
+    res <- dat[["rate"]]
+    res <- rename_cols(res[0L], sub, data_vars(res), pattern = "_rate$",
+                       replacement = "60")
+    res <- change_interval(res, final_int, by_ref = TRUE)
+
+    return(res)
+  }
 
   dur <- dat[["dur"]]
   dva <- data_vars(dur)
