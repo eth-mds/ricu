@@ -85,11 +85,11 @@ dataset and the \code{icustays} table, this gives\if{html}{\out{<div class="r">}
 ## # Time vars:   `intime`, `outtime`
 ##     row_id subject_id hadm_id icustay_id dbsource first_careunit last_careunit
 ##      <int>      <int>   <int>      <int> <chr>    <chr>          <chr>
-## 1    12742      10006  142345     206504 carevue  MICU           MICU
-## 2    12747      10011  105331     232110 carevue  MICU           MICU
-## 3    12749      10013  165520     264446 carevue  MICU           MICU
-## 4    12754      10017  199207     204881 carevue  CCU            CCU
-## 5    12755      10019  177759     228977 carevue  MICU           MICU
+##   1  12742      10006  142345     206504 carevue  MICU           MICU
+##   2  12747      10011  105331     232110 carevue  MICU           MICU
+##   3  12749      10013  165520     264446 carevue  MICU           MICU
+##   4  12754      10017  199207     204881 carevue  CCU            CCU
+##   5  12755      10019  177759     228977 carevue  MICU           MICU
 ## ...
 ## 132  42676      44083  198330     286428 metavis~ CCU            CCU
 ## 133  42691      44154  174245     217724 metavis~ MICU           MICU

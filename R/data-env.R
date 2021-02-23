@@ -446,10 +446,11 @@ new_src_env <- function(x, env = new.env(parent = data_env())) {
 
   assert_that(is_src_cfg(x), is.environment(env))
 
+  nme <- src_name(x)
   res <- structure(env, class = paste0(c(x[["prefix"]], "src"), "_env"),
-                   src_name = src_name(x), id_cfg = as_id_cfg(x))
+                   src_name = nme, id_cfg = as_id_cfg(x))
 
-  assign(src_name(x), res, envir = data_env())
+  assign(nme, res, envir = data_env())
 }
 
 #' @keywords internal
