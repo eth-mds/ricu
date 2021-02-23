@@ -126,7 +126,7 @@ cfg <- list(
   ),
   o2sat = list(
     unit = c("%", "% Sat."),
-    min = 70,
+    min = 50,
     max = 100,
     description = "oxygen saturation",
     category = "respiratory",
@@ -2210,6 +2210,14 @@ cfg <- list(
     category = "respiratory",
     aggregate = c("min", "max"),
     callback = "pafi",
+    class = "rec_cncpt"
+  ),
+  safi = list(
+    concepts = c("o2sat", "fio2"),
+    description = "SaO2/FiO2",
+    category = "respiratory",
+    aggregate = c("min", "max"),
+    callback = "safi",
     class = "rec_cncpt"
   ),
   vent_dur = list(

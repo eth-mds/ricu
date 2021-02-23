@@ -3,6 +3,7 @@
 \encoding{UTF-8}
 \name{pafi}
 \alias{pafi}
+\alias{safi}
 \alias{vent_dur}
 \alias{vent_ind}
 \alias{sed}
@@ -17,6 +18,14 @@
 \title{Concept callback functions}
 \usage{
 pafi(
+  ...,
+  match_win = hours(2L),
+  mode = c("match_vals", "extreme_vals", "fill_gaps"),
+  fix_na_fio2 = TRUE,
+  interval = NULL
+)
+
+safi(
   ...,
   match_win = hours(2L),
   mode = c("match_vals", "extreme_vals", "fill_gaps"),

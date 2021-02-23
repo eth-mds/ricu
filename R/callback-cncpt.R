@@ -213,27 +213,58 @@ pafi <- function(..., match_win = hours(2L),
 
   cnc <- c("po2", "fio2")
   res <- collect_dots(cnc, interval, ...)
+  res <- match_fio2(res, match_win, mode, fix_na_fio2)
 
-  assert_that(is_interval(match_win), match_win > check_interval(res),
+  res <- res[!is.na(get(cnc[1L])) & !is.na(get(cnc[2L])) & get(cnc[2L]) != 0, ]
+  res <- res[, c("pafi") := 100 * get(cnc[1L]) / get(cnc[2L])]
+  res <- rm_cols(res, cnc)
+
+  res
+}
+
+#' @rdname callback_cncpt
+#' @export
+safi <- function(..., match_win = hours(2L),
+                 mode = c("match_vals", "extreme_vals", "fill_gaps"),
+                 fix_na_fio2 = TRUE, interval = NULL) {
+
+  mode <- match.arg(mode)
+
+  cnc <- c("o2sat", "fio2")
+  res <- collect_dots(cnc, interval, ...)
+  res <- match_fio2(res, match_win, mode, fix_na_fio2)
+
+  res <- res[!is.na(get(cnc[1L])) & !is.na(get(cnc[2L])) & get(cnc[2L]) != 0, ]
+  res <- res[, c("safi") := 100 * get(cnc[1L]) / get(cnc[2L])]
+  res <- rm_cols(res, cnc)
+
+  res
+}
+
+match_fio2 <- function(x, match_win, mode, fix_na_fio2) {
+
+  assert_that(is_interval(match_win), match_win > check_interval(x),
               is.flag(fix_na_fio2))
 
   if (identical(mode, "match_vals")) {
 
-    on12 <- paste(meta_vars(res[[1L]]), "==", meta_vars(res[[2L]]))
-    on21 <- paste(meta_vars(res[[2L]]), "==", meta_vars(res[[1L]]))
+    on12 <- paste(meta_vars(x[[1L]]), "==", meta_vars(x[[2L]]))
+    on21 <- paste(meta_vars(x[[2L]]), "==", meta_vars(x[[1L]]))
 
-    res <- rbind(
-      res[[1L]][res[[2L]], on = on12, roll = match_win],
-      res[[2L]][res[[1L]], on = on21, roll = match_win]
+    x <- rbind(
+      x[[1L]][x[[2L]], on = on12, roll = match_win],
+      x[[2L]][x[[1L]], on = on21, roll = match_win]
     )
-    res <- unique(res)
+    x <- unique(x)
 
   } else {
 
-    res <- reduce(merge, res, all = TRUE)
+    x <- reduce(merge, x, all = TRUE)
 
     if (identical(mode, "fill_gaps")) {
-      res <- fill_gaps(res)
+      x <- fill_gaps(x)
+    } else {
+      assert_that(identical(mode, "extreme_vals"))
     }
 
     win_expr <- substitute(
@@ -241,18 +272,14 @@ pafi <- function(..., match_win = hours(2L),
       list(min_fun = min_or_na, max_fun = max_or_na)
     )
 
-    res <- slide(res, !!win_expr, before = match_win, full_window = FALSE)
+    x <- slide(x, !!win_expr, before = match_win, full_window = FALSE)
   }
 
   if (fix_na_fio2) {
-    res <- res[is.na(get(cnc[2L])), c(cnc[2L]) := 21]
+    x <- x[is.na(get(cnc[2L])), c(cnc[2L]) := 21]
   }
 
-  res <- res[!is.na(get(cnc[1L])) & !is.na(get(cnc[2L])) & get(cnc[2L]) != 0, ]
-  res <- res[, c("pafi") := 100 * get(cnc[1L]) / get(cnc[2L])]
-  res <- rm_cols(res, cnc)
-
-  res
+  x
 }
 
 #' @param min_length Minimal time span between a ventilation start and end

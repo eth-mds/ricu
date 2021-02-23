@@ -3541,7 +3541,7 @@
   },
   "o2sat": {
     "unit": ["%", "% Sat."],
-    "min": 70,
+    "min": 50,
     "max": 100,
     "description": "oxygen saturation",
     "category": "respiratory",
@@ -4244,6 +4244,14 @@
         }
       ]
     }
+  },
+  "safi": {
+    "concepts": ["o2sat", "fio2"],
+    "description": "SaO2/FiO2",
+    "category": "respiratory",
+    "aggregate": ["min", "max"],
+    "callback": "safi",
+    "class": "rec_cncpt"
   },
   "samp": {
     "class": "lgl_cncpt",
