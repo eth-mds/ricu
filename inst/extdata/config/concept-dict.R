@@ -1099,7 +1099,7 @@ cfg <- list(
   fgn = list(
     unit = "mg/dL",
     min = 0,
-    max = 15,
+    max = 1500,
     description = "fibrinogen",
     category = "hematology",
     sources = list(
