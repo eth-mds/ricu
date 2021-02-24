@@ -211,6 +211,8 @@ pafi <- function(..., match_win = hours(2L),
 
   mode <- match.arg(mode)
 
+  assert_that(is.flag(fix_na_fio2))
+
   cnc <- c("po2", "fio2")
   res <- collect_dots(cnc, interval, ...)
   res <- match_fio2(res, match_win, mode, if (fix_na_fio2) cnc[2L] else NULL)
@@ -230,6 +232,8 @@ safi <- function(..., match_win = hours(2L),
 
   mode <- match.arg(mode)
 
+  assert_that(is.flag(fix_na_fio2))
+
   cnc <- c("o2sat", "fio2")
   res <- collect_dots(cnc, interval, ...)
   res <- match_fio2(res, match_win, mode, if (fix_na_fio2) cnc[2L] else NULL)
@@ -243,8 +247,7 @@ safi <- function(..., match_win = hours(2L),
 
 match_fio2 <- function(x, match_win, mode, fio2 = NULL) {
 
-  assert_that(is_interval(match_win), match_win > check_interval(x),
-              is.flag(fix_na_fio2))
+  assert_that(is_interval(match_win), match_win > check_interval(x))
 
   if (identical(mode, "match_vals")) {
 
