@@ -213,7 +213,7 @@ pafi <- function(..., match_win = hours(2L),
 
   cnc <- c("po2", "fio2")
   res <- collect_dots(cnc, interval, ...)
-  res <- match_fio2(res, match_win, mode, fix_na_fio2)
+  res <- match_fio2(res, match_win, mode, if (fix_na_fio2) cnc[2L] else NULL)
 
   res <- res[!is.na(get(cnc[1L])) & !is.na(get(cnc[2L])) & get(cnc[2L]) != 0, ]
   res <- res[, c("pafi") := 100 * get(cnc[1L]) / get(cnc[2L])]
@@ -232,7 +232,7 @@ safi <- function(..., match_win = hours(2L),
 
   cnc <- c("o2sat", "fio2")
   res <- collect_dots(cnc, interval, ...)
-  res <- match_fio2(res, match_win, mode, fix_na_fio2)
+  res <- match_fio2(res, match_win, mode, if (fix_na_fio2) cnc[2L] else NULL)
 
   res <- res[!is.na(get(cnc[1L])) & !is.na(get(cnc[2L])) & get(cnc[2L]) != 0, ]
   res <- res[, c("safi") := 100 * get(cnc[1L]) / get(cnc[2L])]
@@ -241,7 +241,7 @@ safi <- function(..., match_win = hours(2L),
   res
 }
 
-match_fio2 <- function(x, match_win, mode, fix_na_fio2) {
+match_fio2 <- function(x, match_win, mode, fio2 = NULL) {
 
   assert_that(is_interval(match_win), match_win > check_interval(x),
               is.flag(fix_na_fio2))
@@ -275,8 +275,8 @@ match_fio2 <- function(x, match_win, mode, fix_na_fio2) {
     x <- slide(x, !!win_expr, before = match_win, full_window = FALSE)
   }
 
-  if (fix_na_fio2) {
-    x <- x[is.na(get(cnc[2L])), c(cnc[2L]) := 21]
+  if (not_null(fio2)) {
+    x <- x[is.na(get(fio2)), c(fio2) := 21]
   }
 
   x

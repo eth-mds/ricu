@@ -8,6 +8,7 @@
 \alias{new_src_env}
 \alias{is_src_env}
 \alias{as_src_env}
+\alias{attached_srcs}
 \alias{is_tbl_avail}
 \alias{src_tbl_avail}
 \alias{src_data_avail}
@@ -27,6 +28,8 @@ new_src_env(x, env = new.env(parent = data_env()))
 is_src_env(x)
 
 as_src_env(x)
+
+attached_srcs()
 
 is_tbl_avail(tbl, env)
 

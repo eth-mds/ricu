@@ -555,6 +555,8 @@ safe_src_get <- function(src) {
   get0(src, envir = data_env(), mode = "environment", ifnotfound = NULL)
 }
 
+#' @keywords internal
+#' @rdname src_env
 #' @export
 attached_srcs <- function() ls(envir = data_env())
 
