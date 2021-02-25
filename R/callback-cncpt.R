@@ -279,7 +279,7 @@ match_fio2 <- function(x, match_win, mode, fio2 = NULL) {
   }
 
   if (not_null(fio2)) {
-    x <- x[is.na(get(fio2)), c(fio2) := 21]
+    x <- set(x, which(is.na(x[[fio2]])), fio2, 21)
   }
 
   x

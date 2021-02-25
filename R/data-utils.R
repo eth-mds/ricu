@@ -365,6 +365,7 @@ id_map_helper.default <- function(x, ...) stop_generic(x, .Generic)
 #' @param in_time,out_time column names of the returned in/out times
 #' @param interval The time interval used to discretize time stamps with,
 #' specified as [base::difftime()] object
+#' @param patient_ids Patient IDs used to subset the result
 #'
 #' @return An `id_tbl` containing the selected IDs and depending on values
 #' passed as `in_time` and `out_time`, start and end times of the ID passed as
@@ -373,7 +374,7 @@ id_map_helper.default <- function(x, ...) stop_generic(x, .Generic)
 #' @export
 stay_windows <- function(x, id_type = "icustay", win_type = id_type,
                          in_time = "start", out_time = "end",
-                         interval = hours(1L)) {
+                         interval = hours(1L), patient_ids = NULL) {
 
   assert_that(is_interval(interval))
 
@@ -387,7 +388,7 @@ stay_windows <- function(x, id_type = "icustay", win_type = id_type,
                .SDcols = c(in_time, out_time)]
   }
 
-  res
+  merge_patid(res, patient_ids)
 }
 
 #' Switch between id types

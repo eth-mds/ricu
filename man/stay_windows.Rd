@@ -10,7 +10,8 @@ stay_windows(
   win_type = id_type,
   in_time = "start",
   out_time = "end",
-  interval = hours(1L)
+  interval = hours(1L),
+  patient_ids = NULL
 )
 }
 \arguments{
@@ -24,6 +25,8 @@ stay_windows(
 
 \item{interval}{The time interval used to discretize time stamps with,
 specified as \code{\link[base:difftime]{base::difftime()}} object}
+
+\item{patient_ids}{Patient IDs used to subset the result}
 }
 \value{
 An \code{id_tbl} containing the selected IDs and depending on values
