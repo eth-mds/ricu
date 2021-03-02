@@ -593,8 +593,13 @@ do_itm_load.fun_itm <- function(x, id_type = "icustay", interval = hours(1L)) {
 #' @export
 do_itm_load.nul_itm <- function(x, id_type = "icustay", interval = hours(1L)) {
 
-  res <- setNames(list(integer(), numeric()), c("id_var", "val_var"))
-  res <- as_id_tbl(res, by_ref = TRUE)
+  idc <- id_type_to_name(x, id_type)
+  xtr <- new_names(idc)
+
+  res <- id_origin(x, id_type_to_name(x, id_type), origin_name = xtr,
+                   copy = FALSE)
+  res <- res[0L, ]
+  res <- res[, c("val_var", xtr) := list(numeric(0L), NULL)]
 
   if (identical(get_target(x), "ts_tbl")) {
     res <- res[, c("index_var") := interval[0L]]
