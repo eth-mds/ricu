@@ -537,7 +537,8 @@ set_id_vars <- function(x, new_id_vars) {
 
   assert_that(is.character(new_id_vars), has_length(new_id_vars))
 
-  check_valid(
-    set_attributes(x, id_vars = unname(new_id_vars))
-  )
+  res <- set_attributes(x, id_vars = unname(new_id_vars))
+  res <- sort(res, by_ref = TRUE)
+
+  check_valid(res)
 }
