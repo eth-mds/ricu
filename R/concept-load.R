@@ -593,8 +593,10 @@ load_concepts.item <- function(x, patient_ids = NULL, id_type = "icustay",
 
     assert_that(is.list(patient_ids), has_name(patient_ids, srcs))
 
-  } else {
-    patient_ids[srcs] <- list(patient_ids)
+  } else if (not_null(patient_ids)) {
+
+    patient_ids <- list(patient_ids)
+    names(patient_ids) <- srcs
   }
 
   # slightly inefficient, as cols might get filled which were only relevant
