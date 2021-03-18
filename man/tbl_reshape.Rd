@@ -6,6 +6,7 @@
 \alias{merge.id_tbl}
 \alias{split.id_tbl}
 \alias{rbind_lst}
+\alias{merge_lst}
 \alias{unmerge}
 \title{ICU class data reshaping}
 \usage{
@@ -24,6 +25,8 @@
 \method{split}{id_tbl}(x, ...)
 
 rbind_lst(x, ...)
+
+merge_lst(x)
 
 unmerge(x, col_groups = as.list(data_vars(x)), by = meta_vars(x), na_rm = TRUE)
 }

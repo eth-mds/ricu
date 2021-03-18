@@ -298,6 +298,23 @@ rbind_lst <- function(x, ...) {
   sort(res, by_ref = TRUE)
 }
 
+#' @rdname tbl_reshape
+#' @export
+#'
+merge_lst <- function(x) {
+
+  assert_that(is.list(x), all_fun(x, is_id_tbl))
+
+  ts <- lgl_ply(x, is_ts_tbl)
+  id <- c(which(ts), which(!ts))
+  ft <- unlist(lapply(x, data_vars))
+
+  x <- reduce(merge, x[id], all = TRUE)
+  x <- setcolorder(x, c(meta_vars(x), ft))
+
+  x
+}
+
 #' @param col_groups A list of character vectors defining the grouping of
 #' non-by columns
 #' @param na_rm Logical flag indicating whether to remove rows that have all
