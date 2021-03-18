@@ -13,6 +13,7 @@ susp_inf(
   abx_win = hours(24L),
   samp_win = hours(72L),
   by_ref = TRUE,
+  keep_components = FALSE,
   interval = NULL
 )
 }

@@ -14,6 +14,7 @@ sep3(
   sofa_thresh = 2L,
   si_lwr = hours(48L),
   si_upr = hours(24L),
+  keep_components = FALSE,
   interval = NULL
 )
 
@@ -34,6 +35,9 @@ window}
 \item{sofa_thresh}{Required SOFA increase to trigger Sepsis 3}
 
 \item{si_lwr, si_upr}{Lower/upper extent of SI windows}
+
+\item{keep_components}{Logical flag indicating whether to return the
+individual components alongside the aggregated score}
 
 \item{interval}{Time series interval (only used for checking consistency
 of input data)}

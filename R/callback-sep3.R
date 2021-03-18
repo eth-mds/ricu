@@ -10,6 +10,8 @@
 #' window
 #' @param sofa_thresh Required SOFA increase to trigger Sepsis 3
 #' @param si_lwr,si_upr Lower/upper extent of SI windows
+#' @param keep_components Logical flag indicating whether to return the
+#' individual components alongside the aggregated score
 #' @param interval Time series interval (only used for checking consistency
 #' of input data)
 #'
@@ -77,7 +79,7 @@
 sep3 <- function(..., si_window = c("first", "last", "any"),
                  delta_fun = delta_cummin, sofa_thresh = 2L,
                  si_lwr = hours(48L), si_upr = hours(24L),
-                 interval = NULL) {
+                 keep_components = FALSE, interval = NULL) {
 
   cnc <- c("sofa", "susp_inf")
   res <- collect_dots(cnc, interval, ...)
@@ -92,6 +94,8 @@ sep3 <- function(..., si_window = c("first", "last", "any"),
 
   id <- id_vars(sofa)
   ind <- index_var(sofa)
+
+  sus_cols <- setdiff(data_vars(susp), "susp_inf")
 
   sofa <- sofa[, c("join_time1", "join_time2") := list(
     get(ind), get(ind)
@@ -114,13 +118,18 @@ sep3 <- function(..., si_window = c("first", "last", "any"),
   join_clause <- c(id, "join_time1 >= si_lwr", "join_time2 <= si_upr")
 
   res <- sofa[susp,
-    c(list(delta_sofa = delta_fun(get("sofa"))), mget(ind)),
+    c(list(delta_sofa = delta_fun(get("sofa"))), mget(c(ind, sus_cols))),
     on = join_clause, by = .EACHI, nomatch = NULL]
 
   res <- res[is_true(get("delta_sofa") >= sofa_thresh), ]
 
-  res <- rm_cols(res, c("join_time1", "join_time2", "delta_sofa"),
-                 by_ref = TRUE)
+  cols_rm <- c("join_time1", "join_time2")
+
+  if (!keep_components) {
+    cols_rm <- c(cols_rm, "delta_sofa")
+  }
+
+  res <- rm_cols(res, cols_rm, by_ref = TRUE)
   res <- res[, head(.SD, n = 1L), by = c(id_vars(res))]
   res <- res[, c("sep3") := TRUE]
 
@@ -233,7 +242,7 @@ delta_min <- function(x, shifts = seq.int(0L, 23L)) {
 susp_inf <- function(..., abx_count_win = hours(24L), abx_min_count = 1L,
                      positive_cultures = FALSE, si_mode = c("and", "or"),
                      abx_win = hours(24L), samp_win = hours(72L),
-                     by_ref = TRUE, interval = NULL) {
+                     by_ref = TRUE, keep_components = FALSE, interval = NULL) {
 
   si_mode <- match.arg(si_mode)
 
@@ -257,7 +266,7 @@ susp_inf <- function(..., abx_count_win = hours(24L), abx_min_count = 1L,
   switch(si_mode, and = si_and, or = si_or)(
     si_abx(res[["abx"]], abx_count_win, abx_min_count),
     si_samp(aggregate(res[["samp"]], samp_fun)),
-    abx_win, samp_win
+    abx_win, samp_win, keep_components
   )
 }
 
@@ -276,7 +285,7 @@ si_samp <- function(x) {
   set(x, j = "samp", value = x[["samp"]] > 0L)
 }
 
-si_and <- function(abx, samp, abx_win, samp_win) {
+si_and <- function(abx, samp, abx_win, samp_win, keep) {
 
   assert_that(has_rows(abx), has_rows(samp), msg = "
     calling `susp_inf()` with `si_mode = and` requires data from both `abx`
@@ -284,23 +293,66 @@ si_and <- function(abx, samp, abx_win, samp_win) {
   )
 
   do_roll <- function(x, y, win) {
+
     met_y <- meta_vars(y)
-    y[x, met_y, with = FALSE, roll = -win, nomatch = NULL,
-      on = paste(met_y, meta_vars(x), sep = " == ")]
+
+    if (keep) {
+
+      y[x, c(met_y, "samp_time", "abx_time"), with = FALSE, roll = -win,
+        nomatch = NULL, on = paste(met_y, meta_vars(x), sep = " == ")]
+
+    } else {
+
+      y[x, met_y, with = FALSE, roll = -win, nomatch = NULL,
+        on = paste(met_y, meta_vars(x), sep = " == ")]
+    }
   }
 
-  res <- unique(rbind(do_roll(abx, samp, hours(24L)),
-                      do_roll(samp, abx, hours(72L))))
+  if (keep) {
+
+    samp_idx <- index_var(samp)
+    abx_idx  <- index_var(abx)
+
+    samp <- samp[, c("samp_time") := get(samp_idx)]
+    abx <-  abx[,  c("abx_time")  := get(abx_idx)]
+  }
+
+  res <- rbind(do_roll(abx, samp, abx_win),
+               do_roll(samp, abx, samp_win))
+
+  if (keep) {
+
+    rmv <- duplicated(res, by = meta_vars(res))
+
+    if (any(rmv)) {
+      msg_progress("removing {sum(rmv)} duplicate si events")
+      res <- res[!rmv, ]
+    }
+
+  } else {
+
+    res <- unique(res)
+  }
+
   res <- res[, c("susp_inf") := TRUE]
 
   res
 }
 
-si_or <- function(abx, samp, abx_win, samp_win) {
+si_or <- function(abx, samp, abx_win, samp_win, keep) {
+
+  if (keep) {
+
+    samp_idx <- index_var(samp)
+    abx_idx  <- index_var(abx)
+
+    samp <- samp[, c("samp_time") := get(samp_idx)]
+    abx <-  abx[,  c("abx_time")  := get(abx_idx)]
+  }
 
   res <- merge(abx, samp, all = TRUE)
   res <- res[get("abx") | get("samp"), ]
-  res <- rm_cols(res, data_vars(res))
+  res <- rm_cols(res, c("abx", "samp"))
   res <- res[, c("susp_inf") := TRUE]
 
   res
