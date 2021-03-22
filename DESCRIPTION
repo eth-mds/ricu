@@ -65,7 +65,8 @@ Suggests:
     ggplot2,
     survival,
     forestmodel,
-    rticles
+    rticles,
+    kableExtra
 RoxygenNote: 7.1.1
 Remotes: nbenn/mockthat
 Additional_repositories: https://septic-tank.github.io/physionet-demo
