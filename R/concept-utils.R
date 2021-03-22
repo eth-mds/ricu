@@ -1359,7 +1359,8 @@ concept_availability <- function(dict = load_dictionary(),
 
     } else {
 
-      c(table(src_name(x))) > 0L
+      itms <- as_item(x)
+      tapply(lgl_ply(itms, inherits, "nul_itm"), names(itms), Negate(any))
     }
   }
 
