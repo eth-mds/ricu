@@ -85,7 +85,8 @@ sep3 <- function(..., si_window = c("first", "last", "any"),
   res <- collect_dots(cnc, interval, ...)
 
   assert_that(is.count(sofa_thresh), is.function(delta_fun),
-              is_interval(si_lwr), is_interval(si_upr))
+              is_interval(si_lwr), is_interval(si_upr),
+              is.flag(keep_components))
 
   si_window <- match.arg(si_window)
 
@@ -248,7 +249,8 @@ susp_inf <- function(..., abx_count_win = hours(24L), abx_min_count = 1L,
 
   assert_that(is.count(abx_min_count), is.flag(positive_cultures),
               is_interval(abx_count_win), is_interval(abx_win),
-              is_interval(samp_win), is.flag(by_ref))
+              is_interval(samp_win), is.flag(by_ref),
+              is.flag(keep_components))
 
   cnc <- c("abx", "samp")
   res <- collect_dots(cnc, interval, ...)
