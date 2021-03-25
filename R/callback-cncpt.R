@@ -444,6 +444,7 @@ urine24 <- function(..., min_win = hours(12L), limits = NULL,
   interval <- check_interval(res)
 
   if (nrow(res) == 0L) {
+    res <- rename_cols(res, "urine24", "urine")
     return(res)
   }
 
