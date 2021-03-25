@@ -443,6 +443,10 @@ urine24 <- function(..., min_win = hours(12L), limits = NULL,
   res      <- collect_dots("urine", interval, ...)
   interval <- check_interval(res)
 
+  if (nrow(res) == 0L) {
+    return(res)
+  }
+
   assert_that(is_interval(min_win), min_win > interval, min_win <= hours(24L))
 
   min_steps   <- ceiling(convert_dt(min_win) / as.double(interval))
