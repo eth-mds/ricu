@@ -11,3 +11,4 @@
 ^cran-comments\.md$
 ^CRAN-RELEASE$
 ^vignettes/jss\.(cls|bst)$
+^vignettes/jss_(cache|files)$
