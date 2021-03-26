@@ -4,14 +4,14 @@ title:
   plain: "ricu: R's Interface to Intensive Care Data"
   short: "\\pkg{ricu}: R meets ICU data"
 author:
-  - name: "Nicolas Bennett\\footnote[1]{These authors contributed equally.}"
+  - name: "Nicolas Bennett\\footnotemark[1]"
     affiliation: ETH Zürich
     address: |
       | Seminar for Statistics
       | Rämistrasse 101
       | CH-8092 Zurich
     email: \email{nicolas.bennett@stat.math.ethz.ch}
-  - name: "Drago Plečko\\footnotemark[1]"
+  - name: "Drago Plečko\\footnotemark[1]\\footnotetext[1]{These authors contributed equally.}"
     affiliation: ETH Zürich
     address: |
       | Seminar for Statistics
@@ -49,6 +49,7 @@ preamble: >
   \usepackage{amsmath}
   \usepackage{booktabs}
   \usepackage{makecell}
+  \usepackage{threeparttablex}
 vignette: >
   %\VignetteIndexEntry{Accessing ICU data with R (Bennett & Plečko, JSS 2021)}
   %\VignetteEngine{knitr::rmarkdown}
@@ -202,11 +203,10 @@ format_2 <- function(x) {
   formatC(x, digits = 2L, format = "f")
 }
 
-summarize <- function(src) {
+summarize <- function(src, avail) {
 
   ids <- as_id_cfg(src)
-
-  cnc <- concept_availability(load_dictionary(src))[, src]
+  cnc <- avail[, src]
 
   los_icu <- load_concepts("los_icu", src, verbose = FALSE)
 
@@ -243,10 +243,17 @@ summarize <- function(src) {
 }
 
 srcs <- c("MIMIC", "eICU", "HiRID", "AUMC")
-summ <- vapply(tolower(srcs), summarize, character(10L))
+dict <- load_dictionary(tolower(srcs))
+avai <- concept_availability(dict, include_rec = FALSE)
+summ <- vapply(tolower(srcs), summarize, character(10L), avai)
 
-colnames(summ) <- srcs
-rownames(summ) <- linebreak(rownames(summ), align = "l")
+colnames(summ)     <- srcs
+rownames(summ)     <- linebreak(rownames(summ), align = "l")
+rownames(summ)[3L] <- paste0(rownames(summ)[3L],
+                             footnote_marker_symbol(1, "latex"))
+
+n_rec_cpt <- nrow(concept_availability(dict, include_rec = TRUE)) -
+             nrow(avai)
 
 capt <- paste(
   "Comparison of datasets supported by \\pkg{ricu}, highlighting some of",
@@ -260,6 +267,13 @@ tbl <- kable(summ, format = "latex", escape = FALSE, booktabs = TRUE,
 tbl <- pack_rows(tbl, "Admission counts", 4, 6)
 tbl <- pack_rows(tbl, "Stay lengths [hr]", 7, 8)
 tbl <- pack_rows(tbl, "Frequency [1/hr]", 9, 10)
+tbl <- footnote(tbl, symbol = paste(
+  "These values represent the number of atomic concepts per data source.",
+  "Additionally,", n_rec_cpt, "recursive concepts are available, which",
+  "build on source-specific atomic concepts in a source-agnostic manner",
+  "(see Section \\\\ref{concept-specification} for details)."),
+  threeparttable = TRUE, escape = FALSE
+)
 tbl
 ```
 

@@ -1211,7 +1211,7 @@ load_dictionary <- function(src = NULL, concepts = NULL,
   parse_dictionary(read_dictionary(name, cfg_dirs), src, concepts)
 }
 
-read_dictionary <- function(name = "data-sources", cfg_dirs = NULL) {
+read_dictionary <- function(name, cfg_dirs = NULL) {
 
   combine_sources <- function(x, y, nme) {
 
@@ -1255,7 +1255,7 @@ read_dictionary <- function(name = "data-sources", cfg_dirs = NULL) {
   get_config(name, unique(c(rev(config_paths()), cfg_dirs)), combine_concepts)
 }
 
-parse_dictionary <- function(dict, src = NULL, concepts = NULL) {
+parse_dictionary <- function(dict, src, concepts = NULL) {
 
   do_itm <- function(sr, x) {
     res <- lapply(x, c, src = sr)
@@ -1362,6 +1362,10 @@ concept_availability <- function(dict = load_dictionary(),
       itms <- as_item(x)
       tapply(lgl_ply(itms, inherits, "nul_itm"), names(itms), Negate(any))
     }
+  }
+
+  if (!isTRUE(include_rec)) {
+    dict <- dict[lgl_ply(dict, Negate(inherits), "rec_cncpt")]
   }
 
   res <- lapply(dict, is_avail)
