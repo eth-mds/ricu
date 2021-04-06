@@ -37,6 +37,9 @@ occur}
 
 \item{by_ref}{Logical flag indicating whether to process data by reference}
 
+\item{keep_components}{Logical flag indicating whether to return the
+individual components alongside the aggregated score}
+
 \item{interval}{Time series interval (only used for checking consistency
 of input data)}
 }

@@ -168,6 +168,7 @@ ricu_untar <- function(...) utils::untar(...)
 #' @param verbose Logical flag indicating whether to print progress information
 #'
 #' @rdname download
+#' @importFrom utils unzip
 #' @export
 download_src.aumc_cfg <- function(x, data_dir = src_data_dir(x),
                                   tables = NULL, force = FALSE, token = NULL,

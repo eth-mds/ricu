@@ -54,8 +54,39 @@ increase in SOFA score.
 \details{
 The Sepsis-3 Consensus (Singer et. al.) defines sepsis as an acute
 increase in the SOFA score (see \code{\link[=sofa_score]{sofa_score()}}) of 2 points or more within
-the suspected infection (SI) window (see \code{\link[=susp_inf]{susp_inf()}}):
-\figure{man/figures/sofa-sep-3-1.png}
+the suspected infection (SI) window (see \code{\link[=susp_inf]{susp_inf()}}):\if{html}{\out{<div class="{tikz sofa-sep-3, echo = FALSE}">}}\preformatted{\\begin\{tikzpicture\}
+  \\draw (-6,0) -- (3,0);
+  \\draw (-6,-0.25) -- (-6,0.25);
+  \\draw (3,-0.25) -- (3,0.25);
+  \\draw (0,-0.25) -- (0,0.25);
+  \\node[align = center] at (0,-0.75) \{SI time\};
+  \\node[align = center] at (3,-0.75) \{SI window\\\\ end\};
+  \\node[align = center] at (-6,-0.75) \{SI window\\\\ start\};
+  \\filldraw  (-6, 1) circle (2pt);
+  \\draw (-6,1) -- (-5.5, 1);
+  \\filldraw (-5.5, 1) circle (2pt);
+  \\draw (-5.5,1) -- (-5, 1);
+  \\node at (-4.25, 1) \{$\\dots$\} ;
+  \\filldraw (-5, 1) circle (2pt);
+  \\filldraw (-3.5, 1) circle (2pt);
+  \\filldraw (-3, 1.5) circle (2pt);
+  \\filldraw (-2.5, 1.5) circle (2pt);
+  \\filldraw (-2, 2.5) circle (2pt);
+  \\draw (-3.5,1) -- (-3, 1.5);
+  \\draw (-3,1.5) -- (-2.5, 1.5);
+  \\draw (-2.5,1.5) -- (-2, 2.5);
+  \\node [black] at (-0.25, 1.75) \{$\\Delta$SOFA $\\geq 2$\};
+  \\draw (-6.5, 1) -- (-6.5, 2.5) ;
+  \\node at (-6.5, 3) \{SOFA\} ;
+  \\draw (-6.5,1)--(-6.6,1) node[left,font=\\small]\{$0$\};
+  \\draw (-6.5,1.5)--(-6.6,1.5) node[left,font=\\small]\{$1$\};
+  \\draw (-6.5,2)--(-6.6,2) node[left,font=\\small]\{$2$\};
+  \\draw (-6.5,2.5)--(-6.6, 2.5) node[left,font=\\small]\{$3$\};
+  \\draw[red] (-2,-0.25) -- (-2,0.25);
+  \\draw[dashed,red] (-2, 2.35) -- (-2, 0) ;
+  \\node[red] at (-2, -0.75) \{Sepsis-3 time\};
+\\end\{tikzpicture\}
+}\if{html}{\out{</div>}}
 
 A patient can potentially have multiple SI windows. The argument
 \code{si_window} is used to control which SI window we focus on (options are

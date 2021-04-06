@@ -180,6 +180,8 @@ delta_min <- function(x, shifts = seq.int(0L, 23L)) {
 #' @param samp_win Time-span within which antibiotic administration has to
 #' occur
 #' @param by_ref Logical flag indicating whether to process data by reference
+#' @param keep_components Logical flag indicating whether to return the
+#' individual components alongside the aggregated score
 #' @param interval Time series interval (only used for checking consistency
 #' of input data)
 #'
