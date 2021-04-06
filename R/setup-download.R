@@ -175,15 +175,18 @@ download_src.aumc_cfg <- function(x, data_dir = src_data_dir(x),
 
   warn_dots(..., ok_args = c("user", "pass"))
 
-  deps <- c(
-    `the command line utility 7z` = nzchar(Sys.which("7z")),
-    `the R package xml2` = requireNamespace("xml2", quietly = TRUE)
-  )
+  if (!requireNamespace("xml2", quietly = TRUE)) {
+    stop_ricu("Download of `aumc` data requires the `xml2` package. If
+               unavailable, download and unzip the data manually
+               to {data_dir}", class = "aumc_dl")
+  }
 
-  if (!all(deps)) {
-    stop_ricu("Download of `aumc` data requires {deps}. Please either make sure
-               all dependencies are available or download and unzip the data
-               manually to {data_dir}")
+  uzp <- getOption("unzip")
+
+  if (identical(uzp, "internal")) {
+    stop_ricu("Download of `aumc` data requires a path to an `unzip`
+              binary returned by `getOption(\"unzip\")` in order to unzip files
+              that are >4GB", class = "aumc_dl")
   }
 
   tbl <- determine_tables(x, data_dir, tables, force)
@@ -231,19 +234,8 @@ download_src.aumc_cfg <- function(x, data_dir = src_data_dir(x),
 
       if (res[["status_code"]] == 200) {
 
-        tbl <- raw_file_name(tbl)
-        unlink(file.path(data_dir, tbl))
-
-        res <- suppressWarnings(
-          system2("7z", c("e", fil, paste0("-o", data_dir), "-tzip", tbl),
-                  stdout = NULL, stderr = TRUE)
-        )
-
-        if (attr(res, "status") != 0) {
-          msg_ricu(c("7z terminated with non-zero exit status:", res),
-                   indent = c(0L, rep_along(2L, res)),
-                   exdent = c(0L, rep_along(2L, res)))
-        }
+        unzip(fil, files = chr_ply(tbl, raw_file_name),
+              exdir = normalizePath(data_dir), overwrite = TRUE, unzip = uzp)
 
         return(invisible(NULL))
       }
@@ -251,7 +243,7 @@ download_src.aumc_cfg <- function(x, data_dir = src_data_dir(x),
   }
 
   stop_ricu("Could not successfully download `aumc` data. Please download and
-             extract the corresponding .zip Archive manually to {data_dir}.",
+             extract the corresponding .zip archive manually to {data_dir}.",
             class = "aumc_dl")
 }
 
