@@ -218,4 +218,44 @@ test_that("src download", {
   )
 
   expect_null(res)
+
+  skip_if_no_local_testdata()
+
+  dl_file <- function(url, handle = new_handle(), dest = NULL,
+                      progr = NULL) {
+
+    dir <- system.file("local_testdata", package = "ricu")
+
+    if (is.null(dest)) {
+      readRDS(file.path(dir, "aumc-fs.rds"))
+    } else {
+      file.copy(file.path(dir, "AmsterdamUMCdb-v1.0.2.zip"), dirname(dest))
+      readRDS(file.path(dir, "aumc-dl.rds"))
+    }
+  }
+
+  src <- "aumc"
+  dir <- file.path(tmp, src)
+
+  expect_true(dir.create(dir))
+
+  expect_invisible(
+    res <- mockthat::with_mock(
+      download_file = dl_file,
+      download_src(src, dir, verbose = FALSE)
+    )
+  )
+
+  expect_null(res)
+  expect_length(list.files(dir, pattern = "\\.csv$"), 7L)
+
+  expect_message(
+    res <- mockthat::with_mock(
+      download_file = NULL,
+      download_src(src, dir)
+    ),
+    class = "no_dl_required"
+  )
+
+  expect_null(res)
 })

@@ -124,7 +124,8 @@ download_src.src_cfg <- function(x, data_dir = src_data_dir(x), tables = NULL,
   tbl <- determine_tables(x, data_dir, tables, force)
 
   if (length(tbl) == 0L) {
-    msg_ricu("The requested tables have already been downloaded")
+    msg_ricu("The requested tables have already been downloaded",
+             class = "no_dl_required")
     return(invisible(NULL))
   }
 
@@ -142,7 +143,8 @@ download_src.hirid_cfg <- function(x, data_dir = src_data_dir(x),
   tbl <- determine_tables(x, data_dir, tables, force)
 
   if (length(tbl) == 0L) {
-    msg_ricu("The requested tables have already been downloaded")
+    msg_ricu("The requested tables have already been downloaded",
+             class = "no_dl_required")
     return(invisible(NULL))
   }
 
@@ -172,7 +174,7 @@ ricu_untar <- function(...) utils::untar(...)
 #' @export
 download_src.aumc_cfg <- function(x, data_dir = src_data_dir(x),
                                   tables = NULL, force = FALSE, token = NULL,
-                                  verbose = TRUE, ...) {
+                                  verbose = TRUE, ...) { # nocov start
 
   warn_dots(..., ok_args = c("user", "pass"))
 
@@ -186,14 +188,15 @@ download_src.aumc_cfg <- function(x, data_dir = src_data_dir(x),
 
   if (identical(uzp, "internal")) {
     stop_ricu("Download of `aumc` data requires a path to an `unzip`
-              binary returned by `getOption(\"unzip\")` in order to unzip files
-              that are >4GB", class = "aumc_dl")
+               binary returned by `getOption(\"unzip\")` in order to unzip
+               files that are >4GB", class = "aumc_dl")
   }
 
   tbl <- determine_tables(x, data_dir, tables, force)
 
   if (length(tbl) == 0L) {
-    msg_ricu("The requested tables have already been downloaded")
+    msg_ricu("The requested tables have already been downloaded",
+             class = "no_dl_required")
     return(invisible(NULL))
   }
 
@@ -246,7 +249,7 @@ download_src.aumc_cfg <- function(x, data_dir = src_data_dir(x),
   stop_ricu("Could not successfully download `aumc` data. Please download and
              extract the corresponding .zip archive manually to {data_dir}.",
             class = "aumc_dl")
-}
+} # nocov end
 
 #' @param user,pass PhysioNet credentials; if `NULL` and environment
 #' variables `RICU_PHYSIONET_USER`/`RICU_PHYSIONET_PASS` are not set, user

@@ -105,3 +105,11 @@ skip_if_srcs_missing <- function(srcs) {
 }
 
 with_mock <- function(...) mockthat::with_mock(..., .env = asNamespace("ricu"))
+
+skip_if_no_local_testdata <- function() {
+
+  skip_if(
+    identical(system.file("local_testdata", package = "ricu"), ""),
+    "No local testdata is available"
+  )
+}
