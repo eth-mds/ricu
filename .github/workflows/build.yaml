@@ -31,6 +31,12 @@ jobs:
           r-version: ${{ matrix.config.r }}
           http-user-agent: ${{ matrix.config.http-user-agent }}
 
+      - name: Install latex packages
+        run: |
+          install.packages(c('tinytex', 'qpdf'))
+          tinytex::tlmgr_install('pdfcrop')
+        shell: Rscript {0}
+
       - uses: r-lib/actions/setup-pandoc@v1
 
       - name: Query dependencies
