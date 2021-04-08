@@ -41,12 +41,6 @@ jobs:
           r-version: ${{ matrix.config.r }}
           http-user-agent: ${{ matrix.config.http-user-agent }}
 
-      - name: Install latex packages
-        run: |
-          install.packages(c('tinytex', 'qpdf'))
-          tinytex::tlmgr_install('pdfcrop')
-        shell: Rscript {0}
-
       - uses: r-lib/actions/setup-pandoc@v1
 
       - name: Query dependencies
@@ -88,7 +82,6 @@ jobs:
       - name: Check
         env:
           _R_CHECK_CRAN_INCOMING_: false
-          _R_CHECK_DOC_SIZES_: false
         run: rcmdcheck::rcmdcheck(args = c("--no-manual", "--as-cran"), error_on = "warning", check_dir = "check")
         shell: Rscript {0}
 
