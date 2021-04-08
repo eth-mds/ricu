@@ -100,4 +100,8 @@
   packageStartupMessage(paste(out, collapse = "\n"))
 }
 
+.onUnload <- function(libpath) {
+  detach_src(attached_srcs())
+}
+
 .datatable.aware = TRUE

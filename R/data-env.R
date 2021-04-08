@@ -438,17 +438,30 @@ as_src_tbl.character <- function(x, env, ...) {
 as_src_tbl.default <- function(x, ...) stop_generic(x, .Generic)
 
 #' @param env Environment used as `src_env`
+#' @param link `NULL` or a second environment (in addition to `data_env()`) in
+#' which the resulting `src_env` is bound to a name
 #'
 #' @keywords internal
 #' @rdname src_env
 #' @export
-new_src_env <- function(x, env = new.env(parent = data_env())) {
+new_src_env <- function(x, env = new.env(parent = data_env()), link = NULL) {
 
-  assert_that(is_src_cfg(x), is.environment(env))
+  assert_that(is_src_cfg(x), is.environment(env),
+              null_or(link, is.environment))
 
   nme <- src_name(x)
+
+  if (not_null(link) && exists(nme, envir = link)) {
+    warn_ricu("Name `{nme}` already bound in environment `{link}`")
+    link <- NULL
+  }
+
   res <- structure(env, class = paste0(c(x[["prefix"]], "src"), "_env"),
-                   src_name = nme, id_cfg = as_id_cfg(x))
+                   src_name = nme, id_cfg = as_id_cfg(x), link = link)
+
+  if (not_null(link)) {
+    assign(nme, res, envir = link)
+  }
 
   assign(nme, res, envir = data_env())
 }

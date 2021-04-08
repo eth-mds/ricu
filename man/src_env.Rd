@@ -23,7 +23,7 @@ as_src_tbl(x, ...)
 
 \method{as_src_tbl}{src_env}(x, tbl, ...)
 
-new_src_env(x, env = new.env(parent = data_env()))
+new_src_env(x, env = new.env(parent = data_env()), link = NULL)
 
 is_src_env(x)
 
@@ -57,6 +57,9 @@ prefix)}
 \item{tbl}{String-valued table name}
 
 \item{env}{Environment used as \code{src_env}}
+
+\item{link}{\code{NULL} or a second environment (in addition to \code{data_env()}) in
+which the resulting \code{src_env} is bound to a name}
 
 \item{tbls}{Character vector of table names}
 

@@ -1,7 +1,7 @@
 [
   {
-    "name": "eicu_demo",
-    "class_prefix": ["eicu_demo", "eicu"],
+    "name": "eicu_test",
+    "class_prefix": ["eicu_test", "eicu_demo", "eicu"],
     "id_cfg": {
       "hadm": {
         "id": "patienthealthsystemstayid",
@@ -233,8 +233,8 @@
     }
   },
   {
-    "name": "mimic_demo",
-    "class_prefix": ["mimic_demo", "mimic"],
+    "name": "mimic_test",
+    "class_prefix": ["mimic_test", "mimic_demo", "mimic"],
     "id_cfg": {
       "patient": {
         "id": "subject_id",

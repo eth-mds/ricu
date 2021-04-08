@@ -889,19 +889,19 @@ ricu::set_config(cfg, "data-sources", cfg_dir)
 
 cfg <- list(
   list(
-    name = "eicu_demo",
-    class_prefix = c("eicu_demo", "eicu"),
+    name = "eicu_test",
+    class_prefix = c("eicu_test", "eicu_demo", "eicu"),
     id_cfg = eicu_id_cfg,
     tables = lapply(eicu_demo_tbls, as_minimal_tbl_spec)
   ),
   list(
-    name = "mimic_demo",
-    class_prefix = c("mimic_demo", "mimic"),
+    name = "mimic_test",
+    class_prefix = c("mimic_test", "mimic_demo", "mimic"),
     id_cfg = mimic_id_cfg,
     tables = lapply(mimic_demo_tbls, as_minimal_tbl_spec)
   )
 )
 
-ricu::set_config(cfg, "demo-sources", cfg_dir)
+ricu::set_config(cfg, "data-sources", file.path(pkg_dir, "inst", "testdata"))
 
 devtools::install(pkg_dir)

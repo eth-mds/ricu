@@ -101,7 +101,8 @@
 #'
 attach_src <- function(x, ...) UseMethod("attach_src", x)
 
-#' @param assign_env Environment in which the data source will become available
+#' @param assign_env,link_env Environment in which the data source will become
+#' available
 #' @param data_dir Directory used to look for [fst::fst()] files; `NULL` calls
 #' [data_dir()] using the source name as `subdir` argument
 #'
@@ -118,13 +119,9 @@ attach_src.src_cfg <- function(x, assign_env = NULL,
 
   tryCatch({
 
-    assert_that(is.string(data_dir), null_or(assign_env, is.environment))
+    assert_that(is.string(data_dir))
 
-    src_env <- setup_src_env(x, data_dir)
-
-    if (is.environment(assign_env)) {
-      assign(src, src_env, envir = assign_env)
-    }
+    setup_src_env(x, data_dir, assign_env)
 
   }, error = function(err) {
 
@@ -136,7 +133,7 @@ attach_src.src_cfg <- function(x, assign_env = NULL,
       exdent = c(0L, rep_along(2L, msg))
     )
 
-    if (is.environment(assign_env)) {
+    if (is.environment(assign_env) && identical(assign_env, pkg_env())) {
       assign(src, NULL, envir = assign_env)
     }
   })
@@ -175,7 +172,7 @@ attach_src.character <- function(x, assign_env = NULL,
         exdent = c(0L, rep_along(2L, msg))
       )
 
-      if (is.environment(env)) {
+      if (is.environment(env) && identical(env, pkg_env())) {
         assign(src, NULL, envir = env)
       }
 
@@ -211,13 +208,41 @@ attach_src.default <- function(x, ...) stop_generic(x, .Generic)
 
 #' @rdname attach_src
 #' @export
+detach_src <- function(x) {
+
+  if (is.character(x)) {
+    envs <- lapply(x, as_src_env)
+  } else {
+    envs <- list(as_src_env(x))
+  }
+
+  for (env in envs) {
+
+    lnk <- attr(env, "link")
+    src <- src_name(env)
+
+    if (is.environment(lnk) && identical(lnk, pkg_env())) {
+      assign(src, NULL, envir = env)
+    } else if (is.environment(lnk)) {
+      rm(list = src, envir = lnk)
+    }
+
+    rm(list = src, envir = data_env())
+  }
+
+  invisible(NULL)
+}
+
+#' @rdname attach_src
+#' @export
 setup_src_env <- function(x, ...) {
   UseMethod("setup_src_env", x)
 }
 
 #' @rdname attach_src
 #' @export
-setup_src_env.src_cfg <- function(x, data_dir = src_data_dir(x), ...) {
+setup_src_env.src_cfg <- function(x, data_dir = src_data_dir(x),
+                                  link_env = NULL, ...) {
 
   tbl_setup <- function(tbl, col, fil, src, env, dir) {
 
@@ -275,7 +300,8 @@ setup_src_env.src_cfg <- function(x, data_dir = src_data_dir(x), ...) {
   tbls <- as_tbl_cfg(x)
   cols <- as_col_cfg(x)
 
-  src_env <- new_src_env(x, env = new.env(parent = data_env()))
+  src_env <- new_src_env(x, env = new.env(parent = data_env()),
+                         link = link_env)
 
   tbl_fun <- Map(
     tbl_setup, vec_chop(tbls), vec_chop(cols), fst_file_names(tbls),

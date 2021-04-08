@@ -4,6 +4,7 @@
 \alias{attach_src}
 \alias{attach_src.src_cfg}
 \alias{attach_src.character}
+\alias{detach_src}
 \alias{setup_src_env}
 \alias{setup_src_env.src_cfg}
 \title{Data attach utilities}
@@ -14,16 +15,19 @@ attach_src(x, ...)
 
 \method{attach_src}{character}(x, assign_env = NULL, data_dir = src_data_dir(x), ...)
 
+detach_src(x)
+
 setup_src_env(x, ...)
 
-\method{setup_src_env}{src_cfg}(x, data_dir = src_data_dir(x), ...)
+\method{setup_src_env}{src_cfg}(x, data_dir = src_data_dir(x), link_env = NULL, ...)
 }
 \arguments{
 \item{x}{Data source to attach}
 
 \item{...}{Forwarded to further calls to \code{attach_src()}}
 
-\item{assign_env}{Environment in which the data source will become available}
+\item{assign_env, link_env}{Environment in which the data source will become
+available}
 
 \item{data_dir}{Directory used to look for \code{\link[fst:fst]{fst::fst()}} files; \code{NULL} calls
 \code{\link[=data_dir]{data_dir()}} using the source name as \code{subdir} argument}
