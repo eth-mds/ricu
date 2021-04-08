@@ -51,4 +51,43 @@ test_that("auto attach env var", {
   expect_null(detach_src(test))
   expect_setequal(attached_srcs(), srcs)
   expect_length(ls(envir = some_env), 0)
+
+  tmp <- withr::local_tempdir()
+  dir <- file.path(tmp, test)
+
+  expect_null(
+    attach_src(test, data_dir = dir,
+               cfg_dirs = system.file("testdata", package = "ricu"))
+  )
+
+  expect_error(
+    expect_message(
+      mockthat::with_mock(
+        is_interactive = TRUE,
+        read_line = "n",
+        as_src_tbl("admissions", "mimic_test")
+      ),
+      class = "miss_tbl_msg"
+    ),
+    class = "miss_tbl_err"
+  )
+
+  mockthat::with_mock(
+    download_src = NULL,
+    import_src = function(x, data_dir, ...) {
+      files <- list.files(src_data_dir(sub("_test", "_demo", src_name(x))),
+                          full.names = TRUE)
+      file.copy(files, data_dir, recursive = TRUE)
+    },
+    setup_src_data(test, dir,
+      cfg_dirs = system.file("testdata", package = "ricu")
+    )
+  )
+
+  mi_adm <- as_src_tbl("admissions", "mimic_test")
+
+  expect_s3_class(mi_adm, "mimic_test_tbl")
+  expect_s3_class(mi_adm, "mimic_demo_tbl")
+  expect_s3_class(mi_adm, "mimic_tbl")
+  expect_s3_class(mi_adm, "src_tbl")
 })

@@ -275,7 +275,7 @@ setup_src_env.src_cfg <- function(x, data_dir = src_data_dir(x),
 
       if (is_interactive()) {
 
-        resp <- readline("Setup now (Y/n)? ")
+        resp <- read_line("Setup now (Y/n)? ")
 
         if (identical(resp, "Y")) {
           setup_src_data(src, data_dir = dir)
