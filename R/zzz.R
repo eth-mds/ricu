@@ -1,5 +1,5 @@
 
-.onLoad <- function(libname, pkgname) {
+.onLoad <- function(libname, pkgname) { # nocov start
 
   fix_base_fun <- function(fun, fix) {
 
@@ -52,7 +52,7 @@
     fix_base_fun(base::cbind.data.frame, cbind_fix)
     fix_base_fun(base::rbind.data.frame, rbind_fix)
   }
-}
+} # nocov end
 
 .onAttach <- function(libname, pkgname) {
 
@@ -100,8 +100,8 @@
   packageStartupMessage(paste(out, collapse = "\n"))
 }
 
-.onUnload <- function(libpath) {
+.onUnload <- function(libpath) { # nocov start
   detach_src(attached_srcs())
-}
+} # nocov end
 
 .datatable.aware = TRUE
