@@ -28,7 +28,7 @@ new_src_env(x, env = new.env(parent = data_env()), link = NULL)
 
 is_src_env(x)
 
-\method{as.list}{src_env}(x)
+\method{as.list}{src_env}(x, ...)
 
 as_src_env(x)
 

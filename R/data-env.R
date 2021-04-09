@@ -489,7 +489,7 @@ format.src_env <- function(x, ...) {
 #' @keywords internal
 #' @method as.list src_env
 #' @export
-as.list.src_env <- function(x) {
+as.list.src_env <- function(x, ...) {
   mget(names(x), envir = x)
 }
 

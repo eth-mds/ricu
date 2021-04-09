@@ -7,7 +7,7 @@
 \usage{
 write_psv(x, dir, na_rows = NULL)
 
-read_psv(dir, col_spec = NULL, id_var = "stay_id")
+read_psv(dir, col_spec = NULL, id_var = "stay_id", index_var = NULL)
 }
 \arguments{
 \item{x}{Object to write to files}
@@ -21,6 +21,9 @@ if \code{NULL}, data is written as-is}
 \item{col_spec}{A column specification as created by \code{\link[readr:cols]{readr::cols()}}}
 
 \item{id_var}{Name of the id column (IDs are generated from file names)}
+
+\item{index_var}{Optional name of index column (will be coerced to
+\code{difftime})}
 }
 \value{
 While \code{write_psv()} is called for side effects and returns \code{NULL}
