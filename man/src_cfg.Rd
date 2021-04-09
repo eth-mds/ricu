@@ -15,6 +15,8 @@
 \alias{as_tbl_cfg}
 \alias{src_name}
 \alias{tbl_name}
+\alias{src_extra_cfg}
+\alias{src_prefix}
 \alias{src_url}
 \alias{id_var_opts}
 \alias{default_vars}
@@ -65,6 +67,10 @@ as_tbl_cfg(x)
 src_name(x)
 
 tbl_name(x)
+
+src_extra_cfg(x)
+
+src_prefix(x)
 
 src_url(x)
 

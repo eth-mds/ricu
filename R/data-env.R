@@ -450,14 +450,16 @@ new_src_env <- function(x, env = new.env(parent = data_env()), link = NULL) {
               null_or(link, is.environment))
 
   nme <- src_name(x)
+  pfx <- src_prefix(x)
 
   if (not_null(link) && exists(nme, envir = link)) {
     warn_ricu("Name `{nme}` already bound in environment `{link}`")
     link <- NULL
   }
 
-  res <- structure(env, class = paste0(c(x[["prefix"]], "src"), "_env"),
-                   src_name = nme, id_cfg = as_id_cfg(x), link = link)
+  res <- structure(env, class = paste0(c(pfx, "src"), "_env"),
+                   src_name = nme, id_cfg = as_id_cfg(x), link = link,
+                   extra = src_extra_cfg(x), prefix = pfx)
 
   if (not_null(link)) {
     assign(nme, res, envir = link)
@@ -481,6 +483,14 @@ print.src_env <- function(x, ...) {
 #' @export
 format.src_env <- function(x, ...) {
   chr_ply(lapply(ls(envir = x), safe_tbl_get, x), dim_brak)
+}
+
+#' @rdname src_env
+#' @keywords internal
+#' @method as.list src_env
+#' @export
+as.list.src_env <- function(x) {
+  mget(names(x), envir = x)
 }
 
 dim_str <- function(x) ifelse(is.na(x), "??", big_mark(x))

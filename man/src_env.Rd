@@ -7,6 +7,7 @@
 \alias{as_src_tbl.src_env}
 \alias{new_src_env}
 \alias{is_src_env}
+\alias{as.list.src_env}
 \alias{as_src_env}
 \alias{attached_srcs}
 \alias{is_tbl_avail}
@@ -26,6 +27,8 @@ as_src_tbl(x, ...)
 new_src_env(x, env = new.env(parent = data_env()), link = NULL)
 
 is_src_env(x)
+
+\method{as.list}{src_env}(x)
 
 as_src_env(x)
 

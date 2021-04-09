@@ -12,7 +12,9 @@ test_that("config classes", {
   expect_s3_class(mi, c("mimic_demo_cfg", "mimic_cfg", "src_cfg"))
   expect_s3_class(ei, c("eicu_demo_cfg", "eicu_cfg", "src_cfg"))
 
+  expect_true(is_src_cfg(mi))
   expect_identical(as_src_cfg(mi), mi)
+  expect_identical(as_src_cfg(mimic_demo), mi)
 
   id <- as_id_cfg(mi)
   co <- as_col_cfg(mi)

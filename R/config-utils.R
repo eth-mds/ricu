@@ -15,8 +15,15 @@ as_src_cfg.src_cfg <- function(x) x
 
 #' @export
 as_src_cfg.src_env <- function(x) {
-  new_src_cfg(src_name(x), as_id_cfg(x), eapply(x, as_col_cfg),
-              eapply(x, as_tbl_cfg), sub("_env", "", head(class(x), n = -1L)))
+
+  args <- list(name = src_name(x), id_cfg = as_id_cfg(x),
+    col_cfg = vec_unchop(lapply(x, as_col_cfg), name_spec = "{inner}"),
+    tbl_cfg = vec_unchop(lapply(x, as_tbl_cfg), name_spec = "{inner}")
+  )
+
+  do.call(new_src_cfg,
+    c(args, src_extra_cfg(x), list(class_prefix = src_prefix(x)))
+  )
 }
 
 #' @export
@@ -56,6 +63,11 @@ format.id_cfg <- function(x, ...) quote_bt(field(x, "id"))
 
 #' @export
 names.id_cfg <- function(x) field(x, "name")
+
+#' @export
+`names<-.id_cfg` <- function(x, value) {
+  if (has_length(value)) `field<-`(x, "name", value) else x
+}
 
 #' @export
 vec_proxy_compare.id_cfg <- function(x, ...) field(x, "pos")
@@ -100,6 +112,11 @@ format.col_cfg <- function(x, ...) {
 #' @export
 names.col_cfg <- function(x) field(x, "table")
 
+#' @export
+`names<-.col_cfg` <- function(x, value) {
+  if (has_length(value)) `field<-`(x, "table", value) else x
+}
+
 #' @rdname src_cfg
 #' @keywords internal
 is_tbl_cfg <- is_type("tbl_cfg")
@@ -137,6 +154,11 @@ format.tbl_cfg <- function(x, ...) {
 #' @export
 names.tbl_cfg <- function(x) field(x, "table")
 
+#' @export
+`names<-.tbl_cfg` <- function(x, value) {
+  if (has_length(value)) `field<-`(x, "table", value) else x
+}
+
 #' @rdname src_cfg
 #' @keywords internal
 #' @export
@@ -171,6 +193,34 @@ tbl_name.tbl_cfg <- function(x) field(x, "table")
 #' @export
 tbl_name.default <- function(x) stop_generic(x, .Generic)
 
+#' @rdname src_cfg
+#' @keywords internal
+#' @export
+src_extra_cfg <- function(x) UseMethod("src_extra_cfg", x)
+
+#' @export
+src_extra_cfg.src_cfg <- function(x) x[["extra"]]
+
+#' @export
+src_extra_cfg.src_env <- function(x) attr(x, "extra")
+
+#' @export
+src_extra_cfg.default <- function(x) stop_generic(x, .Generic)
+
+#' @rdname src_cfg
+#' @keywords internal
+#' @export
+src_prefix <- function(x) UseMethod("src_prefix", x)
+
+#' @export
+src_prefix.src_cfg <- function(x) x[["prefix"]]
+
+#' @export
+src_prefix.src_env <- function(x) attr(x, "prefix")
+
+#' @export
+src_prefix.default <- function(x) stop_generic(x, .Generic)
+
 class_descr <- function(x, ...) {
   paste0(main_class(x), "<", src_name(x), "[", paste(...), "]>")
 }
@@ -178,8 +228,6 @@ class_descr <- function(x, ...) {
 main_class <- function(x) {
   tail(strip_class(x, c("vctrs_rcrd", "vctrs_vctr")), n = 1L)
 }
-
-class_prefix <- function(x) as_src_cfg(x)[["prefix"]]
 
 id_cfg_op <- function(x) {
   x <- sort(as_id_cfg(x))
@@ -228,7 +276,7 @@ src_file_exist <- function(x, dir, type = c("fst", "raw")) {
 #' @rdname src_cfg
 #' @keywords internal
 #'
-src_url <- function(x) as_src_cfg(x)[["url"]]
+src_url <- function(x) src_extra_cfg(as_src_cfg(x))[["url"]]
 
 #' @rdname src_cfg
 #' @keywords internal

@@ -265,7 +265,7 @@ setup_src_env.src_cfg <- function(x, data_dir = src_data_dir(x),
       if (all(file.exists(fil))) {
 
         if (is.null(src_tbl_cache)) {
-          src_tbl_cache <<- new_src_tbl(fil, col, tbl, class_prefix(src), env)
+          src_tbl_cache <<- new_src_tbl(fil, col, tbl, src_prefix(src), env)
         }
 
         return(src_tbl_cache)
@@ -284,7 +284,7 @@ setup_src_env.src_cfg <- function(x, data_dir = src_data_dir(x),
 
       if (all(file.exists(fil))) {
 
-        src_tbl_cache <<- new_src_tbl(fil, col, tbl, class_prefix(src), env)
+        src_tbl_cache <<- new_src_tbl(fil, col, tbl, src_prefix(src), env)
 
         return(src_tbl_cache)
       }

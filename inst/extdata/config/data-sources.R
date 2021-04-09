@@ -861,11 +861,6 @@ cfg <- list(
   list(
     name = "hirid",
     url = "https://physionet.org/files/hirid/1.1",
-    unzip = c(
-      "reference_data.tar.gz",
-      "raw_stage/observation_tables_csv.tar.gz",
-      "raw_stage/pharma_records_csv.tar.gz"
-    ),
     id_cfg = list(
       icustay = list(id = "patientid", position = 1L, start = "admissiontime",
                      table = "general")

@@ -22,9 +22,7 @@ test_that("auto attach env var", {
 
   mi_tst <- as_src_env("mimic_test")
 
-  expect_s3_class(mi_tst, "mimic_test_env")
-  expect_s3_class(mi_tst, "mimic_demo_env")
-  expect_s3_class(mi_tst, "mimic_env")
+  expect_s3_class(mi_tst, c("mimic_test_env", "mimic_demo_env", "mimic_env"))
 
   expect_setequal(names(mi_tst), names(mimic_demo))
   expect_fsetequal(data.table::as.data.table(mi_tst$admissions),
@@ -86,8 +84,6 @@ test_that("auto attach env var", {
 
   mi_adm <- as_src_tbl("admissions", "mimic_test")
 
-  expect_s3_class(mi_adm, "mimic_test_tbl")
-  expect_s3_class(mi_adm, "mimic_demo_tbl")
-  expect_s3_class(mi_adm, "mimic_tbl")
-  expect_s3_class(mi_adm, "src_tbl")
+  expect_s3_class(mi_adm, c("mimic_test_tbl", "mimic_demo_tbl", "mimic_tbl",
+                            "src_tbl"))
 })

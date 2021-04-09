@@ -89,8 +89,8 @@ new_src_cfg <- function(name, id_cfg, col_cfg, tbl_cfg = NULL, ...,
   }
 
   structure(
-    list(name = name, ..., prefix = class_prefix, id_cfg = id_cfg,
-         col_cfg = col_cfg, tbl_cfg = tbl_cfg),
+    list(name = name, prefix = class_prefix, id_cfg = id_cfg,
+         col_cfg = col_cfg, tbl_cfg = tbl_cfg, extra = list(...)),
     class = c(check_prefix(class_prefix, "cfg"), "src_cfg")
   )
 }
