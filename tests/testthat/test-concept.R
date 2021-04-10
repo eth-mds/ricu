@@ -14,11 +14,17 @@ test_that("load concepts", {
   expect_identical(colnames(dat1), c("icustay_id", "charttime", "gluc"))
   expect_equal(interval(dat1), hours(1L))
 
-  albu <- concept("albu", item("mimic_demo", "labevents", "itemid", 50862L))
+  expect_snapshot(print(gluc))
 
-  dat2 <- load_concepts(c(albu, gluc), verbose = FALSE)
+  albu <- concept("albu", item("mimic_demo", "labevents", "itemid", 50862L))
+  glal <- c(albu, gluc)
+
+  dat2 <- load_concepts(glal, verbose = FALSE)
 
   expect_setequal(data_vars(dat2), c("gluc", "albu"))
+
+  expect_snapshot(print(albu))
+  expect_snapshot(print(glal))
 
   dat3 <- load_concepts(gluc, merge_data = FALSE, verbose = FALSE)
 
@@ -80,8 +86,9 @@ test_that("load concepts", {
 
   expect_identical(dat1, dat6)
 
-  gcs_raw <- concept("gcs_raw", load_dictionary(concepts = "gcs"),
-                     set_sed_max = FALSE, class = "rec_cncpt")
+  gcs_con <- load_dictionary(concepts = "gcs")
+  gcs_raw <- concept("gcs_raw", gcs_con, set_sed_max = FALSE,
+                     class = "rec_cncpt")
 
   dat7 <- load_concepts(gcs_raw, "mimic_demo", verbose = FALSE)
 
@@ -89,4 +96,22 @@ test_that("load concepts", {
   expect_true(is_ts_tbl(dat7))
   expect_identical(colnames(dat7), c("icustay_id", "charttime", "gcs_raw"))
   expect_equal(interval(dat7), hours(1L))
+
+  expect_snapshot(print(gcs_con))
+  expect_snapshot(print(gcs_raw))
+})
+
+test_that("load dictionary", {
+
+  #add tests for custom dictionary
+
+  dict <- load_dictionary(c("mimic_demo", "eicu_demo"),
+                          c("age", "alb", "glu", "gcs"))
+
+  expect_s3_class(dict, "concept")
+
+  expect_snapshot(print(dict))
+
+  expect_snapshot_value(concept_availability(dict), style = "json2")
+  expect_snapshot_value(explain_dictionary(dict), style = "json2")
 })

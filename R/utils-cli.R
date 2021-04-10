@@ -164,7 +164,9 @@ with_progress <- function(expr, progress_bar = NULL) {
 
   }
 
-  cli::cli_rule()
+  if (!isFALSE(progress_bar)) {
+    cli::cli_rule()
+  }
 
   res
 }

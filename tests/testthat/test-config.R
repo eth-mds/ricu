@@ -30,4 +30,8 @@ test_that("config classes", {
   expect_identical(as_tbl_cfg(tb), tb)
 
   expect_identical(length(co), length(tb))
+
+  expect_snapshot(print(id))
+  expect_snapshot(print(co))
+  expect_snapshot(print(tb))
 })
