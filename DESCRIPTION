@@ -45,7 +45,7 @@ Imports:
     backports,
     rlang,
     vctrs,
-    cli,
+    cli (>= 2.1.0),
     glue,
     fansi,
     openssl,
