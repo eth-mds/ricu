@@ -68,7 +68,6 @@ Suggests:
     rticles,
     kableExtra
 RoxygenNote: 7.1.1
-Remotes: nbenn/mockthat
 Additional_repositories: https://septic-tank.github.io/physionet-demo
 VignetteBuilder: knitr
 Config/testthat/edition: 3
