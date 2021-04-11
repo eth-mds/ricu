@@ -43,12 +43,12 @@
                      gcs_raw 
       gcs_raw <rec_cncpt[1]> 
 
-# load dictionary
+# load external dictionary
 
     Code
       print(dict)
     Output
-      <concept[4]>
+      <concept[6]>
                                                   age 
                            patient age <num_cncpt[2]> 
                                                   alb 
@@ -57,6 +57,25 @@
                                glucose <num_cncpt[3]> 
                                                   gcs 
       Glasgow coma scale (non-sedated) <rec_cncpt[5]> 
+                                                  esr 
+        erythrocyte sedimentation rate <num_cncpt[2]> 
+                                                  fgn 
+                            fibrinogen <num_cncpt[2]> 
+
+---
+
+    Code
+      print(itms)
+    Output
+      <item[23]>
+      mimic_demo  eicu_demo mimic_demo  eicu_demo mimic_demo  eicu_demo  eicu_demo 
+       <col_itm>  <col_itm>  <sel_itm>  <sel_itm>  <sel_itm>  <sel_itm>  <sel_itm> 
+      mimic_demo  eicu_demo mimic_demo  eicu_demo mimic_demo  eicu_demo mimic_demo 
+       <sel_itm>  <sel_itm>  <sel_itm>  <sel_itm>  <sel_itm>  <sel_itm>  <sel_itm> 
+       eicu_demo mimic_demo  eicu_demo mimic_demo  eicu_demo mimic_demo  eicu_demo 
+       <sel_itm>  <sel_itm>  <nul_itm>  <sel_itm>  <sel_itm>  <sel_itm>  <nul_itm> 
+      mimic_demo  eicu_demo 
+       <sel_itm>  <sel_itm> 
 
 ---
 
@@ -66,7 +85,7 @@
         "dim": {
           "type": "integer",
           "attributes": {},
-          "value": [3, 2]
+          "value": [5, 2]
         },
         "dimnames": {
           "type": "list",
@@ -75,7 +94,7 @@
             {
               "type": "character",
               "attributes": {},
-              "value": ["age", "alb", "glu"]
+              "value": ["age", "alb", "glu", "esr", "fgn"]
             },
             {
               "type": "character",
@@ -85,7 +104,37 @@
           ]
         }
       },
-      "value": [true, true, true, true, true, true]
+      "value": [true, true, true, false, true, true, true, true, true, true]
+    }
+
+---
+
+    {
+      "type": "logical",
+      "attributes": {
+        "dim": {
+          "type": "integer",
+          "attributes": {},
+          "value": [6, 2]
+        },
+        "dimnames": {
+          "type": "list",
+          "attributes": {},
+          "value": [
+            {
+              "type": "character",
+              "attributes": {},
+              "value": ["age", "alb", "glu", "gcs", "esr", "fgn"]
+            },
+            {
+              "type": "character",
+              "attributes": {},
+              "value": ["eicu_demo", "mimic_demo"]
+            }
+          ]
+        }
+      },
+      "value": [true, true, true, false, false, true, true, true, true, false, true, true]
     }
 
 ---
@@ -106,25 +155,43 @@
         "row.names": {
           "type": "integer",
           "attributes": {},
-          "value": [1, 2, 3, 4]
+          "value": [1, 2, 3, 4, 5, 6]
         }
       },
       "value": [
         {
           "type": "character",
           "attributes": {},
-          "value": ["age", "alb", "glu", "gcs"]
+          "value": ["age", "alb", "glu", "gcs", "esr", "fgn"]
         },
         {
           "type": "character",
           "attributes": {},
-          "value": ["demographics", "chemistry", "chemistry", "neurological"]
+          "value": ["demographics", "chemistry", "chemistry", "neurological", "hematology", "hematology"]
         },
         {
           "type": "character",
           "attributes": {},
-          "value": ["patient age", "albumin", "glucose", "Glasgow coma scale (non-sedated)"]
+          "value": ["patient age", "albumin", "glucose", "Glasgow coma scale (non-sedated)", "erythrocyte sedimentation rate", "fibrinogen"]
         }
       ]
     }
+
+---
+
+    Code
+      print(itms)
+    Output
+      <item[2]>
+      mimic_demo  eicu_demo 
+       <sel_itm>  <sel_itm> 
+
+---
+
+    Code
+      print(itm)
+    Output
+      <item[1]>
+      mimic_demo 
+       <sel_itm> 
 

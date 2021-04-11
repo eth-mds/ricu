@@ -532,17 +532,18 @@ load_concepts.rec_cncpt <- function(x, aggregate = NULL, patient_ids = NULL,
               interval = coalesce(x[["interval"]], interval),
               progress = progress)
 
-  itm <- as_item(x)
 
+  sub <- x[["items"]]
   agg <- x[["aggregate"]]
+
   agg <- Map(coalesce, rep_arg(aggregate, names(agg)), agg)
-  agg <- agg[names(itm)]
+  agg <- agg[names(sub)]
 
   if (isTRUE(cache)) {
-    itm <- mark_duplicate_concepts(itm)
+    sub <- mark_duplicate_concepts(sub)
   }
 
-  dat <- Map(do_load_one, itm, agg, x[["extra"]], MoreArgs = ext)
+  dat <- Map(do_load_one, sub, agg, x[["extra"]], MoreArgs = ext)
 
   do_callback(x, dat, ..., interval = interval)
 }

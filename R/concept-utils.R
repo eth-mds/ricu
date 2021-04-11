@@ -638,7 +638,7 @@ new_item <- function(x) {
 
   assert_that(is.list(x), all_fun(x, is_itm))
 
-  new_vctr(x, class = "item")
+  new_vctr(unname(x), class = "item")
 }
 
 #' @rdname data_items
@@ -666,6 +666,9 @@ as_item.itm <- function(x) as_item(list(x))
 as_item.cncpt <- function(x) x[["items"]]
 
 #' @export
+as_item.rec_cncpt <- function(x) as_item(x[["items"]])
+
+#' @export
 as_item.concept <- function(x) do.call(c, unname(lapply(x, as_item)))
 
 #' @export
@@ -678,6 +681,11 @@ format.item <- function(x, ...) {
 
 #' @export
 names.item <- function(x) chr_xtr(x, "src")
+
+#' @export
+`names<-.item` <- function(x, value) {
+  if (has_length(value)) as_item(Map(`[<-`, x, "src", value)) else x
+}
 
 #' @export
 as.list.item <- function(x, ...) vec_data(x)
@@ -1083,6 +1091,11 @@ format.concept <- function(x, ...) {
 
 #' @export
 names.concept <- function(x) chr_xtr(x, "name")
+
+#' @export
+`names<-.concept` <- function(x, value) {
+  if (has_length(value)) as_concept(Map(`[<-`, x, "name", value)) else x
+}
 
 #' @export
 as.list.concept <- function(x, ...) vec_data(x)

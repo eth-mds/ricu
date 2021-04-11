@@ -101,17 +101,60 @@ test_that("load concepts", {
   expect_snapshot(print(gcs_raw))
 })
 
-test_that("load dictionary", {
+test_that("load external dictionary", {
 
-  #add tests for custom dictionary
-
-  dict <- load_dictionary(c("mimic_demo", "eicu_demo"),
-                          c("age", "alb", "glu", "gcs"))
+  srcs <- c("mimic_demo", "eicu_demo")
+  conc <- c("age", "alb", "glu", "gcs", "esr", "fgn")
+  dict <- load_dictionary(srcs, conc)
 
   expect_s3_class(dict, "concept")
+  expect_length(dict, 6L)
+  expect_named(dict, conc)
 
   expect_snapshot(print(dict))
 
-  expect_snapshot_value(concept_availability(dict), style = "json2")
+  itms <- as_item(dict)
+
+  expect_s3_class(itms, "item")
+  expect_length(itms, 23L)
+  expect_setequal(names(itms), srcs)
+
+  expect_snapshot(print(itms))
+
+  avail <- concept_availability(dict)
+
+  expect_snapshot_value(avail, style = "json2")
+  expect_snapshot_value(concept_availability(dict, include_rec = TRUE),
+                        style = "json2")
   expect_snapshot_value(explain_dictionary(dict), style = "json2")
+
+  conc <- c("age", "esr", "fgn", "foo")
+  extr <- load_dictionary(srcs, conc,
+                          cfg_dirs = system.file("testdata", package = "ricu"))
+
+  expect_s3_class(extr, "concept")
+  expect_length(extr, 4L)
+  expect_named(extr, conc)
+
+  expect_false(avail["esr", "eicu_demo"])
+  expect_true(concept_availability(extr)["esr", "eicu_demo"])
+
+  itms <- as_item(extr["foo"])
+
+  expect_s3_class(itms, "item")
+  expect_length(itms, 2L)
+  expect_named(itms, srcs, ignore.order = TRUE)
+
+  expect_snapshot(print(itms))
+
+  itm <- subset_src(as_item(extr["fgn"]), "mimic_demo")
+  tmp <- item("mimic_demo", "labevents", "itemid", 12345L,
+               unit_var = "valueuom", target = "ts_tbl")
+
+  expect_s3_class(itm, "item")
+  expect_length(itm, 1L)
+  expect_named(itm, "mimic_demo")
+  expect_identical(itm, tmp)
+
+  expect_snapshot(print(itm))
 })

@@ -17,7 +17,7 @@
 new_cncpt(
   name,
   items,
-  description = NA_character_,
+  description = name,
   category = NA_character_,
   aggregate = NULL,
   ...,
