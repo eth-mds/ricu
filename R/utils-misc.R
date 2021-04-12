@@ -338,3 +338,7 @@ min_as_mins <- function(x) as.difftime(x, units = "mins")
 digest_lst <- function(x) as.character(openssl::md5(serialize(x, NULL)))
 
 digest <- function(...) digest_lst(list(...))
+
+sys_name <- function() Sys.info()[["sysname"]]
+
+sys_env <- function(...) Sys.getenv(...)

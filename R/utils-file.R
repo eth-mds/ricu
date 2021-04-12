@@ -101,15 +101,15 @@ data_dir <- function(subdir = NULL, create = TRUE) {
 
   assert_that(is.flag(create))
 
-  res <- Sys.getenv("RICU_DATA_PATH", unset = NA_character_)
+  res <- sys_env("RICU_DATA_PATH", unset = NA_character_)
 
   if (is.na(res)) {
 
     res <- switch(
-      Sys.info()[["sysname"]],
-      Darwin  = Sys.getenv("XDG_DATA_HOME", "~/Library/Application Support"),
-      Windows = Sys.getenv("LOCALAPPDATA", Sys.getenv("APPDATA")),
-      Sys.getenv("XDG_DATA_HOME", "~/.local/share")
+      sys_name(),
+      Darwin  = sys_env("XDG_DATA_HOME", "~/Library/Application Support"),
+      Windows = sys_env("LOCALAPPDATA", sys_env("APPDATA")),
+      sys_env("XDG_DATA_HOME", "~/.local/share")
     )
 
     res <- file.path(res, "ricu")
@@ -125,7 +125,7 @@ data_dir <- function(subdir = NULL, create = TRUE) {
     res <- ensure_dirs(res)
   }
 
-  res
+  normalizePath(res, mustWork = FALSE)
 }
 
 #' @param srcs Character vector of data source names, an object for which an
@@ -189,7 +189,7 @@ install_data_pkgs <- function(srcs = c("mimic_demo", "eicu_demo")) {
 #' @export
 auto_attach_srcs <- function() {
 
-  res <- Sys.getenv("RICU_SRC_LOAD", unset = NA_character_)
+  res <- sys_env("RICU_SRC_LOAD", unset = NA_character_)
 
   if (is.na(res)) {
     c("mimic", "mimic_demo", "eicu", "eicu_demo", "hirid", "aumc")
@@ -237,7 +237,7 @@ default_config_path <- function() {
 
 user_config_path <- function() {
 
-  res <- Sys.getenv("RICU_CONFIG_PATH", unset = NA_character_)
+  res <- sys_env("RICU_CONFIG_PATH", unset = NA_character_)
 
   if (is.na(res)) {
     NULL

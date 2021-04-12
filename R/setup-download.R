@@ -405,7 +405,7 @@ get_cred <- function(x, env, msg) {
 
   if (is.null(x)) {
 
-    x <- Sys.getenv(env, unset = NA_character_)
+    x <- sys_env(env, unset = NA_character_)
 
     if (is.na(x)) {
 
