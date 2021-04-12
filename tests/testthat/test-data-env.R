@@ -18,3 +18,26 @@ test_that("demo envs", {
   expect_snapshot(tbl_sum(mi_tbl))
   expect_snapshot(tbl_sum(ei_tbl))
 })
+
+test_that("src env", {
+
+  some_env <- new.env()
+  link_env <- new.env()
+
+  cfg <- load_src_cfg("mimic_demo")[["mimic_demo"]]
+
+  res <- new_src_env(cfg, some_env)
+
+  expect_s3_class(res, c("mimic_demo_env", "mimic_env", "src_env"))
+  expect_identical(res, some_env)
+  expect_length(res, 0L)
+
+  res <- new_src_env(cfg, some_env, link_env)
+
+  expect_identical(res, link_env$mimic_demo)
+
+  expect_warning(
+    new_src_env(cfg, some_env, link_env),
+    class = "src_name_bound_in_link_env"
+  )
+})

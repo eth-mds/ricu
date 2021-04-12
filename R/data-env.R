@@ -452,8 +452,9 @@ new_src_env <- function(x, env = new.env(parent = data_env()), link = NULL) {
   nme <- src_name(x)
   pfx <- src_prefix(x)
 
-  if (not_null(link) && exists(nme, envir = link)) {
-    warn_ricu("Name `{nme}` already bound in environment `{link}`")
+  if (not_null(link) && exists(nme, envir = link, inherits = FALSE)) {
+    warn_ricu("Name `{nme}` already bound in environment {format(link)}",
+              class = "src_name_bound_in_link_env")
     link <- NULL
   }
 

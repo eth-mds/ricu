@@ -124,4 +124,9 @@ test_that("attach srcs", {
     ),
     class = "src_attach_error"
   )
+
+  expect_warning(
+    mimic_demo[[names(mimic_demo)[1L]]] <- "foo",
+    class = "assign_src_tbl"
+  )
 })
