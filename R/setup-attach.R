@@ -191,13 +191,7 @@ attach_src.character <- function(x, assign_env = NULL,
   cfgs <- tryCatch(read_src_cfg(x, ...), error = read_err)
 
   if (has_name(cfgs, x)) {
-
     Map(try_parse, x, cfgs[x], data_dir, MoreArgs = list(env = assign_env))
-
-  } else {
-
-    warn_ricu("Failed to read source configuration for source{?s}
-               {setdiff(x, names(cfg))}", class = "src_cfg_read_error")
   }
 
   invisible(NULL)

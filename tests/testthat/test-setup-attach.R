@@ -8,7 +8,7 @@ test_that("auto attach env var", {
   expect_setequal(auto_attach_srcs(), srcs)
 })
 
-test_that("auto attach env var", {
+test_that("attach srcs", {
 
   srcs <- attached_srcs()
   test <- c("mimic_test", "eicu_test")
@@ -86,4 +86,42 @@ test_that("auto attach env var", {
 
   expect_s3_class(mi_adm, c("mimic_test_tbl", "mimic_demo_tbl", "mimic_tbl",
                             "src_tbl"))
+
+  stop_fun <- mockthat::mock(stop("some error"))
+
+  expect_warning(
+    expect_null(
+      expect_invisible(
+        mockthat::with_mock(
+          read_src_cfg = stop_fun,
+          attach_src("mimic_demo")
+        )
+      )
+    ),
+    class = "src_cfg_read_error"
+  )
+
+  expect_warning(
+    expect_null(
+      expect_invisible(
+        mockthat::with_mock(
+          parse_src_cfg = stop_fun,
+          attach_src("mimic_demo")
+        )
+      )
+    ),
+    class = "src_cfg_parse_error"
+  )
+
+  expect_warning(
+    expect_null(
+      expect_invisible(
+        mockthat::with_mock(
+          setup_src_env = stop_fun,
+          attach_src("mimic_demo")
+        )
+      )
+    ),
+    class = "src_attach_error"
+  )
 })
