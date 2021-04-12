@@ -6,7 +6,6 @@ test_that("data dir", {
     data_dir(create = FALSE)
   )
 
-  expect_true(dir.exists(dirname(dir)))
   expect_identical(basename(dir), "ricu")
 
   tmp <- withr::local_tempdir()
