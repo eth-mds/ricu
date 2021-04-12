@@ -40,4 +40,14 @@ test_that("src env", {
     new_src_env(cfg, some_env, link_env),
     class = "src_name_bound_in_link_env"
   )
+
+  expect_length(get("mimic_demo", data_env()), 0L)
+
+  expect_null(
+    expect_invisible(
+      attach_src("mimic_demo")
+    )
+  )
+
+  expect_gt(length(get("mimic_demo", data_env())), 0L)
 })
