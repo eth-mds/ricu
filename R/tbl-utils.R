@@ -743,3 +743,60 @@ dt_gforce <- function(x,
     last   = x[, last(.SD),                          by = by, .SDcols = vars]
   )
 }
+
+#' @inheritParams data.table::nafill
+#' @rdname tbl_utils
+#' @export
+replace_na <- function(x, val, type = "const", ...) UseMethod("replace_na", x)
+
+#' @export
+replace_na.numeric <- function(x, val, type = "const", ...) {
+
+  if (identical(type, "const")) {
+    data.table::nafill(x, type, val, ...)
+  } else {
+    data.table::nafill(x, type, ...)
+  }
+}
+
+#' @export
+replace_na.logical <- function(x, val, type = "const", ...) {
+
+  if (identical(type, "const")) {
+    NextMethod()
+  } else {
+    as.logical(replace_na(as.integer(x), type = type, ...))
+  }
+}
+
+#' @export
+replace_na.default <- function(x, val, type = "const", ...) {
+
+  warn_dots(...)
+
+  assert_that(identical(type, "const"), msg = "currently only \"const\"
+    replacement is possible (data.table#3992)"
+  )
+
+  replace(x, is.na(x), val)
+}
+
+#' @export
+replace_na.data.table <- function(x, val, type = "const", by_ref = FALSE,
+                                  vars = colnames(x), by = NULL, ...) {
+
+  assert_that(is.flag(by_ref))
+
+  if (isFALSE(by_ref)) {
+    x <- copy(x)
+  }
+
+  if (missing(val) && !any(type == "const")) {
+    val <- NA
+  }
+
+  x <- x[, c(vars) := Map(replace_na, .SD, val, type, MoreArgs = list(...)),
+         .SDcols = vars, by = by]
+  x
+}
+

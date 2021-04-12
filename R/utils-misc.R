@@ -110,82 +110,6 @@ null_or_subs <- function(x, where = parent.frame(1L)) {
   if (missing(x)) NULL else do.call("substitute", list(substitute(x), where))
 }
 
-#' @inheritParams data.table::nafill
-#' @rdname utils
-#' @export
-replace_na <- function(x, val, type = "const", ...) UseMethod("replace_na", x)
-
-#' @export
-replace_na.numeric <- function(x, val, type = "const", ...) {
-
-  if (identical(type, "const")) {
-    data.table::nafill(x, type, val, ...)
-  } else {
-    data.table::nafill(x, type, ...)
-  }
-}
-
-#' @export
-replace_na.logical <- function(x, val, type = "const", ...) {
-
-  if (identical(type, "const")) {
-    NextMethod()
-  } else {
-    as.logical(replace_na(as.integer(x), type = type, ...))
-  }
-}
-
-#' @export
-replace_na.default <- function(x, val, type = "const", ...) {
-
-  warn_dots(...)
-
-  assert_that(identical(type, "const"), msg = "currently only \"const\"
-    replacement is possible (data.table#3992)"
-  )
-
-  replace(x, is.na(x), val)
-}
-
-#' @export
-replace_na.data.table <- function(x, val, type = "const", by_ref = FALSE,
-                                  vars = colnames(x), by = NULL, ...) {
-
-  assert_that(is.flag(by_ref))
-
-  if (isFALSE(by_ref)) {
-    x <- copy(x)
-  }
-
-  if (missing(val) && !any(type == "const")) {
-    val <- NA
-  }
-
-  x <- x[, c(vars) := Map(replace_na, .SD, val, type, MoreArgs = list(...)),
-         .SDcols = vars, by = by]
-  x
-}
-
-split_indices <- function(len, n_chunks) {
-
-  assert_that(is.count(len), is.count(n_chunks))
-
-  if (len == 1L || n_chunks == 1L) {
-
-    rep.int(1L, len)
-
-  } else {
-
-    i <- seq_len(len)
-
-    fuzz <- min((len - 1L) / 1000, 0.4 * len / n_chunks)
-    breaks <- seq(1 - fuzz, len + fuzz, length.out = n_chunks + 1L)
-    bins <- cut(i, breaks)
-
-    as.integer(bins)
-  }
-}
-
 new_names <- function(old_names = character(0L), n = 1L,
                       chars = c(letters, LETTERS, 0L:9L), length = 15L) {
 
@@ -265,17 +189,6 @@ lst_inv <- function(x) {
 map <- function(f, ...) Map(f, ..., USE.NAMES = FALSE)
 
 do_call <- function(x, fun, ...) do.call(fun, c(x, list(...)))
-
-wrap_null <- function(...) {
-
-  objs <- setNames(list(...), as.character(substitute(...)))
-
-  objs[lgl_ply(objs, is.null)] <- list(list(NULL))
-
-  list2env(objs, parent.frame())
-
-  invisible(NULL)
-}
 
 coalesce <- function(...) {
   for (i in seq_len(...length())) {

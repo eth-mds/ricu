@@ -13,6 +13,7 @@
 \alias{is_unique}
 \alias{aggregate.id_tbl}
 \alias{dt_gforce}
+\alias{replace_na}
 \title{ICU class data utilities}
 \usage{
 rename_cols(
@@ -65,6 +66,8 @@ dt_gforce(
   vars = data_vars(x),
   na_rm = !fun \%in\% c("first", "last")
 )
+
+replace_na(x, val, type = "const", ...)
 }
 \arguments{
 \item{x}{Object to query}
@@ -107,6 +110,8 @@ columns to the front.}
 \item{fun}{Function name (as string) to apply over groups}
 
 \item{na_rm}{Logical flag indicating how to treat \code{NA} values}
+
+\item{type}{ character, one of \emph{"const"}, \emph{"locf"} or \emph{"nocb"}. Defaults to \code{"const"}. }
 }
 \value{
 Most of the utility functions return either an \code{id_tbl} or a
