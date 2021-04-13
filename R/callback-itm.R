@@ -39,11 +39,6 @@ combine_date_time <- function(x, time_var, date_shift = hours(12L), ...) {
                         get(idx) + date_shift, get(time_var))]
 }
 
-shift_all_date <- function(x, shift = hours(12L), ...) {
-  idx <- index_var(x)
-  x[, c(idx) := get(idx) + shift]
-}
-
 mimic_sampling <- function(x, val_var, aux_time, ...) {
   x <- combine_date_time(x, aux_time, hours(12L))
   set(x, j = val_var, value = !is.na(x[[val_var]]))
@@ -191,12 +186,6 @@ aggregate_fun <- function(fun, new_unit) {
     res <- res[, c(unit_var) := new_unit]
     res
   }
-}
-
-aggregate_amount <- function(x, val_var, unit_var, ...) {
-  res <- dt_gforce(set(x, j = unit_var, value = NULL), "sum")
-  res <- res[, c(unit_var) := "units"]
-  res
 }
 
 mimic_age <- function(x) {

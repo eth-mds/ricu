@@ -271,7 +271,7 @@ match_fio2 <- function(x, match_win, mode, fio2 = NULL) {
     }
 
     win_expr <- substitute(
-      list(po2 = min_fun(get(cnc[1L])), fio2 = max_fun(get(cnc[2L]))),
+      list(o2sat = min_fun(get("o2sat")), fio2 = max_fun(get("fio2"))),
       list(min_fun = min_or_na, max_fun = max_or_na)
     )
 
