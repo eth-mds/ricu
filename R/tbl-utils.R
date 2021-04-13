@@ -745,6 +745,7 @@ dt_gforce <- function(x,
 }
 
 #' @inheritParams data.table::nafill
+#' @param val Replacement value (if `type` is `"const"`)
 #' @rdname tbl_utils
 #' @export
 replace_na <- function(x, val, type = "const", ...) UseMethod("replace_na", x)

@@ -33,7 +33,6 @@ agg_or_na <- function(agg_fun) {
 #'
 #' @param x Object to use
 #' @param val Value to compare against or to use as replacement
-#' @param ... Forwarded to other methods
 #'
 #' @return
 #' * `min_or_na()`/`max_or_na()`: scalar-valued extrema of a vector

@@ -31,8 +31,6 @@ first_elem(x)
 \item{x}{Object to use}
 
 \item{val}{Value to compare against or to use as replacement}
-
-\item{...}{Forwarded to other methods}
 }
 \value{
 \itemize{

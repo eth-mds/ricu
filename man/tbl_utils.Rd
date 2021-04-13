@@ -111,6 +111,8 @@ columns to the front.}
 
 \item{na_rm}{Logical flag indicating how to treat \code{NA} values}
 
+\item{val}{Replacement value (if \code{type} is \code{"const"})}
+
 \item{type}{ character, one of \emph{"const"}, \emph{"locf"} or \emph{"nocb"}. Defaults to \code{"const"}. }
 }
 \value{
