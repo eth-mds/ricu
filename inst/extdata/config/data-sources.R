@@ -799,6 +799,486 @@ aumc_tbl_cfg <- function() {
   tables
 }
 
+miiv_tbl_cfg <- function() {
+
+  info <- list(
+    admissions = list(
+      subject_id = list(spec = "col_integer"),
+      hadm_id = list(spec = "col_integer"),
+      admittime = list(spec = "col_datetime", format = "%Y-%m-%d %H:%M:%S"),
+      dischtime = list(spec = "col_datetime", format = "%Y-%m-%d %H:%M:%S"),
+      deathtime = list(spec = "col_datetime", format = "%Y-%m-%d %H:%M:%S"),
+      admission_type = list(spec = "col_character"),
+      admission_location = list(spec = "col_character"),
+      discharge_location = list(spec = "col_character"),
+      insurance = list(spec = "col_character"),
+      language = list(spec = "col_character"),
+      marital_status = list(spec = "col_character"),
+      ethnicity = list(spec = "col_character"),
+      edregtime = list(spec = "col_datetime", format = "%Y-%m-%d %H:%M:%S"),
+      edouttime = list(spec = "col_datetime", format = "%Y-%m-%d %H:%M:%S"),
+      hospital_expire_flag = list(spec = "col_integer")
+    ),
+   patients = list(
+      subject_id = list(spec = "col_integer"),
+      gender = list(spec = "col_character"),
+      anchor_age = list(spec = "col_integer"),
+      anchor_year = list(spec = "col_integer"),
+      anchor_year_group = list(spec = "col_character"),
+      dod = list(spec = "col_datetime", format = "%Y-%m-%d")
+    ),
+   transfers = list(
+      subject_id = list(spec = "col_integer"),
+      hadm_id = list(spec = "col_integer"),
+      transfer_id = list(spec = "col_integer"),
+      eventtype = list(spec = "col_character"),
+      careunit = list(spec = "col_character"),
+      intime = list(spec = "col_datetime", format = "%Y-%m-%d %H:%M:%S"),
+      outtime = list(spec = "col_datetime", format = "%Y-%m-%d %H:%M:%S")
+    ),
+    d_hcpcs = list(
+      code = list(spec = "col_character"),
+      category = list(spec = "col_integer"),
+      long_description = list(spec = "col_character"),
+      short_description = list(spec = "col_character")
+    ),
+    diagnoses_icd = list(
+      subject_id = list(spec = "col_integer"),
+      hadm_id = list(spec = "col_integer"),
+      seq_num = list(spec = "col_integer"),
+      icd_code = list(spec = "col_character"),
+      icd_version = list(spec = "col_integer")
+    ),
+    d_icd_diagnoses = list(
+      icd_code = list(spec = "col_character"),
+      icd_version = list(spec = "col_integer"),
+      long_title = list(spec = "col_character")
+    ),
+    d_icd_procedures = list(
+      icd_code = list(spec = "col_character"),
+      icd_version = list(spec = "col_integer"),
+      long_title = list(spec = "col_character")
+    ),
+    d_labitems = list(
+      itemid = list(spec = "col_integer"),
+      label = list(spec = "col_character"),
+      fluid = list(spec = "col_character"),
+      category = list(spec = "col_character"),
+      loinc_code = list(spec = "col_character")
+    ),
+    drgcodes = list(
+      subject_id = list(spec = "col_integer"),
+      hadm_id = list(spec = "col_integer"),
+      drg_type = list(spec = "col_character"),
+      drg_code = list(spec = "col_character"),
+      description = list(spec = "col_character"),
+      drg_severity = list(spec = "col_integer"),
+      drg_mortality = list(spec = "col_integer")
+    ),
+    emar_detail = list(
+      subject_id = list(spec = "col_integer"),
+      emar_id = list(spec = "col_character"),
+      emar_seq = list(spec = "col_integer"),
+      parent_field_ordinal = list(spec = "col_double"),
+      administration_type = list(spec = "col_character"),
+      pharmacy_id = list(spec = "col_integer"),
+      barcode_type = list(spec = "col_character"),
+      reason_for_no_barcode = list(spec = "col_character"),
+      complete_dose_not_given = list(spec = "col_character"),
+      dose_due = list(spec = "col_character"),
+      dose_due_unit = list(spec = "col_character"),
+      dose_given = list(spec = "col_character"),
+      dose_given_unit = list(spec = "col_character"),
+      will_remainder_of_dose_be_given = list(spec = "col_character"),
+      product_amount_given = list(spec = "col_character"),
+      product_unit = list(spec = "col_character"),
+      product_code = list(spec = "col_character"),
+      product_description = list(spec = "col_character"),
+      product_description_other = list(spec = "col_character"),
+      prior_infusion_rate = list(spec = "col_character"),
+      infusion_rate = list(spec = "col_character"),
+      infusion_rate_adjustment = list(spec = "col_character"),
+      infusion_rate_adjustment_amount = list(spec = "col_character"),
+      infusion_rate_unit = list(spec = "col_character"),
+      route = list(spec = "col_character"),
+      infusion_complete = list(spec = "col_character"),
+      completion_interval = list(spec = "col_character"),
+      new_iv_bag_hung = list(spec = "col_character"),
+      continued_infusion_in_other_location = list(spec = "col_character"),
+      restart_interval = list(spec = "col_character"),
+      side = list(spec = "col_character"),
+      site = list(spec = "col_character"),
+      non_formulary_visual_verification = list(spec = "col_character")
+    ),
+    emar = list(
+      subject_id = list(spec = "col_integer"),
+      hadm_id = list(spec = "col_integer"),
+      emar_id = list(spec = "col_character"),
+      emar_seq = list(spec = "col_integer"),
+      poe_id = list(spec = "col_character"),
+      pharmacy_id = list(spec = "col_integer"),
+      charttime = list(spec = "col_datetime", format = "%Y-%m-%d %H:%M:%S"),
+      medication = list(spec = "col_character"),
+      event_txt = list(spec = "col_character"),
+      scheduletime = list(spec = "col_datetime", format = "%Y-%m-%d %H:%M:%S"),
+      storetime = list(spec = "col_datetime", format = "%Y-%m-%d %H:%M:%S")
+    ),
+    hcpcsevents = list(
+      subject_id = list(spec = "col_integer"),
+      hadm_id = list(spec = "col_integer"),
+      chartdate = list(spec = "col_datetime", format = "%Y-%m-%d %H:%M:%S"),
+      hcpcs_cd = list(spec = "col_character"),
+      seq_num = list(spec = "col_integer"),
+      short_description = list(spec = "col_character")
+    ),
+    labevents = list(
+      labevent_id = list(spec = "col_integer"),
+      subject_id = list(spec = "col_integer"),
+      hadm_id = list(spec = "col_integer"),
+      specimen_id = list(spec = "col_integer"),
+      itemid = list(spec = "col_integer"),
+      charttime = list(spec = "col_datetime", format = "%Y-%m-%d %H:%M:%S"),
+      storetime = list(spec = "col_datetime", format = "%Y-%m-%d %H:%M:%S"),
+      value = list(spec = "col_character"),
+      valuenum = list(spec = "col_double"),
+      valueuom = list(spec = "col_character"),
+      ref_range_lower = list(spec = "col_double"),
+      ref_range_upper = list(spec = "col_double"),
+      flag = list(spec = "col_character"),
+      priority = list(spec = "col_character"),
+      comments = list(spec = "col_character")
+    ),
+    microbiologyevents = list(
+      microevent_id = list(spec = "col_integer"),
+      subject_id = list(spec = "col_integer"),
+      hadm_id = list(spec = "col_integer"),
+      micro_specimen_id = list(spec = "col_integer"),
+      chartdate = list(spec = "col_datetime", format = "%Y-%m-%d %H:%M:%S"),
+      charttime = list(spec = "col_datetime", format = "%Y-%m-%d %H:%M:%S"),
+      spec_itemid = list(spec = "col_integer"),
+      spec_type_desc = list(spec = "col_character"),
+      test_seq = list(spec = "col_integer"),
+      storedate = list(spec = "col_datetime", format = "%Y-%m-%d %H:%M:%S"),
+      storetime = list(spec = "col_datetime", format = "%Y-%m-%d %H:%M:%S"),
+      test_itemid = list(spec = "col_integer"),
+      test_name = list(spec = "col_character"),
+      org_itemid = list(spec = "col_integer"),
+      org_name = list(spec = "col_character"),
+      isolate_num = list(spec = "col_integer"),
+      quantity = list(spec = "col_character"),
+      ab_itemid = list(spec = "col_integer"),
+      ab_name = list(spec = "col_character"),
+      dilution_text = list(spec = "col_character"),
+      dilution_comparison = list(spec = "col_character"),
+      dilution_value = list(spec = "col_double"),
+      interpretation = list(spec = "col_character"),
+      comments = list(spec = "col_character")
+    ),
+    pharmacy = list(
+      subject_id = list(spec = "col_integer"),
+      hadm_id = list(spec = "col_integer"),
+      pharmacy_id = list(spec = "col_integer"),
+      poe_id = list(spec = "col_character"),
+      starttime = list(spec = "col_datetime", format = "%Y-%m-%d %H:%M:%S"),
+      stoptime = list(spec = "col_datetime", format = "%Y-%m-%d %H:%M:%S"),
+      medication = list(spec = "col_character"),
+      proc_type = list(spec = "col_character"),
+      status = list(spec = "col_character"),
+      entertime = list(spec = "col_datetime", format = "%Y-%m-%d %H:%M:%S"),
+      verifiedtime = list(spec = "col_datetime", format = "%Y-%m-%d %H:%M:%S"),
+      route = list(spec = "col_character"),
+      frequency = list(spec = "col_character"),
+      disp_sched = list(spec = "col_character"),
+      infusion_type = list(spec = "col_character"),
+      sliding_scale = list(spec = "col_character"),
+      lockout_interval = list(spec = "col_character"),
+      basal_rate = list(spec = "col_double"),
+      one_hr_max = list(spec = "col_character"),
+      doses_per_24_hrs = list(spec = "col_double"),
+      duration = list(spec = "col_double"),
+      duration_interval = list(spec = "col_character"),
+      expiration_value = list(spec = "col_integer"),
+      expiration_unit = list(spec = "col_character"),
+      expirationdate = list(spec = "col_datetime",
+                            format = "%Y-%m-%d %H:%M:%S"),
+      dispensation = list(spec = "col_character"),
+      fill_quantity = list(spec = "col_character")
+    ),
+    poe_detail = list(
+      poe_id = list(spec = "col_character"),
+      poe_seq = list(spec = "col_integer"),
+      subject_id = list(spec = "col_integer"),
+      field_name = list(spec = "col_character"),
+      field_value = list(spec = "col_character")
+    ),
+    poe = list(
+      poe_id = list(spec = "col_character"),
+      poe_seq = list(spec = "col_integer"),
+      subject_id = list(spec = "col_integer"),
+      hadm_id = list(spec = "col_integer"),
+      ordertime = list(spec = "col_datetime", format = "%Y-%m-%d %H:%M:%S"),
+      order_type = list(spec = "col_character"),
+      order_subtype = list(spec = "col_character"),
+      transaction_type = list(spec = "col_character"),
+      discontinue_of_poe_id = list(spec = "col_character"),
+      discontinued_by_poe_id = list(spec = "col_character"),
+      order_status = list(spec = "col_character")
+    ),
+    prescriptions = list(
+      subject_id = list(spec = "col_integer"),
+      hadm_id = list(spec = "col_integer"),
+      pharmacy_id = list(spec = "col_integer"),
+      starttime = list(spec = "col_datetime", format = "%Y-%m-%d %H:%M:%S"),
+      stoptime = list(spec = "col_datetime", format = "%Y-%m-%d %H:%M:%S"),
+      drug_type = list(spec = "col_character"),
+      drug = list(spec = "col_character"),
+      gsn = list(spec = "col_character"),
+      ndc = list(spec = "col_character"),
+      prod_strength = list(spec = "col_character"),
+      form_rx = list(spec = "col_character"),
+      dose_val_rx = list(spec = "col_character"),
+      dose_unit_rx = list(spec = "col_character"),
+      form_val_disp = list(spec = "col_character"),
+      form_unit_disp = list(spec = "col_character"),
+      doses_per_24_hrs = list(spec = "col_double"),
+      route = list(spec = "col_character")
+    ),
+    procedures_icd = list(
+      subject_id = list(spec = "col_integer"),
+      hadm_id = list(spec = "col_integer"),
+      seq_num = list(spec = "col_integer"),
+      chartdate = list(spec = "col_datetime", format = "%Y-%m-%d %H:%M:%S"),
+      icd_code = list(spec = "col_character"),
+      icd_version = list(spec = "col_integer")
+    ),
+    services = list(
+      subject_id = list(spec = "col_integer"),
+      hadm_id = list(spec = "col_integer"),
+      transfertime = list(spec = "col_datetime", format = "%Y-%m-%d %H:%M:%S"),
+      prev_service = list(spec = "col_character"),
+      curr_service = list(spec = "col_character")
+    ),
+    chartevents = list(
+      subject_id = list(spec = "col_integer"),
+      hadm_id = list(spec = "col_integer"),
+      stay_id = list(spec = "col_integer"),
+      charttime = list(spec = "col_datetime", format = "%Y-%m-%d %H:%M:%S"),
+      storetime = list(spec = "col_datetime", format = "%Y-%m-%d %H:%M:%S"),
+      itemid = list(spec = "col_integer"),
+      value = list(spec = "col_character"),
+      valuenum = list(spec = "col_double"),
+      valueuom = list(spec = "col_character"),
+      warning = list(spec = "col_integer")
+    ),
+    datetimeevents = list(
+      subject_id = list(spec = "col_integer"),
+      hadm_id = list(spec = "col_integer"),
+      stay_id = list(spec = "col_integer"),
+      charttime = list(spec = "col_datetime", format = "%Y-%m-%d %H:%M:%S"),
+      storetime = list(spec = "col_datetime", format = "%Y-%m-%d %H:%M:%S"),
+      itemid = list(spec = "col_integer"),
+      value = list(spec = "col_datetime", format = "%Y-%m-%d %H:%M:%S"),
+      valueuom = list(spec = "col_character"),
+      warning = list(spec = "col_integer")
+    ),
+    d_items = list(
+      itemid = list(spec = "col_integer"),
+      label = list(spec = "col_character"),
+      abbreviation = list(spec = "col_character"),
+      linksto = list(spec = "col_character"),
+      category = list(spec = "col_character"),
+      unitname = list(spec = "col_character"),
+      param_type = list(spec = "col_character"),
+      lownormalvalue = list(spec = "col_double"),
+      highnormalvalue = list(spec = "col_double")
+    ),
+    icustays = list(
+      subject_id = list(spec = "col_integer"),
+      hadm_id = list(spec = "col_integer"),
+      stay_id = list(spec = "col_integer"),
+      first_careunit = list(spec = "col_character"),
+      last_careunit = list(spec = "col_character"),
+      intime = list(spec = "col_datetime", format = "%Y-%m-%d %H:%M:%S"),
+      outtime = list(spec = "col_datetime", format = "%Y-%m-%d %H:%M:%S"),
+      los = list(spec = "col_double")
+    ),
+    inputevents = list(
+      subject_id = list(spec = "col_integer"),
+      hadm_id = list(spec = "col_integer"),
+      stay_id = list(spec = "col_integer"),
+      starttime = list(spec = "col_datetime", format = "%Y-%m-%d %H:%M:%S"),
+      endtime = list(spec = "col_datetime", format = "%Y-%m-%d %H:%M:%S"),
+      storetime = list(spec = "col_datetime", format = "%Y-%m-%d %H:%M:%S"),
+      itemid = list(spec = "col_integer"),
+      amount = list(spec = "col_double"),
+      amountuom = list(spec = "col_character"),
+      rate = list(spec = "col_double"),
+      rateuom = list(spec = "col_character"),
+      orderid = list(spec = "col_integer"),
+      linkorderid = list(spec = "col_integer"),
+      ordercategoryname = list(spec = "col_character"),
+      secondaryordercategoryname = list(spec = "col_character"),
+      ordercomponenttypedescription = list(spec = "col_character"),
+      ordercategorydescription = list(spec = "col_character"),
+      patientweight = list(spec = "col_double"),
+      totalamount = list(spec = "col_double"),
+      totalamountuom = list(spec = "col_character"),
+      isopenbag = list(spec = "col_integer"),
+      continueinnextdept = list(spec = "col_integer"),
+      cancelreason = list(spec = "col_integer"),
+      statusdescription = list(spec = "col_character"),
+      originalamount = list(spec = "col_double"),
+      originalrate = list(spec = "col_double")
+    ),
+    outputevents = list(
+      subject_id = list(spec = "col_integer"),
+      hadm_id = list(spec = "col_integer"),
+      stay_id = list(spec = "col_integer"),
+      charttime = list(spec = "col_datetime", format = "%Y-%m-%d %H:%M:%S"),
+      storetime = list(spec = "col_datetime", format = "%Y-%m-%d %H:%M:%S"),
+      itemid = list(spec = "col_integer"),
+      value = list(spec = "col_double"),
+      valueuom = list(spec = "col_character")
+    ),
+    procedureevents = list(
+      subject_id = list(spec = "col_integer"),
+      hadm_id = list(spec = "col_integer"),
+      stay_id = list(spec = "col_integer"),
+      starttime = list(spec = "col_datetime", format = "%Y-%m-%d %H:%M:%S"),
+      endtime = list(spec = "col_datetime", format = "%Y-%m-%d %H:%M:%S"),
+      storetime = list(spec = "col_datetime", format = "%Y-%m-%d %H:%M:%S"),
+      itemid = list(spec = "col_integer"),
+      value = list(spec = "col_double"),
+      valueuom = list(spec = "col_character"),
+      location = list(spec = "col_character"),
+      locationcategory = list(spec = "col_character"),
+      orderid = list(spec = "col_integer"),
+      linkorderid = list(spec = "col_integer"),
+      ordercategoryname = list(spec = "col_character"),
+      secondaryordercategoryname = list(spec = "col_character"),
+      ordercategorydescription = list(spec = "col_character"),
+      patientweight = list(spec = "col_double"),
+      totalamount = list(spec = "col_double"),
+      totalamountuom = list(spec = "col_character"),
+      isopenbag = list(spec = "col_integer"),
+      continueinnextdept = list(spec = "col_integer"),
+      cancelreason = list(spec = "col_integer"),
+      statusdescription = list(spec = "col_character"),
+      comments_date = list(spec = "col_datetime",
+                           format = "%Y-%m-%d %H:%M:%S"),
+      ORIGINALAMOUNT = list(spec = "col_double"),
+      ORIGINALRATE = list(spec = "col_double")
+    )
+  )
+
+  tables <- names(info)
+
+  cols <- lapply(info, function(tbl) {
+    Map(function(name, spec) c(list(name = name), spec), names(tbl), tbl)
+  })
+
+  defaults <- list(
+    admissions = list(
+      index_var = "admittime"
+    )
+  )
+
+  defaults <- Map(function(cl, df) {
+    nme <- vapply(cl, `[[`, character(1L), "name")
+    typ <- vapply(cl, `[[`, character(1L), "spec")
+    tim <- nme[typ == "col_datetime"]
+    if (length(tim)) c(df, list(time_vars = tim)) else df
+  }, cols[tables], defaults[tables])
+
+  n_row <- c(
+    admissions = 523740L,
+    patients = 382278L,
+    transfers = 2189535L,
+    d_hcpcs = 89200L,
+    d_icd_diagnoses = 109775L,
+    d_icd_procedures = 85257L,
+    d_labitems = 1630L,
+    diagnoses_icd = 5280351L,
+    drgcodes = 769622L,
+    emar_detail = 55947923L,
+    emar = 27464367L,
+    hcpcsevents = 160727L,
+    labevents = 122103667L,
+    microbiologyevents = 3397914L,
+    pharmacy = 14736386L,
+    poe_detail = 3256358L,
+    poe = 42483962L,
+    prescriptions = 17008053L,
+    procedures_icd = 779625L,
+    services = 562892L,
+    chartevents = 329499788L,
+    d_items = 3861L,
+    datetimeevents = 7495712L,
+    icustays = 76540L,
+    inputevents = 9460658L,
+    outputevents = 4457381L,
+    procedureevents = 731247L
+  )
+
+  files <- c(
+    admissions = "core/admissions.csv.gz",
+    patients = "core/patients.csv.gz",
+    transfers = "core/transfers.csv.gz",
+    d_hcpcs = "hosp/d_hcpcs.csv.gz",
+    d_icd_diagnoses = "hosp/d_icd_diagnoses.csv.gz",
+    d_icd_procedures = "hosp/d_icd_procedures.csv.gz",
+    d_labitems = "hosp/d_labitems.csv.gz",
+    diagnoses_icd = "hosp/diagnoses_icd.csv.gz",
+    drgcodes = "hosp/drgcodes.csv.gz",
+    emar_detail = "hosp/emar_detail.csv.gz",
+    emar = "hosp/emar.csv.gz",
+    hcpcsevents = "hosp/hcpcsevents.csv.gz",
+    labevents = "hosp/labevents.csv.gz",
+    microbiologyevents = "hosp/microbiologyevents.csv.gz",
+    pharmacy = "hosp/pharmacy.csv.gz",
+    poe_detail = "hosp/poe_detail.csv.gz",
+    poe = "hosp/poe.csv.gz",
+    prescriptions = "hosp/prescriptions.csv.gz",
+    procedures_icd = "hosp/procedures_icd.csv.gz",
+    services = "hosp/services.csv.gz",
+    chartevents = "icu/chartevents.csv.gz",
+    d_items = "icu/d_items.csv.gz",
+    datetimeevents = "icu/datetimeevents.csv.gz",
+    icustays = "icu/icustays.csv.gz",
+    inputevents = "icu/inputevents.csv.gz",
+    outputevents = "icu/outputevents.csv.gz",
+    procedureevents = "icu/procedureevents.csv.gz"
+  )
+
+  part <- list(
+    labevents = list(
+      col = "itemid",
+      breaks = c(
+        50868L, 50902L, 50943L, 50983L, 51146L, 51248L, 51256L, 51279L,
+        51491L
+      )
+    ),
+    chartevents = list(
+      col = "itemid",
+      breaks = c(
+        223782L, 223849L, 223934L, 223986L, 224001L, 224027L, 224073L,
+        224086L, 224291L, 224650L, 224806L, 225054L, 227288L, 227947L,
+        227958L, 227969L, 228396L, 228571L, 228924L, 229126L, 220045L,
+        220051L, 220180L, 220210L, 220292L, 223834L, 224641L, 225188L,
+        227292L
+      )
+    )
+  )
+
+  tables <- Map(list, files = files[tables],
+                 defaults = defaults[tables], num_rows = n_row[tables],
+                 cols = cols[tables])
+
+  tables[names(part)] <- Map(`[[<-`, tables[names(part)], "partitioning", part)
+
+  tables
+}
+
 pkg_dir <- rprojroot::find_root(rprojroot::is_r_package)
 cfg_dir <- file.path(pkg_dir, "inst", "extdata", "config")
 
@@ -857,6 +1337,19 @@ cfg <- list(
     url = "https://physionet.org/files/mimiciii-demo/1.4",
     id_cfg = mimic_id_cfg,
     tables = mimic_demo_tbls
+  ),
+  list(
+    name = "miiv",
+    url = "https://physionet.org/files/mimiciv/1.0",
+    id_cfg = list(
+      patient = list(id = "subject_id", position = 1L, start = "dob",
+                     end = "dod", table = "patients"),
+      hadm = list(id = "hadm_id", position = 2L, start = "admittime",
+                  end = "dischtime", table = "admissions"),
+      icustay = list(id = "stay_id", position = 3L, start = "intime",
+                     end = "outtime", table = "icustays")
+    ),
+    tables = miiv_tbl_cfg()
   ),
   list(
     name = "hirid",
