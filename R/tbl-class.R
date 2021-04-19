@@ -341,6 +341,7 @@ set_attributes <- function(x, ...) {
 strip_class <- function(x, what = class(x)[1L]) setdiff(class(x), what)
 
 #' @method as.data.table id_tbl
+#' @inheritParams data.table::as.data.table
 #' @rdname id_tbl
 #' @export
 as.data.table.id_tbl <- function(x, keep.rownames = FALSE, by_ref = FALSE,
@@ -360,6 +361,7 @@ as.data.table.id_tbl <- function(x, keep.rownames = FALSE, by_ref = FALSE,
 }
 
 #' @method as.data.frame id_tbl
+#' @inheritParams base::as.data.frame
 #' @rdname id_tbl
 #' @export
 as.data.frame.id_tbl <- function(x, row.names = NULL, optional = FALSE, ...) {
