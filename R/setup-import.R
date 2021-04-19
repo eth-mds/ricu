@@ -265,7 +265,7 @@ partition_table <- function(x, dir, progress = NULL, chunk_length = 10 ^ 7,
   if (length(file) == 1L) {
 
     callback <- function(x, pos, ...) {
-      readr::stop_for_problems(x)
+      report_problems(x, file)
       split_write(x, pfun, tempdir, ((pos - 1L) / chunk_length) + 1L,
                   progress, name, tick)
     }
@@ -282,7 +282,7 @@ partition_table <- function(x, dir, progress = NULL, chunk_length = 10 ^ 7,
     for (i in seq_along(file)) {
 
       dat <- readr::read_csv(file[i], col_types = spec, progress = FALSE, ...)
-      readr::stop_for_problems(dat)
+      report_problems(dat, file[i])
 
       split_write(dat, pfun, tempdir, i, progress, name, tick)
     }
@@ -320,7 +320,7 @@ csv_to_fst <- function(x, dir, progress = NULL, ...) {
   assert_that(length(x) == 1L, length(src) == 1L, length(dst) == 1L)
 
   dat  <- readr::read_csv(src, col_types = col_spec(x), progress = FALSE, ...)
-  readr::stop_for_problems(dat)
+  report_problems(dat, src)
 
   dat <- rename_cols(setDT(dat), ricu_cols(x), orig_cols(x))
 
@@ -336,6 +336,28 @@ csv_to_fst <- function(x, dir, progress = NULL, ...) {
   }
 
   progress_tick(tbl_name(x), progress, ticks)
+
+  invisible(NULL)
+}
+
+report_problems <- function(x, file) {
+
+  prob_to_str <- function(x) {
+    paste0("[", x[1L], ", ", x[2L], "]: got '", x[4L], "' instead of ", x[3L])
+  }
+
+  probs <- readr::problems(x)
+
+  if (nrow(probs)) {
+
+    probs <- bullet(apply(probs, 1L, prob_to_str))
+
+    warn_ricu(
+      c("Encountered parsing problems for file {basename(file)}:", probs),
+      class = "csv_parsing_error", indent = c(0L, rep_along(2L, probs)),
+      exdent = c(0L, rep_along(2L, probs))
+    )
+  }
 
   invisible(NULL)
 }

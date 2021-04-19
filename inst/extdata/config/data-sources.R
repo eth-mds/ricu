@@ -926,7 +926,7 @@ miiv_tbl_cfg <- function() {
     hcpcsevents = list(
       subject_id = list(spec = "col_integer"),
       hadm_id = list(spec = "col_integer"),
-      chartdate = list(spec = "col_datetime", format = "%Y-%m-%d %H:%M:%S"),
+      chartdate = list(spec = "col_datetime", format = "%Y-%m-%d"),
       hcpcs_cd = list(spec = "col_character"),
       seq_num = list(spec = "col_integer"),
       short_description = list(spec = "col_character")
@@ -1047,7 +1047,7 @@ miiv_tbl_cfg <- function() {
       subject_id = list(spec = "col_integer"),
       hadm_id = list(spec = "col_integer"),
       seq_num = list(spec = "col_integer"),
-      chartdate = list(spec = "col_datetime", format = "%Y-%m-%d %H:%M:%S"),
+      chartdate = list(spec = "col_datetime", format = "%Y-%m-%d"),
       icd_code = list(spec = "col_character"),
       icd_version = list(spec = "col_integer")
     ),
@@ -1166,8 +1166,8 @@ miiv_tbl_cfg <- function() {
       statusdescription = list(spec = "col_character"),
       comments_date = list(spec = "col_datetime",
                            format = "%Y-%m-%d %H:%M:%S"),
-      ORIGINALAMOUNT = list(spec = "col_double"),
-      ORIGINALRATE = list(spec = "col_double")
+      originalamount = list(spec = "col_double"),
+      originalrate = list(spec = "col_double")
     )
   )
 
@@ -1200,7 +1200,7 @@ miiv_tbl_cfg <- function() {
     d_labitems = 1630L,
     diagnoses_icd = 5280351L,
     drgcodes = 769622L,
-    emar_detail = 55947923L,
+    emar_detail = 55947921L,
     emar = 27464367L,
     hcpcsevents = 160727L,
     labevents = 122103667L,
@@ -1261,12 +1261,16 @@ miiv_tbl_cfg <- function() {
     chartevents = list(
       col = "itemid",
       breaks = c(
-        223782L, 223849L, 223934L, 223986L, 224001L, 224027L, 224073L,
-        224086L, 224291L, 224650L, 224806L, 225054L, 227288L, 227947L,
-        227958L, 227969L, 228396L, 228571L, 228924L, 229126L, 220045L,
-        220051L, 220180L, 220210L, 220292L, 223834L, 224641L, 225188L,
-        227292L
+        220048L, 220059L, 220181L, 220228L, 220615L, 223782L, 223835L,
+        223905L, 223962L, 223990L, 224015L, 224055L, 224082L, 224093L,
+        224328L, 224650L, 224701L, 224850L, 225072L, 226104L, 227240L,
+        227467L, 227950L, 227960L, 228004L, 228397L, 228594L, 228924L,
+        229124L
       )
+    ),
+    poe = list(
+      col = "subject_id",
+      breaks = c(12017899L, 13999829L, 15979442L, 17994364L)
     )
   )
 

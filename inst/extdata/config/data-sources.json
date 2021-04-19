@@ -7365,7 +7365,7 @@
       "emar_detail": {
         "files": "hosp/emar_detail.csv.gz",
         "defaults": null,
-        "num_rows": 55947923,
+        "num_rows": 55947921,
         "cols": {
           "subject_id": {
             "name": "subject_id",
@@ -7575,7 +7575,7 @@
           "chartdate": {
             "name": "chartdate",
             "spec": "col_datetime",
-            "format": "%Y-%m-%d %H:%M:%S"
+            "format": "%Y-%m-%d"
           },
           "hcpcs_cd": {
             "name": "hcpcs_cd",
@@ -7976,6 +7976,10 @@
             "name": "order_status",
             "spec": "col_character"
           }
+        },
+        "partitioning": {
+          "col": "subject_id",
+          "breaks": [12017899, 13999829, 15979442, 17994364]
         }
       },
       "prescriptions": {
@@ -8079,7 +8083,7 @@
           "chartdate": {
             "name": "chartdate",
             "spec": "col_datetime",
-            "format": "%Y-%m-%d %H:%M:%S"
+            "format": "%Y-%m-%d"
           },
           "icd_code": {
             "name": "icd_code",
@@ -8173,7 +8177,7 @@
         },
         "partitioning": {
           "col": "itemid",
-          "breaks": [223782, 223849, 223934, 223986, 224001, 224027, 224073, 224086, 224291, 224650, 224806, 225054, 227288, 227947, 227958, 227969, 228396, 228571, 228924, 229126, 220045, 220051, 220180, 220210, 220292, 223834, 224641, 225188, 227292]
+          "breaks": [220048, 220059, 220181, 220228, 220615, 223782, 223835, 223905, 223962, 223990, 224015, 224055, 224082, 224093, 224328, 224650, 224701, 224850, 225072, 226104, 227240, 227467, 227950, 227960, 228004, 228397, 228594, 228924, 229124]
         }
       },
       "datetimeevents": {
