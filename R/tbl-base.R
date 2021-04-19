@@ -37,6 +37,18 @@ row.names.id_tbl <- function(x) NULL
 `names<-.id_tbl` <- function(x, value) rename_cols(x, value)
 
 #' @export
+`dimnames<-.id_tbl` <- function(x, value) {
+
+  assert_that(length(value) == 2L)
+
+  if (not_null(value[[1L]])) {
+    warn_arg("value[[1]]")
+  }
+
+  rename_cols(x, value[[2L]])
+}
+
+#' @export
 print.id_tbl <- function(x, ..., n = NULL, width = NULL, n_extra = NULL) {
   cat_line(format(x, ..., n = n, width = width, n_extra = n_extra))
   invisible(x)
@@ -89,37 +101,6 @@ approx_art <- function(x) {
 
 #' @export
 str.id_tbl <- function(object, ...) invisible(prt::str_dt(object, ...))
-
-#' @method as.data.table id_tbl
-#' @export
-as.data.table.id_tbl <- function(x, keep.rownames = FALSE, ...) {
-
-  warn_dots(...)
-
-  if (!isFALSE(keep.rownames)) {
-    warn_arg("keep.rownames")
-  }
-
-  unclass_tbl(x)
-}
-
-#' @method as.data.frame id_tbl
-#' @export
-as.data.frame.id_tbl <- function(x, row.names = NULL, optional = FALSE, ...) {
-
-  if (!is.null(row.names)) {
-    warn_arg("row.names")
-  }
-
-  if (!isFALSE(optional)) {
-    warn_arg("optional")
-  }
-
-  x <- as.data.table(x, ...)
-  x <- setDF(x)
-
-  x
-}
 
 #' ICU class data reshaping
 #'

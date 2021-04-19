@@ -340,6 +340,44 @@ set_attributes <- function(x, ...) {
 
 strip_class <- function(x, what = class(x)[1L]) setdiff(class(x), what)
 
+#' @method as.data.table id_tbl
+#' @rdname id_tbl
+#' @export
+as.data.table.id_tbl <- function(x, keep.rownames = FALSE, by_ref = FALSE,
+                                 ...) {
+
+  warn_dots(...)
+
+  if (!isFALSE(keep.rownames)) {
+    warn_arg("keep.rownames")
+  }
+
+  if (!by_ref) {
+    x <- copy(x)
+  }
+
+  unclass_tbl(x)
+}
+
+#' @method as.data.frame id_tbl
+#' @rdname id_tbl
+#' @export
+as.data.frame.id_tbl <- function(x, row.names = NULL, optional = FALSE, ...) {
+
+  if (!is.null(row.names)) {
+    warn_arg("row.names")
+  }
+
+  if (!isFALSE(optional)) {
+    warn_arg("optional")
+  }
+
+  x <- as.data.table(x, ...)
+  x <- setDF(x)
+
+  x
+}
+
 #' Internal utilities for ICU data objects
 #'
 #' In order to remove all `id_tbl`/`ts_tbl`-related attributes, as well as

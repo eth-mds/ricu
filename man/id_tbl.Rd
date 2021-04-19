@@ -7,6 +7,8 @@
 \alias{ts_tbl}
 \alias{is_ts_tbl}
 \alias{as_ts_tbl}
+\alias{as.data.table.id_tbl}
+\alias{as.data.frame.id_tbl}
 \alias{validate_tbl}
 \title{Tabular ICU data classes}
 \usage{
@@ -21,6 +23,10 @@ ts_tbl(..., id_vars = 1L, index_var = NULL, interval = NULL)
 is_ts_tbl(x)
 
 as_ts_tbl(x, id_vars = NULL, index_var = NULL, interval = NULL, by_ref = FALSE)
+
+\method{as.data.table}{id_tbl}(x, keep.rownames = FALSE, by_ref = FALSE, ...)
+
+\method{as.data.frame}{id_tbl}(x, row.names = NULL, optional = FALSE, ...)
 
 validate_tbl(x)
 }
