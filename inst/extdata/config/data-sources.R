@@ -860,7 +860,7 @@ cfg <- list(
   ),
   list(
     name = "hirid",
-    url = "https://physionet.org/files/hirid/1.1",
+    url = "https://physionet.org/files/hirid/1.1.1",
     id_cfg = list(
       icustay = list(id = "patientid", position = 1L, start = "admissiontime",
                      table = "general")
