@@ -355,16 +355,22 @@ download_pysionet_file <- function(url, dest = NULL, user = NULL,
     msg_ricu("Skipped download of {basename(url)}")
     return(invisible(NULL))
 
-  } else if (status == 401) {
+  } else if (status %in% c(401, 403)) {
 
     stop_ricu("Access to the requested resource was denied. Please set up an
                account at https://physionet.org/ and apply for data access.",
-              class = "physionet_401")
+              class = "physionet_login")
 
   } else if (status != 200) {
 
-    stop_ricu(rawToChar(res[["content"]]),
-              class = paste0("physionet_", status))
+    if (requireNamespace("xml2", quietly = TRUE)) {
+      info <- xml2::read_html(rawToChar(res[["content"]]))
+      info <- xml2::xml_text(xml2::xml_find_first(info, "//main"))
+    } else {
+      info <- "Unable to access requested resource on at {url}"
+    }
+
+    stop_ricu(info, class = paste0("physionet_", status))
   }
 
   if (head_only) {
