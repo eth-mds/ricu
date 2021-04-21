@@ -113,3 +113,15 @@ skip_if_no_local_testdata <- function() {
     "No local testdata is available"
   )
 }
+
+with_src <- function(src = "mimic_test", env = parent.frame()) {
+
+  stopifnot(!src %in% attached_srcs(), src %in% c("mimic_test", "eicu_test"))
+
+  attach_src(src, data_dir = src_data_dir(sub("_test", "_demo", src)),
+             cfg_dirs = system.file("testdata", package = "ricu"))
+
+  withr::defer(detach_src(src), envir = env)
+
+  as_src_env(src)
+}
