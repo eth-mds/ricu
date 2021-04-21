@@ -279,11 +279,17 @@ new_ts_tbl <- function(x, id_vars, index_var = NULL, interval = NULL,
 
   if (is.null(interval)) {
     assert_that(is.string(index_var), has_time_cols(x, index_var))
-    interval <- interval(x[[index_var]])
+    interval <- as.difftime(NA_real_, units = units(x[[index_var]]))
   }
 
-  new_id_tbl(x, id_vars, index_var = unname(index_var), interval = interval,
-             ..., class = c(class, "ts_tbl"))
+  res <- new_id_tbl(x, id_vars, index_var = unname(index_var),
+                    interval = interval, ..., class = c(class, "ts_tbl"))
+
+  if (is.na(interval)) {
+    res <- set_attributes(res, interval = interval(index_col(res)))
+  }
+
+  res
 }
 
 new_tbl <- function(x, ..., class, by_ref = TRUE) {
