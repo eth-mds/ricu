@@ -21,7 +21,7 @@ old.hooks <- fansi::set_knit_hooks(knitr::knit_hooks)
 # [ricu](https://septic-tank.github.io/ricu/)
 
 <!-- badges: start -->
-[![Lifecycle](https://img.shields.io/badge/lifecycle-maturing-blue.svg)](https://www.tidyverse.org/lifecycle/#maturing)
+[![Lifecycle](https://img.shields.io/badge/lifecycle-stable-brightgreen.svg)](https://lifecycle.r-lib.org/articles/stages.html#stable)
 [![R build status](https://github.com/septic-tank/ricu/workflows/build/badge.svg)](https://github.com/septic-tank/ricu/actions?query=workflow%3Abuild)
 [![R check status](https://github.com/septic-tank/ricu/workflows/check/badge.svg)](https://github.com/septic-tank/ricu/actions?query=workflow%3Acheck)
 [![pkgdown build status](https://github.com/septic-tank/ricu/workflows/pkgdown/badge.svg)](https://github.com/septic-tank/ricu/actions?query=workflow%3Apkgdown)
