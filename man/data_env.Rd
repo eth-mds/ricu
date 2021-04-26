@@ -125,7 +125,7 @@ Much care has been taken to make \code{ricu} extensible to new datasets. For
 example the publicly available ICU database \href{https://www.amsterdammedicaldatascience.nl/#amsterdamumcdb}{AmsterdamUMCdb }
 provided by the Amsterdam University Medical Center, currently is not part
 of the core datasets of \code{ricu}, but code for integrating this dataset is
-available on \href{https://github.com/septic-tank/aumc}{github}.
+available on \href{https://github.com/eth-mds/aumc}{github}.
 }
 \section{MIMIC-III}{
 

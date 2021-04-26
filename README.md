@@ -1,21 +1,21 @@
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
-# [ricu](https://septic-tank.github.io/ricu/)
+# [ricu](https://eth-mds.github.io/ricu/)
 
 <!-- badges: start -->
 
 [![Lifecycle](https://img.shields.io/badge/lifecycle-stable-brightgreen.svg)](https://lifecycle.r-lib.org/articles/stages.html#stable)
 [![R build
-status](https://github.com/septic-tank/ricu/workflows/build/badge.svg)](https://github.com/septic-tank/ricu/actions?query=workflow%3Abuild)
+status](https://github.com/eth-mds/ricu/workflows/build/badge.svg)](https://github.com/eth-mds/ricu/actions?query=workflow%3Abuild)
 [![R check
-status](https://github.com/septic-tank/ricu/workflows/check/badge.svg)](https://github.com/septic-tank/ricu/actions?query=workflow%3Acheck)
+status](https://github.com/eth-mds/ricu/workflows/check/badge.svg)](https://github.com/eth-mds/ricu/actions?query=workflow%3Acheck)
 [![pkgdown build
-status](https://github.com/septic-tank/ricu/workflows/pkgdown/badge.svg)](https://github.com/septic-tank/ricu/actions?query=workflow%3Apkgdown)
+status](https://github.com/eth-mds/ricu/workflows/pkgdown/badge.svg)](https://github.com/eth-mds/ricu/actions?query=workflow%3Apkgdown)
 [![covr
-status](https://github.com/septic-tank/ricu/workflows/coverage/badge.svg)](https://github.com/septic-tank/ricu/actions?query=workflow%3Acoverage)
+status](https://github.com/eth-mds/ricu/workflows/coverage/badge.svg)](https://github.com/eth-mds/ricu/actions?query=workflow%3Acoverage)
 [![Codecov test
-coverage](https://codecov.io/gh/septic-tank/ricu/branch/master/graph/badge.svg?token=HvOM3yosW3)](https://codecov.io/gh/septic-tank/ricu)
+coverage](https://codecov.io/gh/eth-mds/ricu/branch/master/graph/badge.svg?token=HvOM3yosW3)](https://codecov.io/gh/eth-mds/ricu)
 <!-- badges: end -->
 
 Working with ICU datasets, especially with publicly available ones as
@@ -30,7 +30,7 @@ Currently, installation is only possible from github directly, using the
 `remotes` if installed
 
 ``` r
-remotes::install_github("septic-tank/ricu")
+remotes::install_github("eth-mds/ricu")
 ```
 
 or by sourcing the required code for installation from github by running
@@ -40,7 +40,7 @@ rem <- source(
   paste0("https://raw.githubusercontent.com/r-lib/remotes/master/",
          "install-github.R"
 )
-rem$value("septic-tank/ricu")
+rem$value("eth-mds/ricu")
 ```
 
 In order to make sure that some useful utility packages are installed as
@@ -48,7 +48,7 @@ well, consider installing the packages marked as `Suggests` as well by
 running
 
 ``` r
-remotes::install_github("septic-tank/ricu", dependencies = TRUE)
+remotes::install_github("eth-mds/ricu", dependencies = TRUE)
 ```
 
 instead, or by installing some of the utility packages (relevant for
@@ -62,7 +62,7 @@ and demo dataset packages
 
 ``` r
 install.packages(c("mimic.demo", "eicu.demo"),
-                 repos = "https://septic-tank.github.io/physionet-demo")
+                 repos = "https://eth-mds.github.io/physionet-demo")
 ```
 
 explicitly.

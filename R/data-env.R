@@ -70,7 +70,7 @@
 #' ](https://www.amsterdammedicaldatascience.nl/#amsterdamumcdb)
 #' provided by the Amsterdam University Medical Center, currently is not part
 #' of the core datasets of `ricu`, but code for integrating this dataset is
-#' available on [github](https://github.com/septic-tank/aumc).
+#' available on [github](https://github.com/eth-mds/aumc).
 #'
 #' @section MIMIC-III:
 #' The Medical Information Mart for Intensive Care

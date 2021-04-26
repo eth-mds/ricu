@@ -91,7 +91,7 @@ Demo datasets
 \href{https://physionet.org/content/eicu-crd-demo/2.0/}{eiCU demo} can either be
 installed as R packages directly by running\preformatted{install.packages(
   c("mimic.demo", "eicu.demo"),
-  repos = "https://septic-tank.github.io/physionet-demo"
+  repos = "https://eth-mds.github.io/physionet-demo"
 )
 }
 

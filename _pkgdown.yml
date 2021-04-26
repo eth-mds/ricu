@@ -1,7 +1,7 @@
 
 title: ICU data with R
 
-url: https://septic-tank.github.io/ricu
+url: https://eth-mds.github.io/ricu
 
 development:
   mode: release
@@ -12,8 +12,8 @@ template:
 
 repo:
   url:
-    home: https://github.com/septic-tank/ricu
-    issue: https://github.com/septic-tank/ricu/issues
+    home: https://github.com/eth-mds/ricu
+    issue: https://github.com/eth-mds/ricu/issues
 
 reference:
 - title: Data loading

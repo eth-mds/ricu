@@ -39,7 +39,7 @@
 #' ```
 #' install.packages(
 #'   c("mimic.demo", "eicu.demo"),
-#'   repos = "https://septic-tank.github.io/physionet-demo"
+#'   repos = "https://eth-mds.github.io/physionet-demo"
 #' )
 #' ```
 #'
