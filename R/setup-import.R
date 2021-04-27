@@ -270,6 +270,10 @@ partition_table <- function(x, dir, progress = NULL, chunk_length = 10 ^ 7,
                   progress, name, tick)
     }
 
+    if (grepl("\\.gz$", file)) {
+      file <- gunzip(file, tempdir)
+    }
+
     readr::read_csv_chunked(file, callback, chunk_length, col_types = spec,
                             progress = FALSE, ...)
 
@@ -296,7 +300,7 @@ partition_table <- function(x, dir, progress = NULL, chunk_length = 10 ^ 7,
     tick <- 1L
   }
 
-  for (src_dir in list.files(tempdir, full.names = TRUE)) {
+  for (src_dir in file.path(tempdir, paste0("part_", seq_len(n_part(x))))) {
     merge_fst_chunks(src_dir, targ, newc, oldc, pcol, progress, name, tick)
   }
 
@@ -310,6 +314,34 @@ partition_table <- function(x, dir, progress = NULL, chunk_length = 10 ^ 7,
   }
 
   invisible(NULL)
+}
+
+gunzip <- function(file, exdir) {
+
+  dest <- file.path(exdir, sub("\\.gz$", "", basename(file)))
+
+  file <- gzfile(file, open = "rb")
+  on.exit(close(file))
+
+  if (file.exists(dest)) {
+    return(NULL)
+  }
+
+  out <- file(dest, open = "wb")
+  on.exit(close(out), add = TRUE)
+
+  repeat {
+
+    tmp <- readBin(file, what = raw(0L), size = 1L, n = 1e7)
+
+    if (length(tmp) == 0L) {
+      break
+    }
+
+    writeBin(tmp, con = out, size = 1L)
+  }
+
+  return(dest)
 }
 
 csv_to_fst <- function(x, dir, progress = NULL, ...) {

@@ -461,7 +461,7 @@ download_check_data <- function(dest_folder, files, url, src,
 
   chksums <- tryCatch(
     get_sha256(url, user, pass),
-    physionet_401 = function(err) NULL
+    physionet_login = function(err) NULL
   )
 
   if (is.null(chksums)) {
