@@ -4258,7 +4258,7 @@
           "id_var": "icd9_code",
           "val_var": "short_title"
         },
-        "num_rows": 14710,
+        "num_rows": 14567,
         "cols": {
           "row_id": {
             "name": "ROW_ID",
@@ -4284,7 +4284,7 @@
           "id_var": "icd9_code",
           "val_var": "short_title"
         },
-        "num_rows": 3898,
+        "num_rows": 3882,
         "cols": {
           "row_id": {
             "name": "ROW_ID",
@@ -4981,7 +4981,7 @@
           "chartdate": {
             "name": "CHARTDATE",
             "spec": "col_datetime",
-            "format": "%Y-%m-%d %H:%M:%S"
+            "format": "%Y-%m-%d"
           },
           "charttime": {
             "name": "CHARTTIME",

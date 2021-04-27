@@ -293,6 +293,10 @@ eicu_tbl_cfg <- function(info, is_demo = FALSE) {
 
 mimic_tbl_cfg <- function(info, is_demo = FALSE) {
 
+  find_entry <- function(x, what, name) {
+    which(vapply(x, `[[`, character(1L), what) == name)
+  }
+
   files <- c("ADMISSIONS.csv.gz",
              "CALLOUT.csv.gz",
              "CAREGIVERS.csv.gz",
@@ -466,6 +470,16 @@ mimic_tbl_cfg <- function(info, is_demo = FALSE) {
       )
       x
     })
+
+    icd_diag <- find_entry(info, "table_name", "d_icd_diagnoses")
+    info[[icd_diag]]$num_rows <- 14567L
+
+    icd_proc <- find_entry(info, "table_name", "d_icd_procedures")
+    info[[icd_proc]]$num_rows <- 3882L
+
+    note <- find_entry(info, "table_name", "noteevents")
+    date <- find_entry(info[[note]]$cols, "name", "chartdate")
+    info[[note]]$cols[[date]]$format <- "%Y-%m-%d"
   }
 
   time_vars <- lapply(info, function(x) {

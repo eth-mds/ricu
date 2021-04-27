@@ -310,7 +310,10 @@ partition_table <- function(x, dir, progress = NULL, chunk_length = 10 ^ 7,
       dbl_ply(lapply(file.path(dir, fst_file_name(x)), fst::fst), nrow)
     )
 
-    assert_that(all_equal(act_row, n_row(x)))
+    if (!all_equal(exp_row, act_row)) {
+      warn_ricu("expected {exp_row} rows but got {act_row} rows for table
+                `{name}`", class = "import_row_mismatch")
+    }
   }
 
   invisible(NULL)
@@ -360,14 +363,25 @@ csv_to_fst <- function(x, dir, progress = NULL, ...) {
 
   exp_row <- n_row(x)
 
+  tbl <- tbl_name(x)
+
   if (is.na(exp_row)) {
+
     ticks <- 1L
+
   } else {
-    assert_that(all_equal(nrow(fst::fst(dst)), exp_row))
+
+    act_row <- nrow(fst::fst(dst))
+
+    if (!all_equal(exp_row, act_row)) {
+      warn_ricu("expected {exp_row} rows but got {act_row} rows for table
+                `{tbl}`", class = "import_row_mismatch")
+    }
+
     ticks <- exp_row
   }
 
-  progress_tick(tbl_name(x), progress, ticks)
+  progress_tick(tbl, progress, ticks)
 
   invisible(NULL)
 }
