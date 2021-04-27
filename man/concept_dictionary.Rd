@@ -13,11 +13,12 @@ load_dictionary(
   cfg_dirs = NULL
 )
 
-concept_availability(dict = load_dictionary(), include_rec = FALSE)
+concept_availability(dict = NULL, include_rec = FALSE, ...)
 
 explain_dictionary(
-  dict = load_dictionary(),
-  cols = c("name", "category", "description")
+  dict = NULL,
+  cols = c("name", "category", "description"),
+  ...
 )
 }
 \arguments{
@@ -30,10 +31,13 @@ explain_dictionary(
 
 \item{cfg_dirs}{File name of the dictionary}
 
-\item{dict}{A dictionary (\code{conncept} object)}
+\item{dict}{A dictionary (\code{conncept} object) or \code{NULL}}
 
 \item{include_rec}{Logical flag indicating whether to include \code{rec_cncpt}
 concepts as well}
+
+\item{...}{Forwarded to \code{load_dictionary()} in case \code{NULL} is passed as
+\code{dict} argument}
 
 \item{cols}{Columns to include in the output of \code{explain_dictionary()}}
 }

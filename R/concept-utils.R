@@ -1217,14 +1217,13 @@ n_tick.concept <- function(x) sum(int_ply(x, n_tick))
 load_dictionary <- function(src = NULL, concepts = NULL,
                             name = "concept-dict", cfg_dirs = NULL) {
 
-  avail <- src_data_avail(attached_srcs())
-  avail <- setNames(avail[["available"]], avail[["name"]])
+  avail <- attached_srcs()
 
   if (is.null(src)) {
-    src <- names(avail[avail])
+    src <- avail
   }
 
-  assert_that(are_in(src, names(avail)), all(avail[src]))
+  assert_that(are_in(src, avail))
 
   parse_dictionary(read_dictionary(name, cfg_dirs), src, concepts)
 }
@@ -1347,12 +1346,13 @@ parse_dictionary <- function(dict, src, concepts = NULL) {
 identity_callback <- function(...) ..1
 
 #' @rdname concept_dictionary
-#' @param dict A dictionary (`conncept` object)
+#' @param dict A dictionary (`conncept` object) or `NULL`
 #' @param include_rec Logical flag indicating whether to include `rec_cncpt`
 #' concepts as well
+#' @param ... Forwarded to `load_dictionary()` in case `NULL` is passed as
+#' `dict` argument
 #' @export
-concept_availability <- function(dict = load_dictionary(),
-                                 include_rec = FALSE) {
+concept_availability <- function(dict = NULL, include_rec = FALSE, ...) {
 
   rbind_avail <- function(x) {
 
@@ -1382,6 +1382,10 @@ concept_availability <- function(dict = load_dictionary(),
     }
   }
 
+  if (is.null(dict)) {
+    dict <- load_dictionary(...)
+  }
+
   if (!isTRUE(include_rec)) {
     dict <- dict[lgl_ply(dict, Negate(inherits), "rec_cncpt")]
   }
@@ -1398,10 +1402,15 @@ concept_availability <- function(dict = load_dictionary(),
 #'
 #' @rdname concept_dictionary
 #' @export
-explain_dictionary <- function(dict = load_dictionary(),
-                               cols = c("name", "category", "description")) {
+explain_dictionary <- function(dict = NULL,
+                               cols = c("name", "category", "description"),
+                               ...) {
 
   chr_ply_inv <- function(i, x) chr_ply(x, `[[`, i)
+
+  if (is.null(dict)) {
+    dict <- load_dictionary(...)
+  }
 
   assert_that(is_concept(dict), is.character(cols), has_length(cols))
 
