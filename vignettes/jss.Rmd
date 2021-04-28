@@ -90,7 +90,7 @@ if (!srcs_avail(srcs)) {
     "dataset is missing. In order to download and setup data, have a look at",
     "`?setup_src_data`."
   )
-  msg <- paste(strwrap(msg), collapse="\n")
+  msg <- paste(strwrap(msg), collapse = "\n")
   message(msg)
 }
 ```
