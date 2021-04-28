@@ -1,0 +1,142 @@
+---
+title: "Quick start guide"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Quick start guide}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+
+library(ricu)
+
+demo  <- c("mimic_demo", "eicu_demo")
+alls  <- demo
+
+avail <- is_data_avail(alls)
+
+srcs_avail <- function(x) all(avail[x])
+
+if (!srcs_avail(alls)) {
+
+  msg <- paste(
+    "Note: Examples in this vignette require that one or more of datasets",
+    paste("`", alls, "`", collapse = ", "), "are available. Chunks that",
+    "depend on certain datasets will not be evaluated if the corresponding",
+    "dataset is missing. In order to download and setup data, have a look at",
+    "`?setup_src_data`."
+  )
+  msg <- paste(strwrap(msg), collapse = "\n")
+  message(msg)
+}
+
+```
+
+In order to set up `ricu`, download of datasets from several platforms is required. Two data sources, `mimic_demo` and `eicu_demo` are available directly as R packages, hosted on Github. The respective full-featured versions `mimic` and `eicu`, as well as the `hirid` dataset are available from [PhysioNet](https://physionet.org), while access to the remaining standard dataset `aumc` is available from yet another [website](https://amsterdammedicaldatascience.nl/). The following steps guide through package installation, data source set up and conclude with some example data queries.
+
+## Package installation
+
+Stable package releases are available from [CRAN](https://cran.r-project.org/package=ricu) as
+
+```{r, eval = FALSE}
+install.packages("ricu")
+```
+
+and the latest development version is available from [GitHub](https://github.com/eth-mds/ricu) as
+
+```{r, eval = FALSE}
+remotes::install_github("eth-mds/ricu")
+```
+
+## Demo datasets
+
+The two demo datasets `mimic_demo` and `eicu_demo` are listed as `Suggests` dependencies and therefore their availability is determined by the value passed as `dependencies` to the above package installation function. The following call explicitly installs the demo dataset packages
+
+```{r, eval = FALSE}
+install.packages(
+  c("mimic.demo", "eicu.demo"),
+  repos = "https://eth-mds.github.io/physionet-demo"
+)
+```
+
+## Full datasets
+
+Included with `ricu` are functions for download and setup of the following datasets: `mimic`, `eicu`, `hirid` and `aumc`, which can be invoked in several different ways.
+
+- To begin with, a directory is needed where the data can permanently be  stored. The default location is platform dependent and can be overridden using the environment variable `RICU_DATA_PATH`. The current value can be retrieved by calling `data_dir()`.
+- Access to both the PhysioNet datasets (MIMIC-III, eICU and HiRID), as well as to AUMCdb is free but credentialed. In addition to setting up an [account with PhysioNet](https://physionet.org/register/), [credentialing](https://physionet.org/settings/credentialing/) is required, which, in the case of HiRID, must also be followed by submitting an [access request](https://physionet.org/request-access/hirid/1.1.1/) to the data-owners. Details on the procedure for requesting access to AUMCdb is available from [here](https://amsterdammedicaldatascience.nl/#amsterdamumcdb) and consists of filling out a [form](https://amsterdammedicaldatascience.nl/arfeula_v1.6.pdf) and completing a training course such as [Data or Specimens Only Research (DSOR)](https://physionet.org/about/citi-course/) which, together with proof of training course completion, can be submitted by [email](mailto:access@amsterdammedicaldatascience.nl).
+- If raw data in `.csv` form has already been downloaded, this can be decompressed and copied to an appropriate sub-folder (`mimic`, `eicu`, `hirid` or `aumc`) to the directory identified by `data_dir()`.
+- In order to have `ricu` download the required data, login credentials can be supplied as environment variables `RICU_PHYSIONET_USER`/`RICU_PHYSIONET_PASS` and `RICU_AUMC_TOKEN` (the string the follows `token=` in the download URL received from the AUMCdb data owners) or entered into the terminal manually in interactive sessions.
+- Enabling efficient random row/column access, `ricu` converts `.csv` files into a binary format using the [fst](https://cran.r-project.org/package=fst) package.
+- Data conversion to `.fst` format (and potentially data download) is automatically triggered upon first access of a table. In interactive sessions, the user is asked for permission to setup the given data source and in non-interactive sessions, access to missing data throws an error.
+- Instead of relying on first data access to trigger setup, up-front data conversion, possible preceded by data download, can be invoked by calling `setup_src_data()`.
+
+## Concept loading
+
+Many commonly used clinical data concepts are available for all data sources, where the required data exists. An overview of available concepts is available by calling `explain_dictionary()` and concepts can be loaded using `load_concepts()`:
+
+```{r, eval = srcs_avail(demo)}
+head(explain_dictionary(src = c("mimic_demo", "eicu_demo")))
+load_concepts("alb", "mimic_demo", verbose = FALSE)
+```
+
+Concepts representing time-dependent measurements are loaded as `ts_tbl` objects, whereas static information is retrieved as `id_tbl` object. Both classes inherit from `data.table` (and therefore also from `data.frame`) and can be coerced to any of the base classes using `as.data.table()` and `as.data.frame()`, respectively. Using `data.table` 'by-reference' operations, this is available as zero-copy operation by passing `by_ref = TRUE`
+
+```{r, eval = srcs_avail("eicu_demo")}
+(dat <- load_concepts("height", "eicu_demo", verbose = FALSE))
+head(as.data.frame(dat, by_ref = TRUE))
+```
+
+Many functions exported by `ricu` use `id_tbl` and `ts_tbl` objects in order to enable more concise semantics. Merging an `id_tbl` with a `ts_tbl`, for example, will automatically use the columns identified by `id_vars()` of both tables, as `by.x`/`by.y` arguments, while for two `ts_tbl` object, respective columns reported by `id_vars()` and `index_var()` will be used to merge on.
+
+## Extending the concept dictionary
+
+In addition to the ~100 concepts that are available by default, adding user-defined concepts is possible either as  R objects or more robustly, as JSON configuration files.
+
+- Data concepts consist of zero, one, or several data items per data source, encoding how to retrieve the corresponding data. The constructors `concept()` and `item()` can be used to instantiate concepts as R objects.
+
+    ```{r, eval = srcs_avail("mimic_demo")}
+    ldh <- concept("ldh",
+      item("mimic_demo", "labevents", "itemid", 50954),
+      description = "Lactate dehydrogenase",
+      unit = "IU/L"
+    )
+    load_concepts(ldh, verbose = FALSE)
+    ```
+
+- Configuration files are looked for in both the package installation directory and in user-specified locations, either using the environment variable `RICU_CONFIG_PATH` or by passing paths as function arguments (`load_dictionary()` for example accepts a `cfg_dirs` argument).
+
+- Mechanisms for both extending and replacing existing concept dictionaries are supported by `ricu`. The file name of the default concept dictionary is called `concept-dict.json` and any file with the same name in user-specified locations will be used as extensions. In order to forgo the internal dictionary, a different file name can be chosen, which then has to be passed as function argument (`load_dictionary()` for example has a `name` argument which defaults to `concept-dict`)
+
+- A JSON-based concept akin to the one above can be specified as
+
+    ```
+    {
+        "ldh": {
+          "unit": "IU/L",
+          "description": "Lactate dehydrogenase",
+          "sources": {
+            "mimic_demo": [
+              {
+                "ids": 50954,
+                "table": "labevents",
+                "sub_var": "itemid"
+              }
+            ]
+          }
+        }
+    }
+    ```
+
+    and this can (given that it is saved as `concept-dict.json` in a directory pointed to by `RICU_CONFIG_PATH`) then be loaded using `load_concepts()` as
+
+    ```{r, eval = FALSE}
+    load_concepts("ldh", "mimic_demo")
+    ```
+
+    For further details on constructing concepts, refer to documentation at `?concept` and `?item`.
