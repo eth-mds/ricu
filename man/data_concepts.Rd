@@ -17,7 +17,7 @@
 new_cncpt(
   name,
   items,
-  description = NA_character_,
+  description = name,
   category = NA_character_,
   aggregate = NULL,
   ...,
@@ -35,7 +35,12 @@ init_cncpt(x, ...)
 
 \method{init_cncpt}{cncpt}(x, ...)
 
-\method{init_cncpt}{rec_cncpt}(x, callback = "identity_callback", interval = NULL, ...)
+\method{init_cncpt}{rec_cncpt}(
+  x,
+  callback = paste0("rename_data_var('", x[["name"]], "')"),
+  interval = NULL,
+  ...
+)
 
 new_concept(x)
 

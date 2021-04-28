@@ -2,14 +2,21 @@
 % Please edit documentation in R/utils-cli.R
 \name{msg_progress}
 \alias{msg_progress}
+\alias{fmt_msg}
 \title{Message signaling nested with progress reporting}
 \usage{
 msg_progress(..., envir = parent.frame())
+
+fmt_msg(msg, envir = parent.frame(), indent = 0L, exdent = 0L)
 }
 \arguments{
 \item{...}{Passed to \code{\link[base:message]{base::.makeMessage()}}}
 
-\item{envir}{Passed to \code{\link[glue:glue]{glue::glue()}}.}
+\item{envir}{Environment in this objects from \code{msg} are evaluated}
+
+\item{msg}{String valued message}
+
+\item{indent, exdent}{Vector valued and mapped to \code{\link[fansi:strwrap_ctl]{fansi::strwrap2_ctl()}}}
 }
 \value{
 Called for side effects and returns \code{NULL} invisibly.

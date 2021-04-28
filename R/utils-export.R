@@ -41,6 +41,12 @@ write_psv <- function(x, dir, na_rows = NULL) {
     assert_that(is.null(na_rows))
   }
 
+  if (!identical(time_unit(x), "hours")) {
+    new_int <- interval(x)
+    units(new_int) <- "hours"
+    x <- change_interval(x, new_int)
+  }
+
   dat <- split(x, by = id_vars(x), keep.by = FALSE)
   files <- file.path(dir, paste0(names(dat), sep = ".psv"))
 
@@ -51,16 +57,21 @@ write_psv <- function(x, dir, na_rows = NULL) {
 
 #' @param col_spec A column specification as created by [readr::cols()]
 #' @param id_var Name of the id column (IDs are generated from file names)
+#' @param index_var Optional name of index column (will be coerced to
+#' `difftime`)
 #'
 #' @rdname data_export
 #' @export
 #'
-read_psv <- function(dir, col_spec = NULL, id_var = "stay_id") {
+read_psv <- function(dir, col_spec = NULL, id_var = "stay_id",
+                     index_var = NULL) {
 
   add_id <- function(x, val) {
     x[[id_var]] <- val
     x
   }
+
+  assert_that(is.string(id_var), null_or(index_var, is.string))
 
   files <- list.files(dir, full.names = TRUE)
 
@@ -69,6 +80,16 @@ read_psv <- function(dir, col_spec = NULL, id_var = "stay_id") {
   ids <- as.integer(sub("\\.psv", "", sub("^p", "", basename(files))))
 
   dat <- Map(add_id, dat, ids)
+  res <- rbindlist(lapply(dat, setDT))
 
-  rbindlist(lapply(dat, setDT))
+  if (not_null(index_var)) {
+
+    res <- res[, c(index_var) := hours(get(index_var))]
+
+    as_ts_tbl(res, id_vars = id_var, index_var = index_var, by_ref = TRUE)
+
+  } else {
+
+    as_id_tbl(res, id_vars = id_var, by_ref = TRUE)
+  }
 }

@@ -10,6 +10,10 @@
 \alias{n_tick}
 \alias{set_target}
 \alias{get_target}
+\alias{subset_src}
+\alias{subset_src.item}
+\alias{subset_src.cncpt}
+\alias{subset_src.concept}
 \title{Internal utilities for \code{item}/\code{concept} objects}
 \usage{
 prepare_query(x)
@@ -29,6 +33,14 @@ n_tick(x)
 set_target(x, target)
 
 get_target(x)
+
+subset_src(x, src)
+
+\method{subset_src}{item}(x, src)
+
+\method{subset_src}{cncpt}(x, src)
+
+\method{subset_src}{concept}(x, src)
 }
 \arguments{
 \item{x}{Object defining the row-subsetting}
@@ -41,6 +53,8 @@ get_target(x)
 
 \item{interval}{The time interval used to discretize time stamps with,
 specified as \code{\link[base:difftime]{base::difftime()}} object}
+
+\item{src}{Character vector of data source name(s)}
 }
 \value{
 \itemize{
@@ -55,14 +69,15 @@ likely (\code{id_tbl}/\code{ts_tbl})
 \item \code{n_tick()}: Integer valued number of progress bar ticks
 \item \code{set_target()}: a modified object with newly set target class
 \item \code{get_target()}: string valued target class of an object
+\item \code{subset_src()}: an object of the same type as the object passed as \code{x}
 }
 }
 \description{
-Several internal utilities for modifying and querying item and concept
-objects, including getters and setters for \code{itm} variables, callback
-functions, \code{cncpt} target classes, as well as utilities for data loading
-such as \code{prepare_query()} which creates a row-subsetting expression,
-\code{do_callback()}, which applies a callback function to data or
-\code{do_itm_load()}, which performs data loading corresponding to an \code{itm}.
+Several internal utilities for modifying, querying ans subsetting item and
+concept objects, including getters and setters for \code{itm} variables,
+callback functions, \code{cncpt} target classes, as well as utilities for data
+loading such as \code{prepare_query()} which creates a row-subsetting
+expression, \code{do_callback()}, which applies a callback function to data or
+\code{do_itm_load()}, which performs data loading corresponding to an \code{itm}
 }
 \keyword{internal}

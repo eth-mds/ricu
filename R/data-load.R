@@ -132,7 +132,7 @@ load_difftime.eicu_tbl <- function(x, rows, cols = colnames(x),
 
   warn_dots(...)
 
-  load_eicu(x, {{ rows }}, cols, id_hint, time_vars)
+  load_eiau(x, {{ rows }}, cols, id_hint, time_vars, min_as_mins)
 }
 
 #' @rdname load_src
@@ -144,6 +144,17 @@ load_difftime.hirid_tbl <- function(x, rows, cols = colnames(x),
   warn_dots(...)
 
   load_mihi(x, {{ rows }}, cols, id_hint, time_vars)
+}
+
+#' @rdname load_src
+#' @export
+load_difftime.aumc_tbl <- function(x, rows, cols = colnames(x),
+                                   id_hint = id_vars(x),
+                                   time_vars = ricu::time_vars(x), ...) {
+
+  warn_dots(...)
+
+  load_eiau(x, {{ rows }}, cols, id_hint, time_vars, ms_as_mins)
 }
 
 #' @rdname load_src
@@ -205,7 +216,7 @@ load_mihi <- function(x, rows, cols, id_hint, time_vars) {
   as_id_tbl(dat, id_vars = id_col, by_ref = TRUE)
 }
 
-load_eicu <- function(x, rows, cols, id_hint, time_vars) {
+load_eiau <- function(x, rows, cols, id_hint, time_vars, mins_fun) {
 
   id_col <- resolve_id_hint(x, id_hint)
 
@@ -219,13 +230,9 @@ load_eicu <- function(x, rows, cols, id_hint, time_vars) {
 
   if (length(time_vars)) {
 
-    assert_that(id_col %in% colnames(dat),
-      msg = paste("In order to return relative times, a single ID var",
-                  paste0("`", id_col, "`"), "is required.")
-    )
+    assert_that(has_col(dat, id_col))
 
-    dat <- dat[, c(time_vars) := lapply(.SD, as.difftime, units = "mins"),
-               .SDcols = time_vars]
+    dat <- dat[, c(time_vars) := lapply(.SD, mins_fun), .SDcols = time_vars]
   }
 
   as_id_tbl(dat, id_vars = id_col, by_ref = TRUE)
@@ -355,8 +362,9 @@ load_ts.src_tbl <- function(x, rows, cols = colnames(x), id_var = id_vars(x),
   time_vars <- intersect(time_vars, colnames(res))
 
   res <- change_id(res, id_var, x, cols = time_vars, keep_old_id = FALSE)
+  res <- change_interval(res, interval, time_vars, by_ref = TRUE)
 
-  change_interval(res, interval, time_vars, by_ref = TRUE)
+  res
 }
 
 #' @rdname load_tbl

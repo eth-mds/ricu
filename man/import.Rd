@@ -3,17 +3,33 @@
 \name{import_src}
 \alias{import_src}
 \alias{import_src.src_cfg}
+\alias{import_src.aumc_cfg}
 \alias{import_tbl}
 \alias{import_tbl.tbl_cfg}
 \title{Data import utilities}
 \usage{
 import_src(x, ...)
 
-\method{import_src}{src_cfg}(x, data_dir = src_data_dir(x), force = FALSE, ...)
+\method{import_src}{src_cfg}(
+  x,
+  data_dir = src_data_dir(x),
+  tables = NULL,
+  force = FALSE,
+  verbose = TRUE,
+  ...
+)
+
+\method{import_src}{aumc_cfg}(x, ...)
 
 import_tbl(x, ...)
 
-\method{import_tbl}{tbl_cfg}(x, data_dir = src_data_dir(x), progress = NULL, ...)
+\method{import_tbl}{tbl_cfg}(
+  x,
+  data_dir = src_data_dir(x),
+  progress = NULL,
+  cleanup = FALSE,
+  ...
+)
 }
 \arguments{
 \item{x}{Object specifying the source configuration}
@@ -21,14 +37,21 @@ import_tbl(x, ...)
 \item{...}{Passed to downstream methods (finally to
 \link[readr:read_delim]{readr::read_csv}/\link[readr:read_delim_chunked]{readr::read_csv_chunked})/generic consistency}
 
-\item{data_dir}{The directory where the data was downloaded to (see
-\code{\link[=download_src]{download_src()}}).}
+\item{data_dir}{Destination directory where the downloaded data is written
+to.}
 
-\item{force}{Logical flag indicating whether to overwrite already imported
-tables}
+\item{tables}{Character vector specifying the tables to download. If
+\code{NULL}, all available tables are downloaded.}
+
+\item{force}{Logical flag; if \code{TRUE}, existing data will be re-downloaded}
+
+\item{verbose}{Logical flag indicating whether to print progress information}
 
 \item{progress}{Either \code{NULL} or a progress bar as created by
 \code{\link[progress:progress_bar]{progress::progress_bar()}}}
+
+\item{cleanup}{Logical flag indicating whether to remove raw csv files after
+conversion to fst}
 }
 \value{
 Called for side effects and returns \code{NULL} invisibly.

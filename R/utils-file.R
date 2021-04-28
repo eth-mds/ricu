@@ -58,11 +58,12 @@
 #' "null"`, `auto_unbox = TRUE` and `pretty = TRUE`.
 #'
 #' Whenever the package namespace is attached, a summary of dataset
-#' availability is printed using the utility functions `auto_load_src_names()`
+#' availability is printed using the utility functions `auto_attach_srcs()`
 #' and `src_data_avail()`. While the former simply returns a character vector
 #' of data sources that are configures for automatically being set up on
 #' package loading, the latter returns a summary of the number of available
-#' tables per dataset.
+#' tables per dataset.m Finally, `is_data_avail()` returns a named logical
+#' vector indicating which data sources have all required data available.
 #'
 #' @param subdir A string specifying a directory that will be made sure to
 #' exist below the data directory.
@@ -72,10 +73,11 @@
 #' @rdname file_utils
 #'
 #' @return Functions `data_dir()`, `src_data_dir()` and `config_paths()` return
-#' file paths as character vectors, `auto_load_src_names()` returns a character
-#' vector of data source names and `src_data_avail()` a `data.frame` describing
-#' availability of data sources. Configuration utilitites `get_config()` and
-#' `set_config()` read and write list objects to/from JSON format.
+#' file paths as character vectors, `auto_attach_srcs()` returns a character
+#' vector of data source names, `src_data_avail()` returns a `data.frame`
+#' describing availability of data sources and `is_data_avail()` a named
+#' logical vector. Configuration utilities `get_config()` and `set_config()`
+#' read and write list objects to/from JSON format.
 #'
 #' @examples
 #' Sys.setenv(RICU_DATA_PATH = tempdir())
@@ -99,15 +101,15 @@ data_dir <- function(subdir = NULL, create = TRUE) {
 
   assert_that(is.flag(create))
 
-  res <- Sys.getenv("RICU_DATA_PATH", unset = NA_character_)
+  res <- sys_env("RICU_DATA_PATH", unset = NA_character_)
 
   if (is.na(res)) {
 
     res <- switch(
-      Sys.info()[["sysname"]],
-      Darwin  = Sys.getenv("XDG_DATA_HOME", "~/Library/Application Support"),
-      Windows = Sys.getenv("LOCALAPPDATA", Sys.getenv("APPDATA")),
-      Sys.getenv("XDG_DATA_HOME", "~/.local/share")
+      sys_name(),
+      Darwin  = sys_env("XDG_DATA_HOME", "~/Library/Application Support"),
+      Windows = sys_env("LOCALAPPDATA", sys_env("APPDATA")),
+      sys_env("XDG_DATA_HOME", "~/.local/share")
     )
 
     res <- file.path(res, "ricu")
@@ -123,16 +125,22 @@ data_dir <- function(subdir = NULL, create = TRUE) {
     res <- ensure_dirs(res)
   }
 
-  res
+  normalizePath(res, mustWork = FALSE)
 }
 
-#' @param src,srcs Character vector of data source names
+#' @param srcs Character vector of data source names, an object for which an
+#' `src_name()` method is defined or an arbitrary-length list thereof.
+#'
 #' @rdname file_utils
 #' @export
 src_data_dir <- function(srcs) {
 
+  if (is.object(srcs)) {
+    srcs <- list(srcs)
+  }
+
   if (!is.character(srcs)) {
-    srcs <- src_name(srcs)
+    srcs <- chr_ply(srcs, src_name)
   }
 
   if (length(srcs) > 1L) {
@@ -179,54 +187,15 @@ install_data_pkgs <- function(srcs = c("mimic_demo", "eicu_demo")) {
 
 #' @rdname file_utils
 #' @export
-auto_load_src_names <- function() {
+auto_attach_srcs <- function() {
 
-  res <- Sys.getenv("RICU_SRC_LOAD", unset = NA_character_)
+  res <- sys_env("RICU_SRC_LOAD", unset = NA_character_)
 
   if (is.na(res)) {
-    c("mimic", "mimic_demo", "eicu", "eicu_demo", "hirid")
+    c("mimic", "mimic_demo", "eicu", "eicu_demo", "hirid", "aumc")
   } else {
     strsplit(res, ",")[[1L]]
   }
-}
-
-#' @rdname file_utils
-#' @export
-src_data_avail <- function(src = auto_load_src_names()) {
-
-  src_stats <- function(x, env) {
-
-    src_env <- tryCatch(
-      get0(x, envir = env, inherits = FALSE),
-      miss_tbl_msg = function(msg) attr(msg, "tbl_ok"),
-      message = function(msg) NULL,
-      warning = function(warn) NULL,
-      error = function(err) NULL
-    )
-
-    if (is.null(src_env)) {
-      c(NA_integer_, NA_integer_)
-    } else if (is_src_env(src_env)) {
-      rep(length(src_env), 2L)
-    } else {
-      c(sum(src_env), length(src_env))
-    }
-  }
-
-  if (identical(length(src), 0L)) {
-    return(NULL)
-  }
-
-  assert_that(is.character(src))
-
-  env <- data_env()
-  res <- int_ply(src, src_stats, env, length = 2L)
-
-  data.frame(
-    name = src,
-    available = is_true(src %in% ls(envir = env) & res[1L, ] == res[2L, ]),
-    tables = res[1L, ], total = res[2L, ]
-  )
 }
 
 ensure_dirs <- function(paths) {
@@ -268,12 +237,12 @@ default_config_path <- function() {
 
 user_config_path <- function() {
 
-  res <- Sys.getenv("RICU_CONFIG_PATH", unset = NA_character_)
+  res <- sys_env("RICU_CONFIG_PATH", unset = NA_character_)
 
   if (is.na(res)) {
     NULL
   } else {
-    res
+    strsplit(res, ",")[[1L]]
   }
 }
 

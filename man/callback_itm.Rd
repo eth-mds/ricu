@@ -4,6 +4,7 @@
 \alias{transform_fun}
 \alias{binary_op}
 \alias{comp_na}
+\alias{set_val}
 \alias{apply_map}
 \alias{convert_unit}
 \title{Item callback utilities}
@@ -14,9 +15,11 @@ binary_op(op, y)
 
 comp_na(op, y)
 
+set_val(val)
+
 apply_map(map)
 
-convert_unit(rgx, fun, new, ignore_case = TRUE, ...)
+convert_unit(fun, new, rgx = NULL, ignore_case = TRUE, ...)
 }
 \arguments{
 \item{fun}{Function(s) used for transforming matching values}
@@ -27,13 +30,15 @@ convert_unit(rgx, fun, new, ignore_case = TRUE, ...)
 
 \item{y}{Value passed as second argument to function \code{op}}
 
+\item{val}{Value to replace every element of x with}
+
 \item{map}{Named atomic vector used for mapping a set of values (the names
 of \code{map}) to a different set (the values of \code{map})}
 
-\item{rgx}{Regular expression(s) used for identifying observations based on
-their current unit of measurement}
-
 \item{new}{Name(s) of transformed units}
+
+\item{rgx}{Regular expression(s) used for identifying observations based on
+their current unit of measurement, \code{NULL} means everything}
 
 \item{ignore_case}{Forwarded to \code{\link[base:grep]{base::grep()}}}
 }

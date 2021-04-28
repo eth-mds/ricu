@@ -13,10 +13,11 @@
 \usage{
 sofa_score(
   ...,
-  interval = NULL,
-  win_fun = max_or_na,
+  worst_val_fun = max_or_na,
   explicit_wins = FALSE,
-  win_length = hours(24L)
+  win_length = hours(24L),
+  keep_components = FALSE,
+  interval = NULL
 )
 
 sofa_resp(..., interval = NULL)
@@ -34,16 +35,20 @@ sofa_renal(..., interval = NULL)
 \arguments{
 \item{...}{Concept data, either passed as list or individual argument}
 
-\item{interval}{Time series interval (only used for checking consistency
-of input data, \code{NULL} will use the interval of the first data object)}
-
-\item{win_fun}{functions used to calculate worst values over windows}
+\item{worst_val_fun}{functions used to calculate worst values over windows}
 
 \item{explicit_wins}{The default \code{FALSE} iterates over all time steps,
 \code{TRUE} uses only the last time step per patient and a vector of times will
 iterate over these explicit time points}
 
-\item{win_length}{Time-frame to look back and apply the \code{win_fun}}
+\item{win_length}{Time-frame to look back and apply the \code{worst_val_fun}}
+
+\item{keep_components}{Logical flag indicating whether to return the
+individual components alongside the aggregated score (with a suffix \verb{_comp}
+added to their names)}
+
+\item{interval}{Time series interval (only used for checking consistency
+of input data, \code{NULL} will use the interval of the first data object)}
 }
 \value{
 A \code{ts_tbl} object.
@@ -63,7 +68,7 @@ respective internally called function.
 \details{
 The function \code{sofa_score()} calculates, for each component, the worst value
 over a moving window as specified by \code{win_length}, using the function
-passed as \code{win_fun}. The default functions \code{max_or_na()} return \code{NA}
+passed as \code{worst_val_fun}. The default functions \code{max_or_na()} return \code{NA}
 instead of \code{-Inf/Inf} in the case where no measurement is available over an
 entire window. When calculating the overall score by summing up components
 per time-step, a \code{NA} value is treated as 0.

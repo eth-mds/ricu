@@ -13,9 +13,17 @@
 \alias{is_unique}
 \alias{aggregate.id_tbl}
 \alias{dt_gforce}
+\alias{replace_na}
 \title{ICU class data utilities}
 \usage{
-rename_cols(x, new, old = colnames(x), skip_absent = FALSE, by_ref = FALSE)
+rename_cols(
+  x,
+  new,
+  old = colnames(x),
+  skip_absent = FALSE,
+  by_ref = FALSE,
+  ...
+)
 
 rm_cols(x, cols, skip_absent = FALSE, by_ref = FALSE)
 
@@ -58,6 +66,8 @@ dt_gforce(
   vars = data_vars(x),
   na_rm = !fun \%in\% c("first", "last")
 )
+
+replace_na(x, val, type = "const", ...)
 }
 \arguments{
 \item{x}{Object to query}
@@ -69,6 +79,8 @@ columns}
 
 \item{by_ref}{Logical flag indicating whether to perform the operation by
 reference}
+
+\item{...}{Ignored}
 
 \item{cols}{Column names of columns to consider}
 
@@ -87,8 +99,6 @@ suffices}
 \item{reorder_cols}{Logical flag indicating whether to move the \code{by}
 columns to the front.}
 
-\item{...}{Ignored}
-
 \item{incomparables}{Not used. Here for S3 method consistency}
 
 \item{expr}{Expression to apply over groups}
@@ -100,6 +110,10 @@ columns to the front.}
 \item{fun}{Function name (as string) to apply over groups}
 
 \item{na_rm}{Logical flag indicating how to treat \code{NA} values}
+
+\item{val}{Replacement value (if \code{type} is \code{"const"})}
+
+\item{type}{ character, one of \emph{"const"}, \emph{"locf"} or \emph{"nocb"}. Defaults to \code{"const"}. }
 }
 \value{
 Most of the utility functions return either an \code{id_tbl} or a

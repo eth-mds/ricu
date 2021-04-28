@@ -75,33 +75,103 @@
 new_src_cfg <- function(name, id_cfg, col_cfg, tbl_cfg = NULL, ...,
                         class_prefix = name) {
 
-  if (all_fun(tbl_cfg, is.null)) {
+  if (all_fun(tbl_cfg, is.null) || length(tbl_cfg) == 0L) {
     tbl_cfg <- NULL
   }
 
   assert_that(
-    is.string(name), is_id_cfg(id_cfg), all_fun(col_cfg, is_col_cfg),
-    null_or(tbl_cfg, all_fun, is_tbl_cfg), is.character(class_prefix)
+    is.string(name), is_id_cfg(id_cfg), is_col_cfg(col_cfg),
+    null_or(tbl_cfg, is_tbl_cfg), is.character(class_prefix)
   )
 
-  if (has_length(class_prefix)) {
-    subclass <- paste0(class_prefix, "_cfg")
-  }
-
-  names(col_cfg) <- chr_ply(col_cfg, tbl_name)
-
   if (not_null(tbl_cfg)) {
-
-    names(tbl_cfg) <- chr_ply(tbl_cfg, tbl_name)
-
     assert_that(setequal(names(col_cfg), names(tbl_cfg)))
   }
 
   structure(
-    list(name = name, ..., prefix = class_prefix, id_cfg = id_cfg,
-         col_cfg = col_cfg, tbl_cfg = tbl_cfg),
-    class = c(subclass, "src_cfg")
+    list(name = name, prefix = class_prefix, id_cfg = id_cfg,
+         col_cfg = col_cfg, tbl_cfg = tbl_cfg, extra = list(...)),
+    class = c(check_prefix(class_prefix, "cfg"), "src_cfg")
   )
+}
+
+check_scalar <- function(x, allow_null = TRUE,
+  mode = c("character", "logical", "integer", "double")) {
+
+  assert_that(is.flag(allow_null))
+
+  mode <- match.arg(mode)
+
+  na_const <- switch(mode, integer = NA_integer_, double = NA_real_,
+                     logical = NA, character = NA_character_)
+  is_fun   <- switch(mode, integer = is.integer, double = is.double,
+                     logical = is.logical, character = is.character)
+  ptype    <- switch(mode, integer = integer(1L), double = double(1L),
+                     logical = logical(1L), character = character(1L))
+
+  check_one <- function(x) {
+
+    if (is.na(x) || length(x) == 0L || (length(x) == 1L && nchar(x) == 0L)) {
+      x <- na_const
+    }
+
+    assert_that(length(x) == 1L, is_fun(x), allow_null || !is.na(x),
+                msg = "{as_label(x) is not a scalar {mode} object")
+
+    x
+  }
+
+  if (is.null(x)) {
+    x <- list(NULL)
+  }
+
+  vapply(x, check_one, ptype, USE.NAMES = FALSE)
+}
+
+check_vector <- function(x, allow_null = TRUE,
+  mode = c("character", "logical", "integer", "double")) {
+
+  assert_that(is.flag(allow_null))
+
+  mode <- match.arg(mode)
+
+  is_fun   <- switch(mode, integer = is.integer, double = is.double,
+                     logical = is.logical, character = is.character)
+
+  check_one <- function(x) {
+
+    if (length(x) == 0L || (length(x) == 1L && (nchar(x) == 0L || is.na(x)))) {
+      x <- NULL
+    }
+
+    assert_that(
+      allow_null || (!is.null(x) && is_fun(x)), all(nchar(x) > 0L),
+      all(!is.na(x)),
+      msg = "{as_label(x)} is not a {mode} vector with no missing entries"
+    )
+
+    x
+  }
+
+  if (!is.list(x)) {
+    x <- list(x)
+  }
+
+  lapply(unname(x), check_one)
+}
+
+check_prefix <- function(x, suffix) {
+
+  if (has_length(x)) {
+
+    assert_that(is.character(x))
+
+    paste(x, suffix, sep = "_")
+
+  } else {
+
+    NULL
+  }
 }
 
 #' @param src Data source name
@@ -113,70 +183,65 @@ new_src_cfg <- function(name, id_cfg, col_cfg, tbl_cfg = NULL, ...,
 #' @rdname src_cfg
 #' @keywords internal
 #'
-new_id_cfg <- function(name, src, id, pos, start = NA_character_,
-                       end = NA_character_, table = NA_character_,
-                       class_prefix = src) {
+new_id_cfg <- function(src, name, id, pos, start = NULL, end = NULL,
+                       table = NULL, class_prefix = src) {
 
-  assert_that(
-    is.character(name), is_unique(name), is.character(id),
-    is.integer(pos), is.character(start), is.character(end),
-    is.character(table), is.string(src), is.character(class_prefix)
+  name <- check_scalar(name, FALSE)
+
+  assert_that(is.string(src), is_unique(name))
+
+  res <- list(
+    id = check_scalar(id, FALSE), pos = check_scalar(pos, FALSE, "int"),
+    start = check_scalar(start), end = check_scalar(end),
+    table = check_scalar(table)
   )
 
-  check <- ifelse(is.na(start) & is.na(end), is.na(table), !is.na(table))
+  res <- lapply(res, vec_recycle, length(name))
 
-  assert_that(all(check), msg = paste0("Invalid ID config for IDs ",
-    concat(quote_bt(id[!check])), ": table name needed due to start/end args")
+  res <- new_rcrd(c(list(name = name), res), src = src,
+                  class = c(check_prefix(class_prefix, "ids"), "id_cfg"))
+
+  check <- ifelse(is.na(field(res, "start")) & is.na(field(res, "end")),
+                  is.na(field(res, "table")), !is.na(field(res, "table")))
+
+  assert_that(all(check), msg = "
+    Invalid ID config for IDs {concat(quote_bt(names(res)[!check]))}:
+    table name needed due to start/end args"
   )
 
-  if (has_length(class_prefix)) {
-    class_prefix <- paste0(class_prefix, "_ids")
-  }
-
-  new_rcrd(
-    vec_recycle_common(name = name, id = id, pos = pos, start = start,
-                       end = end, table = table),
-    src = src, class = c(class_prefix, "id_cfg")
-  )
+  res
 }
 
-#' @param id_var,index_var,val_var,unit_var,time_vars Names of columns with
-#' respective meanings
-#'
 #' @rdname src_cfg
 #' @keywords internal
 #'
-new_col_cfg <- function(table, src, id_var = NULL, index_var = NULL,
-                        val_var = NULL, unit_var = NULL, time_vars = NULL, ...,
-                        class_prefix = src) {
+new_col_cfg <- function(src, table, ..., class_prefix = src) {
 
-  extra <- list(...)
+  sca_ok <- function(x) all(lengths(x) <= 1L)
 
-  assert_that(
-    is.string(table), is.string(src), null_or(id_var, is.string),
-    null_or(index_var, is.string), null_or(val_var, is.string),
-    null_or(unit_var, is.string), null_or(time_vars, is.character),
-    is.character(class_prefix), all_fun(extra, is.character)
+  table <- check_scalar(table, FALSE)
+
+  assert_that(is.string(src), is_unique(table))
+
+  vars <- lapply(list(...), check_vector)
+  scal <- filter_vars(vars, "scalar")
+
+  assert_that(same_length(c(scal, filter_vars(vars, "vector")), vars), msg = "
+    Arguments passed as `...` have to be named with names ending in either
+    `_var` or `_vars`."
   )
 
-  if (not_null(index_var)) {
-    assert_that(
-      index_var %in% time_vars, msg = paste0("expecting the index variable ",
-      "to be among the time variables")
-    )
-  }
+  assert_that(all_fun(scal, all_fun, sca_ok))
 
-  if (has_length(class_prefix)) {
-    class_prefix <- paste0(class_prefix, "_cols")
-  }
+  vars <- lapply(vars, vec_recycle, length(table))
 
-  res <- c(
-    list(table = table, src = src, id_var = id_var, index_var = index_var,
-         val_var = val_var, unit_var = unit_var, time_vars = time_vars),
-    extra
-  )
+  new_rcrd(c(list(table = table), vars), src = src,
+           class = c(check_prefix(class_prefix, "cols"), "col_cfg"))
+}
 
-  structure(res, class = c(class_prefix, "col_cfg"))
+filter_vars <- function(x, which = c("scalar", "vector")) {
+  x[grepl(switch(match.arg(which), scalar = "_var$", vector = "_vars$"),
+                 names(x))]
 }
 
 #' @param cols List containing a list per column each holding string valued
@@ -192,7 +257,7 @@ new_col_cfg <- function(table, src, id_var = NULL, index_var = NULL,
 #' @rdname src_cfg
 #' @keywords internal
 #'
-new_tbl_cfg <- function(table, src, files = NULL, cols = NULL, num_rows = NULL,
+new_tbl_cfg <- function(src, table, files = NULL, cols = NULL, num_rows = NULL,
                         partitioning = NULL, ..., class_prefix = src) {
 
   col_spc <- function(name, spec, ...) {
@@ -201,37 +266,54 @@ new_tbl_cfg <- function(table, src, files = NULL, cols = NULL, num_rows = NULL,
 
   tbl_spc <- function(...) substitute(cols(...))
 
-  assert_that(
-    is.string(table), is.string(src), null_or(files, is.character),
-    null_or(cols, all_fun, is.list),
-    null_or(cols, all_fun, has_name, c("name", "spec")),
-    null_or(num_rows, is.count), null_or(partitioning, is.list),
-    null_or(partitioning, has_name, c("col", "breaks"))
-  )
-
-  if (is.null(num_rows)) {
-    num_rows <- NA_integer_
+  mak_spc <- function(x) {
+    res <- setNames(lapply(x, do_call, col_spc), chr_xtr(x, "name"))
+    eval(do.call(tbl_spc, res), envir = asNamespace("readr"))
   }
 
-  if (has_length(class_prefix)) {
-    class_prefix <- paste0(class_prefix, "_cols")
-  }
+  table <- check_scalar(table, FALSE)
+
+  assert_that(is.string(src), is_unique(table))
 
   if (not_null(cols)) {
-    spec <- lapply(cols, do_call, col_spc)
-    names(spec) <- chr_xtr(cols, "name")
 
-    spec <- eval(do.call(tbl_spc, spec), envir = asNamespace("readr"))
-    cols <- names(cols)
+    if (length(table) == 1L && length(cols) != 1L) {
+      cols <- list(cols)
+    }
+
+    assert_that(all_fun(cols, all_fun, null_or, has_name, c("name", "spec")))
+
+    spec <- lapply(cols, mak_spc)
+    cols <- lapply(cols, names)
+
   } else {
-    spec <- NULL
+
+    spec <- list(NULL)
   }
 
-  structure(
-    list(table = table, src = src, files = files, cols = cols, spec = spec,
-         nrow = num_rows, partitioning = partitioning, ...),
-    class = c(class_prefix, "tbl_cfg")
+  if (not_null(partitioning)) {
+
+    if (length(table) == 1L && length(partitioning) != 1L) {
+      partitioning <- list(partitioning)
+    }
+
+    assert_that(all_fun(partitioning, null_or, has_name, c("col", "breaks")))
+
+  } else {
+
+    partitioning <- list(NULL)
+  }
+
+  res <- list(
+    files = check_vector(files), cols = check_vector(cols),
+    spec = spec, partitioning = partitioning,
+    num_rows = check_scalar(num_rows, mode = "int")
   )
+
+  res <- lapply(c(res, list(...)), vec_recycle, length(table))
+  cls <- c(check_prefix(class_prefix, "tbls"), "tbl_cfg")
+
+  new_rcrd(c(list(table = table), res), src = src, class = cls)
 }
 
 #' Load configuration for a data source
@@ -432,8 +514,8 @@ new_tbl_cfg <- function(table, src, files = NULL, cols = NULL, num_rows = NULL,
 #' str(cfg, max.level = 1L)
 #'
 #' cols <- as_col_cfg(cfg)
-#' index_var(cols[["chartevents"]])
-#' time_vars(cols[["chartevents"]])
+#' index_var(head(cols))
+#' time_vars(head(cols))
 #'
 #' as_id_cfg(cfg)
 #'
@@ -484,14 +566,10 @@ parse_src_cfg <- function(x) {
 
   mk_id_cfg <- function(name, id_cfg, class_prefix = name, ...) {
 
-    id <- chr_xtr(id_cfg, "id")
-    po <- int_xtr(id_cfg, "position")
-    st <- chr_xtr_null(id_cfg, "start")
-    en <- chr_xtr_null(id_cfg, "end")
-    tb <- chr_xtr_null(id_cfg, "table")
-
     args <- list(
-      names(id_cfg), name, id, po, st, en, tb, class_prefix = class_prefix
+      name, names(id_cfg), chr_xtr(id_cfg, "id"), int_xtr(id_cfg, "position"),
+      chr_xtr_null(id_cfg, "start"), chr_xtr_null(id_cfg, "end"),
+      chr_xtr_null(id_cfg, "table"), class_prefix = class_prefix
     )
 
     do.call(new_id_cfg, args)
@@ -499,24 +577,22 @@ parse_src_cfg <- function(x) {
 
   mk_col_cfg <- function(name, tables, class_prefix = name, ...) {
 
-    na <- names(tables)
-    df <- lst_xtr(tables, "defaults")
-    pf <- list(list(class_prefix))
+    args <- c(list(src = name, table = names(tables)),
+              lst_inv(lst_xtr(tables, "defaults")),
+              list(class_prefix = class_prefix))
 
-    args <- map(c, na, name, df, class_prefix = pf)
-
-    lapply(args, do_call, new_col_cfg)
+    do.call(new_col_cfg, args)
   }
 
   mk_tbl_cfg <- function(name, tables, class_prefix = name, ...) {
 
-    na <- names(tables)
-    rs <- Map(`[`, tables, lapply(lapply(tables, names), setdiff, "defaults"))
-    pf <- list(list(class_prefix))
+    rest <- lapply(lapply(tables, names), setdiff, "defaults")
+    rest <- Map(`[`, tables, rest)
 
-    args <- map(c, na, name, rs, class_prefix = pf)
+    args <- c(list(src = name, table = names(tables)), lst_inv(rest),
+              list(class_prefix = class_prefix))
 
-    lapply(args, do_call, new_tbl_cfg)
+    do.call(new_tbl_cfg, args)
   }
 
   assert_that(is.list(x), has_name(x, c("name", "id_cfg", "tables")))

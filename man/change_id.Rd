@@ -11,7 +11,7 @@
 \alias{downgrade_id.id_tbl}
 \title{Switch between id types}
 \usage{
-change_id(x, target_id, src, ..., keep_old_id = TRUE)
+change_id(x, target_id, src, ..., keep_old_id = TRUE, id_type = FALSE)
 
 upgrade_id(x, target_id, src, cols = time_vars(x), ...)
 
@@ -36,6 +36,9 @@ downgrade_id(x, target_id, src, cols = time_vars(x), ...)
 
 \item{keep_old_id}{Logical flag indicating whether to keep the previous ID
 column}
+
+\item{id_type}{Logical flag indicating whether \code{target_id} is specified as
+ID name (e.g. \code{icustay_id} on MIMIC) or ID type (e.g. \code{icustay})}
 
 \item{cols}{Column names that require time-adjustment}
 }
@@ -67,11 +70,11 @@ hospital admissions as destination IDs.\if{html}{\out{<div class="r">}}\preforma
 ## # Id var:      `icustay_id`
 ##     icustay_id hadm_id hadm_id_start hadm_id_end
 ##          <int>   <int> <drtn>        <drtn>
-## 1       201006  198503  -3290 mins    9114 mins
-## 2       201204  114648     -2 mins    6949 mins
-## 3       203766  126949  -1336 mins    8818 mins
-## 4       204132  157609     -1 mins   10103 mins
-## 5       204201  177678   -368 mins    9445 mins
+##   1     201006  198503  -3290 mins    9114 mins
+##   2     201204  114648     -2 mins    6949 mins
+##   3     203766  126949  -1336 mins    8818 mins
+##   4     204132  157609     -1 mins   10103 mins
+##   5     204201  177678   -368 mins    9445 mins
 ## ...
 ## 132     295043  170883 -10413 mins   31258 mins
 ## 133     295741  176805     -1 mins    3153 mins

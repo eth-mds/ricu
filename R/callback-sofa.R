@@ -13,18 +13,21 @@
 #' respective internally called function.
 #'
 #' @param ... Concept data, either passed as list or individual argument
-#' @param interval Time series interval (only used for checking consistency
-#' of input data, `NULL` will use the interval of the first data object)
-#' @param win_fun functions used to calculate worst values over windows
+#' @param worst_val_fun functions used to calculate worst values over windows
 #' @param explicit_wins The default `FALSE` iterates over all time steps,
 #' `TRUE` uses only the last time step per patient and a vector of times will
 #' iterate over these explicit time points
-#' @param win_length Time-frame to look back and apply the `win_fun`
+#' @param win_length Time-frame to look back and apply the `worst_val_fun`
+#' @param keep_components Logical flag indicating whether to return the
+#' individual components alongside the aggregated score (with a suffix `_comp`
+#' added to their names)
+#' @param interval Time series interval (only used for checking consistency
+#' of input data, `NULL` will use the interval of the first data object)
 #'
 #' @details
 #' The function `sofa_score()` calculates, for each component, the worst value
 #' over a moving window as specified by `win_length`, using the function
-#' passed as `win_fun`. The default functions `max_or_na()` return `NA`
+#' passed as `worst_val_fun`. The default functions `max_or_na()` return `NA`
 #' instead of `-Inf/Inf` in the case where no measurement is available over an
 #' entire window. When calculating the overall score by summing up components
 #' per time-step, a `NA` value is treated as 0.
@@ -88,14 +91,15 @@
 #' @rdname callback_sofa
 #' @export
 #'
-sofa_score <- function(..., interval = NULL, win_fun = max_or_na,
-                       explicit_wins = FALSE, win_length = hours(24L)) {
+sofa_score <- function(..., worst_val_fun = max_or_na, explicit_wins = FALSE,
+                       win_length = hours(24L), keep_components = FALSE,
+                       interval = NULL) {
 
   cnc <- c("sofa_resp", "sofa_coag", "sofa_liver", "sofa_cardio",
            "sofa_cns", "sofa_renal")
   dat <- collect_dots(cnc, interval, ..., merge_dat = TRUE)
 
-  expr <- substitute(lapply(.SD, fun), list(fun = win_fun))
+  expr <- substitute(lapply(.SD, fun), list(fun = worst_val_fun))
 
   if (isFALSE(explicit_wins)) {
 
@@ -124,7 +128,12 @@ sofa_score <- function(..., interval = NULL, win_fun = max_or_na,
   }
 
   res <- res[, c("sofa") := rowSums(.SD, na.rm = TRUE), .SDcols = cnc]
-  res <- rm_cols(res, cnc)
+
+  if (isTRUE(keep_components)) {
+    res <- rename_cols(res, paste0(cnc, "_comp"), cnc, by_ref = TRUE)
+  } else {
+    res <- rm_cols(res, cnc, by_ref = TRUE)
+  }
 
   res
 }
@@ -145,10 +154,10 @@ sofa_resp <- function(..., interval = NULL) {
     )
   }
 
-  cnc <- c("pafi", "vent")
+  cnc <- c("pafi", "vent_ind")
   dat <- collect_dots(cnc, interval, ..., merge_dat = TRUE)
 
-  dat <- dat[is_true(get("pafi") < 200) & !is_true(get("vent")),
+  dat <- dat[is_true(get("pafi") < 200) & !is_true(get("vent_ind")),
              c("pafi") := 200]
   dat <- dat[, c("sofa_resp") := score_calc(get("pafi"))]
 

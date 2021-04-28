@@ -98,11 +98,15 @@
 #'             table = c("chartevents", "vitalperiodic"),
 #'             sub_var = list("itemid", NULL),
 #'             val_var = list(NULL, "heartrate"),
-#'             ids = list(c(211L, 220045L), NULL),
+#'             ids = list(c(211L, 220045L), FALSE),
 #'             class = c("sel_itm", "col_itm"))
+#'
+#' hr3 <- new_itm(src = "eicu_demo", table = "vitalperiodic",
+#'                val_var = "heartrate", class = "col_itm")
 #'
 #' identical(as_item(hr1), hr2[1])
 #' identical(new_item(list(hr1)), hr2[1])
+#' identical(hr2, as_item(list(hr1, hr3)))
 #' }
 #'
 #' @export
@@ -133,6 +137,9 @@ tbl_name.itm <- function(x) {
 
 #' @export
 tbl_name.fun_itm <- function(x) NULL
+
+#' @export
+tbl_name.nul_itm <- function(x) NULL
 
 #' @export
 as_src_tbl.itm <- function(x, ...) as_src_tbl(tbl_name(x), src_name(x), ...)
@@ -187,7 +194,7 @@ init_itm.hrd_itm <- function(x, table, sub_var, ids,
 #'
 #' @rdname data_items
 #' @export
-init_itm.col_itm <- function(x, table, unit_val = NULL,
+init_itm.col_itm <- function(x, table, sub_var, unit_val = NULL,
                              callback = "identity_callback", ...) {
 
   assert_that(is.string(table), null_or(unit_val, is.string))
@@ -240,6 +247,7 @@ init_itm.fun_itm <- function(x, callback, ...) {
 init_itm.itm <- function(x, ...) {
 
   dots <- list(...)
+  dots <- dots[lgl_ply(dots, not_null)]
 
   assert_that(is_disjoint(names(x), names(dots)))
 
@@ -253,12 +261,12 @@ init_itm.default <- function(x, ...) stop_generic(x, .Generic)
 
 #' Internal utilities for `item`/`concept` objects
 #'
-#' Several internal utilities for modifying and querying item and concept
-#' objects, including getters and setters for `itm` variables, callback
-#' functions, `cncpt` target classes, as well as utilities for data loading
-#' such as `prepare_query()` which creates a row-subsetting expression,
-#' `do_callback()`, which applies a callback function to data or
-#' `do_itm_load()`, which performs data loading corresponding to an `itm`.
+#' Several internal utilities for modifying, querying ans subsetting item and
+#' concept objects, including getters and setters for `itm` variables,
+#' callback functions, `cncpt` target classes, as well as utilities for data
+#' loading such as `prepare_query()` which creates a row-subsetting
+#' expression, `do_callback()`, which applies a callback function to data or
+#' `do_itm_load()`, which performs data loading corresponding to an `itm`
 #'
 #' @param x Object defining the row-subsetting
 #'
@@ -274,6 +282,7 @@ init_itm.default <- function(x, ...) stop_generic(x, .Generic)
 #' * `n_tick()`: Integer valued number of progress bar ticks
 #' * `set_target()`: a modified object with newly set target class
 #' * `get_target()`: string valued target class of an object
+#' * `subset_src()`: an object of the same type as the object passed as `x`
 #'
 #' @rdname item_utils
 #' @keywords internal
@@ -352,7 +361,7 @@ try_add_vars.itm <- function(x, ...) {
 
       if (isTRUE(cur)) {
         if (is.null(tbl_name(x))) next
-        cur <- as_col_cfg(x)[[var]]
+        cur <- default_vars(as_src_tbl(x), var)
       }
 
       old <- if (has_name(x[["vars"]], var)) x[["vars"]][[var]] else NULL
@@ -455,6 +464,15 @@ set_callback.itm <- function(x, fun) {
 set_callback.default <- function(x, ...) stop_generic(x, .Generic)
 
 str_to_fun <- function(x) {
+
+  if (is.null(x)) {
+    return(identity_callback)
+  }
+
+  if (is.function(x)) {
+    return(x)
+  }
+
   res <- eval(parse(text = x))
   assert_that(is.function(res))
   res
@@ -573,6 +591,25 @@ do_itm_load.fun_itm <- function(x, id_type = "icustay", interval = hours(1L)) {
 }
 
 #' @export
+do_itm_load.nul_itm <- function(x, id_type = "icustay", interval = hours(1L)) {
+
+  idc <- id_type_to_name(x, id_type)
+  xtr <- new_names(idc)
+
+  res <- id_origin(x, id_type_to_name(x, id_type), origin_name = xtr,
+                   copy = FALSE)
+  res <- res[0L, ]
+  res <- res[, c("val_var", xtr) := list(numeric(0L), NULL)]
+
+  if (identical(get_target(x), "ts_tbl")) {
+    res <- res[, c("index_var") := interval[0L]]
+    res <- as_ts_tbl(res, interval = interval, by_ref = TRUE)
+  }
+
+  res
+}
+
+#' @export
 do_itm_load.default <- function(x, ...) stop_generic(x, .Generic)
 
 #' @export
@@ -601,13 +638,15 @@ new_item <- function(x) {
 
   assert_that(is.list(x), all_fun(x, is_itm))
 
-  new_vctr(x, class = "item")
+  new_vctr(unname(x), class = "item")
 }
 
 #' @rdname data_items
 #' @export
 item <- function(...) {
-  new_item(do.call(map, c(list(new_itm), vec_recycle_common(...))))
+  dots <- lapply(list(...), wrap_list)
+  dots <- do.call(vec_recycle_common, dots)
+  new_item(do.call(Map, c(list(new_itm), dots)))
 }
 
 #' @rdname data_items
@@ -627,6 +666,9 @@ as_item.itm <- function(x) as_item(list(x))
 as_item.cncpt <- function(x) x[["items"]]
 
 #' @export
+as_item.rec_cncpt <- function(x) as_item(x[["items"]])
+
+#' @export
 as_item.concept <- function(x) do.call(c, unname(lapply(x, as_item)))
 
 #' @export
@@ -639,6 +681,11 @@ format.item <- function(x, ...) {
 
 #' @export
 names.item <- function(x) chr_xtr(x, "src")
+
+#' @export
+`names<-.item` <- function(x, value) {
+  if (has_length(value)) as_item(Map(`[<-`, x, "src", value)) else x
+}
 
 #' @export
 as.list.item <- function(x, ...) vec_data(x)
@@ -686,6 +733,17 @@ set_target.itm <- function(x, target) {
   x
 }
 
+#' @export
+set_target.cncpt <- function(x, target) {
+  x[["items"]] <- set_target(x[["items"]], target)
+  x
+}
+
+#' @export
+set_target.concept <- function(x, target) {
+  new_concept(lapply(x, set_target, target))
+}
+
 set_target.default <- function(x, target) stop_generic(x, .Generic)
 
 #' @rdname item_utils
@@ -701,6 +759,8 @@ get_target.itm <- function(x) x[["target"]]
 
 #' @export
 get_target.default <- function(x) stop_generic(x, .Generic)
+
+is_target <- function(x, dat) is_type(get_target(x))(dat)
 
 #' Data Concepts
 #'
@@ -813,7 +873,7 @@ get_target.default <- function(x) stop_generic(x, .Generic)
 #'
 #' @export
 #'
-new_cncpt <- function(name, items, description = NA_character_,
+new_cncpt <- function(name, items, description = name,
                       category = NA_character_, aggregate = NULL, ...,
                       target = "ts_tbl", class = "num_cncpt") {
 
@@ -898,15 +958,15 @@ init_cncpt.cncpt <- function(x, ...) {
 #'
 #' @rdname data_concepts
 #' @export
-init_cncpt.rec_cncpt <- function(x, callback = "identity_callback",
-                                 interval = NULL, ...) {
+init_cncpt.rec_cncpt <- function(x,
+  callback = paste0("rename_data_var('", x[["name"]], "')"),
+  interval = NULL, ...) {
 
   really_na <- function(x) not_null(x) && is.na(x)
 
-  warn_dots(...)
+  assert_that(evals_to_fun(callback), null_or(interval, is.string))
 
-  assert_that(is_concept(x[["items"]]), is.string(callback),
-              null_or(interval, is.string))
+  x[["items"]] <- as_concept(x[["items"]])
 
   if (not_null(interval)) {
     interval <- as.difftime(interval)
@@ -918,6 +978,24 @@ init_cncpt.rec_cncpt <- function(x, callback = "identity_callback",
   x[["aggregate"]] <- agg
 
   todo <- c("callback", "interval")
+  x[todo] <- mget(todo)
+
+  if (...length() > 0L) {
+
+    extra <- list(...)
+
+    if (length(x[["items"]]) == 1L) {
+      extra <- list(extra)
+    }
+
+    extra <- rep_arg(extra, names(x[["items"]]))
+
+  } else {
+
+    extra <- list(NULL)
+  }
+
+  todo <- c("callback", "interval", "extra")
   x[todo] <- mget(todo)
 
   x
@@ -964,10 +1042,21 @@ new_concept <- function(x) {
   res
 }
 
+wrap_list <- function(x) {
+
+  if (length(x) > 1L || (is.list(x) && identical(class(x), "list"))) {
+    return(x)
+  }
+
+  list(x)
+}
+
 #' @rdname data_concepts
 #' @export
 concept <- function(...) {
-  new_concept(do.call(Map, c(list(new_cncpt), vec_recycle_common(...))))
+  dots <- lapply(list(...), wrap_list)
+  dots <- do.call(vec_recycle_common, dots)
+  new_concept(do.call(Map, c(list(new_cncpt), dots)))
 }
 
 #' @rdname data_concepts
@@ -1002,6 +1091,11 @@ format.concept <- function(x, ...) {
 
 #' @export
 names.concept <- function(x) chr_xtr(x, "name")
+
+#' @export
+`names<-.concept` <- function(x, value) {
+  if (has_length(value)) as_concept(Map(`[<-`, x, "name", value)) else x
+}
 
 #' @export
 as.list.concept <- function(x, ...) vec_data(x)
@@ -1083,6 +1177,25 @@ n_tick.concept <- function(x) sum(int_ply(x, n_tick))
 #' dictionary by specifying a character vector of data sources and/or concept
 #' names.
 #'
+#' A summary of item availability for a set of concepts can be created using
+#' `concept_availability()`. This produces a logical matrix with `TRUE` entries
+#' corresponding to concepts where for the given data source, at least a single
+#' item has been defined. If data is loaded for a combination of concept and
+#' data source, where the corresponding entry is `FALSE`, this will yield
+#' either a zero-row `id_tbl` object or an object inheriting form `id_tbl`
+#' where the column corresponding to the concept is `NA` throughout, depending
+#' on whether the concept was loaded alongside other concepts where data is
+#' available or not.
+#'
+#' Whether to include `rec_cncpt` concepts in the overview produced by
+#' `concept_availability()` can be controlled via the logical flag
+#' `include_rec`. A recursive concept is considered available simply if all its
+#' building blocks are available. This can, however lead to slightly confusing
+#' output as a recursive concept might not strictly depend on one of its
+#' sub-concepts but handle such missingness by design. In such a scenario, the
+#' availability summary might report `FALSE` even though data can still be
+#' produced.
+#'
 #' @param src `NULL` or the name of one or several data sources
 #' @param concepts A character vector used to subset the concept dictionary or
 #' `NULL` indicating no subsetting
@@ -1104,26 +1217,31 @@ n_tick.concept <- function(x) sum(int_ply(x, n_tick))
 load_dictionary <- function(src = NULL, concepts = NULL,
                             name = "concept-dict", cfg_dirs = NULL) {
 
-  avail <- src_data_avail()
-  avail <- setNames(avail[["available"]], avail[["name"]])
+  avail <- attached_srcs()
 
   if (is.null(src)) {
-    src <- names(avail[avail])
+    src <- avail
   }
 
-  assert_that(are_in(src, names(avail)), all(avail[src]))
+  assert_that(are_in(src, avail))
 
   parse_dictionary(read_dictionary(name, cfg_dirs), src, concepts)
 }
 
-read_dictionary <- function(name = "data-sources", cfg_dirs = NULL) {
+read_dictionary <- function(name, cfg_dirs = NULL) {
 
-  combine_sources <- function(x, y) {
+  combine_sources <- function(x, y, nme) {
 
-    assert_that(
-      !identical(x[["class"]], "rec_cncpt"), not_null(names(y[["sources"]])),
-      length(y) == 1L, has_name(y, "sources"), is.list(y[["sources"]])
-    )
+    if (identical(x[["class"]], "rec_cncpt")) {
+      stop_ricu("Cannot merge recursive concept `{nme}`", "extend_dict_err")
+    }
+
+    if (is.null(names(y[["sources"]])) || length(y) != 1L ||
+        !has_name(y, "sources") || !is.list(y[["sources"]])) {
+
+      stop_ricu("Cannot merge concept `{nme}` due to malformed `sources`
+                 entry", "extend_dict_err")
+    }
 
     new_sources    <- c(y[["sources"]], x[["sources"]])
     x[["sources"]] <- new_sources[!duplicated(names(new_sources))]
@@ -1144,7 +1262,7 @@ read_dictionary <- function(name = "data-sources", cfg_dirs = NULL) {
     dups <- intersect(names(x), names(y))
 
     if (has_length(dups)) {
-      x[dups] <- map(combine_sources, x[dups], y[dups])
+      x[dups] <- map(combine_sources, x[dups], y[dups], dups)
       y[dups] <- NULL
     }
 
@@ -1154,7 +1272,7 @@ read_dictionary <- function(name = "data-sources", cfg_dirs = NULL) {
   get_config(name, unique(c(rev(config_paths()), cfg_dirs)), combine_concepts)
 }
 
-parse_dictionary <- function(dict, src = NULL, concepts = NULL) {
+parse_dictionary <- function(dict, src, concepts = NULL) {
 
   do_itm <- function(sr, x) {
     res <- lapply(x, c, src = sr)
@@ -1172,12 +1290,11 @@ parse_dictionary <- function(dict, src = NULL, concepts = NULL) {
 
     } else {
 
-      if (not_null(src)) {
-        sources <- sources[src]
-      }
+      sources <- sources[src]
 
       itms <- do.call(c, Map(do_itm, names(sources), sources))
       itms <- new_item(itms)
+      itms <- subset_src(itms, src)
     }
 
     cncpt_info <- list(name = name, items = itms, target = target)
@@ -1226,4 +1343,122 @@ parse_dictionary <- function(dict, src = NULL, concepts = NULL) {
   do_new(concepts, dict)
 }
 
-identity_callback <- function(x, ...) x
+identity_callback <- function(...) ..1
+
+#' @rdname concept_dictionary
+#' @param dict A dictionary (`conncept` object) or `NULL`
+#' @param include_rec Logical flag indicating whether to include `rec_cncpt`
+#' concepts as well
+#' @param ... Forwarded to `load_dictionary()` in case `NULL` is passed as
+#' `dict` argument
+#' @export
+concept_availability <- function(dict = NULL, include_rec = FALSE, ...) {
+
+  rbind_avail <- function(x) {
+
+    all_srcs <- sort(unique(unlist(lapply(x, names))))
+
+    res <- lapply(x, `[`, all_srcs)
+    res <- lapply(res, `names<-`, all_srcs)
+
+    do.call(rbind, res)
+  }
+
+  all_true <- function(x) all(is_true(x))
+
+  is_avail <- function(x) {
+
+    if (inherits(x, "rec_cncpt")) {
+
+      res <- lapply(as_item(x), is_avail)
+      res <- rbind_avail(res)
+
+      apply(res, 2L, all_true)
+
+    } else {
+
+      itms <- as_item(x)
+      tapply(lgl_ply(itms, inherits, "nul_itm"), names(itms), Negate(any))
+    }
+  }
+
+  if (is.null(dict)) {
+    dict <- load_dictionary(...)
+  }
+
+  if (!isTRUE(include_rec)) {
+    dict <- dict[lgl_ply(dict, Negate(inherits), "rec_cncpt")]
+  }
+
+  res <- lapply(dict, is_avail)
+  res <- rbind_avail(res)
+
+  res[is.na(res)] <- FALSE
+
+  res
+}
+
+#' @param cols Columns to include in the output of `explain_dictionary()`
+#'
+#' @rdname concept_dictionary
+#' @export
+explain_dictionary <- function(dict = NULL,
+                               cols = c("name", "category", "description"),
+                               ...) {
+
+  chr_ply_inv <- function(i, x) chr_ply(x, `[[`, i)
+
+  if (is.null(dict)) {
+    dict <- load_dictionary(...)
+  }
+
+  assert_that(is_concept(dict), is.character(cols), has_length(cols))
+
+  res <- lapply(cols, chr_ply_inv, dict)
+  names(res) <- cols
+
+  as.data.frame(res, stringsAsFactors = FALSE)
+}
+
+#' @param src Character vector of data source name(s)
+#'
+#' @rdname item_utils
+#' @keywords internal
+#' @export
+subset_src <- function(x, src) {
+
+  if (is.null(src)) {
+    return(x)
+  }
+
+  assert_that(is.character(src))
+
+  UseMethod("subset_src", x)
+}
+
+#' @rdname item_utils
+#' @keywords internal
+#' @export
+subset_src.item <- function(x, src) {
+
+  hits <- src %in% names(x)
+
+  if (!all(hits)) {
+    x <- c(x, new_item(lapply(src[!hits], new_itm, class = "nul_itm")))
+  }
+
+  x[names(x) %in% src]
+}
+
+#' @rdname item_utils
+#' @keywords internal
+#' @export
+subset_src.cncpt <- function(x, src) {
+  x[["items"]] <- subset_src(x[["items"]], src)
+  set_target(x, get_target(x))
+}
+
+#' @rdname item_utils
+#' @keywords internal
+#' @export
+subset_src.concept <- function(x, src) new_concept(lapply(x, subset_src, src))

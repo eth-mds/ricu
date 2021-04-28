@@ -42,8 +42,6 @@
 #' laptop class hardware.
 #'
 #' @param x Object specifying the source configuration
-#' @param data_dir The directory where the data was downloaded to (see
-#' [download_src()]).
 #' @param ... Passed to downstream methods (finally to
 #' [readr::read_csv]/[readr::read_csv_chunked])/generic consistency
 #'
@@ -70,57 +68,97 @@
 #'
 import_src <- function(x, ...) UseMethod("import_src", x)
 
-#' @param force Logical flag indicating whether to overwrite already imported
-#' tables
-#'
+#' @inheritParams download_src
 #' @rdname import
 #' @export
-import_src.src_cfg <- function(x, data_dir = src_data_dir(x), force = FALSE,
-                               ...) {
+import_src.src_cfg <- function(x, data_dir = src_data_dir(x), tables = NULL,
+                               force = FALSE, verbose = TRUE, ...) {
 
   assert_that(is.dir(data_dir), is.flag(force))
 
   tbl <- as_tbl_cfg(x)
+  ver <- isTRUE(verbose)
 
-  todo <- src_file_exist(tbl, "raw")
-  done <- src_file_exist(tbl, "fst")
+  if (is.null(tables)) {
+
+    todo <- src_file_exist(tbl, data_dir, "raw")
+
+  } else {
+
+    assert_that(is.character(tables), has_length(tables),
+                are_in(tables, names(tbl)))
+
+    todo <- names(tbl) %in% tables
+  }
+
+  done <- src_file_exist(tbl, data_dir, "fst")
   skip <- done & todo
 
   if (!force && any(skip)) {
-    msg_ricu("Table{?s} {quote_bt(names(tbl)[skip])} ha{?s/ve} already been
-             imported and will be skipped")
+
+    if (ver) {
+      msg_ricu("Table{?s} {quote_bt(names(tbl)[skip])} ha{?s/ve} already been
+               imported and will be skipped")
+    }
+
     todo <- todo & !skip
   }
 
   if (!any(todo)) {
-    msg_ricu("All required tables have already been imported")
+    warn_ricu("All required tables have already been imported",
+              class = "no_import")
     return(invisible(NULL))
   }
 
   tbl <- tbl[todo]
-  pba <- progress_init(sum(int_ply(tbl, nrow)),
-    msg = "Importing {length(tbl)} table{?s} for {quote_bt(src_name(x))}"
-  )
 
-  for(table in tbl) {
-    import_tbl(table, data_dir = data_dir, progress = pba, ...)
+  if (ver) {
+    pba <- progress_init(n_tick(tbl),
+      msg = "Importing {length(tbl)} table{?s} for {quote_bt(src_name(x))}"
+    )
+  } else {
+    pba <- FALSE
   }
 
-  if (!(is.null(pba) || pba$finished)) {
-    pba$update(1)
-  }
+  with_progress({
+    for(table in vec_chop(tbl)) {
+      import_tbl(table, data_dir = data_dir, progress = pba, ...)
+    }
+  }, progress_bar = pba)
 
-  msg_ricu("Successfully imported {length(tbl)} table{?s}")
+
+  if (ver) {
+    msg_ricu("Successfully imported {length(tbl)} table{?s}")
+  }
 
   invisible(NULL)
 }
 
+#' @rdname import
 #' @export
-import_src.character <- function(x, data_dir = src_data_dir(x), force = FALSE,
-                                 ...) {
+import_src.aumc_cfg <- function(x, ...) {
+  NextMethod(locale = readr::locale(encoding = "latin1"))
+}
 
-  Map(import_src, load_src_cfg(x, ...), data_dir,
-      MoreArgs = list(force = force))
+#' @export
+import_src.character <- function(x, data_dir = src_data_dir(x), tables = NULL,
+                                 force = FALSE, verbose = TRUE, ...) {
+
+  if (is.character(tables)) {
+
+    assert_that(length(x) == 1L)
+
+    tables <- list(tables)
+
+  } else if (is.null(tables)) {
+
+    tables <- list(tables)
+  }
+
+  assert_that(is.list(tables))
+
+  Map(import_src, load_src_cfg(x, ...), data_dir, tables, force,
+      MoreArgs = list(verbose = verbose))
 
   invisible(NULL)
 }
@@ -130,6 +168,8 @@ import_src.default <- function(x, ...) stop_generic(x, .Generic)
 
 #' @param progress Either `NULL` or a progress bar as created by
 #' [progress::progress_bar()]
+#' @param cleanup Logical flag indicating whether to remove raw csv files after
+#' conversion to fst
 #'
 #' @rdname import
 #' @export
@@ -138,23 +178,29 @@ import_tbl <- function(x, ...) UseMethod("import_tbl", x)
 #' @rdname import
 #' @export
 import_tbl.tbl_cfg <- function(x, data_dir = src_data_dir(x), progress = NULL,
-                               ...) {
+                               cleanup = FALSE, ...) {
 
-  assert_that(is.dir(data_dir))
+  assert_that(is.dir(data_dir), is.flag(cleanup))
 
-  if (n_partitions(x) > 1L) {
+  if (n_part(x) > 1L) {
     partition_table(x, data_dir, progress, ...)
   } else {
     csv_to_fst(x, data_dir, progress, ...)
   }
+
+  if (cleanup) {
+    unlink(file.path(data_dir, raw_file_name(x)))
+  }
+
+  invisible(NULL)
 }
 
 #' @export
 import_tbl.default <- function(x, ...) stop_generic(x, .Generic)
 
-merge_fst_chunks <- function(src_dir, targ_dir, cols, sort_col, prog, nme) {
+merge_fst_chunks <- function(src, targ, new, old, sort_col, prog, nme, tick) {
 
-  files <- list.files(src_dir, full.names = TRUE)
+  files <- list.files(src, full.names = TRUE)
 
   sort_ind <- order(
     as.integer(sub("^chunk_", "", sub("\\.fst$", "", basename(files))))
@@ -162,20 +208,21 @@ merge_fst_chunks <- function(src_dir, targ_dir, cols, sort_col, prog, nme) {
 
   dat <- lapply(files[sort_ind], fst::read_fst, as.data.table = TRUE)
   dat <- rbindlist(dat)
-  dat <- data.table::setorderv(dat, sort_col)
-  dat <- setnames(dat, names(cols), cols)
+  dat <- setorderv(dat, sort_col)
+  dat <- rename_cols(dat, new, old)
 
-  part_no  <- sub("part_", "", basename(src_dir))
-  new_file <- file.path(ensure_dirs(targ_dir), paste0(part_no, ".fst"))
+  part_no  <- sub("part_", "", basename(src))
+  new_file <- file.path(ensure_dirs(targ), paste0(part_no, ".fst"))
 
   fst::write_fst(dat, new_file, compress = 100L)
 
-  progress_tick(paste(nme, "part", part_no), prog, floor(nrow(dat) / 2))
+  progress_tick(paste(nme, "part", part_no), prog,
+                coalesce(tick, floor(nrow(dat) / 2)))
 
   invisible(NULL)
 }
 
-split_write <- function(x, part_fun, dir, chunk_no, prog, nme) {
+split_write <- function(x, part_fun, dir, chunk_no, prog, nme, tick) {
 
   n_row <- nrow(x)
 
@@ -189,7 +236,8 @@ split_write <- function(x, part_fun, dir, chunk_no, prog, nme) {
 
   Map(fst::write_fst, x, tmp_nme)
 
-  progress_tick(paste(nme, "chunk", chunk_no), prog, floor(n_row / 2))
+  progress_tick(paste(nme, "chunk", chunk_no), prog,
+                coalesce(tick, floor(n_row / 2)))
 
   invisible(NULL)
 }
@@ -197,71 +245,174 @@ split_write <- function(x, part_fun, dir, chunk_no, prog, nme) {
 partition_table <- function(x, dir, progress = NULL, chunk_length = 10 ^ 7,
                             ...) {
 
-  assert_that(n_partitions(x) > 1L)
-
   tempdir <- ensure_dirs(tempfile())
   on.exit(unlink(tempdir, recursive = TRUE))
 
   spec <- col_spec(x)
   pfun <- partition_fun(x, orig_names = TRUE)
   pcol <- partition_col(x, orig_names = TRUE)
-  file <- file.path(dir, raw_file_names(x))
+  rawf <- raw_file_name(x)
+  file <- file.path(dir, rawf)
   name <- tbl_name(x)
+
+  exp_row <- n_row(x)
+
+  if (is.na(exp_row)) {
+    tick <- if (length(file) == 1L) 0L else 1L
+  } else {
+    tick <- NULL
+  }
 
   if (length(file) == 1L) {
 
     callback <- function(x, pos, ...) {
-      readr::stop_for_problems(x)
+      report_problems(x, rawf)
       split_write(x, pfun, tempdir, ((pos - 1L) / chunk_length) + 1L,
-                  progress, name)
+                  progress, name, tick)
+    }
+
+    if (grepl("\\.gz$", file)) {
+      file <- gunzip(file, tempdir)
     }
 
     readr::read_csv_chunked(file, callback, chunk_length, col_types = spec,
                             progress = FALSE, ...)
+
+    if (is.na(exp_row)) {
+      progress_tick(NULL, progress)
+    }
 
   } else {
 
     for (i in seq_along(file)) {
 
       dat <- readr::read_csv(file[i], col_types = spec, progress = FALSE, ...)
-      readr::stop_for_problems(dat)
+      report_problems(dat, rawf[i])
 
-      split_write(dat, pfun, tempdir, i, progress, name)
+      split_write(dat, pfun, tempdir, i, progress, name, tick)
     }
   }
 
-  cols <- col_names(x)
   targ <- file.path(dir, name)
+  newc <- ricu_cols(x)
+  oldc <- orig_cols(x)
 
-  for (src_dir in list.files(tempdir, full.names = TRUE)) {
-    merge_fst_chunks(src_dir, targ, cols, pcol, progress, name)
+  if (is.na(exp_row)) {
+    tick <- 1L
   }
 
-  fst_tables <- lapply(file.path(dir, fst_file_names(x)), fst::fst)
+  for (src_dir in file.path(tempdir, paste0("part_", seq_len(n_part(x))))) {
+    merge_fst_chunks(src_dir, targ, newc, oldc, pcol, progress, name, tick)
+  }
 
-  check_n_row(x, sum(dbl_ply(fst_tables, nrow)))
+  if (is.null(tick)) {
+
+    act_row <- sum(
+      dbl_ply(lapply(file.path(dir, fst_file_name(x)), fst::fst), nrow)
+    )
+
+    if (!all_equal(exp_row, act_row)) {
+      warn_ricu("expected {exp_row} rows but got {act_row} rows for table
+                `{name}`", class = "import_row_mismatch")
+    }
+  }
 
   invisible(NULL)
 }
 
+gunzip <- function(file, exdir) {
+
+  dest <- file.path(exdir, sub("\\.gz$", "", basename(file)))
+
+  file <- gzfile(file, open = "rb")
+  on.exit(close(file))
+
+  if (file.exists(dest)) {
+    return(NULL)
+  }
+
+  out <- file(dest, open = "wb")
+  on.exit(close(out), add = TRUE)
+
+  repeat {
+
+    tmp <- readBin(file, what = raw(0L), size = 1L, n = 1e7)
+
+    if (length(tmp) == 0L) {
+      break
+    }
+
+    writeBin(tmp, con = out, size = 1L)
+  }
+
+  return(dest)
+}
+
 csv_to_fst <- function(x, dir, progress = NULL, ...) {
 
-  src <- file.path(dir, raw_file_names(x))
-  dst <- file.path(dir, fst_file_names(x))
+  raw <- raw_file_name(x)
+  src <- file.path(dir, raw)
+  dst <- file.path(dir, fst_file_name(x))
 
-  assert_that(length(src) == 1L, length(dst) == 1L)
+  assert_that(length(x) == 1L, length(src) == 1L, length(dst) == 1L)
 
-  dat  <- readr::read_csv(src, col_types = col_spec(x), progress = FALSE, ...)
-  readr::stop_for_problems(dat)
+  dat <- readr::read_csv(src, col_types = col_spec(x), progress = FALSE, ...)
+  report_problems(dat, raw)
 
-  cols <- col_names(x)
-  dat  <- setnames(dat, names(cols), cols)
+  dat <- rename_cols(setDT(dat), ricu_cols(x), orig_cols(x))
 
   fst::write_fst(dat, dst, compress = 100L)
 
-  fst_table <- fst::fst(dst)
+  exp_row <- n_row(x)
 
-  progress_tick(tbl_name(x), progress, check_n_row(x, nrow(fst_table)))
+  tbl <- tbl_name(x)
+
+  if (is.na(exp_row)) {
+
+    ticks <- 1L
+
+  } else {
+
+    act_row <- nrow(fst::fst(dst))
+
+    if (!all_equal(exp_row, act_row)) {
+      warn_ricu("expected {exp_row} rows but got {act_row} rows for table
+                `{tbl}`", class = "import_row_mismatch")
+    }
+
+    ticks <- exp_row
+  }
+
+  progress_tick(tbl, progress, ticks)
+
+  invisible(NULL)
+}
+
+report_problems <- function(x, file) {
+
+  prob_to_str <- function(x) {
+    paste0("[", x[1L], ", ", x[2L], "]: got '", x[4L], "' instead of ", x[3L])
+  }
+
+  probs <- readr::problems(x)
+  nprob <- nrow(probs)
+
+  if (nprob) {
+
+    out <- bullet(apply(head(probs, n = 10), 1L, prob_to_str))
+    ext <- nprob - 10
+
+    if (ext > 0) {
+      out <- c(out, bullet("{cli::symbol$ellipsis} and {big_mark(ext)} further
+                            problems"))
+    }
+
+    warn_ricu(
+      c("Encountered parsing problems for file {file}:", out),
+      class = "csv_parsing_error", indent = c(0L, rep_along(2L, out)),
+      exdent = c(0L, rep_along(2L, out))
+    )
+  }
 
   invisible(NULL)
 }

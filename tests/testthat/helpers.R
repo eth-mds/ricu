@@ -42,22 +42,6 @@ expect_all_identical <- function(object, expected = object[[1L]], ...,
   invisible(act$val)
 }
 
-test_that("expect_all_identical", {
-
-  expect_success(expect_all_identical("foo", "foo"))
-  expect_success(expect_all_identical(c("foo", "foo"), "foo"))
-  expect_failure(expect_all_identical("foo", "bar"))
-
-  expect_success(expect_all_identical(c("foo", "bar"), c("foo", "bar")))
-  expect_failure(expect_all_identical(c("foo", "bar"), c("foo", "foo")))
-  expect_success(expect_all_identical("foo", c("foo", "foo")))
-  expect_failure(expect_all_identical("foo", c("foo", "bar")))
-
-  expect_success(expect_all_identical(c("foo", "foo")))
-  expect_failure(expect_all_identical(c("foo", "bar")))
-})
-
-
 expect_all_equal <- function(object, expected = object[[1L]], ..., info = NULL,
                              label = NULL, expected_label = NULL) {
 
@@ -82,21 +66,6 @@ expect_all_equal <- function(object, expected = object[[1L]], ..., info = NULL,
   invisible(act$val)
 }
 
-test_that("expect_all_equal", {
-
-  expect_success(expect_all_equal("foo", "foo"))
-  expect_success(expect_all_equal(c("foo", "foo"), "foo"))
-  expect_failure(expect_all_equal("foo", "bar"))
-
-  expect_success(expect_all_equal(c("foo", "bar"), c("foo", "bar")))
-  expect_failure(expect_all_equal(c("foo", "bar"), c("foo", "foo")))
-  expect_success(expect_all_equal("foo", c("foo", "foo")))
-  expect_failure(expect_all_equal("foo", c("foo", "bar")))
-
-  expect_success(expect_all_equal(c("foo", "foo")))
-  expect_failure(expect_all_equal(c("foo", "bar")))
-})
-
 expect_all <- function(object, info = NULL, label = NULL) {
 
   act <- quasi_label(rlang::enquo(object), label, arg = "object")
@@ -106,14 +75,6 @@ expect_all <- function(object, info = NULL, label = NULL) {
 
   invisible(act$val)
 }
-
-test_that("expect_all_equal", {
-
-  expect_success(expect_all(TRUE))
-  expect_failure(expect_all(FALSE))
-  expect_success(expect_all(c(TRUE, TRUE)))
-  expect_failure(expect_all(c(TRUE, FALSE)))
-})
 
 expect_fsetequal <- function(object, expected, ...) {
 
@@ -128,16 +89,39 @@ expect_fsetequal <- function(object, expected, ...) {
   invisible(act$val)
 }
 
-test_that("expect_fsetequal", {
+skip_if_srcs_missing <- function(srcs) {
 
-  dt1 <- data.table::data.table(a = letters[1:10], b = 1:10)
-  dt2 <- data.table::data.table(a = LETTERS[1:10], b = 1:10)
+  avail <- is_data_avail(srcs)
+  skip  <- !all(avail)
 
-  expect_success(expect_fsetequal(dt1, dt1))
-  expect_success(expect_fsetequal(dt1, dt1[sample(1:10), ]))
-  expect_failure(expect_fsetequal(dt1, dt2))
-  expect_failure(expect_fsetequal(dt1, dt1[-1L, ]))
-})
+  if (skip) {
+    msg <- fmt_msg("Data source{?s} {quote_bt(srcs[!avail])} {?is/are} missing
+                    but required for tests")
+  } else {
+    msg <- NULL
+  }
 
-cpy <- data.table::copy
-assign("ident_cb", function(x, ...) x, envir = .GlobalEnv)
+  skip_if(skip, msg)
+}
+
+with_mock <- function(...) mockthat::with_mock(..., .env = asNamespace("ricu"))
+
+skip_if_no_local_testdata <- function() {
+
+  skip_if(
+    identical(system.file("local_testdata", package = "ricu"), ""),
+    "No local testdata is available"
+  )
+}
+
+with_src <- function(src = "mimic_test", env = parent.frame()) {
+
+  stopifnot(!src %in% attached_srcs(), src %in% c("mimic_test", "eicu_test"))
+
+  attach_src(src, data_dir = src_data_dir(sub("_test", "_demo", src)),
+             cfg_dirs = system.file("testdata", package = "ricu"))
+
+  withr::defer(detach_src(src), envir = env)
+
+  as_src_env(src)
+}

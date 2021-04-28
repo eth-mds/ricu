@@ -18,15 +18,15 @@ library(ricu)
 old.hooks <- fansi::set_knit_hooks(knitr::knit_hooks)
 ```
 
-# [ricu](https://septic-tank.github.io/ricu/)
+# [ricu](https://eth-mds.github.io/ricu/)
 
 <!-- badges: start -->
-[![Lifecycle](https://img.shields.io/badge/lifecycle-maturing-blue.svg)](https://lifecycle.r-lib.org/articles/stages.html)
-[![R build status](https://github.com/septic-tank/ricu/workflows/build/badge.svg)](https://github.com/septic-tank/ricu/actions?query=workflow%3Abuild)
-[![R check status](https://github.com/septic-tank/ricu/workflows/check/badge.svg)](https://github.com/septic-tank/ricu/actions?query=workflow%3Acheck)
-[![pkgdown build status](https://github.com/septic-tank/ricu/workflows/pkgdown/badge.svg)](https://github.com/septic-tank/ricu/actions?query=workflow%3Apkgdown)
-[![covr status](https://github.com/septic-tank/ricu/workflows/coverage/badge.svg)](https://github.com/septic-tank/ricu/actions?query=workflow%3Acoverage)
-[![Codecov test coverage](https://codecov.io/gh/septic-tank/ricu/branch/master/graph/badge.svg?token=HvOM3yosW3)](https://codecov.io/gh/septic-tank/ricu)
+[![Lifecycle](https://img.shields.io/badge/lifecycle-stable-brightgreen.svg)](https://lifecycle.r-lib.org/articles/stages.html#stable)
+[![R build status](https://github.com/eth-mds/ricu/workflows/build/badge.svg)](https://github.com/eth-mds/ricu/actions?query=workflow%3Abuild)
+[![R check status](https://github.com/eth-mds/ricu/workflows/check/badge.svg)](https://github.com/eth-mds/ricu/actions?query=workflow%3Acheck)
+[![pkgdown build status](https://github.com/eth-mds/ricu/workflows/pkgdown/badge.svg)](https://github.com/eth-mds/ricu/actions?query=workflow%3Apkgdown)
+[![covr status](https://github.com/eth-mds/ricu/workflows/coverage/badge.svg)](https://github.com/eth-mds/ricu/actions?query=workflow%3Acoverage)
+[![Codecov test coverage](https://codecov.io/gh/eth-mds/ricu/branch/master/graph/badge.svg?token=HvOM3yosW3)](https://codecov.io/gh/eth-mds/ricu)
 <!-- badges: end -->
 
 Working with ICU datasets, especially with publicly available ones as provided by [PhysioNet](https://physionet.org) in R is facilitated by `ricu`, which provides data access, a level of abstraction to encode clinical concepts in a data source agnostic way, as well as classes and utilities for working with the arising types of time series datasets.
@@ -36,7 +36,7 @@ Working with ICU datasets, especially with publicly available ones as provided b
 Currently, installation is only possible from github directly, using the `remotes` if installed
 
 ```{r gh-rem, eval = FALSE}
-remotes::install_github("septic-tank/ricu")
+remotes::install_github("eth-mds/ricu")
 ```
 
 or by sourcing the required code for installation from github by running
@@ -46,26 +46,26 @@ rem <- source(
   paste0("https://raw.githubusercontent.com/r-lib/remotes/master/",
          "install-github.R"
 )
-rem$value("septic-tank/ricu")
+rem$value("eth-mds/ricu")
 ```
 
 In order to make sure that some useful utility packages are installed as well, consider installing the packages marked as `Suggests` as well by running
 
 ```{r gh-all, eval = FALSE}
-remotes::install_github("septic-tank/ricu", dependencies = TRUE)
+remotes::install_github("eth-mds/ricu", dependencies = TRUE)
 ```
 
 instead, or by installing some of the utility packages (relevant for downloading and preprocessing PhysioNet datasets)
 
 ```{r deps-util, eval = FALSE}
-install.packages(c("getPass", "keyring", "openssl", "xml2"))
+install.packages("xml2")
 ```
 
 and demo dataset packages
 
 ```{r deps-data, eval = FALSE}
 install.packages(c("mimic.demo", "eicu.demo"),
-                 repos = "https://septic-tank.github.io/physionet-demo")
+                 repos = "https://eth-mds.github.io/physionet-demo")
 ```
 
 explicitly.
@@ -81,7 +81,17 @@ mimic_demo$admissions
 and data can be loaded into an R session for example using
 
 ```{r mimic-ts}
-load_ts("labevents", "mimic_demo", itemid == 50862L, c("valuenum", "valueuom"))
+load_ts("labevents", "mimic_demo", itemid == 50862L,
+        cols = c("valuenum", "valueuom"))
+```
+
+```{r mimic-ts-print, echo = FALSE}
+load_ts("labevents", "mimic_demo", itemid == 50862L,
+        cols = c("valuenum", "valueuom"))[]
 ```
 
 which returns time series data as `ts_tbl` object.
+
+## Acknowledgments
+
+This work was supported by grant #2017-110 of the Strategic Focal Area "Personalized Health and Related Technologies (PHRT)" of the ETH Domain for the SPHN/PHRT Driver Project "Personalized Swiss Sepsis Study".

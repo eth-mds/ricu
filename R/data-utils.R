@@ -212,7 +212,7 @@ id_win_helper.hirid_env <- function(x) {
 
   ind_fun <- function(id, index) {
 
-    tmp <- data.table::setDT(list(id = id, index = index))
+    tmp <- setDT(list(id = id, index = index))
 
     ind <- tmp[, .I[which.max(get("index"))], by = "id"][["V1"]]
 
@@ -238,6 +238,36 @@ id_win_helper.hirid_env <- function(x) {
              .SDcols = c(sta, "datetime")]
 
   order_rename(res, ids, sta, "datetime")
+}
+
+#' @rdname data_utils
+#' @export
+id_win_helper.aumc_env <- function(x) {
+
+  cfg <- sort(as_id_cfg(x), decreasing = TRUE)
+
+  ids <- field(cfg, "id")
+  sta <- field(cfg, "start")
+  end <- field(cfg, "end")
+
+  tbl <- as_src_tbl(x, unique(field(cfg, "table")))
+  mis <- setdiff(sta, colnames(tbl))
+
+  assert_that(length(mis) >= 1L)
+
+  res <- tbl[, c(ids, intersect(sta, colnames(tbl)), end)]
+
+  if (length(mis) > 0L) {
+    res[, c(mis) := 0L]
+  }
+
+  res <- res[, c(sta, end) := lapply(.SD, ms_as_mins), .SDcols = c(sta, end)]
+
+  res <- setcolorder(res, c(ids, sta, end))
+  res <- rename_cols(res, c(ids, paste0(ids, "_start"),
+                                 paste0(ids, "_end")), by_ref = TRUE)
+
+  as_id_tbl(res, ids[2L], by_ref = TRUE)
 }
 
 #' @export
@@ -301,23 +331,18 @@ id_map_helper.src_env <- function(x, id_var, win_var) {
   map    <- id_windows(x)
   map_id <- id_vars(map)
 
-  if (identical(id_var, map_id)) {
-    ori <- NULL
-  } else {
-    ori <- paste0(id_var, "_start")
+  io_vars <- paste0(win_var, c("_start", "_end"))
+
+  if (!identical(id_var, map_id)) {
+    ori <- new_names(map)
+    map <- map[, c(ori) := get(paste0(id_var, "_start"))]
+    map <- map[, unique(c(id_var, win_var, io_vars, ori)), with = FALSE]
+    map <- map[, c(io_vars) := lapply(.SD, `-`, get(ori)),
+               .SDcols = c(io_vars)]
   }
 
-  inn <- paste0(win_var, "_start")
-  out <- paste0(win_var, "_end")
-
-  map <- map[, unique(c(id_var, win_var, inn, out, ori)), with = FALSE]
-
-  if (not_null(ori)) {
-    map <- map[, c(inn, out) := lapply(.SD, `-`, get(ori)),
-               .SDcols = c(inn, out)]
-    map <- rm_cols(map, ori, by_ref = TRUE)
-  }
-
+  kep <- setdiff(colnames(map), unique(c(id_var, win_var, io_vars)))
+  map <- rm_cols(map, kep, by_ref = TRUE)
   map <- unique(map)
 
   as_id_tbl(map, id_var, by_ref = TRUE)
@@ -340,6 +365,7 @@ id_map_helper.default <- function(x, ...) stop_generic(x, .Generic)
 #' @param in_time,out_time column names of the returned in/out times
 #' @param interval The time interval used to discretize time stamps with,
 #' specified as [base::difftime()] object
+#' @param patient_ids Patient IDs used to subset the result
 #'
 #' @return An `id_tbl` containing the selected IDs and depending on values
 #' passed as `in_time` and `out_time`, start and end times of the ID passed as
@@ -348,7 +374,7 @@ id_map_helper.default <- function(x, ...) stop_generic(x, .Generic)
 #' @export
 stay_windows <- function(x, id_type = "icustay", win_type = id_type,
                          in_time = "start", out_time = "end",
-                         interval = hours(1L)) {
+                         interval = hours(1L), patient_ids = NULL) {
 
   assert_that(is_interval(interval))
 
@@ -362,7 +388,7 @@ stay_windows <- function(x, id_type = "icustay", win_type = id_type,
                .SDcols = c(in_time, out_time)]
   }
 
-  res
+  merge_patid(res, patient_ids)
 }
 
 #' Switch between id types
@@ -388,7 +414,7 @@ stay_windows <- function(x, id_type = "icustay", win_type = id_type,
 #' example, we request for `mimic_demo`, with ICU stay IDs as source and
 #' hospital admissions as destination IDs.
 #'
-#' ```{r}
+#' ```{r, eval = is_data_avail("mimic_demo")}
 #' id_map_helper(mimic_demo, "icustay_id", "hadm_id")
 #' ```
 #'
@@ -442,6 +468,8 @@ stay_windows <- function(x, id_type = "icustay", win_type = id_type,
 #' @param ... Passed to `upgrade_id()`/`downgrade_id()`
 #' @param keep_old_id Logical flag indicating whether to keep the previous ID
 #' column
+#' @param id_type Logical flag indicating whether `target_id` is specified as
+#' ID name (e.g. `icustay_id` on MIMIC) or ID type (e.g. `icustay`)
 #'
 #' @return An object of the same type as `x` with modified IDs.
 #'
@@ -458,9 +486,16 @@ stay_windows <- function(x, id_type = "icustay", win_type = id_type,
 #' @rdname change_id
 #' @export
 #'
-change_id <- function(x, target_id, src, ..., keep_old_id = TRUE) {
+change_id <- function(x, target_id, src, ..., keep_old_id = TRUE,
+                      id_type = FALSE) {
 
   assert_that(is.string(target_id), is.flag(keep_old_id))
+
+  id_cfg <- as_id_cfg(src)
+
+  if (isTRUE(id_type)) {
+    target_id <- id_type_to_name(id_cfg, target_id)
+  }
 
   orig_id <- id_var(x)
 
@@ -468,9 +503,10 @@ change_id <- function(x, target_id, src, ..., keep_old_id = TRUE) {
     return(x)
   }
 
-  id_cfg <- as_id_cfg(src)
-
   opt <- id_var_opts(id_cfg)
+
+  assert_that(is_in(orig_id, opt), is_in(target_id, opt))
+
   ori <- id_cfg[orig_id   == opt]
   fin <- id_cfg[target_id == opt]
 

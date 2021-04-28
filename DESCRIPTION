@@ -6,7 +6,7 @@ Description: Focused on (but not exclusive to) data sets hosted on PhysioNet
     functions for running arbitrary queries against available data sets, a
     system for defining clinical concepts and encoding their representations
     in tabular ICU data is presented.
-Version: 0.1.3
+Version: 0.4.0
 Authors@R: c(
     person(given = "Nicolas",
            family = "Bennett",
@@ -26,9 +26,9 @@ Encoding: UTF-8
 Language: en-US
 LazyData: true
 URL:
-    https://github.com/septic-tank/ricu,
+    https://github.com/eth-mds/ricu,
     https://physionet.org
-BugReports: https://github.com/septic-tank/ricu/issues
+BugReports: https://github.com/eth-mds/ricu/issues
 Depends:
     R (>= 3.4.0)
 Imports:
@@ -45,23 +45,29 @@ Imports:
     backports,
     rlang,
     vctrs,
-    cli,
+    cli (>= 2.1.0),
     glue,
     fansi,
+    openssl,
     utils
 Suggests:
-    openssl,
     xml2,
     covr,
-    testthat (>= 2.1.0),
+    testthat (>= 3.0.0),
     withr,
+    mockthat,
     pkgload,
     mimic.demo,
     eicu.demo,
     progress,
     knitr,
     rmarkdown,
-    ggplot2
+    ggplot2,
+    survival,
+    forestmodel,
+    rticles,
+    kableExtra
 RoxygenNote: 7.1.1
-Additional_repositories: https://septic-tank.github.io/physionet-demo
+Additional_repositories: https://eth-mds.github.io/physionet-demo
 VignetteBuilder: knitr
+Config/testthat/edition: 3

@@ -3,7 +3,7 @@ agg_or_na <- function(agg_fun) {
   function(x) {
     if (all(is.na(x))) return(x[1L])
     res <- agg_fun(x, na.rm = TRUE)
-    if(is.na(res)) x[1L] else res
+    if (is.na(res)) x[1L] else res
   }
 }
 
@@ -32,8 +32,7 @@ agg_or_na <- function(agg_fun) {
 #' [data.table::setnafill()] is called or other objects.
 #'
 #' @param x Object to use
-#' @param val Value to compare against
-#' @param ... Forwarded to other methods
+#' @param val Value to compare against or to use as replacement
 #'
 #' @return
 #' * `min_or_na()`/`max_or_na()`: scalar-valued extrema of a vector
@@ -68,12 +67,10 @@ agg_or_na <- function(agg_fun) {
 #'
 #' @rdname utils
 #' @export
-#'
 min_or_na <- agg_or_na(min)
 
 #' @rdname utils
 #' @export
-#'
 max_or_na <- agg_or_na(max)
 
 reduce <- function(f, x, ...) Reduce(function(x, y) f(x, y, ...), x)
@@ -84,73 +81,32 @@ round_to <- function(x, to = 1) {
 
 #' @rdname utils
 #' @export
-#'
 is_val <- function(x, val) !is.na(x) & x == val
 
 #' @rdname utils
 #' @export
-#'
 not_val <- function(x, val) !is.na(x) & x != val
 
 val_or_na <- function(x, val) is.na(x) | x == val
 
 #' @rdname utils
 #' @export
-#'
 is_true <- function(x) !is.na(x) & x
 
 #' @rdname utils
 #' @export
-#'
 is_false <- function(x) !(is.na(x) | x)
 
 #' @rdname utils
 #' @export
-#'
 last_elem <- function(x) x[length(x)]
 
 #' @rdname utils
 #' @export
-#'
 first_elem <- function(x) x[1L]
 
 null_or_subs <- function(x, where = parent.frame(1L)) {
   if (missing(x)) NULL else do.call("substitute", list(substitute(x), where))
-}
-
-#' @importFrom data.table setnafill
-#' @rdname utils
-#' @export
-#'
-replace_na <- function(x, val, ...) {
-
-  if (is_dt(x)) {
-    res <- setnafill(x, type = "const", fill = val, ...)
-  } else {
-    res <- replace(x, is.na(x), val)
-  }
-
-  res
-}
-
-split_indices <- function(len, n_chunks) {
-
-  assert_that(is.count(len), is.count(n_chunks))
-
-  if (len == 1L || n_chunks == 1L) {
-
-    rep.int(1L, len)
-
-  } else {
-
-    i <- seq_len(len)
-
-    fuzz <- min((len - 1L) / 1000, 0.4 * len / n_chunks)
-    breaks <- seq(1 - fuzz, len + fuzz, length.out = n_chunks + 1L)
-    bins <- cut(i, breaks)
-
-    as.integer(bins)
-  }
 }
 
 new_names <- function(old_names = character(0L), n = 1L,
@@ -224,23 +180,14 @@ xtr_null <- function(x, i, null_val) {
   if (is.null(res <- x[[i]])) null_val else res
 }
 
+lst_inv <- function(x) {
+  nms <- sort(unique(unlist(lapply(x, names))))
+  lapply(setNames(nms, nms), function(y) lst_xtr(x, y))
+}
+
 map <- function(f, ...) Map(f, ..., USE.NAMES = FALSE)
 
-do_call <- function(x, fun, args = NULL) {
-  if (is.null(args)) do.call(fun, x)
-  else do.call(fun, unname(x[args]))
-}
-
-wrap_null <- function(...) {
-
-  objs <- setNames(list(...), as.character(substitute(...)))
-
-  objs[lgl_ply(objs, is.null)] <- list(list(NULL))
-
-  list2env(objs, parent.frame())
-
-  invisible(NULL)
-}
+do_call <- function(x, fun, ...) do.call(fun, c(x, list(...)))
 
 coalesce <- function(...) {
   for (i in seq_len(...length())) {
@@ -258,8 +205,12 @@ rep_arg <- function(arg, names) {
     len <- length(names)
   }
 
-  if (length(arg) <= 1L) {
+  if (!is.list(arg) && length(arg) <= 1L) {
     arg <- rep(list(arg), len)
+  } else if (length(arg) != len && len == 1L) {
+    arg <- list(arg)
+  } else if (length(arg) != len) {
+    arg <- as.list(arg)
   }
 
   assert_that(all_equal(length(arg), len))
@@ -283,4 +234,23 @@ unlst <- function(x, recursive = FALSE, use_names = FALSE) {
   unlist(x, recursive = recursive, use.names = use_names)
 }
 
+unlst_str <- function(x) chr_ply(x, identity)
+
 rep_along <- function(x, times) rep(x, length(times))
+
+cat_line <- function(...) {
+  line <- trimws(paste0(...), "right")
+  cat(paste0(line, "\n"), sep = "")
+}
+
+ms_as_mins <- function(x) min_as_mins(as.integer(x / 6e4))
+
+min_as_mins <- function(x) as.difftime(x, units = "mins")
+
+digest_lst <- function(x) as.character(openssl::md5(serialize(x, NULL)))
+
+digest <- function(...) digest_lst(list(...))
+
+sys_name <- function() Sys.info()[["sysname"]]
+
+sys_env <- function(...) Sys.getenv(...)

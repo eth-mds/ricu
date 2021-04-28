@@ -1,5 +1,5 @@
 
-.onLoad <- function(libname, pkgname) {
+.onLoad <- function(libname, pkgname) { # nocov start
 
   fix_base_fun <- function(fun, fix) {
 
@@ -29,7 +29,7 @@
 
   backports::import(pkgname)
 
-  srcs <- auto_load_src_names()
+  srcs <- auto_attach_srcs()
 
   if (has_length(srcs)) {
     attach_src(srcs, assign_env = pkg_env())
@@ -52,7 +52,7 @@
     fix_base_fun(base::cbind.data.frame, cbind_fix)
     fix_base_fun(base::rbind.data.frame, rbind_fix)
   }
-}
+} # nocov end
 
 .onAttach <- function(libname, pkgname) {
 
@@ -63,15 +63,15 @@
   pkg <- methods::getPackageName()
   ver <- utils::packageVersion(pkg)
 
-  cat_line(file = con)
-  cat_rule(paste(pkg, ver), file = con)
+  cli::cat_line(file = con)
+  cli::cat_rule(paste(pkg, ver), file = con)
 
   stats <- src_data_avail()
 
   if (is.null(stats)) {
 
-    cat_line(
-      "\nCurrently no data sources are configured to be attached:\n",
+    cli::cat_line(
+      "\nCurrently no data sources are configured to be attached.\n",
       "(the environment variable `RICU_SRC_LOAD` controls this)",
       file = con
     )
@@ -83,21 +83,25 @@
     srcs  <- paste0(stats[["name"]], ": ", stats[["tables"]], " of ",
                     stats[["total"]], " tables available")
 
-    cat_line(
+    cli::cat_line(
       "\nThe following data sources are configured to be attached:\n",
       "(the environment variable `RICU_SRC_LOAD` controls this)\n",
       file = con
     )
 
-    Map(cat_bullet, srcs, bullet = bull, bullet_col = color,
+    Map(cli::cat_bullet, srcs, bullet = bull, bullet_col = color,
         MoreArgs = list(file = con))
   }
 
-  cat_line(file = con)
-  cat_rule(file = con)
-  cat_line(file = con)
+  cli::cat_line(file = con)
+  cli::cat_rule(file = con)
+  cli::cat_line(file = con)
 
   packageStartupMessage(paste(out, collapse = "\n"))
 }
+
+.onUnload <- function(libpath) { # nocov start
+  detach_src(attached_srcs())
+} # nocov end
 
 .datatable.aware = TRUE

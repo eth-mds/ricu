@@ -2,6 +2,8 @@
 % Please edit documentation in R/concept-utils.R
 \name{load_dictionary}
 \alias{load_dictionary}
+\alias{concept_availability}
+\alias{explain_dictionary}
 \title{Load concept dictionaries}
 \usage{
 load_dictionary(
@@ -9,6 +11,14 @@ load_dictionary(
   concepts = NULL,
   name = "concept-dict",
   cfg_dirs = NULL
+)
+
+concept_availability(dict = NULL, include_rec = FALSE, ...)
+
+explain_dictionary(
+  dict = NULL,
+  cols = c("name", "category", "description"),
+  ...
 )
 }
 \arguments{
@@ -20,6 +30,16 @@ load_dictionary(
 \item{name}{Name of the dictionary to be read}
 
 \item{cfg_dirs}{File name of the dictionary}
+
+\item{dict}{A dictionary (\code{conncept} object) or \code{NULL}}
+
+\item{include_rec}{Logical flag indicating whether to include \code{rec_cncpt}
+concepts as well}
+
+\item{...}{Forwarded to \code{load_dictionary()} in case \code{NULL} is passed as
+\code{dict} argument}
+
+\item{cols}{Columns to include in the output of \code{explain_dictionary()}}
 }
 \value{
 A \code{concept} object containing several data concepts as \code{cncpt}
@@ -85,6 +105,25 @@ specified by the JSON object, with the above corresponding to a call like\prefor
 The arguments \code{src} and \code{concepts} can be used to only load a subset of a
 dictionary by specifying a character vector of data sources and/or concept
 names.
+
+A summary of item availability for a set of concepts can be created using
+\code{concept_availability()}. This produces a logical matrix with \code{TRUE} entries
+corresponding to concepts where for the given data source, at least a single
+item has been defined. If data is loaded for a combination of concept and
+data source, where the corresponding entry is \code{FALSE}, this will yield
+either a zero-row \code{id_tbl} object or an object inheriting form \code{id_tbl}
+where the column corresponding to the concept is \code{NA} throughout, depending
+on whether the concept was loaded alongside other concepts where data is
+available or not.
+
+Whether to include \code{rec_cncpt} concepts in the overview produced by
+\code{concept_availability()} can be controlled via the logical flag
+\code{include_rec}. A recursive concept is considered available simply if all its
+building blocks are available. This can, however lead to slightly confusing
+output as a recursive concept might not strictly depend on one of its
+sub-concepts but handle such missingness by design. In such a scenario, the
+availability summary might report \code{FALSE} even though data can still be
+produced.
 }
 \examples{
 if (require(mimic.demo)) {

@@ -37,6 +37,18 @@ row.names.id_tbl <- function(x) NULL
 `names<-.id_tbl` <- function(x, value) rename_cols(x, value)
 
 #' @export
+`dimnames<-.id_tbl` <- function(x, value) {
+
+  assert_that(length(value) == 2L)
+
+  if (not_null(value[[1L]])) {
+    warn_arg("value[[1]]")
+  }
+
+  rename_cols(x, value[[2L]])
+}
+
+#' @export
 print.id_tbl <- function(x, ..., n = NULL, width = NULL, n_extra = NULL) {
   cat_line(format(x, ..., n = n, width = width, n_extra = n_extra))
   invisible(x)
@@ -44,62 +56,51 @@ print.id_tbl <- function(x, ..., n = NULL, width = NULL, n_extra = NULL) {
 
 #' @export
 format.id_tbl <- function(x, ..., n = NULL, width = NULL, n_extra = NULL) {
-  mat <- prt::trunc_dt(x, n = n, width = width, n_extra = n_extra)
-  format(mat)
+  format(prt::trunc_dt(x, n = n, width = width, n_extra = n_extra))
 }
 
 #' @importFrom tibble tbl_sum
 #' @export
 tbl_sum.ts_tbl <- function(x) {
-  ids <- id_vars(x)
-  setNames(
-    c(dim_desc(x), concat(quote_bt(ids)),
-      paste0(quote_bt(index_var(x)), " (", format(interval(x)), ")")),
-    c("A `ts_tbl`", paste0("Id var", if (length(ids) > 1L) "s"), "Index var")
-  )
+  idx <- paste0(quote_bt(index_var(x)), " (", format(interval(x)), ")")
+  c(NextMethod(), `Index var` = idx)
 }
 
 #' @importFrom tibble tbl_sum
 #' @export
 tbl_sum.id_tbl <- function(x) {
+
+  get_unit <- function(x) {
+    if (inherits(x, "difftime")) ""
+    else if (has_attr(x, "units")) attr(x, "units")
+    else ""
+  }
+
   ids <- id_vars(x)
-  setNames(c(dim_desc(x), concat(quote_bt(ids))),
-           c("An `id_tbl`", paste0("Id var", if (length(ids) > 1L) "s")))
+  cls <- class(x)[1L]
+  cls <- paste0(approx_art(cls), " `", cls, "`")
+
+  res <- setNames(
+    c(dim_desc(x), concat(quote_bt(ids))),
+    c(cls, paste0("Id var", if (length(ids) > 1L) "s"))
+  )
+
+  unt <- chr_ply(x, get_unit, use_names = TRUE)
+  unt <- unt[nzchar(unt)]
+
+  if (has_length(unt)) {
+    res <- c(res, Units = concat("`", names(unt), "` [", unt, "]"))
+  }
+
+  res
+}
+
+approx_art <- function(x) {
+  if (substr(x, 1L, 1L) %in% c("a", "e", "i", "o", "u")) "An" else "A"
 }
 
 #' @export
 str.id_tbl <- function(object, ...) invisible(prt::str_dt(object, ...))
-
-#' @method as.data.table id_tbl
-#' @export
-as.data.table.id_tbl <- function(x, keep.rownames = FALSE, ...) {
-
-  warn_dots(...)
-
-  if (!isFALSE(keep.rownames)) {
-    warn_arg("keep.rownames")
-  }
-
-  unclass_tbl(x)
-}
-
-#' @method as.data.frame id_tbl
-#' @export
-as.data.frame.id_tbl <- function(x, row.names = NULL, optional = FALSE, ...) {
-
-  if (!is.null(row.names)) {
-    warn_arg("row.names")
-  }
-
-  if (!isFALSE(optional)) {
-    warn_arg("optional")
-  }
-
-  x <- as.data.table(x, ...)
-  x <- setDF(x)
-
-  x
-}
 
 #' ICU class data reshaping
 #'
@@ -276,6 +277,23 @@ rbind_lst <- function(x, ...) {
   res <- reclass_tbl(dt_rbl(x, ...), ptyp)
 
   sort(res, by_ref = TRUE)
+}
+
+#' @rdname tbl_reshape
+#' @export
+#'
+merge_lst <- function(x) {
+
+  assert_that(is.list(x), all_fun(x, is_id_tbl))
+
+  ts <- lgl_ply(x, is_ts_tbl)
+  id <- c(which(ts), which(!ts))
+  ft <- unlist(lapply(x, data_vars))
+
+  x <- reduce(merge, x[id], all = TRUE)
+  x <- setcolorder(x, c(meta_vars(x), ft))
+
+  x
 }
 
 #' @param col_groups A list of character vectors defining the grouping of

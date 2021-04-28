@@ -39,7 +39,7 @@
 #' ```
 #' install.packages(
 #'   c("mimic.demo", "eicu.demo"),
-#'   repos = "https://septic-tank.github.io/physionet-demo"
+#'   repos = "https://eth-mds.github.io/physionet-demo"
 #' )
 #' ```
 #'
@@ -55,14 +55,37 @@
 #' inherit from or can be coerced to `src_cfg`. For more information on data
 #' source configuration, refer to [load_src_cfg()].
 #'
+#' As such, with the addition of the AmsterdamUMCdb dataset, which
+#' unfortunately is not hosted on PhysioNet, A separate downloader for that
+#' dataset is available as well. Currently this requires both availability of
+#' the CRAN package `xml2`, as well as the command line utility 7zip.
+#' Furthermore, data access has to be [requested
+#' ](https://amsterdammedicaldatascience.nl/#amsterdamumcdb) and for
+#' non-interactive download the download token has to be made available as
+#' environment variable `RICU_AUMC_TOKEN` or passed as `token` argument to
+#' `download_src()`. The download token can be retrieved from the URL provided
+#' when granted access as by extracting the string followed by `token=`:
+#'
+#' ```
+#' https://example.org/?s=download&token=0c27af59-72d1-0349-aa59-00000a8076d9
+#' ```
+#'
+#' would translate to
+#'
+#' ```{r, eval = FALSE}
+#' Sys.setenv(RICU_AUMC_TOKEN = "0c27af59-72d1-0349-aa59-00000a8076d9")
+#' ```
+#'
+#' If the dependencies outlined above are not fulfilled, download and archive
+#' extraction can be carried out manually into the corresponding folder and
+#' [import_src()] can be run.
+#'
 #' @param x Object specifying the source configuration
 #' @param data_dir Destination directory where the downloaded data is written
 #' to.
 #' @param ... Generic consistency
 #'
-#' @importFrom utils untar
 #' @importFrom curl new_handle handle_setopt parse_headers
-#' @importFrom curl curl_fetch_disk curl_fetch_stream curl_fetch_memory
 #'
 #' @return Called for side effects and returns `NULL` invisibly.
 #'
@@ -92,70 +115,160 @@ download_src <- function(x, data_dir = src_data_dir(x), ...) {
 #' @param tables Character vector specifying the tables to download. If
 #' `NULL`, all available tables are downloaded.
 #' @param force Logical flag; if `TRUE`, existing data will be re-downloaded
-#' @param user,pass PhysioNet credentials; if `NULL` and environment
-#' variables `RICU_PHYSIONET_USER`/`RICU_PHYSIONET_PASS` are not set, user
-#' input is required
 #'
 #' @rdname download
 #' @export
 download_src.src_cfg <- function(x, data_dir = src_data_dir(x), tables = NULL,
-                                 force = FALSE, user = NULL, pass = NULL,
-                                 ...) {
-
-  warn_dots(...)
+                                 force = FALSE, ...) {
 
   tbl <- determine_tables(x, data_dir, tables, force)
 
   if (length(tbl) == 0L) {
-    msg_ricu("The requested tables have already been downloaded")
+    msg_ricu("The requested tables have already been downloaded",
+             class = "no_dl_required")
     return(invisible(NULL))
   }
 
-  download_check_data(data_dir, chr_ply(tbl, raw_file_names),
-                      src_url(x), user, pass, src_name(x))
+  files <- unlst_str(raw_file_names(tbl))
+
+  download_check_data(data_dir, files, src_url(x), src_name(x), ...)
 
   invisible(NULL)
 }
 
 #' @export
 download_src.hirid_cfg <- function(x, data_dir = src_data_dir(x),
-                                   tables = NULL, force = FALSE, user = NULL,
-                                   pass = NULL, ...) {
-
-  warn_dots(...)
+                                   tables = NULL, force = FALSE, ...) {
 
   tbl <- determine_tables(x, data_dir, tables, force)
 
   if (length(tbl) == 0L) {
-    msg_ricu("The requested tables have already been downloaded")
+    msg_ricu("The requested tables have already been downloaded",
+             class = "no_dl_required")
     return(invisible(NULL))
   }
 
-  todo <- chr_xtr(tbl, "zip_file")
+  todo <- field(tbl, "zip_file")
+  fils <- unique(unlst_str(todo))
 
-  download_check_data(data_dir, unique(todo), src_url(x), user, pass,
-                      src_name(x))
+  tmp <- ensure_dirs(tempfile())
+  on.exit(unlink(tmp, recursive = TRUE))
 
-  todo <- file.path(data_dir, todo)
-  done <- lapply(tbl, raw_file_names)
+  download_check_data(tmp, fils, src_url(x), src_name(x), ...)
 
-  assert_that(
-    all_fun(Map(untar, todo, done, MoreArgs = list(exdir = data_dir)),
-            identical, 0L)
-  )
+  res <- Map(ricu_untar, Map(file.path, tmp, todo), raw_file_names(tbl),
+             MoreArgs = list(exdir = data_dir))
 
-  unlink(unique(todo))
+  assert_that(all_fun(res, identical, 0L))
 
   invisible(NULL)
 }
 
+ricu_untar <- function(...) utils::untar(...)
+
+#' @param token Download token for AmsterdamUMCdb (see 'Details')
+#' @param verbose Logical flag indicating whether to print progress information
+#'
+#' @rdname download
+#' @importFrom utils unzip
+#' @export
+download_src.aumc_cfg <- function(x, data_dir = src_data_dir(x),
+                                  tables = NULL, force = FALSE, token = NULL,
+                                  verbose = TRUE, ...) { # nocov start
+
+  warn_dots(..., ok_args = c("user", "pass"))
+
+  if (!requireNamespace("xml2", quietly = TRUE)) {
+    stop_ricu("Download of `aumc` data requires the `xml2` package. If
+               unavailable, download and unzip the data manually
+               to {data_dir}", class = "aumc_dl")
+  }
+
+  uzp <- getOption("unzip")
+
+  if (identical(uzp, "internal")) {
+    stop_ricu("Download of `aumc` data requires a path to an `unzip`
+               binary returned by `getOption(\"unzip\")` in order to unzip
+               files that are >4GB", class = "aumc_dl")
+  }
+
+  tbl <- determine_tables(x, data_dir, tables, force)
+
+  if (length(tbl) == 0L) {
+    msg_ricu("The requested tables have already been downloaded",
+             class = "no_dl_required")
+    return(invisible(NULL))
+  }
+
+  tok <- get_cred(token, "RICU_AUMC_TOKEN", "token: ")
+
+  url <- paste0("https://filesender.surf.nl/?s=download&token=", tok)
+  res <- download_file(url)
+
+  if (res[["status_code"]] == 200) {
+
+    info <- xml2::read_html(rawToChar(res[["content"]]))
+
+    size <- xml2::xml_find_first(info,
+                                 "//div[contains(@class, 'general box')]")
+    size <- as.numeric(xml2::xml_attr(size, "data-transfer-size"))
+
+    info <- xml2::xml_find_first(info,
+      "//div[contains(@class, 'files box')]/div[contains(@class, 'file')]"
+    )
+
+    name <- xml2::xml_attr(info, "data-name")
+    url  <- xml2::xml_attr(xml2::xml_child(info, "a"), "href")
+
+    if (!is.na(size) && !is.na(name) && !is.na(info)) {
+
+      tmp <- ensure_dirs(tempfile())
+      on.exit(unlink(tmp, recursive = TRUE))
+
+      fil <- file.path(tmp, name)
+
+      if (isTRUE(verbose)) {
+        prg <- progress_init(size, msg = "Donwloading `aumc` data",
+                             what = FALSE)
+      } else {
+        prg <- FALSE
+      }
+
+      res <- download_file(url, dest = fil, progr = prg)
+
+      if (res[["status_code"]] == 200) {
+
+        unzip(fil, files = chr_ply(tbl, raw_file_name),
+              exdir = normalizePath(data_dir), overwrite = TRUE, unzip = uzp)
+
+        return(invisible(NULL))
+      }
+    }
+  }
+
+  stop_ricu("Could not successfully download `aumc` data. Please download and
+             extract the corresponding .zip archive manually to {data_dir}.",
+            class = "aumc_dl")
+} # nocov end
+
+#' @param user,pass PhysioNet credentials; if `NULL` and environment
+#' variables `RICU_PHYSIONET_USER`/`RICU_PHYSIONET_PASS` are not set, user
+#' input is required
+#'
+#' @rdname download
 #' @export
 download_src.character <- function(x, data_dir = src_data_dir(x),
                                    tables = NULL, force = FALSE,
-                                   user = NULL, pass = NULL, ...) {
+                                   user = NULL, pass = NULL, verbose = TRUE,
+                                   ...) {
+
+  if (is.null(tables)) {
+    tables <- list(tables)
+  }
 
   Map(download_src, load_src_cfg(x, ...), data_dir, tables,
-      MoreArgs = list(force = force, user = user, pass = pass))
+    MoreArgs = list(force = force, user = user, pass = pass, verbose = verbose)
+  )
 
   invisible(NULL)
 }
@@ -175,18 +288,41 @@ determine_tables <- function(x, dir, tables, force) {
               is.dir(dir), is.flag(force))
 
   if (!force) {
-    avail  <- names(x)[src_file_exist(x, "fst") | src_file_exist(x, "raw")]
+    avail  <- names(x)[src_file_exist(x, dir, "fst") |
+                       src_file_exist(x, dir, "raw")]
     tables <- setdiff(tables, avail)
   }
 
   x[tables]
 }
 
+download_file <- function(url, handle = new_handle(), dest = NULL,
+                          progr = NULL) {
+
+  if (is.null(dest)) {
+    return(curl::curl_fetch_memory(url, handle))
+  }
+
+  if (is.null(progr)) {
+    return(curl::curl_fetch_disk(url, dest, handle = handle))
+  }
+
+  con <- file(dest, "ab", blocking = FALSE)
+  on.exit(close(con))
+
+  prog_fun <- function(x) {
+    progress_tick(NULL, progr, length(x))
+    writeBin(x, con)
+  }
+
+  curl::curl_fetch_stream(url, prog_fun, handle = handle)
+}
+
 download_pysionet_file <- function(url, dest = NULL, user = NULL,
                                    pass = NULL, head_only = FALSE,
                                    progress = NULL) {
 
-  assert_that(is.string(url), is.flag(head_only))
+  assert_that(is.string(url), null_or(dest, is.string), is.flag(head_only))
 
   handle <- new_handle(useragent = "Wget/")
 
@@ -199,61 +335,42 @@ download_pysionet_file <- function(url, dest = NULL, user = NULL,
     handle <- handle_setopt(handle, username = user, password = pass)
   }
 
-  if (is.null(dest)) {
+  if (is.null(dest) && head_only) {
 
-    assert_that(is.null(progress))
+    handle <- handle_setopt(handle, nobody = TRUE)
 
-    if (head_only) {
-      handle <- handle_setopt(handle, nobody = TRUE)
-    }
+  } else if (not_null(dest) && file.exists(dest)) {
 
-    res <- curl_fetch_memory(url, handle)
-
-  } else {
-
-    assert_that(is.string(dest), !head_only)
-
-    if (file.exists(dest)) {
-      handle <- handle_setopt(handle,
-        timevalue = file.mtime(dest), timecondition = TRUE
-      )
-    }
-
-    if (is.null(progress)) {
-
-      res <- curl_fetch_disk(url, dest, handle = handle)
-
-    } else {
-
-      con <- file(dest, "ab", blocking = FALSE)
-      on.exit(close(con))
-
-      prog_fun <- function(x) {
-        progress_tick(NULL, progress, length(x))
-        writeBin(x, con)
-      }
-
-      res <- curl_fetch_stream(url, prog_fun, handle = handle)
-    }
-
-    if (res[["status_code"]] == 304) {
-      msg_ricu("Skipped download of {basename(url)}")
-      return(invisible(NULL))
-    }
+    handle <- handle_setopt(handle,
+      timevalue = file.mtime(dest), timecondition = TRUE
+    )
   }
+
+  res <- download_file(url, handle, dest, progress)
 
   status <- res[["status_code"]]
 
-  if (status == 401) {
+  if (status == 304) {
+
+    msg_ricu("Skipped download of {basename(url)}")
+    return(invisible(NULL))
+
+  } else if (status %in% c(401, 403)) {
 
     stop_ricu("Access to the requested resource was denied. Please set up an
                account at https://physionet.org/ and apply for data access.",
-              class = "physionet_401")
+              class = "physionet_login")
 
   } else if (status != 200) {
 
-    stop_ricu(rawToChar(res[["content"]]),
-              class = paste0("physionet_", status))
+    if (requireNamespace("xml2", quietly = TRUE)) {
+      info <- xml2::read_html(rawToChar(res[["content"]]))
+      info <- xml2::xml_text(xml2::xml_find_first(info, "//main"))
+    } else {
+      info <- "Unable to access requested resource on at {url}"
+    }
+
+    stop_ricu(info, class = paste0("physionet_", status))
   }
 
   if (head_only) {
@@ -294,7 +411,7 @@ get_cred <- function(x, env, msg) {
 
   if (is.null(x)) {
 
-    x <- Sys.getenv(env, unset = NA_character_)
+    x <- sys_env(env, unset = NA_character_)
 
     if (is.na(x)) {
 
@@ -302,7 +419,7 @@ get_cred <- function(x, env, msg) {
         stop_ricu("User input is required")
       }
 
-      x <- readline(msg)
+      x <- read_line(msg)
     }
   }
 
@@ -310,6 +427,8 @@ get_cred <- function(x, env, msg) {
 
   x
 }
+
+read_line <- function(prompt = "") readline(prompt)
 
 get_file_size <- function(url, user, pass) {
 
@@ -325,7 +444,9 @@ get_file_size <- function(url, user, pass) {
   as.numeric(sub("^Content-Length: ", "", resp[hit], ignore.case = TRUE))
 }
 
-download_check_data <- function(dest_folder, files, url, user, pass, src) {
+download_check_data <- function(dest_folder, files, url, src,
+                                user = NULL, pass = NULL, verbose = TRUE,
+                                ...) {
 
   dl_one <- function(url, size, path, prog) {
 
@@ -336,9 +457,11 @@ download_check_data <- function(dest_folder, files, url, user, pass, src) {
     invisible(NULL)
   }
 
+  warn_dots(..., ok_args = "token")
+
   chksums <- tryCatch(
     get_sha256(url, user, pass),
-    physionet_401 = function(err) NULL
+    physionet_login = function(err) NULL
   )
 
   if (is.null(chksums)) {
@@ -361,35 +484,35 @@ download_check_data <- function(dest_folder, files, url, user, pass, src) {
   urls    <- file.path(url, files, fsep = "/")
 
   ensure_dirs(dirname(paths))
+  unlink(paths)
 
   sizes <- dbl_ply(urls, get_file_size, user, pass)
 
-  pba <- progress_init(sum(sizes),
-    msg = "Downloading {length(files)} file{?s} for {quote_bt(src)}"
-  )
+  if (isTRUE(verbose)) {
+    pba <- progress_init(sum(sizes),
+      msg = "Downloading {length(files)} file{?s} for {quote_bt(src)}"
+    )
+  } else {
+    pba <- FALSE
+  }
 
   with_progress(
     Map(dl_one, urls, sizes, paths, MoreArgs = list(prog = pba)),
     progress_bar = pba
   )
 
-  if (is_pkg_installed("openssl")) {
-
+  if (isTRUE(verbose)) {
     msg_ricu("Comparing checksums")
+  }
 
-    checks <- mapply(check_file_sha256, paths, chksums)
+  checks <- mapply(check_file_sha256, paths, chksums)
 
-    if (!all(checks)) {
-      warn_ricu(
-        c("Checksum mismatch for {qty(sum(!checks))} file{?s}:",
-          bullet(files[!checks])),
-        class = "checksum_mismatch", exdent = c(0L, rep(2L, sum(!checks)))
-      )
-    }
-
-  } else {
-
-    msg_ricu("The package openssl is required for comparing checksums.")
+  if (!all(checks)) {
+    warn_ricu(
+      c("Checksum mismatch for {qty(sum(!checks))} file{?s}:",
+        bullet(files[!checks])),
+      class = "checksum_mismatch", exdent = c(0L, rep(2L, sum(!checks)))
+    )
   }
 
   invisible(NULL)

@@ -16,31 +16,24 @@ knitr::opts_chunk$set(
 library(ricu)
 library(ggplot2)
 
-on_cran <- function() !identical(Sys.getenv("NOT_CRAN"), "true")
+srcs  <- c("mimic_demo", "eicu_demo")
+avail <- is_data_avail(srcs)
 
-create_filename <- function(base_dir, src) {
-  paste0(file.path(base_dir, "extdata", "vignettes", "uom", src), ".rds")
+srcs_avail <- function(x) all(avail[x])
+
+if (!srcs_avail(srcs)) {
+
+  msg <- paste(
+    "Note: Examples in this vignette require that one or more of datasets",
+    paste("`", srcs, "`", collapse = ", "), "are available. Chunks that",
+    "depend on certain datasets will not be evaluated if the corresponding",
+    "dataset is missing. In order to download data, have a look at",
+    "`?setup_src_data`."
+  )
+  msg <- paste(strwrap(msg), collapse="\n")
+  message(msg)
 }
 
-load_concepts <- function(concepts, src, ...) {
-
-  cached_file <- create_filename(system.file(package = "ricu"), src)
-
-  if (file.exists(cached_file) && on_cran()) {
-    return(readRDS(cached_file))
-  }
-
-  res <- ricu::load_concepts(concepts, src, ...)
-  dst <- create_filename(file.path("..", "inst"), src)
-
-  if (!dir.exists(dirname(dst))) {
-    dir.create(dirname(dst), recursive = TRUE)
-  }
-
-  saveRDS(res, dst, version = 2L)
-
-  res
-}
 ```
 
 ### Possible mismatch in units
@@ -53,25 +46,25 @@ All concepts that can be loaded with `load_concepts()` within `ricu` have been c
 
 For example, we take 5 different concepts:
 
-```{r concept-range}
-data_src <- c("mimic_demo", "eicu_demo")
+```{r concept-range, eval = srcs_avail(srcs)}
+srcs
 
 concepts <- c(
   "map", "lact" , "crea", "bili", "plt"
 )
 
-dat <- lapply(data_src,
+dat <- lapply(srcs,
   function(src) load_concepts(concepts, src, verbose = FALSE)
 )
 
-names(dat) <- data_src
+names(dat) <- srcs
 
 dat
 ```
 
 We plot the density of the features and report their median values:
 
-```{r uom, echo = FALSE, fig.width = 6}
+```{r uom, echo = FALSE, fig.width = 6, eval = srcs_avail(srcs)}
 take_quants <- function(x, lwr, upr) {
   qq <- quantile(x, probs = c(lwr, upr), na.rm = TRUE)
   x[!is.na(x) & x >= qq[1L] & x <= qq[2L]]

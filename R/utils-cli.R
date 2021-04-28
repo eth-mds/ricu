@@ -3,28 +3,20 @@ is_interactive <- function() {
   !isTRUE(getOption('knitr.in.progress')) && interactive()
 }
 
-progress_init <- function(lenth = NULL, msg = "loading", ...) {
+progress_init <- function(length = NULL, msg = "loading", what = TRUE, ...) {
 
-  cb_fun <- function(x) {
+  if (is_interactive() && is_pkg_installed("progress") && length > 1L) {
 
-    for (out in combine_messages(x)) {
-      msg_ricu(bullet(out$head), "progress_header", exdent = 2L)
-      for (msg in out$msgs) {
-        msg_ricu(bullet(msg, level = 2L), "progress_body", indent = 2L,
-                 exdent = 4L)
-      }
+    if (isTRUE(what)) {
+      fmt <- ":what [:bar] :percent"
+    } else {
+      fmt <- "[:bar] :percent"
     }
 
-    cli::cli_rule()
-  }
-
-  if (is_interactive() && is_pkg_installed("progress") && lenth > 1L) {
-
-    res <- progress::progress_bar$new(
-      format = ":what [:bar] :percent", total = lenth, callback = cb_fun, ...
-    )
+    res <- progress::progress_bar$new(format = fmt, total = length, ...)
 
   } else {
+
     res <- NULL
   }
 
@@ -63,13 +55,12 @@ progress_tick <- function(info = NULL, progress_bar = NULL, length = 1L) {
       token <- sprintf("%-15s", info)
     }
 
-    progress_bar$tick(len = length, tokens = list(what = token))
-    attr(progress_bar, "token") <- token
-
-
+    attr(progress_bar, "token")    <- token
     attr(progress_bar, "output")   <- combine_messages(progress_bar)
     attr(progress_bar, "header")   <- info
     attr(progress_bar, "messages") <- character(0L)
+
+    progress_bar$tick(len = length, tokens = list(what = token))
 
   } else if (not_null(old_token)) {
 
@@ -117,6 +108,7 @@ combine_messages <- function(x) {
 #'
 #' tryCatch(msg_progress("Foo", "bar"), msg_progress = capt_fun)
 #'
+#' @rdname cli_output
 #' @export
 msg_progress <- function(..., envir = parent.frame()) {
   msg_ricu(.makeMessage(...), "msg_progress", envir = envir)
@@ -156,9 +148,23 @@ with_progress <- function(expr, progress_bar = NULL) {
     msg_progress = create_progress_handler(progress_bar)
   )
 
-  if (inherits(progress_bar, "progress_bar") && !progress_bar$finished) {
-    progress_bar$update(1)
-  } else if (is.null(progress_bar)) {
+  if (inherits(progress_bar, "progress_bar")) {
+
+    if (!progress_bar$finished) {
+      progress_bar$update(1)
+    }
+
+    for (out in combine_messages(progress_bar)) {
+      msg_ricu(bullet(out$head), "progress_header", exdent = 2L)
+      for (msg in out$msgs) {
+        msg_ricu(bullet(msg, level = 2L), "progress_body", indent = 2L,
+                 exdent = 4L)
+      }
+    }
+
+  }
+
+  if (!isFALSE(progress_bar)) {
     cli::cli_rule()
   }
 
@@ -172,6 +178,8 @@ big_mark <- function(x, ...) {
 
 quote_bt <- function(x) encodeString(x, quote = "`")
 
+enbraket <- function(x) paste0("[", x, "]")
+
 concat <- function(...) paste0(..., collapse = ", ")
 
 prcnt <- function(x, tot = sum(x)) {
@@ -183,9 +191,15 @@ bullet <- function(..., level = 1L) {
   paste0(switch(level, symbol$bullet, symbol$circle, "-"), " ", ...)
 }
 
+#' @param msg String valued message
+#' @param envir Environment in this objects from `msg` are evaluated
+#' @param indent,exdent Vector valued and mapped to [fansi::strwrap2_ctl()]
+#'
+#' @rdname cli_output
+#' @export
 fmt_msg <- function(msg, envir = parent.frame(), indent = 0L, exdent = 0L) {
 
-  msg <- chr_ply(msg, pluralize, .envir = envir)
+  msg <- chr_ply(msg, cli::pluralize, .envir = envir)
   msg <- map(fansi::strwrap2_ctl, msg, indent = indent, exdent = exdent,
              MoreArgs = list(simplify = TRUE, wrap.always = TRUE))
 
@@ -276,98 +290,4 @@ stop_generic <- function(x, fun) {
 
   stop_ricu("No applicable method for generic function `{fun}()` and
              class{?es} {quote_bt(class(x))}.", class = "generic_no_fun")
-}
-
-# the following functions are added until `cli` is next updated on CRAN
-# see https://github.com/r-lib/cli/pull/155
-
-pluralize <- function(..., .envir = parent.frame(),
-                      .transformer = glue::identity_transformer) {
-
-  values <- new.env(parent = emptyenv())
-  values$empty <- new_names(length = 7L)
-  values$qty <- values$empty
-  values$num_subst <- 0L
-  values$postprocess <- FALSE
-  values$pmarkers <- list()
-
-  tf <- function(text, envir) {
-    if (substr(text, 1, 1) == "?") {
-      if (identical(values$qty, values$empty)) {
-        values$postprocess <- TRUE
-        id <- new_names(length = 7L)
-        values$pmarkers[[id]] <- text
-        return(id)
-      } else {
-        return(process_plural(make_quantity(values$qty), text))
-      }
-
-    } else {
-      values$num_subst <- values$num_subst + 1
-      qty <- .transformer(text, envir)
-      values$qty <- qty
-      return(inline_collapse(qty))
-    }
-  }
-
-  raw <- glue::glue(..., .envir = .envir, .transformer = tf)
-  post_process_plurals(raw, values)
-}
-
-make_quantity <- function(object) {
-  val <- if (is.numeric(object)) {
-    stopifnot(length(object) == 1)
-    as.integer(object)
-  } else {
-    length(object)
-  }
-}
-
-process_plural <- function(qty, code) {
-  parts <- strsplit(str_tail(code), "/", fixed = TRUE)[[1]]
-  if (length(parts) == 1) {
-    if (qty != 1) parts[1] else ""
-  } else if (length(parts) == 2) {
-    if (qty == 1) parts[1] else parts[2]
-  } else if (length(parts) == 3) {
-    if (qty == 0) {
-      parts[1]
-    } else if (qty == 1) {
-      parts[2]
-    } else {
-      parts[3]
-    }
-  } else {
-    stop("Invalid pluralization directive: `", code, "`")
-  }
-}
-
-post_process_plurals <- function(str, values) {
-  if (!values$postprocess) return(str)
-  if (values$num_subst == 0) {
-    stop("Cannot pluralize without a quantity")
-  }
-  if (values$num_subst != 1) {
-    stop("Multiple quantities for pluralization")
-  }
-
-  qty <- make_quantity(values$qty)
-  for (i in seq_along(values$pmarkers)) {
-    mark <- values$pmarkers[i]
-    str <- sub(names(mark), process_plural(qty, mark[[1]]), str)
-  }
-
-  str
-}
-
-str_tail <- function(x) {
-  substr(x, 2, nchar(x))
-}
-
-inline_collapse <- function(x) {
-  if (length(x) >= 3) {
-    glue::glue_collapse(x, sep = ", ", last = ", and ")
-  } else {
-    glue::glue_collapse(x, sep = ", ", last = " and ")
-  }
 }

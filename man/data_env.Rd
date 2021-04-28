@@ -9,6 +9,7 @@
 \alias{eicu}
 \alias{eicu_demo}
 \alias{hirid}
+\alias{aumc}
 \title{ICU datasets}
 \format{
 The exported \code{data} environment contains all datasets that have been made
@@ -35,7 +36,9 @@ either downloaded in full (\href{https://physionet.org/content/mimiciii/1.4/}{MI
 third data set is available only in full (\href{https://physionet.org/content/hirid/1.0/}{HiRID }). While demo data sets are
 freely available, full download requires credentialed access which can be
 gained by applying for an account with \href{https://physionet.org/register/}{PhysioNet }. Even though registration is required,
-the described datasets are all publicly available.
+the described datasets are all publicly available. With \href{https://amsterdammedicaldatascience.nl/#amsterdamumcdb}{AmsterdamUMCdb }, a non-PhysioNet
+hosted data source is available as well. As with the PhysioNet datasets,
+access is public but has to be granted by the data collectors.
 }
 \details{
 Setting up a dataset for use with \code{ricu} requires a configuration object.
@@ -61,32 +64,32 @@ explored by typing its name into the console and individual tables can be
 inspected using the \code{$} function. For example for the MIMIC-III demo
 dataset and the \code{icustays} table, this gives\if{html}{\out{<div class="r">}}\preformatted{mimic_demo
 }\if{html}{\out{</div>}}\preformatted{## <mimic_demo_env[25]>
-##           icustays     procedures_icd              d_cpt            d_items 
-##         [136 x 12]          [506 x 5]          [134 x 9]      [12,487 x 10] 
-##      diagnoses_icd     datetimeevents        chartevents         admissions 
-##        [1,761 x 5]      [15,551 x 14]     [758,355 x 15]         [129 x 19] 
-##     inputevents_cv         d_labitems microbiologyevents       outputevents 
-##      [34,799 x 22]          [753 x 6]       [2,003 x 16]      [11,320 x 13] 
-## procedureevents_mv            callout    d_icd_diagnoses          cptevents 
-##         [753 x 25]          [77 x 24]       [14,567 x 4]       [1,579 x 12] 
-##      prescriptions         caregivers           drgcodes          transfers 
-##      [10,398 x 19]        [7,567 x 4]          [297 x 8]         [524 x 13] 
-##           patients          labevents   d_icd_procedures           services 
-##          [100 x 8]       [76,074 x 9]        [3,882 x 4]          [163 x 6] 
-##     inputevents_mv 
-##      [13,224 x 31]
+##         admissions            callout         caregivers        chartevents 
+##         [129 x 19]          [77 x 24]        [7,567 x 4]     [758,355 x 15] 
+##          cptevents              d_cpt    d_icd_diagnoses   d_icd_procedures 
+##       [1,579 x 12]          [134 x 9]       [14,567 x 4]        [3,882 x 4] 
+##            d_items         d_labitems     datetimeevents      diagnoses_icd 
+##      [12,487 x 10]          [753 x 6]      [15,551 x 14]        [1,761 x 5] 
+##           drgcodes           icustays     inputevents_cv     inputevents_mv 
+##          [297 x 8]         [136 x 12]      [34,799 x 22]      [13,224 x 31] 
+##          labevents microbiologyevents       outputevents           patients 
+##       [76,074 x 9]       [2,003 x 16]      [11,320 x 13]          [100 x 8] 
+##      prescriptions procedureevents_mv     procedures_icd           services 
+##      [10,398 x 19]         [753 x 25]          [506 x 5]          [163 x 6] 
+##          transfers 
+##         [524 x 13]
 }\if{html}{\out{<div class="r">}}\preformatted{mimic_demo$icustays
 }\if{html}{\out{</div>}}\preformatted{## # <mimic_tbl>: [136 x 12]
 ## # ID options:  subject_id (patient) < hadm_id (hadm) < icustay_id (icustay)
-## # Defaults:    intime (index), last_careunit (value)
-## # Time vars:   intime, outtime
+## # Defaults:    `intime` (index), `last_careunit` (val)
+## # Time vars:   `intime`, `outtime`
 ##     row_id subject_id hadm_id icustay_id dbsource first_careunit last_careunit
 ##      <int>      <int>   <int>      <int> <chr>    <chr>          <chr>
-## 1    12742      10006  142345     206504 carevue  MICU           MICU
-## 2    12747      10011  105331     232110 carevue  MICU           MICU
-## 3    12749      10013  165520     264446 carevue  MICU           MICU
-## 4    12754      10017  199207     204881 carevue  CCU            CCU
-## 5    12755      10019  177759     228977 carevue  MICU           MICU
+##   1  12742      10006  142345     206504 carevue  MICU           MICU
+##   2  12747      10011  105331     232110 carevue  MICU           MICU
+##   3  12749      10013  165520     264446 carevue  MICU           MICU
+##   4  12754      10017  199207     204881 carevue  CCU            CCU
+##   5  12755      10019  177759     228977 carevue  MICU           MICU
 ## ...
 ## 132  42676      44083  198330     286428 metavis~ CCU            CCU
 ## 133  42691      44154  174245     217724 metavis~ MICU           MICU
@@ -122,7 +125,7 @@ Much care has been taken to make \code{ricu} extensible to new datasets. For
 example the publicly available ICU database \href{https://www.amsterdammedicaldatascience.nl/#amsterdamumcdb}{AmsterdamUMCdb }
 provided by the Amsterdam University Medical Center, currently is not part
 of the core datasets of \code{ricu}, but code for integrating this dataset is
-available on \href{https://github.com/septic-tank/aumc}{github}.
+available on \href{https://github.com/eth-mds/aumc}{github}.
 }
 \section{MIMIC-III}{
 
@@ -173,6 +176,19 @@ period from January 2008 to June 2016. Dependent on the type of measurement,
 time resolution can be on the order of 2 minutes.
 }
 
+\section{AmsterdamUMCdb}{
+
+With similar time-resolution (for vital-sign measurements) as HiRID,
+\href{https://amsterdammedicaldatascience.nl/#amsterdamumcdb}{AmsterdamUMCdb}
+contains data from 23,000 admissions of adult patients from 2003-2016 to
+the department of Intensive Care, of Amsterdam University Medical Center.
+In total, nearly 10^9^ individual observations consisting of vitals signs,
+clinical scoring systems, device data and lab results data, as well as
+nearly 5*10^6^ million medication entries, alongside de-identified
+demographic information corresponding to the 20,000 individual patients
+is spread over 7 tables.
+}
+
 \references{
 Johnson, A., Pollard, T., & Mark, R. (2016). MIMIC-III Clinical Database
 (version 1.4). PhysioNet. https://doi.org/10.13026/C2XW26.
@@ -197,5 +213,12 @@ PhysioNet. https://doi.org/10.13026/hz5m-md48.
 Hyland, S.L., Faltys, M., Hüser, M. et al. Early prediction of circulatory
 failure in the intensive care unit using machine learning. Nat Med 26,
 364–373 (2020). https://doi.org/10.1038/s41591-020-0789-4
+
+Thoral PJ, Peppink JM, Driessen RH, et al (2020) AmsterdamUMCdb: The First
+Freely Accessible European Intensive Care Database from the ESICM Data
+Sharing Initiative. https://www.amsterdammedicaldatascience.nl.
+
+Elbers, Dr. P.W.G. (Amsterdam UMC) (2019): AmsterdamUMCdb v1.0.2. DANS.
+https://doi.org/10.17026/dans-22u-f8vd
 }
 \keyword{datasets}

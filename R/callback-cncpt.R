@@ -94,6 +94,10 @@ check_interval <- function(dat, ival = NULL) {
   invisible(ival)
 }
 
+rename_data_var <- function(new_name, old_name = NULL) {
+  function(...) rename_cols(..1, new_name, coalesce(old_name, data_var(..1)))
+}
+
 #' Concept callback functions
 #'
 #' Owing to increased complexity and more diverse applications, recursive
@@ -137,14 +141,16 @@ check_interval <- function(dat, ival = NULL) {
 #' }{\out{\textsubscript{2}}}{\ifelse{html}{\out{<sub>2</sub>}}{2}} with 21,
 #' the percentage (by volume) of oxygen in (tropospheric) air.
 #'
-#' ## `vent`
-#' Building on the atomic concepts `vent_start` and `vent_end`, an binary
-#' indicator for ventilation status is constructed by combining start and end
-#' events that are separated by at most `match_win` and at least `min_length`.
-#' Time-points (as determined by `interval`) that fall into such ventilation
-#' windows are set to `TRUE`, while missingness (`NA`) or `FALSE` indicate no
-#' mechanical ventilation. Currently, no clear distinction between invasive
-#' an non-invasive ventilation is made.
+#' ## `vent_dur` and `vent_ind`
+#' Building on the atomic concepts `vent_start` and `vent_end`, `vent_dur`
+#' determines time windows during which patients are mechanically ventilated
+#' by combining start and end events that are separated by at most `match_win`
+#' and at least `min_length`. Durations can be converted into an indicator
+#' varaible represented by `vent_ind`, where time-points (as determined by
+#' `interval`) that fall into such ventilation windows are set to `TRUE`,
+#' while missingness (`NA`) or `FALSE` indicate no mechanical ventilation.
+#' Currently, no clear distinction between invasive an non-invasive
+#' ventilation is made.
 #'
 #' ## `sed`
 #' In order to construct an indicator for patient sedation, information from
@@ -205,42 +211,11 @@ pafi <- function(..., match_win = hours(2L),
 
   mode <- match.arg(mode)
 
+  assert_that(is.flag(fix_na_fio2))
+
   cnc <- c("po2", "fio2")
   res <- collect_dots(cnc, interval, ...)
-
-  assert_that(is_interval(match_win), match_win > check_interval(res),
-              is.flag(fix_na_fio2))
-
-  if (identical(mode, "match_vals")) {
-
-    on12 <- paste(meta_vars(res[[1L]]), "==", meta_vars(res[[2L]]))
-    on21 <- paste(meta_vars(res[[2L]]), "==", meta_vars(res[[1L]]))
-
-    res <- rbind(
-      res[[1L]][res[[2L]], on = on12, roll = match_win],
-      res[[2L]][res[[1L]], on = on21, roll = match_win]
-    )
-    res <- unique(res)
-
-  } else {
-
-    res <- reduce(merge, res, all = TRUE)
-
-    if (identical(mode, "fill_gaps")) {
-      res <- fill_gaps(res)
-    }
-
-    win_expr <- substitute(
-      list(po2 = min_fun(get(cnc[1L])), fio2 = max_fun(get(cnc[2L]))),
-      list(min_fun = min_or_na, max_fun = max_or_na)
-    )
-
-    res <- slide(res, !!win_expr, before = match_win, full_window = FALSE)
-  }
-
-  if (fix_na_fio2) {
-    res <- res[is.na(get(cnc[2L])), c(cnc[2L]) := 21]
-  }
+  res <- match_fio2(res, match_win, mode, if (fix_na_fio2) cnc[2L] else NULL)
 
   res <- res[!is.na(get(cnc[1L])) & !is.na(get(cnc[2L])) & get(cnc[2L]) != 0, ]
   res <- res[, c("pafi") := 100 * get(cnc[1L]) / get(cnc[2L])]
@@ -249,17 +224,78 @@ pafi <- function(..., match_win = hours(2L),
   res
 }
 
+#' @rdname callback_cncpt
+#' @export
+safi <- function(..., match_win = hours(2L),
+                 mode = c("match_vals", "extreme_vals", "fill_gaps"),
+                 fix_na_fio2 = TRUE, interval = NULL) {
+
+  mode <- match.arg(mode)
+
+  assert_that(is.flag(fix_na_fio2))
+
+  cnc <- c("o2sat", "fio2")
+  res <- collect_dots(cnc, interval, ...)
+  res <- match_fio2(res, match_win, mode, if (fix_na_fio2) cnc[2L] else NULL)
+
+  res <- res[!is.na(get(cnc[1L])) & !is.na(get(cnc[2L])) & get(cnc[2L]) != 0, ]
+  res <- res[, c("safi") := 100 * get(cnc[1L]) / get(cnc[2L])]
+  res <- rm_cols(res, cnc)
+
+  res
+}
+
+match_fio2 <- function(x, match_win, mode, fio2 = NULL) {
+
+  assert_that(is_interval(match_win), match_win > check_interval(x))
+
+  if (identical(mode, "match_vals")) {
+
+    on12 <- paste(meta_vars(x[[1L]]), "==", meta_vars(x[[2L]]))
+    on21 <- paste(meta_vars(x[[2L]]), "==", meta_vars(x[[1L]]))
+
+    x <- rbind(
+      x[[1L]][x[[2L]], on = on12, roll = match_win],
+      x[[2L]][x[[1L]], on = on21, roll = match_win]
+    )
+    x <- unique(x)
+
+  } else {
+
+    x <- reduce(merge, x, all = TRUE)
+
+    if (identical(mode, "fill_gaps")) {
+      x <- fill_gaps(x)
+    } else {
+      assert_that(identical(mode, "extreme_vals"))
+    }
+
+    win_expr <- substitute(
+      list(o2sat = min_fun(get("o2sat")), fio2 = max_fun(get("fio2"))),
+      list(min_fun = min_or_na, max_fun = max_or_na)
+    )
+
+    x <- slide(x, !!win_expr, before = match_win, full_window = FALSE)
+  }
+
+  if (not_null(fio2)) {
+    x <- set(x, which(is.na(x[[fio2]])), fio2, 21)
+  }
+
+  x
+}
+
 #' @param min_length Minimal time span between a ventilation start and end
 #' time
 #'
 #' @rdname callback_cncpt
 #' @export
 #'
-vent <- function(..., match_win = hours(6L), min_length = mins(10L),
-                 interval = NULL) {
+vent_dur <- function(..., match_win = hours(6L), min_length = mins(30L),
+                     interval = NULL) {
 
   subset_true <- function(x, col) x[is_true(get(col))]
-  copy_time <- function(x, new, old) x[, c(new) := get(old)]
+  calc_dur <- function(x, y) fifelse(is.na(y), x + match_win, y - x)
 
   final_int <- interval
 
@@ -281,31 +317,46 @@ vent <- function(..., match_win = hours(6L), min_length = mins(10L),
   units(min_length) <- units(interval)
 
   res <- Map(subset_true, res, cnc)
-  sst <- c("start_time", "stop_time")
+  var <- "vent_dur"
 
   if (has_rows(res[[2L]])) {
 
-    res <- Map(copy_time, res, sst, chr_ply(res, index_var))
-    jon <- unlist(
-      do.call(map, c(paste, rev(lapply(res, meta_vars)), sep = " == "))
-    )
+    idx_vars  <- chr_ply(res, index_var)
+    res[[2L]] <- res[[2L]][, c(var, idx_vars[2L]) := list(
+      get(idx_vars[2L]), get(idx_vars[2L]) - mins(1L))]
+
+    jon <- chr_ply(do.call(map, c("c", lapply(rev(res), meta_vars))), paste,
+                   collapse = " == ")
+
 
     res <- res[[2L]][res[[1L]], roll = -match_win, on = jon]
-    res <- res[is.na(get(sst[2L])), c(sst[2L]) := get(sst[1L]) + match_win]
+    res <- res[, c(var, cnc) := list(
+      calc_dur(get(idx_vars[2L]), get(var)), NULL, NULL)]
+    res <- res[get(var) >= min_length, ]
 
   } else {
 
-    ind <- index_var(res[[1L]])
-
-    res <- copy(res[[1L]])
-    res <- res[, c(sst) := list(get(ind), get(ind) + match_win)]
+    res <- res[[1L]][, c(var, "vent_start") := list(match_win, NULL)]
   }
 
-  res <- res[get(sst[2L]) - get(sst[1L]) >= min_length, ]
   res <- change_interval(res, final_int, by_ref = TRUE)
 
-  res <- unique(expand(res, start_var = sst[1L], end_var = sst[2L]))
-  res <- res[, c("vent") := TRUE]
+  aggregate(res, "max")
+}
+
+#' @rdname callback_cncpt
+#' @export
+#'
+vent_ind <- function(..., interval = NULL) {
+
+  cnc <- "vent_dur"
+  res <- collect_dots(cnc, interval, ...)
+  idx <- index_var(res)
+  res <- res[, c(cnc) := get(idx) + get(cnc)]
+
+  res <- expand(res, idx, cnc)
+  res <- unique(res)
+  res <- res[, c("vent_ind") := TRUE]
 
   res
 }
@@ -336,7 +387,6 @@ sed <- function(..., interval = NULL) {
 #'
 gcs <- function(..., valid_win = hours(6L), set_sed_max = TRUE,
                 set_na_max = TRUE, interval = NULL) {
-
 
   cnc <- c("egcs", "vgcs", "mgcs", "tgcs", "sed")
   res <- collect_dots(cnc, interval, ..., merge_dat = TRUE)
@@ -393,6 +443,11 @@ urine24 <- function(..., min_win = hours(12L), limits = NULL,
   res      <- collect_dots("urine", interval, ...)
   interval <- check_interval(res)
 
+  if (nrow(res) == 0L) {
+    res <- rename_cols(res, "urine24", "urine")
+    return(res)
+  }
+
   assert_that(is_interval(min_win), min_win > interval, min_win <= hours(24L))
 
   min_steps   <- ceiling(convert_dt(min_win) / as.double(interval))
@@ -428,16 +483,25 @@ vaso60 <- function(..., max_gap = mins(5L), interval = NULL) {
     final_int <- interval
   }
 
-  assert_that(is_interval(final_int), is_interval(max_gap))
+  assert_that(is_interval(final_int))
+
+  if (any(int_ply(dat, nrow) == 0L)) {
+
+    res <- dat[["rate"]]
+    res <- rename_cols(res[0L], sub, data_vars(res), pattern = "_rate$",
+                       replacement = "60")
+    res <- change_interval(res, final_int, by_ref = TRUE)
+
+    return(res)
+  }
 
   dur <- dat[["dur"]]
   dva <- data_vars(dur)
   idx <- index_var(dur)
   dur <- dur[get(dva) > 0, ]
 
-  dur <- dur[, c(dva) := get(idx) + get(dva) + max_gap]
-  dur <- merge_ranges(dur, idx, dva, by_ref = TRUE)
-  dur <- dur[, c(dva) := get(dva) - max_gap]
+  dur <- dur[, c(dva) := get(idx) + get(dva)]
+  dur <- merge_ranges(dur, idx, dva, max_gap = max_gap, by_ref = TRUE)
   dur <- dur[get(dva) - get(idx) >= hours(1L), ]
 
   rate <- dat[["rate"]]
@@ -452,8 +516,8 @@ vaso60 <- function(..., max_gap = mins(5L), interval = NULL) {
 
   res <- rate[dur, on = join, nomatch = NULL]
   res <- rm_cols(res, temp, by_ref = TRUE)
-  res <- rename_cols(res, sub("_rate$", "60", data_vars(res)), data_vars(res),
-                     by_ref = TRUE)
+  res <- rename_cols(res, sub, data_vars(res), by_ref = TRUE,
+                     pattern = "_rate$", replacement = "60")
   res <- change_interval(res, final_int, by_ref = TRUE)
 
   if (max_gap < 0L) {
@@ -461,4 +525,91 @@ vaso60 <- function(..., max_gap = mins(5L), interval = NULL) {
   }
 
   aggregate(res, "max")
+}
+
+#' @rdname callback_cncpt
+#' @export
+vaso_ind <- function(..., interval = NULL) {
+
+  cnc <- c("dopa_dur", "norepi_dur", "dobu_dur", "epi_dur")
+  res <- collect_dots(cnc, interval, ..., merge_dat = TRUE)
+  unt <- time_unit(res)
+
+  res <- res[, c(cnc) := lapply(.SD, as.difftime, units = unt), .SDcols = cnc]
+  res <- res[, c("vaso_ind", cnc) := list(pmax(
+    get("dopa_dur"), get("norepi_dur"), get("dobu_dur"), get("epi_dur"),
+    na.rm = TRUE), NULL, NULL, NULL, NULL)
+  ]
+
+  res <- expand(res, index_var(res), "vaso_ind")
+  res <- unique(res)
+  res <- res[, c("vaso_ind") := TRUE]
+
+  res
+}
+
+#' @rdname callback_cncpt
+#' @export
+supp_o2 <- function(..., interval = NULL) {
+
+  cnc <- c("vent_ind", "fio2")
+  res <- collect_dots(cnc, interval, ..., merge_dat = TRUE)
+
+  res <- res[, c("supp_o2", "vent_ind", "fio2") := list(
+    get("vent_ind") | get("fio2") > 21, NULL, NULL
+  )]
+
+  res
+}
+
+map_vals <- function(pts, vals) {
+  function(x) pts[findInterval(x, vals, left.open = TRUE) + 1]
+}
+
+#' @rdname callback_cncpt
+#' @export
+avpu <- function(..., interval = NULL) {
+
+  avpu_map <- map_vals(c(NA, "U", "P", "V", "A", NA), c(2, 3, 9, 13, 15))
+
+  res <- collect_dots("gcs", interval, ...)
+  res <- res[, c("avpu", "gcs") := list(avpu_map(get("gcs")), NULL)]
+
+  res
+}
+
+#' @rdname callback_cncpt
+#' @export
+bmi <- function(..., interval = NULL) {
+
+  cnc <- c("weight", "height")
+  res <- collect_dots(cnc, interval, ..., merge_dat = TRUE)
+  res <- res[, c("bmi", cnc) := list(
+    get("weight") / (get("height") / 100) ^ 2, NULL, NULL
+  )]
+
+  res <- filter_bounds(res, "bmi", 10, 100)
+
+  setattr(data_col(res), "units", "kg/m^2")
+
+  res
+}
+
+#' @rdname callback_cncpt
+#' @export
+norepi_equiv <- function(..., interval = NULL) {
+
+  multiply_rename <- function(x, fact, col) {
+    x <- x[, c(col) := get(col) * fact]
+    x <- rename_cols(x, "norepi_equiv", col)
+    x
+  }
+
+  cnc <- c("epi_rate", "norepi_rate", "dopa_rate", "adh_rate", "phn_rate")
+  res <- collect_dots(cnc, interval, ...)
+  res <- map(multiply_rename, res, 1 / c(1, 1, 150, 0.4, 10), cnc)
+
+  res <- rbind_lst(res, fill = TRUE)
+
+  aggregate(res)
 }

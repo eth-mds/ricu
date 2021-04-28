@@ -494,17 +494,104 @@ locf <- function(x) {
 }
 
 merge_ranges <- function(x, lwr_var = index_var(x), upr_var = data_vars(x),
-                         by_ref = FALSE) {
+                         max_gap = 0, by_ref = FALSE) {
 
-  assert_that(is_dt(x), has_col(x, lwr_var), has_col(x, upr_var))
+  assert_that(is_dt(x), has_col(x, lwr_var), has_col(x, upr_var),
+              is_scalar(max_gap), max_gap == 0 || is_interval(max_gap))
 
   tmp_var <- paste0("i.", upr_var)
 
   assert_that(!has_col(x, tmp_var))
 
-  x <- sort(x, by = c(id_vars(x), lwr_var, upr_var), by_ref = by_ref)
+  if (!isTRUE(by_ref)) {
+    x <- copy(x)
+  }
+
+  if (max_gap != 0) {
+    x <- x[, c(upr_var) := get(upr_var) + max_gap]
+  }
+
+  x <- sort(x, by = c(id_vars(x), lwr_var, upr_var), by_ref = TRUE)
   x <- reclass_tbl(data.table::foverlaps(x, x, mult = "first"), as_ptype(x))
-  x <- x[, setNames(list(max(get(tmp_var))), upr_var), by = c(meta_vars(x))]
+
+  expr <- quote(list(max(get(tmp_var))))
+  names(expr) <- c("", upr_var)
+
+  x <- x[, eval(expr), by = c(meta_vars(x))]
+
+  if (max_gap != 0) {
+    x <- x[, c(upr_var) := get(upr_var) - max_gap]
+  }
+
+  x
+}
+
+group_measurements <- function(x, max_gap = hours(6L), group_var = "grp_var") {
+
+  grp_calc  <- function(x) {
+
+    tmp <- rle(x <= max_gap)
+
+    val <- tmp[["values"]]
+    len <- tmp[["lengths"]]
+
+    len[ val] <- len[ val] + 1L
+    len[!val] <- len[!val] - 1L
+
+    if (!val[1L]) len[1L] <- len[1L] + 1L
+
+    res <- rep.int(ifelse(val, len, 1L), ifelse(val, 1L, len))
+    rep(seq_along(res), res)
+  }
+
+  assert_that(is_ts_tbl(x), is_interval(max_gap), is_scalar(max_gap),
+              is.string(group_var), is_disjoint(group_var, colnames(x)))
+
+  id_vars   <- id_vars(x)
+  index_var <- index_var(x)
+
+  if (interval(x) > max_gap) {
+    warn_ricu("splitting durations by gaps of length {format(max_gap)}
+               using data with a time resolution of {format(interval(x))}")
+  }
+
+  x <- x[, c(group_var) := padded_diff(get(index_var), Inf),
+         by = c(id_vars)]
+  x <- x[, c(group_var) := grp_calc(get(group_var))]
+
+  x
+}
+
+padded_diff <- function(x, final) c(diff(x), final)
+
+trunc_time <- function(x, min, max) {
+
+  if (not_null(min)) {
+    replace(x, x < min, min)
+  }
+
+  if (not_null(max)) {
+    replace(x, x > max, max)
+  }
+
+  x
+}
+
+create_intervals <- function(x, by_vars = id_vars(x), overhang = hours(1L),
+                             max_len = hours(6L), end_var = "endtime") {
+
+  assert_that(is_ts_tbl(x), has_cols(x, by_vars),
+              is_interval(overhang), is_scalar(overhang),
+              is_interval(max_len), is_scalar(max_len),
+              is.string(end_var), is_disjoint(end_var, colnames(x)))
+
+  idx_var <- index_var(x)
+  inteval <- interval(x)
+
+  x <- x[, c(end_var) := padded_diff(get(idx_var), overhang), by = c(by_vars)]
+  x <- x[, c(end_var) := `units<-`(
+         trunc_time(get(end_var), 0L, max_len) - inteval, units(inteval))]
+  x <- x[, c(end_var) := get(idx_var) + get(end_var)]
 
   x
 }

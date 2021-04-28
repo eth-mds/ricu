@@ -5,7 +5,7 @@
 #' @importFrom rlang as_label
 NULL
 
-assert_that <- function(..., env = parent.frame(), msg = NULL) {
+assert_that <- function(..., env = parent.frame(), msg = NULL, class = NULL) {
 
   res <- see_if(..., env = env)
 
@@ -19,7 +19,7 @@ assert_that <- function(..., env = parent.frame(), msg = NULL) {
     msg <- fmt_msg(msg, envir = env)
   }
 
-  cls <- c(attr(msg, "assert_class"), "assertError", "ricu_err")
+  cls <- c(class, attr(msg, "assert_class"), "assertError", "ricu_err")
 
   rlang::abort(msg, class = cls)
 }
@@ -48,6 +48,13 @@ is_scalar <- function(x) is.atomic(x) && length(x) == 1L
 
 on_failure(is_scalar) <- function(call, env) {
   format_assert("{as_label(call$x)} is not a scalar", "is_scalar_assert")
+}
+
+is_number <- function(x) is_scalar(x) && is.numeric(x)
+
+on_failure(is_number) <- function(call, env) {
+  format_assert("{as_label(call$x)} is not a scalar number",
+                "is_number_assert")
 }
 
 is_intish <- function(x) {
@@ -91,7 +98,8 @@ in_failure <- function(call, env) {
     format_assert(
       c("None of the following were found among the provided options.
          Did you possibly mean:",
-         bullet(concat("'", sug, "'"), " instead of '", names(sug), "'")),
+         bullet(chr_ply(sug, function(x) concat("'", x, "'")), " instead of '",
+                names(sug), "'")),
       "are_in_assert", exdent = c(0L, rep_along(2L, sug)))
   }
 }
@@ -104,7 +112,7 @@ is_in <- function(x, opts, na_rm = FALSE) {
 
 on_failure(is_in) <- in_failure
 
-has_col <- function(x, cols) has_cols(x, cols, 1L)
+has_col <- function(x, col) has_cols(x, col, 1L)
 
 has_cols <- function(x, cols, length = NA) {
   if (is.na(length)) {
@@ -142,7 +150,7 @@ on_failure(has_interval) <- function(call, env) {
 }
 
 is_interval <- function(x) {
-  assert_that(is_difftime(x), has_length(x)) && all(x >= 0)
+  assert_that(is_difftime(x), has_length(x)) && all(x >= 0, na.rm = TRUE)
 }
 
 on_failure(is_interval) <- function(call, env) {
@@ -172,7 +180,7 @@ obeys_interval <- function(x, interval, na_rm = TRUE, tolerance = secs(1e-3)) {
   assert_that(
     is_difftime(x), is_scalar(interval), is_interval(interval),
     is_scalar(tolerance), is_interval(tolerance)
-  ) && all(
+  ) && is.na(interval) || all(
     as.double(x) %% as.double(interval, units = units(x)) <
       as.double(tolerance, units = units(x)), na.rm = na_rm
   )
@@ -234,7 +242,7 @@ on_failure(all_map) <- function(call, env) {
 all_null <- function(x) all_fun(x, is.null)
 
 on_failure(all_null) <- function(call, env) {
-  format_assert("some of {as_label(call$x)} are not NULL", "all_null_assert")
+  format_assert("some of {as_label(call$x)} are not `NULL`", "all_null_assert")
 }
 
 same_length <- function(x, y) identical(length(x), length(y))
@@ -273,13 +281,14 @@ on_failure(null_or) <- function(call, env) {
 }
 
 evals_to_fun <- function(x) {
-  assert_that(is.string(x)) &&
+  is.function(x) || (is.string(x) &&
     is.function(tryCatch(eval(parse(text = x)), error = function(e) NULL))
+  )
 }
 
 on_failure(evals_to_fun) <- function(call, env) {
   format_assert(
-    "{as_label(call$x)} does not evaluate to a function",
+    "{as_label(call$x)} is neither a function nor evaluates to a function",
     "evals_fun_assert"
   )
 }

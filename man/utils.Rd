@@ -9,7 +9,6 @@
 \alias{is_false}
 \alias{last_elem}
 \alias{first_elem}
-\alias{replace_na}
 \title{Utility functions}
 \usage{
 min_or_na(x)
@@ -27,15 +26,11 @@ is_false(x)
 last_elem(x)
 
 first_elem(x)
-
-replace_na(x, val, ...)
 }
 \arguments{
 \item{x}{Object to use}
 
-\item{val}{Value to compare against}
-
-\item{...}{Forwarded to other methods}
+\item{val}{Value to compare against or to use as replacement}
 }
 \value{
 \itemize{

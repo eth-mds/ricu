@@ -4,12 +4,9 @@
 \alias{attach_src}
 \alias{attach_src.src_cfg}
 \alias{attach_src.character}
+\alias{detach_src}
 \alias{setup_src_env}
 \alias{setup_src_env.src_cfg}
-\alias{new_src_tbl}
-\alias{as_src_tbl}
-\alias{new_src_env}
-\alias{as_src_env}
 \title{Data attach utilities}
 \usage{
 attach_src(x, ...)
@@ -18,48 +15,27 @@ attach_src(x, ...)
 
 \method{attach_src}{character}(x, assign_env = NULL, data_dir = src_data_dir(x), ...)
 
-setup_src_env(x, env, ...)
+detach_src(x)
 
-\method{setup_src_env}{src_cfg}(x, env, data_dir = src_data_dir(x), ...)
+setup_src_env(x, ...)
 
-new_src_tbl(files, col_cfg, tbl_cfg, prefix, src_env)
-
-as_src_tbl(x, ...)
-
-new_src_env(x, env = new.env(parent = data_env()))
-
-as_src_env(x)
+\method{setup_src_env}{src_cfg}(x, data_dir = src_data_dir(x), link_env = NULL, ...)
 }
 \arguments{
 \item{x}{Data source to attach}
 
 \item{...}{Forwarded to further calls to \code{attach_src()}}
 
-\item{assign_env}{Environment in which the data source will become available}
+\item{assign_env, link_env}{Environment in which the data source will become
+available}
 
 \item{data_dir}{Directory used to look for \code{\link[fst:fst]{fst::fst()}} files; \code{NULL} calls
 \code{\link[=data_dir]{data_dir()}} using the source name as \code{subdir} argument}
-
-\item{env}{Environment where data proxy objects are created}
-
-\item{files}{File names of \code{fst} files that will be used to create a \code{prt}
-object (see also \code{\link[prt:new_prt]{prt::new_prt()}})}
-
-\item{col_cfg}{Coerced to \code{col_cfg} by calling \code{\link[=as_col_cfg]{as_col_cfg()}}}
-
-\item{tbl_cfg}{Coerced to \code{tbl_cfg} by calling \code{\link[=as_tbl_cfg]{as_tbl_cfg()}}}
-
-\item{prefix}{Character vector valued data source name(s) (used as class
-prefix)}
-
-\item{src_env}{The data source environment (as \code{src_env} object)}
 }
 \value{
-The constructors \code{new_src_env()}/\code{new_src_tbl()} as well as coercion
-functions \code{as_src_env()}/\code{as_src_tbl()} return \code{src_env} and \code{src_tbl}
-objects respectively. The function \code{attach_src()} is called for side
-effects and returns \code{NULL} invisibly, while \code{setup_src_env()} instantiates
-and returns a \code{src_env} object.
+Both \code{attach_src()} and \code{setup_src_env()} are called for side
+effects and therefore return invisibly. While \code{attach_src()} returns \code{NULL},
+\code{setup_src_env()} returns the newly created \code{src_env} object.
 }
 \description{
 Making a dataset available to \code{ricu} consists of 3 steps: downloading
@@ -79,50 +55,56 @@ well as sub-classes as specified by the data source \code{class_prefix}
 configuration setting (see \code{\link[=load_src_cfg]{load_src_cfg()}}). All \code{src_env} objects created
 by calling \code{attach_src()} represent environments that are direct
 descendants of the \code{data} environment and are bound to the respective
-dataset name within that environment. While \code{attach_src()} does not
-immediately instantiate a \code{src_env} object, it rather creates a promise
-using \code{\link[base:delayedAssign]{base::delayedAssign()}} which evaluates to a \code{src_env} upon first
-access. This allows for data sources to be set up where the data is missing
-in a way that prompts the user to download and import the data when first
-accessed.
-
-Additionally, \code{attach_src()} creates an active binding using
-\code{\link[base:bindenv]{base::makeActiveBinding()}}, binding a function to the dataset name within
-the environment passed as \code{assign_env}, which retrieves the respective
-\code{src_env} from the \code{data} environment. This shortcut is set up for
-convenience, such that for example the MIMIC-III demo dataset not only is
-available as \verb{ricu::data::mimic_demo}, but also as \code{ricu::mimic_demo} (or if
-the package namespace is attached, simply as \code{mimic_demo}). The \code{ricu}
-namespace contains objects \code{mimic}, \code{mimic_demo}, \code{eicu}, etc. which are
-used as such links when loading the package. However, new data sets can be
-set up an accessed in the same way.
+dataset name within that environment. For more information on \code{src_env} and
+\code{src_tbl} objects, refer to \code{\link[=new_src_tbl]{new_src_tbl()}}.
 
 If set up correctly, it is not necessary for the user to directly call
-\code{attach_src()}. When the package is loaded, the default data sources are
-attached automatically. This default can be controlled by setting as
-environment variable \code{RICU_SRC_LOAD} a comma separated list of data source
-names before loading the library. Setting this environment variable as\preformatted{Sys.setenv(RICU_SRC_LOAD = "mimic_demo,eciu_demo")
+\code{attach_src()}. When the package is loaded, the default data sources (see
+\code{\link[=auto_attach_srcs]{auto_attach_srcs()}}) are attached automatically. This default can be
+controlled by setting as environment variable \code{RICU_SRC_LOAD} a comma
+separated list of data source names before loading the library. Setting
+this environment variable as\preformatted{Sys.setenv(RICU_SRC_LOAD = "mimic_demo,eciu_demo")
 }
 
 will change the default of loading both MIMIC-III and eICU, alongside the
-respective demo datasets, and HiRID, to just the two demo datasets. For
-setting an environment variable upon startup of the R session, refer to
-\code{\link[base:Startup]{base::.First.sys()}}.
+respective demo datasets, as well as HiRID and AUMC, to just the two demo
+datasets. For setting an environment variable upon startup of the R
+session, refer to \code{\link[base:Startup]{base::.First.sys()}}.
 
-The \code{src_env} promise for each data source is created using the S3 generic
-function \code{setup_src_env()}. This function checks if all required files are
-available from \code{data_dir}. If files are missing the user is prompted for
-download in interactive sessions and an error is thrown otherwise. As soon
-as all required data is available, a \code{src_tbl} object is created per table
-and assigned to the \code{src_env}.
+Attaching a dataset during package namespace loading will both instantiate
+a corresponding \code{src_env} in the \code{data} environment and for convenience
+also assign this object into the package namespace, such that for example
+the MIMIC-III demo dataset not only is available as
+\verb{ricu::data::mimic_demo}, but also as \code{ricu::mimic_demo} (or if the package
+namespace is attached, simply as \code{mimic_demo}). Dataset attaching using
+\code{attach_src()} does not need to happen during namespace loading, but can be
+triggered by the user at any time. If such a convenience link as described
+above is desired by the user, an environment such as \code{.GlobalEnv} has to be
+passed as \code{assign_env} to \code{attach_src()}.
 
-The S3 class \code{src_tbl} inherits from \code{\link[prt:new_prt]{prt}}, which
-represents a partitioned \code{\link[fst:fst]{fst}} file. In addition to the \code{prt}
-object, meta data in the form of \code{col_cfg} and \code{tbl_cfg} is associated with
-a \code{src_tbl} object (see \code{\link[=load_src_cfg]{load_src_cfg()}}). Furthermore, as with \code{src_env},
-sub-classes are added as specified by the source configuration
-\code{class_prefix} entry. This allows certain functionality, for example data
-loading, to be adapted to data source-specific requirements.
+Data sets are set up as \code{src_env} objects irrespectively of whether all (or
+any) of the required data is available. If some (or all) data is missing,
+the user is asked for permission to download in interactive sessions and an
+error is thrown in non-interactive sessions. Downloading demo datasets
+requires no further information but access to full-scale datasets (even
+though they are publicly available) is guarded by access credentials (see
+\code{\link[=download_src]{download_src()}}).
+
+While \code{attach_src()} provides the main entry point, \code{src_env} objects are
+instantiated by the S3 generic function \code{setup_src_env()} and the wrapping
+function serves to catch errors that might be caused by config file parsing
+issues as to not break attaching of the package namespace. Apart form this,
+\code{attach_src()} also provides the convenience linking into the package
+namespace (or a user-specified environment) described above.
+
+A \code{src_env} object created by \code{setup_src_env()} does not directly contain
+\code{src_tbl} objects bound to names, but rather an active binding (see
+\code{\link[base:bindenv]{base::makeActiveBinding()}}) per table. These active bindings check for
+availability of required files and evaluate to corresponding \code{src_tbl}
+objects if these checks are passed and ask for user input otherwise. As
+\code{src_tbl} objects are intended to be read-only, assignment is not possible
+except for the value \code{NULL} which resets the internally cached \code{src_tbl}
+that is created on first successful access.
 }
 \examples{
 \dontrun{
@@ -133,7 +115,7 @@ library(ricu)
 ls(envir = data)
 exists("mimic_demo")
 
-attach_src("mimic_demo")
+attach_src("mimic_demo", assign_env = .GlobalEnv)
 
 ls(envir = data)
 exists("mimic_demo")

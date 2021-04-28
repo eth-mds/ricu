@@ -195,6 +195,10 @@ is_dt <- is_type("data.table")
 
 is_df <- is_type("data.frame")
 
+is_fst <- is_type("fst_table")
+
+is_prt <- is_type("prt")
+
 #' ICU class data utilities
 #'
 #' Several utility functions for working with `id_tbl` and `ts_tbl` objects
@@ -279,6 +283,8 @@ is_df <- is_type("data.frame")
 #' @param skip_absent Logical flag for ignoring non-existent column names
 #' @param by_ref Logical flag indicating whether to perform the operation by
 #' reference
+#' @param ... In case a function is passed as `new`, further arguments are
+#' forwarded to that function
 #'
 #' @return Most of the utility functions return either an `id_tbl` or a
 #' `ts_tbl`, potentially modified by reference, depending on the type of the
@@ -289,7 +295,13 @@ is_df <- is_type("data.frame")
 #' @rdname tbl_utils
 #' @export
 rename_cols <- function(x, new, old = colnames(x), skip_absent = FALSE,
-                        by_ref = FALSE) {
+                        by_ref = FALSE, ...) {
+
+  if (is.function(new)) {
+    new <- new(old, ...)
+  } else {
+    warn_dots(...)
+  }
 
   assert_that(is_unique(new), is_unique(old), same_length(new, old),
               is.flag(skip_absent), is.flag(by_ref),
@@ -299,12 +311,25 @@ rename_cols <- function(x, new, old = colnames(x), skip_absent = FALSE,
     return(x)
   }
 
-  UseMethod("rename_cols", x)
+  col_renamer(x, new, old, skip_absent, by_ref)
 }
 
+#' Internal utilities for ICU data classes
+#'
+#' @inheritParams rename_cols
+#'
+#' @keywords internal
 #' @export
-rename_cols.ts_tbl <- function(x, new, old = colnames(x), skip_absent = FALSE,
-                               by_ref = FALSE) {
+col_renamer <- function(x, new, old = colnames(x), skip_absent = FALSE,
+                        by_ref = FALSE) {
+
+  UseMethod("col_renamer", x)
+}
+
+#' @keywords internal
+#' @export
+col_renamer.ts_tbl <- function(x, new, old = colnames(x),
+                               skip_absent = FALSE, by_ref = FALSE) {
 
   old_ind <- index_var(x)
   intval  <- interval(x)
@@ -321,12 +346,13 @@ rename_cols.ts_tbl <- function(x, new, old = colnames(x), skip_absent = FALSE,
     x <- set_attributes(x, index_var = unname(new_ind))
   }
 
-  rename_cols.id_tbl(x, new, old, skip_absent, by_ref)
+  col_renamer.id_tbl(x, new, old, skip_absent, by_ref)
 }
 
+#' @keywords internal
 #' @export
-rename_cols.id_tbl <- function(x, new, old = colnames(x), skip_absent = FALSE,
-                               by_ref = FALSE) {
+col_renamer.id_tbl <- function(x, new, old = colnames(x),
+                              skip_absent = FALSE, by_ref = FALSE) {
 
   if (skip_absent) {
 
@@ -352,12 +378,13 @@ rename_cols.id_tbl <- function(x, new, old = colnames(x), skip_absent = FALSE,
     x <- set_attributes(x, id_vars = unname(new_id))
   }
 
-  rename_cols.data.table(x, new, old, skip_absent, by_ref)
+  col_renamer.data.table(x, new, old, skip_absent, by_ref)
 }
 
-#' @method rename_cols data.table
+#' @method col_renamer data.table
+#' @keywords internal
 #' @export
-rename_cols.data.table <- function(x, new, old = colnames(x),
+col_renamer.data.table <- function(x, new, old = colnames(x),
                                    skip_absent = FALSE, by_ref = FALSE) {
 
   if (!skip_absent) {
@@ -373,8 +400,9 @@ rename_cols.data.table <- function(x, new, old = colnames(x),
   check_valid(x)
 }
 
+#' @keywords internal
 #' @export
-rename_cols.default <- function(x, ...) stop_generic(x, .Generic)
+col_renamer.default <- function(x, ...) stop_generic(x, .Generic)
 
 #' @rdname tbl_utils
 #' @export
@@ -715,3 +743,61 @@ dt_gforce <- function(x,
     last   = x[, last(.SD),                          by = by, .SDcols = vars]
   )
 }
+
+#' @inheritParams data.table::nafill
+#' @param val Replacement value (if `type` is `"const"`)
+#' @rdname tbl_utils
+#' @export
+replace_na <- function(x, val, type = "const", ...) UseMethod("replace_na", x)
+
+#' @export
+replace_na.numeric <- function(x, val, type = "const", ...) {
+
+  if (identical(type, "const")) {
+    data.table::nafill(x, type, val, ...)
+  } else {
+    data.table::nafill(x, type, ...)
+  }
+}
+
+#' @export
+replace_na.logical <- function(x, val, type = "const", ...) {
+
+  if (identical(type, "const")) {
+    NextMethod()
+  } else {
+    as.logical(replace_na(as.integer(x), type = type, ...))
+  }
+}
+
+#' @export
+replace_na.default <- function(x, val, type = "const", ...) {
+
+  warn_dots(...)
+
+  assert_that(identical(type, "const"), msg = "currently only \"const\"
+    replacement is possible (data.table#3992)"
+  )
+
+  replace(x, is.na(x), val)
+}
+
+#' @export
+replace_na.data.table <- function(x, val, type = "const", by_ref = FALSE,
+                                  vars = colnames(x), by = NULL, ...) {
+
+  assert_that(is.flag(by_ref))
+
+  if (isFALSE(by_ref)) {
+    x <- copy(x)
+  }
+
+  if (missing(val) && !any(type == "const")) {
+    val <- NA
+  }
+
+  x <- x[, c(vars) := Map(replace_na, .SD, val, type, MoreArgs = list(...)),
+         .SDcols = vars, by = by]
+  x
+}
+
