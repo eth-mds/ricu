@@ -1310,7 +1310,7 @@
         "cols": {
           "nursingchartid": {
             "name": "nursingchartid",
-            "spec": "col_integer"
+            "spec": "col_double"
           },
           "patientunitstayid": {
             "name": "patientunitstayid",
@@ -1838,7 +1838,7 @@
         "cols": {
           "vitalperiodicid": {
             "name": "vitalperiodicid",
-            "spec": "col_integer"
+            "spec": "col_double"
           },
           "patientunitstayid": {
             "name": "patientunitstayid",
@@ -3209,7 +3209,7 @@
         "cols": {
           "nursingchartid": {
             "name": "nursingchartid",
-            "spec": "col_integer"
+            "spec": "col_double"
           },
           "patientunitstayid": {
             "name": "patientunitstayid",
@@ -3729,7 +3729,7 @@
         "cols": {
           "vitalperiodicid": {
             "name": "vitalperiodicid",
-            "spec": "col_integer"
+            "spec": "col_double"
           },
           "patientunitstayid": {
             "name": "patientunitstayid",

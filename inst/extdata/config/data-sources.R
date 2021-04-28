@@ -33,8 +33,8 @@ col_spec_map <- function(type) {
   switch(type,
     bool = list(spec = "col_logical"),
     int2 = ,
-    int4 = ,
-    int8 = list(spec = "col_integer"),
+    int4 = list(spec = "col_integer"),
+    int8 = ,
     numeric = ,
     float8 = list(spec = "col_double"),
     bpchar = ,
@@ -551,7 +551,7 @@ hirid_tbl_cfg <- function() {
       "observation_tables", "csv", paste0("part-", 0L:249L, ".csv")
     ),
     ordinal = "ordinal_vars_ref.csv",
-    pharma= file.path(
+    pharma = file.path(
       "pharma_records", "csv", paste0("part-", 0L:249L, ".csv")
     ),
     variables = "hirid_variable_reference.csv"

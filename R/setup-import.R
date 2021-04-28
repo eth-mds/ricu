@@ -251,7 +251,8 @@ partition_table <- function(x, dir, progress = NULL, chunk_length = 10 ^ 7,
   spec <- col_spec(x)
   pfun <- partition_fun(x, orig_names = TRUE)
   pcol <- partition_col(x, orig_names = TRUE)
-  file <- file.path(dir, raw_file_name(x))
+  rawf <- raw_file_name(x)
+  file <- file.path(dir, rawf)
   name <- tbl_name(x)
 
   exp_row <- n_row(x)
@@ -265,7 +266,7 @@ partition_table <- function(x, dir, progress = NULL, chunk_length = 10 ^ 7,
   if (length(file) == 1L) {
 
     callback <- function(x, pos, ...) {
-      readr::stop_for_problems(x)
+      report_problems(x, rawf)
       split_write(x, pfun, tempdir, ((pos - 1L) / chunk_length) + 1L,
                   progress, name, tick)
     }
@@ -286,7 +287,7 @@ partition_table <- function(x, dir, progress = NULL, chunk_length = 10 ^ 7,
     for (i in seq_along(file)) {
 
       dat <- readr::read_csv(file[i], col_types = spec, progress = FALSE, ...)
-      readr::stop_for_problems(dat)
+      report_problems(dat, rawf[i])
 
       split_write(dat, pfun, tempdir, i, progress, name, tick)
     }
@@ -349,13 +350,14 @@ gunzip <- function(file, exdir) {
 
 csv_to_fst <- function(x, dir, progress = NULL, ...) {
 
-  src <- file.path(dir, raw_file_name(x))
+  raw <- raw_file_name(x)
+  src <- file.path(dir, raw)
   dst <- file.path(dir, fst_file_name(x))
 
   assert_that(length(x) == 1L, length(src) == 1L, length(dst) == 1L)
 
-  dat  <- readr::read_csv(src, col_types = col_spec(x), progress = FALSE, ...)
-  readr::stop_for_problems(dat)
+  dat <- readr::read_csv(src, col_types = col_spec(x), progress = FALSE, ...)
+  report_problems(dat, raw)
 
   dat <- rename_cols(setDT(dat), ricu_cols(x), orig_cols(x))
 
@@ -382,6 +384,35 @@ csv_to_fst <- function(x, dir, progress = NULL, ...) {
   }
 
   progress_tick(tbl, progress, ticks)
+
+  invisible(NULL)
+}
+
+report_problems <- function(x, file) {
+
+  prob_to_str <- function(x) {
+    paste0("[", x[1L], ", ", x[2L], "]: got '", x[4L], "' instead of ", x[3L])
+  }
+
+  probs <- readr::problems(x)
+  nprob <- nrow(probs)
+
+  if (nprob) {
+
+    out <- bullet(apply(head(probs, n = 10), 1L, prob_to_str))
+    ext <- nprob - 10
+
+    if (ext > 0) {
+      out <- c(out, bullet("{cli::symbol$ellipsis} and {big_mark(ext)} further
+                            problems"))
+    }
+
+    warn_ricu(
+      c("Encountered parsing problems for file {file}:", out),
+      class = "csv_parsing_error", indent = c(0L, rep_along(2L, out)),
+      exdent = c(0L, rep_along(2L, out))
+    )
+  }
 
   invisible(NULL)
 }
