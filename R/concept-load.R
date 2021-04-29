@@ -477,8 +477,7 @@ load_concepts.item <- function(x, patient_ids = NULL, id_type = "icustay",
     res <- load_concepts(x, patient_ids[[src]], ...)
 
     if (mulit_src) {
-      res <- res[, c("source") := src]
-      res <- set_id_vars(res, c("source", id_vars(res)))
+      res <- add_src_col(res, src)
     }
 
     res
@@ -489,26 +488,7 @@ load_concepts.item <- function(x, patient_ids = NULL, id_type = "icustay",
   srcs <- unique(src_name(x))
   mulit_src <- length(srcs) > 1L
 
-  if (mulit_src && not_null(patient_ids)) {
-
-    if (is_df(patient_ids)) {
-
-      assert_that(has_col(patient_ids, "source"))
-
-      if (is_dt(patient_ids)) {
-        patient_ids <- split(patient_ids, by = "source")
-      } else {
-        patient_ids <- split(patient_ids, patient_ids[["source"]])
-      }
-    }
-
-    assert_that(is.list(patient_ids), has_name(patient_ids, srcs))
-
-  } else if (not_null(patient_ids)) {
-
-    patient_ids <- list(patient_ids)
-    names(patient_ids) <- srcs
-  }
+  patient_ids <- split_patid(patient_ids, srcs)
 
   # slightly inefficient, as cols might get filled which were only relevant
   # during callback
@@ -553,4 +533,41 @@ merge_patid <- function(x, patid) {
   } else {
     merge(x, patid, by = id_col, all = FALSE)
   }
+}
+
+add_src_col <- function(x, src) {
+  x <- x[, c("source") := src]
+  x <- set_id_vars(x, c("source", id_vars(x)))
+  x
+}
+
+split_patid <- function(x, srcs) {
+
+  if (is.null(x)) {
+
+    x <- rep(list(NULL), length(srcs))
+    names(x) <- srcs
+
+  } else if (length(srcs) > 1L) {
+
+    if (is_df(x)) {
+
+      assert_that(has_col(x, "source"))
+
+      if (is_dt(x)) {
+        x <- split(x, by = "source")
+      } else {
+        x <- split(x, x[["source"]])
+      }
+    }
+
+  } else {
+
+    x <- list(x)
+    names(x) <- srcs
+  }
+
+  assert_that(is.list(x), has_name(x, srcs))
+
+  x
 }

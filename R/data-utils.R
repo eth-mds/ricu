@@ -359,7 +359,16 @@ id_map_helper.default <- function(x, ...) stop_generic(x, .Generic)
 #'
 #' @seealso change_id
 #'
-#' @param x Passed to [as_id_cfg()] and [as_src_env()]
+#' @param x Data source (is coerced to `src_env` using `as_src_env()`)
+#'
+#' @return An `id_tbl` containing the selected IDs and depending on values
+#' passed as `in_time` and `out_time`, start and end times of the ID passed as
+#' `win_var`.
+#'
+#' @rdname stay_windows
+#' @export
+stay_windows <- function(x, ...) UseMethod("stay_windows", x)
+
 #' @param id_type Type of ID all returned times are relative to
 #' @param win_type Type of ID for which the in/out times is returned
 #' @param in_time,out_time column names of the returned in/out times
@@ -367,14 +376,14 @@ id_map_helper.default <- function(x, ...) stop_generic(x, .Generic)
 #' specified as [base::difftime()] object
 #' @param patient_ids Patient IDs used to subset the result
 #'
-#' @return An `id_tbl` containing the selected IDs and depending on values
-#' passed as `in_time` and `out_time`, start and end times of the ID passed as
-#' `win_var`.
-#'
+#' @rdname stay_windows
 #' @export
-stay_windows <- function(x, id_type = "icustay", win_type = id_type,
-                         in_time = "start", out_time = "end",
-                         interval = hours(1L), patient_ids = NULL) {
+stay_windows.src_env <- function(x, id_type = "icustay", win_type = id_type,
+                                 in_time = "start", out_time = "end",
+                                 interval = hours(1L), patient_ids = NULL,
+                                 ...) {
+
+  warn_dots(...)
 
   assert_that(is_interval(interval))
 
@@ -390,6 +399,41 @@ stay_windows <- function(x, id_type = "icustay", win_type = id_type,
 
   merge_patid(res, patient_ids)
 }
+
+#' @rdname stay_windows
+#' @export
+stay_windows.character <- function(x, ...) stay_windows(as.list(x), ...)
+
+#' @rdname stay_windows
+#' @export
+stay_windows.list <- function(x, ..., patient_ids = NULL) {
+
+  load_one <- function(x, ...) {
+
+    src <- src_name(x)
+    res <- stay_windows(x, ..., patient_ids = patient_ids[[src]])
+
+    if (mulit_src) {
+      res <- add_src_col(res, src)
+    }
+
+    res
+
+  }
+
+  x <- lapply(x, as_src_env)
+
+  srcs <- unique(chr_ply(x, src_name))
+  mulit_src <- length(srcs) > 1L
+
+  patient_ids <- split_patid(patient_ids, srcs)
+
+  rbind_lst(lapply(x, load_one, ...))
+}
+
+#' @rdname stay_windows
+#' @export
+stay_windows.default <- function(x, ...) stay_windows(as_src_env(x), ...)
 
 #' Switch between id types
 #'
