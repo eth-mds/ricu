@@ -14,7 +14,9 @@ knitr::opts_chunk$set(
 )
 
 library(ricu)
+```
 
+```{r, echo = FALSE}
 demo  <- c("mimic_demo", "eicu_demo")
 alls  <- demo
 
@@ -34,7 +36,6 @@ if (!srcs_avail(alls)) {
   msg <- paste(strwrap(msg), collapse = "\n")
   message(msg)
 }
-
 ```
 
 In order to set up `ricu`, download of datasets from several platforms is required. Two data sources, `mimic_demo` and `eicu_demo` are available directly as R packages, hosted on Github. The respective full-featured versions `mimic` and `eicu`, as well as the `hirid` dataset are available from [PhysioNet](https://physionet.org), while access to the remaining standard dataset `aumc` is available from yet another [website](https://amsterdammedicaldatascience.nl/). The following steps guide through package installation, data source set up and conclude with some example data queries.
