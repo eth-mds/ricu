@@ -19,7 +19,8 @@ author:
       | CH-8092 Zürich
     email: \email{drago.plecko@stat.math.ethz.ch}
   - name: Ida-Fong Ukor
-    affiliation: East Kent Hospitals \AND
+    affiliation: "East Kent Hospitals \\AND"
+    affiliation2: "East Kent Hospitals"
     address: |
       | NHS University Foundation Trust
       | William Harvey Hospital
@@ -75,7 +76,9 @@ library(ggplot2)
 
 options(kableExtra.latex.load_packages = FALSE)
 library(kableExtra)
+```
 
+```{r setup, echo = FALSE}
 srcs  <- c("mimic", "mimic_demo", "eicu", "eicu_demo", "hirid", "aumc")
 avail <- is_data_avail(srcs)
 
