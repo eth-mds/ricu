@@ -78,7 +78,7 @@ options(kableExtra.latex.load_packages = FALSE)
 library(kableExtra)
 ```
 
-```{r setup, echo = FALSE}
+```{r data-avail, echo = FALSE}
 srcs  <- c("mimic", "mimic_demo", "eicu", "eicu_demo", "hirid", "aumc")
 avail <- is_data_avail(srcs)
 
