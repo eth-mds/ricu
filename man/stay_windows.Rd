@@ -30,6 +30,8 @@ stay_windows(x, ...)
 \arguments{
 \item{x}{Data source (is coerced to \code{src_env} using \code{as_src_env()})}
 
+\item{...}{Generic consistency}
+
 \item{id_type}{Type of ID all returned times are relative to}
 
 \item{win_type}{Type of ID for which the in/out times is returned}

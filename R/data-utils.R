@@ -375,6 +375,7 @@ stay_windows <- function(x, ...) UseMethod("stay_windows", x)
 #' @param interval The time interval used to discretize time stamps with,
 #' specified as [base::difftime()] object
 #' @param patient_ids Patient IDs used to subset the result
+#' @param ... Generic consistency
 #'
 #' @rdname stay_windows
 #' @export
