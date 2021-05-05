@@ -1,5 +1,5 @@
 \documentclass[
-]{jss}
+  notitle]{jss}
 
 \usepackage[utf8]{inputenc}
 
@@ -101,6 +101,8 @@ evaluated if the corresponding dataset is missing. In order to download
 and setup data, have a look at `?setup_src_data`.
 \end{CodeOutput}
 \end{CodeChunk}
+
+\maketitle
 
 \hypertarget{introduction}{%
 \section{Introduction}\label{introduction}}
@@ -1214,11 +1216,11 @@ R> (dat <- ts_tbl(a = 1:5, b = hours(1:5), c = rnorm(5)))
 # Index var:  `b` (1 hours)
       a b            c
   <int> <drtn>   <dbl>
-1     1 1 hours -0.525
-2     2 2 hours  0.803
-3     3 3 hours  1.07
-4     4 4 hours -1.10
-5     5 5 hours  0.361
+1     1 1 hours  0.524
+2     2 2 hours  1.69
+3     3 3 hours  0.129
+4     4 4 hours -0.649
+5     5 5 hours -0.979
 \end{CodeOutput}
 \begin{CodeInput}
 R> dat[["b"]] <- dat[["b"]] + mins(30)
@@ -1229,11 +1231,11 @@ R> dat
 # Id var:      `a`
       a b               c
   <int> <drtn>      <dbl>
-1     1  5400 secs -0.525
-2     2  9000 secs  0.803
-3     3 12600 secs  1.07
-4     4 16200 secs -1.10
-5     5 19800 secs  0.361
+1     1  5400 secs  0.524
+2     2  9000 secs  1.69
+3     3 12600 secs  0.129
+4     4 16200 secs -0.649
+5     5 19800 secs -0.979
 \end{CodeOutput}
 \end{CodeChunk}
 
