@@ -189,15 +189,46 @@ Additionally, table layouts vary (\emph{long} versus \emph{wide} data
 arrangement) and data organization in general is far from consistent
 over datasets.
 
-The following sections serve to introduce \pkg{ricu} by first giving an
-overview of particularities of the four default datasets (Section
-\ref{ready-to-use-datasets}), followed by some implementation details on
-how datasets are stored and how external data sources can be made
-accessible by \pkg{ricu} (Section \ref{implementation-details}). Section
-\ref{data-concepts} is concerned with how clinical data concepts can be
-represented and loaded into memory for further analysis, followed by a
-section containing two toy examples on how to use \pkg{ricu} to
-investigate actual clinical questions (Section \ref{examples}).
+The following sections serve to introduce \pkg{ricu} by covering two
+central aspects that are key to both using and extending \pkg{ricu}, as
+well as understanding some architectural choices that went into the
+design of the package:
+
+\begin{itemize}
+\item
+  \textbf{Datasets} (Section \ref{data-sources}): Providing an interface
+  to several public yet credentialed datasets is a core functionality of
+  \pkg{ricu}. As a starting point for those unfamiliar with theses
+  datasets, Section \ref{ready-to-use-datasets} provides an overview,
+  outlining some strengths and weaknesses of each. Extensibility to new
+  datasets has been a central consideration throughout the design
+  process and Section \ref{implementation-details} covers some
+  implementation details, while Section \ref{adding-external-datasets}
+  provides some brief pointers on how to integrate further datasets with
+  \pkg{ricu}.
+\item
+  \textbf{Clinical concepts} (Section \ref{data-concepts}): With data
+  sources set up for efficient access, another key aspect to having a
+  unified interface for heterogeneously organized datasets is providing
+  a way to define data concepts. Clinically relevant data entities, such
+  as heart rate measurements, or patient weight can be defined as a
+  dictionary of \emph{concepts}, each containing several data
+  \emph{items}, which in turn encode how to load the corresponding data
+  subset from a given data source. Section \ref{clinical-concepts}
+  provides an overview of the roughly 100 concepts that are included
+  with \pkg{ricu} for the default data sources, while Section
+  \ref{concept-specification} introduces the JSON-based format for
+  encoding \emph{concepts} and corresponding \emph{items}. This again is
+  intended for being extended to both new concepts and new data sources.
+\end{itemize}
+
+A final section (\ref{examples}) introduces two short examples,
+highlighting some further functionality provided by \pkg{ricu} that
+might be useful for data analysis tasks. For readers mainly interested
+in getting up and running as quickly as possible, a quick start guide is
+available as separate
+\href{https://CRAN.R-project.org/package=ricu/vignettes/ricu.html}{package
+vignette}.
 
 \hypertarget{data-sources}{%
 \section{Data sources}\label{data-sources}}
@@ -1214,13 +1245,13 @@ R> (dat <- ts_tbl(a = 1:5, b = hours(1:5), c = rnorm(5)))
 # A `ts_tbl`: 5 x 3
 # Id var:     `a`
 # Index var:  `b` (1 hours)
-      a b            c
-  <int> <drtn>   <dbl>
-1     1 1 hours  0.524
-2     2 2 hours  1.69
-3     3 3 hours  0.129
-4     4 4 hours -0.649
-5     5 5 hours -0.979
+      a b             c
+  <int> <drtn>    <dbl>
+1     1 1 hours -1.03
+2     2 2 hours -0.408
+3     3 3 hours -0.119
+4     4 4 hours  0.0456
+5     5 5 hours  0.0978
 \end{CodeOutput}
 \begin{CodeInput}
 R> dat[["b"]] <- dat[["b"]] + mins(30)
@@ -1229,13 +1260,13 @@ R> dat
 \begin{CodeOutput}
 # An `id_tbl`: 5 x 3
 # Id var:      `a`
-      a b               c
-  <int> <drtn>      <dbl>
-1     1  5400 secs  0.524
-2     2  9000 secs  1.69
-3     3 12600 secs  0.129
-4     4 16200 secs -0.649
-5     5 19800 secs -0.979
+      a b                c
+  <int> <drtn>       <dbl>
+1     1  5400 secs -1.03
+2     2  9000 secs -0.408
+3     3 12600 secs -0.119
+4     4 16200 secs  0.0456
+5     5 19800 secs  0.0978
 \end{CodeOutput}
 \end{CodeChunk}
 

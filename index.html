@@ -106,11 +106,12 @@
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu">remotes</span><span class="fu">::</span><span class="fu"><a href="https://remotes.r-lib.org/reference/install_github.html">install_github</a></span><span class="op">(</span><span class="st">"eth-mds/ricu"</span><span class="op">)</span></code></pre></div>
 <p>or by sourcing the required code for installation from github by running</p>
-<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1"></a>rem &lt;-<span class="st"> </span><span class="kw">source</span>(</span>
-<span id="cb2-2"><a href="#cb2-2"></a>  <span class="kw">paste0</span>(<span class="st">"https://raw.githubusercontent.com/r-lib/remotes/master/"</span>,</span>
-<span id="cb2-3"><a href="#cb2-3"></a>         <span class="st">"install-github.R"</span></span>
-<span id="cb2-4"><a href="#cb2-4"></a>)</span>
-<span id="cb2-5"><a href="#cb2-5"></a>rem<span class="op">$</span><span class="kw">value</span>(<span class="st">"eth-mds/ricu"</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">rem</span> <span class="op">&lt;-</span> <span class="kw"><a href="https://rdrr.io/r/base/source.html">source</a></span><span class="op">(</span>
+  <span class="fu"><a href="https://rdrr.io/r/base/paste.html">paste0</a></span><span class="op">(</span><span class="st">"https://raw.githubusercontent.com/r-lib/remotes/master/"</span>,
+         <span class="st">"install-github.R"</span><span class="op">)</span>
+<span class="op">)</span>
+<span class="va">rem</span><span class="op">$</span><span class="fu">value</span><span class="op">(</span><span class="st">"eth-mds/ricu"</span><span class="op">)</span></code></pre></div>
 <p>In order to make sure that some useful utility packages are installed as well, consider installing the packages marked as <code>Suggests</code> as well by running</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu">remotes</span><span class="fu">::</span><span class="fu"><a href="https://remotes.r-lib.org/reference/install_github.html">install_github</a></span><span class="op">(</span><span class="st">"eth-mds/ricu"</span>, dependencies <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></code></pre></div>
