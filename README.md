@@ -38,7 +38,7 @@ or by sourcing the required code for installation from github by running
 ``` r
 rem <- source(
   paste0("https://raw.githubusercontent.com/r-lib/remotes/master/",
-         "install-github.R"
+         "install-github.R")
 )
 rem$value("eth-mds/ricu")
 ```

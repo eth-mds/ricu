@@ -63,7 +63,7 @@ filter_quants <- function(x, lwr, upr) {
     x[!is.na(x) & x >= qq[1L] & x <= qq[2L]]
   }
 
-  x[, list(val = do_filter(data_col(x))), by = "source"]
+  x[, list(val = do_filter(get(data_var(x)))), by = "source"]
 }
 
 srcs <- c(full, demo)
@@ -72,7 +72,7 @@ srcs <- head(srcs[is_data_avail(srcs)], n = length(full))
 concepts <- c("map", "lact" , "crea", "bili", "plt")
 
 dat <- load_concepts(concepts, srcs, verbose = FALSE, merge = FALSE)
-dat <- lapply(dat, filter_quants, lwr = 0.05, upr = 0.95)
+dat <- lapply(dat, filter_quants, lwr = 0.025, upr = 0.975)
 
 for (feat in names(dat)) {
 
