@@ -1,7 +1,7 @@
 ---
 title:
-  formatted: "\\pkg{ricu}: \\proglang{R}'s Interface to Intensive Care Data"
   plain: "ricu: R's Interface to Intensive Care Data"
+  formatted: "\\pkg{ricu}: \\proglang{R}'s Interface to Intensive Care Data"
   short: "\\pkg{ricu}: R meets ICU data"
 author:
   - name: "Nicolas Bennett\\footnotemark[1]"
@@ -79,6 +79,8 @@ options(kableExtra.latex.load_packages = FALSE)
 library(kableExtra)
 ```
 
+\maketitle
+
 ```{r data-avail, echo = FALSE}
 srcs  <- c("mimic", "mimic_demo", "eicu", "eicu_demo", "hirid", "aumc")
 avail <- is_data_avail(srcs)
@@ -98,8 +100,6 @@ if (!srcs_avail(srcs)) {
   message(msg)
 }
 ```
-
-\maketitle
 
 # Introduction
 
