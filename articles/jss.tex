@@ -92,6 +92,8 @@ CH-8092 Zürich\\
 
 \begin{document}
 
+\maketitle
+
 \begin{CodeChunk}
 \begin{CodeOutput}
 Note: Examples in this vignette require that one or more of datasets `
@@ -101,8 +103,6 @@ evaluated if the corresponding dataset is missing. In order to download
 and setup data, have a look at `?setup_src_data`.
 \end{CodeOutput}
 \end{CodeChunk}
-
-\maketitle
 
 \hypertarget{introduction}{%
 \section{Introduction}\label{introduction}}
@@ -1245,13 +1245,13 @@ R> (dat <- ts_tbl(a = 1:5, b = hours(1:5), c = rnorm(5)))
 # A `ts_tbl`: 5 x 3
 # Id var:     `a`
 # Index var:  `b` (1 hours)
-      a b             c
-  <int> <drtn>    <dbl>
-1     1 1 hours -1.03
-2     2 2 hours -0.408
-3     3 3 hours -0.119
-4     4 4 hours  0.0456
-5     5 5 hours  0.0978
+      a b            c
+  <int> <drtn>   <dbl>
+1     1 1 hours -1.89
+2     2 2 hours  1.67
+3     3 3 hours  0.905
+4     4 4 hours  1.71
+5     5 5 hours -0.328
 \end{CodeOutput}
 \begin{CodeInput}
 R> dat[["b"]] <- dat[["b"]] + mins(30)
@@ -1260,13 +1260,13 @@ R> dat
 \begin{CodeOutput}
 # An `id_tbl`: 5 x 3
 # Id var:      `a`
-      a b                c
-  <int> <drtn>       <dbl>
-1     1  5400 secs -1.03
-2     2  9000 secs -0.408
-3     3 12600 secs -0.119
-4     4 16200 secs  0.0456
-5     5 19800 secs  0.0978
+      a b               c
+  <int> <drtn>      <dbl>
+1     1  5400 secs -1.89
+2     2  9000 secs  1.67
+3     3 12600 secs  0.905
+4     4 16200 secs  1.71
+5     5 19800 secs -0.328
 \end{CodeOutput}
 \end{CodeChunk}
 
