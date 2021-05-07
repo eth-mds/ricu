@@ -51,6 +51,8 @@ preamble: >
   \usepackage{booktabs}
   \usepackage{makecell}
   \usepackage{threeparttablex}
+  \usepackage{enumerate}
+  \usepackage{hyperref}
 vignette: >
   %\VignetteIndexEntry{Accessing ICU data with R (Bennett & Plečko, JSS 2021)}
   %\VignetteEngine{knitr::rmarkdown}
@@ -102,6 +104,10 @@ if (!srcs_avail(srcs)) {
 ```
 
 # Introduction
+\renewcommand*{\thefootnote}{\fnsymbol{footnote}}
+\footnotetext{$^{*}$These authors contributed equally.}
+\renewcommand*{\thefootnote}{\arabic{footnote}}
+
 
 Collection of electronic health records has seen a significant rise in recent years \citep{evans2016}, opening up opportunities and providing the grounds for a large body of data-driven research oriented towards helping clinicians in decision-making and therefore improving patient care and health outcomes \citep{jiang2017}.
 
@@ -113,13 +119,42 @@ To our knowledge, infrastructure that provides a common interface to multiple su
 
 Given the somewhat narrow focus of the targeted datasets, combined with the fact that in some cases data is even extracted from identical patient care management systems, it may come as a surprise as to how heterogeneous the resulting datasets are. In MIMIC-III and HiRID, for example, time-stamps are reported as absolute times (albeit randomly shifted due to data privacy concerns), whereas eICU and AUMC use relative times (with origins being admission times). Another example, involves different types of patient identifiers and their use among datasets. Common to all is the notion of an ICU admission ID, but apart from that, the amount of available information varies: While ICU (and hospital) readmissions for a given patient can be identified in some, this is not possible in other datasets. Furthermore, use of identifier systems might not be consistent over tables. In MIMIC-III, for example, some tables refer to ICU stay IDs while others use hospital stay IDs, which slightly complicates data retrieval for a given ID system. Additionally, table layouts vary (*long* versus *wide* data arrangement) and data organization in general is far from consistent over datasets.
 
-The following sections serve to introduce \pkg{ricu} by covering two central aspects that are key to both using and extending \pkg{ricu}, as well as understanding some architectural choices that went into the design of the package:
+## Quick start and organization
 
-* **Datasets** (Section \ref{data-sources}): Providing an interface to several public yet credentialed datasets is a core functionality of \pkg{ricu}. As a starting point for those unfamiliar with theses datasets, Section \ref{ready-to-use-datasets} provides an overview, outlining some strengths and weaknesses of each. Extensibility to new datasets has been a central consideration throughout the design process and Section \ref{implementation-details} covers some implementation details, while Section \ref{adding-external-datasets} provides some brief pointers on how to integrate further datasets with \pkg{ricu}.
-
-* **Clinical concepts** (Section \ref{data-concepts}): With data sources set up for efficient access, another key aspect to having a unified interface for heterogeneously organized datasets is providing a way to define data concepts. Clinically relevant data entities, such as heart rate measurements, or patient weight can be defined as a dictionary of *concepts*, each containing several data *items*, which in turn encode how to load the corresponding data subset from a given data source. Section \ref{clinical-concepts} provides an overview of the roughly 100 concepts that are included with \pkg{ricu} for the default data sources, while Section \ref{concept-specification} introduces the JSON-based format for encoding *concepts* and corresponding *items*. This again is intended for being extended to both new concepts and new data sources.
-
-A final section (\ref{examples}) introduces two short examples, highlighting some further functionality provided by \pkg{ricu} that might be useful for data analysis tasks. For readers mainly interested in getting up and running as quickly as possible, a quick start guide is available as separate [package vignette](https://CRAN.R-project.org/package=ricu/vignettes/ricu.html).
+We give a quick outline of how \pkg{ricu} can be used and how the manuscript is organized.
+\begin{enumerate}[(i)]
+	\item Download and install the \pkg{ricu} package:
+	\begin{itemize}
+		\item install \pkg{ricu} via CRAN with \code{install.packages("ricu")}
+		\item alternatively, to install from Github use \code{remotes::install_github("eth-mds/ricu")}
+	\end{itemize}
+	\item Get access to datasets and run setup:
+	\begin{itemize}
+		\item get access to MIMIC-III, eICU and HiRID via \href{https://physionet.org/register/}{Physionet}
+		\item get access to AUMCdb via \href{https://amsterdammedicaldatascience.nl/#amsterdamumcdb}{Amsterdam Medical Data Science Website}
+		\item set \code{`RICU_PHYSIONET_USER`}, \code{`RICU_PHYSIONET_PASS`} and \code{`RICU_AUMC_TOKEN`} environment variables using the obtained information
+		\item run \code{setup_data_src()} and wait for data download and conversion
+	\end{itemize}
+	A more detailed description of the datasets and the setup process is given in Section \ref{data-sources}. There is also a separate \href{https://CRAN.R-project.org/package=ricu/vignettes/ricu.html}{vignette to help the user get started}.
+	\item Use the main \code{load_concepts()} function to load 100+ available concepts:
+	\begin{itemize}
+		\item for example, run \code{load_concepts(c("age", "glu"), "mimic")} to obtain data on glucose and age concepts in the MIMIC-III dataset
+		\item see \code{?load_concepts} for more details
+	\end{itemize}
+	A more detailed description of available concepts and data loading is discussed in Section \ref{data-concepts}.
+	\item Add your own concepts:
+	\begin{itemize}
+		\item although some commonly appearing concepts are already available (such as demographics, vitals and laboratory values), the user might be interested in adding their own, custom concepts
+	\end{itemize}
+	Addition of custom concepts is possible in two different ways, discussed in detail in Section \ref{concept-specification}.
+	\item Add your own dataset:
+	\begin{itemize}
+		\item the user might be interested in analyzing their own dataset, or using it jointly with the four large in-built datasets in \pkg{ricu}
+		\item \pkg{ricu} supports the addition of user-specified datasets
+	\end{itemize}
+	Full detail about adding a custom dataset is described in Section \ref{adding-external-datasets}.
+\end{enumerate}
+Lastly, in Section \ref{examples} we briefly show how \pkg{ricu} can be used in practice to address clinical questions.
 
 # Data sources
 
