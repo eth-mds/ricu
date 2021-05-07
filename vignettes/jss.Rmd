@@ -19,14 +19,12 @@ author:
       | CH-8092 Zürich
     email: \email{drago.plecko@stat.math.ethz.ch}
   - name: Ida-Fong Ukor
-    affiliation: "East Kent Hospitals \\AND"
-    affiliation2: "East Kent Hospitals"
+    affiliation: "Monash Health"
     address: |
-      | NHS University Foundation Trust
-      | William Harvey Hospital
-      | Kennington Road, Willesborough
-      | Ashford TN24 0LZ
-    email: \email{idafong.ukor@nhs.net}
+      | Department of Anaesthesia and Perioperative Medicine
+      | 246 Clayton Road
+      | Clayton VIC 3168
+    email: \email{dr.ukor@gmail.com}
   - name: Nicolai Meinshausen
     affiliation: ETH Zürich
     address: |
