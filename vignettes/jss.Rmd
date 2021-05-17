@@ -19,9 +19,10 @@ author:
       | CH-8092 Zürich
     email: \email{drago.plecko@stat.math.ethz.ch}
   - name: Ida-Fong Ukor
-    affiliation: "Monash Health"
+    affiliation: "Monash Health \\AND"
+    affiliation2: Monash Health
     address: |
-      | Department of Anaesthesia and Perioperative Medicine
+      | Department of Anaesthesiology and Perioperative Medicine
       | 246 Clayton Road
       | Clayton VIC 3168
     email: \email{dr.ukor@gmail.com}
@@ -49,8 +50,6 @@ preamble: >
   \usepackage{booktabs}
   \usepackage{makecell}
   \usepackage{threeparttablex}
-  \usepackage{enumerate}
-  \usepackage{hyperref}
 vignette: >
   %\VignetteIndexEntry{Accessing ICU data with R (Bennett & Plečko, JSS 2021)}
   %\VignetteEngine{knitr::rmarkdown}
@@ -91,7 +90,7 @@ if (!srcs_avail(srcs)) {
 
   msg <- paste(
     "Note: Examples in this vignette require that one or more of datasets",
-    paste("`", srcs, "`", collapse = ", "), "are available. Chunks that",
+    paste0("`", srcs, "`", collapse = ", "), "are available. Chunks that",
     "depend on certain datasets will not be evaluated if the corresponding",
     "dataset is missing. In order to download and setup data, have a look at",
     "`?setup_src_data`."
@@ -102,10 +101,6 @@ if (!srcs_avail(srcs)) {
 ```
 
 # Introduction
-\renewcommand*{\thefootnote}{\fnsymbol{footnote}}
-\footnotetext{$^{*}$These authors contributed equally.}
-\renewcommand*{\thefootnote}{\arabic{footnote}}
-
 
 Collection of electronic health records has seen a significant rise in recent years \citep{evans2016}, opening up opportunities and providing the grounds for a large body of data-driven research oriented towards helping clinicians in decision-making and therefore improving patient care and health outcomes \citep{jiang2017}.
 
@@ -117,41 +112,49 @@ To our knowledge, infrastructure that provides a common interface to multiple su
 
 Given the somewhat narrow focus of the targeted datasets, combined with the fact that in some cases data is even extracted from identical patient care management systems, it may come as a surprise as to how heterogeneous the resulting datasets are. In MIMIC-III and HiRID, for example, time-stamps are reported as absolute times (albeit randomly shifted due to data privacy concerns), whereas eICU and AUMC use relative times (with origins being admission times). Another example, involves different types of patient identifiers and their use among datasets. Common to all is the notion of an ICU admission ID, but apart from that, the amount of available information varies: While ICU (and hospital) readmissions for a given patient can be identified in some, this is not possible in other datasets. Furthermore, use of identifier systems might not be consistent over tables. In MIMIC-III, for example, some tables refer to ICU stay IDs while others use hospital stay IDs, which slightly complicates data retrieval for a given ID system. Additionally, table layouts vary (*long* versus *wide* data arrangement) and data organization in general is far from consistent over datasets.
 
-## Quick start and organization
+# Quick start and organization
 
 We give a quick outline of how \pkg{ricu} can be used and how the manuscript is organized.
-\begin{enumerate}[(i)]
-	\item Download and install the \pkg{ricu} package:
-	\begin{itemize}
-		\item install \pkg{ricu} via CRAN with \code{install.packages("ricu")}
-		\item alternatively, to install from Github use \code{remotes::install_github("eth-mds/ricu")}
-	\end{itemize}
-	\item Get access to datasets and run setup:
-	\begin{itemize}
-		\item get access to MIMIC-III, eICU and HiRID via \href{https://physionet.org/register/}{Physionet}
-		\item get access to AUMCdb via \href{https://amsterdammedicaldatascience.nl/#amsterdamumcdb}{Amsterdam Medical Data Science Website}
-		\item set \code{`RICU_PHYSIONET_USER`}, \code{`RICU_PHYSIONET_PASS`} and \code{`RICU_AUMC_TOKEN`} environment variables using the obtained information
-		\item run \code{setup_data_src()} and wait for data download and conversion
-	\end{itemize}
-	A more detailed description of the datasets and the setup process is given in Section \ref{data-sources}. There is also a separate \href{https://CRAN.R-project.org/package=ricu/vignettes/ricu.html}{vignette to help the user get started}.
-	\item Use the main \code{load_concepts()} function to load 100+ available concepts:
-	\begin{itemize}
-		\item for example, run \code{load_concepts(c("age", "glu"), "mimic")} to obtain data on glucose and age concepts in the MIMIC-III dataset
-		\item see \code{?load_concepts} for more details
-	\end{itemize}
-	A more detailed description of available concepts and data loading is discussed in Section \ref{data-concepts}.
-	\item Add your own concepts:
-	\begin{itemize}
-		\item although some commonly appearing concepts are already available (such as demographics, vitals and laboratory values), the user might be interested in adding their own, custom concepts
-	\end{itemize}
-	Addition of custom concepts is possible in two different ways, discussed in detail in Section \ref{concept-specification}.
-	\item Add your own dataset:
-	\begin{itemize}
-		\item the user might be interested in analyzing their own dataset, or using it jointly with the four large in-built datasets in \pkg{ricu}
-		\item \pkg{ricu} supports the addition of user-specified datasets
-	\end{itemize}
-	Full detail about adding a custom dataset is described in Section \ref{adding-external-datasets}.
-\end{enumerate}
+
+1. Download and install the \pkg{ricu} package:
+
+    * install \pkg{ricu} via CRAN with `install.packages("ricu")`
+
+    * alternatively, to install from Github use `install_github("eth-mds/ricu")` (of the \pkg{remotes} package)
+
+1. Get access to datasets and run setup:
+
+    * get access to MIMIC-III, eICU and HiRID via [Physionet](https://physionet.org/register/)
+
+    * get access to AUMCdb via [Amsterdam Medical Data Science Website](https://amsterdammedicaldatascience.nl/#amsterdamumcdb)
+
+    * set `RICU_PHYSIONET_USER`, `RICU_PHYSIONET_PASS` and `RICU_AUMC_TOKEN` environment variables using the obtained information
+
+    * run `setup_data_src()` and wait for data download and conversion
+
+    A more detailed description of the datasets and the setup process is given in Section \ref{data-sources}. There is also a separate [vignette to help the user get started](https://CRAN.R-project.org/package=ricu/vignettes/ricu.html).
+
+1. Use the main `load_concepts()` function to load 100+ available concepts:
+
+    * for example, run `load_concepts(c("age", "glu"), "mimic")` to obtain data on glucose and age concepts in the MIMIC-III dataset
+
+    * see `?load_concepts` for more details
+
+    A more detailed description of available concepts and data loading is discussed in Section \ref{data-concepts}.
+
+1. Add your own concepts:
+
+    * although some commonly appearing concepts are already available (such as demographics, vitals and laboratory values), the user might be interested in adding their own, custom concepts
+
+    Addition of custom concepts is possible in two different ways, discussed in detail in Section \ref{concept-specification}.
+
+1. Add your own dataset:
+
+    *  the user might be interested in analyzing their own dataset, or using it jointly with the four large in-built datasets in \pkg{ricu}
+    *  \pkg{ricu} supports the addition of user-specified datasets
+
+    Full detail about adding a custom dataset is described in Section \ref{adding-external-datasets}.
+
 Lastly, in Section \ref{examples} we briefly show how \pkg{ricu} can be used in practice to address clinical questions.
 
 # Data sources

@@ -29,7 +29,7 @@ if (!srcs_avail(demo)) {
 
   msg <- paste(
     "Note: Examples in this vignette require that one or more of datasets",
-    paste("`", demo, "`", collapse = ", "), "are available. Chunks that",
+    paste0("`", demo, "`", collapse = ", "), "are available. Chunks that",
     "depend on certain datasets will not be evaluated if the corresponding",
     "dataset is missing. In order to download data, have a look at",
     "`?setup_src_data`."
