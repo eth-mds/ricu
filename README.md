@@ -15,7 +15,7 @@ status](https://github.com/eth-mds/ricu/workflows/pkgdown/badge.svg)](https://gi
 [![covr
 status](https://github.com/eth-mds/ricu/workflows/coverage/badge.svg)](https://github.com/eth-mds/ricu/actions?query=workflow%3Acoverage)
 [![Codecov test
-coverage](https://codecov.io/gh/eth-mds/ricu/branch/main/graph/badge.svg?token=HvOM3yosW3)](https://codecov.io/gh/eth-mds/ricu)
+coverage](https://codecov.io/gh/eth-mds/ricu/branch/main/graph/badge.svg?token=gQisoami9F)](https://codecov.io/gh/eth-mds/ricu)
 <!-- badges: end -->
 
 Working with ICU datasets, especially with publicly available ones as
