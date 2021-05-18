@@ -4,6 +4,17 @@ test_that("load hirid items", {
   gluc <- mockthat::with_mock(
     load_id = id_tbl(id = c(20005110L, 24000523L, 24000585L),
                      unit = rep("mmol/l", 3L)),
+    as_src_tbl = structure(list(),
+      class = c("hirid_tbl", "src_tbl"),
+      col_cfg = new_col_cfg("hirid", "observations", index_var = "datetime",
+                            time_vars = c("datetime", "entertime"),
+                            val_var = "value"),
+      src_env = structure(list(),
+        class = c("hirid_env", "src_env"),
+        id_cfg = new_id_cfg("hirid",  "icustay", "patientid", 1L,
+                            "admissiontime", NA_character_, "general")
+      )
+    ),
     parse_dictionary(read_dictionary("concept-dict"), "hirid", "glu")
   )
 

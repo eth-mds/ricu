@@ -179,7 +179,7 @@ init_itm.hrd_itm <- function(x, table, sub_var, ids,
 
   x[["table"]] <- table
 
-  units <- load_id(as_src_tbl("variables", x), .data$id %in% .env$ids,
+  units <- load_id("variables", x, .data$id %in% .env$ids,
                    cols = "unit", id_var = "id")
   units <- rename_cols(rm_na(units), sub_var, "id")
 
@@ -360,7 +360,11 @@ try_add_vars.itm <- function(x, ...) {
     } else {
 
       if (isTRUE(cur)) {
-        if (is.null(tbl_name(x))) next
+
+        if (is.null(tbl_name(x))) {
+          next
+        }
+
         cur <- default_vars(as_src_tbl(x), var)
       }
 
