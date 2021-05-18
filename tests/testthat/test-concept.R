@@ -146,6 +146,29 @@ test_that("load concepts", {
   expect_snapshot(print(gcs_raw))
 })
 
+skip_if_srcs_missing("eicu_demo")
+
+test_that("load concepts multi src", {
+
+  ids <- list(eicu_demo  = c(141765, 143870),
+              mimic_demo = c(293280, 298685))
+
+  dat <- load_concepts("glu", c("mimic_demo", "eicu_demo"),
+                       patient_ids = ids, verbose = FALSE)
+
+  expect_s3_class(dat, "ts_tbl")
+  expect_true(is_ts_tbl(dat))
+  expect_length(id_vars(dat), 2L)
+
+  uqe <- unique(dat[, id_vars(dat), with = FALSE])
+
+  expect_identical(nrow(uqe), 4L)
+  expect_identical(dat,
+    load_concepts("glu", c("mimic_demo", "eicu_demo"), patient_ids = uqe,
+                  verbose = FALSE)
+  )
+})
+
 test_that("load external dictionary", {
 
   srcs <- c("mimic_demo", "eicu_demo")

@@ -530,6 +530,8 @@ merge_patid <- function(x, patid) {
 
   if (is_id_tbl(patid)) {
     merge(x, patid, all = FALSE)
+  } else if (ncol(patid) == 1L) {
+    merge(x, patid, by.x = id_col, by.y = colnames(patid), all = FALSE)
   } else {
     merge(x, patid, by = id_col, all = FALSE)
   }
@@ -555,9 +557,11 @@ split_patid <- function(x, srcs) {
       assert_that(has_col(x, "source"))
 
       if (is_dt(x)) {
-        x <- split(x, by = "source")
+        x <- set_id_vars(x, setdiff(id_vars(x), "source"))
+        x <- split(x, by = "source", keep.by = FALSE)
       } else {
-        x <- split(x, x[["source"]])
+        x <- split(x[, setdiff(colnames(x), "source"), drop = FALSE],
+                   x[["source"]])
       }
     }
 

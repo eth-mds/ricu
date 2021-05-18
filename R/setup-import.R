@@ -356,7 +356,10 @@ csv_to_fst <- function(x, dir, progress = NULL, ...) {
 
   assert_that(length(x) == 1L, length(src) == 1L, length(dst) == 1L)
 
-  dat <- readr::read_csv(src, col_types = col_spec(x), progress = FALSE, ...)
+  dat <- suppressWarnings(
+    readr::read_csv(src, col_types = col_spec(x), progress = FALSE, ...)
+  )
+
   report_problems(dat, raw)
 
   dat <- rename_cols(setDT(dat), ricu_cols(x), orig_cols(x))
