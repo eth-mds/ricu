@@ -167,6 +167,13 @@ test_that("load concepts multi src", {
     load_concepts("glu", c("mimic_demo", "eicu_demo"), patient_ids = uqe,
                   verbose = FALSE)
   )
+
+  uqe <- as.data.frame(uqe)
+
+  expect_identical(dat,
+    load_concepts("glu", c("mimic_demo", "eicu_demo"), patient_ids = uqe,
+                  verbose = FALSE)
+  )
 })
 
 test_that("load external dictionary", {

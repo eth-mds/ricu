@@ -764,10 +764,12 @@ replace_na.numeric <- function(x, val, type = "const", ...) {
 replace_na.logical <- function(x, val, type = "const", ...) {
 
   if (identical(type, "const")) {
-    NextMethod()
+    res <- NextMethod()
   } else {
-    as.logical(replace_na(as.integer(x), type = type, ...))
+    res <- replace_na(as.integer(x), type = type, ...)
   }
+
+  as.logical(res)
 }
 
 #' @export

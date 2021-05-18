@@ -168,4 +168,11 @@ test_that("na ops", {
 
   expect_identical(nrow(rm_na(no_na, character(0L))),
                    nrow(rm_na(no_na, mode = "any")))
+
+  tmp <- no_na
+
+  val <- tmp[["d"]][5L]
+  tmp[["d"]][5L] <- NA_real_
+
+  expect_equal(replace_na(tmp, val), no_na, ignore_attr = TRUE)
 })
