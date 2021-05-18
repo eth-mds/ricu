@@ -1295,11 +1295,11 @@ R> (dat <- ts_tbl(a = 1:5, b = hours(1:5), c = rnorm(5)))
 # Index var:  `b` (1 hours)
       a b            c
   <int> <drtn>   <dbl>
-1     1 1 hours  0.541
-2     2 2 hours  1.33
-3     3 3 hours -0.550
-4     4 4 hours  0.897
-5     5 5 hours  0.664
+1     1 1 hours  0.739
+2     2 2 hours -0.374
+3     3 3 hours  0.791
+4     4 4 hours  0.907
+5     5 5 hours  0.771
 \end{CodeOutput}
 \begin{CodeInput}
 R> dat[["b"]] <- dat[["b"]] + mins(30)
@@ -1310,11 +1310,11 @@ R> dat
 # Id var:      `a`
       a b               c
   <int> <drtn>      <dbl>
-1     1  5400 secs  0.541
-2     2  9000 secs  1.33
-3     3 12600 secs -0.550
-4     4 16200 secs  0.897
-5     5 19800 secs  0.664
+1     1  5400 secs  0.739
+2     2  9000 secs -0.374
+3     3 12600 secs  0.791
+4     4 16200 secs  0.907
+5     5 19800 secs  0.771
 \end{CodeOutput}
 \end{CodeChunk}
 
