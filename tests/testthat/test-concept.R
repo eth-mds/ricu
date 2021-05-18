@@ -125,6 +125,10 @@ test_that("load concepts", {
   expect_identical(data_vars(dat8), c("variableid", "value", "unit"))
   expect_equal(interval(dat8), hours(1L))
 
+  expect_identical(id_vars(gluc3), id_vars(dat8))
+  expect_identical(index_var(gluc3), index_var(dat8))
+  expect_identical(meta_vars(gluc3), meta_vars(dat8))
+
   expect_identical(dat8, do_callback(gluc3, dat8))
 })
 

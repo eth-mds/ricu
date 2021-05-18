@@ -227,11 +227,15 @@ id_win_helper.hirid_env <- function(x) {
   ids <- field(cfg, "id")
   sta <- field(cfg, "start")
 
-  obs <- as_src_tbl(x, "observations")
-  obs <- subset(obs, .env$ind_fun(.data$patientid, .data$datetime),
-                c("patientid", "datetime"), part_safe = TRUE)
+  obs <- load_src(
+    "observations", x, .env$ind_fun(.data$patientid, .data$datetime),
+    c("patientid", "datetime")
+  )
   obs <- obs[, list(datetime = max(get("datetime"))), by = "patientid"]
-  tbl <- as_src_tbl(x, field(cfg, "table"))[, c(ids, sta)]
+
+  tbl <- load_src(
+    field(cfg, "table"), x, cols = c(ids, sta)
+  )
 
   res <- merge(tbl, obs, by = ids)
   res <- res[, c(sta, "datetime") := lapply(.SD, as_dt_min, get(sta)),
@@ -251,11 +255,12 @@ id_win_helper.aumc_env <- function(x) {
   end <- field(cfg, "end")
 
   tbl <- as_src_tbl(x, unique(field(cfg, "table")))
+
   mis <- setdiff(sta, colnames(tbl))
 
   assert_that(length(mis) >= 1L)
 
-  res <- tbl[, c(ids, intersect(sta, colnames(tbl)), end)]
+  res <- load_src(tbl, cols = c(ids, intersect(sta, colnames(tbl)), end))
 
   if (length(mis) > 0L) {
     res[, c(mis) := 0L]
