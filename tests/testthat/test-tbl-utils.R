@@ -153,3 +153,19 @@ test_that("unique", {
   expect_identical(res, aggregate(tbl, list(z = sum(z))))
   expect_identical(res, aggregate(tbl, list(z = fun(z))))
 })
+
+test_that("na ops", {
+
+  tbl <- id_tbl(
+    a = seq.int(10L),
+    b = sample(c(TRUE, FALSE, NA), 10L, TRUE),
+    c = sample(c(letters[seq.int(6L)], rep(NA_character_, 4L))),
+    d = c(rnorm(1L), sample(c(rnorm(5L), rep(NA_real_, 4L))))
+  )
+
+  no_na <- replace_na(tbl, list(TRUE, "z", NULL), c("const", "const", "locf"),
+                      vars = c("b", "c", "d"))
+
+  expect_identical(nrow(rm_na(no_na, character(0L))),
+                   nrow(rm_na(no_na, mode = "any")))
+})
