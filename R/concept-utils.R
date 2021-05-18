@@ -1217,12 +1217,14 @@ n_tick.concept <- function(x) sum(int_ply(x, n_tick))
 load_dictionary <- function(src = NULL, concepts = NULL,
                             name = "concept-dict", cfg_dirs = NULL) {
 
-  if (is.null(src)) {
-    avail <- is_data_avail(attached_srcs())
-    src <- names(avail)[avail]
-  }
+  avail <- is_data_avail(attached_srcs())
+  avail <- names(avail)[avail]
 
-  assert_that(are_in(src, avail))
+  if (is.null(src)) {
+    src <- avail
+  } else {
+    assert_that(are_in(src, avail))
+  }
 
   parse_dictionary(read_dictionary(name, cfg_dirs), src, concepts)
 }
