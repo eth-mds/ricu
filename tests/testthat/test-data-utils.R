@@ -28,12 +28,19 @@ test_that("stay windows", {
   )
 
   expect_s3_class(hrd, "id_tbl")
-  expect_identical(nrow(hrd), 10L)
+  expect_identical(nrow(hrd), 8L)
   expect_identical(id_vars(hrd), "patientid")
   expect_setequal(data_vars(hrd), c("patientid_start", "patientid_end"))
 
   aum <- mockthat::with_mock(
-    load_src = function(x, src, ...) {
+    as_src_tbl = function(...) {
+      data.table::data.table(
+        patientid = integer(0L), admissionid = integer(0L),
+        admittedat = numeric(0L), dischargedat = numeric(0L),
+        dateofdeath = numeric(0L)
+      )
+    },
+    load_src = function(...) {
       data.table::data.table(
         admissionid = seq_len(10L),
         patientid = seq_len(10L),

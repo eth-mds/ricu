@@ -1217,10 +1217,9 @@ n_tick.concept <- function(x) sum(int_ply(x, n_tick))
 load_dictionary <- function(src = NULL, concepts = NULL,
                             name = "concept-dict", cfg_dirs = NULL) {
 
-  avail <- attached_srcs()
-
   if (is.null(src)) {
-    src <- avail
+    avail <- is_data_avail(attached_srcs())
+    src <- names(avail)[avail]
   }
 
   assert_that(are_in(src, avail))

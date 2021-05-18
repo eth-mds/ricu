@@ -29,7 +29,7 @@
 #' this environment variable as
 #'
 #' ```
-#' Sys.setenv(RICU_SRC_LOAD = "mimic_demo,eciu_demo")
+#' Sys.setenv(RICU_SRC_LOAD = "mimic_demo,eicu_demo")
 #' ```
 #'
 #' will change the default of loading both MIMIC-III and eICU, alongside the

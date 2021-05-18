@@ -1,4 +1,38 @@
 
+test_that("load hirid items", {
+
+  gluc <- mockthat::with_mock(
+    load_id = id_tbl(id = c(20005110L, 24000523L, 24000585L),
+                     unit = rep("mmol/l", 3L)),
+    parse_dictionary(read_dictionary("concept-dict"), "hirid", "glu")
+  )
+
+  expect_identical(n_tick(gluc), 2L)
+
+  gluc <- as_item(gluc)[[1L]]
+
+  dat <- mockthat::with_mock(
+    load_ts = ts_tbl(
+      patientid = rep(seq_len(2L), each = 10L),
+      datetime = hours(rep(seq_len(10L), 2L)),
+      variableid = rep(24000585L, 20L),
+      value = rnorm(20L)
+    ),
+    do_itm_load(gluc)
+  )
+
+  expect_s3_class(dat, "ts_tbl")
+  expect_true(is_ts_tbl(dat))
+  expect_identical(data_vars(dat), c("variableid", "value", "unit"))
+  expect_equal(interval(dat), hours(1L))
+
+  expect_identical(id_vars(gluc), id_vars(dat))
+  expect_identical(index_var(gluc), index_var(dat))
+  expect_identical(meta_vars(gluc), meta_vars(dat))
+
+  expect_identical(dat, do_callback(gluc, dat))
+})
+
 skip_if_srcs_missing("mimic_demo")
 
 test_that("load concepts", {
@@ -99,37 +133,6 @@ test_that("load concepts", {
 
   expect_snapshot(print(gcs_con))
   expect_snapshot(print(gcs_raw))
-
-  gluc3 <- mockthat::with_mock(
-    load_id = id_tbl(id = c(20005110L, 24000523L, 24000585L),
-                     unit = rep("mmol/l", 3L)),
-    parse_dictionary(read_dictionary("concept-dict"), "hirid", "glu")
-  )
-
-  expect_identical(n_tick(gluc3), 2L)
-
-  gluc3 <- as_item(gluc3)[[1L]]
-
-  dat8 <- mockthat::with_mock(
-    load_ts = ts_tbl(
-      patientid = rep(seq_len(2L), each = 10L),
-      datetime = hours(rep(seq_len(10L), 2L)),
-      variableid = rep(24000585L, 20L),
-      value = rnorm(20L)
-    ),
-    do_itm_load(gluc3)
-  )
-
-  expect_s3_class(dat8, "ts_tbl")
-  expect_true(is_ts_tbl(dat8))
-  expect_identical(data_vars(dat8), c("variableid", "value", "unit"))
-  expect_equal(interval(dat8), hours(1L))
-
-  expect_identical(id_vars(gluc3), id_vars(dat8))
-  expect_identical(index_var(gluc3), index_var(dat8))
-  expect_identical(meta_vars(gluc3), meta_vars(dat8))
-
-  expect_identical(dat8, do_callback(gluc3, dat8))
 })
 
 test_that("load external dictionary", {
