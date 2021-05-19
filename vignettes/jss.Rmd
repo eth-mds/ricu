@@ -25,7 +25,7 @@ author:
       | Department of Anaesthesiology and Perioperative Medicine
       | 246 Clayton Road
       | Clayton VIC 3168
-    email: \email{dr.ukor@gmail.com}
+    email: \email{ida-fong.ukor@monashhealth.org}
   - name: Nicolai Meinshausen
     affiliation: ETH Zürich
     address: |
@@ -112,50 +112,59 @@ To our knowledge, infrastructure that provides a common interface to multiple su
 
 Given the somewhat narrow focus of the targeted datasets, combined with the fact that in some cases data is even extracted from identical patient care management systems, it may come as a surprise as to how heterogeneous the resulting datasets are. In MIMIC-III and HiRID, for example, time-stamps are reported as absolute times (albeit randomly shifted due to data privacy concerns), whereas eICU and AUMC use relative times (with origins being admission times). Another example, involves different types of patient identifiers and their use among datasets. Common to all is the notion of an ICU admission ID, but apart from that, the amount of available information varies: While ICU (and hospital) readmissions for a given patient can be identified in some, this is not possible in other datasets. Furthermore, use of identifier systems might not be consistent over tables. In MIMIC-III, for example, some tables refer to ICU stay IDs while others use hospital stay IDs, which slightly complicates data retrieval for a given ID system. Additionally, table layouts vary (*long* versus *wide* data arrangement) and data organization in general is far from consistent over datasets.
 
-# Quick start and organization
+# Quick start guide
 
-We give a quick outline of how \pkg{ricu} can be used and how the manuscript is organized.
+The following list gives a quick outline of the steps required for setting up and starting to use \pkg{ricu}, alongside some section references on where to find further details. A more comprehensive version of this overview is available as a [separate vignette](https://CRAN.R-project.org/package=ricu/vignettes/ricu.html).
 
-1. Download and install the \pkg{ricu} package:
+1. Package installation:
 
-    * install \pkg{ricu} via CRAN with `install.packages("ricu")`
+    * the latest release of \pkg{ricu} can be installed from CRAN as `install.packages("ricu")`
 
-    * alternatively, to install from Github use `install_github("eth-mds/ricu")` (of the \pkg{remotes} package)
+    * alternatively, the latest development version is available from [Github](https://github.com/eth-mds/ricu) by running `remotes::install_github("eth-mds/ricu")`
 
-1. Get access to datasets and run setup:
+1. Requesting access to datasets and data source setup:
 
-    * get access to MIMIC-III, eICU and HiRID via [Physionet](https://physionet.org/register/)
+    * demo datasets can be set up by installing the data packages `mimic.demo` and/or `eicu.demo` while passing `"https://eth-mds.github.io/physionet-demo"` as `repos` argument to `install.packages()`
 
-    * get access to AUMCdb via [Amsterdam Medical Data Science Website](https://amsterdammedicaldatascience.nl/#amsterdamumcdb)
+    * the complete MIMIC-III, eICU and HiRID datasets can be accessed by setting up an account at [PhysioNet](https://physionet.org/register)
 
-    * set `RICU_PHYSIONET_USER`, `RICU_PHYSIONET_PASS` and `RICU_AUMC_TOKEN` environment variables using the obtained information
+    * access to AUMCdb is available via the [Amsterdam Medical Data Science Website](https://amsterdammedicaldatascience.nl/#amsterdamumcdb)
 
-    * run `setup_data_src()` and wait for data download and conversion
+    * the obtained credentials can be configured for PhysioNet datasets by setting environment variables `RICU_PHYSIONET_USER` and `RICU_PHYSIONET_PASS`, while the download token for AUMCdb can be set as `RICU_AUMC_TOKEN`
 
-    A more detailed description of the datasets and the setup process is given in Section \ref{data-sources}. There is also a separate [vignette to help the user get started](https://CRAN.R-project.org/package=ricu/vignettes/ricu.html).
+    * datasets are downloaded and set up either automatically upon the first access attempt or manually by running `setup_data_src()`; the environment variable `RICU_DATA_PATH` can be set to control data location
 
-1. Use the main `load_concepts()` function to load 100+ available concepts:
+    * dataset availability can be queried by calling `src_data_avail()`
 
-    * for example, run `load_concepts(c("age", "glu"), "mimic")` to obtain data on glucose and age concepts in the MIMIC-III dataset
+    A more detailed description of the datasets and the setup process is given in Section \ref{data-sources}, with Section \ref{ready-to-use-datasets} providing an overview of each of the 4 supported datasets and Section \ref{implementation-details} elaborating on how datasets are represented in code.
 
-    * see `?load_concepts` for more details
+1. Loading of data corresponding to clinical concepts using `load_concepts()`:
 
-    A more detailed description of available concepts and data loading is discussed in Section \ref{data-concepts}.
+    * currently, over 100 data concepts are available for the 4 supported datasets (see `concept_availability()`/`explain_dictionary()` for names, availability etc.)
 
-1. Add your own concepts:
+    * both concepts and data sources can be specified as strings; for example, glucose and age data can be loaded from MIMIC-III as `load_concepts(c("age", "glu"), "mimic")`
 
-    * although some commonly appearing concepts are already available (such as demographics, vitals and laboratory values), the user might be interested in adding their own, custom concepts
+    Section \ref{data-concepts} goes into more detail on how data concepts are represented within \pkg{ricu} and an overview of the pre-configured concepts is available from Section \ref{clinical-concepts}.
 
-    Addition of custom concepts is possible in two different ways, discussed in detail in Section \ref{concept-specification}.
+1. Extending the concept dictionary:
 
-1. Add your own dataset:
+    * data concepts can be specified in code using the constructors `concept()`/`item()` or `new_concept()`/`new_item()`
 
-    *  the user might be interested in analyzing their own dataset, or using it jointly with the four large in-built datasets in \pkg{ricu}
-    *  \pkg{ricu} supports the addition of user-specified datasets
+    * for session persistence, data concepts can also be specified as JSON formatted objects
 
-    Full detail about adding a custom dataset is described in Section \ref{adding-external-datasets}.
+    * JSON-based concept dictionaries can either extend or replace others and they can be pointed to by setting the environment variable `RICU_CONFIG_PATH`
 
-Lastly, in Section \ref{examples} we briefly show how \pkg{ricu} can be used in practice to address clinical questions.
+    The JSON format used to encode data concepts is discussed in more detail in Section \ref{concept-specification}.
+
+1. Adding new datasets:
+
+    * a JSON-based dataset configuration file is required, from which the configuration objects described in Section \ref{implementation-details} are created
+
+    * in order for concepts to be available from the new dataset, the dictionary requires extension by adding new data items
+
+    Some further information about adding a custom dataset is available from Section \ref{adding-external-datasets}, albeit not in much detail. Some code used when AUMCdb was not yet fully integrated with \pkg{ricu} is available from [Github](https://github.com/eth-mds/aumc).
+
+The final section (\ref{examples}) shows briefly how \pkg{ricu} could be used in practice to address clinical questions by presenting two small examples.
 
 # Data sources
 
