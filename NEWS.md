@@ -1,3 +1,7 @@
+# ricu 0.4.0
+
+* CRAN release which includes `aumc` data source and `sep3` concept
+
 # ricu 0.3.0
 
 * revamped `src_env` setup
