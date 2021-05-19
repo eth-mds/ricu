@@ -65,7 +65,7 @@ CH-8092 Zürich\\
     Department of Anaesthesiology and Perioperative Medicine\\
 246 Clayton Road\\
 Clayton VIC 3168\\
-  E-mail: \email{dr.ukor@gmail.com}\\
+  E-mail: \email{ida-fong.ukor@monashhealth.org}\\
   
       Nicolai Meinshausen\\
     ETH Zürich\\
@@ -188,95 +188,129 @@ Additionally, table layouts vary (\emph{long} versus \emph{wide} data
 arrangement) and data organization in general is far from consistent
 over datasets.
 
-\hypertarget{quick-start-and-organization}{%
-\section{Quick start and
-organization}\label{quick-start-and-organization}}
+\hypertarget{quick-start-guide}{%
+\section{Quick start guide}\label{quick-start-guide}}
 
-We give a quick outline of how \pkg{ricu} can be used and how the
-manuscript is organized.
+The following list gives a quick outline of the steps required for
+setting up and starting to use \pkg{ricu}, alongside some section
+references on where to find further details. A more comprehensive
+version of this overview is available as a
+\href{https://CRAN.R-project.org/package=ricu/vignettes/ricu.html}{separate
+vignette}.
 
 \begin{enumerate}
 \def\labelenumi{\arabic{enumi}.}
 \item
-  Download and install the \pkg{ricu} package:
+  Package installation:
 
   \begin{itemize}
   \item
-    install \pkg{ricu} via CRAN with \texttt{install.packages("ricu")}
+    the latest release of \pkg{ricu} can be installed from CRAN as
+    \texttt{install.packages("ricu")}
   \item
-    alternatively, to install from Github use
-    \texttt{install\_github("eth-mds/ricu")} (of the \pkg{remotes}
-    package)
+    alternatively, the latest development version is available from
+    \href{https://github.com/eth-mds/ricu}{Github} by running
+    \texttt{remotes::install\_github("eth-mds/ricu")}
   \end{itemize}
 \item
-  Get access to datasets and run setup:
+  Requesting access to datasets and data source setup:
 
   \begin{itemize}
   \item
-    get access to MIMIC-III, eICU and HiRID via
-    \href{https://physionet.org/register/}{Physionet}
+    demo datasets can be set up by installing the data packages
+    \texttt{mimic.demo} and/or \texttt{eicu.demo} while passing
+    \texttt{"https://eth-mds.github.io/physionet-demo"} as
+    \texttt{repos} argument to \texttt{install.packages()}
   \item
-    get access to AUMCdb via
+    the complete MIMIC-III, eICU and HiRID datasets can be accessed by
+    setting up an account at
+    \href{https://physionet.org/register}{PhysioNet}
+  \item
+    access to AUMCdb is available via the
     \href{https://amsterdammedicaldatascience.nl/\#amsterdamumcdb}{Amsterdam
     Medical Data Science Website}
   \item
-    set \texttt{RICU\_PHYSIONET\_USER}, \texttt{RICU\_PHYSIONET\_PASS}
-    and \texttt{RICU\_AUMC\_TOKEN} environment variables using the
-    obtained information
+    the obtained credentials can be configured for PhysioNet datasets by
+    setting environment variables \texttt{RICU\_PHYSIONET\_USER} and
+    \texttt{RICU\_PHYSIONET\_PASS}, while the download token for AUMCdb
+    can be set as \texttt{RICU\_AUMC\_TOKEN}
   \item
-    run \texttt{setup\_data\_src()} and wait for data download and
-    conversion
+    datasets are downloaded and set up either automatically upon the
+    first access attempt or manually by running
+    \texttt{setup\_data\_src()}; the environment variable
+    \texttt{RICU\_DATA\_PATH} can be set to control data location
+  \item
+    dataset availability can be queried by calling
+    \texttt{src\_data\_avail()}
   \end{itemize}
 
   A more detailed description of the datasets and the setup process is
-  given in Section \ref{data-sources}. There is also a separate
-  \href{https://CRAN.R-project.org/package=ricu/vignettes/ricu.html}{vignette
-  to help the user get started}.
+  given in Section \ref{data-sources}, with Section
+  \ref{ready-to-use-datasets} providing an overview of each of the 4
+  supported datasets and Section \ref{implementation-details}
+  elaborating on how datasets are represented in code.
 \item
-  Use the main \texttt{load\_concepts()} function to load 100+ available
-  concepts:
+  Loading of data corresponding to clinical concepts using
+  \texttt{load\_concepts()}:
 
   \begin{itemize}
   \item
-    for example, run \texttt{load\_concepts(c("age",\ "glu"),\ "mimic")}
-    to obtain data on glucose and age concepts in the MIMIC-III dataset
+    currently, over 100 data concepts are available for the 4 supported
+    datasets (see
+    \texttt{concept\_availability()}/\texttt{explain\_dictionary()} for
+    names, availability etc.)
   \item
-    see \texttt{?load\_concepts} for more details
+    both concepts and data sources can be specified as strings; for
+    example, glucose and age data can be loaded from MIMIC-III as
+    \texttt{load\_concepts(c("age",\ "glu"),\ "mimic")}
   \end{itemize}
 
-  A more detailed description of available concepts and data loading is
-  discussed in Section \ref{data-concepts}.
+  Section \ref{data-concepts} goes into more detail on how data concepts
+  are represented within \pkg{ricu} and an overview of the
+  pre-configured concepts is available from Section
+  \ref{clinical-concepts}.
 \item
-  Add your own concepts:
+  Extending the concept dictionary:
 
   \begin{itemize}
-  \tightlist
   \item
-    although some commonly appearing concepts are already available
-    (such as demographics, vitals and laboratory values), the user might
-    be interested in adding their own, custom concepts
+    data concepts can be specified in code using the constructors
+    \texttt{concept()}/\texttt{item()} or
+    \texttt{new\_concept()}/\texttt{new\_item()}
+  \item
+    for session persistence, data concepts can also be specified as JSON
+    formatted objects
+  \item
+    JSON-based concept dictionaries can either extend or replace others
+    and they can be pointed to by setting the environment variable
+    \texttt{RICU\_CONFIG\_PATH}
   \end{itemize}
 
-  Addition of custom concepts is possible in two different ways,
-  discussed in detail in Section \ref{concept-specification}.
+  The JSON format used to encode data concepts is discussed in more
+  detail in Section \ref{concept-specification}.
 \item
-  Add your own dataset:
+  Adding new datasets:
 
   \begin{itemize}
-  \tightlist
   \item
-    the user might be interested in analyzing their own dataset, or
-    using it jointly with the four large in-built datasets in \pkg{ricu}
+    a JSON-based dataset configuration file is required, from which the
+    configuration objects described in Section
+    \ref{implementation-details} are created
   \item
-    \pkg{ricu} supports the addition of user-specified datasets
+    in order for concepts to be available from the new dataset, the
+    dictionary requires extension by adding new data items
   \end{itemize}
 
-  Full detail about adding a custom dataset is described in Section
-  \ref{adding-external-datasets}.
+  Some further information about adding a custom dataset is available
+  from Section \ref{adding-external-datasets}, albeit not in much
+  detail. Some code used when AUMCdb was not yet fully integrated with
+  \pkg{ricu} is available from
+  \href{https://github.com/eth-mds/aumc}{Github}.
 \end{enumerate}
 
-Lastly, in Section \ref{examples} we briefly show how \pkg{ricu} can be
-used in practice to address clinical questions.
+The final section (\ref{examples}) shows briefly how \pkg{ricu} could be
+used in practice to address clinical questions by presenting two small
+examples.
 
 \hypertarget{data-sources}{%
 \section{Data sources}\label{data-sources}}
@@ -1293,13 +1327,13 @@ R> (dat <- ts_tbl(a = 1:5, b = hours(1:5), c = rnorm(5)))
 # A `ts_tbl`: 5 x 3
 # Id var:     `a`
 # Index var:  `b` (1 hours)
-      a b            c
-  <int> <drtn>   <dbl>
-1     1 1 hours  0.739
-2     2 2 hours -0.374
-3     3 3 hours  0.791
-4     4 4 hours  0.907
-5     5 5 hours  0.771
+      a b             c
+  <int> <drtn>    <dbl>
+1     1 1 hours  0.0739
+2     2 2 hours  1.01
+3     3 3 hours -0.597
+4     4 4 hours  0.563
+5     5 5 hours -0.575
 \end{CodeOutput}
 \begin{CodeInput}
 R> dat[["b"]] <- dat[["b"]] + mins(30)
@@ -1308,13 +1342,13 @@ R> dat
 \begin{CodeOutput}
 # An `id_tbl`: 5 x 3
 # Id var:      `a`
-      a b               c
-  <int> <drtn>      <dbl>
-1     1  5400 secs  0.739
-2     2  9000 secs -0.374
-3     3 12600 secs  0.791
-4     4 16200 secs  0.907
-5     5 19800 secs  0.771
+      a b                c
+  <int> <drtn>       <dbl>
+1     1  5400 secs  0.0739
+2     2  9000 secs  1.01
+3     3 12600 secs -0.597
+4     4 16200 secs  0.563
+5     5 19800 secs -0.575
 \end{CodeOutput}
 \end{CodeChunk}
 
