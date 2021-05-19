@@ -1,7 +1,7 @@
 ## Test environments
 
-* local R installation, macOS 10.15, R 4.0.3
-* GitHub Actions (ubuntu-16.04): 3.4, 3.5, oldrel, release
+* local R installation, macOS 10.15, R 4.0.4
+* GitHub Actions (ubuntu-16.04): 3.4, 3.5, oldrel, release, devel
 * GitHub Actions (windows): 3.6, release
 * Github Actions (macOS): release
 * win-builder (devel)
@@ -10,4 +10,4 @@
 
 0 errors | 0 warnings | 0 notes
 
-* This is a maintenance release to fix a CRAN policy violation
+* This is a new release
