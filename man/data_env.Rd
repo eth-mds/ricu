@@ -137,7 +137,7 @@ The database includes information such as demographics, vital sign
 measurements made at the bedside (~1 data point per hour), laboratory test
 results, procedures, medications, caregiver notes, imaging reports, and
 mortality (both in and out of hospital). For further information, please
-refer to the \href{https://mimic.physionet.org/about/mimic/}{MIMIC-III documentation }.
+refer to the \href{https://mimic.physionet.org/iii/}{MIMIC-III documentation}.
 
 The corresponding
 \href{https://physionet.org/content/mimiciii-demo/}{demo dataset}

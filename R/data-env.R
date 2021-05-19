@@ -81,8 +81,7 @@
 #' measurements made at the bedside (~1 data point per hour), laboratory test
 #' results, procedures, medications, caregiver notes, imaging reports, and
 #' mortality (both in and out of hospital). For further information, please
-#' refer to the [MIMIC-III documentation
-#' ](https://mimic.physionet.org/about/mimic/).
+#' refer to the [MIMIC-III documentation](https://mimic.physionet.org/iii/).
 #'
 #' The corresponding
 #' [demo dataset](https://physionet.org/content/mimiciii-demo/)
