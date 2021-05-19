@@ -1056,9 +1056,9 @@ made available to \pkg{ricu} using \texttt{attach\_src()}. In addition
 to providing a configuration file, dataset-specific implementations of
 some of the S3 generic functions involved in data-loading might be
 required. In the case of AmsterdamUMCdb, a class-specific implementation
-of \texttt{load\_difftime()} is required, as raw time-stamps are recoded
-in milliseconds (instead of minutes), as well as a class-specific
-implementation of the S3 generic function
+of \texttt{load\_difftime()} is required, as raw time-stamps are
+recorded in milliseconds (instead of minutes), as well as a
+class-specific implementation of the S3 generic function
 \texttt{id\_win\_helper()}\footnote{This method is used as part of
   \texttt{change\_id()} which is called whenever the requested ID system
   is not available in raw data. A component central to conversion
@@ -1327,13 +1327,13 @@ R> (dat <- ts_tbl(a = 1:5, b = hours(1:5), c = rnorm(5)))
 # A `ts_tbl`: 5 x 3
 # Id var:     `a`
 # Index var:  `b` (1 hours)
-      a b             c
-  <int> <drtn>    <dbl>
-1     1 1 hours  0.0739
-2     2 2 hours  1.01
-3     3 3 hours -0.597
-4     4 4 hours  0.563
-5     5 5 hours -0.575
+      a b            c
+  <int> <drtn>   <dbl>
+1     1 1 hours  1.16
+2     2 2 hours -1.18
+3     3 3 hours  0.325
+4     4 4 hours -0.748
+5     5 5 hours  1.21
 \end{CodeOutput}
 \begin{CodeInput}
 R> dat[["b"]] <- dat[["b"]] + mins(30)
@@ -1342,13 +1342,13 @@ R> dat
 \begin{CodeOutput}
 # An `id_tbl`: 5 x 3
 # Id var:      `a`
-      a b                c
-  <int> <drtn>       <dbl>
-1     1  5400 secs  0.0739
-2     2  9000 secs  1.01
-3     3 12600 secs -0.597
-4     4 16200 secs  0.563
-5     5 19800 secs -0.575
+      a b               c
+  <int> <drtn>      <dbl>
+1     1  5400 secs  1.16
+2     2  9000 secs -1.18
+3     3 12600 secs  0.325
+4     4 16200 secs -0.748
+5     5 19800 secs  1.21
 \end{CodeOutput}
 \end{CodeChunk}
 
