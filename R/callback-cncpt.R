@@ -146,7 +146,7 @@ rename_data_var <- function(new_name, old_name = NULL) {
 #' determines time windows during which patients are mechanically ventilated
 #' by combining start and end events that are separated by at most `match_win`
 #' and at least `min_length`. Durations can be converted into an indicator
-#' varaible represented by `vent_ind`, where time-points (as determined by
+#' variable represented by `vent_ind`, where time-points (as determined by
 #' `interval`) that fall into such ventilation windows are set to `TRUE`,
 #' while missingness (`NA`) or `FALSE` indicate no mechanical ventilation.
 #' Currently, no clear distinction between invasive an non-invasive

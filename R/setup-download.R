@@ -33,7 +33,7 @@
 #'
 #' Demo datasets
 #' [MIMIC-III demo](https://physionet.org/content/mimiciii-demo/1.4/) and
-#' [eiCU demo](https://physionet.org/content/eicu-crd-demo/2.0/) can either be
+#' [eICU demo](https://physionet.org/content/eicu-crd-demo/2.0/) can either be
 #' installed as R packages directly by running
 #'
 #' ```

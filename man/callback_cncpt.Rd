@@ -159,7 +159,7 @@ Building on the atomic concepts \code{vent_start} and \code{vent_end}, \code{ven
 determines time windows during which patients are mechanically ventilated
 by combining start and end events that are separated by at most \code{match_win}
 and at least \code{min_length}. Durations can be converted into an indicator
-varaible represented by \code{vent_ind}, where time-points (as determined by
+variable represented by \code{vent_ind}, where time-points (as determined by
 \code{interval}) that fall into such ventilation windows are set to \code{TRUE},
 while missingness (\code{NA}) or \code{FALSE} indicate no mechanical ventilation.
 Currently, no clear distinction between invasive an non-invasive
