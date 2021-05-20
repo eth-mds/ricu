@@ -6,6 +6,7 @@
 <!-- badges: start -->
 
 [![Lifecycle](https://img.shields.io/badge/lifecycle-stable-brightgreen.svg)](https://lifecycle.r-lib.org/articles/stages.html#stable)
+[![CRAN](https://www.r-pkg.org/badges/version/ricu)](https://cran.r-project.org/package=ricu)
 [![R build
 status](https://github.com/eth-mds/ricu/workflows/build/badge.svg)](https://github.com/eth-mds/ricu/actions?query=workflow%3Abuild)
 [![R check
