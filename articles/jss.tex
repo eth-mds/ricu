@@ -418,9 +418,34 @@ as critical care procedures, organized as a 26-table relational
 structure.
 
 \begin{CodeChunk}
+\begin{CodeOutput}
+Note: The following code chunk(s) are intended to be run using data
+from `mimic` which is not available. Alternatively, data from
+`mimic_demo` is used instead.
+\end{CodeOutput}
+\end{CodeChunk}
+
+\begin{CodeChunk}
 \begin{CodeInput}
-R> mimic
+R> mimic_demo
 \end{CodeInput}
+\begin{CodeOutput}
+<mimic_demo_env[25]>
+        admissions            callout         caregivers        chartevents 
+        [129 x 19]          [77 x 24]        [7,567 x 4]     [758,355 x 15] 
+         cptevents              d_cpt    d_icd_diagnoses   d_icd_procedures 
+      [1,579 x 12]          [134 x 9]       [14,567 x 4]        [3,882 x 4] 
+           d_items         d_labitems     datetimeevents      diagnoses_icd 
+     [12,487 x 10]          [753 x 6]      [15,551 x 14]        [1,761 x 5] 
+          drgcodes           icustays     inputevents_cv     inputevents_mv 
+         [297 x 8]         [136 x 12]      [34,799 x 22]      [13,224 x 31] 
+         labevents microbiologyevents       outputevents           patients 
+      [76,074 x 9]       [2,003 x 16]      [11,320 x 13]          [100 x 8] 
+     prescriptions procedureevents_mv     procedures_icd           services 
+     [10,398 x 19]         [753 x 25]          [506 x 5]          [163 x 6] 
+         transfers 
+        [524 x 13] 
+\end{CodeOutput}
 \end{CodeChunk}
 
 One thing of note from a data-organizational perspective is that a
@@ -460,9 +485,42 @@ PhysioNet. Patients with discharge dates in 2014 or 2015 were
 considered, with stays in low acuity units being removed.
 
 \begin{CodeChunk}
+\begin{CodeOutput}
+Note: The following code chunk(s) are intended to be run using data
+from `eicu` which is not available. Alternatively, data from
+`eicu_demo` is used instead.
+\end{CodeOutput}
+\end{CodeChunk}
+
+\begin{CodeChunk}
 \begin{CodeInput}
-R> eicu
+R> eicu_demo
 \end{CodeInput}
+\begin{CodeOutput}
+<eicu_demo_env[31]>
+            admissiondrug               admissiondx                   allergy 
+             [7,417 x 14]               [7,578 x 6]              [2,475 x 13] 
+             apacheapsvar       apachepatientresult             apachepredvar 
+             [2,205 x 26]              [3,676 x 23]              [2,205 x 51] 
+     careplancareprovider               careplaneol           careplangeneral 
+              [5,627 x 8]                  [15 x 5]              [33,148 x 6] 
+             careplangoal careplaninfectiousdisease                 customlab 
+              [3,633 x 7]                 [112 x 8]                  [30 x 7] 
+                diagnosis                  hospital              infusiondrug 
+             [24,978 x 7]                 [186 x 4]              [38,256 x 9] 
+             intakeoutput                       lab                medication 
+           [100,466 x 12]            [434,660 x 10]             [75,604 x 15] 
+                 microlab                      note           nurseassessment 
+                [342 x 7]              [24,758 x 8]              [91,589 x 8] 
+                nursecare             nursecharting               pasthistory 
+             [42,080 x 8]           [1,477,163 x 8]              [12,109 x 8] 
+                  patient              physicalexam           respiratorycare 
+             [2,520 x 29]              [84,058 x 6]              [5,436 x 34] 
+      respiratorycharting                 treatment            vitalaperiodic 
+            [176,089 x 7]              [38,290 x 5]            [274,088 x 13] 
+            vitalperiodic 
+         [1,634,960 x 19] 
+\end{CodeOutput}
 \end{CodeChunk}
 
 The data is organized into 31 tables and includes patient demographics,
@@ -566,6 +624,47 @@ catheters, information on administered medication, and other medical
 procedures. In terms of patient identifiers, it is possible to link ICU
 admissions corresponding to the same individual, but it is not possible
 to identify separate hospital admissions.
+
+\begin{CodeChunk}
+\begin{CodeOutput}
+Note: The following code chunk(s) are intended to be run using data
+from `mimic`, `eicu` which is not available. Alternatively, data from
+`mimic_demo`, `eicu_demo` is used instead.
+\end{CodeOutput}
+\end{CodeChunk}
+
+\begin{table}
+
+\caption{\label{tab:datasets}Comparison of datasets supported by \pkg{ricu}, highlighting some of the major similarities and distinguishing features among the four data sources described in the preceding paragraphs. Values followed by parenthesized ranges represent medians and are accompanied by quartiles.}
+\centering
+\begin{threeparttable}
+\begin{tabular}[t]{lll}
+\toprule
+  & MIMIC (demo) & eICU (demo)\\
+\midrule
+Number of tables & 25 & 31\\
+Disk storage [GB] & 0.01 & 0.06\\
+Available concepts\textsuperscript{*} & 87 & 85\\
+\addlinespace[0.3em]
+\multicolumn{3}{l}{\textbf{Admission counts}}\\
+\hspace{1em}ICU & 136 & 2,520\\
+\hspace{1em}Hospital & 129 & 2,174\\
+\hspace{1em}Unique patients & 100 & -\\
+\addlinespace[0.3em]
+\multicolumn{3}{l}{\textbf{Stay lengths [hr]}}\\
+\hspace{1em}ICU stays & \makecell[l]{2.11\\(1.23 - 4.33)} & \makecell[l]{1.47\\(0.79 - 2.78)}\\
+\hspace{1em}Hospital stays & \makecell[l]{6.63\\(3.31 - 10.65)} & \makecell[l]{4.14\\(2.12 - 7.90)}\\
+\addlinespace[0.3em]
+\multicolumn{3}{l}{\textbf{Frequency [1/hr]}}\\
+\hspace{1em}\makecell[l]{Vital signs\\(heart rate)} & \makecell[l]{1.00\\(1.00 - 1.00)} & \makecell[l]{12.00\\(12.00 - 12.00)}\\
+\hspace{1em}\makecell[l]{Lab tests\\(bilirubin)} & \makecell[l]{0.04\\(0.04 - 0.08)} & \makecell[l]{0.04\\(0.04 - 0.05)}\\
+\bottomrule
+\end{tabular}
+\begin{tablenotes}
+\item[*] These values represent the number of atomic concepts per data source. Additionally, 29 recursive concepts are available, which build on source-specific atomic concepts in a source-agnostic manner (see Section \ref{concept-specification} for details).
+\end{tablenotes}
+\end{threeparttable}
+\end{table}
 
 \hypertarget{implementation-details}{%
 \subsection{Implementation details}\label{implementation-details}}
@@ -1331,11 +1430,11 @@ R> (dat <- ts_tbl(a = 1:5, b = hours(1:5), c = rnorm(5)))
 # Index var:  `b` (1 hours)
       a b            c
   <int> <drtn>   <dbl>
-1     1 1 hours -0.413
-2     2 2 hours -1.90
-3     3 3 hours  0.357
-4     4 4 hours -0.412
-5     5 5 hours  0.792
+1     1 1 hours  0.913
+2     2 2 hours  1.14
+3     3 3 hours  0.738
+4     4 4 hours -0.805
+5     5 5 hours  0.152
 \end{CodeOutput}
 \begin{CodeInput}
 R> dat[["b"]] <- dat[["b"]] + mins(30)
@@ -1346,11 +1445,11 @@ R> dat
 # Id var:      `a`
       a b               c
   <int> <drtn>      <dbl>
-1     1  5400 secs -0.413
-2     2  9000 secs -1.90
-3     3 12600 secs  0.357
-4     4 16200 secs -0.412
-5     5 19800 secs  0.792
+1     1  5400 secs  0.913
+2     2  9000 secs  1.14
+3     3 12600 secs  0.738
+4     4 16200 secs -0.805
+5     5 19800 secs  0.152
 \end{CodeOutput}
 \end{CodeChunk}
 
@@ -1689,6 +1788,24 @@ how some data pre-processing can be added to an existing concept by
 creating a new \texttt{rec\_cncpt} and how to create an new data concept
 altogether.
 
+\begin{CodeChunk}
+\begin{CodeOutput}
+Note: The following code chunk(s) are intended to be run using data
+from `mimic` which is not available. Alternatively, data from
+`mimic_demo` is used instead.
+\end{CodeOutput}
+\end{CodeChunk}
+
+\begin{CodeChunk}
+\begin{CodeInput}
+R> if (is_data_avail("mimic")) {
++   src <- "mimic"
++ } else {
++   src <- "mimic_demo"
++ }
+\end{CodeInput}
+\end{CodeChunk}
+
 \hypertarget{lactate-and-mortality}{%
 \subsection{Lactate and mortality}\label{lactate-and-mortality}}
 
@@ -1704,12 +1821,12 @@ patients admitted from 2008 onwards of ages 25 to 65 years old.
 
 \begin{CodeChunk}
 \begin{CodeInput}
-R> cohort <- load_id("icustays", "mimic", dbsource == "metavision",
+R> cohort <- load_id("icustays", src, dbsource == "metavision",
 +                   cols = NULL)
-R> cohort <- load_concepts("age", "mimic", patient_ids = cohort,
+R> cohort <- load_concepts("age", src, patient_ids = cohort,
 +                         verbose = FALSE)
 R> 
-R> dat <- load_concepts(c("lact", "death", "sofa", "sex"), "mimic",
+R> dat <- load_concepts(c("lact", "death", "sofa", "sex"), src,
 +                      patient_ids = cohort[age > 25 & age < 65],
 +                      verbose = FALSE)
 R> 
@@ -1725,6 +1842,10 @@ R> cox_mod <- coxph(
 +   data = dat
 + )
 \end{CodeInput}
+\begin{CodeOutput}
+Warning in agreg.fit(X, Y, istrat, offset, init, control, weights = weights, :
+Ran out of iterations and did not converge
+\end{CodeOutput}
 \end{CodeChunk}
 
 After loading the data, some minor pre-processing is still required
@@ -1735,6 +1856,13 @@ using a last observation carry forward (locf) scheme (observing the
 patient grouping) and we simply replace missing \texttt{death} values
 with the value \texttt{FALSE}. The resulting model fit can be visualized
 as:
+
+\begin{CodeChunk}
+
+
+\begin{center}\includegraphics{/private/var/folders/24/8k48jl6d249_n_qfxwsl6xvm0000gn/T/RtmphHzDCQ/file724642c300a/articles/jss_files/figure-latex/cox_plot-1} \end{center}
+
+\end{CodeChunk}
 
 A simple exploration already shows that the increased values of lactate
 are associated with mortality, even after adjusting for the SOFA score.
@@ -1783,7 +1911,7 @@ R> ins_cb <- function(ins, ...) {
 +   ins
 + }
 R> 
-R> ins24 <- load_dictionary("mimic", "ins")
+R> ins24 <- load_dictionary(src, "ins")
 R> ins24 <- concept("ins24", ins24, "insulin in first 24h", aggregate = "sum",
 +                  callback = ins_cb, target = "id_tbl", class = "rec_cncpt")
 \end{CodeInput}
@@ -1802,7 +1930,7 @@ we can use \texttt{transform\_fun()} coupled with a function like
 \begin{CodeInput}
 R> grep_diab <- function(x) grepl("^250\\.?[0-9]{2}$", x)
 R> 
-R> diab  <- item("mimic", table = "diagnoses_icd",
+R> diab  <- item(src, table = "diagnoses_icd",
 +               callback = transform_fun(grep_diab), class = "col_itm")
 R> diab  <- concept("diab", diab, "diabetes", target = "id_tbl",
 +                  class = "lgl_cncpt")
@@ -1815,6 +1943,13 @@ R> dat
 
 After this, we can visualize the difference between the two groups with
 a histogram:
+
+\begin{CodeChunk}
+
+
+\begin{center}\includegraphics{/private/var/folders/24/8k48jl6d249_n_qfxwsl6xvm0000gn/T/RtmphHzDCQ/file724642c300a/articles/jss_files/figure-latex/diabetes_visualize-1} \end{center}
+
+\end{CodeChunk}
 
 The plot suggests that during the first day of ICU stay, perhaps
 unsurprisingly, diabetic patients receive more insulin compared to
