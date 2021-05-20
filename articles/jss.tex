@@ -99,7 +99,9 @@ Note: Examples in this vignette require that one or more of datasets
 `mimic`, `mimic_demo`, `eicu`, `eicu_demo`, `hirid`, `aumc` are
 available. Chunks that depend on certain datasets will not be evaluated
 if the corresponding dataset is missing. In order to download and setup
-data, have a look at `?setup_src_data`.
+data, have a look at `?setup_src_data`. The full version of this
+vignette is available from
+https://CRAN.R-project.org/package=ricu/vignettes/jss.pdf
 \end{CodeOutput}
 \end{CodeChunk}
 
@@ -218,7 +220,7 @@ vignette}.
   \begin{itemize}
   \item
     demo datasets can be set up by installing the data packages
-    \texttt{mimic.demo} and/or \texttt{eicu.demo} while passing
+    \texttt{mimic.demo} and/or \texttt{eicu.demo}, passing
     \texttt{"https://eth-mds.github.io/physionet-demo"} as
     \texttt{repos} argument to \texttt{install.packages()}
   \item
@@ -1329,11 +1331,11 @@ R> (dat <- ts_tbl(a = 1:5, b = hours(1:5), c = rnorm(5)))
 # Index var:  `b` (1 hours)
       a b            c
   <int> <drtn>   <dbl>
-1     1 1 hours -1.80
-2     2 2 hours  0.198
-3     3 3 hours  1.39
-4     4 4 hours  1.03
-5     5 5 hours -1.01
+1     1 1 hours -0.413
+2     2 2 hours -1.90
+3     3 3 hours  0.357
+4     4 4 hours -0.412
+5     5 5 hours  0.792
 \end{CodeOutput}
 \begin{CodeInput}
 R> dat[["b"]] <- dat[["b"]] + mins(30)
@@ -1344,11 +1346,11 @@ R> dat
 # Id var:      `a`
       a b               c
   <int> <drtn>      <dbl>
-1     1  5400 secs -1.80
-2     2  9000 secs  0.198
-3     3 12600 secs  1.39
-4     4 16200 secs  1.03
-5     5 19800 secs -1.01
+1     1  5400 secs -0.413
+2     2  9000 secs -1.90
+3     3 12600 secs  0.357
+4     4 16200 secs -0.412
+5     5 19800 secs  0.792
 \end{CodeOutput}
 \end{CodeChunk}
 
