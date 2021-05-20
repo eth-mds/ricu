@@ -19,7 +19,7 @@ Authors@R: c(
     person(given = "Ida-Fong",
            family = "Ukor",
            role = c("aut"),
-           email = "dr.ukor@gmail.com")
+           email = "ida-fong.ukor@monashhealth.org")
     )
 License: GPL-3
 Encoding: UTF-8
