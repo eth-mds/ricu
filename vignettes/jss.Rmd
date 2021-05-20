@@ -99,6 +99,37 @@ if (!srcs_avail(srcs)) {
 
   message(paste(strwrap(msg), collapse = "\n"))
 }
+
+demo_src_avail <- function(x, msg = FALSE) {
+
+  if (srcs_avail(x)) {
+    return(TRUE)
+  }
+
+  demo <- paste0(x, "_demo")
+
+  if (srcs_avail(demo)) {
+
+    txt <- paste(
+      "Note: The following code chunk(s) are intended to be run using data",
+      "from", paste0("`", srcs, "`", collapse = ", "), "which is not",
+      "available. Alternatively, data from",
+      paste0("`", demo, "`", collapse = ", "), "is used instead."
+    )
+
+    if (msg) {
+      message(paste(strwrap(txt), collapse = "\n"))
+    }
+
+    TRUE
+
+  } else {
+
+    FALSE
+  }
+}
+
+only_demo <- function(x, ...) !srcs_avail(x) && demo_src_avail(x, ...)
 ```
 
 # Introduction
@@ -192,8 +223,12 @@ The following paragraphs serve to give quick introductions to the included datas
 
 The [Medical Information Mart for Intensive Care III (MIMIC-III)](https://physionet.org/content/mimiciii/1.4/) represents the third iteration of the arguably most influential initiative for collecting and providing to the public large-scale ICU data^[The initial MIMIC (at the time short for Multi-parameter Intelligent Monitoring for Intensive Care) data release dates back 20 years and contained data on roughly 100 patients recorded from patient monitors in the medical, surgical, and cardiac intensive care units of Boston's Beth Israel Hospital during the years 1992-1999 \citep{moody1996}. Significantly broadened in scope, MIMIC-II was released 10 years after, now including data on almost 27,000 adult hospital admissions collected from ICUs of Beth Israel Deaconess Medical Center (BIDMC) from 2001 to 2008 \citep{lee2011}. Following MIMIC-III, release of MIMIC-IV is imminent with a first development version having been released in summer 2020. This iteration of MIMIC too is planned to be included with \pkg{ricu} as soon a first stable version is released.]. The dataset comprises de-identified health related data of roughly 46,000 patients admitted to critical care units of BIDMC during the years 2001-2012. Amounting to just over 61,000 individual ICU admission, data is available on demographics, routine vital sign measurements (at approximately 1 hour resolution), laboratory tests, medication, as well as critical care procedures, organized as a 26-table relational structure.
 
-```{r mimic-tables, eval = srcs_avail("mimic")}
+```{r mimic-tbls, eval = srcs_avail("mimic"), include = srcs_avail("mimic")}
 mimic
+```
+
+```{r mimic_demo-tbls, eval = only_demo("mimic", TRUE), include = only_demo("mimic")}
+mimic_demo
 ```
 
 One thing of note from a data-organizational perspective is that a change in electronic health care systems occurred in 2008. Owing to this, roughly 48,000 ICU admissions spanning the years 2001 though 2008 are documented using the CareVue system, while for 2008 and onwards, data was extracted from the MetaVision system. Item identifiers differ between the two systems, requiring queries to consider both ID mappings (heart rate for example being available both as `itemid` number `211` for CareVue and `220045` for MetaVision) as does documentation of infusions and other procedures that are considered as input events (c.f. `inputevents_cv` and `inputevents_mv` tables). Especially with respect to such input event data, MetaVision data generally is of superior quality.
@@ -204,8 +239,12 @@ In terms of patient identifiers, MIMIC-III allows for identifying both individua
 
 Unlike the single-center focus of other datasets, the [eICU Collaborative Research Database](https://physionet.org/content/eicu-crd/2.0/) constitutes an amalgamation of data from critical care units of over 200 hospitals throughout the continental United States. Large-scale data collected via the Philips eICU program which provides telehealth infrastructure for intensive care units, is available from the Philips eICU Research Institute (eRI), albeit neither publicly nor freely. Only data corresponding to roughly 200,000 ICU admissions, sampled from a larger population of over 3 million ICU admissions and stratified by hospital, is being made available via PhysioNet. Patients with discharge dates in 2014 or 2015 were considered, with stays in low acuity units being removed.
 
-```{r eicu-tables, eval = srcs_avail("eicu")}
+```{r eicu-tbls, eval = srcs_avail("eicu"), include = srcs_avail("eicu")}
 eicu
+```
+
+```{r eicu_demo-tbls, eval = only_demo("eicu", TRUE), include = only_demo("eicu")}
+eicu_demo
 ```
 
 The data is organized into 31 tables and includes patient demographics, routine vital signs, laboratory measurements, medication administrations, admission diagnoses, as well as treatment information. Owing to the wide range of hospitals participating in this data collection initiative, spanning small, rural, non-teaching health centers with fewer than 100 beds to large teaching hospitals with an excess of 500 beds, data availability varies. Even if data was being recorded at the bedside it might end up missing from the eICU dataset due to technical limitations of the collection process. As for patient identifiers, while it is possible to link ICU admissions corresponding to the same hospital stay, it is not possible to identify patients across hospital stays.
@@ -216,7 +255,7 @@ Data resolution again varies considerably over included variables. The `vitalper
 
 Developed for early prediction of circulatory failure \citep{hyland2020}, the [High Time Resolution ICU Dataset (HiRID)](https://physionet.org/content/hirid/1.0/) contains data on almost 34,000 admissions to the Department of Intensive Care Medicine of the Bern University Hospital, Switzerland, an interdisciplinary 60-bed unit. Given the clear focus on a concrete application during data collection, this dataset is the most limited in terms of breadth of available information, which is also reflected in a comparatively simple data layout comprising only 5 tables^[The data is available in three states: as raw data and in preprocessed form, with preprocessed data being represented by two intermediary pipeline stages from \citep{hyland2020}. While \pkg{ricu} focuses exclusively on raw data, the *merged* stage represents a selection of variables that were deemed most predictive for determining circulatory failure, which are then merged into 18 meta-variables, representing different clinical concepts. Time stamps in *merged* data are left unchanged, yielding irregular time series, whereas for the *imputed* stage, data is down-sampled to a 5 minute grid and missing values are imputed using a scheme discussed in \citep{hyland2020}.].
 
-```{r hirid-tables, eval = srcs_avail("hirid")}
+```{r hirid-tbls, eval = srcs_avail("hirid")}
 hirid
 ```
 
@@ -226,13 +265,13 @@ Collected during the period of January 2008 through June 2016, roughly 700 disti
 
 As a second European dataset, also focusing on increased time-resolution over the US datasets, [AmsterdamUMCdb](https://amsterdammedicaldatascience.nl/#amsterdamumcdb) has been made available in late 2019, containing data on over 23,000 intensive care unit and high dependency unit admissions of adult patients during the years 2003 through 2016. The department of Intensive Care at Amsterdam University Medical Center is a mixed medical-surgical ICU with up to 32 bed ICU and 12 bed high dependency units with an average of 1000-2000 yearly admissions. Covering middle ground between the US datasets and HiRID in terms of breadth of included data, while providing a maximal time-resolution of 1 minute, AmsterdamUMCdb constitutes a well organized high quality ICU data resource organized succinctly as a 7-table relational structure.
 
-```{r aumc-tables, eval = srcs_avail("aumc")}
+```{r aumc-tbls, eval = srcs_avail("aumc")}
 aumc
 ```
 
 A slightly different approach to data anonymization was chosen for this dataset, yielding demographic information such as patient weight, height and age only available as binned variables instead of raw numeric values. Apart from this, there is information on patient origin, mortality, admission diagnoses, as well as numerical measurements including vital parameters, lab results, outputs from drains and catheters, information on administered medication, and other medical procedures. In terms of patient identifiers, it is possible to link ICU admissions corresponding to the same individual, but it is not possible to identify separate hospital admissions.
 
-```{r src-overview, eval = srcs_avail(c("mimic", "eicu", "hirid", "aumc")), echo = FALSE, results = "asis"}
+```{r src-overview, eval = srcs_avail(c("mimic", "eicu", "hirid", "aumc")) || demo_src_avail(c("mimic", "eicu"), msg = TRUE), echo = FALSE, results = "asis"}
 as_quant <- function(x) {
 
   if (identical(length(x), 0L)) {
@@ -300,10 +339,16 @@ summarize <- function(src, avail) {
   )
 }
 
-srcs <- c("MIMIC", "eICU", "HiRID", "AUMC")
-dict <- load_dictionary(tolower(srcs))
+if (srcs_avail(c("mimic", "eicu", "hirid", "aumc"))) {
+  srcs <- c("MIMIC", "eICU", "HiRID", "AUMC")
+} else {
+  srcs <- c("MIMIC (demo)", "eICU (demo)")
+}
+
+dict <- load_dictionary(sub(" \\(demo\\)$", "", tolower(srcs)))
 avai <- concept_availability(dict, include_rec = FALSE)
-summ <- vapply(tolower(srcs), summarize, character(10L), avai)
+summ <- vapply(sub(" \\(demo\\)$", "", tolower(srcs)), summarize,
+               character(10L), avai)
 
 colnames(summ)     <- srcs
 rownames(summ)     <- linebreak(rownames(summ), align = "l")
@@ -662,17 +707,26 @@ Callback functions can become rather involved (especially for more complex conce
 
 In order to briefly illustrate how \pkg{ricu} could be applied to real-world clinical questions, two toy examples are provided in the following sections. While the first example fully relies on data concepts that are included with \pkg{ricu}, the second one explores both how some data pre-processing can be added to an existing concept by creating a new `rec_cncpt` and how to create an new data concept altogether.
 
+```{r src_sel, eval = demo_src_avail("mimic", msg = TRUE), echo = FALSE}
+if (is_data_avail("mimic")) {
+  src <- "mimic"
+} else {
+  src <- "mimic_demo"
+}
+
+```
+
 ## Lactate and mortality
 
 First, we investigate the association of lactate levels and mortality. This problem has been studied before and it is widely accepted that both static and dynamic lactate indices are associated with increased mortality \citep{haas2016, nichol2011, van2013}. In order to model this relationship, we fit a time-varying proportional hazards Cox model \citep{therneau2000, therneau2015}, which includes the SOFA score as a general predictor of illness severity, using MIMIC-III data. Furthermore, for the sake of this example, we are only interested in patients admitted from 2008 onwards of ages 25 to 65 years old.
 
-```{r time_cox_model, eval = srcs_avail("mimic"), cache = TRUE}
-cohort <- load_id("icustays", "mimic", dbsource == "metavision",
+```{r time_cox_model, eval = demo_src_avail("mimic"), cache = TRUE}
+cohort <- load_id("icustays", src, dbsource == "metavision",
                   cols = NULL)
-cohort <- load_concepts("age", "mimic", patient_ids = cohort,
+cohort <- load_concepts("age", src, patient_ids = cohort,
                         verbose = FALSE)
 
-dat <- load_concepts(c("lact", "death", "sofa", "sex"), "mimic",
+dat <- load_concepts(c("lact", "death", "sofa", "sex"), src,
                      patient_ids = cohort[age > 25 & age < 65],
                      verbose = FALSE)
 
@@ -691,7 +745,7 @@ cox_mod <- coxph(
 
 After loading the data, some minor pre-processing is still required before modeling: first, we want to make sure we only use data up to (and including) the hour in which the `death` flag switches to `TRUE`. After that we impute missing values for `lact` using a last observation carry forward (locf) scheme (observing the patient grouping) and we simply replace missing `death` values with the value `FALSE`. The resulting model fit can be visualized as:
 
-```{r cox_plot, eval = srcs_avail("mimic"), echo = FALSE, warning = FALSE, message = FALSE, fig.width = 8}
+```{r cox_plot, eval = demo_src_avail("mimic"), echo = FALSE, warning = FALSE, message = FALSE, fig.width = 8}
 theme_fp <- function(...) {
   theme_bw(...) +
   theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(),
@@ -710,7 +764,7 @@ For the next example, again using MIMIC-III data, we turn to the usage of co-mor
 
 As there already is an insulin concept available, `ins24` can be implemented as `rec_cncpt`, loading `ins` with aggregation set to `sum()` (instead of `median()`) and inserting the callback function `ins_cb()` into the loading process. The callback function takes care of the pre-processing steps outlined above: first data is subsetted to fall into the the first 24 hours of ICU admissions, followed by binning of summed values.
 
-```{r ins24, eval = srcs_avail("mimic")}
+```{r ins24, eval = demo_src_avail("mimic")}
 ins_breaks <- c(0, 1, 10, 20, 40, Inf)
 
 ins_cb <- function(ins, ...) {
@@ -731,17 +785,17 @@ ins_cb <- function(ins, ...) {
   ins
 }
 
-ins24 <- load_dictionary("mimic", "ins")
+ins24 <- load_dictionary(src, "ins")
 ins24 <- concept("ins24", ins24, "insulin in first 24h", aggregate = "sum",
                  callback = ins_cb, target = "id_tbl", class = "rec_cncpt")
 ```
 
 The binary diabetes concept can be implemented as `lgl_cncpt`, for which ICD-9 codes are matched using a regular expression. As we're not only interested in retrieving diabetic patients, a `col_itm` is more suited for data retrieval over an `rgx_itm` and for creating the required callback function that produces a logical vector we can use `transform_fun()` coupled with a function like `grep_diab()`. The two concepts are then combined using `c()` and loaded via `load_concepts()`.
 
-```{r diab, eval = srcs_avail("mimic")}
+```{r diab, eval = demo_src_avail("mimic")}
 grep_diab <- function(x) grepl("^250\\.?[0-9]{2}$", x)
 
-diab  <- item("mimic", table = "diagnoses_icd",
+diab  <- item(src, table = "diagnoses_icd",
               callback = transform_fun(grep_diab), class = "col_itm")
 diab  <- concept("diab", diab, "diabetes", target = "id_tbl",
                  class = "lgl_cncpt")
@@ -753,7 +807,7 @@ dat
 
 After this, we can visualize the difference between the two groups with a histogram:
 
-```{r diabetes_visualize, echo = FALSE, eval = srcs_avail("mimic"), fig.height = 3}
+```{r diabetes_visualize, echo = FALSE, eval = demo_src_avail("mimic"), fig.height = 3}
 dat <- dat[, weight := 1 / .N, by = diab]
 ggplot(dat, aes(x = ins24, fill = diab)) +
   stat_count(aes(weight = weight), alpha = 0.75, position = "dodge") +
