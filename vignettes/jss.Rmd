@@ -93,10 +93,11 @@ if (!srcs_avail(srcs)) {
     paste0("`", srcs, "`", collapse = ", "), "are available. Chunks that",
     "depend on certain datasets will not be evaluated if the corresponding",
     "dataset is missing. In order to download and setup data, have a look at",
-    "`?setup_src_data`."
+    "`?setup_src_data`. The full version of this vignette is available from",
+    "https://CRAN.R-project.org/package=ricu/vignettes/jss.pdf"
   )
-  msg <- paste(strwrap(msg), collapse = "\n")
-  message(msg)
+
+  message(paste(strwrap(msg), collapse = "\n"))
 }
 ```
 
@@ -124,7 +125,7 @@ The following list gives a quick outline of the steps required for setting up an
 
 1. Requesting access to datasets and data source setup:
 
-    * demo datasets can be set up by installing the data packages `mimic.demo` and/or `eicu.demo` while passing `"https://eth-mds.github.io/physionet-demo"` as `repos` argument to `install.packages()`
+    * demo datasets can be set up by installing the data packages `mimic.demo` and/or `eicu.demo`, passing `"https://eth-mds.github.io/physionet-demo"` as `repos` argument to `install.packages()`
 
     * the complete MIMIC-III, eICU and HiRID datasets can be accessed by setting up an account at [PhysioNet](https://physionet.org/register)
 

@@ -31,10 +31,11 @@ if (!srcs_avail(alls)) {
     paste0("`", alls, "`", collapse = ", "), "are available. Chunks that",
     "depend on certain datasets will not be evaluated if the corresponding",
     "dataset is missing. In order to download and setup data, have a look at",
-    "`?setup_src_data`."
+    "`?setup_src_data`. The full version of this vignette is available from",
+    "https://CRAN.R-project.org/package=ricu/vignettes/ricu.html"
   )
-  msg <- paste(strwrap(msg), collapse = "\n")
-  message(msg)
+
+  message(paste(strwrap(msg), collapse = "\n"))
 }
 ```
 
