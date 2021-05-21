@@ -99,12 +99,10 @@ CH-8092 Zürich\\
 
 \begin{CodeChunk}
 \begin{CodeOutput}
-Note: Examples in this vignette require that one or more of datasets
-`mimic`, `mimic_demo`, `eicu`, `eicu_demo`, `hirid` and `aumc` are
-available. Chunks that depend on certain datasets will not be evaluated
-if the corresponding dataset is missing. In order to download and setup
-data, have a look at `?setup_src_data`. The full version of this
-vignette is available from
+Note: Examples in this vignette require that datasets `mimic`, `eicu`,
+`hirid` and `aumc` are available. Chunks that depend on certain
+datasets will not be evaluated if the corresponding dataset is missing.
+The full version of this vignette is available from
 https://CRAN.R-project.org/package=ricu/vignettes/jss.pdf
 \end{CodeOutput}
 \end{CodeChunk}
@@ -423,9 +421,9 @@ structure.
 
 \begin{CodeChunk}
 \begin{CodeOutput}
-Note: The following code chunk(s) are intended to be run using data
-from `mimic` which is not available. Alternatively, data from
-`mimic_demo` is used instead.
+Note: The following code chunks are intended to be run using data from
+`mimic` which is not available. Alternatively, data from `mimic_demo`
+is used instead.
 \end{CodeOutput}
 \end{CodeChunk}
 
@@ -490,9 +488,9 @@ considered, with stays in low acuity units being removed.
 
 \begin{CodeChunk}
 \begin{CodeOutput}
-Note: The following code chunk(s) are intended to be run using data
-from `eicu` which is not available. Alternatively, data from
-`eicu_demo` is used instead.
+Note: The following code chunks are intended to be run using data from
+`eicu` which is not available. Alternatively, data from `eicu_demo` is
+used instead.
 \end{CodeOutput}
 \end{CodeChunk}
 
@@ -631,9 +629,9 @@ to identify separate hospital admissions.
 
 \begin{CodeChunk}
 \begin{CodeOutput}
-Note: The following code chunk(s) are intended to be run using data
-from `mimic` and `eicu` which is not available. Alternatively, data
-from `mimic_demo` and `eicu_demo` is used instead.
+Note: The following code chunks are intended to be run using data from
+`mimic` and `eicu` which is not available. Alternatively, data from
+`mimic_demo` and `eicu_demo` is used instead.
 \end{CodeOutput}
 \end{CodeChunk}
 
@@ -1432,13 +1430,13 @@ R> (dat <- ts_tbl(a = 1:5, b = hours(1:5), c = rnorm(5)))
 # A `ts_tbl`: 5 x 3
 # Id var:     `a`
 # Index var:  `b` (1 hours)
-      a b           c
-  <int> <drtn>  <dbl>
-1     1 1 hours 0.769
-2     2 2 hours 0.750
-3     3 3 hours 1.24
-4     4 4 hours 0.899
-5     5 5 hours 0.295
+      a b            c
+  <int> <drtn>   <dbl>
+1     1 1 hours  0.891
+2     2 2 hours -1.99
+3     3 3 hours -0.455
+4     4 4 hours -0.276
+5     5 5 hours  0.844
 \end{CodeOutput}
 \begin{CodeInput}
 R> dat[["b"]] <- dat[["b"]] + mins(30)
@@ -1447,13 +1445,13 @@ R> dat
 \begin{CodeOutput}
 # An `id_tbl`: 5 x 3
 # Id var:      `a`
-      a b              c
-  <int> <drtn>     <dbl>
-1     1  5400 secs 0.769
-2     2  9000 secs 0.750
-3     3 12600 secs 1.24
-4     4 16200 secs 0.899
-5     5 19800 secs 0.295
+      a b               c
+  <int> <drtn>      <dbl>
+1     1  5400 secs  0.891
+2     2  9000 secs -1.99
+3     3 12600 secs -0.455
+4     4 16200 secs -0.276
+5     5 19800 secs  0.844
 \end{CodeOutput}
 \end{CodeChunk}
 
@@ -1794,20 +1792,10 @@ altogether.
 
 \begin{CodeChunk}
 \begin{CodeOutput}
-Note: The following code chunk(s) are intended to be run using data
-from `mimic` which is not available. Alternatively, data from
-`mimic_demo` is used instead.
+Note: The following code chunks are intended to be run using data from
+`mimic` which is not available. Alternatively, data from `mimic_demo`
+is used instead.
 \end{CodeOutput}
-\end{CodeChunk}
-
-\begin{CodeChunk}
-\begin{CodeInput}
-R> if (is_data_avail("mimic")) {
-+   src <- "mimic"
-+ } else {
-+   src <- "mimic_demo"
-+ }
-\end{CodeInput}
 \end{CodeChunk}
 
 \hypertarget{lactate-and-mortality}{%
@@ -1820,31 +1808,11 @@ mortality \citep{haas2016, nichol2011, van2013}. In order to model this
 relationship, we fit a time-varying proportional hazards Cox model
 \citep{therneau2000, therneau2015}, which includes the SOFA score as a
 general predictor of illness severity, using MIMIC-III data.
-Furthermore, for the sake of this example, we are only interested in
-patients admitted from 2008 onwards of ages 25 to 65 years old.
 
 \begin{CodeChunk}
 \begin{CodeInput}
-R> cohort <- load_id("icustays", src, dbsource == "metavision",
-+                   cols = NULL)
-R> cohort <- load_concepts("age", src, patient_ids = cohort,
-+                         verbose = FALSE)
-R> 
+R> src <- "mimic_demo"
 R> dat <- load_concepts(c("lact", "death", "sofa", "sex"), src,
-+                      patient_ids = cohort[age > 25 & age < 65],
-+                      verbose = FALSE)
-\end{CodeInput}
-\end{CodeChunk}
-
-\begin{CodeChunk}
-\begin{CodeInput}
-R> cohort <- load_id("icustays", src, dbsource == "metavision",
-+                   cols = NULL)
-R> cohort <- load_concepts("age", src, patient_ids = cohort,
-+                         verbose = FALSE)
-R> 
-R> dat <- load_concepts(c("lact", "death", "sofa", "sex"), src,
-+                      patient_ids = cohort[age > 25 & age < 65],
 +                      verbose = FALSE)
 \end{CodeInput}
 \end{CodeChunk}
@@ -1863,10 +1831,6 @@ R> cox_mod <- coxph(
 +   data = dat
 + )
 \end{CodeInput}
-\begin{CodeOutput}
-Warning in agreg.fit(X, Y, istrat, offset, init, control, weights = weights, :
-Ran out of iterations and did not converge
-\end{CodeOutput}
 \end{CodeChunk}
 
 After loading the data, some minor pre-processing is still required
@@ -1881,7 +1845,7 @@ as:
 \begin{CodeChunk}
 
 
-\begin{center}\includegraphics{/private/var/folders/24/8k48jl6d249_n_qfxwsl6xvm0000gn/T/Rtmpjzah3r/file8657e57b94a/articles/jss_files/figure-latex/cox_plot-1} \end{center}
+\begin{center}\includegraphics{/private/var/folders/24/8k48jl6d249_n_qfxwsl6xvm0000gn/T/Rtmpb4OwU4/file88152018078/articles/jss_files/figure-latex/cox_plot-1} \end{center}
 
 \end{CodeChunk}
 
@@ -1968,7 +1932,7 @@ a histogram:
 \begin{CodeChunk}
 
 
-\begin{center}\includegraphics{/private/var/folders/24/8k48jl6d249_n_qfxwsl6xvm0000gn/T/Rtmpjzah3r/file8657e57b94a/articles/jss_files/figure-latex/diabetes_visualize-1} \end{center}
+\begin{center}\includegraphics{/private/var/folders/24/8k48jl6d249_n_qfxwsl6xvm0000gn/T/Rtmpb4OwU4/file88152018078/articles/jss_files/figure-latex/diabetes_visualize-1} \end{center}
 
 \end{CodeChunk}
 
