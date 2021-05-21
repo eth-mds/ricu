@@ -24,14 +24,26 @@ avail <- is_data_avail(alls)
 
 srcs_avail <- function(x) all(avail[x])
 
+paste1 <- function(x) {
+
+  x <- paste0("`", x, "`")
+
+  if (length(x) <= 2L) {
+    return(paste0(x, collapse = " and "))
+  }
+
+  paste0(paste0(head(x, n = length(x) - 2L), collapse = ", "), ", ",
+         paste0(tail(x, n = 2L), collapse = " and "))
+}
+
 if (!srcs_avail(alls)) {
 
   msg <- paste(
     "Note: Examples in this vignette require that one or more of datasets",
-    paste0("`", alls, "`", collapse = ", "), "are available. Chunks that",
-    "depend on certain datasets will not be evaluated if the corresponding",
-    "dataset is missing. In order to download and setup data, have a look at",
-    "`?setup_src_data`. The full version of this vignette is available from",
+    paste1(alls), "are available. Chunks that depend on certain datasets will",
+    "not be evaluated if the corresponding dataset is missing. In order to",
+    "download and setup data, have a look at `?setup_src_data`. The full",
+    "version of this vignette is available from",
     "https://CRAN.R-project.org/package=ricu/vignettes/ricu.html"
   )
 

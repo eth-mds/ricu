@@ -80,6 +80,10 @@ library(kableExtra)
 
 \maketitle
 
+\renewcommand*{\thefootnote}{\fnsymbol{footnote}}
+\footnotetext{$^{*}$These authors contributed equally.}
+\renewcommand*{\thefootnote}{\arabic{footnote}}
+
 ```{r data-avail, echo = FALSE}
 srcs  <- c("mimic", "mimic_demo", "eicu", "eicu_demo", "hirid", "aumc")
 avail <- is_data_avail(srcs)
@@ -87,18 +91,25 @@ avail <- is_data_avail(srcs)
 srcs_avail <- function(x) all(avail[x])
 
 paste1 <- function(x) {
-  if (length(x) <= 1L) x
-  else if (length(x) == 2L) paste0("`", x, "`", collapse = " and ")
+
+  x <- paste0("`", x, "`")
+
+  if (length(x) <= 2L) {
+    return(paste0(x, collapse = " and "))
+  }
+
+  paste0(paste0(head(x, n = length(x) - 2L), collapse = ", "), ", ",
+         paste0(tail(x, n = 2L), collapse = " and "))
 }
 
 if (!srcs_avail(srcs)) {
 
   msg <- paste(
     "Note: Examples in this vignette require that one or more of datasets",
-    paste0("`", srcs, "`", collapse = ", "), "are available. Chunks that",
-    "depend on certain datasets will not be evaluated if the corresponding",
-    "dataset is missing. In order to download and setup data, have a look at",
-    "`?setup_src_data`. The full version of this vignette is available from",
+    paste1(srcs), "are available. Chunks that depend on certain datasets will",
+    "not be evaluated if the corresponding dataset is missing. In order to",
+    "download and setup data, have a look at `?setup_src_data`. The full",
+    "version of this vignette is available from",
     "https://CRAN.R-project.org/package=ricu/vignettes/jss.pdf"
   )
 
@@ -117,9 +128,8 @@ demo_src_avail <- function(x, msg = FALSE) {
 
     txt <- paste(
       "Note: The following code chunk(s) are intended to be run using data",
-      "from", paste0("`", x, "`", collapse = ", "), "which is not available.",
-      "Alternatively, data from", paste0("`", demo, "`", collapse = ", "),
-      "is used instead."
+      "from", paste1(x), "which is not available. Alternatively, data from",
+      paste1(demo), "is used instead."
     )
 
     if (msg) {
@@ -289,7 +299,7 @@ eval_next <- srcs_avail(c("mimic", "eicu", "hirid", "aumc")) ||
   demo_src_avail(c("mimic", "eicu"), msg = TRUE)
 ```
 
-```{r src-overview, eval = eval_next, echo = FALSE, results = "asis"}
+```{r src-overview, eval = eval_next, echo = FALSE, results = "asis", cache = TRUE}
 as_quant <- function(x) {
 
   if (identical(length(x), 0L)) {
@@ -742,7 +752,7 @@ if (is_data_avail("mimic")) {
 
 First, we investigate the association of lactate levels and mortality. This problem has been studied before and it is widely accepted that both static and dynamic lactate indices are associated with increased mortality \citep{haas2016, nichol2011, van2013}. In order to model this relationship, we fit a time-varying proportional hazards Cox model \citep{therneau2000, therneau2015}, which includes the SOFA score as a general predictor of illness severity, using MIMIC-III data. Furthermore, for the sake of this example, we are only interested in patients admitted from 2008 onwards of ages 25 to 65 years old.
 
-```{r time_cox_model, eval = demo_src_avail("mimic"), cache = TRUE}
+```{r cox-full, eval = srcs_avail("mimic"), cache = TRUE}
 cohort <- load_id("icustays", src, dbsource == "metavision",
                   cols = NULL)
 cohort <- load_concepts("age", src, patient_ids = cohort,
@@ -751,7 +761,20 @@ cohort <- load_concepts("age", src, patient_ids = cohort,
 dat <- load_concepts(c("lact", "death", "sofa", "sex"), src,
                      patient_ids = cohort[age > 25 & age < 65],
                      verbose = FALSE)
+```
 
+```{r cox-demo, eval = only_demo("mimic")}
+cohort <- load_id("icustays", src, dbsource == "metavision",
+                  cols = NULL)
+cohort <- load_concepts("age", src, patient_ids = cohort,
+                        verbose = FALSE)
+
+dat <- load_concepts(c("lact", "death", "sofa", "sex"), src,
+                     patient_ids = cohort[age > 25 & age < 65],
+                     verbose = FALSE)
+```
+
+```{r cox-model, eval = eval_next}
 dat <- dat[, head(.SD, n = match(TRUE, death, .N)), by = c(id_vars(dat))]
 dat <- fill_gaps(dat)
 

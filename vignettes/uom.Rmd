@@ -25,14 +25,54 @@ avail <- is_data_avail(c(demo, full))
 
 srcs_avail <- function(x) all(avail[x])
 
+paste1 <- function(x) {
+
+  x <- paste0("`", x, "`")
+
+  if (length(x) <= 2L) {
+    return(paste0(x, collapse = " and "))
+  }
+
+  paste0(paste0(head(x, n = length(x) - 2L), collapse = ", "), ", ",
+         paste0(tail(x, n = 2L), collapse = " and "))
+}
+
+demo_src_avail <- function(x, msg = FALSE) {
+
+  if (srcs_avail(x)) {
+    return(TRUE)
+  }
+
+  demo <- paste0(x, "_demo")
+
+  if (srcs_avail(demo)) {
+
+    txt <- paste(
+      "Note: The following code chunk(s) are intended to be run using data",
+      "from", paste1(x), "which is not available. Alternatively, data from",
+      paste1(demo), "is used instead."
+    )
+
+    if (msg) {
+      message(paste(strwrap(txt), collapse = "\n"))
+    }
+
+    TRUE
+
+  } else {
+
+    FALSE
+  }
+}
+
 if (!srcs_avail(demo)) {
 
   msg <- paste(
     "Note: Examples in this vignette require that one or more of datasets",
-    paste0("`", demo, "`", collapse = ", "), "are available. Chunks that",
-    "depend on certain datasets will not be evaluated if the corresponding",
-    "dataset is missing. In order to download data, have a look at",
-    "`?setup_src_data`. The full version of this vignette is available from",
+    paste1(demo), "are available. Chunks that depend on certain datasets will",
+    "not be evaluated if the corresponding dataset is missing. In order to",
+    "download and setup data, have a look at `?setup_src_data`. The full",
+    "version of this vignette is available from",
     "https://CRAN.R-project.org/package=ricu/vignettes/uom.html"
   )
 
@@ -46,7 +86,7 @@ One challenge when working with electronic healthcare (EHR) data from different 
 
 Data concepts of type `num_cncpt` can specify an expected units as character vector (where the string in position 1 is added as per-column attribute `units`). Due to the complexity involved, unit conversion to the specified target unit currently is not handled automatically^[Support for automatically handling this, using the [units](https://cran.r-project.org/package=units) packages, is being considered, but so far has not been implemented]. Instead, item-specific callback functions are responsible for handling this, while unit mismatches are reported as messages during concept loading.
 
-```{r, eval = srcs_avail(demo)}
+```{r demo-load, eval = srcs_avail(demo)}
 (dat <- load_concepts(c("lact", "map"), c("mimic_demo", "eicu_demo")))
 ```
 
@@ -56,7 +96,11 @@ Several utility functions are exported from `ricu` for helping with creating cal
 
 As a sanity check to see whether measurement units (and data values in general) are aligned when compared across datasets, density plots may be employed.
 
-```{r, echo = FALSE, fig.width = 6, eval = sum(avail) >= 2L}
+```{r uom-eval, echo = FALSE}
+eval_next <- srcs_avail(full) || demo_src_avail(c("mimic", "eicu"), msg = TRUE)
+```
+
+```{r uom-hist, echo = FALSE, fig.width = 6, eval = eval_next, cache = TRUE}
 filter_quants <- function(x, lwr, upr) {
 
   do_filter <- function(x) {
@@ -65,6 +109,12 @@ filter_quants <- function(x, lwr, upr) {
   }
 
   x[, list(val = do_filter(get(data_var(x)))), by = "source"]
+}
+
+if (srcs_avail(full)) {
+  srcs <- full
+} else {
+  srcs <- demo
 }
 
 srcs <- c(full, demo)
