@@ -39,11 +39,10 @@ paste1 <- function(x) {
 if (!srcs_avail(alls)) {
 
   msg <- paste(
-    "Note: Examples in this vignette require that one or more of datasets",
-    paste1(alls), "are available. Chunks that depend on certain datasets will",
-    "not be evaluated if the corresponding dataset is missing. In order to",
-    "download and setup data, have a look at `?setup_src_data`. The full",
-    "version of this vignette is available from",
+    "Note: Examples in this vignette require that datasets",
+    paste1(alls[!avail]), "are available. Chunks that depend on certain",
+    "datasets will not be evaluated if the corresponding dataset is missing.",
+    "The full version of this vignette is available from",
     "https://CRAN.R-project.org/package=ricu/vignettes/ricu.html"
   )
 

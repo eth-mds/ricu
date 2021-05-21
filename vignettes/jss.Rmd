@@ -105,11 +105,10 @@ paste1 <- function(x) {
 if (!srcs_avail(srcs)) {
 
   msg <- paste(
-    "Note: Examples in this vignette require that one or more of datasets",
-    paste1(srcs), "are available. Chunks that depend on certain datasets will",
-    "not be evaluated if the corresponding dataset is missing. In order to",
-    "download and setup data, have a look at `?setup_src_data`. The full",
-    "version of this vignette is available from",
+    "Note: Examples in this vignette require that datasets",
+    paste1(srcs[!avail]), "are available. Chunks that depend on certain",
+    "datasets will not be evaluated if the corresponding dataset is missing.",
+    "The full version of this vignette is available from",
     "https://CRAN.R-project.org/package=ricu/vignettes/jss.pdf"
   )
 
@@ -127,7 +126,7 @@ demo_src_avail <- function(x, msg = FALSE) {
   if (srcs_avail(demo)) {
 
     txt <- paste(
-      "Note: The following code chunk(s) are intended to be run using data",
+      "Note: The following code chunks are intended to be run using data",
       "from", paste1(x), "which is not available. Alternatively, data from",
       paste1(demo), "is used instead."
     )
@@ -739,20 +738,13 @@ In order to briefly illustrate how \pkg{ricu} could be applied to real-world cli
 eval_next <- demo_src_avail("mimic", msg = TRUE)
 ```
 
-```{r src-sel, eval = eval_next}
-if (is_data_avail("mimic")) {
-  src <- "mimic"
-} else {
-  src <- "mimic_demo"
-}
-
-```
-
 ## Lactate and mortality
 
-First, we investigate the association of lactate levels and mortality. This problem has been studied before and it is widely accepted that both static and dynamic lactate indices are associated with increased mortality \citep{haas2016, nichol2011, van2013}. In order to model this relationship, we fit a time-varying proportional hazards Cox model \citep{therneau2000, therneau2015}, which includes the SOFA score as a general predictor of illness severity, using MIMIC-III data. Furthermore, for the sake of this example, we are only interested in patients admitted from 2008 onwards of ages 25 to 65 years old.
+First, we investigate the association of lactate levels and mortality. This problem has been studied before and it is widely accepted that both static and dynamic lactate indices are associated with increased mortality \citep{haas2016, nichol2011, van2013}. In order to model this relationship, we fit a time-varying proportional hazards Cox model \citep{therneau2000, therneau2015}, which includes the SOFA score as a general predictor of illness severity, using MIMIC-III data. `r if (srcs_avail("mimic")) "Furthermore, for the sake of this example, we are only interested in patients admitted from 2008 onwards of ages 25 to 65 years old."`
 
-```{r cox-full, eval = srcs_avail("mimic"), cache = TRUE}
+```{r cox-full, eval = srcs_avail("mimic"), include = srcs_avail("mimic"), cache = TRUE}
+src <- "mimic"
+
 cohort <- load_id("icustays", src, dbsource == "metavision",
                   cols = NULL)
 cohort <- load_concepts("age", src, patient_ids = cohort,
@@ -763,14 +755,9 @@ dat <- load_concepts(c("lact", "death", "sofa", "sex"), src,
                      verbose = FALSE)
 ```
 
-```{r cox-demo, eval = only_demo("mimic")}
-cohort <- load_id("icustays", src, dbsource == "metavision",
-                  cols = NULL)
-cohort <- load_concepts("age", src, patient_ids = cohort,
-                        verbose = FALSE)
-
+```{r cox-demo, eval = only_demo("mimic"), include = only_demo("mimic")}
+src <- "mimic_demo"
 dat <- load_concepts(c("lact", "death", "sofa", "sex"), src,
-                     patient_ids = cohort[age > 25 & age < 65],
                      verbose = FALSE)
 ```
 
