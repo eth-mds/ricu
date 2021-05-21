@@ -93,10 +93,14 @@ CH-8092 Zürich\\
 
 \maketitle
 
+\renewcommand*{\thefootnote}{\fnsymbol{footnote}}
+\footnotetext{$^{*}$These authors contributed equally.}
+\renewcommand*{\thefootnote}{\arabic{footnote}}
+
 \begin{CodeChunk}
 \begin{CodeOutput}
 Note: Examples in this vignette require that one or more of datasets
-`mimic`, `mimic_demo`, `eicu`, `eicu_demo`, `hirid`, `aumc` are
+`mimic`, `mimic_demo`, `eicu`, `eicu_demo`, `hirid` and `aumc` are
 available. Chunks that depend on certain datasets will not be evaluated
 if the corresponding dataset is missing. In order to download and setup
 data, have a look at `?setup_src_data`. The full version of this
@@ -628,8 +632,8 @@ to identify separate hospital admissions.
 \begin{CodeChunk}
 \begin{CodeOutput}
 Note: The following code chunk(s) are intended to be run using data
-from `mimic`, `eicu` which is not available. Alternatively, data from
-`mimic_demo`, `eicu_demo` is used instead.
+from `mimic` and `eicu` which is not available. Alternatively, data
+from `mimic_demo` and `eicu_demo` is used instead.
 \end{CodeOutput}
 \end{CodeChunk}
 
@@ -1428,13 +1432,13 @@ R> (dat <- ts_tbl(a = 1:5, b = hours(1:5), c = rnorm(5)))
 # A `ts_tbl`: 5 x 3
 # Id var:     `a`
 # Index var:  `b` (1 hours)
-      a b            c
-  <int> <drtn>   <dbl>
-1     1 1 hours  0.913
-2     2 2 hours  1.14
-3     3 3 hours  0.738
-4     4 4 hours -0.805
-5     5 5 hours  0.152
+      a b           c
+  <int> <drtn>  <dbl>
+1     1 1 hours 0.769
+2     2 2 hours 0.750
+3     3 3 hours 1.24
+4     4 4 hours 0.899
+5     5 5 hours 0.295
 \end{CodeOutput}
 \begin{CodeInput}
 R> dat[["b"]] <- dat[["b"]] + mins(30)
@@ -1443,13 +1447,13 @@ R> dat
 \begin{CodeOutput}
 # An `id_tbl`: 5 x 3
 # Id var:      `a`
-      a b               c
-  <int> <drtn>      <dbl>
-1     1  5400 secs  0.913
-2     2  9000 secs  1.14
-3     3 12600 secs  0.738
-4     4 16200 secs -0.805
-5     5 19800 secs  0.152
+      a b              c
+  <int> <drtn>     <dbl>
+1     1  5400 secs 0.769
+2     2  9000 secs 0.750
+3     3 12600 secs 1.24
+4     4 16200 secs 0.899
+5     5 19800 secs 0.295
 \end{CodeOutput}
 \end{CodeChunk}
 
@@ -1829,7 +1833,24 @@ R>
 R> dat <- load_concepts(c("lact", "death", "sofa", "sex"), src,
 +                      patient_ids = cohort[age > 25 & age < 65],
 +                      verbose = FALSE)
+\end{CodeInput}
+\end{CodeChunk}
+
+\begin{CodeChunk}
+\begin{CodeInput}
+R> cohort <- load_id("icustays", src, dbsource == "metavision",
++                   cols = NULL)
+R> cohort <- load_concepts("age", src, patient_ids = cohort,
++                         verbose = FALSE)
 R> 
+R> dat <- load_concepts(c("lact", "death", "sofa", "sex"), src,
++                      patient_ids = cohort[age > 25 & age < 65],
++                      verbose = FALSE)
+\end{CodeInput}
+\end{CodeChunk}
+
+\begin{CodeChunk}
+\begin{CodeInput}
 R> dat <- dat[, head(.SD, n = match(TRUE, death, .N)), by = c(id_vars(dat))]
 R> dat <- fill_gaps(dat)
 R> 
@@ -1860,7 +1881,7 @@ as:
 \begin{CodeChunk}
 
 
-\begin{center}\includegraphics{/private/var/folders/24/8k48jl6d249_n_qfxwsl6xvm0000gn/T/RtmphHzDCQ/file724642c300a/articles/jss_files/figure-latex/cox_plot-1} \end{center}
+\begin{center}\includegraphics{/private/var/folders/24/8k48jl6d249_n_qfxwsl6xvm0000gn/T/Rtmpjzah3r/file8657e57b94a/articles/jss_files/figure-latex/cox_plot-1} \end{center}
 
 \end{CodeChunk}
 
@@ -1947,7 +1968,7 @@ a histogram:
 \begin{CodeChunk}
 
 
-\begin{center}\includegraphics{/private/var/folders/24/8k48jl6d249_n_qfxwsl6xvm0000gn/T/RtmphHzDCQ/file724642c300a/articles/jss_files/figure-latex/diabetes_visualize-1} \end{center}
+\begin{center}\includegraphics{/private/var/folders/24/8k48jl6d249_n_qfxwsl6xvm0000gn/T/Rtmpjzah3r/file8657e57b94a/articles/jss_files/figure-latex/diabetes_visualize-1} \end{center}
 
 \end{CodeChunk}
 
