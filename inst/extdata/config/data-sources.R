@@ -855,7 +855,7 @@ cfg <- list(
   list(
     name = "eicu_demo",
     class_prefix = c("eicu_demo", "eicu"),
-    url = "https://physionet.org/files/eicu-crd-demo/2.0",
+    url = "https://physionet.org/files/eicu-crd-demo/2.0.1",
     id_cfg = eicu_id_cfg,
     tables = eicu_demo_tbls
   ),

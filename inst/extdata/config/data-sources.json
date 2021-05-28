@@ -1923,7 +1923,7 @@
   {
     "name": "eicu_demo",
     "class_prefix": ["eicu_demo", "eicu"],
-    "url": "https://physionet.org/files/eicu-crd-demo/2.0",
+    "url": "https://physionet.org/files/eicu-crd-demo/2.0.1",
     "id_cfg": {
       "hadm": {
         "id": "patienthealthsystemstayid",
