@@ -99,10 +99,11 @@ CH-8092 Zürich\\
 
 \begin{CodeChunk}
 \begin{CodeOutput}
-Note: Examples in this vignette require that datasets `mimic`, `eicu`,
-`hirid` and `aumc` are available. Chunks that depend on certain
-datasets will not be evaluated if the corresponding dataset is missing.
-The full version of this vignette is available from
+Note: Examples in this vignette require that datasets `mimic`,
+`mimic_demo`, `eicu`, `eicu_demo`, `hirid` and `aumc` are available.
+Chunks that depend on certain datasets will not be evaluated if the
+corresponding dataset is missing. The full version of this vignette is
+available from
 https://CRAN.R-project.org/package=ricu/vignettes/jss.pdf
 \end{CodeOutput}
 \end{CodeChunk}
@@ -419,37 +420,6 @@ approximately 1 hour resolution), laboratory tests, medication, as well
 as critical care procedures, organized as a 26-table relational
 structure.
 
-\begin{CodeChunk}
-\begin{CodeOutput}
-Note: The following code chunks are intended to be run using data from
-`mimic` which is not available. Alternatively, data from `mimic_demo`
-is used instead.
-\end{CodeOutput}
-\end{CodeChunk}
-
-\begin{CodeChunk}
-\begin{CodeInput}
-R> mimic_demo
-\end{CodeInput}
-\begin{CodeOutput}
-<mimic_demo_env[25]>
-        admissions            callout         caregivers        chartevents 
-        [129 x 19]          [77 x 24]        [7,567 x 4]     [758,355 x 15] 
-         cptevents              d_cpt    d_icd_diagnoses   d_icd_procedures 
-      [1,579 x 12]          [134 x 9]       [14,567 x 4]        [3,882 x 4] 
-           d_items         d_labitems     datetimeevents      diagnoses_icd 
-     [12,487 x 10]          [753 x 6]      [15,551 x 14]        [1,761 x 5] 
-          drgcodes           icustays     inputevents_cv     inputevents_mv 
-         [297 x 8]         [136 x 12]      [34,799 x 22]      [13,224 x 31] 
-         labevents microbiologyevents       outputevents           patients 
-      [76,074 x 9]       [2,003 x 16]      [11,320 x 13]          [100 x 8] 
-     prescriptions procedureevents_mv     procedures_icd           services 
-     [10,398 x 19]         [753 x 25]          [506 x 5]          [163 x 6] 
-         transfers 
-        [524 x 13] 
-\end{CodeOutput}
-\end{CodeChunk}
-
 One thing of note from a data-organizational perspective is that a
 change in electronic health care systems occurred in 2008. Owing to
 this, roughly 48,000 ICU admissions spanning the years 2001 though 2008
@@ -485,45 +455,6 @@ admissions, sampled from a larger population of over 3 million ICU
 admissions and stratified by hospital, is being made available via
 PhysioNet. Patients with discharge dates in 2014 or 2015 were
 considered, with stays in low acuity units being removed.
-
-\begin{CodeChunk}
-\begin{CodeOutput}
-Note: The following code chunks are intended to be run using data from
-`eicu` which is not available. Alternatively, data from `eicu_demo` is
-used instead.
-\end{CodeOutput}
-\end{CodeChunk}
-
-\begin{CodeChunk}
-\begin{CodeInput}
-R> eicu_demo
-\end{CodeInput}
-\begin{CodeOutput}
-<eicu_demo_env[31]>
-            admissiondrug               admissiondx                   allergy 
-             [7,417 x 14]               [7,578 x 6]              [2,475 x 13] 
-             apacheapsvar       apachepatientresult             apachepredvar 
-             [2,205 x 26]              [3,676 x 23]              [2,205 x 51] 
-     careplancareprovider               careplaneol           careplangeneral 
-              [5,627 x 8]                  [15 x 5]              [33,148 x 6] 
-             careplangoal careplaninfectiousdisease                 customlab 
-              [3,633 x 7]                 [112 x 8]                  [30 x 7] 
-                diagnosis                  hospital              infusiondrug 
-             [24,978 x 7]                 [186 x 4]              [38,256 x 9] 
-             intakeoutput                       lab                medication 
-           [100,466 x 12]            [434,660 x 10]             [75,604 x 15] 
-                 microlab                      note           nurseassessment 
-                [342 x 7]              [24,758 x 8]              [91,589 x 8] 
-                nursecare             nursecharting               pasthistory 
-             [42,080 x 8]           [1,477,163 x 8]              [12,109 x 8] 
-                  patient              physicalexam           respiratorycare 
-             [2,520 x 29]              [84,058 x 6]              [5,436 x 34] 
-      respiratorycharting                 treatment            vitalaperiodic 
-            [176,089 x 7]              [38,290 x 5]            [274,088 x 13] 
-            vitalperiodic 
-         [1,634,960 x 19] 
-\end{CodeOutput}
-\end{CodeChunk}
 
 The data is organized into 31 tables and includes patient demographics,
 routine vital signs, laboratory measurements, medication
@@ -627,47 +558,6 @@ procedures. In terms of patient identifiers, it is possible to link ICU
 admissions corresponding to the same individual, but it is not possible
 to identify separate hospital admissions.
 
-\begin{CodeChunk}
-\begin{CodeOutput}
-Note: The following code chunks are intended to be run using data from
-`mimic` and `eicu` which is not available. Alternatively, data from
-`mimic_demo` and `eicu_demo` is used instead.
-\end{CodeOutput}
-\end{CodeChunk}
-
-\begin{table}
-
-\caption{\label{tab:datasets}Comparison of datasets supported by \pkg{ricu}, highlighting some of the major similarities and distinguishing features among the four data sources described in the preceding paragraphs. Values followed by parenthesized ranges represent medians and are accompanied by quartiles.}
-\centering
-\begin{threeparttable}
-\begin{tabular}[t]{lll}
-\toprule
-  & MIMIC (demo) & eICU (demo)\\
-\midrule
-Number of tables & 25 & 31\\
-Disk storage [GB] & 0.01 & 0.06\\
-Available concepts\textsuperscript{*} & 87 & 85\\
-\addlinespace[0.3em]
-\multicolumn{3}{l}{\textbf{Admission counts}}\\
-\hspace{1em}ICU & 136 & 2,520\\
-\hspace{1em}Hospital & 129 & 2,174\\
-\hspace{1em}Unique patients & 100 & -\\
-\addlinespace[0.3em]
-\multicolumn{3}{l}{\textbf{Stay lengths [hr]}}\\
-\hspace{1em}ICU stays & \makecell[l]{2.11\\(1.23 - 4.33)} & \makecell[l]{1.47\\(0.79 - 2.78)}\\
-\hspace{1em}Hospital stays & \makecell[l]{6.63\\(3.31 - 10.65)} & \makecell[l]{4.14\\(2.12 - 7.90)}\\
-\addlinespace[0.3em]
-\multicolumn{3}{l}{\textbf{Frequency [1/hr]}}\\
-\hspace{1em}\makecell[l]{Vital signs\\(heart rate)} & \makecell[l]{1.00\\(1.00 - 1.00)} & \makecell[l]{12.00\\(12.00 - 12.00)}\\
-\hspace{1em}\makecell[l]{Lab tests\\(bilirubin)} & \makecell[l]{0.04\\(0.04 - 0.08)} & \makecell[l]{0.04\\(0.04 - 0.05)}\\
-\bottomrule
-\end{tabular}
-\begin{tablenotes}
-\item[*] These values represent the number of atomic concepts per data source. Additionally, 29 recursive concepts are available, which build on source-specific atomic concepts in a source-agnostic manner (see Section \ref{concept-specification} for details).
-\end{tablenotes}
-\end{threeparttable}
-\end{table}
-
 \hypertarget{implementation-details}{%
 \subsection{Implementation details}\label{implementation-details}}
 
@@ -697,30 +587,6 @@ for example inherits from \texttt{mimic\_demo\_tbl} and
 \begin{CodeInput}
 R> mimic_demo$admissions
 \end{CodeInput}
-\begin{CodeOutput}
-# <mimic_tbl>: [129 x 19]
-# ID options:  subject_id (patient) < hadm_id (hadm) < icustay_id (icustay)
-# Defaults:    `admission_type` (val)
-# Time vars:   `admittime`, `dischtime`, `deathtime`, `edregtime`, `edouttime`
-    row_id subject_id hadm_id admittime           dischtime
-     <int>      <int>   <int> <dttm>              <dttm>
-  1  12258      10006  142345 2164-10-23 21:09:00 2164-11-01 17:15:00
-  2  12263      10011  105331 2126-08-14 22:32:00 2126-08-28 18:59:00
-  3  12265      10013  165520 2125-10-04 23:36:00 2125-10-07 15:13:00
-  4  12269      10017  199207 2149-05-26 17:19:00 2149-06-03 18:42:00
-  5  12270      10019  177759 2163-05-14 20:43:00 2163-05-15 12:00:00
-...
-125  41055      44083  198330 2112-05-28 15:45:00 2112-06-07 16:50:00
-126  41070      44154  174245 2178-05-14 20:29:00 2178-05-15 09:45:00
-127  41087      44212  163189 2123-11-24 14:14:00 2123-12-30 14:31:00
-128  41090      44222  192189 2180-07-19 06:55:00 2180-07-20 13:00:00
-129  41092      44228  103379 2170-12-15 03:14:00 2170-12-24 18:00:00
-# ... with 119 more rows, and 14 more variables: deathtime <dttm>,
-#   admission_type <chr>, admission_location <chr>, discharge_location <chr>,
-#   insurance <chr>, language <chr>, religion <chr>, marital_status <chr>,
-#   ethnicity <chr>, edregtime <dttm>, edouttime <dttm>, diagnosis <chr>,
-#   hospital_expire_flag <int>, has_chartevents_data <int>
-\end{CodeOutput}
 \end{CodeChunk}
 
 Powered by the \pkg{prt} \citep{bennett2021} package, \texttt{src\_tbl}
@@ -734,16 +600,6 @@ row-partitioned tables into multiple binary files created by the
 \begin{CodeInput}
 R> subset(mimic_demo$admissions, subject_id > 44000, language:ethnicity)
 \end{CodeInput}
-\begin{CodeOutput}
-   language          religion marital_status              ethnicity
-1:     ENGL          CATHOLIC         SINGLE                  WHITE
-2:     ENGL          CATHOLIC         SINGLE                  WHITE
-3:     ENGL          CATHOLIC         SINGLE                  WHITE
-4:     ENGL PROTESTANT QUAKER        MARRIED                  WHITE
-5:     ENGL      UNOBTAINABLE         SINGLE BLACK/AFRICAN AMERICAN
-6:     ENGL          CATHOLIC         SINGLE                  WHITE
-7:     ENGL     NOT SPECIFIED         SINGLE                  WHITE
-\end{CodeOutput}
 \end{CodeChunk}
 
 This syntax makes it possible to read row-subsets of \emph{long} tables
@@ -757,16 +613,6 @@ R> subject_id <- 44000:45000
 R> subset(mimic_demo$admissions, .data$subject_id %in% .env$subject_id,
 +        subject_id:dischtime)
 \end{CodeInput}
-\begin{CodeOutput}
-   subject_id hadm_id           admittime           dischtime
-1:      44083  125157 2112-05-04 08:00:00 2112-05-11 14:15:00
-2:      44083  131048 2112-05-22 15:37:00 2112-05-25 13:30:00
-3:      44083  198330 2112-05-28 15:45:00 2112-06-07 16:50:00
-4:      44154  174245 2178-05-14 20:29:00 2178-05-15 09:45:00
-5:      44212  163189 2123-11-24 14:14:00 2123-12-30 14:31:00
-6:      44222  192189 2180-07-19 06:55:00 2180-07-20 13:00:00
-7:      44228  103379 2170-12-15 03:14:00 2170-12-24 18:00:00
-\end{CodeOutput}
 \end{CodeChunk}
 
 By using so-called pronouns (\texttt{.data} and \texttt{.env}), the
@@ -853,16 +699,6 @@ functions successively homogenize data representations, starting with
 R> load_src("admissions", "mimic_demo", subject_id > 44000,
 +          cols = c("hadm_id", "admittime", "dischtime"))
 \end{CodeInput}
-\begin{CodeOutput}
-   hadm_id           admittime           dischtime
-1:  125157 2112-05-04 08:00:00 2112-05-11 14:15:00
-2:  131048 2112-05-22 15:37:00 2112-05-25 13:30:00
-3:  198330 2112-05-28 15:45:00 2112-06-07 16:50:00
-4:  174245 2178-05-14 20:29:00 2178-05-15 09:45:00
-5:  163189 2123-11-24 14:14:00 2123-12-30 14:31:00
-6:  192189 2180-07-19 06:55:00 2180-07-20 13:00:00
-7:  103379 2170-12-15 03:14:00 2170-12-24 18:00:00
-\end{CodeOutput}
 \end{CodeChunk}
 
 As data sources differ in their representation of time-stamps, a next
@@ -874,22 +710,6 @@ difference to the origin time-point of a given ID system.
 R> load_difftime("admissions", "mimic_demo", subject_id > 44000,
 +               cols = c("hadm_id", "admittime", "dischtime"))
 \end{CodeInput}
-\end{CodeChunk}
-
-\begin{CodeChunk}
-\begin{CodeOutput}
-# An `id_tbl`: 7 x 3
-# Id var:      `hadm_id`
-  hadm_id admittime dischtime
-    <int> <drtn>    <drtn>
-1  103379 0 mins    13846 mins
-2  125157 0 mins    10455 mins
-3  131048 0 mins     4193 mins
-4  163189 0 mins    51857 mins
-5  174245 0 mins      796 mins
-6  192189 0 mins     1805 mins
-7  198330 0 mins    14465 mins
-\end{CodeOutput}
 \end{CodeChunk}
 
 The function \texttt{load\_difftime()} is expected to return timestamps
@@ -916,22 +736,6 @@ intervals (using \texttt{change\_interval()}).
 R> load_id("admissions", "mimic_demo", subject_id > 44000,
 +         cols = c("admittime", "dischtime"), id_var = "hadm_id")
 \end{CodeInput}
-\end{CodeChunk}
-
-\begin{CodeChunk}
-\begin{CodeOutput}
-# An `id_tbl`: 7 x 3
-# Id var:      `hadm_id`
-  hadm_id admittime dischtime
-    <int> <drtn>    <drtn>
-1  103379 0 hours   230 hours
-2  125157 0 hours   174 hours
-3  131048 0 hours    69 hours
-4  163189 0 hours   864 hours
-5  174245 0 hours    13 hours
-6  192189 0 hours    30 hours
-7  198330 0 hours   241 hours
-\end{CodeOutput}
 \end{CodeChunk}
 
 \hypertarget{data-source-configuration}{%
@@ -1187,26 +991,6 @@ Heart rate, for example can be loaded using the \texttt{hr} concept as
 \begin{CodeInput}
 R> load_concepts("hr", c("mimic_demo", "eicu_demo"), verbose = FALSE)
 \end{CodeInput}
-\begin{CodeOutput}
-# A `ts_tbl`: 152,197 x 4
-# Id vars:    `source`, `icustay_id`
-# Units:      `hr` [bpm]
-# Index var:  `charttime` (1 hours)
-        source     icustay_id charttime    hr
-        <chr>           <int> <drtn>    <dbl>
-      1 eicu_demo      141764   0 hours   119
-      2 eicu_demo      141764   1 hours   105
-      3 eicu_demo      141764   2 hours    95
-      4 eicu_demo      141764   3 hours   106
-      5 eicu_demo      141764   4 hours   102
-    ...
-152,193 mimic_demo     298685 314 hours    60
-152,194 mimic_demo     298685 315 hours    56
-152,195 mimic_demo     298685 316 hours    50
-152,196 mimic_demo     298685 317 hours    48
-152,197 mimic_demo     298685 318 hours     0
-# ... with 152,187 more rows
-\end{CodeOutput}
 \end{CodeChunk}
 
 This requires some form of infrastructure for concisely specifying how
@@ -1430,13 +1214,13 @@ R> (dat <- ts_tbl(a = 1:5, b = hours(1:5), c = rnorm(5)))
 # A `ts_tbl`: 5 x 3
 # Id var:     `a`
 # Index var:  `b` (1 hours)
-      a b            c
-  <int> <drtn>   <dbl>
-1     1 1 hours  0.891
-2     2 2 hours -1.99
-3     3 3 hours -0.455
-4     4 4 hours -0.276
-5     5 5 hours  0.844
+      a b             c
+  <int> <drtn>    <dbl>
+1     1 1 hours  0.0592
+2     2 2 hours  1.58
+3     3 3 hours -1.05
+4     4 4 hours -0.528
+5     5 5 hours  1.07
 \end{CodeOutput}
 \begin{CodeInput}
 R> dat[["b"]] <- dat[["b"]] + mins(30)
@@ -1445,13 +1229,13 @@ R> dat
 \begin{CodeOutput}
 # An `id_tbl`: 5 x 3
 # Id var:      `a`
-      a b               c
-  <int> <drtn>      <dbl>
-1     1  5400 secs  0.891
-2     2  9000 secs -1.99
-3     3 12600 secs -0.455
-4     4 16200 secs -0.276
-5     5 19800 secs  0.844
+      a b                c
+  <int> <drtn>       <dbl>
+1     1  5400 secs  0.0592
+2     2  9000 secs  1.58
+3     3 12600 secs -1.05
+4     4 16200 secs -0.528
+5     5 19800 secs  1.07
 \end{CodeOutput}
 \end{CodeChunk}
 
@@ -1498,28 +1282,8 @@ display some concept meta-data.
 \begin{CodeInput}
 R> dict <- load_dictionary(c("mimic_demo", "eicu_demo"))
 R> head(dict)
-\end{CodeInput}
-\begin{CodeOutput}
-<concept[6]>
-                                  abx                              adh_rate 
-           antibiotics <lgl_cncpt[4]>       vasopressin rate <num_cncpt[3]> 
-                                  adm                                   age 
-patient admission type <fct_cncpt[2]>            patient age <num_cncpt[2]> 
-                                  alb                                   alp 
-               albumin <num_cncpt[2]>   alkaline phosphatase <num_cncpt[2]> 
-\end{CodeOutput}
-\begin{CodeInput}
 R> explain_dictionary(head(dict))
 \end{CodeInput}
-\begin{CodeOutput}
-      name     category            description
-1      abx  medications            antibiotics
-2 adh_rate  medications       vasopressin rate
-3      adm demographics patient admission type
-4      age demographics            patient age
-5      alb    chemistry                albumin
-6      alp    chemistry   alkaline phosphatase
-\end{CodeOutput}
 \end{CodeChunk}
 
 The following sub-sections serve to introduce some of the included
@@ -1531,13 +1295,6 @@ following counts
 \begin{CodeInput}
 R> table(vapply(dict, `[[`, character(1L), "category"))
 \end{CodeInput}
-\begin{CodeOutput}
-
-   blood gas    chemistry demographics   hematology  medications microbiology 
-          10           21            6           20           16            1 
-neurological      outcome       output  respiratory       vitals 
-           8           19            2           10            6 
-\end{CodeOutput}
 \end{CodeChunk}
 
 \hypertarget{physiological-data}{%
@@ -1555,26 +1312,6 @@ hematology assays.
 R> load_concepts(c("alb", "glu"), "mimic_demo", interval = mins(15L),
 +               verbose = FALSE)
 \end{CodeInput}
-\begin{CodeOutput}
-# A `ts_tbl`: 1,965 x 4
-# Id var:     `icustay_id`
-# Units:      `alb` [g/dL], `glu` [mg/dL]
-# Index var:  `charttime` (15 mins)
-      icustay_id charttime    alb   glu
-           <int> <drtn>     <dbl> <dbl>
-    1     201006 -3495 mins  NA     116
-    2     201006 -2745 mins  NA      83
-    3     201006 -1275 mins  NA      91
-    4     201006    15 mins   2.4   175
-    5     201006   675 mins  NA     129
-  ...
-1,961     298685 15600 mins  NA     159
-1,962     298685 16365 mins   2.2   153
-1,963     298685 17400 mins  NA     182
-1,964     298685 17595 mins  NA     122
-1,965     298685 17955 mins   2.5   121
-# ... with 1,955 more rows
-\end{CodeOutput}
 \end{CodeChunk}
 
 Most concepts of this kind are represented by \texttt{num\_cncpt}
@@ -1604,26 +1341,6 @@ merging will duplicate static data over all time-points.
 \begin{CodeInput}
 R> load_concepts(c("age", "glu"), "mimic_demo", verbose = FALSE)
 \end{CodeInput}
-\begin{CodeOutput}
-# A `ts_tbl`: 1,914 x 4
-# Id var:     `icustay_id`
-# Units:      `age` [years], `glu` [mg/dL]
-# Index var:  `charttime` (1 hours)
-      icustay_id charttime   age   glu
-           <int> <drtn>    <dbl> <dbl>
-    1     201006 -58 hours  68.9   116
-    2     201006 -45 hours  68.9    83
-    3     201006 -21 hours  68.9    91
-    4     201006   0 hours  68.9   175
-    5     201006  11 hours  68.9   129
-  ...
-1,910     298685 260 hours  80.1   159
-1,911     298685 272 hours  80.1   153
-1,912     298685 290 hours  80.1   182
-1,913     298685 293 hours  80.1   122
-1,914     298685 299 hours  80.1   121
-# ... with 1,904 more rows
-\end{CodeOutput}
 \end{CodeChunk}
 
 Despite a best-effort approach, data availability can be a limiting
@@ -1687,26 +1404,6 @@ administered for at least 60 minutes).
 R> load_concepts(c("abx", "vent_ind", "norepi_rate", "norepi_dur"),
 +               "mimic_demo", verbose = FALSE)
 \end{CodeInput}
-\begin{CodeOutput}
-# A `ts_tbl`: 12,547 x 6
-# Id var:     `icustay_id`
-# Units:      `norepi_rate` [mcg/kg/min]
-# Index var:  `startdate` (1 hours)
-       icustay_id startdate abx   vent_ind norepi_rate norepi_dur
-            <int> <drtn>    <lgl> <lgl>          <dbl> <drtn>
-     1     201006 -40 hours TRUE  NA           NA      NA hours
-     2     201006 -16 hours TRUE  NA           NA      NA hours
-     3     201006   7 hours TRUE  NA           NA      NA hours
-     4     201006   8 hours NA    TRUE         NA      60 hours
-     5     201006   9 hours NA    TRUE          0.0460 NA hours
-   ...
-12,543     298685 612 hours NA    TRUE         NA      NA hours
-12,544     298685 613 hours NA    TRUE         NA      NA hours
-12,545     298685 614 hours NA    TRUE         NA      NA hours
-12,546     298685 615 hours NA    TRUE         NA      NA hours
-12,547     298685 616 hours NA    TRUE         NA      NA hours
-# ... with 12,537 more rows
-\end{CodeOutput}
 \end{CodeChunk}
 
 As cautioned in Section \ref{patient-demographics}, variability in data
@@ -1744,25 +1441,6 @@ score construction.
 R> load_concepts(c("sirs", "death"), "mimic_demo", verbose = FALSE,
 +               keep_components = TRUE)
 \end{CodeInput}
-\begin{CodeOutput}
-# A `ts_tbl`: 14,295 x 8
-# Id var:     `icustay_id`
-# Index var:  `charttime` (1 hours)
-       icustay_id charttime  sirs death temp_comp hr_comp resp_comp wbc_comp
-            <int> <drtn>    <dbl> <lgl>     <int>   <int>     <int>    <int>
-     1     201006 -58 hours     1 NA           NA      NA        NA        1
-     2     201006 -45 hours     1 NA           NA      NA        NA        1
-     3     201006 -21 hours     1 NA           NA      NA        NA        1
-     4     201006 -10 hours     2 NA           NA      NA         1        1
-     5     201006   0 hours     3 NA            0       1         1        1
-   ...
-14,291     298685 314 hours     2 NA            0       0         1        1
-14,292     298685 315 hours     2 NA            0       0         1        1
-14,293     298685 316 hours     2 NA            0       0         1        1
-14,294     298685 317 hours     1 NA            0       0         0        1
-14,295     298685 318 hours     1 TRUE          0       0        NA        1
-# ... with 14,285 more rows
-\end{CodeOutput}
 \end{CodeChunk}
 
 Callback functions can become rather involved (especially for more
@@ -1790,14 +1468,6 @@ how some data pre-processing can be added to an existing concept by
 creating a new \texttt{rec\_cncpt} and how to create an new data concept
 altogether.
 
-\begin{CodeChunk}
-\begin{CodeOutput}
-Note: The following code chunks are intended to be run using data from
-`mimic` which is not available. Alternatively, data from `mimic_demo`
-is used instead.
-\end{CodeOutput}
-\end{CodeChunk}
-
 \hypertarget{lactate-and-mortality}{%
 \subsection{Lactate and mortality}\label{lactate-and-mortality}}
 
@@ -1808,14 +1478,6 @@ mortality \citep{haas2016, nichol2011, van2013}. In order to model this
 relationship, we fit a time-varying proportional hazards Cox model
 \citep{therneau2000, therneau2015}, which includes the SOFA score as a
 general predictor of illness severity, using MIMIC-III data.
-
-\begin{CodeChunk}
-\begin{CodeInput}
-R> src <- "mimic_demo"
-R> dat <- load_concepts(c("lact", "death", "sofa", "sex"), src,
-+                      verbose = FALSE)
-\end{CodeInput}
-\end{CodeChunk}
 
 \begin{CodeChunk}
 \begin{CodeInput}
@@ -1841,13 +1503,6 @@ using a last observation carry forward (locf) scheme (observing the
 patient grouping) and we simply replace missing \texttt{death} values
 with the value \texttt{FALSE}. The resulting model fit can be visualized
 as:
-
-\begin{CodeChunk}
-
-
-\begin{center}\includegraphics{/private/var/folders/24/8k48jl6d249_n_qfxwsl6xvm0000gn/T/Rtmpb4OwU4/file88152018078/articles/jss_files/figure-latex/cox_plot-1} \end{center}
-
-\end{CodeChunk}
 
 A simple exploration already shows that the increased values of lactate
 are associated with mortality, even after adjusting for the SOFA score.
@@ -1928,13 +1583,6 @@ R> dat
 
 After this, we can visualize the difference between the two groups with
 a histogram:
-
-\begin{CodeChunk}
-
-
-\begin{center}\includegraphics{/private/var/folders/24/8k48jl6d249_n_qfxwsl6xvm0000gn/T/Rtmpb4OwU4/file88152018078/articles/jss_files/figure-latex/diabetes_visualize-1} \end{center}
-
-\end{CodeChunk}
 
 The plot suggests that during the first day of ICU stay, perhaps
 unsurprisingly, diabetic patients receive more insulin compared to

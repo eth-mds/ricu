@@ -79,7 +79,7 @@ the package." />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">ICU data with R</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.4.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.4.1.9000</span>
       </span>
     </div>
 
@@ -167,6 +167,17 @@ the package.</p>
 <span class='co'># S3 method for aumc_cfg</span>
 <span class='fu'>import_src</span><span class='op'>(</span><span class='va'>x</span>, <span class='va'>...</span><span class='op'>)</span>
 
+<span class='co'># S3 method for character</span>
+<span class='fu'>import_src</span><span class='op'>(</span>
+  <span class='va'>x</span>,
+  data_dir <span class='op'>=</span> <span class='fu'><a href='data_dir.html'>src_data_dir</a></span><span class='op'>(</span><span class='va'>x</span><span class='op'>)</span>,
+  tables <span class='op'>=</span> <span class='cn'>NULL</span>,
+  force <span class='op'>=</span> <span class='cn'>FALSE</span>,
+  verbose <span class='op'>=</span> <span class='cn'>TRUE</span>,
+  cleanup <span class='op'>=</span> <span class='cn'>FALSE</span>,
+  <span class='va'>...</span>
+<span class='op'>)</span>
+
 <span class='fu'>import_tbl</span><span class='op'>(</span><span class='va'>x</span>, <span class='va'>...</span><span class='op'>)</span>
 
 <span class='co'># S3 method for tbl_cfg</span>
@@ -209,14 +220,14 @@ to.</p></td>
       <td><p>Logical flag indicating whether to print progress information</p></td>
     </tr>
     <tr>
-      <th>progress</th>
-      <td><p>Either <code>NULL</code> or a progress bar as created by
-<code><a href='https://rdrr.io/pkg/progress/man/progress_bar.html'>progress::progress_bar()</a></code></p></td>
-    </tr>
-    <tr>
       <th>cleanup</th>
       <td><p>Logical flag indicating whether to remove raw csv files after
 conversion to fst</p></td>
+    </tr>
+    <tr>
+      <th>progress</th>
+      <td><p>Either <code>NULL</code> or a progress bar as created by
+<code><a href='https://rdrr.io/pkg/progress/man/progress_bar.html'>progress::progress_bar()</a></code></p></td>
     </tr>
     </table>
 
