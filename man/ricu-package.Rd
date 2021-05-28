@@ -28,7 +28,7 @@ Useful links:
 Authors:
 \itemize{
   \item Drago Plecko \email{drago.plecko@stat.math.ethz.ch}
-  \item Ida-Fong Ukor \email{dr.ukor@gmail.com}
+  \item Ida-Fong Ukor \email{ida-fong.ukor@monashhealth.org}
 }
 
 }

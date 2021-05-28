@@ -490,7 +490,12 @@ reclass_tbl.default <- function(x, template, ...) {
 }
 
 try_reclass <- function(x, template) {
-  reclass_tbl(x, template, stop_on_fail = FALSE)
+
+  if (is_df(x)) {
+    reclass_tbl(x, template, stop_on_fail = FALSE)
+  } else {
+    x
+  }
 }
 
 #' @rdname tbl_internal

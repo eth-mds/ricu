@@ -140,9 +140,14 @@ import_src.aumc_cfg <- function(x, ...) {
   NextMethod(locale = readr::locale(encoding = "latin1"))
 }
 
+#' @param cleanup Logical flag indicating whether to remove raw csv files after
+#' conversion to fst
+#'
+#' @rdname import
 #' @export
 import_src.character <- function(x, data_dir = src_data_dir(x), tables = NULL,
-                                 force = FALSE, verbose = TRUE, ...) {
+                                 force = FALSE, verbose = TRUE, cleanup = FALSE,
+                                 ...) {
 
   if (is.character(tables)) {
 
@@ -158,7 +163,7 @@ import_src.character <- function(x, data_dir = src_data_dir(x), tables = NULL,
   assert_that(is.list(tables))
 
   Map(import_src, load_src_cfg(x, ...), data_dir, tables, force,
-      MoreArgs = list(verbose = verbose))
+      MoreArgs = list(verbose = verbose, cleanup = cleanup))
 
   invisible(NULL)
 }
@@ -168,8 +173,6 @@ import_src.default <- function(x, ...) stop_generic(x, .Generic)
 
 #' @param progress Either `NULL` or a progress bar as created by
 #' [progress::progress_bar()]
-#' @param cleanup Logical flag indicating whether to remove raw csv files after
-#' conversion to fst
 #'
 #' @rdname import
 #' @export
