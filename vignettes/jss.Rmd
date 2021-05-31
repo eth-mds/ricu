@@ -225,11 +225,11 @@ install.packages(
 )
 ```
 
-Provisions for datasets configured to be attached during package loading are made irrespectively of whether data is actually available. Upon first access of a dataset with some data missing, the user is asked for permission to download in interactive sessions and an error is thrown otherwise. Credentials can either be provided as environment variables (`RICU_PHYSIONET_USER` and `RICU_PHYSIONET_PASS` for access to PhysioNet data, as well as `RICU_AUMC_TOKEN` for AmsterdamUMCdb) and if the corresponding variables are unset, user input is again required in interactive sessions. For non-interactive sessions, functionality is exported such that data can be downloaded and set up ahead of first access (see `?setup_src_data`), which requires the environment variables to be set or credentials to be passed as function arguments.
+Provisions for datasets configured to be attached during package loading are made irrespective of whether data is actually available. Upon access of an incomplete dataset, the user is asked for permission to download in interactive sessions and an error is thrown otherwise. Credentials can either be provided as environment variables (`RICU_PHYSIONET_USER` and `RICU_PHYSIONET_PASS` for access to PhysioNet data, as well as `RICU_AUMC_TOKEN` for AmsterdamUMCdb) and if the corresponding variables are unset, user input is again required in interactive sessions. For non-interactive sessions, functionality is exported such that data can be downloaded and set up ahead of first access (see `?setup_src_data`).
 
 ## Ready to use datasets
 
-Contingent on being granted access by the data owners, several large-scale ICU datasets collected from multiple hospitals in the US and Europe can be set up for access using \pkg{ricu} with minimal user effort. Download requires a stable Internet connection as the amount of downloaded data ranges from 5 to 10 GB per dataset, as well as 50 to 100 GB of temporary disk storage for unpacking and preparing the data for efficient access. In terms of permanent storage, again 5 to 10 GB per dataset are required. Despite uncompressed sizes of up to 100 GB for some of the larger tables, memory requirements easily permit importing (and working with) all available tables using Laptop class hardware as only subsets of rows are read at once.
+Contingent on being granted access by the data owners, several large-scale ICU datasets collected from multiple hospitals in the US and Europe can be set up for access using \pkg{ricu} with minimal user effort. Download requires a stable Internet connection, as well as 50 to 100 GB of temporary disk storage for unpacking and preparing the data for efficient access. In terms of permanent storage, 5 to 10 GB per dataset are required, while memory requirements permit importing (and working with) even the largest tables using Laptop class hardware as only subsets of rows are read at once.
 
 The following paragraphs serve to give quick introductions to the included datasets to offer some guidance, outlining some strengths and weaknesses of each of the datasets. Especially the PhysioNet datasets [MIMIC-III](https://mimic.physionet.org/about/mimic/) and [eICU](https://eicu-crd.mit.edu/about/eicu/) offer good documentation on the respective websites. This section is concluded with a table summarizing similarities and differences among the datasets, outlined in the following paragraphs (see table \ref{tab:datasets}).
 
@@ -298,7 +298,7 @@ eval_next <- srcs_avail(c("mimic", "eicu", "hirid", "aumc")) ||
   demo_src_avail(c("mimic", "eicu"), msg = TRUE)
 ```
 
-```{r src-overview, eval = eval_next, echo = FALSE, results = "asis", cache = TRUE}
+```{r src-overview, eval = eval_next, echo = FALSE, results = "asis"}
 as_quant <- function(x) {
 
   if (identical(length(x), 0L)) {
@@ -409,15 +409,15 @@ tbl
 
 ## Implementation details
 
-Every dataset is represented by an environment with class attributes and associated metadata objects stored as object attributes to that environment. Dataset environments all inherit from `src_env` and from any number of class names constructed from data source name(s) with a suffix `_env` attached. The environment representing MIMIC-III, for example inherits from `src_env` and `mimic_env`, while the corresponding demo dataset inherits from `src_env`, `mimic_env` and `mimic_demo_env`. These sub-classes are later used for adapting the process of data loading to particularities of individual datasets.
+Every dataset is represented by an environment with class attributes and associated metadata objects stored as object attributes to that environment. Dataset environments all inherit from `src_env` and from any number of class names constructed from data source name(s) with a suffix `_env` attached. The environment representing MIMIC-III, for example inherits from `src_env` and `mimic_env`, while the corresponding demo dataset inherits from `src_env`, `mimic_env` and `mimic_demo_env`. These sub-classes are later used for tailoring the process of data loading to particularities of individual datasets.
 
-A `src_env` contains an active binding per contained table, which returns a `src_tbl` object representing the requested table after having checked that the required data is locally available (and querying the user for download if not). As is the case for `src_env` objects, `src_tbl` objects inherit from additional classes such that certain per-dataset behavior can be customized. The `admissions` table of the MIMIC-III demo dataset for example inherits from `mimic_demo_tbl` and `mimic_tbl` (alongside classes `src_tbl` and `prt`).
+A `src_env` contains an active binding per contained table, which returns a `src_tbl` object representing the requested table. As is the case for `src_env` objects, `src_tbl` objects inherit from additional classes such that certain per-dataset behavior can be customized. The `admissions` table of the MIMIC-III demo dataset for example inherits from `mimic_demo_tbl` and `mimic_tbl` (alongside classes `src_tbl` and `prt`).
 
 ```{r mimic-adm, eval = srcs_avail("mimic_demo")}
 mimic_demo$admissions
 ```
 
-Powered by the \pkg{prt} \citep{bennett2021} package, `src_tbl` objects represent tabular data and are stored as a singleton or row-partitioned tables into multiple binary files created by the \pkg{fst} \citep{klik2020} package. In addition to standard subsetting, `prt` objects can be subsetted via the base R S3 generic function `subset()` and using non-standard evaluation:
+Powered by the \pkg{prt} \citep{bennett2021} package, `src_tbl` objects represent row-partitioned tabular data stored as multiple binary files created by the \pkg{fst} \citep{klik2020} package. In addition to standard subsetting, `prt` objects can be subsetted via the base R S3 generic function `subset()` and using non-standard evaluation:
 
 ```{r mimic-sub, eval = srcs_avail("mimic_demo")}
 subset(mimic_demo$admissions, subject_id > 44000, language:ethnicity)
@@ -431,16 +431,16 @@ subset(mimic_demo$admissions, .data$subject_id %in% .env$subject_id,
        subject_id:dischtime)
 ```
 
-By using so-called pronouns (`.data` and `.env`), the distinction can readily be made between a name referring to an object within the context of the data and an object within the context of the calling environment.
+By using \pkg{rlang} pronouns (`.data` and `.env`), the distinction can readily be made between a name referring to an object within the context of the data and an object within the context of the calling environment.
 
 ### Data source set-up
 
-In order to make a dataset accessible to \pkg{ricu}, three steps are necessary, each handled by an exported S3 generic function: `download_scr()`, `import_src()` and `attach_src()`. While the first two steps, download and import are one-time procedures, attaching is carried out every time the package namespace is loaded. By default, all data sources known to \pkg{ricu} are configured to be attached and in case some data is missing for a given data source, the missing data is downloaded and imported on first access (and contingent on user consent). For downloads to run through without user interaction, several environment variables can be configured:
+In order to make a dataset accessible to \pkg{ricu}, three steps are necessary, each handled by an exported S3 generic function: `download_scr()`, `import_src()` and `attach_src()`. The first two steps, download and import, are one-time procedures, whereas attaching is carried out every time the package namespace is loaded. By default, all data sources known to \pkg{ricu} are configured to be attached and in case some data is missing for a given data source, the missing data is downloaded and imported on first access. For data download, several environment variables can be configured:
 
 * `RICU_PHYSIONET_USER`/`RICU_PHYSIONET_PASS`: PhysioNet user name and password with access to the requested dataset.
 * `RICU_AUMC_TOKEN`: Download token, extracted from the download URL received when requesting data access.
 
-If any of the required access credentials are not available as environment variables, the user is queried in interactive sessions. Each of the datasets requires 5-10 GB disk space for permanent storage. In addition to that, 50-100 GB of temporary disk storage is required during download and import of any of the datasets, roughly corresponding to the respective maximum table sizes (uncompressed). Memory requirements are kept low by performing all set-up operations only on subsets of rows at the time, such that Laptop-class hardware is sufficient for handling such datasets. Initial data source set up (depending on available download speeds and CPU/disk type) may take upwards of an hour per dataset.
+If any of the required access credentials are not available as environment variables, the user is queried in interactive sessions. Each of the datasets requires 5-10 GB disk space for permanent storage. Additionally, 50-100 GB of temporary disk storage is required during download and import of any of the datasets. Memory requirements are kept low by performing all set-up operations only on subsets of rows at the time, such that 8 GB of memory should suffice. Initial data source set up (depending on available download speeds and CPU/disk type) may take upwards of an hour per dataset.
 
 Further environment variables can be set to customize certain aspects of \pkg{ricu} data handling:
 
@@ -448,7 +448,7 @@ Further environment variables can be set to customize certain aspects of \pkg{ri
 * `RICU_CONFIG_PATH`: Comma-separated paths to directories containing configuration files (in addition to the default location; retrievable using `config_paths()`).
 * `RICU_SRC_LOAD`: Comma-separated data source names that are set up for being automatically attached on namespace loading (the current set of data sources is available as `auto_attach_srcs()`).
 
-After successful data download, importing prepares tables for efficient random row-access, for which the raw data format (.csv) is not well suited. Tables are read in using \pkg{readr} \citep{hester2020}, potentially partitioned row-wise, and re-saved using \pkg{fst}. Finally, attaching a dataset creates a corresponding `src_env` object which together with associated meta-data is used by \pkg{ricu} to run queries against the data.
+After successful data download, importing prepares tables for efficient random row-access, for which the raw data format (.csv) is not well suited. Tables are read in using \pkg{readr} \citep{hester2020}, potentially (re-)partitioned row-wise, and re-saved using \pkg{fst}. Finally, attaching a dataset creates a corresponding `src_env` object which together with associated meta-data is used by \pkg{ricu} to run queries against the data.
 
 ### Data loading
 
@@ -742,7 +742,7 @@ eval_next <- demo_src_avail("mimic", msg = TRUE)
 
 First, we investigate the association of lactate levels and mortality. This problem has been studied before and it is widely accepted that both static and dynamic lactate indices are associated with increased mortality \citep{haas2016, nichol2011, van2013}. In order to model this relationship, we fit a time-varying proportional hazards Cox model \citep{therneau2000, therneau2015}, which includes the SOFA score as a general predictor of illness severity, using MIMIC-III data. `r if (srcs_avail("mimic")) "Furthermore, for the sake of this example, we are only interested in patients admitted from 2008 onwards of ages 25 to 65 years old."`
 
-```{r cox-full, eval = srcs_avail("mimic"), include = srcs_avail("mimic"), cache = TRUE}
+```{r cox-full, eval = srcs_avail("mimic"), include = srcs_avail("mimic")}
 src <- "mimic"
 
 cohort <- load_id("icustays", src, dbsource == "metavision",
@@ -839,7 +839,7 @@ dat
 
 After this, we can visualize the difference between the two groups with a histogram:
 
-```{r diabetes_visualize, echo = FALSE, eval = demo_src_avail("mimic"), fig.height = 3}
+```{r diabetes-visualize, echo = FALSE, eval = demo_src_avail("mimic"), fig.height = 3}
 dat <- dat[, weight := 1 / .N, by = diab]
 ggplot(dat, aes(x = ins24, fill = diab)) +
   stat_count(aes(weight = weight), alpha = 0.75, position = "dodge") +
@@ -853,4 +853,8 @@ The plot suggests that during the first day of ICU stay, perhaps unsurprisingly,
 
 # Acknowledgments
 
-This work was supported by grant #2017-110 of the Strategic Focal Area "Personalized Health and Related Technologies (PHRT)" of the ETH Domain for the SPHN/PHRT Driver Project "Personalized Swiss Sepsis Study".
+Nicolas Bennett, Drago Plečko, Nicolai Meinshausen and Peter Bühlmann were supported by grant #2017-110 of the Strategic Focal Area "Personalized Health and Related Technologies (PHRT)" of the ETH Domain for the SPHN/PHRT Driver Project "Personalized Swiss Sepsis Study".
+
+```{r session-info, include = FALSE}
+sessionInfo()
+```
