@@ -98,21 +98,48 @@
 
     
     
-<pre><code>#&gt; Note: Examples in this vignette require that datasets `mimic_demo` and
-#&gt; `eicu_demo` are available. Chunks that depend on certain datasets will
-#&gt; not be evaluated if the corresponding dataset is missing. The full
-#&gt; version of this vignette is available from
-#&gt; https://CRAN.R-project.org/package=ricu/vignettes/uom.html</code></pre>
 <p>One challenge when working with electronic healthcare (EHR) data from different hospitals, which is accentuated if the intensive care units (ICUs) collecting the data are located in different geographic regions, is the use of different measurement unit systems. In part, this can be attributed to the use of imperial units in English speaking countries (e.g. patient weight being reported in lbs instead of kg), but more subtle differences in practice are involved as well, such as reporting lab test results in mg/dL instead of the SI unit mmol/L. While discrepancies of the former type are easy to resolve, harmonization of different notions of concentration is slightly more involved due to the conversion factor being substance-specific.</p>
 <div id="ricu-data-concepts" class="section level2">
 <h2 class="hasAnchor">
 <a href="#ricu-data-concepts" class="anchor"></a><code>ricu</code> data concepts</h2>
 <p>Data concepts of type <code>num_cncpt</code> can specify an expected units as character vector (where the string in position 1 is added as per-column attribute <code>units</code>). Due to the complexity involved, unit conversion to the specified target unit currently is not handled automatically<a href="#fn1" class="footnote-ref" id="fnref1"><sup>1</sup></a>. Instead, item-specific callback functions are responsible for handling this, while unit mismatches are reported as messages during concept loading.</p>
-<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="op">(</span><span class="va">dat</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/load_concepts.html">load_concepts</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"lact"</span>, <span class="st">"map"</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"mimic_demo"</span>, <span class="st">"eicu_demo"</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></code></pre></div>
+<div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="op">(</span><span class="va">dat</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/load_concepts.html">load_concepts</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"lact"</span>, <span class="st">"map"</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"mimic_demo"</span>, <span class="st">"eicu_demo"</span><span class="op">)</span><span class="op">)</span><span class="op">)</span>
+<span class="co">#&gt; ── Loading 2 concepts ──────────────────────────────────────────────────────────</span>
+<span class="co">#&gt; • lact</span>
+<span class="co">#&gt;   ◯ removed 19 (0.74%) of rows due to out of range (or `NA`) entries</span>
+<span class="co">#&gt;   ◯ not all units are in [mmol/L]: mEq/L, mmole/L, MMOLL (0.62%, 0.08%,</span>
+<span class="co">#&gt;     and 0.51%)</span>
+<span class="co">#&gt; • map</span>
+<span class="co">#&gt;   ◯ removed 1438014 (74.7%) of rows due to out of range (or `NA`)</span>
+<span class="co">#&gt;     entries</span>
+<span class="co">#&gt;   ◯ not all units are in [mmHg], [mm Hg]: NA (96.74%)</span>
+<span class="co">#&gt; ────────────────────────────────────────────────────────────────────────────────</span>
+<span class="co">#&gt; # A `ts_tbl`: 139,144 ✖ 5</span>
+<span class="co">#&gt; # Id vars:    `source`, `icustay_id`</span>
+<span class="co">#&gt; # Units:      `lact` [mmol/L], `map` [mmHg]</span>
+<span class="co">#&gt; # Index var:  `charttime` (1 hours)</span>
+<span class="co">#&gt;         source     icustay_id charttime  lact   map</span>
+<span class="co">#&gt;         &lt;chr&gt;           &lt;int&gt; &lt;drtn&gt;    &lt;dbl&gt; &lt;dbl&gt;</span>
+<span class="co">#&gt;       1 eicu_demo      141764   1 hours    NA  112.</span>
+<span class="co">#&gt;       2 eicu_demo      141764   2 hours    NA  128</span>
+<span class="co">#&gt;       3 eicu_demo      141764   3 hours    NA  143</span>
+<span class="co">#&gt;       4 eicu_demo      141764   4 hours    NA  133</span>
+<span class="co">#&gt;       5 eicu_demo      141764   5 hours    NA  103</span>
+<span class="co">#&gt;       …</span>
+<span class="co">#&gt; 139,140 mimic_demo     298685 314 hours    NA   76</span>
+<span class="co">#&gt; 139,141 mimic_demo     298685 315 hours    NA   58</span>
+<span class="co">#&gt; 139,142 mimic_demo     298685 316 hours    NA   47</span>
+<span class="co">#&gt; 139,143 mimic_demo     298685 317 hours    NA   35</span>
+<span class="co">#&gt; 139,144 mimic_demo     298685 318 hours    NA   12</span>
+<span class="co">#&gt; # … with 139,134 more rows</span></code></pre></div>
 <p>Messages raised during loading of lactate values, for example, indicate that 0.62% of retrieved values are specified in mEq/L instead of mmol/L (which requires an identity transformation for unit conversion), while the remaining discrepancies are false positives (both mmole/L and MMOLL can be assumed to mean mmol/L). For mean arterial bloop pressure values, the target unit is specified as mmHg (with the alternative spelling mm Hg being accepted as well), however, due to the data organization in eICU<a href="#fn2" class="footnote-ref" id="fnref2"><sup>2</sup></a>, no explicit measurement units are specified for this variable, in turn causing the large percentage of missing unit values reported.</p>
 <p>Several utility functions are exported from <code>ricu</code> for helping with creating callback functions that handle unit conversion. Data items corresponding to the bilirubin concept for the European datasets HiRID and AUMCdb, for example, have a callback entry specified as <code>convert_unit(binary_op(``*``, 0.058467), "mg/dL")</code>. This creates a callback functions which applies <code>binary_op(``*``, 0.058467)</code> to the column specified as <code>val_var</code> and replaces existing values in the column identified by <code>unit_var</code> with the value <code>"mg/dl"</code>. In case the loaded data already is comprised of a mix of units, a regular expression passed as <code>rgx</code> can be specified, which will be used to identify the rows on which to operate. Finally, the function <code>binary_op</code> turns a binary function into an unary function by fixing the second operand.</p>
 <p>As a sanity check to see whether measurement units (and data values in general) are aligned when compared across datasets, density plots may be employed.</p>
+<pre><code>#&gt; Note: The following code chunks are intended to be run using data from
+#&gt; `mimic` and `eicu` which is not available. Alternatively, data from
+#&gt; `mimic_demo` and `eicu_demo` is used instead.</code></pre>
+<p><img src="uom_files/figure-html/uom-hist-1.png" width="576"><img src="uom_files/figure-html/uom-hist-2.png" width="576"><img src="uom_files/figure-html/uom-hist-3.png" width="576"><img src="uom_files/figure-html/uom-hist-4.png" width="576"><img src="uom_files/figure-html/uom-hist-5.png" width="576"></p>
 <p>When extending the <code>ricu</code> dictionary to both new data sources and new data concepts, it might be worthwhile to visually inspect the returned data in a fashion similar to the above in order to have a high-level confirmation that measurement units roughly agree.</p>
 </div>
 <div class="footnotes">

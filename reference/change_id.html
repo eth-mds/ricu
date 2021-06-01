@@ -278,14 +278,29 @@ stamps -4h, 3h and 11h, while data points 4-8 are assigned to -10h, -2h,
 efficient <code>data.table</code> rolling join.</p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='kw'>if</span> <span class='op'>(</span><span class='kw'><a href='https://rdrr.io/r/base/library.html'>require</a></span><span class='op'>(</span><span class='va'>mimic.demo</span><span class='op'>)</span><span class='op'>)</span> <span class='op'>{</span>
+    <pre class="examples"><div class='input'><span class='kw'>if</span> <span class='op'>(</span><span class='kw'><a href='https://rdrr.io/r/base/library.html'>require</a></span><span class='op'>(</span><span class='va'><a href='https://physionet.org/content/mimiciii-demo/1.4'>mimic.demo</a></span><span class='op'>)</span><span class='op'>)</span> <span class='op'>{</span>
 <span class='va'>tbl</span> <span class='op'>&lt;-</span> <span class='va'>mimic_demo</span><span class='op'>$</span><span class='va'>labevents</span>
 <span class='va'>dat</span> <span class='op'>&lt;-</span> <span class='fu'><a href='load_src.html'>load_difftime</a></span><span class='op'>(</span><span class='va'>tbl</span>, <span class='va'>itemid</span> <span class='op'>==</span> <span class='fl'>50809</span>, <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"charttime"</span>, <span class='st'>"valuenum"</span><span class='op'>)</span><span class='op'>)</span>
 <span class='va'>dat</span>
 
 <span class='fu'>change_id</span><span class='op'>(</span><span class='va'>dat</span>, <span class='st'>"icustay_id"</span>, <span class='va'>tbl</span>, keep_old_id <span class='op'>=</span> <span class='cn'>FALSE</span><span class='op'>)</span>
 <span class='op'>}</span>
-</div><div class='output co'>#&gt; <span class='message'>Loading required package: mimic.demo</span></div><div class='output co'>#&gt; <span class='warning'>Warning: there is no package called ‘mimic.demo’</span></div><div class='input'>
+</div><div class='output co'>#&gt; <span class='message'>Loading required package: mimic.demo</span></div><div class='output co'>#&gt; <span style='color: #949494;'># An `id_tbl`: 284 ✖ 3</span>
+#&gt; <span style='color: #949494;'># Id var:      `icustay_id`</span>
+#&gt;     icustay_id charttime  valuenum
+#&gt;          <span style='color: #949494; font-style: italic;'>&lt;int&gt;</span> <span style='color: #949494; font-style: italic;'>&lt;drtn&gt;</span>        <span style='color: #949494; font-style: italic;'>&lt;dbl&gt;</span>
+#&gt;   <span style='color: #949494;'>1</span>     <span style='text-decoration: underline;'>201</span>006   689 mins      129
+#&gt;   <span style='color: #949494;'>2</span>     <span style='text-decoration: underline;'>201</span>006   877 mins      144
+#&gt;   <span style='color: #949494;'>3</span>     <span style='text-decoration: underline;'>203</span>766   726 mins      164
+#&gt;   <span style='color: #949494;'>4</span>     <span style='text-decoration: underline;'>203</span>766   766 mins      185
+#&gt;   <span style='color: #949494;'>5</span>     <span style='text-decoration: underline;'>203</span>766   833 mins      181
+#&gt;   <span style='color: #949494;'>…</span>
+#&gt; <span style='color: #949494;'>280</span>     <span style='text-decoration: underline;'>295</span>043 13746 mins      156
+#&gt; <span style='color: #949494;'>281</span>     <span style='text-decoration: underline;'>295</span>741  -125 mins      122
+#&gt; <span style='color: #949494;'>282</span>     <span style='text-decoration: underline;'>296</span>804   638 mins      105
+#&gt; <span style='color: #949494;'>283</span>     <span style='text-decoration: underline;'>298</span>685  4472 mins       88
+#&gt; <span style='color: #949494;'>284</span>     <span style='text-decoration: underline;'>298</span>685 13861 mins      138
+#&gt; <span style='color: #949494;'># … with 274 more rows</span></div><div class='input'>
 </div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">

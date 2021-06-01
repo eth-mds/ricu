@@ -98,27 +98,22 @@
 
     
     
-<pre><code>#&gt; Note: Examples in this vignette require that datasets `mimic_demo` and
-#&gt; `eicu_demo` are available. Chunks that depend on certain datasets will
-#&gt; not be evaluated if the corresponding dataset is missing. The full
-#&gt; version of this vignette is available from
-#&gt; https://CRAN.R-project.org/package=ricu/vignettes/ricu.html</code></pre>
 <p>In order to set up <code>ricu</code>, download of datasets from several platforms is required. Two data sources, <code>mimic_demo</code> and <code>eicu_demo</code> are available directly as R packages, hosted on Github. The respective full-featured versions <code>mimic</code> and <code>eicu</code>, as well as the <code>hirid</code> dataset are available from <a href="https://physionet.org">PhysioNet</a>, while access to the remaining standard dataset <code>aumc</code> is available from yet another <a href="https://amsterdammedicaldatascience.nl/">website</a>. The following steps guide through package installation, data source set up and conclude with some example data queries.</p>
 <div id="package-installation" class="section level2">
 <h2 class="hasAnchor">
 <a href="#package-installation" class="anchor"></a>Package installation</h2>
 <p>Stable package releases are available from <a href="https://cran.r-project.org/package=ricu">CRAN</a> as</p>
-<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html">install.packages</a></span><span class="op">(</span><span class="st">"ricu"</span><span class="op">)</span></code></pre></div>
 <p>and the latest development version is available from <a href="https://github.com/eth-mds/ricu">GitHub</a> as</p>
-<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu">remotes</span><span class="fu">::</span><span class="fu"><a href="https://remotes.r-lib.org/reference/install_github.html">install_github</a></span><span class="op">(</span><span class="st">"eth-mds/ricu"</span><span class="op">)</span></code></pre></div>
 </div>
 <div id="demo-datasets" class="section level2">
 <h2 class="hasAnchor">
 <a href="#demo-datasets" class="anchor"></a>Demo datasets</h2>
 <p>The two demo datasets <code>mimic_demo</code> and <code>eicu_demo</code> are listed as <code>Suggests</code> dependencies and therefore their availability is determined by the value passed as <code>dependencies</code> to the above package installation function. The following call explicitly installs the demo dataset packages</p>
-<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html">install.packages</a></span><span class="op">(</span>
   <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"mimic.demo"</span>, <span class="st">"eicu.demo"</span><span class="op">)</span>,
   repos <span class="op">=</span> <span class="st">"https://eth-mds.github.io/physionet-demo"</span>
@@ -142,13 +137,62 @@
 <h2 class="hasAnchor">
 <a href="#concept-loading" class="anchor"></a>Concept loading</h2>
 <p>Many commonly used clinical data concepts are available for all data sources, where the required data exists. An overview of available concepts is available by calling <code><a href="../reference/load_dictionary.html">explain_dictionary()</a></code> and concepts can be loaded using <code><a href="../reference/load_concepts.html">load_concepts()</a></code>:</p>
-<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span><span class="op">(</span><span class="fu"><a href="../reference/load_dictionary.html">explain_dictionary</a></span><span class="op">(</span>src <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"mimic_demo"</span>, <span class="st">"eicu_demo"</span><span class="op">)</span><span class="op">)</span><span class="op">)</span>
-<span class="fu"><a href="../reference/load_concepts.html">load_concepts</a></span><span class="op">(</span><span class="st">"alb"</span>, <span class="st">"mimic_demo"</span>, verbose <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></code></pre></div>
+<span class="co">#&gt;       name     category            description</span>
+<span class="co">#&gt; 1      abx  medications            antibiotics</span>
+<span class="co">#&gt; 2 adh_rate  medications       vasopressin rate</span>
+<span class="co">#&gt; 3      adm demographics patient admission type</span>
+<span class="co">#&gt; 4      age demographics            patient age</span>
+<span class="co">#&gt; 5      alb    chemistry                albumin</span>
+<span class="co">#&gt; 6      alp    chemistry   alkaline phosphatase</span>
+<span class="fu"><a href="../reference/load_concepts.html">load_concepts</a></span><span class="op">(</span><span class="st">"alb"</span>, <span class="st">"mimic_demo"</span>, verbose <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span>
+<span class="co">#&gt; # A `ts_tbl`: 297 ✖ 3</span>
+<span class="co">#&gt; # Id var:     `icustay_id`</span>
+<span class="co">#&gt; # Units:      `alb` [g/dL]</span>
+<span class="co">#&gt; # Index var:  `charttime` (1 hours)</span>
+<span class="co">#&gt;     icustay_id charttime   alb</span>
+<span class="co">#&gt;          &lt;int&gt; &lt;drtn&gt;    &lt;dbl&gt;</span>
+<span class="co">#&gt;   1     201006   0 hours   2.4</span>
+<span class="co">#&gt;   2     203766 -18 hours   2</span>
+<span class="co">#&gt;   3     203766   4 hours   1.7</span>
+<span class="co">#&gt;   4     204132   7 hours   3.6</span>
+<span class="co">#&gt;   5     204201   9 hours   2.3</span>
+<span class="co">#&gt;   …</span>
+<span class="co">#&gt; 293     298685 130 hours   1.9</span>
+<span class="co">#&gt; 294     298685 154 hours   2</span>
+<span class="co">#&gt; 295     298685 203 hours   2</span>
+<span class="co">#&gt; 296     298685 272 hours   2.2</span>
+<span class="co">#&gt; 297     298685 299 hours   2.5</span>
+<span class="co">#&gt; # … with 287 more rows</span></code></pre></div>
 <p>Concepts representing time-dependent measurements are loaded as <code>ts_tbl</code> objects, whereas static information is retrieved as <code>id_tbl</code> object. Both classes inherit from <code>data.table</code> (and therefore also from <code>data.frame</code>) and can be coerced to any of the base classes using <code>as.data.table()</code> and <code><a href="https://rdrr.io/r/base/as.data.frame.html">as.data.frame()</a></code>, respectively. Using <code>data.table</code> ‘by-reference’ operations, this is available as zero-copy operation by passing <code>by_ref = TRUE</code></p>
-<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="op">(</span><span class="va">dat</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/load_concepts.html">load_concepts</a></span><span class="op">(</span><span class="st">"height"</span>, <span class="st">"eicu_demo"</span>, verbose <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span><span class="op">)</span>
-<span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/as.data.frame.html">as.data.frame</a></span><span class="op">(</span><span class="va">dat</span>, by_ref <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span><span class="op">)</span></code></pre></div>
+<span class="co">#&gt; # An `id_tbl`: 2,449 ✖ 2</span>
+<span class="co">#&gt; # Id var:      `patientunitstayid`</span>
+<span class="co">#&gt; # Units:       `height` [cm]</span>
+<span class="co">#&gt;       patientunitstayid height</span>
+<span class="co">#&gt;                   &lt;int&gt;  &lt;dbl&gt;</span>
+<span class="co">#&gt;     1            141764   158.</span>
+<span class="co">#&gt;     2            141765   158.</span>
+<span class="co">#&gt;     3            143870   167</span>
+<span class="co">#&gt;     4            144815   173.</span>
+<span class="co">#&gt;     5            145427   178.</span>
+<span class="co">#&gt;     …</span>
+<span class="co">#&gt; 2,445           3351763   165.</span>
+<span class="co">#&gt; 2,446           3352230   178.</span>
+<span class="co">#&gt; 2,447           3352231   178.</span>
+<span class="co">#&gt; 2,448           3352333   178.</span>
+<span class="co">#&gt; 2,449           3353113   188</span>
+<span class="co">#&gt; # … with 2,439 more rows</span>
+<span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/as.data.frame.html">as.data.frame</a></span><span class="op">(</span><span class="va">dat</span>, by_ref <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span><span class="op">)</span>
+<span class="co">#&gt;   patientunitstayid height</span>
+<span class="co">#&gt; 1            141764  157.5</span>
+<span class="co">#&gt; 2            141765  157.5</span>
+<span class="co">#&gt; 3            143870  167.0</span>
+<span class="co">#&gt; 4            144815  172.7</span>
+<span class="co">#&gt; 5            145427  177.8</span>
+<span class="co">#&gt; 6            147306  157.5</span></code></pre></div>
 <p>Many functions exported by <code>ricu</code> use <code>id_tbl</code> and <code>ts_tbl</code> objects in order to enable more concise semantics. Merging an <code>id_tbl</code> with a <code>ts_tbl</code>, for example, will automatically use the columns identified by <code><a href="../reference/id_vars.html">id_vars()</a></code> of both tables, as <code>by.x</code>/<code>by.y</code> arguments, while for two <code>ts_tbl</code> object, respective columns reported by <code><a href="../reference/id_vars.html">id_vars()</a></code> and <code><a href="../reference/id_vars.html">index_var()</a></code> will be used to merge on.</p>
 </div>
 <div id="extending-the-concept-dictionary" class="section level2">
@@ -158,13 +202,31 @@
 <ul>
 <li>
 <p>Data concepts consist of zero, one, or several data items per data source, encoding how to retrieve the corresponding data. The constructors <code><a href="../reference/new_cncpt.html">concept()</a></code> and <code><a href="../reference/new_itm.html">item()</a></code> can be used to instantiate concepts as R objects.</p>
-<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">ldh</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/new_cncpt.html">concept</a></span><span class="op">(</span><span class="st">"ldh"</span>,
   <span class="fu"><a href="../reference/new_itm.html">item</a></span><span class="op">(</span><span class="st">"mimic_demo"</span>, <span class="st">"labevents"</span>, <span class="st">"itemid"</span>, <span class="fl">50954</span><span class="op">)</span>,
   description <span class="op">=</span> <span class="st">"Lactate dehydrogenase"</span>,
   unit <span class="op">=</span> <span class="st">"IU/L"</span>
 <span class="op">)</span>
-<span class="fu"><a href="../reference/load_concepts.html">load_concepts</a></span><span class="op">(</span><span class="va">ldh</span>, verbose <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></code></pre></div>
+<span class="fu"><a href="../reference/load_concepts.html">load_concepts</a></span><span class="op">(</span><span class="va">ldh</span>, verbose <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span>
+<span class="co">#&gt; # A `ts_tbl`: 365 ✖ 3</span>
+<span class="co">#&gt; # Id var:     `icustay_id`</span>
+<span class="co">#&gt; # Units:      `ldh` [IU/L]</span>
+<span class="co">#&gt; # Index var:  `charttime` (1 hours)</span>
+<span class="co">#&gt;     icustay_id charttime   ldh</span>
+<span class="co">#&gt;          &lt;int&gt; &lt;drtn&gt;    &lt;dbl&gt;</span>
+<span class="co">#&gt;   1     201006 -45 hours   249</span>
+<span class="co">#&gt;   2     201006  48 hours   399</span>
+<span class="co">#&gt;   3     203766   4 hours   227</span>
+<span class="co">#&gt;   4     204132   7 hours   489</span>
+<span class="co">#&gt;   5     204132  36 hours   574</span>
+<span class="co">#&gt;   …</span>
+<span class="co">#&gt; 361     298685 203 hours   222</span>
+<span class="co">#&gt; 362     298685 226 hours   230</span>
+<span class="co">#&gt; 363     298685 260 hours   218</span>
+<span class="co">#&gt; 364     298685 272 hours   221</span>
+<span class="co">#&gt; 365     298685 299 hours   253</span>
+<span class="co">#&gt; # … with 355 more rows</span></code></pre></div>
 </li>
 <li><p>Configuration files are looked for in both the package installation directory and in user-specified locations, either using the environment variable <code>RICU_CONFIG_PATH</code> or by passing paths as function arguments (<code><a href="../reference/load_dictionary.html">load_dictionary()</a></code> for example accepts a <code>cfg_dirs</code> argument).</p></li>
 <li><p>Mechanisms for both extending and replacing existing concept dictionaries are supported by <code>ricu</code>. The file name of the default concept dictionary is called <code>concept-dict.json</code> and any file with the same name in user-specified locations will be used as extensions. In order to forgo the internal dictionary, a different file name can be chosen, which then has to be passed as function argument (<code><a href="../reference/load_dictionary.html">load_dictionary()</a></code> for example has a <code>name</code> argument which defaults to <code>concept-dict</code>)</p></li>
@@ -186,7 +248,7 @@
     }
 }</code></pre>
 <p>and this can (given that it is saved as <code>concept-dict.json</code> in a directory pointed to by <code>RICU_CONFIG_PATH</code>) then be loaded using <code><a href="../reference/load_concepts.html">load_concepts()</a></code> as</p>
-<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="../reference/load_concepts.html">load_concepts</a></span><span class="op">(</span><span class="st">"ldh"</span>, <span class="st">"mimic_demo"</span><span class="op">)</span></code></pre></div>
 <p>For further details on constructing concepts, refer to documentation at <code><a href="../reference/new_cncpt.html">?concept</a></code> and <code><a href="../reference/new_itm.html">?item</a></code>.</p>
 </li>
