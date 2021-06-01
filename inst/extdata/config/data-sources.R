@@ -1360,7 +1360,7 @@ cfg <- list(
     name = "miiv",
     url = "https://physionet.org/files/mimiciv/1.0",
     id_cfg = list(
-      patient = list(id = "subject_id", position = 1L, start = "dob",
+      patient = list(id = "subject_id", position = 1L, start = "anchor_year",
                      end = "dod", table = "patients"),
       hadm = list(id = "hadm_id", position = 2L, start = "admittime",
                   end = "dischtime", table = "admissions"),

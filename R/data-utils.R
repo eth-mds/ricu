@@ -275,6 +275,40 @@ id_win_helper.aumc_env <- function(x) {
   as_id_tbl(res, ids[2L], by_ref = TRUE)
 }
 
+#' @rdname data_utils
+#' @export
+id_win_helper.miiv_env <- function(x) {
+
+  merge_inter <- function(x, y) {
+    merge(x, y, by = intersect(colnames(x), colnames(y)))
+  }
+
+  get_id_tbl <- function(tbl, id, start, end, aux) {
+    as_src_tbl(x, tbl)[, c(id, start, end, aux)]
+  }
+
+  fix_year <- function(x, y) list(as.POSIXct(paste0(x - y, "-01-01")), NULL)
+
+  age <- "anchor_age"
+
+  cfg <- sort(as_id_cfg(x), decreasing = TRUE)
+
+  ids  <- field(cfg, "id")
+  sta <- field(cfg, "start")
+  end  <- field(cfg, "end")
+
+  res <- Map(get_id_tbl, field(cfg, "table"), ids, sta,
+             end, c(as.list(ids[-1L]), age))
+  res <- Reduce(merge_inter, res)
+
+  res <- res[, c(tail(sta, n = 1L), age) := fix_year(get(tail(sta, n = 1L)),
+                                                     get(age))]
+  res <- res[, c(sta, end) := lapply(.SD, as_dt_min, get(sta[1L])),
+             .SDcols = c(sta, end)]
+
+  order_rename(res, ids, sta, end)
+}
+
 #' @export
 id_win_helper.default <- function(x) stop_generic(x, .Generic)
 

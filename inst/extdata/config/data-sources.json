@@ -7044,7 +7044,7 @@
       "patient": {
         "id": "subject_id",
         "position": 1,
-        "start": "dob",
+        "start": "anchor_year",
         "end": "dod",
         "table": "patients"
       },
@@ -8580,12 +8580,12 @@
             "spec": "col_datetime",
             "format": "%Y-%m-%d %H:%M:%S"
           },
-          "ORIGINALAMOUNT": {
-            "name": "ORIGINALAMOUNT",
+          "originalamount": {
+            "name": "originalamount",
             "spec": "col_double"
           },
-          "ORIGINALRATE": {
-            "name": "ORIGINALRATE",
+          "originalrate": {
+            "name": "originalrate",
             "spec": "col_double"
           }
         }
