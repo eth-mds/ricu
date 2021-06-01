@@ -33,7 +33,7 @@
 
   if (has_length(srcs)) {
     attach_src(srcs, assign_env = pkg_env())
-    namespaceExport(pkg_env(), srcs)
+    namespaceExport(pkg_env(), attached_srcs())
   }
 
   if (base::getRversion() < "4.0.0") {
