@@ -4,6 +4,7 @@
 \alias{id_origin}
 \alias{id_orig_helper}
 \alias{id_orig_helper.src_env}
+\alias{id_orig_helper.miiv_env}
 \alias{id_windows}
 \alias{id_win_helper}
 \alias{id_win_helper.mimic_env}
@@ -21,6 +22,8 @@ id_origin(x, id, origin_name = NULL, copy = TRUE)
 id_orig_helper(x, id)
 
 \method{id_orig_helper}{src_env}(x, id)
+
+\method{id_orig_helper}{miiv_env}(x, id)
 
 id_windows(x, copy = TRUE)
 

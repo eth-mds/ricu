@@ -9,6 +9,7 @@
 \alias{load_difftime.eicu_tbl}
 \alias{load_difftime.hirid_tbl}
 \alias{load_difftime.aumc_tbl}
+\alias{load_difftime.miiv_tbl}
 \alias{load_difftime.character}
 \title{Low level functions for loading data}
 \usage{
@@ -48,6 +49,15 @@ load_difftime(x, ...)
 )
 
 \method{load_difftime}{aumc_tbl}(
+  x,
+  rows,
+  cols = colnames(x),
+  id_hint = id_vars(x),
+  time_vars = ricu::time_vars(x),
+  ...
+)
+
+\method{load_difftime}{miiv_tbl}(
   x,
   rows,
   cols = colnames(x),

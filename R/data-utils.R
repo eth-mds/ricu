@@ -77,13 +77,16 @@ id_orig_env <- new.env()
 
 #' @rdname data_utils
 #' @export
-id_orig_helper <- function(x, id) UseMethod("id_orig_helper", x)
+id_orig_helper <- function(x, id) {
+
+  assert_that(is.string(id))
+
+  UseMethod("id_orig_helper", x)
+}
 
 #' @rdname data_utils
 #' @export
 id_orig_helper.src_env <- function(x, id) {
-
-  assert_that(is.string(id))
 
   cfg <- as_id_cfg(x)[id == id_var_opts(x)]
 
@@ -100,6 +103,28 @@ id_orig_helper.src_env <- function(x, id) {
   }
 
   res <- unique(res)
+
+  as_id_tbl(res, id, by_ref = TRUE)
+}
+
+#' @rdname data_utils
+#' @export
+id_orig_helper.miiv_env <- function(x, id) {
+
+  if (!identical(id, "subject_id")) {
+    return(NextMethod())
+  }
+
+  cfg <- as_id_cfg(x)[id == id_var_opts(x)]
+
+  assert_that(length(cfg) == 1L)
+
+  sta <- field(cfg, "start")
+  age <- "anchor_age"
+
+  res <- as_src_tbl(x, field(cfg, "table"))
+  res <- res[, c(id, sta, age)]
+  res <- res[, c(sta, age) := shift_year(get(sta), get(age))]
 
   as_id_tbl(res, id, by_ref = TRUE)
 }
@@ -287,8 +312,6 @@ id_win_helper.miiv_env <- function(x) {
     as_src_tbl(x, tbl)[, c(id, start, end, aux)]
   }
 
-  fix_year <- function(x, y) list(as.POSIXct(paste0(x - y, "-01-01")), NULL)
-
   age <- "anchor_age"
 
   cfg <- sort(as_id_cfg(x), decreasing = TRUE)
@@ -301,8 +324,8 @@ id_win_helper.miiv_env <- function(x) {
              end, c(as.list(ids[-1L]), age))
   res <- Reduce(merge_inter, res)
 
-  res <- res[, c(tail(sta, n = 1L), age) := fix_year(get(tail(sta, n = 1L)),
-                                                     get(age))]
+  res <- res[, c(tail(sta, n = 1L), age) := shift_year(get(tail(sta, n = 1L)),
+                                                       get(age))]
   res <- res[, c(sta, end) := lapply(.SD, as_dt_min, get(sta[1L])),
              .SDcols = c(sta, end)]
 
@@ -311,6 +334,8 @@ id_win_helper.miiv_env <- function(x) {
 
 #' @export
 id_win_helper.default <- function(x) stop_generic(x, .Generic)
+
+shift_year <- function(x, y) list(as.POSIXct(paste0(x - y, "-01-01")), NULL)
 
 order_rename <- function(x, id_var, st_var, ed_var) {
   x <- setcolorder(x, c(id_var, st_var, ed_var))
