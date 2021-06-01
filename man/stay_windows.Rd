@@ -2,20 +2,35 @@
 % Please edit documentation in R/data-utils.R
 \name{stay_windows}
 \alias{stay_windows}
+\alias{stay_windows.src_env}
+\alias{stay_windows.character}
+\alias{stay_windows.list}
+\alias{stay_windows.default}
 \title{Stays}
 \usage{
-stay_windows(
+stay_windows(x, ...)
+
+\method{stay_windows}{src_env}(
   x,
   id_type = "icustay",
   win_type = id_type,
   in_time = "start",
   out_time = "end",
   interval = hours(1L),
-  patient_ids = NULL
+  patient_ids = NULL,
+  ...
 )
+
+\method{stay_windows}{character}(x, ...)
+
+\method{stay_windows}{list}(x, ..., patient_ids = NULL)
+
+\method{stay_windows}{default}(x, ...)
 }
 \arguments{
-\item{x}{Passed to \code{\link[=as_id_cfg]{as_id_cfg()}} and \code{\link[=as_src_env]{as_src_env()}}}
+\item{x}{Data source (is coerced to \code{src_env} using \code{as_src_env()})}
+
+\item{...}{Generic consistency}
 
 \item{id_type}{Type of ID all returned times are relative to}
 

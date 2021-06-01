@@ -1,3 +1,7 @@
+# ricu 0.4.0
+
+* CRAN release which includes `aumc` data source and `sep3` concept
+
 # ricu 0.3.0
 
 * revamped `src_env` setup
@@ -16,6 +20,7 @@
 
 * concept fixes (`susp_inf`, non-hadm loading of `abx` on `mimic`, `map` on
   `hirid`)
+* fix CRAN policy violation
 
 # ricu 0.1.2
 

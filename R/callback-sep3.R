@@ -208,7 +208,7 @@ delta_min <- function(x, shifts = seq.int(0L, 23L)) {
 #' respectively, as per [Singer et.al.
 #' ](https://jamanetwork.com/journals/jama/fullarticle/2492881).
 #'
-#' The ealier of the two times (fluid sampling, antibiotic treatment) is taken
+#' The earlier of the two times (fluid sampling, antibiotic treatment) is taken
 #' as the time of suspected infection (SI time). The suspected infection
 #' window (SI window) is defined to start `si_lwr` hours before the SI time
 #' and end `si_upr` hours after the SI time. The default values of 48 and 24

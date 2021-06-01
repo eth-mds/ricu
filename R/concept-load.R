@@ -140,8 +140,6 @@
 #'
 #' @param x Object specifying the data to be loaded
 #' @param ... Passed to downstream methods
-#' @param cache Logical flag indicating whether to cache concepts that are
-#' required multiple times (experimental)
 #'
 #' @return An `id_tbl`/`ts_tbl` or a list thereof, depending on loaded
 #' concepts and the value passed as `merge_data`.
@@ -162,19 +160,7 @@
 #'
 #' @rdname load_concepts
 #' @export
-load_concepts <- function(x, ..., cache = FALSE) {
-
-  if (isTRUE(cache)) {
-    warn_ricu("current concept memoization is experimental.")
-    on.exit(rm_all(concept_lookup_env))
-  }
-
-  UseMethod("load_concepts", x)
-}
-
-rm_all <- function(env) rm(list = ls(envir = env), envir = env)
-
-concept_lookup_env <- new.env()
+load_concepts <- function(x, ...) UseMethod("load_concepts", x)
 
 #' @param src A character vector, used to subset the `concepts`; `NULL`
 #' means no subsetting
@@ -204,47 +190,6 @@ load_concepts.character <- function(x, src = NULL, concepts = NULL, ...,
   }
 }
 
-linear_concept_names <- function(x) {
-
-  get_name <- function(x) {
-
-    res <- NULL
-
-    if (inherits(x, "rec_cncpt")) {
-      res <- unlst(lapply(x[["items"]], get_name))
-    }
-
-    if (inherits(x, "cncpt")) {
-      res <- c(x[["name"]], res)
-    }
-
-    res
-  }
-
-  unlst(lapply(x, get_name))
-}
-
-mark_duplicate_concepts <- function(x) {
-
-  mark_dups <- function(x, nmes) {
-
-    if (inherits(x, "rec_cncpt")) {
-      x[["items"]] <- new_concept(lapply(x[["items"]], mark_dups, nmes))
-    }
-
-    if (inherits(x, "cncpt") && x[["name"]] %in% nmes) {
-      attr(x, "dup_cncpt") <- TRUE
-    }
-
-    x
-  }
-
-  all_cncpts <- linear_concept_names(x)
-  dup_cncpts <- all_cncpts[duplicated(all_cncpts)]
-
-  new_concept(lapply(x, mark_dups, dup_cncpts))
-}
-
 #' @param aggregate Controls how data within concepts is aggregated
 #' @param merge_data Logical flag, specifying whether to merge concepts into
 #' wide format or return a list, each entry corresponding to a concept
@@ -253,8 +198,7 @@ mark_duplicate_concepts <- function(x) {
 #' @rdname load_concepts
 #' @export
 load_concepts.concept <- function(x, src = NULL, aggregate = NULL,
-                                  merge_data = TRUE, verbose = TRUE, ...,
-                                  cache = FALSE) {
+                                  merge_data = TRUE, verbose = TRUE, ...) {
 
   assert_that(is.flag(merge_data), is.flag(verbose))
 
@@ -278,12 +222,8 @@ load_concepts.concept <- function(x, src = NULL, aggregate = NULL,
     pba <- FALSE
   }
 
-  if (isTRUE(cache)) {
-    x <- mark_duplicate_concepts(x)
-  }
-
   res <- with_progress(
-    Map(load_one_concept_helper, x, aggregate,
+    Map(load_one_concept_helper, x, names(x), aggregate,
         MoreArgs = c(list(...), list(progress = pba))),
     progress_bar = pba
   )
@@ -309,39 +249,13 @@ load_concepts.concept <- function(x, src = NULL, aggregate = NULL,
   res
 }
 
-load_one_concept_helper <- function(x, aggregate, ..., progress) {
-
-  args <- as.list(match.call())[-1]
-  args[c("x", "patient_ids", "progress")] <- NULL
-  args <- lapply(args, eval, parent.frame())
-
-  name <- x[["name"]]
-  ival <- coalesce(args[["interval"]], hours(1L))
+load_one_concept_helper <- function(x, name, aggregate, ..., progress) {
 
   progress_tick(name, progress, 0L)
 
-  if (isTRUE(attr(x, "dup_cncpt"))) {
-
-    args[["name"]] <- name
-    args[["interval"]] <- as.double(ival, units = "mins")
-    args[["id_type"]] <- coalesce(args[["id_type"]], "icustay")
-
-    cach <- digest_lst(args)
-    res  <- get0(cach, envir = concept_lookup_env, inherits = FALSE)
-
-    if (not_null(res)) {
-      msg_progress("using cached data")
-      return(copy(res))
-    }
-  }
-
-  res <- load_concepts(x, aggregate, ..., progress = progress, cache = FALSE)
+  res <- load_concepts(x, aggregate, ..., progress = progress)
 
   assert_that(has_name(res, name), is_target(x, res))
-
-  if (isTRUE(attr(x, "dup_cncpt"))) {
-    assign(cach, copy(res), envir = concept_lookup_env)
-  }
 
   progress_tick(progress_bar = progress)
 
@@ -519,11 +433,11 @@ load_concepts.lgl_cncpt <- function(x, aggregate = NULL, ...,
 #' @export
 load_concepts.rec_cncpt <- function(x, aggregate = NULL, patient_ids = NULL,
                                     id_type = "icustay", interval = hours(1L),
-                                    ..., progress = NULL, cache = FALSE) {
+                                    ..., progress = NULL) {
 
-  do_load_one <- function(x, aggregate, extra, ..., progress) {
+  do_load_one <- function(x, nme, aggregate, extra, ..., progress) {
     do.call(load_one_concept_helper,
-      c(list(x = x, aggregate = aggregate), extra, list(...),
+      c(list(x = x, name = nme, aggregate = aggregate), extra, list(...),
         list(progress = progress))
     )
   }
@@ -539,11 +453,7 @@ load_concepts.rec_cncpt <- function(x, aggregate = NULL, patient_ids = NULL,
   agg <- Map(coalesce, rep_arg(aggregate, names(agg)), agg)
   agg <- agg[names(sub)]
 
-  if (isTRUE(cache)) {
-    sub <- mark_duplicate_concepts(sub)
-  }
-
-  dat <- Map(do_load_one, sub, agg, x[["extra"]], MoreArgs = ext)
+  dat <- Map(do_load_one, sub, names(sub), agg, x[["extra"]], MoreArgs = ext)
 
   do_callback(x, dat, ..., interval = interval)
 }
@@ -567,8 +477,7 @@ load_concepts.item <- function(x, patient_ids = NULL, id_type = "icustay",
     res <- load_concepts(x, patient_ids[[src]], ...)
 
     if (mulit_src) {
-      res <- res[, c("source") := src]
-      res <- set_id_vars(res, c("source", id_vars(res)))
+      res <- add_src_col(res, src)
     }
 
     res
@@ -579,26 +488,7 @@ load_concepts.item <- function(x, patient_ids = NULL, id_type = "icustay",
   srcs <- unique(src_name(x))
   mulit_src <- length(srcs) > 1L
 
-  if (mulit_src && not_null(patient_ids)) {
-
-    if (is_df(patient_ids)) {
-
-      assert_that(has_col(patient_ids, "source"))
-
-      if (is_dt(patient_ids)) {
-        patient_ids <- split(patient_ids, by = "source")
-      } else {
-        patient_ids <- split(patient_ids, patient_ids[["source"]])
-      }
-    }
-
-    assert_that(is.list(patient_ids), has_name(patient_ids, srcs))
-
-  } else if (not_null(patient_ids)) {
-
-    patient_ids <- list(patient_ids)
-    names(patient_ids) <- srcs
-  }
+  patient_ids <- split_patid(patient_ids, srcs)
 
   # slightly inefficient, as cols might get filled which were only relevant
   # during callback
@@ -614,7 +504,7 @@ load_concepts.item <- function(x, patient_ids = NULL, id_type = "icustay",
 load_concepts.itm <- function(x, patient_ids = NULL, id_type = "icustay",
                               interval = hours(1L), ...) {
 
-  warn_dots(..., ok_args = c("cache", "keep_components"))
+  warn_dots(..., ok_args = "keep_components")
 
   res <- do_itm_load(x, id_type, interval = interval)
   res <- merge_patid(res, patient_ids)
@@ -640,7 +530,48 @@ merge_patid <- function(x, patid) {
 
   if (is_id_tbl(patid)) {
     merge(x, patid, all = FALSE)
+  } else if (ncol(patid) == 1L) {
+    merge(x, patid, by.x = id_col, by.y = colnames(patid), all = FALSE)
   } else {
     merge(x, patid, by = id_col, all = FALSE)
   }
+}
+
+add_src_col <- function(x, src) {
+  x <- x[, c("source") := src]
+  x <- set_id_vars(x, c("source", id_vars(x)))
+  x
+}
+
+split_patid <- function(x, srcs) {
+
+  if (is.null(x)) {
+
+    x <- rep(list(NULL), length(srcs))
+    names(x) <- srcs
+
+  } else if (length(srcs) > 1L) {
+
+    if (is_df(x)) {
+
+      assert_that(has_col(x, "source"))
+
+      if (is_dt(x)) {
+        x <- set_id_vars(x, setdiff(id_vars(x), "source"))
+        x <- split(x, by = "source", keep.by = FALSE)
+      } else {
+        x <- split(x[, setdiff(colnames(x), "source"), drop = FALSE],
+                   x[["source"]])
+      }
+    }
+
+  } else {
+
+    x <- list(x)
+    names(x) <- srcs
+  }
+
+  assert_that(is.list(x), has_name(x, srcs))
+
+  x
 }

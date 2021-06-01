@@ -382,10 +382,12 @@ hopper <- function(x, expr, windows, full_window = FALSE,
   windows <- windows[, c(win_cols) := lapply(.SD, `units<-`, orig_unit),
                      .SDcols = win_cols]
 
+  tbl_ind <- index_var(x)
+
   if (full_window) {
 
-    extremes <- x[, list(grp_min = min(get(index_var(x))),
-                         grp_max = max(get(index_var(x)))),
+    extremes <- x[, list(grp_min = min(get(tbl_ind)),
+                         grp_max = max(get(tbl_ind))),
                   by = tbl_id]
 
     join <- c(paste(tbl_id, "==", win_id), paste("grp_min <=", lwr_col),
@@ -395,8 +397,6 @@ hopper <- function(x, expr, windows, full_window = FALSE,
     windows <- rename_cols(windows, c(win_id, lwr_col, upr_col), by_ref = TRUE)
     windows <- as_id_tbl(windows, win_id, by_ref = TRUE)
   }
-
-  tbl_ind <- index_var(x)
 
   tmp_col <- new_names(x, n = 2L)
   x <- x[, c(tmp_col) := list(get(tbl_ind), get(tbl_ind))]

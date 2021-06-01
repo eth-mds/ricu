@@ -111,3 +111,33 @@ test_that("ts_tbl constructors", {
   expect_error(ts_tbl(a = 1:10, a = hours(1:10)),
                class = "has_time_cols_assert")
 })
+
+test_that("icu_tbl coercion", {
+
+  dat <- runif(10)
+
+  ts <- ts_tbl(a = 1:10, b = hours(1:10), c = dat)
+  id <- id_tbl(a = 1:10, c = dat)
+
+  expect_identical(as_ts_tbl(ts), ts)
+  expect_identical(as_ts_tbl(as_id_tbl(ts)), ts)
+
+  expect_identical(as_id_tbl(id), id)
+
+  expect_identical(as_ts_tbl(as.data.table(ts), "a"), ts)
+  expect_identical(as.data.table(ts), as.data.table(as_id_tbl(ts)),
+                   ignore_attr = TRUE)
+
+  expect_identical(as_id_tbl(as.data.table(id), "a"), id)
+  expect_identical(as.data.table(id), as.data.table(as_id_tbl(id)),
+                   ignore_attr = TRUE)
+
+  expect_identical(as_ts_tbl(as.data.frame(ts), "a"), ts)
+  expect_identical(as.data.frame(ts), as.data.frame(as_id_tbl(ts)),
+                   ignore_attr = TRUE)
+
+  expect_identical(as_id_tbl(as.data.frame(id), "a"), id)
+  expect_identical(as.data.frame(id), as.data.frame(as_id_tbl(id)),
+                   ignore_attr = TRUE)
+})
+

@@ -4,6 +4,7 @@
 \alias{import_src}
 \alias{import_src.src_cfg}
 \alias{import_src.aumc_cfg}
+\alias{import_src.character}
 \alias{import_tbl}
 \alias{import_tbl.tbl_cfg}
 \title{Data import utilities}
@@ -20,6 +21,16 @@ import_src(x, ...)
 )
 
 \method{import_src}{aumc_cfg}(x, ...)
+
+\method{import_src}{character}(
+  x,
+  data_dir = src_data_dir(x),
+  tables = NULL,
+  force = FALSE,
+  verbose = TRUE,
+  cleanup = FALSE,
+  ...
+)
 
 import_tbl(x, ...)
 
@@ -47,11 +58,11 @@ to.}
 
 \item{verbose}{Logical flag indicating whether to print progress information}
 
-\item{progress}{Either \code{NULL} or a progress bar as created by
-\code{\link[progress:progress_bar]{progress::progress_bar()}}}
-
 \item{cleanup}{Logical flag indicating whether to remove raw csv files after
 conversion to fst}
+
+\item{progress}{Either \code{NULL} or a progress bar as created by
+\code{\link[progress:progress_bar]{progress::progress_bar()}}}
 }
 \value{
 Called for side effects and returns \code{NULL} invisibly.

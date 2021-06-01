@@ -279,11 +279,17 @@ new_ts_tbl <- function(x, id_vars, index_var = NULL, interval = NULL,
 
   if (is.null(interval)) {
     assert_that(is.string(index_var), has_time_cols(x, index_var))
-    interval <- interval(x[[index_var]])
+    interval <- as.difftime(NA_real_, units = units(x[[index_var]]))
   }
 
-  new_id_tbl(x, id_vars, index_var = unname(index_var), interval = interval,
-             ..., class = c(class, "ts_tbl"))
+  res <- new_id_tbl(x, id_vars, index_var = unname(index_var),
+                    interval = interval, ..., class = c(class, "ts_tbl"))
+
+  if (is.na(interval)) {
+    res <- set_attributes(res, interval = interval(index_col(res)))
+  }
+
+  res
 }
 
 new_tbl <- function(x, ..., class, by_ref = TRUE) {
@@ -339,6 +345,46 @@ set_attributes <- function(x, ...) {
 }
 
 strip_class <- function(x, what = class(x)[1L]) setdiff(class(x), what)
+
+#' @method as.data.table id_tbl
+#' @inheritParams data.table::as.data.table
+#' @rdname id_tbl
+#' @export
+as.data.table.id_tbl <- function(x, keep.rownames = FALSE, by_ref = FALSE,
+                                 ...) {
+
+  warn_dots(...)
+
+  if (!isFALSE(keep.rownames)) {
+    warn_arg("keep.rownames")
+  }
+
+  if (!by_ref) {
+    x <- copy(x)
+  }
+
+  unclass_tbl(x)
+}
+
+#' @method as.data.frame id_tbl
+#' @inheritParams base::as.data.frame
+#' @rdname id_tbl
+#' @export
+as.data.frame.id_tbl <- function(x, row.names = NULL, optional = FALSE, ...) {
+
+  if (!is.null(row.names)) {
+    warn_arg("row.names")
+  }
+
+  if (!isFALSE(optional)) {
+    warn_arg("optional")
+  }
+
+  x <- as.data.table(x, ...)
+  x <- setDF(x)
+
+  x
+}
 
 #' Internal utilities for ICU data objects
 #'
@@ -444,7 +490,12 @@ reclass_tbl.default <- function(x, template, ...) {
 }
 
 try_reclass <- function(x, template) {
-  reclass_tbl(x, template, stop_on_fail = FALSE)
+
+  if (is_df(x)) {
+    reclass_tbl(x, template, stop_on_fail = FALSE)
+  } else {
+    x
+  }
 }
 
 #' @rdname tbl_internal

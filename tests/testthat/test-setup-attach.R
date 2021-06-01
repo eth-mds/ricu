@@ -8,6 +8,8 @@ test_that("auto attach env var", {
   expect_setequal(auto_attach_srcs(), srcs)
 })
 
+skip_if_srcs_missing(c("mimic_demo", "eicu_demo"))
+
 test_that("attach srcs", {
 
   srcs <- attached_srcs()

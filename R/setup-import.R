@@ -140,9 +140,14 @@ import_src.aumc_cfg <- function(x, ...) {
   NextMethod(locale = readr::locale(encoding = "latin1"))
 }
 
+#' @param cleanup Logical flag indicating whether to remove raw csv files after
+#' conversion to fst
+#'
+#' @rdname import
 #' @export
 import_src.character <- function(x, data_dir = src_data_dir(x), tables = NULL,
-                                 force = FALSE, verbose = TRUE, ...) {
+                                 force = FALSE, verbose = TRUE, cleanup = FALSE,
+                                 ...) {
 
   if (is.character(tables)) {
 
@@ -158,7 +163,7 @@ import_src.character <- function(x, data_dir = src_data_dir(x), tables = NULL,
   assert_that(is.list(tables))
 
   Map(import_src, load_src_cfg(x, ...), data_dir, tables, force,
-      MoreArgs = list(verbose = verbose))
+      MoreArgs = list(verbose = verbose, cleanup = cleanup))
 
   invisible(NULL)
 }
@@ -168,8 +173,6 @@ import_src.default <- function(x, ...) stop_generic(x, .Generic)
 
 #' @param progress Either `NULL` or a progress bar as created by
 #' [progress::progress_bar()]
-#' @param cleanup Logical flag indicating whether to remove raw csv files after
-#' conversion to fst
 #'
 #' @rdname import
 #' @export
@@ -251,7 +254,8 @@ partition_table <- function(x, dir, progress = NULL, chunk_length = 10 ^ 7,
   spec <- col_spec(x)
   pfun <- partition_fun(x, orig_names = TRUE)
   pcol <- partition_col(x, orig_names = TRUE)
-  file <- file.path(dir, raw_file_name(x))
+  rawf <- raw_file_name(x)
+  file <- file.path(dir, rawf)
   name <- tbl_name(x)
 
   exp_row <- n_row(x)
@@ -265,9 +269,13 @@ partition_table <- function(x, dir, progress = NULL, chunk_length = 10 ^ 7,
   if (length(file) == 1L) {
 
     callback <- function(x, pos, ...) {
-      report_problems(x, file)
+      report_problems(x, rawf)
       split_write(x, pfun, tempdir, ((pos - 1L) / chunk_length) + 1L,
                   progress, name, tick)
+    }
+
+    if (grepl("\\.gz$", file)) {
+      file <- gunzip(file, tempdir)
     }
 
     readr::read_csv_chunked(file, callback, chunk_length, col_types = spec,
@@ -282,7 +290,7 @@ partition_table <- function(x, dir, progress = NULL, chunk_length = 10 ^ 7,
     for (i in seq_along(file)) {
 
       dat <- readr::read_csv(file[i], col_types = spec, progress = FALSE, ...)
-      report_problems(dat, file[i])
+      report_problems(dat, rawf[i])
 
       split_write(dat, pfun, tempdir, i, progress, name, tick)
     }
@@ -296,7 +304,7 @@ partition_table <- function(x, dir, progress = NULL, chunk_length = 10 ^ 7,
     tick <- 1L
   }
 
-  for (src_dir in list.files(tempdir, full.names = TRUE)) {
+  for (src_dir in file.path(tempdir, paste0("part_", seq_len(n_part(x))))) {
     merge_fst_chunks(src_dir, targ, newc, oldc, pcol, progress, name, tick)
   }
 
@@ -306,21 +314,56 @@ partition_table <- function(x, dir, progress = NULL, chunk_length = 10 ^ 7,
       dbl_ply(lapply(file.path(dir, fst_file_name(x)), fst::fst), nrow)
     )
 
-    assert_that(all_equal(act_row, n_row(x)))
+    if (!all_equal(exp_row, act_row)) {
+      warn_ricu("expected {exp_row} rows but got {act_row} rows for table
+                `{name}`", class = "import_row_mismatch")
+    }
   }
 
   invisible(NULL)
 }
 
+gunzip <- function(file, exdir) {
+
+  dest <- file.path(exdir, sub("\\.gz$", "", basename(file)))
+
+  file <- gzfile(file, open = "rb")
+  on.exit(close(file))
+
+  if (file.exists(dest)) {
+    return(NULL)
+  }
+
+  out <- file(dest, open = "wb")
+  on.exit(close(out), add = TRUE)
+
+  repeat {
+
+    tmp <- readBin(file, what = raw(0L), size = 1L, n = 1e7)
+
+    if (length(tmp) == 0L) {
+      break
+    }
+
+    writeBin(tmp, con = out, size = 1L)
+  }
+
+  return(dest)
+}
+
 csv_to_fst <- function(x, dir, progress = NULL, ...) {
 
-  src <- file.path(dir, raw_file_name(x))
+  raw <- raw_file_name(x)
+  src <- file.path(dir, raw)
   dst <- file.path(dir, fst_file_name(x))
 
   assert_that(length(x) == 1L, length(src) == 1L, length(dst) == 1L)
 
-  dat  <- readr::read_csv(src, col_types = col_spec(x), progress = FALSE, ...)
-  report_problems(dat, src)
+  dat <- suppressWarnings(
+    readr::read_csv(src, col_types = col_spec(x), progress = FALSE, ...)
+  )
+
+  report_problems(dat, raw)
 
   dat <- rename_cols(setDT(dat), ricu_cols(x), orig_cols(x))
 
@@ -328,14 +371,54 @@ csv_to_fst <- function(x, dir, progress = NULL, ...) {
 
   exp_row <- n_row(x)
 
+  tbl <- tbl_name(x)
+
   if (is.na(exp_row)) {
+
     ticks <- 1L
+
   } else {
-    assert_that(all_equal(nrow(fst::fst(dst)), exp_row))
+
+    act_row <- nrow(fst::fst(dst))
+
+    if (!all_equal(exp_row, act_row)) {
+      warn_ricu("expected {exp_row} rows but got {act_row} rows for table
+                `{tbl}`", class = "import_row_mismatch")
+    }
+
     ticks <- exp_row
   }
 
-  progress_tick(tbl_name(x), progress, ticks)
+  progress_tick(tbl, progress, ticks)
+
+  invisible(NULL)
+}
+
+report_problems <- function(x, file) {
+
+  prob_to_str <- function(x) {
+    paste0("[", x[1L], ", ", x[2L], "]: got '", x[4L], "' instead of ", x[3L])
+  }
+
+  probs <- readr::problems(x)
+  nprob <- nrow(probs)
+
+  if (nprob) {
+
+    out <- bullet(apply(head(probs, n = 10), 1L, prob_to_str))
+    ext <- nprob - 10
+
+    if (ext > 0) {
+      out <- c(out, bullet("{cli::symbol$ellipsis} and {big_mark(ext)} further
+                            problems"))
+    }
+
+    warn_ricu(
+      c("Encountered parsing problems for file {file}:", out),
+      class = "csv_parsing_error", indent = c(0L, rep_along(2L, out)),
+      exdent = c(0L, rep_along(2L, out))
+    )
+  }
 
   invisible(NULL)
 }

@@ -16,9 +16,9 @@ Focused on (but not exclusive to) data sets hosted on PhysioNet
 \seealso{
 Useful links:
 \itemize{
-  \item \url{https://github.com/septic-tank/ricu}
+  \item \url{https://github.com/eth-mds/ricu}
   \item \url{https://physionet.org}
-  \item Report bugs at \url{https://github.com/septic-tank/ricu/issues}
+  \item Report bugs at \url{https://github.com/eth-mds/ricu/issues}
 }
 
 }
@@ -28,7 +28,7 @@ Useful links:
 Authors:
 \itemize{
   \item Drago Plecko \email{drago.plecko@stat.math.ethz.ch}
-  \item Ida-Fong Ukor \email{dr.ukor@gmail.com}
+  \item Ida-Fong Ukor \email{ida-fong.ukor@monashhealth.org}
 }
 
 }

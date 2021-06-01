@@ -17,6 +17,16 @@ test_that("collapse/expand", {
   expect_equal(tbl, col, ignore_attr = TRUE)
 })
 
+test_that("gaps", {
+
+  tbl <- ts_tbl(x = rep(1L, 10L), y = hours(seq.int(1L, 13L)[-c(2L, 5L, 8L)]),
+                z = rnorm(10L))
+
+  expect_true(has_gaps(tbl))
+  expect_false(has_no_gaps(tbl))
+  expect_false(is_regular(tbl))
+})
+
 test_that("slide", {
 
   fun <- function(x) sum(x)
@@ -31,6 +41,9 @@ test_that("slide", {
   expect_identical(ncol(tbl), ncol(tbl))
 
   expect_identical(res, slide(tbl, fun(z), before = hours(3L)))
+
+  expect_lt(nrow(slide(tbl, sum(z), before = hours(3L), full_window = TRUE)),
+            nrow(res))
 
   tmp <- data.table::copy(tbl)
 

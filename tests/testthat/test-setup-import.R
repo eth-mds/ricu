@@ -6,7 +6,8 @@ write.csv(mtcars, file.path(tmp_cars, "mtcars.csv"), row.names = FALSE)
 Map(
   write.csv,
   split(mtcars, mtcars$vs),
-  file.path(tmp_cars, paste0("cars_", unique(mtcars$vs), ".csv")),
+  lapply(file.path(tmp_cars, paste0("cars_", unique(mtcars$vs), ".csv.gz")),
+         gzfile),
   row.names = FALSE
 )
 
@@ -32,6 +33,14 @@ test_that("import csv", {
   expect_true("foo.fst" %in% list.files(tmp_cars))
   expect_equal(mtcars, fst::read_fst(file.path(tmp_cars, "foo.fst")),
                ignore_attr = TRUE)
+
+  cfg <- new_tbl_cfg("cars", "foo", "mtcars.csv", num_rows = 32L,
+    cols = c(spec[-length(spec)],
+             list(weight = list(name = "wt", spec = "col_logical")))
+  )
+
+  expect_warning(csv_to_fst(cfg, tmp_cars, progress = FALSE),
+                 class = "csv_parsing_error")
 })
 
 test_that("import partitioned", {
@@ -52,8 +61,8 @@ test_that("import partitioned", {
 
   tbb <- "bar"
   bar <- file.path(tmp_cars, tbb)
-  cfg <- new_tbl_cfg("cars", tbb, c("cars_0.csv", "cars_1.csv"), spec, 32L,
-                     part)
+  cfg <- new_tbl_cfg("cars", tbb, c("cars_0.csv.gz", "cars_1.csv.gz"), spec,
+                     32L, part)
 
   expect_null(
     partition_table(cfg, tmp_cars, chunk_length = 5, progress = FALSE)

@@ -1310,7 +1310,7 @@
         "cols": {
           "nursingchartid": {
             "name": "nursingchartid",
-            "spec": "col_integer"
+            "spec": "col_double"
           },
           "patientunitstayid": {
             "name": "patientunitstayid",
@@ -1838,7 +1838,7 @@
         "cols": {
           "vitalperiodicid": {
             "name": "vitalperiodicid",
-            "spec": "col_integer"
+            "spec": "col_double"
           },
           "patientunitstayid": {
             "name": "patientunitstayid",
@@ -1923,7 +1923,7 @@
   {
     "name": "eicu_demo",
     "class_prefix": ["eicu_demo", "eicu"],
-    "url": "https://physionet.org/files/eicu-crd-demo/2.0",
+    "url": "https://physionet.org/files/eicu-crd-demo/2.0.1",
     "id_cfg": {
       "hadm": {
         "id": "patienthealthsystemstayid",
@@ -3209,7 +3209,7 @@
         "cols": {
           "nursingchartid": {
             "name": "nursingchartid",
-            "spec": "col_integer"
+            "spec": "col_double"
           },
           "patientunitstayid": {
             "name": "patientunitstayid",
@@ -3729,7 +3729,7 @@
         "cols": {
           "vitalperiodicid": {
             "name": "vitalperiodicid",
-            "spec": "col_integer"
+            "spec": "col_double"
           },
           "patientunitstayid": {
             "name": "patientunitstayid",
@@ -4258,7 +4258,7 @@
           "id_var": "icd9_code",
           "val_var": "short_title"
         },
-        "num_rows": 14710,
+        "num_rows": 14567,
         "cols": {
           "row_id": {
             "name": "ROW_ID",
@@ -4284,7 +4284,7 @@
           "id_var": "icd9_code",
           "val_var": "short_title"
         },
-        "num_rows": 3898,
+        "num_rows": 3882,
         "cols": {
           "row_id": {
             "name": "ROW_ID",
@@ -4981,7 +4981,7 @@
           "chartdate": {
             "name": "CHARTDATE",
             "spec": "col_datetime",
-            "format": "%Y-%m-%d %H:%M:%S"
+            "format": "%Y-%m-%d"
           },
           "charttime": {
             "name": "CHARTTIME",
@@ -8594,7 +8594,7 @@
   },
   {
     "name": "hirid",
-    "url": "https://physionet.org/files/hirid/1.1",
+    "url": "https://physionet.org/files/hirid/1.1.1",
     "id_cfg": {
       "icustay": {
         "id": "patientid",

@@ -125,7 +125,7 @@ Much care has been taken to make \code{ricu} extensible to new datasets. For
 example the publicly available ICU database \href{https://www.amsterdammedicaldatascience.nl/#amsterdamumcdb}{AmsterdamUMCdb }
 provided by the Amsterdam University Medical Center, currently is not part
 of the core datasets of \code{ricu}, but code for integrating this dataset is
-available on \href{https://github.com/septic-tank/aumc}{github}.
+available on \href{https://github.com/eth-mds/aumc}{github}.
 }
 \section{MIMIC-III}{
 
@@ -137,7 +137,7 @@ The database includes information such as demographics, vital sign
 measurements made at the bedside (~1 data point per hour), laboratory test
 results, procedures, medications, caregiver notes, imaging reports, and
 mortality (both in and out of hospital). For further information, please
-refer to the \href{https://mimic.physionet.org/about/mimic/}{MIMIC-III documentation }.
+refer to the \href{https://mimic.physionet.org/iii/}{MIMIC-III documentation}.
 
 The corresponding
 \href{https://physionet.org/content/mimiciii-demo/}{demo dataset}

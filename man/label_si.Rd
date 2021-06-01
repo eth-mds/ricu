@@ -65,7 +65,7 @@ sampling                                        ABX (last possible)
 The default values of \code{samp_win} and \code{abx_win} are 24 and 72 hours
 respectively, as per \href{https://jamanetwork.com/journals/jama/fullarticle/2492881}{Singer et.al. }.
 
-The ealier of the two times (fluid sampling, antibiotic treatment) is taken
+The earlier of the two times (fluid sampling, antibiotic treatment) is taken
 as the time of suspected infection (SI time). The suspected infection
 window (SI window) is defined to start \code{si_lwr} hours before the SI time
 and end \code{si_upr} hours after the SI time. The default values of 48 and 24

@@ -12,3 +12,4 @@
 ^CRAN-RELEASE$
 ^vignettes/jss\.(cls|bst)$
 ^vignettes/jss_(cache|files)$
+^inst/local_testdata

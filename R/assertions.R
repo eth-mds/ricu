@@ -150,7 +150,7 @@ on_failure(has_interval) <- function(call, env) {
 }
 
 is_interval <- function(x) {
-  assert_that(is_difftime(x), has_length(x)) && all(x >= 0)
+  assert_that(is_difftime(x), has_length(x)) && all(x >= 0, na.rm = TRUE)
 }
 
 on_failure(is_interval) <- function(call, env) {
@@ -180,7 +180,7 @@ obeys_interval <- function(x, interval, na_rm = TRUE, tolerance = secs(1e-3)) {
   assert_that(
     is_difftime(x), is_scalar(interval), is_interval(interval),
     is_scalar(tolerance), is_interval(tolerance)
-  ) && all(
+  ) && is.na(interval) || all(
     as.double(x) %% as.double(interval, units = units(x)) <
       as.double(tolerance, units = units(x)), na.rm = na_rm
   )

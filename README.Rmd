@@ -18,15 +18,16 @@ library(ricu)
 old.hooks <- fansi::set_knit_hooks(knitr::knit_hooks)
 ```
 
-# [ricu](https://septic-tank.github.io/ricu/)
+# [ricu](https://eth-mds.github.io/ricu/)
 
 <!-- badges: start -->
-[![Lifecycle](https://img.shields.io/badge/lifecycle-maturing-blue.svg)](https://www.tidyverse.org/lifecycle/#maturing)
-[![R build status](https://github.com/septic-tank/ricu/workflows/build/badge.svg)](https://github.com/septic-tank/ricu/actions?query=workflow%3Abuild)
-[![R check status](https://github.com/septic-tank/ricu/workflows/check/badge.svg)](https://github.com/septic-tank/ricu/actions?query=workflow%3Acheck)
-[![pkgdown build status](https://github.com/septic-tank/ricu/workflows/pkgdown/badge.svg)](https://github.com/septic-tank/ricu/actions?query=workflow%3Apkgdown)
-[![covr status](https://github.com/septic-tank/ricu/workflows/coverage/badge.svg)](https://github.com/septic-tank/ricu/actions?query=workflow%3Acoverage)
-[![Codecov test coverage](https://codecov.io/gh/septic-tank/ricu/branch/master/graph/badge.svg?token=HvOM3yosW3)](https://codecov.io/gh/septic-tank/ricu)
+[![Lifecycle](https://img.shields.io/badge/lifecycle-stable-brightgreen.svg)](https://lifecycle.r-lib.org/articles/stages.html#stable)
+[![CRAN](https://www.r-pkg.org/badges/version/ricu)](https://cran.r-project.org/package=ricu)
+[![R build status](https://github.com/eth-mds/ricu/workflows/build/badge.svg)](https://github.com/eth-mds/ricu/actions?query=workflow%3Abuild)
+[![R check status](https://github.com/eth-mds/ricu/workflows/check/badge.svg)](https://github.com/eth-mds/ricu/actions?query=workflow%3Acheck)
+[![pkgdown build status](https://github.com/eth-mds/ricu/workflows/pkgdown/badge.svg)](https://github.com/eth-mds/ricu/actions?query=workflow%3Apkgdown)
+[![covr status](https://github.com/eth-mds/ricu/workflows/coverage/badge.svg)](https://github.com/eth-mds/ricu/actions?query=workflow%3Acoverage)
+[![Codecov test coverage](https://codecov.io/gh/eth-mds/ricu/branch/main/graph/badge.svg?token=gQisoami9F)](https://codecov.io/gh/eth-mds/ricu)
 <!-- badges: end -->
 
 Working with ICU datasets, especially with publicly available ones as provided by [PhysioNet](https://physionet.org) in R is facilitated by `ricu`, which provides data access, a level of abstraction to encode clinical concepts in a data source agnostic way, as well as classes and utilities for working with the arising types of time series datasets.
@@ -36,23 +37,23 @@ Working with ICU datasets, especially with publicly available ones as provided b
 Currently, installation is only possible from github directly, using the `remotes` if installed
 
 ```{r gh-rem, eval = FALSE}
-remotes::install_github("septic-tank/ricu")
+remotes::install_github("eth-mds/ricu")
 ```
 
 or by sourcing the required code for installation from github by running
 
 ```{r gh-dir, eval = FALSE}
 rem <- source(
-  paste0("https://raw.githubusercontent.com/r-lib/remotes/master/",
-         "install-github.R"
+  paste0("https://raw.githubusercontent.com/r-lib/remotes/main/",
+         "install-github.R")
 )
-rem$value("septic-tank/ricu")
+rem$value("eth-mds/ricu")
 ```
 
 In order to make sure that some useful utility packages are installed as well, consider installing the packages marked as `Suggests` as well by running
 
 ```{r gh-all, eval = FALSE}
-remotes::install_github("septic-tank/ricu", dependencies = TRUE)
+remotes::install_github("eth-mds/ricu", dependencies = TRUE)
 ```
 
 instead, or by installing some of the utility packages (relevant for downloading and preprocessing PhysioNet datasets)
@@ -65,7 +66,7 @@ and demo dataset packages
 
 ```{r deps-data, eval = FALSE}
 install.packages(c("mimic.demo", "eicu.demo"),
-                 repos = "https://septic-tank.github.io/physionet-demo")
+                 repos = "https://eth-mds.github.io/physionet-demo")
 ```
 
 explicitly.

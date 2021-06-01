@@ -6,7 +6,7 @@ Description: Focused on (but not exclusive to) data sets hosted on PhysioNet
     functions for running arbitrary queries against available data sets, a
     system for defining clinical concepts and encoding their representations
     in tabular ICU data is presented.
-Version: 0.4.0
+Version: 0.4.1.9000
 Authors@R: c(
     person(given = "Nicolas",
            family = "Bennett",
@@ -19,16 +19,15 @@ Authors@R: c(
     person(given = "Ida-Fong",
            family = "Ukor",
            role = c("aut"),
-           email = "dr.ukor@gmail.com")
+           email = "ida-fong.ukor@monashhealth.org")
     )
 License: GPL-3
 Encoding: UTF-8
 Language: en-US
-LazyData: true
 URL:
-    https://github.com/septic-tank/ricu,
+    https://github.com/eth-mds/ricu,
     https://physionet.org
-BugReports: https://github.com/septic-tank/ricu/issues
+BugReports: https://github.com/eth-mds/ricu/issues
 Depends:
     R (>= 3.4.0)
 Imports:
@@ -68,6 +67,6 @@ Suggests:
     rticles,
     kableExtra
 RoxygenNote: 7.1.1
-Additional_repositories: https://septic-tank.github.io/physionet-demo
+Additional_repositories: https://eth-mds.github.io/physionet-demo
 VignetteBuilder: knitr
 Config/testthat/edition: 3

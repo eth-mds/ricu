@@ -33,8 +33,8 @@ col_spec_map <- function(type) {
   switch(type,
     bool = list(spec = "col_logical"),
     int2 = ,
-    int4 = ,
-    int8 = list(spec = "col_integer"),
+    int4 = list(spec = "col_integer"),
+    int8 = ,
     numeric = ,
     float8 = list(spec = "col_double"),
     bpchar = ,
@@ -293,6 +293,10 @@ eicu_tbl_cfg <- function(info, is_demo = FALSE) {
 
 mimic_tbl_cfg <- function(info, is_demo = FALSE) {
 
+  find_entry <- function(x, what, name) {
+    which(vapply(x, `[[`, character(1L), what) == name)
+  }
+
   files <- c("ADMISSIONS.csv.gz",
              "CALLOUT.csv.gz",
              "CAREGIVERS.csv.gz",
@@ -466,6 +470,16 @@ mimic_tbl_cfg <- function(info, is_demo = FALSE) {
       )
       x
     })
+
+    icd_diag <- find_entry(info, "table_name", "d_icd_diagnoses")
+    info[[icd_diag]]$num_rows <- 14567L
+
+    icd_proc <- find_entry(info, "table_name", "d_icd_procedures")
+    info[[icd_proc]]$num_rows <- 3882L
+
+    note <- find_entry(info, "table_name", "noteevents")
+    date <- find_entry(info[[note]]$cols, "name", "chartdate")
+    info[[note]]$cols[[date]]$format <- "%Y-%m-%d"
   }
 
   time_vars <- lapply(info, function(x) {
@@ -537,7 +551,7 @@ hirid_tbl_cfg <- function() {
       "observation_tables", "csv", paste0("part-", 0L:249L, ".csv")
     ),
     ordinal = "ordinal_vars_ref.csv",
-    pharma= file.path(
+    pharma = file.path(
       "pharma_records", "csv", paste0("part-", 0L:249L, ".csv")
     ),
     variables = "hirid_variable_reference.csv"
@@ -1325,7 +1339,7 @@ cfg <- list(
   list(
     name = "eicu_demo",
     class_prefix = c("eicu_demo", "eicu"),
-    url = "https://physionet.org/files/eicu-crd-demo/2.0",
+    url = "https://physionet.org/files/eicu-crd-demo/2.0.1",
     id_cfg = eicu_id_cfg,
     tables = eicu_demo_tbls
   ),
@@ -1357,7 +1371,7 @@ cfg <- list(
   ),
   list(
     name = "hirid",
-    url = "https://physionet.org/files/hirid/1.1",
+    url = "https://physionet.org/files/hirid/1.1.1",
     id_cfg = list(
       icustay = list(id = "patientid", position = 1L, start = "admissiontime",
                      table = "general")
