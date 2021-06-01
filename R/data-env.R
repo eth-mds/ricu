@@ -204,6 +204,10 @@ NULL
 #' @rdname data_env
 NULL
 
+#' @name miiv
+#' @rdname data_env
+NULL
+
 data_env <- function() get("data", envir = pkg_env(), mode = "environment")
 
 #' Data source environments
