@@ -1193,7 +1193,104 @@ miiv_tbl_cfg <- function() {
 
   defaults <- list(
     admissions = list(
-      index_var = "admittime"
+      val_var = "admission_type"
+    ),
+    d_hcpcs = list(
+      id_var = "code",
+      val_var = "short_description"
+    ),
+    d_icd_diagnoses = list(
+      id_var = "icd_code",
+      val_var = "long_title"
+    ),
+    d_icd_procedures = list(
+      id_var = "icd_code",
+      val_var = "long_title"
+    ),
+    d_labitems = list(
+      id_var = "itemid",
+      val_var = "label"
+    ),
+    diagnoses_icd = list(
+      val_var = "icd_code"
+    ),
+    drgcodes = list(
+      val_var = "drg_code"
+    ),
+    emar_detail = list(
+      id_var = "emar_id"
+    ),
+    emar = list(
+      index_var = "charttime"
+    ),
+    hcpcsevents = list(
+      index_var = "chartdate"
+    ),
+    labevents = list(
+      index_var = "charttime",
+      val_var = "valuenum",
+      unit_var = "valueuom"
+    ),
+    microbiologyevents = list(
+      index_var = "chartdate",
+      val_var = "isolate_num"
+    ),
+    pharmacy = list(
+      id_var = "pharmacy_id",
+      index_var = "starttime",
+      val_var = "duration",
+      unit_var = "duration_interval"
+    ),
+    poe_detail = list(
+      id_var = "poe_id"
+    ),
+    poe = list(
+      index_var = "ordertime"
+    ),
+    prescriptions = list(
+      index_var = "starttime",
+      val_var = "dose_val_rx",
+      unit_var = "dose_unit_rx"
+    ),
+    procedures_icd = list(
+      index_var = "chartdate",
+      val_var = "icd_code"
+    ),
+    services = list(
+      index_var = "transfertime",
+      val_var = "curr_service"
+    ),
+    chartevents = list(
+      index_var = "charttime",
+      val_var = "valuenum",
+      unit_var = "valueuom"
+    ),
+    d_items = list(
+      id_var = "itemid",
+      val_var = "label"
+    ),
+    datetimeevents = list(
+      index_var = "charttime",
+      val_var = "itemid"
+    ),
+    icustays = list(
+      index_var = "intime",
+      val_var = "last_careunit"
+    ),
+    inputevents = list(
+      index_var = "starttime",
+      val_var = "rate",
+      unit_var = "rateuom"
+    ),
+    outputevents = list(
+      index_var = "charttime",
+      val_var = "value",
+      unit_var = "valueuom"
+    ),
+    procedureevents = list(
+      index_var = "starttime",
+      val_var = "value",
+      unit_var = "valueuom"
     )
   )
 

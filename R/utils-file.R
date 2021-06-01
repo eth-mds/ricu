@@ -192,7 +192,7 @@ auto_attach_srcs <- function() {
   res <- sys_env("RICU_SRC_LOAD", unset = NA_character_)
 
   if (is.na(res)) {
-    c("mimic", "mimic_demo", "eicu", "eicu_demo", "hirid", "aumc", "miiv")
+    c("mimic", "mimic_demo", "eicu", "eicu_demo", "hirid", "aumc")
   } else {
     strsplit(res, ",")[[1L]]
   }

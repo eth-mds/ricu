@@ -22,6 +22,9 @@ cfg <- list(
       ),
       aumc = list(
         list(ids = 6640L, table = "numericitems", sub_var = "itemid")
+      ),
+      miiv = list(
+        list(ids = 220045L, table = "chartevents", sub_var = "itemid")
       )
     )
   ),
@@ -46,6 +49,10 @@ cfg <- list(
       ),
       aumc = list(
         list(ids = 6641L, table = "numericitems", sub_var = "itemid")
+      ),
+      miiv = list(
+        list(ids = c(220050L, 220179L), table = "chartevents",
+             sub_var = "itemid")
       )
     )
   ),
@@ -70,6 +77,10 @@ cfg <- list(
       ),
       aumc = list(
         list(ids = 6643L, table = "numericitems", sub_var = "itemid")
+      ),
+      miiv = list(
+        list(ids = c(220051L, 220180L), table = "chartevents",
+             sub_var = "itemid")
       )
     )
   ),
@@ -96,6 +107,10 @@ cfg <- list(
       ),
       aumc = list(
         list(ids = 6642L, table = "numericitems", sub_var = "itemid")
+      ),
+      miiv = list(
+        list(ids = c(220052L, 220181L, 225312L), table = "chartevents",
+             sub_var = "itemid")
       )
     )
   ),
@@ -121,6 +136,10 @@ cfg <- list(
       aumc = list(
         list(ids = c(8874L, 12266L), table = "numericitems",
              sub_var = "itemid")
+      ),
+      miiv = list(
+        list(ids = c(220210L, 224688L, 224689L, 224690L),
+             table = "chartevents", sub_var = "itemid")
       )
     )
   ),
@@ -149,6 +168,10 @@ cfg <- list(
              sub_var = "itemid"),
         list(ids = 12311L, table = "numericitems", sub_var = "itemid",
              callback = "transform_fun(binary_op(`*`, 100))")
+      ),
+      miiv = list(
+        list(ids = c(220277L, 226253L, 50817L), table = "chartevents",
+             sub_var = "itemid")
       )
     )
   ),
@@ -160,8 +183,9 @@ cfg <- list(
     category = "blood gas",
     sources = list(
       mimic = list(
-        list(ids = c(3420L, 50816L, 223835L), table = "labevents",
-             sub_var = "itemid")
+        list(ids = c(3420L, 223835L), table = "chartevents",
+             sub_var = "itemid"),
+        list(ids = 50816L, table = "labevents", sub_var = "itemid")
       ),
       eicu = list(
         list(ids = "FiO2", table = "respiratorycharting",
@@ -176,6 +200,10 @@ cfg <- list(
       ),
       aumc = list(
         list(ids = 12279L, table = "numericitems", sub_var = "itemid")
+      ),
+      miiv = list(
+        list(ids = 223835L, table = "chartevents", sub_var = "itemid"),
+        list(ids = 50816L, table = "labevents", sub_var = "itemid")
       )
     )
   ),
@@ -192,6 +220,9 @@ cfg <- list(
       eicu = list(
         list(ids = "Total CO2", table = "lab", sub_var = "labname",
              callback = "convert_unit(set_val(NA), 'mEq/L', 'lpm')")
+      ),
+      miiv = list(
+        list(ids = 50804L, table = "labevents", sub_var = "itemid")
       )
     )
   ),
@@ -214,6 +245,9 @@ cfg <- list(
       aumc = list(
         list(ids = c(6800L, 11978L), table = "numericitems",
              sub_var = "itemid")
+      ),
+      miiv = list(
+        list(ids = 50861L, table = "labevents", sub_var = "itemid")
       )
     )
   ),
@@ -236,6 +270,9 @@ cfg <- list(
       aumc = list(
         list(ids = c(6806L, 11990L), table = "numericitems",
              sub_var = "itemid")
+      ),
+      miiv = list(
+        list(ids = 50878L, table = "labevents", sub_var = "itemid")
       )
     )
   ),
@@ -261,6 +298,9 @@ cfg <- list(
         list(ids = c(6828L, 9935L), table = "numericitems",
              sub_var = "itemid",
              callback = "convert_unit(binary_op(`*`, 3.097521), 'mg/dL')")
+      ),
+      miiv = list(
+        list(ids = 50970L, table = "labevents", sub_var = "itemid")
       )
     )
   ),
@@ -286,6 +326,9 @@ cfg <- list(
         list(ids = c(6850L, 9943L), table = "numericitems",
              sub_var = "itemid",
              callback = "convert_unit(binary_op(`*`, 2.8), 'mg/dL')")
+      ),
+      miiv = list(
+        list(ids = 51006L, table = "labevents", sub_var = "itemid")
       )
     )
   ),
@@ -308,6 +351,9 @@ cfg <- list(
       aumc = list(
         list(ids = c(6848L, 12310L), table = "numericitems",
              sub_var = "itemid")
+      ),
+      miiv = list(
+        list(ids = 50820L, table = "labevents", sub_var = "itemid")
       )
     )
   ),
@@ -333,6 +379,9 @@ cfg <- list(
         list(ids = c(6813L, 9945L), table = "numericitems",
              sub_var = "itemid",
              callback = "convert_unit(binary_op(`*`, 0.058467), 'mg/dL')")
+      ),
+      miiv = list(
+        list(ids = 50885L, table = "labevents", sub_var = "itemid")
       )
     )
   ),
@@ -352,6 +401,9 @@ cfg <- list(
       ),
       aumc = list(
         list(ids = 11893L, table = "numericitems", sub_var = "itemid")
+      ),
+      miiv = list(
+        list(ids = 51237L, table = "labevents", sub_var = "itemid")
       )
     )
   ),
@@ -375,6 +427,9 @@ cfg <- list(
       aumc = list(
         list(ids = c(6797L, 9964L, 10409L, 14252L), table = "numericitems",
              sub_var = "itemid")
+      ),
+      miiv = list(
+        list(ids = 51265L, table = "labevents", sub_var = "itemid")
       )
     )
   ),
@@ -398,6 +453,9 @@ cfg <- list(
       aumc = list(
         list(ids = c(6837L, 9580L, 10053L), table = "numericitems",
              sub_var = "itemid")
+      ),
+      miiv = list(
+        list(ids = 50813L, table = "labevents", sub_var = "itemid")
       )
     )
   ),
@@ -422,6 +480,9 @@ cfg <- list(
         list(ids = 11846L, table = "numericitems", sub_var = "itemid"),
         list(ids = 14258L, table = "numericitems", sub_var = "itemid",
              callback = "blood_cell_ratio")
+      ),
+      miiv = list(
+        list(ids = 51244L, table = "labevents", sub_var = "itemid")
       )
     )
   ),
@@ -445,6 +506,9 @@ cfg <- list(
       aumc = list(
         list(ids = c(6810L, 9992L), table = "numericitems",
              sub_var = "itemid")
+      ),
+      miiv = list(
+        list(ids = 50882L, table = "labevents", sub_var = "itemid")
       )
     )
   ),
@@ -470,6 +534,9 @@ cfg <- list(
         list(ids = c(6836L, 9941L, 14216L), table = "numericitems",
              sub_var = "itemid",
              callback = "convert_unit(binary_op(`*`, 0.011309), 'mg/dL')")
+      ),
+      miiv = list(
+        list(ids = 50912L, table = "labevents", sub_var = "itemid")
       )
     )
   ),
@@ -487,6 +554,9 @@ cfg <- list(
       ),
       aumc = list(
         list(ids = 6789L, table = "numericitems", sub_var = "itemid")
+      ),
+      miiv = list(
+        list(ids = 51274L, table = "labevents", sub_var = "itemid")
       )
     )
   ),
@@ -505,6 +575,9 @@ cfg <- list(
       ),
       aumc = list(
         list(ids = 18952L, table = "numericitems", sub_var = "itemid")
+      ),
+      miiv = list(
+        list(ids = 51277L, table = "labevents", sub_var = "itemid")
       )
     )
   ),
@@ -527,6 +600,9 @@ cfg <- list(
       aumc = list(
         list(ids = c(6803L, 11984L), table = "numericitems",
              sub_var = "itemid")
+      ),
+      miiv = list(
+        list(ids = 50863L, table = "labevents", sub_var = "itemid")
       )
     )
   ),
@@ -549,6 +625,9 @@ cfg <- list(
       aumc = list(
         list(ids = c(6779L, 9965L), table = "numericitems",
              sub_var = "itemid")
+      ),
+      miiv = list(
+        list(ids = 51301L, table = "labevents", sub_var = "itemid")
       )
     )
   ),
@@ -575,6 +654,9 @@ cfg <- list(
         list(ids = c(6778L, 9553L, 9960L, 10286L, 19703L),
              table = "numericitems", sub_var = "itemid",
              callback = "convert_unit(binary_op(`*`, 1.611344), 'g/dL')")
+      ),
+      miiv = list(
+        list(ids = 51222L, table = "labevents", sub_var = "itemid")
       )
     )
   ),
@@ -595,6 +677,9 @@ cfg <- list(
         list(ids = c(6777L, 11423L, 11545L), table = "numericitems",
              sub_var = "itemid",
              callback = "transform_fun(binary_op(`*`, 100))")
+      ),
+      miiv = list(
+        list(ids = 51221L, table = "labevents", sub_var = "itemid")
       )
     )
   ),
@@ -618,6 +703,9 @@ cfg <- list(
       aumc = list(
         list(ids = c(6846L, 9990L, 21213L), table = "numericitems",
              sub_var = "itemid")
+      ),
+      miiv = list(
+        list(ids = 50818L, table = "labevents", sub_var = "itemid")
       )
     )
   ),
@@ -641,6 +729,9 @@ cfg <- list(
       aumc = list(
         list(ids = c(7433L, 9996L, 21214L), table = "numericitems",
              sub_var = "itemid")
+      ),
+      miiv = list(
+        list(ids = 50821L, table = "labevents", sub_var = "itemid")
       )
     )
   ),
@@ -663,6 +754,9 @@ cfg <- list(
       aumc = list(
         list(ids = 11679L, table = "numericitems", sub_var = "itemid",
              callback = "convert_unit(binary_op(`*`, 0.016113), 'pg')")
+      ),
+      miiv = list(
+        list(ids = 51248L, table = "labevents", sub_var = "itemid")
       )
     )
   ),
@@ -687,6 +781,9 @@ cfg <- list(
       aumc = list(
         list(ids = 18666L, table = "numericitems", sub_var = "itemid",
              callback = "convert_unit(binary_op(`*`, 1.611), '%')")
+      ),
+      miiv = list(
+        list(ids = 51249L, table = "labevents", sub_var = "itemid")
       )
     )
   ),
@@ -709,6 +806,9 @@ cfg <- list(
       ),
       aumc = list(
         list(ids = 9968L, table = "numericitems", sub_var = "itemid")
+      ),
+      miiv = list(
+        list(ids = 51250L, table = "labevents", sub_var = "itemid")
       )
     )
   ),
@@ -730,6 +830,9 @@ cfg <- list(
       ),
       aumc = list(
         list(ids = 17982L, table = "numericitems", sub_var = "itemid")
+      ),
+      miiv = list(
+        list(ids = 51275L, table = "labevents", sub_var = "itemid")
       )
     )
   ),
@@ -755,6 +858,9 @@ cfg <- list(
       aumc = list(
         list(ids = c(6817L, 9933L), table = "numericitems", sub_var = "itemid",
              callback = "convert_unit(binary_op(`*`, 4.008), 'mg/dL')")
+      ),
+      miiv = list(
+        list(ids = 50893L, table = "labevents", sub_var = "itemid")
       )
     )
   ),
@@ -777,6 +883,9 @@ cfg <- list(
       ),
       aumc = list(
         list(ids = 9930L, table = "numericitems", sub_var = "itemid")
+      ),
+      miiv = list(
+        list(ids = 50902L, table = "labevents", sub_var = "itemid")
       )
     )
   ),
@@ -803,6 +912,9 @@ cfg <- list(
       aumc = list(
         list(ids = c(6839L, 9952L), table = "numericitems", sub_var = "itemid",
              callback = "convert_unit(binary_op(`*`, 2.431), 'mg/dL')")
+      ),
+      miiv = list(
+        list(ids = 50960L, table = "labevents", sub_var = "itemid")
       )
     )
   ),
@@ -826,6 +938,9 @@ cfg <- list(
       aumc = list(
         list(ids = c(6835, 9556, 9927, 10285), table = "numericitems",
              sub_var = "itemid")
+      ),
+      miiv = list(
+        list(ids = 50971L, table = "labevents", sub_var = "itemid")
       )
     )
   ),
@@ -849,6 +964,9 @@ cfg <- list(
       aumc = list(
         list(ids = c(6840, 9555, 9924, 10284), table = "numericitems",
              sub_var = "itemid")
+      ),
+      miiv = list(
+        list(ids = 50983L, table = "labevents", sub_var = "itemid")
       )
     )
   ),
@@ -869,6 +987,9 @@ cfg <- list(
         list(ids = 11710L, table = "numericitems", sub_var = "itemid"),
         list(ids = 14256L, table = "numericitems", sub_var = "itemid",
              callback = "blood_cell_ratio")
+      ),
+      miiv = list(
+        list(ids = 51146L, table = "labevents", sub_var = "itemid")
       )
     )
   ),
@@ -889,6 +1010,9 @@ cfg <- list(
         list(ids = 6773L, table = "numericitems", sub_var = "itemid"),
         list(ids = 9967L, table = "numericitems", sub_var = "itemid",
              callback = "blood_cell_ratio")
+      ),
+      miiv = list(
+        list(ids = 51200L, table = "labevents", sub_var = "itemid")
       )
     )
   ),
@@ -914,6 +1038,9 @@ cfg <- list(
              sub_var = "itemid"),
         list(ids = 14254L, table = "numericitems", sub_var = "itemid",
              callback = "blood_cell_ratio")
+      ),
+      miiv = list(
+        list(ids = 51256L, table = "labevents", sub_var = "itemid")
       )
     )
   ),
@@ -941,6 +1068,9 @@ cfg <- list(
         list(ids = c(6833L, 9557L, 9947L), table = "numericitems",
              sub_var = "itemid",
              callback = "convert_unit(binary_op(`*`, 18.016), 'mg/dL')")
+      ),
+      miiv = list(
+        list(ids = c(50809L, 50931L), table = "labevents", sub_var = "itemid")
       )
     )
   ),
@@ -964,6 +1094,9 @@ cfg <- list(
       aumc = list(
         list(ids = c(6815L, 8915L, 9560L, 9561L, 10267L),
              table = "numericitems", sub_var = "itemid")
+      ),
+      miiv = list(
+        list(ids = 50808L, table = "labevents", sub_var = "itemid")
       )
     )
   ),
@@ -988,6 +1121,10 @@ cfg <- list(
       aumc = list(
         list(ids = c(6825L, 10079L), table = "numericitems",
              sub_var = "itemid")
+      ),
+      miiv = list(
+        list(ids = 50889L, table = "labevents", sub_var = "itemid",
+             callback = "convert_unit(binary_op(`*`, 10), 'mg/L', 'mg/dl')")
       )
     )
   ),
@@ -1008,6 +1145,9 @@ cfg <- list(
       aumc = list(
         list(ids = c(6808L, 11902L), table = "numericitems",
              sub_var = "itemid")
+      ),
+      miiv = list(
+        list(ids = 51288L, table = "labevents", sub_var = "itemid")
       )
     )
   ),
@@ -1046,6 +1186,9 @@ cfg <- list(
       ),
       aumc = list(
         list(ids = 11692L, table = "numericitems", sub_var = "itemid")
+      ),
+      miiv = list(
+        list(ids = 50814L, table = "labevents", sub_var = "itemid")
       )
     )
   ),
@@ -1068,6 +1211,9 @@ cfg <- list(
       ),
       aumc = list(
         list(ids = 10407L, table = "numericitems", sub_var = "itemid")
+      ),
+      miiv = list(
+        list(ids = 51003L, table = "labevents", sub_var = "itemid")
       )
     )
   ),
@@ -1093,6 +1239,9 @@ cfg <- list(
         list(ids = c(6801L, 9937L), table = "numericitems",
              sub_var = "itemid",
              callback = "convert_unit(binary_op(`*`, 0.1), 'g/dL')")
+      ),
+      miiv = list(
+        list(ids = 50862L, table = "labevents", sub_var = "itemid")
       )
     )
   ),
@@ -1118,6 +1267,9 @@ cfg <- list(
         list(ids = c(6776L, 9989L, 10175L), table = "numericitems",
              sub_var = "itemid",
              callback = "convert_unit(binary_op(`*`, 0.058467), 'mg/dL')")
+      ),
+      miiv = list(
+        list(ids = 51214L, table = "labevents", sub_var = "itemid")
       )
     )
   ),
@@ -1141,6 +1293,9 @@ cfg <- list(
       aumc = list(
         list(ids = c(6807L, 9994L), table = "numericitems",
              sub_var = "itemid", dir_var = "tag", callback = "aumc_bxs")
+      ),
+      miiv = list(
+        list(ids = 50802L, table = "labevents", sub_var = "itemid")
       )
     )
   ),
@@ -1159,6 +1314,9 @@ cfg <- list(
       ),
       aumc = list(
         list(ids = c(6774L, 9962L), table = "numericitems", sub_var = "itemid")
+      ),
+      miiv = list(
+        list(ids = 51279L, table = "labevents", sub_var = "itemid")
       )
     )
   ),
@@ -1181,6 +1339,9 @@ cfg <- list(
       aumc = list(
         list(ids = c(6822L, 11998L), table = "numericitems",
              sub_var = "itemid")
+      ),
+      miiv = list(
+        list(ids = 50910L, table = "labevents", sub_var = "itemid")
       )
     )
   ),
@@ -1202,6 +1363,9 @@ cfg <- list(
       ),
       aumc = list(
         list(ids = 6824L, table = "numericitems", sub_var = "itemid")
+      ),
+      miiv = list(
+        list(ids = 50911L, table = "labevents", sub_var = "itemid")
       )
     )
   ),
@@ -1237,6 +1401,9 @@ cfg <- list(
                 `Op aanspreken`              = 3,
                 `Spontaan`                   = 4)
             )"))
+      ),
+      miiv = list(
+        list(ids = 220739L, table = "chartevents", sub_var = "itemid")
       )
     )
   ),
@@ -1275,6 +1442,9 @@ cfg <- list(
                 `Verwarde taal`          = 4,
                 `Georiënteerd`           = 5)
             )"))
+      ),
+      miiv = list(
+        list(ids = 223900L, table = "chartevents", sub_var = "itemid")
       )
     )
   ),
@@ -1314,6 +1484,9 @@ cfg <- list(
                 `Localiseren pijn`          = 5,
                 `Voert opdrachten uit`      = 6)
             )"))
+      ),
+      miiv = list(
+        list(ids = 223901L, table = "chartevents", sub_var = "itemid")
       )
     )
   ),
@@ -1360,6 +1533,11 @@ cfg <- list(
       ),
       aumc = list(
         list(ids = 8794L, table = "numericitems", sub_var = "itemid")
+      ),
+      miiv = list(
+        list(ids = c(226557L, 226558L, 226559L, 226560L, 226561L,  226563L,
+                     226564L, 226565L, 226566L, 226567L, 226584L, 227510L),
+             table = "outputevents", sub_var = "itemid")
       )
     )
   ),
@@ -1390,6 +1568,10 @@ cfg <- list(
         list(ids = 7178L, table = "drugitems", sub_var = "itemid",
              rel_weight = "doserateperkg", rate_uom = "doserateunit",
              stop_var = "stop", callback = "aumc_rate_kg")
+      ),
+      miiv = list(
+        list(ids = 221653L, table = "inputevents", sub_var = "itemid",
+             stop_var = "endtime", callback = "mimic_rate_mv")
       )
     )
   ),
@@ -1418,6 +1600,11 @@ cfg <- list(
       aumc = list(
         list(ids = 7178L, table = "drugitems", sub_var = "itemid",
              stop_var = "stop", grp_var = "orderid", callback = "aumc_dur")
+      ),
+      miiv = list(
+        list(ids = 221653L, table = "inputevents", sub_var = "itemid",
+             stop_var = "endtime", grp_var = "linkorderid",
+             callback = "mimic_dur_inmv")
       )
     )
   ),
@@ -1452,6 +1639,10 @@ cfg <- list(
         list(ids = 7179L, table = "drugitems", sub_var = "itemid",
              rel_weight = "doserateperkg", rate_uom = "doserateunit",
              stop_var = "stop", callback = "aumc_rate_kg")
+      ),
+      miiv = list(
+        list(ids = 221662L, table = "inputevents", sub_var = "itemid",
+             stop_var = "endtime", callback = "mimic_rate_mv")
       )
     )
   ),
@@ -1476,6 +1667,11 @@ cfg <- list(
       aumc = list(
         list(ids = 7179L, table = "drugitems", sub_var = "itemid",
              stop_var = "stop", grp_var = "orderid", callback = "aumc_dur")
+      ),
+      miiv = list(
+        list(ids = 221662L, table = "inputevents", sub_var = "itemid",
+             stop_var = "endtime", grp_var = "linkorderid",
+             callback = "mimic_dur_inmv")
       )
     )
   ),
@@ -1515,6 +1711,10 @@ cfg <- list(
         list(ids = 7229L, table = "drugitems", sub_var = "itemid",
              rel_weight = "doserateperkg", rate_uom = "doserateunit",
              stop_var = "stop", callback = "aumc_rate_kg")
+      ),
+      miiv = list(
+        list(ids = 221906L, table = "inputevents", sub_var = "itemid",
+             stop_var = "endtime", callback = "mimic_rate_mv")
       )
     )
   ),
@@ -1544,6 +1744,11 @@ cfg <- list(
       aumc = list(
         list(ids = 7229L, table = "drugitems", sub_var = "itemid",
              stop_var = "stop", grp_var = "orderid", callback = "aumc_dur")
+      ),
+      miiv = list(
+        list(ids = 221906L, table = "inputevents", sub_var = "itemid",
+             stop_var = "endtime", grp_var = "linkorderid",
+             callback = "mimic_dur_inmv")
       )
     )
   ),
@@ -1583,6 +1788,10 @@ cfg <- list(
         list(ids = 6818L, table = "drugitems", sub_var = "itemid",
              rel_weight = "doserateperkg", rate_uom = "doserateunit",
              stop_var = "stop", callback = "aumc_rate_kg")
+      ),
+      miiv = list(
+        list(ids = 221289L, table = "inputevents", sub_var = "itemid",
+             stop_var = "endtime", callback = "mimic_rate_mv")
       )
     )
   ),
@@ -1612,6 +1821,11 @@ cfg <- list(
       aumc = list(
         list(ids = 6818L, table = "drugitems", sub_var = "itemid",
              stop_var = "stop", grp_var = "orderid", callback = "aumc_dur")
+      ),
+      miiv = list(
+        list(ids = 221289L, table = "inputevents", sub_var = "itemid",
+             stop_var = "endtime", grp_var = "linkorderid",
+             callback = "mimic_dur_inmv")
       )
     )
   ),
@@ -1630,18 +1844,19 @@ cfg <- list(
     sources = list(
       mimic = list(
         list(
-        ids = c(1L,     60L,    218L,    221L,    223L,    436L,    437L,
+          ids = c(
+                1L,     60L,    218L,    221L,    223L,    436L,    437L,
               444L,    445L,    448L,    449L,    450L,    459L,    501L,
               502L,    503L,    505L,    506L,    535L,    543L,    639L,
               654L,    667L,    668L,    669L,    670L,    671L,    672L,
               681L,    682L,    683L,    684L,    686L,   1211L,   1340L,
              1486L,   1600L,   1655L,   2000L,   3459L,   5865L,   5866L,
-           220339L, 223848L, 223849L, 224419L, 224684L, 224685L, 224686L,
-           224687L, 224695L, 224696L, 224697L, 224700L, 224701L, 224702L,
-           224703L, 224704L, 224705L, 224706L, 224707L, 224709L, 224738L,
-           224746L, 224747L, 224750L, 226873L, 227187L),
-           table = "chartevents", sub_var = "itemid",
-           callback = "transform_fun(set_val(TRUE))"
+            220339L, 223848L, 223849L, 224419L, 224684L, 224685L, 224686L,
+            224687L, 224695L, 224696L, 224697L, 224700L, 224701L, 224702L,
+            224703L, 224704L, 224705L, 224706L, 224707L, 224709L, 224738L,
+            224746L, 224747L, 224750L, 226873L, 227187L),
+          table = "chartevents", sub_var = "itemid",
+          callback = "transform_fun(set_val(TRUE))"
         )
       ),
       eicu = list(
@@ -1660,6 +1875,18 @@ cfg <- list(
       aumc = list(
         list(ids = 9328L, sub_var = "itemid", table = "processitems",
              callback = "transform_fun(set_val(TRUE))")
+      ),
+      miiv = list(
+        list(
+          ids = c(
+            220339L, 223848L, 223849L, 224419L, 224684L, 224685L, 224686L,
+            224687L, 224695L, 224696L, 224697L, 224700L, 224701L, 224702L,
+            224703L, 224704L, 224705L, 224706L, 224707L, 224709L, 224738L,
+            224746L, 224747L, 224750L, 226873L, 227187L
+          ),
+          table = "chartevents", sub_var = "itemid",
+          callback = "transform_fun(set_val(TRUE))"
+        )
       )
     )
   ),
@@ -1690,6 +1917,12 @@ cfg <- list(
       aumc = list(
         list(ids = 9328L, sub_var = "itemid", index_var = "stop",
              table = "processitems", callback = "transform_fun(set_val(TRUE))")
+      ),
+      miiv = list(
+        list(ids = c(225468L, 225477L, 227194L), table = "procedureevents",
+             sub_var = "itemid", callback = "transform_fun(set_val(TRUE))"),
+        list(ids = 226732L, table = "chartevents", sub_var = "itemid",
+             callback = "transform_fun(set_val(TRUE))")
       )
     )
   ),
@@ -1709,6 +1942,10 @@ cfg <- list(
       aumc = list(
         list(ids = 6735L, table = "listitems", sub_var = "itemid",
              callback = "transform_fun(comp_na(`==`, 'Geïntubeerd'))")
+      ),
+      miiv = list(
+        list(ids = c("1.0 ET/Trach", "No Response-ETT"), table = "chartevents",
+             sub_var = "value", callback = "transform_fun(set_val(TRUE))")
       )
     )
   ),
@@ -1732,6 +1969,9 @@ cfg <- list(
       aumc = list(
         list(ids = 14444L, sub_var = "itemid", table = "listitems",
              callback = "transform_fun(aumc_rass)")
+      ),
+      miiv = list(
+        list(ids = 228096L, table = "chartevents", sub_var = "itemid")
       )
     )
   ),
@@ -1811,6 +2051,32 @@ cfg <- list(
           13094L, 13102L, 15591L, 18860L, 19137L, 19773L, 20563L, 23166L,
           24241L, 25776L, 27617L, 29321L), table = "drugitems",
         sub_var = "itemid", callback = "transform_fun(set_val(TRUE))")
+      ),
+      miiv = list(
+        list(regex = paste(
+          "aztreonam", "bactrim", "cephalexin", "chloramphenicol", "cipro",
+          "flagyl", "metronidazole", "nitrofurantoin", "tazobactam",
+          "rifampin", "sulfadiazine", "timentin", "trimethoprim", "(amika",
+          "gentami", "vanco)cin", "(amoxi", "ampi", "dicloxa", "naf", "oxa",
+          "peni", "pipera)cillin", "(azithro", "clarithro", "erythro",
+          "clinda", "strepto", "tobra", "vanco)mycin", "cef(azolin",
+          "tazidime", "adroxil", "epime", "otetan", "otaxime", "podoxime",
+          "uroxime)", "(doxy", "mino", "tetra)cycline", "(levofl", "moxifl",
+          "ofl)oxacin", "macro(bid", "dantin)", "(una", "zo)syn", sep = "|"),
+          table = "prescriptions", sub_var = "drug",
+          callback = "transform_fun(set_val(TRUE))", class = "rgx_itm"
+        ),
+        list(ids = c(
+          225798L, 225837L, 225838L, 225840L, 225842L, 225843L, 225844L,
+          225845L, 225847L, 225848L, 225850L, 225851L, 225853L, 225855L,
+          225857L, 225859L, 225860L, 225862L, 225863L, 225865L, 225866L,
+          225868L, 225869L, 225871L, 225873L, 225875L, 225876L, 225877L,
+          225879L, 225881L, 225882L, 225883L, 225884L, 225885L, 225886L,
+          225888L, 225889L, 225890L, 225892L, 225893L, 225895L, 225896L,
+          225897L, 225898L, 225899L, 225900L, 225902L, 225903L, 225905L,
+          227691L, 228003L), table = "inputevents", sub_var = "itemid",
+          callback = "transform_fun(set_val(TRUE))"
+        )
       )
     )
   ),
@@ -1835,6 +2101,11 @@ cfg <- list(
            9195L,  9197L, 9198L, 9200L, 9202L, 9203L, 9204L, 9205L, 13024L,
           19663L, 19664L), table = "procedureorderitems", sub_var = "itemid",
         callback = "transform_fun(set_val(TRUE))")
+      ),
+      miiv = list(
+        list(table = "microbiologyevents", val_var = "org_itemid",
+             callback = "mimic_sampling", aux_time = "charttime",
+             class = "col_itm")
       )
     )
   ),
@@ -1849,6 +2120,9 @@ cfg <- list(
       ),
       eicu = list(
         list(ids = "troponin - I", table = "lab", sub_var = "labname")
+      ),
+      miiv = list(
+        list(ids = 51002L, table = "labevents", sub_var = "itemid")
       )
     )
   ),
@@ -1873,6 +2147,9 @@ cfg <- list(
       aumc = list(
         list(ids = 6812L, table = "numericitems", sub_var = "itemid",
              callback = "convert_unit(binary_op(`*`, 0.058467), 'mg/dL')")
+      ),
+      miiv = list(
+        list(ids = 50883L, table = "labevents", sub_var = "itemid")
       )
     )
   ),
@@ -1901,6 +2178,12 @@ cfg <- list(
       aumc = list(
         list(ids = c(8658L, 13952L, 16110L), table = "numericitems",
              sub_var = "itemid")
+      ),
+      miiv = list(
+        list(ids = 223762L, table = "chartevents", sub_var = "itemid"),
+        list(ids = c(223761L, 224027L), table = "chartevents",
+             sub_var = "itemid",
+             callback = "convert_unit(fahr_to_cels, 'C', 'f')")
       )
     )
   ),
@@ -1925,6 +2208,9 @@ cfg <- list(
           table = "numericitems", sub_var = "itemid",
           callback = "convert_unit(binary_op(`*`, 7.6), 'mmHg', 'None|Geen')"
         )
+      ),
+      miiv = list(
+        list(ids = 228640L, table = "chartevents", sub_var = "itemid")
       )
     )
   ),
@@ -1952,6 +2238,11 @@ cfg <- list(
       aumc = list(
         list(ids = c(7624L, 9014L, 19129L), sub_var = "itemid",
              table = "drugitems")
+      ),
+      miiv = list(
+        list(ids = c(223258L, 223260L), table = "inputevents",
+             sub_var = "itemid", val_var = "amount", end_var = "endtime",
+             callback = "distribute_amount")
       )
     )
   ),
@@ -1979,6 +2270,11 @@ cfg <- list(
         list(val_var = "gender", table = "admissions",
              callback = strip_ws("apply_map(c(Vrouw = 'Female',
                                               Man   = 'Male'))"),
+             class = "col_itm")
+      ),
+      miiv = list(
+        list(table = "patients", val_var = "gender",
+             callback = "apply_map(c(M = 'Male', F = 'Female'))",
              class = "col_itm")
       )
     )
@@ -2011,6 +2307,9 @@ cfg <- list(
                                               `70-79` = 75,
                                               `80+`   = 90))"),
              class = "col_itm")
+      ),
+      miiv = list(
+        list(table = "patients", val_var = "anchor_age", class = "col_itm")
       )
     )
   ),
@@ -2044,6 +2343,9 @@ cfg <- list(
                                               `100-109` = 105,
                                               `110+`    = 120))"),
              class = "col_itm")
+      ),
+      miiv = list(
+        list(ids = 226512L, table = "chartevents", sub_var = "itemid")
       )
     )
   ),
@@ -2076,6 +2378,10 @@ cfg <- list(
                                               `180-189` = 185,
                                               `190+`    = 200))"),
              class = "col_itm")
+      ),
+      miiv = list(
+        list(ids = 226707L, table = "chartevents", sub_var = "itemid",
+             callback = "convert_unit(binary_op(`*`, 2.54), 'cm', '^in')")
       )
     )
   ),
@@ -2104,6 +2410,11 @@ cfg <- list(
         list(table = "admissions", index_var = "dateofdeath",
              val_var = "dischargedat", callback = "aumc_death",
              class = "col_itm")
+      ),
+      miiv = list(
+        list(table = "admissions", index_var = "deathtime",
+             val_var = "hospital_expire_flag",
+             callback = "transform_fun(comp_na(`==`, 1L))", class = "col_itm")
       )
     )
   ),
@@ -2161,6 +2472,18 @@ cfg <- list(
                 Vaatchirurgie                  = 'surg',
                 Verloskunde                    = 'other'))"),
               class = "col_itm")
+      ),
+      miiv = list(
+        list(table = "services", val_var = "curr_service",
+          callback = "apply_map(
+            c(MED   = 'med',   SURG  = 'surg', CMED = 'med',  CSURG  = 'surg',
+              VSURG = 'surg',  NSURG = 'surg', NB   = 'other', NMED  = 'med',
+              ORTHO = 'surg',  TRAUM = 'surg', OMED = 'med',   GU    = 'other',
+              NBB   = 'other', TSURG = 'surg', GYN  = 'other', PSURG = 'surg',
+              OBS   = 'other', ENT   = 'surg', DENT = 'surg',  PSYCH = 'other')
+          )",
+          class = "col_itm"
+        )
       )
     )
   ),
@@ -2186,6 +2509,10 @@ cfg <- list(
       aumc = list(
         list(callback = "los_callback", win_type = "icustay",
              class = "fun_itm")
+      ),
+      miiv = list(
+        list(callback = "los_callback", win_type = "icustay",
+             class = "fun_itm")
       )
     )
   ),
@@ -2200,6 +2527,9 @@ cfg <- list(
         list(callback = "los_callback", win_type = "hadm", class = "fun_itm")
       ),
       eicu = list(
+        list(callback = "los_callback", win_type = "hadm", class = "fun_itm")
+      ),
+      miiv = list(
         list(callback = "los_callback", win_type = "hadm", class = "fun_itm")
       )
     )
@@ -2359,6 +2689,9 @@ cfg <- list(
       aumc = list(
         list(ids = c(6796L, 11586L), table = "numericitems",
              sub_var = "itemid")
+      ),
+      miiv = list(
+        list(ids = 51144L, table = "labevents", sub_var = "itemid")
       )
     )
   ),
@@ -2408,6 +2741,9 @@ cfg <- list(
       aumc = list(
         list(ids = c(11812L, 16166L), table = "numericitems",
              sub_var = "itemid")
+      ),
+      miiv = list(
+        list(ids = 50852L, table = "labevents", sub_var = "itemid")
       )
     )
   ),
@@ -2450,6 +2786,13 @@ cfg <- list(
         list(ids = 12467L, table = "drugitems", sub_var = "itemid",
              rate_uom = "doserateunit", stop_var = "stop",
              callback = "aumc_rate_units(0.53)")
+      ),
+      miiv = list(
+        list(ids = 222315L, table = "inputevents", sub_var = "itemid",
+             stop_var = "endtime", callback = "combine_callbacks(
+               convert_unit(binary_op(`/`, 60), 'units/min', 'units/hour'),
+               mimic_rate_mv
+             )")
       )
     )
   ),
@@ -2472,6 +2815,10 @@ cfg <- list(
         list(regex = "^phenylephrine.*\\(.+\\)$", table = "infusiondrug",
              sub_var = "drugname", weight_var = "patientweight",
              callback = "eicu_rate_kg(ml_to_mcg = 200)", class = "rgx_itm")
+      ),
+      miiv = list(
+        list(ids = 221749L, table = "inputevents", sub_var = "itemid",
+             stop_var = "endtime", callback = "mimic_rate_mv")
       )
     )
   ),

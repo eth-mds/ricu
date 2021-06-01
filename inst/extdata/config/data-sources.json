@@ -7067,7 +7067,7 @@
       "admissions": {
         "files": "core/admissions.csv.gz",
         "defaults": {
-          "index_var": "admittime",
+          "val_var": "admission_type",
           "time_vars": ["admittime", "dischtime", "deathtime", "edregtime", "edouttime"]
         },
         "num_rows": 523740,
@@ -7214,7 +7214,10 @@
       },
       "d_hcpcs": {
         "files": "hosp/d_hcpcs.csv.gz",
-        "defaults": null,
+        "defaults": {
+          "id_var": "code",
+          "val_var": "short_description"
+        },
         "num_rows": 89200,
         "cols": {
           "code": {
@@ -7237,7 +7240,9 @@
       },
       "diagnoses_icd": {
         "files": "hosp/diagnoses_icd.csv.gz",
-        "defaults": null,
+        "defaults": {
+          "val_var": "icd_code"
+        },
         "num_rows": 5280351,
         "cols": {
           "subject_id": {
@@ -7264,7 +7269,10 @@
       },
       "d_icd_diagnoses": {
         "files": "hosp/d_icd_diagnoses.csv.gz",
-        "defaults": null,
+        "defaults": {
+          "id_var": "icd_code",
+          "val_var": "long_title"
+        },
         "num_rows": 109775,
         "cols": {
           "icd_code": {
@@ -7283,7 +7291,10 @@
       },
       "d_icd_procedures": {
         "files": "hosp/d_icd_procedures.csv.gz",
-        "defaults": null,
+        "defaults": {
+          "id_var": "icd_code",
+          "val_var": "long_title"
+        },
         "num_rows": 85257,
         "cols": {
           "icd_code": {
@@ -7302,7 +7313,10 @@
       },
       "d_labitems": {
         "files": "hosp/d_labitems.csv.gz",
-        "defaults": null,
+        "defaults": {
+          "id_var": "itemid",
+          "val_var": "label"
+        },
         "num_rows": 1630,
         "cols": {
           "itemid": {
@@ -7329,7 +7343,9 @@
       },
       "drgcodes": {
         "files": "hosp/drgcodes.csv.gz",
-        "defaults": null,
+        "defaults": {
+          "val_var": "drg_code"
+        },
         "num_rows": 769622,
         "cols": {
           "subject_id": {
@@ -7364,7 +7380,9 @@
       },
       "emar_detail": {
         "files": "hosp/emar_detail.csv.gz",
-        "defaults": null,
+        "defaults": {
+          "id_var": "emar_id"
+        },
         "num_rows": 55947921,
         "cols": {
           "subject_id": {
@@ -7504,6 +7522,7 @@
       "emar": {
         "files": "hosp/emar.csv.gz",
         "defaults": {
+          "index_var": "charttime",
           "time_vars": ["charttime", "scheduletime", "storetime"]
         },
         "num_rows": 27464367,
@@ -7560,6 +7579,7 @@
       "hcpcsevents": {
         "files": "hosp/hcpcsevents.csv.gz",
         "defaults": {
+          "index_var": "chartdate",
           "time_vars": "chartdate"
         },
         "num_rows": 160727,
@@ -7594,6 +7614,9 @@
       "labevents": {
         "files": "hosp/labevents.csv.gz",
         "defaults": {
+          "index_var": "charttime",
+          "val_var": "valuenum",
+          "unit_var": "valueuom",
           "time_vars": ["charttime", "storetime"]
         },
         "num_rows": 122103667,
@@ -7669,6 +7692,8 @@
       "microbiologyevents": {
         "files": "hosp/microbiologyevents.csv.gz",
         "defaults": {
+          "index_var": "chartdate",
+          "val_var": "isolate_num",
           "time_vars": ["chartdate", "charttime", "storedate", "storetime"]
         },
         "num_rows": 3397914,
@@ -7778,6 +7803,10 @@
       "pharmacy": {
         "files": "hosp/pharmacy.csv.gz",
         "defaults": {
+          "id_var": "pharmacy_id",
+          "index_var": "starttime",
+          "val_var": "duration",
+          "unit_var": "duration_interval",
           "time_vars": ["starttime", "stoptime", "entertime", "verifiedtime", "expirationdate"]
         },
         "num_rows": 14736386,
@@ -7899,7 +7928,9 @@
       },
       "poe_detail": {
         "files": "hosp/poe_detail.csv.gz",
-        "defaults": null,
+        "defaults": {
+          "id_var": "poe_id"
+        },
         "num_rows": 3256358,
         "cols": {
           "poe_id": {
@@ -7927,6 +7958,7 @@
       "poe": {
         "files": "hosp/poe.csv.gz",
         "defaults": {
+          "index_var": "ordertime",
           "time_vars": "ordertime"
         },
         "num_rows": 42483962,
@@ -7985,6 +8017,9 @@
       "prescriptions": {
         "files": "hosp/prescriptions.csv.gz",
         "defaults": {
+          "index_var": "starttime",
+          "val_var": "dose_val_rx",
+          "unit_var": "dose_unit_rx",
           "time_vars": ["starttime", "stoptime"]
         },
         "num_rows": 17008053,
@@ -8064,6 +8099,8 @@
       "procedures_icd": {
         "files": "hosp/procedures_icd.csv.gz",
         "defaults": {
+          "index_var": "chartdate",
+          "val_var": "icd_code",
           "time_vars": "chartdate"
         },
         "num_rows": 779625,
@@ -8098,6 +8135,8 @@
       "services": {
         "files": "hosp/services.csv.gz",
         "defaults": {
+          "index_var": "transfertime",
+          "val_var": "curr_service",
           "time_vars": "transfertime"
         },
         "num_rows": 562892,
@@ -8128,6 +8167,9 @@
       "chartevents": {
         "files": "icu/chartevents.csv.gz",
         "defaults": {
+          "index_var": "charttime",
+          "val_var": "valuenum",
+          "unit_var": "valueuom",
           "time_vars": ["charttime", "storetime"]
         },
         "num_rows": 329499788,
@@ -8183,6 +8225,8 @@
       "datetimeevents": {
         "files": "icu/datetimeevents.csv.gz",
         "defaults": {
+          "index_var": "charttime",
+          "val_var": "itemid",
           "time_vars": ["charttime", "storetime", "value"]
         },
         "num_rows": 7495712,
@@ -8230,7 +8274,10 @@
       },
       "d_items": {
         "files": "icu/d_items.csv.gz",
-        "defaults": null,
+        "defaults": {
+          "id_var": "itemid",
+          "val_var": "label"
+        },
         "num_rows": 3861,
         "cols": {
           "itemid": {
@@ -8274,6 +8321,8 @@
       "icustays": {
         "files": "icu/icustays.csv.gz",
         "defaults": {
+          "index_var": "intime",
+          "val_var": "last_careunit",
           "time_vars": ["intime", "outtime"]
         },
         "num_rows": 76540,
@@ -8317,6 +8366,9 @@
       "inputevents": {
         "files": "icu/inputevents.csv.gz",
         "defaults": {
+          "index_var": "starttime",
+          "val_var": "rate",
+          "unit_var": "rateuom",
           "time_vars": ["starttime", "endtime", "storetime"]
         },
         "num_rows": 9460658,
@@ -8433,6 +8485,9 @@
       "outputevents": {
         "files": "icu/outputevents.csv.gz",
         "defaults": {
+          "index_var": "charttime",
+          "val_var": "value",
+          "unit_var": "valueuom",
           "time_vars": ["charttime", "storetime"]
         },
         "num_rows": 4457381,
@@ -8476,6 +8531,9 @@
       "procedureevents": {
         "files": "icu/procedureevents.csv.gz",
         "defaults": {
+          "index_var": "starttime",
+          "val_var": "value",
+          "unit_var": "valueuom",
           "time_vars": ["starttime", "endtime", "storetime", "comments_date"]
         },
         "num_rows": 731247,

@@ -52,6 +52,21 @@
           "callback": "transform_fun(set_val(TRUE))"
         }
       ],
+      "miiv": [
+        {
+          "regex": "aztreonam|bactrim|cephalexin|chloramphenicol|cipro|flagyl|metronidazole|nitrofurantoin|tazobactam|rifampin|sulfadiazine|timentin|trimethoprim|(amika|gentami|vanco)cin|(amoxi|ampi|dicloxa|naf|oxa|peni|pipera)cillin|(azithro|clarithro|erythro|clinda|strepto|tobra|vanco)mycin|cef(azolin|tazidime|adroxil|epime|otetan|otaxime|podoxime|uroxime)|(doxy|mino|tetra)cycline|(levofl|moxifl|ofl)oxacin|macro(bid|dantin)|(una|zo)syn",
+          "table": "prescriptions",
+          "sub_var": "drug",
+          "callback": "transform_fun(set_val(TRUE))",
+          "class": "rgx_itm"
+        },
+        {
+          "ids": [225798, 225837, 225838, 225840, 225842, 225843, 225844, 225845, 225847, 225848, 225850, 225851, 225853, 225855, 225857, 225859, 225860, 225862, 225863, 225865, 225866, 225868, 225869, 225871, 225873, 225875, 225876, 225877, 225879, 225881, 225882, 225883, 225884, 225885, 225886, 225888, 225889, 225890, 225892, 225893, 225895, 225896, 225897, 225898, 225899, 225900, 225902, 225903, 225905, 227691, 228003],
+          "table": "inputevents",
+          "sub_var": "itemid",
+          "callback": "transform_fun(set_val(TRUE))"
+        }
+      ],
       "mimic": [
         {
           "regex": "aztreonam|bactrim|cephalexin|chloramphenicol|cipro|flagyl|metronidazole|nitrofurantoin|tazobactam|rifampin|sulfadiazine|timentin|trimethoprim|(amika|gentami|vanco)cin|(amoxi|ampi|dicloxa|naf|oxa|peni|pipera)cillin|(azithro|clarithro|erythro|clinda|strepto|tobra|vanco)mycin|cef(azolin|tazidime|adroxil|epime|otetan|otaxime|podoxime|uroxime)|(doxy|mino|tetra)cycline|(levofl|moxifl|ofl)oxacin|macro(bid|dantin)|(una|zo)syn",
@@ -126,6 +141,15 @@
           "callback": "hirid_rate"
         }
       ],
+      "miiv": [
+        {
+          "ids": 222315,
+          "table": "inputevents",
+          "sub_var": "itemid",
+          "stop_var": "endtime",
+          "callback": "combine_callbacks(\n               convert_unit(binary_op(`/`, 60), 'units/min', 'units/hour'),\n               mimic_rate_mv\n             )"
+        }
+      ],
       "mimic": [
         {
           "ids": 30051,
@@ -191,6 +215,14 @@
           "class": "col_itm"
         }
       ],
+      "miiv": [
+        {
+          "table": "services",
+          "val_var": "curr_service",
+          "callback": "apply_map(\n            c(MED   = 'med',   SURG  = 'surg', CMED = 'med',  CSURG  = 'surg',\n              VSURG = 'surg',  NSURG = 'surg', NB   = 'other', NMED  = 'med',\n              ORTHO = 'surg',  TRAUM = 'surg', OMED = 'med',   GU    = 'other',\n              NBB   = 'other', TSURG = 'surg', GYN  = 'other', PSURG = 'surg',\n              OBS   = 'other', ENT   = 'surg', DENT = 'surg',  PSYCH = 'other')\n          )",
+          "class": "col_itm"
+        }
+      ],
       "mimic": [
         {
           "table": "services",
@@ -245,6 +277,13 @@
         {
           "table": "general",
           "val_var": "age",
+          "class": "col_itm"
+        }
+      ],
+      "miiv": [
+        {
+          "table": "patients",
+          "val_var": "anchor_age",
           "class": "col_itm"
         }
       ],
@@ -304,6 +343,13 @@
           "class": "hrd_itm"
         }
       ],
+      "miiv": [
+        {
+          "ids": 50862,
+          "table": "labevents",
+          "sub_var": "itemid"
+        }
+      ],
       "mimic": [
         {
           "ids": 50862,
@@ -353,6 +399,13 @@
           "table": "observations",
           "sub_var": "variableid",
           "class": "hrd_itm"
+        }
+      ],
+      "miiv": [
+        {
+          "ids": 50863,
+          "table": "labevents",
+          "sub_var": "itemid"
         }
       ],
       "mimic": [
@@ -406,6 +459,13 @@
           "class": "hrd_itm"
         }
       ],
+      "miiv": [
+        {
+          "ids": 50861,
+          "table": "labevents",
+          "sub_var": "itemid"
+        }
+      ],
       "mimic": [
         {
           "ids": 50861,
@@ -455,6 +515,13 @@
           "table": "observations",
           "sub_var": "variableid",
           "class": "hrd_itm"
+        }
+      ],
+      "miiv": [
+        {
+          "ids": 50878,
+          "table": "labevents",
+          "sub_var": "itemid"
         }
       ],
       "mimic": [
@@ -514,6 +581,13 @@
           "sub_var": "labname"
         }
       ],
+      "miiv": [
+        {
+          "ids": 51146,
+          "table": "labevents",
+          "sub_var": "itemid"
+        }
+      ],
       "mimic": [
         {
           "ids": 51146,
@@ -568,6 +642,13 @@
           "class": "hrd_itm"
         }
       ],
+      "miiv": [
+        {
+          "ids": 50802,
+          "table": "labevents",
+          "sub_var": "itemid"
+        }
+      ],
       "mimic": [
         {
           "ids": 50802,
@@ -618,6 +699,13 @@
           "table": "observations",
           "sub_var": "variableid",
           "class": "hrd_itm"
+        }
+      ],
+      "miiv": [
+        {
+          "ids": 50882,
+          "table": "labevents",
+          "sub_var": "itemid"
         }
       ],
       "mimic": [
@@ -674,6 +762,13 @@
           "class": "hrd_itm"
         }
       ],
+      "miiv": [
+        {
+          "ids": 50885,
+          "table": "labevents",
+          "sub_var": "itemid"
+        }
+      ],
       "mimic": [
         {
           "ids": 50885,
@@ -726,6 +821,13 @@
           "sub_var": "variableid",
           "callback": "convert_unit(binary_op(`*`, 0.058467), 'mg/dL')",
           "class": "hrd_itm"
+        }
+      ],
+      "miiv": [
+        {
+          "ids": 50883,
+          "table": "labevents",
+          "sub_var": "itemid"
         }
       ],
       "mimic": [
@@ -786,6 +888,13 @@
           "class": "hrd_itm"
         }
       ],
+      "miiv": [
+        {
+          "ids": 51144,
+          "table": "labevents",
+          "sub_var": "itemid"
+        }
+      ],
       "mimic": [
         {
           "ids": 51144,
@@ -838,6 +947,13 @@
           "sub_var": "variableid",
           "callback": "convert_unit(binary_op(`*`, 2.8), 'mg/dL')",
           "class": "hrd_itm"
+        }
+      ],
+      "miiv": [
+        {
+          "ids": 51006,
+          "table": "labevents",
+          "sub_var": "itemid"
         }
       ],
       "mimic": [
@@ -896,6 +1012,13 @@
           "class": "hrd_itm"
         }
       ],
+      "miiv": [
+        {
+          "ids": 50893,
+          "table": "labevents",
+          "sub_var": "itemid"
+        }
+      ],
       "mimic": [
         {
           "ids": 50893,
@@ -946,6 +1069,13 @@
           "table": "observations",
           "sub_var": "variableid",
           "class": "hrd_itm"
+        }
+      ],
+      "miiv": [
+        {
+          "ids": 50808,
+          "table": "labevents",
+          "sub_var": "itemid"
         }
       ],
       "mimic": [
@@ -999,6 +1129,13 @@
           "class": "hrd_itm"
         }
       ],
+      "miiv": [
+        {
+          "ids": 50910,
+          "table": "labevents",
+          "sub_var": "itemid"
+        }
+      ],
       "mimic": [
         {
           "ids": 50910,
@@ -1048,6 +1185,13 @@
           "table": "observations",
           "sub_var": "variableid",
           "class": "hrd_itm"
+        }
+      ],
+      "miiv": [
+        {
+          "ids": 50911,
+          "table": "labevents",
+          "sub_var": "itemid"
         }
       ],
       "mimic": [
@@ -1100,6 +1244,13 @@
           "table": "observations",
           "sub_var": "variableid",
           "class": "hrd_itm"
+        }
+      ],
+      "miiv": [
+        {
+          "ids": 50902,
+          "table": "labevents",
+          "sub_var": "itemid"
         }
       ],
       "mimic": [
@@ -1179,6 +1330,13 @@
           "class": "hrd_itm"
         }
       ],
+      "miiv": [
+        {
+          "ids": 50912,
+          "table": "labevents",
+          "sub_var": "itemid"
+        }
+      ],
       "mimic": [
         {
           "ids": 50912,
@@ -1230,6 +1388,14 @@
           "table": "observations",
           "sub_var": "variableid",
           "class": "hrd_itm"
+        }
+      ],
+      "miiv": [
+        {
+          "ids": 50889,
+          "table": "labevents",
+          "sub_var": "itemid",
+          "callback": "convert_unit(binary_op(`*`, 10), 'mg/L', 'mg/dl')"
         }
       ],
       "mimic": [
@@ -1284,6 +1450,13 @@
           "table": "observations",
           "sub_var": "variableid",
           "class": "hrd_itm"
+        }
+      ],
+      "miiv": [
+        {
+          "ids": [220051, 220180],
+          "table": "chartevents",
+          "sub_var": "itemid"
         }
       ],
       "mimic": [
@@ -1341,6 +1514,15 @@
           "sub_var": "variableid",
           "callback": "hirid_death",
           "class": "hrd_itm"
+        }
+      ],
+      "miiv": [
+        {
+          "table": "admissions",
+          "index_var": "deathtime",
+          "val_var": "hospital_expire_flag",
+          "callback": "transform_fun(comp_na(`==`, 1L))",
+          "class": "col_itm"
         }
       ],
       "mimic": [
@@ -1403,6 +1585,16 @@
           "sub_var": "pharmaid",
           "grp_var": "infusionid",
           "callback": "hirid_duration"
+        }
+      ],
+      "miiv": [
+        {
+          "ids": 221653,
+          "table": "inputevents",
+          "sub_var": "itemid",
+          "stop_var": "endtime",
+          "grp_var": "linkorderid",
+          "callback": "mimic_dur_inmv"
         }
       ],
       "mimic": [
@@ -1488,6 +1680,15 @@
           "callback": "hirid_rate_kg"
         }
       ],
+      "miiv": [
+        {
+          "ids": 221653,
+          "table": "inputevents",
+          "sub_var": "itemid",
+          "stop_var": "endtime",
+          "callback": "mimic_rate_mv"
+        }
+      ],
       "mimic": [
         {
           "ids": [30042, 30306],
@@ -1563,6 +1764,16 @@
           "class": "rgx_itm"
         }
       ],
+      "miiv": [
+        {
+          "ids": 221662,
+          "table": "inputevents",
+          "sub_var": "itemid",
+          "stop_var": "endtime",
+          "grp_var": "linkorderid",
+          "callback": "mimic_dur_inmv"
+        }
+      ],
       "mimic": [
         {
           "ids": [30043, 30125, 30307],
@@ -1635,6 +1846,15 @@
           "weight_var": "patientweight",
           "callback": "eicu_rate_kg(ml_to_mcg = 1600)",
           "class": "rgx_itm"
+        }
+      ],
+      "miiv": [
+        {
+          "ids": 221662,
+          "table": "inputevents",
+          "sub_var": "itemid",
+          "stop_var": "endtime",
+          "callback": "mimic_rate_mv"
         }
       ],
       "mimic": [
@@ -1721,6 +1941,13 @@
           "class": "hrd_itm"
         }
       ],
+      "miiv": [
+        {
+          "ids": 220739,
+          "table": "chartevents",
+          "sub_var": "itemid"
+        }
+      ],
       "mimic": [
         {
           "ids": [184, 220739],
@@ -1769,6 +1996,13 @@
           "ids": "-eos",
           "table": "lab",
           "sub_var": "labname"
+        }
+      ],
+      "miiv": [
+        {
+          "ids": 51200,
+          "table": "labevents",
+          "sub_var": "itemid"
         }
       ],
       "mimic": [
@@ -1827,6 +2061,16 @@
           "sub_var": "pharmaid",
           "grp_var": "infusionid",
           "callback": "hirid_duration"
+        }
+      ],
+      "miiv": [
+        {
+          "ids": 221289,
+          "table": "inputevents",
+          "sub_var": "itemid",
+          "stop_var": "endtime",
+          "grp_var": "linkorderid",
+          "callback": "mimic_dur_inmv"
         }
       ],
       "mimic": [
@@ -1912,6 +2156,15 @@
           "callback": "hirid_rate_kg"
         }
       ],
+      "miiv": [
+        {
+          "ids": 221289,
+          "table": "inputevents",
+          "sub_var": "itemid",
+          "stop_var": "endtime",
+          "callback": "mimic_rate_mv"
+        }
+      ],
       "mimic": [
         {
           "ids": [30044, 30119, 30309],
@@ -1976,6 +2229,13 @@
           "class": "hrd_itm"
         }
       ],
+      "miiv": [
+        {
+          "ids": 51288,
+          "table": "labevents",
+          "sub_var": "itemid"
+        }
+      ],
       "mimic": [
         {
           "ids": 51288,
@@ -2013,6 +2273,13 @@
           "table": "observations",
           "sub_var": "variableid",
           "class": "hrd_itm"
+        }
+      ],
+      "miiv": [
+        {
+          "ids": 228640,
+          "table": "chartevents",
+          "sub_var": "itemid"
         }
       ],
       "mimic": [
@@ -2067,6 +2334,13 @@
           "sub_var": "variableid",
           "callback": "convert_unit(binary_op(`*`, 100), 'mg/dL')",
           "class": "hrd_itm"
+        }
+      ],
+      "miiv": [
+        {
+          "ids": 51214,
+          "table": "labevents",
+          "sub_var": "itemid"
         }
       ],
       "mimic": [
@@ -2135,16 +2409,38 @@
           "class": "hrd_itm"
         }
       ],
+      "miiv": [
+        {
+          "ids": 223835,
+          "table": "chartevents",
+          "sub_var": "itemid"
+        },
+        {
+          "ids": 50816,
+          "table": "labevents",
+          "sub_var": "itemid"
+        }
+      ],
       "mimic": [
         {
-          "ids": [3420, 50816, 223835],
+          "ids": [3420, 223835],
+          "table": "chartevents",
+          "sub_var": "itemid"
+        },
+        {
+          "ids": 50816,
           "table": "labevents",
           "sub_var": "itemid"
         }
       ],
       "mimic_demo": [
         {
-          "ids": [3420, 50816, 223835],
+          "ids": [3420, 223835],
+          "table": "chartevents",
+          "sub_var": "itemid"
+        },
+        {
+          "ids": 50816,
           "table": "labevents",
           "sub_var": "itemid"
         }
@@ -2207,6 +2503,13 @@
           "class": "hrd_itm"
         }
       ],
+      "miiv": [
+        {
+          "ids": [50809, 50931],
+          "table": "labevents",
+          "sub_var": "itemid"
+        }
+      ],
       "mimic": [
         {
           "ids": [50809, 50931],
@@ -2239,6 +2542,13 @@
         {
           "ids": [11812, 16166],
           "table": "numericitems",
+          "sub_var": "itemid"
+        }
+      ],
+      "miiv": [
+        {
+          "ids": 50852,
+          "table": "labevents",
           "sub_var": "itemid"
         }
       ]
@@ -2308,6 +2618,13 @@
           "sub_var": "labname"
         }
       ],
+      "miiv": [
+        {
+          "ids": 51221,
+          "table": "labevents",
+          "sub_var": "itemid"
+        }
+      ],
       "mimic": [
         {
           "ids": 51221,
@@ -2360,6 +2677,14 @@
           "table": "observations",
           "sub_var": "variableid",
           "class": "hrd_itm"
+        }
+      ],
+      "miiv": [
+        {
+          "ids": 226707,
+          "table": "chartevents",
+          "sub_var": "itemid",
+          "callback": "convert_unit(binary_op(`*`, 2.54), 'cm', '^in')"
         }
       ],
       "mimic": [
@@ -2418,6 +2743,13 @@
           "class": "hrd_itm"
         }
       ],
+      "miiv": [
+        {
+          "ids": 51222,
+          "table": "labevents",
+          "sub_var": "itemid"
+        }
+      ],
       "mimic": [
         {
           "ids": 51222,
@@ -2470,6 +2802,13 @@
           "class": "hrd_itm"
         }
       ],
+      "miiv": [
+        {
+          "ids": 220045,
+          "table": "chartevents",
+          "sub_var": "itemid"
+        }
+      ],
       "mimic": [
         {
           "ids": [211, 220045],
@@ -2517,6 +2856,13 @@
           "table": "observations",
           "sub_var": "variableid",
           "class": "hrd_itm"
+        }
+      ],
+      "miiv": [
+        {
+          "ids": 51237,
+          "table": "labevents",
+          "sub_var": "itemid"
         }
       ],
       "mimic": [
@@ -2570,6 +2916,16 @@
           "table": "pharma",
           "sub_var": "pharmaid",
           "callback": "aggregate_fun('sum', 'units')"
+        }
+      ],
+      "miiv": [
+        {
+          "ids": [223258, 223260],
+          "table": "inputevents",
+          "sub_var": "itemid",
+          "val_var": "amount",
+          "end_var": "endtime",
+          "callback": "distribute_amount"
         }
       ],
       "mimic": [
@@ -2640,6 +2996,13 @@
           "class": "hrd_itm"
         }
       ],
+      "miiv": [
+        {
+          "ids": 50971,
+          "table": "labevents",
+          "sub_var": "itemid"
+        }
+      ],
       "mimic": [
         {
           "ids": 50971,
@@ -2692,6 +3055,13 @@
           "class": "hrd_itm"
         }
       ],
+      "miiv": [
+        {
+          "ids": 50813,
+          "table": "labevents",
+          "sub_var": "itemid"
+        }
+      ],
       "mimic": [
         {
           "ids": 50813,
@@ -2723,6 +3093,13 @@
         }
       ],
       "eicu_demo": [
+        {
+          "callback": "los_callback",
+          "win_type": "hadm",
+          "class": "fun_itm"
+        }
+      ],
+      "miiv": [
         {
           "callback": "los_callback",
           "win_type": "hadm",
@@ -2774,6 +3151,13 @@
         }
       ],
       "hirid": [
+        {
+          "callback": "los_callback",
+          "win_type": "icustay",
+          "class": "fun_itm"
+        }
+      ],
+      "miiv": [
         {
           "callback": "los_callback",
           "win_type": "icustay",
@@ -2839,6 +3223,13 @@
           "class": "hrd_itm"
         }
       ],
+      "miiv": [
+        {
+          "ids": 51244,
+          "table": "labevents",
+          "sub_var": "itemid"
+        }
+      ],
       "mimic": [
         {
           "ids": 51244,
@@ -2901,6 +3292,13 @@
           "class": "hrd_itm"
         }
       ],
+      "miiv": [
+        {
+          "ids": [220052, 220181, 225312],
+          "table": "chartevents",
+          "sub_var": "itemid"
+        }
+      ],
       "mimic": [
         {
           "ids": [52, 443, 456, 6072, 220052, 220181, 225312],
@@ -2951,6 +3349,13 @@
           "table": "observations",
           "sub_var": "variableid",
           "class": "hrd_itm"
+        }
+      ],
+      "miiv": [
+        {
+          "ids": 51248,
+          "table": "labevents",
+          "sub_var": "itemid"
         }
       ],
       "mimic": [
@@ -3007,6 +3412,13 @@
           "class": "hrd_itm"
         }
       ],
+      "miiv": [
+        {
+          "ids": 51249,
+          "table": "labevents",
+          "sub_var": "itemid"
+        }
+      ],
       "mimic": [
         {
           "ids": 51249,
@@ -3059,6 +3471,13 @@
           "class": "hrd_itm"
         }
       ],
+      "miiv": [
+        {
+          "ids": 51250,
+          "table": "labevents",
+          "sub_var": "itemid"
+        }
+      ],
       "mimic": [
         {
           "ids": 51250,
@@ -3109,6 +3528,13 @@
           "table": "observations",
           "sub_var": "variableid",
           "class": "hrd_itm"
+        }
+      ],
+      "miiv": [
+        {
+          "ids": 50814,
+          "table": "labevents",
+          "sub_var": "itemid"
         }
       ],
       "mimic": [
@@ -3174,6 +3600,13 @@
           "class": "hrd_itm"
         }
       ],
+      "miiv": [
+        {
+          "ids": 50960,
+          "table": "labevents",
+          "sub_var": "itemid"
+        }
+      ],
       "mimic": [
         {
           "ids": 50960,
@@ -3232,6 +3665,13 @@
           "class": "hrd_itm"
         }
       ],
+      "miiv": [
+        {
+          "ids": 223901,
+          "table": "chartevents",
+          "sub_var": "itemid"
+        }
+      ],
       "mimic": [
         {
           "ids": [454, 223901],
@@ -3282,6 +3722,13 @@
           "table": "observations",
           "sub_var": "variableid",
           "class": "hrd_itm"
+        }
+      ],
+      "miiv": [
+        {
+          "ids": 50983,
+          "table": "labevents",
+          "sub_var": "itemid"
         }
       ],
       "mimic": [
@@ -3340,6 +3787,13 @@
           "table": "observations",
           "sub_var": "variableid",
           "class": "hrd_itm"
+        }
+      ],
+      "miiv": [
+        {
+          "ids": 51256,
+          "table": "labevents",
+          "sub_var": "itemid"
         }
       ],
       "mimic": [
@@ -3405,6 +3859,16 @@
           "sub_var": "pharmaid",
           "grp_var": "infusionid",
           "callback": "hirid_duration"
+        }
+      ],
+      "miiv": [
+        {
+          "ids": 221906,
+          "table": "inputevents",
+          "sub_var": "itemid",
+          "stop_var": "endtime",
+          "grp_var": "linkorderid",
+          "callback": "mimic_dur_inmv"
         }
       ],
       "mimic": [
@@ -3495,6 +3959,15 @@
           "sub_var": "pharmaid",
           "grp_var": "infusionid",
           "callback": "hirid_rate_kg"
+        }
+      ],
+      "miiv": [
+        {
+          "ids": 221906,
+          "table": "inputevents",
+          "sub_var": "itemid",
+          "stop_var": "endtime",
+          "callback": "mimic_rate_mv"
         }
       ],
       "mimic": [
@@ -3593,6 +4066,13 @@
           "class": "hrd_itm"
         }
       ],
+      "miiv": [
+        {
+          "ids": [220277, 226253, 50817],
+          "table": "chartevents",
+          "sub_var": "itemid"
+        }
+      ],
       "mimic": [
         {
           "ids": [646, 220277, 226253, 50817],
@@ -3653,6 +4133,13 @@
           "class": "hrd_itm"
         }
       ],
+      "miiv": [
+        {
+          "ids": 50818,
+          "table": "labevents",
+          "sub_var": "itemid"
+        }
+      ],
       "mimic": [
         {
           "ids": 50818,
@@ -3704,6 +4191,13 @@
           "class": "hrd_itm"
         }
       ],
+      "miiv": [
+        {
+          "ids": 50820,
+          "table": "labevents",
+          "sub_var": "itemid"
+        }
+      ],
       "mimic": [
         {
           "ids": 50820,
@@ -3743,6 +4237,15 @@
           "weight_var": "patientweight",
           "callback": "eicu_rate_kg(ml_to_mcg = 200)",
           "class": "rgx_itm"
+        }
+      ],
+      "miiv": [
+        {
+          "ids": 221749,
+          "table": "inputevents",
+          "sub_var": "itemid",
+          "stop_var": "endtime",
+          "callback": "mimic_rate_mv"
         }
       ],
       "mimic": [
@@ -3831,6 +4334,13 @@
           "class": "hrd_itm"
         }
       ],
+      "miiv": [
+        {
+          "ids": 50970,
+          "table": "labevents",
+          "sub_var": "itemid"
+        }
+      ],
       "mimic": [
         {
           "ids": 50970,
@@ -3881,6 +4391,13 @@
           "table": "observations",
           "sub_var": "variableid",
           "class": "hrd_itm"
+        }
+      ],
+      "miiv": [
+        {
+          "ids": 51265,
+          "table": "labevents",
+          "sub_var": "itemid"
         }
       ],
       "mimic": [
@@ -3935,6 +4452,13 @@
           "class": "hrd_itm"
         }
       ],
+      "miiv": [
+        {
+          "ids": 50821,
+          "table": "labevents",
+          "sub_var": "itemid"
+        }
+      ],
       "mimic": [
         {
           "ids": 50821,
@@ -3976,6 +4500,13 @@
           "ids": "PT",
           "table": "lab",
           "sub_var": "labname"
+        }
+      ],
+      "miiv": [
+        {
+          "ids": 51274,
+          "table": "labevents",
+          "sub_var": "itemid"
         }
       ],
       "mimic": [
@@ -4027,6 +4558,13 @@
           "table": "observations",
           "sub_var": "variableid",
           "class": "hrd_itm"
+        }
+      ],
+      "miiv": [
+        {
+          "ids": 51275,
+          "table": "labevents",
+          "sub_var": "itemid"
         }
       ],
       "mimic": [
@@ -4089,6 +4627,13 @@
           "class": "hrd_itm"
         }
       ],
+      "miiv": [
+        {
+          "ids": 228096,
+          "table": "chartevents",
+          "sub_var": "itemid"
+        }
+      ],
       "mimic": [
         {
           "ids": 228096,
@@ -4133,6 +4678,13 @@
           "sub_var": "labname"
         }
       ],
+      "miiv": [
+        {
+          "ids": 51279,
+          "table": "labevents",
+          "sub_var": "itemid"
+        }
+      ],
       "mimic": [
         {
           "ids": 51279,
@@ -4175,6 +4727,13 @@
           "ids": "RDW",
           "table": "lab",
           "sub_var": "labname"
+        }
+      ],
+      "miiv": [
+        {
+          "ids": 51277,
+          "table": "labevents",
+          "sub_var": "itemid"
         }
       ],
       "mimic": [
@@ -4229,6 +4788,13 @@
           "class": "hrd_itm"
         }
       ],
+      "miiv": [
+        {
+          "ids": [220210, 224688, 224689, 224690],
+          "table": "chartevents",
+          "sub_var": "itemid"
+        }
+      ],
       "mimic": [
         {
           "ids": [618, 619, 220210, 224688, 224689, 224690],
@@ -4279,6 +4845,15 @@
           "table": "microlab",
           "val_var": "organism",
           "callback": "transform_fun(comp_na(`!=`, 'no growth'))",
+          "class": "col_itm"
+        }
+      ],
+      "miiv": [
+        {
+          "table": "microbiologyevents",
+          "val_var": "org_itemid",
+          "callback": "mimic_sampling",
+          "aux_time": "charttime",
           "class": "col_itm"
         }
       ],
@@ -4336,6 +4911,13 @@
           "table": "observations",
           "sub_var": "variableid",
           "class": "hrd_itm"
+        }
+      ],
+      "miiv": [
+        {
+          "ids": [220050, 220179],
+          "table": "chartevents",
+          "sub_var": "itemid"
         }
       ],
       "mimic": [
@@ -4402,6 +4984,14 @@
         {
           "table": "general",
           "val_var": "sex",
+          "callback": "apply_map(c(M = 'Male', F = 'Female'))",
+          "class": "col_itm"
+        }
+      ],
+      "miiv": [
+        {
+          "table": "patients",
+          "val_var": "gender",
           "callback": "apply_map(c(M = 'Male', F = 'Female'))",
           "class": "col_itm"
         }
@@ -4529,6 +5119,13 @@
           "callback": "convert_unit(set_val(NA), 'mEq/L', 'lpm')"
         }
       ],
+      "miiv": [
+        {
+          "ids": 50804,
+          "table": "labevents",
+          "sub_var": "itemid"
+        }
+      ],
       "mimic": [
         {
           "ids": 50804,
@@ -4579,6 +5176,19 @@
           "table": "observations",
           "sub_var": "variableid",
           "class": "hrd_itm"
+        }
+      ],
+      "miiv": [
+        {
+          "ids": 223762,
+          "table": "chartevents",
+          "sub_var": "itemid"
+        },
+        {
+          "ids": [223761, 224027],
+          "table": "chartevents",
+          "sub_var": "itemid",
+          "callback": "convert_unit(fahr_to_cels, 'C', 'f')"
         }
       ],
       "mimic": [
@@ -4681,6 +5291,13 @@
           "class": "hrd_itm"
         }
       ],
+      "miiv": [
+        {
+          "ids": 51003,
+          "table": "labevents",
+          "sub_var": "itemid"
+        }
+      ],
       "mimic": [
         {
           "ids": 51003,
@@ -4719,6 +5336,14 @@
           "class": "hrd_itm"
         }
       ],
+      "miiv": [
+        {
+          "ids": ["1.0 ET/Trach", "No Response-ETT"],
+          "table": "chartevents",
+          "sub_var": "value",
+          "callback": "transform_fun(set_val(TRUE))"
+        }
+      ],
       "mimic": [
         {
           "ids": ["1.0 ET/Trach", "No Response-ETT"],
@@ -4755,6 +5380,13 @@
           "ids": "troponin - I",
           "table": "lab",
           "sub_var": "labname"
+        }
+      ],
+      "miiv": [
+        {
+          "ids": 51002,
+          "table": "labevents",
+          "sub_var": "itemid"
         }
       ],
       "mimic": [
@@ -4821,6 +5453,13 @@
           "sub_var": "variableid",
           "callback": "hirid_urine",
           "class": "hrd_itm"
+        }
+      ],
+      "miiv": [
+        {
+          "ids": [226557, 226558, 226559, 226560, 226561, 226563, 226564, 226565, 226566, 226567, 226584, 227510],
+          "table": "outputevents",
+          "sub_var": "itemid"
         }
       ],
       "mimic": [
@@ -4926,6 +5565,20 @@
           "class": "hrd_itm"
         }
       ],
+      "miiv": [
+        {
+          "ids": [225468, 225477, 227194],
+          "table": "procedureevents",
+          "sub_var": "itemid",
+          "callback": "transform_fun(set_val(TRUE))"
+        },
+        {
+          "ids": 226732,
+          "table": "chartevents",
+          "sub_var": "itemid",
+          "callback": "transform_fun(set_val(TRUE))"
+        }
+      ],
       "mimic": [
         {
           "ids": [225468, 225477, 227194],
@@ -5025,6 +5678,14 @@
           "class": "hrd_itm"
         }
       ],
+      "miiv": [
+        {
+          "ids": [220339, 223848, 223849, 224419, 224684, 224685, 224686, 224687, 224695, 224696, 224697, 224700, 224701, 224702, 224703, 224704, 224705, 224706, 224707, 224709, 224738, 224746, 224747, 224750, 226873, 227187],
+          "table": "chartevents",
+          "sub_var": "itemid",
+          "callback": "transform_fun(set_val(TRUE))"
+        }
+      ],
       "mimic": [
         {
           "ids": [1, 60, 218, 221, 223, 436, 437, 444, 445, 448, 449, 450, 459, 501, 502, 503, 505, 506, 535, 543, 639, 654, 667, 668, 669, 670, 671, 672, 681, 682, 683, 684, 686, 1211, 1340, 1486, 1600, 1655, 2000, 3459, 5865, 5866, 220339, 223848, 223849, 224419, 224684, 224685, 224686, 224687, 224695, 224696, 224697, 224700, 224701, 224702, 224703, 224704, 224705, 224706, 224707, 224709, 224738, 224746, 224747, 224750, 226873, 227187],
@@ -5085,6 +5746,13 @@
           "class": "hrd_itm"
         }
       ],
+      "miiv": [
+        {
+          "ids": 223900,
+          "table": "chartevents",
+          "sub_var": "itemid"
+        }
+      ],
       "mimic": [
         {
           "ids": [723, 223900],
@@ -5134,6 +5802,13 @@
           "table": "observations",
           "sub_var": "variableid",
           "class": "hrd_itm"
+        }
+      ],
+      "miiv": [
+        {
+          "ids": 51301,
+          "table": "labevents",
+          "sub_var": "itemid"
         }
       ],
       "mimic": [
@@ -5188,6 +5863,13 @@
           "table": "observations",
           "sub_var": "variableid",
           "class": "hrd_itm"
+        }
+      ],
+      "miiv": [
+        {
+          "ids": 226512,
+          "table": "chartevents",
+          "sub_var": "itemid"
         }
       ],
       "mimic": [
