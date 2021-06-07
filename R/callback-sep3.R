@@ -175,7 +175,7 @@ delta_min <- function(x, shifts = seq.int(0L, 23L)) {
 #' @param abx_min_count Minimal number of antibiotic administrations
 #' @param positive_cultures Logical flag indicating whether to require
 #' cultures to be positive
-#' @param si_mode Switch between `and`/`or` modes
+#' @param si_mode Switch between `and`, `or`, `abx`, `samp` modes
 #' @param abx_win Time-span within which sampling has to occur
 #' @param samp_win Time-span within which antibiotic administration has to
 #' occur
@@ -243,9 +243,14 @@ delta_min <- function(x, shifts = seq.int(0L, 23L)) {
 #' @export
 #'
 susp_inf <- function(..., abx_count_win = hours(24L), abx_min_count = 1L,
-                     positive_cultures = FALSE, si_mode = c("and", "or"),
+                     positive_cultures = FALSE,
+                     si_mode = c("and", "or", "abx", "samp"),
                      abx_win = hours(24L), samp_win = hours(72L),
                      by_ref = TRUE, keep_components = FALSE, interval = NULL) {
+
+  rename_si <- function(x) {
+    rename_cols(x, "susp_inf", data_vars(x), by_ref = TRUE)
+  }
 
   si_mode <- match.arg(si_mode)
 
@@ -267,7 +272,14 @@ susp_inf <- function(..., abx_count_win = hours(24L), abx_min_count = 1L,
     res <- lapply(res, copy)
   }
 
-  switch(si_mode, and = si_and, or = si_or)(
+  cmbn_fun <- switch(si_mode,
+    and = si_and,
+    or = si_or,
+    abx = function(abx, samp, ...) rename_si(abx),
+    samp = function(abx, samp, ...) rename_si(samp)
+  )
+
+  cmbn_fun(
     si_abx(res[["abx"]], abx_count_win, abx_min_count),
     si_samp(aggregate(res[["samp"]], samp_fun)),
     abx_win, samp_win, keep_components

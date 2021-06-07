@@ -9,7 +9,7 @@ susp_inf(
   abx_count_win = hours(24L),
   abx_min_count = 1L,
   positive_cultures = FALSE,
-  si_mode = c("and", "or"),
+  si_mode = c("and", "or", "abx", "samp"),
   abx_win = hours(24L),
   samp_win = hours(72L),
   by_ref = TRUE,
@@ -28,7 +28,7 @@ criterion}
 \item{positive_cultures}{Logical flag indicating whether to require
 cultures to be positive}
 
-\item{si_mode}{Switch between \code{and}/\code{or} modes}
+\item{si_mode}{Switch between \code{and}, \code{or}, \code{abx}, \code{samp} modes}
 
 \item{abx_win}{Time-span within which sampling has to occur}
 
