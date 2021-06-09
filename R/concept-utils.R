@@ -1375,10 +1375,19 @@ concept_availability <- function(dict = NULL, include_rec = FALSE, ...) {
 
     if (inherits(x, "rec_cncpt")) {
 
-      res <- lapply(as_item(x), is_avail)
-      res <- rbind_avail(res)
+      res <- as_item(x)
 
-      apply(res, 2L, all_true)
+      if (is.na(include_rec)) {
+
+        setNames(rep(NA, length = length(res)), names(res))
+
+      } else {
+
+        res <- lapply(res, is_avail)
+        res <- rbind_avail(res)
+
+        apply(res, 2L, all_true)
+      }
 
     } else {
 
@@ -1391,14 +1400,12 @@ concept_availability <- function(dict = NULL, include_rec = FALSE, ...) {
     dict <- load_dictionary(...)
   }
 
-  if (!isTRUE(include_rec)) {
+  if (isFALSE(include_rec)) {
     dict <- dict[lgl_ply(dict, Negate(inherits), "rec_cncpt")]
   }
 
   res <- lapply(dict, is_avail)
   res <- rbind_avail(res)
-
-  res[is.na(res)] <- FALSE
 
   res
 }
