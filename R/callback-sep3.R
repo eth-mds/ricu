@@ -262,6 +262,8 @@ susp_inf <- function(..., abx_count_win = hours(24L), abx_min_count = 1L,
   cnc <- c("abx", "samp")
   res <- collect_dots(cnc, interval, ...)
 
+  time_unit <- units(attr(res, "ival_checked"))
+
   if (positive_cultures) {
     samp_fun <- "sum"
   } else {
@@ -282,7 +284,9 @@ susp_inf <- function(..., abx_count_win = hours(24L), abx_min_count = 1L,
   cmbn_fun(
     si_abx(res[["abx"]], abx_count_win, abx_min_count),
     si_samp(aggregate(res[["samp"]], samp_fun)),
-    abx_win, samp_win, keep_components
+    `units<-`(abx_win, time_unit),
+    `units<-`(samp_win, time_unit),
+    keep_components
   )
 }
 
