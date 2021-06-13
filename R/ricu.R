@@ -5,7 +5,7 @@
 #' @importFrom data.table := .SD .EACHI .I %chin% as.data.table copy
 #' @importFrom data.table first last
 #' @importFrom stats setNames na.omit median sd var
-#' @importFrom utils str head tail setNames
+#' @importFrom utils str head tail
 #' @importFrom cli symbol no qty
 #' @importFrom rlang !!
 #' @import vctrs
