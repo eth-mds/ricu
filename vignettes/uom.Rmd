@@ -19,7 +19,7 @@ library(ggplot2)
 
 ```{r, echo = FALSE}
 demo  <- c("mimic_demo", "eicu_demo")
-full  <- c("mimic", "eicu", "aumc", "hirid")
+full  <- c("mimic", "eicu", "aumc", "hirid", "miiv")
 
 avail <- is_data_avail(c(demo, full))
 
@@ -91,13 +91,145 @@ Data concepts of type `num_cncpt` can specify an expected units as character vec
 
 Messages raised during loading of lactate values, for example, indicate that 0.62% of retrieved values are specified in mEq/L instead of mmol/L (which requires an identity transformation for unit conversion), while the remaining discrepancies are false positives (both mmole/L and MMOLL can be assumed to mean mmol/L). For mean arterial bloop pressure values, the target unit is specified as mmHg (with the alternative spelling mm Hg being accepted as well), however, due to the data organization in eICU^[Both the `vitalperiodic` and `vitalaperiodic` tables in eICU are layed out in *wide* format (whereas most other tables are in *long* format), and therefore no unit columns are available. This also explains the substantial degree of missingness (in terms of values) reported, as such a *wide* data organization scheme coupled with differing measurement intervals per variable will inevitably lead to some degree of sparsity.], no explicit measurement units are specified for this variable, in turn causing the large percentage of missing unit values reported.
 
-Several utility functions are exported from `ricu` for helping with creating callback functions that handle unit conversion. Data items corresponding to the bilirubin concept for the European datasets HiRID and AUMCdb, for example, have a callback entry specified as `convert_unit(binary_op(``*``, 0.058467), "mg/dL")`. This creates a callback functions which applies `binary_op(``*``, 0.058467)` to the column specified as `val_var` and replaces existing values in the column identified by `unit_var` with the value `"mg/dl"`. In case the loaded data already is comprised of a mix of units, a regular expression passed as `rgx` can be specified, which will be used to identify the rows on which to operate. Finally, the function `binary_op` turns a binary function into an unary function by fixing the second operand.
+Several utility functions are exported from `ricu` for helping with creating callback functions that handle unit conversion. Data items corresponding to the bilirubin concept for the European datasets HiRID and AUMCdb, for example, have a callback entry specified as ``convert_unit(binary_op(`*`, 0.058467), "mg/dL")``. This creates a callback functions which applies ``binary_op(`*`, 0.058467)`` to the column specified as `val_var` and replaces existing values in the column identified by `unit_var` with the value `"mg/dl"`. In case the loaded data already is comprised of a mix of units, a regular expression passed as `rgx` can be specified, which will be used to identify the rows on which to operate. Finally, the function `binary_op` turns a binary function into an unary function by fixing the second operand.
 
-As a sanity check to see whether measurement units (and data values in general) are aligned when compared across datasets, density plots may be employed.
+As a first sanity check we will slightly modify data loading in order to be warned about item IDs that do not appear in the data. For this we slightly modify data items loaded from the dictionary such that items of type `sel_itm` which may contain several IDs, are split into separate items.
 
 ```{r uom-eval, echo = FALSE}
 eval_next <- srcs_avail(full) || demo_src_avail(c("mimic", "eicu"), msg = TRUE)
+
+if (srcs_avail(full)) {
+  srcs <- full
+} else {
+  srcs <- demo
+}
 ```
+
+```{r sep-itms, eval = eval_next}
+assign_id <- function(id, itm) `$<-`(itm, "ids", id)
+
+rep_itm <- function(itm) as_item(lapply(itm$ids, assign_id, itm))
+
+split_items <- function(x) {
+
+  if (is_concept(x)) {
+    return(new_concept(lapply(x, split_items)))
+  }
+
+  if (inherits(x, "sel_itm")) {
+    return(rep_itm(x))
+  }
+
+  if (inherits(x, "itm")) {
+    return(as_item(x))
+  }
+
+  if (inherits(x, "rec_cncpt")) {
+    x$items <- as_concept(lapply(x$items, split_items))
+  } else if (inherits(x, "cncpt")) {
+    x$items <- do.call("c", lapply(x$items, split_items))
+  }
+
+  x
+}
+
+concepts <- c("map", "lact" , "crea", "bili", "plt")
+
+dict <- load_dictionary(srcs, c(concepts, "gcs"))
+dict <- split_items(dict)
+```
+
+Next, for the actual data loading we substitute the internally called function `do_itm_load()` with a modified version that throws a warning whenever zero rows are returned.
+
+```{r itm-load, eval = eval_next, cache = TRUE}
+itm_load_warn_empty <- function(x, ...) {
+
+  res <- do_itm_load(x, ...)
+
+  if (!nrow(res) && !inherits(x, "nul_itm")) {
+    warning("empty load for id ", x$ids, " in table ", x$src, "::", x$table)
+  }
+
+  res
+}
+
+dat <- mockthat::with_mock(
+  do_itm_load = itm_load_warn_empty,
+  load_concepts(dict, srcs, merge = FALSE, verbose = FALSE)
+)
+```
+
+If no error was thrown during data loading, every single ID that is part of a `sel_itm` actually returns some data. For other types of data items this means that for every single item as a whole, some data was returned. There are limitations to this type of sanity check though: It might be the case that one of the supplied IDs associated with a `num_cncpt` concept returns data in an unexpected unit of measurement which may cause the range filter to remove all of that data again. In such a scenario though, this will be reported (if `TRUE` is passed as `verbose` argument to `load_concept()`). Paying attention to the output produced by `load_concept()` should help spot such issues, albeit no longer at item resolution but only at concept level.
+
+Next, we will investigate the number of measurements available per concept and stay day. For each stay ID and concept we calculate the number of measurements and note the stay duration. From this we can visualize how the number of measurements per day is distributed over the datasets alongside the percentage of patients that have at least one measurement available.
+
+```{r itm-counts, eval = eval_next}
+count_meas <- function(x) {
+  x[!is.na(get(data_var(x))), list(count = .N), by = c(id_vars(x))]
+}
+
+meas_day <- function(x, los) {
+  merge(x, los)[, count := count / los_icu]
+}
+
+quants <- function(x) {
+  setNames(
+    as.list(quantile(x, c(0.05, 0.25, 0.5, 0.75, 0.95))),
+    c("min", "lwr", "med", "upr", "max")
+  )
+}
+
+meas_stats <- function(x, concept) {
+  x[, c(list(concept = concept, n_pat = .N), quants(count / los_icu)),
+    by = "source"]
+}
+
+los <- load_concepts("los_icu", srcs, verbose = FALSE)
+los <- los[los_icu > 0, ]
+
+counts <- lapply(dat, count_meas)
+counts <- lapply(counts, merge, los_icu)
+counts <- Map(meas_stats, counts, names(counts))
+counts <- do.call(rbind, counts)
+counts <- merge(counts, los[, list(total_pat = .N), by = "source"],
+                by = "source")
+
+head(counts)
+```
+
+```{r count-plot, echo = FALSE, fig.width = 6, eval = eval_next}
+boxplots <- ggplot(counts, aes(concept)) +
+  geom_boxplot(
+     aes(ymin = min, lower = lwr, middle = med, upper = upr, ymax = max,
+         color = source),
+     stat = "identity"
+  ) +
+  coord_flip() +
+  theme_bw() +
+  xlab("Concept name") + ylab("Measurement count per ICU day")
+
+pat_perc <- ggplot(counts, aes(concept)) +
+  geom_col(aes(y = n_pat / total_pat, fill = source), position = "dodge2") +
+  coord_flip() +
+  theme_bw() +
+  theme(axis.title.y = element_blank(),
+        axis.text.y = element_blank(),
+        axis.ticks.y = element_blank()) +
+  ylab("Percentage of patients")
+
+cowplot::plot_grid(
+  cowplot::plot_grid(
+    boxplots + theme(legend.position = "none"),
+    pat_perc + theme(legend.position = "none"),
+    nrow = 1L, rel_widths = c(0.7, 0.3)
+  ),
+  cowplot::get_legend(boxplots + theme(legend.position = "bottom")),
+  ncol = 1L, rel_heights = c(0.9, 0.1)
+)
+
+```
+
+Finally, we compare the densities we obtain by looking concept values per dataset, as visualized in the following plot.
 
 ```{r uom-hist, echo = FALSE, fig.width = 6, eval = eval_next, cache = TRUE}
 filter_quants <- function(x, lwr, upr) {
@@ -110,28 +242,18 @@ filter_quants <- function(x, lwr, upr) {
   x[, list(val = do_filter(get(data_var(x)))), by = "source"]
 }
 
-if (srcs_avail(full)) {
-  srcs <- full
-} else {
-  srcs <- demo
-}
+for (x in dat) {
 
-srcs <- c(full, demo)
-srcs <- head(srcs[is_data_avail(srcs)], n = length(full))
+  feat <- data_var(x)
 
-concepts <- c("map", "lact" , "crea", "bili", "plt")
+  x <- filter_quants(x, lwr = 0.025, upr = 0.975)
 
-dat <- load_concepts(concepts, srcs, verbose = FALSE, merge = FALSE)
-dat <- lapply(dat, filter_quants, lwr = 0.025, upr = 0.975)
-
-for (feat in names(dat)) {
-
-  title <- dat[[feat]][, list(val = median(val)), by = "source"]
+  title <- x[, list(val = median(val)), by = "source"]
   title <- paste0(title$val, " (", title$source, ")", collapse = ", ")
   title <- paste0(feat, ": ", title)
 
   print(
-    ggplot(dat[[feat]], aes(x = val, fill = source)) +
+    ggplot(x, aes(x = val, fill = source)) +
       geom_density(alpha = 0.5) +
       xlab(feat) + theme_bw() + ggtitle(title)
   )
