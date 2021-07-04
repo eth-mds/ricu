@@ -255,8 +255,8 @@ remove_gaps <- function(x) rm_na(x, data_vars(x), "all")
 #'
 slide <- function(x, expr, before, after = hours(0L), ...) {
 
-  assert_that(is_scalar(before), is_interval(before),
-              is_scalar(after), is_interval(after))
+  assert_that(is_scalar(before), is_difftime(before),
+              is_scalar(after), is_difftime(after))
 
   id_cols <- id_vars(x)
   ind_col <- index_var(x)
@@ -302,8 +302,8 @@ slide <- function(x, expr, before, after = hours(0L), ...) {
 slide_index <- function(x, expr, index, before, after = hours(0L), ...) {
 
   assert_that(is_difftime(index), has_length(index), is_unique(index),
-              is_scalar(before), is_interval(before),
-              is_scalar(after),  is_interval(after))
+              is_scalar(before), is_difftime(before),
+              is_scalar(after),  is_difftime(after))
 
   id_cols <- id_vars(x)
   ind_col <- index_var(x)
