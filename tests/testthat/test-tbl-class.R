@@ -112,6 +112,57 @@ test_that("ts_tbl constructors", {
                class = "has_time_cols_assert")
 })
 
+test_that("win_tbl constructors", {
+
+  tbl <- win_tbl(a = 1:10, b = hours(1:10), c = mins(1:10))
+
+  expect_s3_class(tbl, "win_tbl")
+  expect_true(is_win_tbl(tbl))
+  expect_identical(id_vars(tbl), "a")
+  expect_identical(index_var(tbl), "b")
+  expect_equal(interval(tbl), hours(1L))
+  expect_identical(dur_var(tbl), "c")
+
+  dat <- data.frame(a = 1:10, b = hours(1:10), c = mins(1:10), d = rnorm(10))
+  tbl <- as_win_tbl(dat)
+
+  expect_identical(as_win_tbl(c(dat)), tbl)
+
+  expect_s3_class(dat, c("ts_tbl", "id_tbl", "data.frame"))
+  expect_true(is_win_tbl(tbl))
+  expect_identical(id_vars(tbl), "a")
+  expect_identical(index_var(tbl), "b")
+  expect_identical(index_col(tbl), hours(1:10))
+  expect_identical(dur_var(tbl), "c")
+  expect_identical(dur_col(tbl), mins(1:10))
+  expect_identical(data_vars(tbl), "d")
+  expect_identical(meta_vars(tbl), c("a", "b", "c"))
+  expect_equal(interval(tbl), hours(1L))
+  expect_equal(time_step(tbl), 1L)
+  expect_identical(time_unit(tbl), "hours")
+
+  ptyp <- as_ptype(tbl)
+
+  expect_identical(id_vars(ptyp), "a")
+  expect_identical(index_var(ptyp), "b")
+  expect_equal(interval(ptyp), hours(1L))
+  expect_equal(time_step(ptyp), 1L)
+  expect_identical(time_unit(ptyp), "hours")
+  expect_identical(dur_var(ptyp), "c")
+
+  expect_identical(nrow(win_tbl(a = c(1:9, NA), b = hours(c(1:5, NA, 7:10)),
+                                c = mins(c(NA, 2:10)))), 7L)
+
+  expect_error(win_tbl(a = 1:10, b = hours(1:10), c = 1:10, dur_var = "c"),
+               class = "is_difftime_assert")
+  expect_error(win_tbl(a = 1:10, b = hours(1:10), c = mins(1:10),
+                       index_var = "b", dur_var = "b"),
+               class = "is_disjoint_assert")
+
+  expect_error(as_win_tbl(as.matrix(dat)))
+  expect_error(as_win_tbl(as.matrix(dat, by_ref = TRUE)))
+})
+
 test_that("icu_tbl coercion", {
 
   dat <- runif(10)

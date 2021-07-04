@@ -119,6 +119,20 @@ index_col <- function(x) x[[index_var(x)]]
 
 #' @rdname tbl_meta
 #' @export
+dur_var <- function(x) UseMethod("dur_var", x)
+
+#' @export
+dur_var.win_tbl <- function(x) attr(x, "dur_var")
+
+#' @export
+dur_var.default <- function(x) stop_generic(x, .Generic)
+
+#' @rdname tbl_meta
+#' @export
+dur_col <- function(x) x[[dur_var(x)]]
+
+#' @rdname tbl_meta
+#' @export
 meta_vars <- function(x) UseMethod("meta_vars", x)
 
 #' @export
@@ -126,6 +140,9 @@ meta_vars.id_tbl <- function(x) id_vars(x)
 
 #' @export
 meta_vars.ts_tbl <- function(x) c(id_vars(x), index_var(x))
+
+#' @export
+meta_vars.win_tbl <- function(x) c(id_vars(x), index_var(x), dur_var(x))
 
 #' @export
 meta_vars.default <- function(x) stop_generic(x, .Generic)
@@ -324,6 +341,28 @@ col_renamer <- function(x, new, old = colnames(x), skip_absent = FALSE,
                         by_ref = FALSE) {
 
   UseMethod("col_renamer", x)
+}
+
+#' @keywords internal
+#' @export
+col_renamer.win_tbl <- function(x, new, old = colnames(x),
+                                skip_absent = FALSE, by_ref = FALSE) {
+
+  old_dur <- dur_var(x)
+
+  if (old_dur %in% old) {
+
+    new_dur <- new[old %in% old_dur]
+
+    if (!by_ref) {
+      x <- copy(x)
+      by_ref <- TRUE
+    }
+
+    x <- set_attributes(x, dur_var = unname(new_dur))
+  }
+
+  col_renamer.ts_tbl(x, new, old, skip_absent, by_ref)
 }
 
 #' @keywords internal

@@ -7,6 +7,9 @@
 \alias{ts_tbl}
 \alias{is_ts_tbl}
 \alias{as_ts_tbl}
+\alias{win_tbl}
+\alias{is_win_tbl}
+\alias{as_win_tbl}
 \alias{as.data.table.id_tbl}
 \alias{as.data.frame.id_tbl}
 \alias{validate_tbl}
@@ -23,6 +26,19 @@ ts_tbl(..., id_vars = 1L, index_var = NULL, interval = NULL)
 is_ts_tbl(x)
 
 as_ts_tbl(x, id_vars = NULL, index_var = NULL, interval = NULL, by_ref = FALSE)
+
+win_tbl(..., id_vars = NULL, index_var = NULL, interval = NULL, dur_var = NULL)
+
+is_win_tbl(x)
+
+as_win_tbl(
+  x,
+  id_vars = NULL,
+  index_var = NULL,
+  interval = NULL,
+  dur_var = NULL,
+  by_ref = FALSE
+)
 
 \method{as.data.table}{id_tbl}(x, keep.rownames = FALSE, by_ref = FALSE, ...)
 
@@ -44,6 +60,8 @@ reference}
 
 \item{interval}{Time series interval length specified as scalar-valued
 \code{difftime} object}
+
+\item{dur_var}{Column name of the duration column}
 
 \item{keep.rownames}{Default is \code{FALSE}. If \code{TRUE}, adds the input object's names as a separate column named \code{"rn"}. \code{keep.rownames = "id"} names the column \code{"id"} instead.}
 

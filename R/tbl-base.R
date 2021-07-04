@@ -61,12 +61,16 @@ format.id_tbl <- function(x, ..., n = NULL, width = NULL, n_extra = NULL) {
 
 #' @importFrom tibble tbl_sum
 #' @export
+tbl_sum.win_tbl <- function(x) {
+  c(NextMethod(), `Duration var` = quote_bt(dur_var(x)))
+}
+
+#' @export
 tbl_sum.ts_tbl <- function(x) {
   idx <- paste0(quote_bt(index_var(x)), " (", format(interval(x)), ")")
   c(NextMethod(), `Index var` = idx)
 }
 
-#' @importFrom tibble tbl_sum
 #' @export
 tbl_sum.id_tbl <- function(x) {
 

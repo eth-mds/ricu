@@ -6,6 +6,8 @@
 \alias{id_col}
 \alias{index_var}
 \alias{index_col}
+\alias{dur_var}
+\alias{dur_col}
 \alias{meta_vars}
 \alias{data_vars}
 \alias{data_var}
@@ -25,6 +27,10 @@ id_col(x)
 index_var(x)
 
 index_col(x)
+
+dur_var(x)
+
+dur_col(x)
 
 meta_vars(x)
 

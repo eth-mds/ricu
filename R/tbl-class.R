@@ -184,25 +184,6 @@ as_id_tbl.default <- function(x, id_vars = NULL, by_ref = FALSE) {
   as_id_tbl(x, id_vars = id_vars, by_ref = by_ref)
 }
 
-new_id_tbl <- function(x, id_vars, ..., class = character()) {
-
-  if (is.null(id_vars)) {
-    if (data.table::haskey(x)) {
-      id_vars <- data.table::key(x)
-    } else {
-      id_vars <- 1L
-    }
-  }
-
-  if (is.numeric(id_vars) || is.logical(id_vars)) {
-    id_vars <- colnames(x)[id_vars]
-  }
-
-  assert_that(is.character(id_vars), has_length(id_vars))
-
-  new_tbl(x, id_vars = unname(id_vars), ..., class = c(class, "id_tbl"))
-}
-
 #' @param index_var Column name of the index column
 #' @param interval Time series interval length specified as scalar-valued
 #' `difftime` object
@@ -219,8 +200,8 @@ is_ts_tbl <- is_type("ts_tbl")
 
 #' @rdname id_tbl
 #' @export
-as_ts_tbl <- function(x, id_vars = NULL, index_var = NULL,
-                      interval = NULL, by_ref = FALSE) {
+as_ts_tbl <- function(x, id_vars = NULL, index_var = NULL, interval = NULL,
+                      by_ref = FALSE) {
 
   UseMethod("as_ts_tbl", x)
 }
@@ -260,7 +241,102 @@ as_ts_tbl.default <- function(x, id_vars = NULL, index_var = NULL,
             by_ref = by_ref)
 }
 
-new_ts_tbl <- function(x, id_vars, index_var = NULL, interval = NULL,
+#' @param dur_var Column name of the duration column
+#'
+#' @rdname id_tbl
+#' @export
+win_tbl <- function(..., id_vars = NULL, index_var = NULL, interval = NULL,
+                    dur_var = NULL) {
+  as_win_tbl(list(...), id_vars, index_var, interval, dur_var, by_ref = TRUE)
+}
+
+#' @rdname id_tbl
+#' @export
+is_win_tbl <- is_type("win_tbl")
+
+#' @rdname id_tbl
+#' @export
+as_win_tbl <- function(x, id_vars = NULL, index_var = NULL, interval = NULL,
+                       dur_var = NULL, by_ref = FALSE) {
+
+  UseMethod("as_win_tbl", x)
+}
+
+#' @export
+as_win_tbl.win_tbl <- function(x, id_vars = NULL, index_var = NULL,
+                               interval = NULL, dur_var = NULL, ...) {
+
+  as_win_tbl.ts_tbl(x, id_vars, index_var, interval,
+                    coalesce(dur_var, dur_var(x)), ...)
+}
+
+#' @export
+as_win_tbl.ts_tbl <- function(x, id_vars = NULL, index_var = NULL,
+                             interval = NULL, ...) {
+
+  as_win_tbl.id_tbl(x, id_vars, coalesce(index_var, index_var(x)),
+                   coalesce(interval, interval(x)), ...)
+}
+
+#' @export
+as_win_tbl.id_tbl <- function(x, id_vars = NULL, ...) {
+  as_win_tbl.data.table(x, coalesce(id_vars, id_vars(x)), ...)
+}
+
+#' @method as_win_tbl data.table
+#' @export
+as_win_tbl.data.table <- function(x, ...) new_win_tbl(x, ...)
+
+#' @export
+as_win_tbl.default <- function(x, ..., by_ref = FALSE) {
+
+  if (isTRUE(by_ref)) {
+    x <- setDT(x)
+  } else {
+    x <- as.data.table(x)
+  }
+
+  as_win_tbl(x, ..., by_ref = by_ref)
+}
+
+new_win_tbl <- function(x, id_vars = NULL, index_var = NULL, interval = NULL,
+                        dur_var = NULL, ..., class = character()) {
+
+  if (is.null(index_var) || is.null(dur_var)) {
+    opts <- time_vars(x)
+  }
+
+  if (is.null(index_var) && is.null(dur_var)) {
+
+    assert_that(length(opts) == 2L, msg = "In order to automatically determine
+      both the index and duration columns, exactly two `difftime` columns are
+      required.")
+
+    index_var <- opts[1L]
+    dur_var <- opts[2L]
+
+  } else if (is.null(index_var)) {
+
+    index_var <- setdiff(opts, dur_var)
+
+    assert_that(length(index_var) == 1L, msg = "In order to automatically
+      determine the index column, exactly one `difftime` column apart from the
+      duration column is required.")
+
+  } else if (is.null(dur_var)) {
+
+    dur_var <- setdiff(opts, index_var)
+
+    assert_that(length(dur_var) == 1L, msg = "In order to automatically
+      determine the duration column, exactly one `difftime` column apart from
+      the index column is required.")
+  }
+
+  new_ts_tbl(x, id_vars, index_var, interval, dur_var = dur_var, ...,
+             class = c(class, "win_tbl"))
+}
+
+new_ts_tbl <- function(x, id_vars = NULL, index_var = NULL, interval = NULL,
                        ..., class = character()) {
 
   if (is.null(index_var)) {
@@ -290,6 +366,25 @@ new_ts_tbl <- function(x, id_vars, index_var = NULL, interval = NULL,
   }
 
   res
+}
+
+new_id_tbl <- function(x, id_vars = NULL, ..., class = character()) {
+
+  if (is.null(id_vars)) {
+    if (data.table::haskey(x)) {
+      id_vars <- data.table::key(x)
+    } else {
+      id_vars <- 1L
+    }
+  }
+
+  if (is.numeric(id_vars) || is.logical(id_vars)) {
+    id_vars <- colnames(x)[id_vars]
+  }
+
+  assert_that(is.character(id_vars), has_length(id_vars))
+
+  new_tbl(x, id_vars = unname(id_vars), ..., class = c(class, "id_tbl"))
 }
 
 new_tbl <- function(x, ..., class, by_ref = TRUE) {
@@ -416,6 +511,11 @@ unclass_tbl <- function(x) UseMethod("unclass_tbl", x)
 unclass_tbl.data.frame <- function(x) x
 
 #' @export
+unclass_tbl.win_tbl <- function(x) {
+  unclass_tbl(set_attributes(x, dur_var = NULL, class = strip_class(x)))
+}
+
+#' @export
 unclass_tbl.ts_tbl <- function(x) {
   unclass_tbl(
     set_attributes(x, index_var = NULL, interval = NULL,
@@ -464,6 +564,20 @@ reclass_tbl.ts_tbl <- function(x, template, stop_on_fail = TRUE) {
 
   x <- set_attributes(x, index_var = index_var(template),
                       interval = interval(template), class = .Class)
+
+  if (isTRUE(validate_tbl(x))) {
+    return(x)
+  }
+
+  NextMethod(object = template)
+}
+
+#' @export
+reclass_tbl.win_tbl <- function(x, template, stop_on_fail = TRUE) {
+
+  x <- NextMethod(object = template)
+
+  x <- set_attributes(x, dur_var = dur_var(template), class = .Class)
 
   if (isTRUE(validate_tbl(x))) {
     return(x)
@@ -553,6 +667,19 @@ validate_tbl.ts_tbl <- function(x) {
   res <- validate_that(
     is.string(invar), has_cols(x, invar), is_disjoint(id_vars(x), invar),
     obeys_interval(index, inval), same_unit(index, inval)
+  )
+
+  if (isTRUE(res)) NextMethod() else res
+}
+
+#' @export
+validate_tbl.win_tbl <- function(x) {
+
+  dvar <- dur_var(x)
+
+  res <- validate_that(
+    is.string(dvar), has_cols(x, dvar), is_disjoint(id_vars(x), dvar),
+    is_disjoint(dvar, index_var(x)), is_difftime(dur_col(x))
   )
 
   if (isTRUE(res)) NextMethod() else res
