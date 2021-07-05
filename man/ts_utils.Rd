@@ -15,11 +15,11 @@
 \usage{
 expand(
   x,
-  start_var = "start",
-  end_var = "end",
-  step_size = NULL,
-  new_index = NULL,
-  keep_vars = id_vars(x)
+  start_var = index_var(x),
+  end_var = NULL,
+  step_size = time_step(x),
+  new_index = start_var,
+  keep_vars = NULL
 )
 
 collapse(

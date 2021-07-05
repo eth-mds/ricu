@@ -85,8 +85,9 @@
 #' @rdname ts_utils
 #' @export
 #'
-expand <- function(x, start_var = "start", end_var = "end", step_size = NULL,
-                   new_index = NULL, keep_vars = id_vars(x)) {
+expand <- function(x, start_var = index_var(x), end_var = NULL,
+                   step_size = time_step(x), new_index = start_var,
+                   keep_vars = NULL) {
 
   do_seq <- function(min, max) seq(min, max, step_size)
 
@@ -97,35 +98,49 @@ expand <- function(x, start_var = "start", end_var = "end", step_size = NULL,
         value = as.difftime(unlist(lst), units = unit))
   }
 
-  assert_that(
-    is_dt(x), has_time_cols(x, c(start_var, end_var), 2L),
-    same_unit(x[[start_var]], x[[end_var]])
-  )
+  assert_that(is_dt(x), is.string(new_index), is_scalar(step_size),
+              is.numeric(step_size))
 
   if (identical(nrow(x), 0L)) {
     return(x)
   }
 
-  step_size <- coalesce(step_size, time_step(x))
-  new_index <- coalesce(new_index, index_var(x))
+  start_var <- coalesce(start_var, if (is_ts_tbl(x)) index_var(x), "start")
+  end_var   <- coalesce(end_var, if (is_win_tbl(x)) new_names(x), "end")
+  time_unit <- units(x[[start_var]])
+  interval  <- as.difftime(step_size, units = time_unit)
 
-  assert_that(is.string(new_index), is_scalar(step_size),
-              is.numeric(step_size))
+  if (is_win_tbl(x) && !end_var %in% colnames(x)) {
 
-  unit <- units(x[[start_var]])
+    on.exit(rm_cols(x, end_var, by_ref = TRUE))
 
-  x <- rm_na(x, c(start_var, end_var), "any")
-  x <- x[get(start_var) <= get(end_var), ]
+    dur_var <- dur_var(x)
+    dat_var <- data_vars(x)
 
-  res <- x[, c(keep_vars, start_var, end_var), with = FALSE]
+    x <- x[, c(end_var) := re_time(get(start_var) + get(dur_var), interval)]
+    x <- x[get(end_var) < 0, c(end_var) := as.difftime(0, units = time_unit)]
+  }
+
+  assert_that(has_time_cols(x, c(start_var, end_var), 2L),
+              same_unit(x[[start_var]], x[[end_var]]))
+
+  if (is.null(keep_vars)) {
+    keep_vars <- id_vars(x)
+    if (is_win_tbl(x)) {
+      keep_vars <- c(keep_vars, dat_var)
+    }
+  }
+
+  res <- rm_na(x, c(start_var, end_var), "any")
+  res <- res[get(start_var) <= get(end_var), c(keep_vars, start_var, end_var),
+             with = FALSE]
   res <- res[, c(start_var, end_var) := lapply(.SD, as.double),
              .SDcols = c(start_var, end_var)]
 
-  res <- res[, seq_expand(get(start_var), get(end_var), unit, .SD),
+  res <- res[, seq_expand(get(start_var), get(end_var), time_unit, .SD),
              .SDcols = keep_vars]
 
-  as_ts_tbl(res, index_var = new_index,
-            interval = as.difftime(step_size, units = unit), by_ref = TRUE)
+  as_ts_tbl(res, index_var = new_index, interval = interval, by_ref = TRUE)
 }
 
 #' @param id_vars,index_var ID and index variables
