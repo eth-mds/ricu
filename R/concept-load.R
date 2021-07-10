@@ -234,6 +234,10 @@ load_concepts.concept <- function(x, src = NULL, aggregate = NULL,
 
   if (length(res) > 1L) {
 
+    wn <- lgl_ply(res, is_win_tbl)
+
+    res[wn] <- Map(expand, res[wn], aggregate = aggregate[wn])
+
     ts <- lgl_ply(res, is_ts_tbl)
     id <- lgl_ply(res, is_id_tbl) & ! ts
 

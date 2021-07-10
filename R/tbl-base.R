@@ -167,6 +167,11 @@ merge.id_tbl <- function(x, y, by = NULL, by.x = NULL, by.y = NULL, ...) {
 
   targ <- NULL
 
+  if (is_win_tbl(x) || is_win_tbl(y)) {
+    stop_ricu("`win_tbl` objects should be converted to `ts_tbl` objects using
+               `expand()` before merging", class = "merge_win_tbl")
+  }
+
   if (is_id_tbl(y)) {
 
     if (is_ts_tbl(x) && is_ts_tbl(y)) {

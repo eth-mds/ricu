@@ -13,6 +13,12 @@
 \alias{load_ts.itm}
 \alias{load_ts.fun_itm}
 \alias{load_ts.default}
+\alias{load_win}
+\alias{load_win.src_tbl}
+\alias{load_win.character}
+\alias{load_win.itm}
+\alias{load_win.fun_itm}
+\alias{load_win.default}
 \title{Load data as \code{id_tbl} or \code{ts_tbl} objects}
 \usage{
 load_id(x, ...)
@@ -61,6 +67,36 @@ load_ts(x, ...)
 \method{load_ts}{fun_itm}(x, ...)
 
 \method{load_ts}{default}(x, ...)
+
+load_win(x, ...)
+
+\method{load_win}{src_tbl}(
+  x,
+  rows,
+  cols = colnames(x),
+  id_var = id_vars(x),
+  index_var = ricu::index_var(x),
+  interval = hours(1L),
+  dur_var = ricu::dur_var(x),
+  dur_is_end = TRUE,
+  time_vars = ricu::time_vars(x),
+  ...
+)
+
+\method{load_win}{character}(x, src, ...)
+
+\method{load_win}{itm}(
+  x,
+  cols = colnames(x),
+  id_var = id_vars(x),
+  index_var = ricu::index_var(x),
+  dur_var = ricu::dur_var(x),
+  ...
+)
+
+\method{load_win}{fun_itm}(x, ...)
+
+\method{load_win}{default}(x, ...)
 }
 \arguments{
 \item{x}{Object for which to load data}
@@ -82,6 +118,11 @@ timestamps and thus returned as \code{\link[base:difftime]{base::difftime()}} ve
 \item{src}{Passed to \code{\link[=as_src_tbl]{as_src_tbl()}} in order to determine the data source}
 
 \item{index_var}{The column defining the index of \code{ts_tbl} objects}
+
+\item{dur_var}{The column used for determining durations}
+
+\item{dur_is_end}{Logical flag indicating whether to use durations as-is or
+to calculated them by subtracting the \code{index_var} column}
 }
 \value{
 An \code{id_tbl} or a \code{ts_tbl} object.

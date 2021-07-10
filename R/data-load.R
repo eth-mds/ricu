@@ -399,3 +399,64 @@ load_ts.fun_itm <- function(x, ...) stop_generic(x, .Generic)
 #' @rdname load_tbl
 #' @export
 load_ts.default <- function(x, ...) load_ts(as_src_tbl(x), ...)
+
+#' @param dur_var The column used for determining durations
+#' @param dur_is_end Logical flag indicating whether to use durations as-is or
+#' to calculated them by subtracting the `index_var` column
+#'
+#' @rdname load_tbl
+#' @export
+load_win <- function(x, ...) UseMethod("load_win", x)
+
+#' @rdname load_tbl
+#' @export
+load_win.src_tbl <- function(x, rows, cols = colnames(x), id_var = id_vars(x),
+                             index_var = ricu::index_var(x),
+                             interval = hours(1L), dur_var = ricu::dur_var(x),
+                             dur_is_end = TRUE, time_vars = ricu::time_vars(x),
+                             ...) {
+
+  warn_dots(...)
+
+  assert_that(is.string(index_var), is.string(dur_var), is.flag(dur_is_end))
+
+  res <- load_difftime(x, {{ rows }}, c(cols, index_var, dur_var), id_var,
+                       time_vars)
+
+  if (dur_is_end) {
+    res <- res[, c(dur_var) := get(dur_var) - get(index_var)]
+  }
+
+  res <- as_win_tbl(res, id_vars(res), index_var, mins(1L), dur_var,
+                    by_ref = TRUE)
+
+  time_vars <- intersect(time_vars, colnames(res))
+
+  res <- change_id(res, id_var, x, cols = time_vars, keep_old_id = FALSE)
+  res <- change_interval(res, interval, time_vars, by_ref = TRUE)
+
+  res
+}
+
+#' @rdname load_tbl
+#' @export
+load_win.character <- function(x, src, ...) load_win(as_src_tbl(x, src), ...)
+
+#' @rdname load_tbl
+#' @export
+load_win.itm <- function(x, cols = colnames(x), id_var = id_vars(x),
+                         index_var = ricu::index_var(x),
+                         dur_var = ricu::dur_var(x), ...) {
+
+  load_win(as_src_tbl(x), !!prepare_query(x), cols, id_var, index_var, ...,
+           dur_var = dur_var)
+}
+
+#' @rdname load_tbl
+#' @export
+load_win.fun_itm <- function(x, ...) stop_generic(x, .Generic)
+
+#' @rdname load_tbl
+#' @export
+load_win.default <- function(x, ...) load_win(as_src_tbl(x), ...)
+

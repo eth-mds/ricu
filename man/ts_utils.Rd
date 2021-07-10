@@ -19,7 +19,8 @@ expand(
   end_var = NULL,
   step_size = time_step(x),
   new_index = start_var,
-  keep_vars = NULL
+  keep_vars = NULL,
+  aggregate = FALSE
 )
 
 collapse(
@@ -71,6 +72,8 @@ windows bounds}
 \item{new_index}{Name of the new index column}
 
 \item{keep_vars}{Names of the columns to hold onto}
+
+\item{aggregate}{Function for aggregating values in overlapping intervals}
 
 \item{id_vars, index_var}{ID and index variables}
 

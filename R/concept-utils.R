@@ -553,7 +553,7 @@ do_itm_load <- function(x, id_type = "icustay", interval = hours(1L)) {
 do_itm_load.itm <- function(x, id_type = "icustay", interval = hours(1L)) {
 
   trg <- get_target(x)
-  fun <- switch(trg, id_tbl = load_id, ts_tbl = load_ts,
+  fun <- switch(trg, id_tbl = load_id, ts_tbl = load_ts, win_tbl = load_win,
                 stop_ricu("Cannot load object with target class {trg}"))
 
   fun(x, id_var = id_var(as_id_cfg(x)[id_type]), interval = interval)
@@ -627,7 +627,10 @@ index_var.itm <- function(x) {
 }
 
 #' @export
-meta_vars.itm <- function(x) c(id_vars(x), index_var(x))
+dur_var.itm <- function(x) x[["dur_var"]]
+
+#' @export
+meta_vars.itm <- function(x) c(id_vars(x), index_var(x), dur_var(x))
 
 #' @export
 dimnames.itm <- function(x) list(NULL, unlst(x[["vars"]]))

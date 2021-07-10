@@ -24,6 +24,14 @@ test_that("collapse/expand", {
   expect_identical(nrow(exp),
     as.integer(sum(re_time(tbl$z, interval(tbl)))) + nrow(tbl)
   )
+
+  tbl <- win_tbl(x = rep(1, 5), y = hours(1:5), z = mins(1:5 * 30),
+                 val = rnorm(5))
+  exp <- expand(tbl, aggregate = TRUE)
+
+  expect_s3_class(exp, "ts_tbl")
+  expect_identical(meta_vars(exp), setdiff(meta_vars(tbl), "z"))
+  expect_identical(nrow(exp), 7L)
 })
 
 test_that("gaps", {

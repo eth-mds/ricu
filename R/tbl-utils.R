@@ -201,6 +201,9 @@ time_vars <- function(x) UseMethod("time_vars", x)
 time_vars.data.frame <- function(x) colnames(x)[lgl_ply(x, is_difftime)]
 
 #' @export
+time_vars.win_tbl <- function(x) setdiff(NextMethod(), dur_var(x))
+
+#' @export
 time_vars.default <- function(x) stop_generic(x, .Generic)
 
 rename <- function(x, new, old) {
@@ -706,7 +709,7 @@ aggregate.id_tbl <- function(x, expr = NULL, by = meta_vars(x),
     how <- get(as.character(substitute(expr)), envir = env)
   }
 
-  if (is.null(how)) {
+  if (is.null(how) || isTRUE(how)) {
 
     if (all(lgl_ply(vars, is_type, is.numeric, is_difftime))) {
 
