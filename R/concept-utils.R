@@ -627,7 +627,7 @@ index_var.itm <- function(x) {
 }
 
 #' @export
-dur_var.itm <- function(x) x[["dur_var"]]
+dur_var.itm <- function(x) x[["vars"]][["dur_var"]]
 
 #' @export
 meta_vars.itm <- function(x) c(id_vars(x), index_var(x), dur_var(x))

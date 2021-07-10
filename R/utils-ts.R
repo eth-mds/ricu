@@ -51,6 +51,7 @@
 #' `start_var` and `end_var`
 #' @param new_index Name of the new index column
 #' @param keep_vars Names of the columns to hold onto
+#' @param aggregate Function for aggregating values in overlapping intervals
 #'
 #' @return Most functions return `ts_tbl` objects with the exception of
 #' `has_gaps()`/`has_no_gaps()`/`is_regular()`, which return logical flags.
@@ -87,7 +88,7 @@
 #'
 expand <- function(x, start_var = index_var(x), end_var = NULL,
                    step_size = time_step(x), new_index = start_var,
-                   keep_vars = NULL) {
+                   keep_vars = NULL, aggregate = FALSE) {
 
   do_seq <- function(min, max) seq(min, max, step_size)
 
@@ -140,7 +141,14 @@ expand <- function(x, start_var = index_var(x), end_var = NULL,
   res <- res[, seq_expand(get(start_var), get(end_var), time_unit, .SD),
              .SDcols = keep_vars]
 
-  as_ts_tbl(res, index_var = new_index, interval = interval, by_ref = TRUE)
+  res <- as_ts_tbl(res, index_var = new_index, interval = interval,
+                   by_ref = TRUE)
+
+  if (!isFALSE(aggregate)) {
+    res <- aggregate(res, aggregate)
+  }
+
+  res
 }
 
 #' @param id_vars,index_var ID and index variables

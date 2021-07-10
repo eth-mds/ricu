@@ -430,7 +430,7 @@ load_win.src_tbl <- function(x, rows, cols = colnames(x), id_var = id_vars(x),
   res <- as_win_tbl(res, id_vars(res), index_var, mins(1L), dur_var,
                     by_ref = TRUE)
 
-  time_vars <- intersect(time_vars, colnames(res))
+  time_vars <- setdiff(intersect(time_vars, colnames(res)), dur_var)
 
   res <- change_id(res, id_var, x, cols = time_vars, keep_old_id = FALSE)
   res <- change_interval(res, interval, time_vars, by_ref = TRUE)
