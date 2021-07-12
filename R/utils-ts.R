@@ -145,7 +145,7 @@ expand <- function(x, start_var = index_var(x), end_var = NULL,
                    by_ref = TRUE)
 
   if (!isFALSE(aggregate)) {
-    res <- aggregate(res, aggregate)
+    res <- stats::aggregate(res, aggregate)
   }
 
   res
