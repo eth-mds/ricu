@@ -115,10 +115,10 @@ expand <- function(x, start_var = index_var(x), end_var = NULL,
 
     on.exit(rm_cols(x, end_var, by_ref = TRUE))
 
-    dur_var <- dur_var(x)
-    dat_var <- data_vars(x)
+    dura_var <- dur_var(x)
+    data_var <- data_vars(x)
 
-    x <- x[, c(end_var) := re_time(get(start_var) + get(dur_var), interval)]
+    x <- x[, c(end_var) := re_time(get(start_var) + get(dura_var), interval)]
     x <- x[get(end_var) < 0, c(end_var) := as.difftime(0, units = time_unit)]
   }
 
@@ -128,7 +128,7 @@ expand <- function(x, start_var = index_var(x), end_var = NULL,
   if (is.null(keep_vars)) {
     keep_vars <- id_vars(x)
     if (is_win_tbl(x)) {
-      keep_vars <- c(keep_vars, dat_var)
+      keep_vars <- c(keep_vars, data_var)
     }
   }
 
