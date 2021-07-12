@@ -618,3 +618,15 @@ create_intervals <- function(x, by_vars = id_vars(x), overhang = hours(1L),
 
   x
 }
+
+min_time_unit <- function(x) {
+
+  assert_that(is.character(x))
+
+  if (any(x == "secs")) "secs"
+  else if (any(x == "mins")) "mins"
+  else if (any(x == "hours")) "hours"
+  else if (any(x == "days")) "days"
+  else if (any(x == "weeks")) "weeks"
+  else stop_ricu("unknown time units", class = "unknown_time_unit")
+}

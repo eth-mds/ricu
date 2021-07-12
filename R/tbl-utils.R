@@ -133,6 +133,10 @@ dur_col <- function(x) x[[dur_var(x)]]
 
 #' @rdname tbl_meta
 #' @export
+dur_unit <- function(x) units(dur_col(x))
+
+#' @rdname tbl_meta
+#' @export
 meta_vars <- function(x) UseMethod("meta_vars", x)
 
 #' @export
@@ -541,6 +545,24 @@ change_interval.data.table <- function(x, new_interval, cols = time_vars(x),
 
 #' @export
 change_interval.default <- function(x, ...) stop_generic(x, .Generic)
+
+#' @param new_unit Nex `difftime` unit for the `dur_var` column
+#' @rdname tbl_utils
+#' @export
+change_dur_unit <- function(x, new_unit, by_ref = FALSE) {
+
+  assert_that(is_win_tbl(x), is.string(new_unit), is.flag(by_ref))
+
+  dura_var <- dur_var(x)
+
+  if (by_ref) {
+    x <- x[, c(dura_var) := `units<-`(get(dura_var), new_unit)]
+  } else {
+    x[[dura_var]] <- `units<-`(dur_col(x), new_unit)
+  }
+
+  x
+}
 
 #' @param cols Column names of columns to consider
 #' @param mode Switch between `all` where all entries of a row have to be

@@ -8,6 +8,7 @@
 \alias{index_col}
 \alias{dur_var}
 \alias{dur_col}
+\alias{dur_unit}
 \alias{meta_vars}
 \alias{data_vars}
 \alias{data_var}
@@ -31,6 +32,8 @@ index_col(x)
 dur_var(x)
 
 dur_col(x)
+
+dur_unit(x)
 
 meta_vars(x)
 

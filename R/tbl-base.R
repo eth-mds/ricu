@@ -251,8 +251,10 @@ rbind_lst <- function(x, ...) {
     rename_cols(x, fun(new), fun(x), by_ref = TRUE)
   }
 
+  win_tbl <- lgl_ply(x, is_win_tbl)
+
   id_tbl <- lgl_ply(x, is_id_tbl)
-  ts_tbl <- lgl_ply(x, is_ts_tbl)
+  ts_tbl <- lgl_ply(x, is_ts_tbl) & !win_tbl
   id_tbl <- id_tbl & !ts_tbl
 
   if (any(id_tbl)) {
@@ -271,6 +273,19 @@ rbind_lst <- function(x, ...) {
   } else {
 
     ptyp <- NULL
+  }
+
+  if (sum(win_tbl) >= 2L) {
+
+    units <- chr_ply(x[win_tbl], dur_unit)
+    targ  <- min_time_unit(units)
+
+    todo <- rep_along(FALSE, x)
+    todo[win_tbl] <- units != targ
+
+    if (any(todo)) {
+      x[todo] <- lapply(x[todo], change_dur_unit, targ)
+    }
   }
 
   if (not_null(ptyp)) {

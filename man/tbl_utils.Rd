@@ -4,6 +4,7 @@
 \alias{rename_cols}
 \alias{rm_cols}
 \alias{change_interval}
+\alias{change_dur_unit}
 \alias{rm_na}
 \alias{sort.id_tbl}
 \alias{is_sorted}
@@ -28,6 +29,8 @@ rename_cols(
 rm_cols(x, cols, skip_absent = FALSE, by_ref = FALSE)
 
 change_interval(x, new_interval, cols = time_vars(x), by_ref = FALSE)
+
+change_dur_unit(x, new_unit, by_ref = FALSE)
 
 rm_na(x, cols = data_vars(x), mode = c("all", "any"))
 
@@ -86,6 +89,8 @@ reference}
 
 \item{new_interval}{Replacement interval length specified as scalar-valued
 \code{difftime} object}
+
+\item{new_unit}{Nex \code{difftime} unit for the \code{dur_var} column}
 
 \item{mode}{Switch between \code{all} where all entries of a row have to be
 missing (for the selected columns) or \code{any}, where a single missing entry
