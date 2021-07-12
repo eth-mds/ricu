@@ -546,7 +546,7 @@ change_interval.data.table <- function(x, new_interval, cols = time_vars(x),
 #' @export
 change_interval.default <- function(x, ...) stop_generic(x, .Generic)
 
-#' @param new_unit Nex `difftime` unit for the `dur_var` column
+#' @param new_unit New `difftime` unit for the `dur_var` column
 #' @rdname tbl_utils
 #' @export
 change_dur_unit <- function(x, new_unit, by_ref = FALSE) {

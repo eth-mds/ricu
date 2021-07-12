@@ -154,6 +154,48 @@ test_that("icu_tbl merging", {
   y <- data.table::data.table(c = 1:10, d = dat2)
 
   expect_error(merge(x, y))
+
+  x <- win_tbl(x = 1:10, y = hours(1:10), z = mins(1:10 * 30), val = dat1)
+  y <- id_tbl(a = 1:10, b = dat2)
+
+  res <- merge(x, y)
+
+  expect_s3_class(res, "win_tbl")
+  expect_identical(id_var(res), "x")
+  expect_identical(index_var(res), "y")
+  expect_identical(dur_var(res), "z")
+  expect_setequal(data_vars(res), c("val", "b"))
+
+  res <- merge(y, x)
+
+  expect_s3_class(res, "win_tbl")
+  expect_identical(id_var(res), "a")
+  expect_identical(index_var(res), "y")
+  expect_identical(dur_var(res), "z")
+  expect_setequal(data_vars(res), c("val", "b"))
+
+  y <- ts_tbl(a = 1:10, b = hours(1:10), d = dat2)
+
+  expect_error(merge(x, y), class = "merge_win_tbl")
+  expect_error(merge(y, x), class = "merge_win_tbl")
+
+  y <- win_tbl(a = 1:10, b = hours(1:10), c = mins(1:10 * 30), d = dat2)
+
+  res <- merge(x, y)
+
+  expect_s3_class(res, "win_tbl")
+  expect_identical(id_var(res), "x")
+  expect_identical(index_var(res), "y")
+  expect_identical(dur_var(res), "z")
+  expect_setequal(data_vars(res), c("val", "d"))
+
+  res <- merge(y, x)
+
+  expect_s3_class(res, "win_tbl")
+  expect_identical(id_var(res), "a")
+  expect_identical(index_var(res), "b")
+  expect_identical(dur_var(res), "c")
+  expect_setequal(data_vars(res), c("val", "d"))
 })
 
 test_that("icu_tbl merge list", {

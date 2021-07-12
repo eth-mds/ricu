@@ -167,9 +167,10 @@ merge.id_tbl <- function(x, y, by = NULL, by.x = NULL, by.y = NULL, ...) {
 
   targ <- NULL
 
-  if (is_win_tbl(x) || is_win_tbl(y)) {
+  if (xor(is_win_tbl(x), is_win_tbl(y)) && xor(is_ts_tbl(y), is_ts_tbl(x))) {
     stop_ricu("`win_tbl` objects should be converted to `ts_tbl` objects using
-               `expand()` before merging", class = "merge_win_tbl")
+               `expand()` before merging with `ts_tbl` objects",
+              class = "merge_win_tbl")
   }
 
   if (is_id_tbl(y)) {
@@ -177,6 +178,10 @@ merge.id_tbl <- function(x, y, by = NULL, by.x = NULL, by.y = NULL, ...) {
     if (is_ts_tbl(x) && is_ts_tbl(y)) {
 
       assert_that(same_time(interval(x), interval(y)))
+
+      if (is_win_tbl(x)) {
+        assert_that(identical(dur_unit(x), dur_unit(y)))
+      }
 
       if (setequal(meta_vars(x), meta_vars(y))) {
         if (is.null(by))   by   <- meta_vars(x)
