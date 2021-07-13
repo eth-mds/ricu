@@ -739,7 +739,7 @@ aggregate.id_tbl <- function(x, expr = NULL, by = meta_vars(x),
 
     } else if (all(lgl_ply(vars, is_type, is.logical))) {
 
-      fun <- "sum"
+      fun <- "any"
 
     } else if (all(lgl_ply(vars, is_type, is.character))) {
 
@@ -777,9 +777,11 @@ aggregate.id_tbl <- function(x, expr = NULL, by = meta_vars(x),
 #'
 dt_gforce <- function(x,
                       fun = c("mean", "median", "min", "max", "sum", "prod",
-                              "var", "sd", "first", "last"),
+                              "var", "sd", "first", "last", "any", "all"),
                       by = meta_vars(x), vars = data_vars(x),
                       na_rm = !fun %in% c("first", "last")) {
+
+  col_is_lgl <- function(col, tbl) is.logical(tbl[[col]])
 
   if (getOption("datatable.optimize") < 2L) {
     warn_ricu("the setting `datatable.optimize` prevents GForce optimizations
@@ -794,6 +796,10 @@ dt_gforce <- function(x,
 
   assert_that(is.flag(na_rm), all(c(vars, by) %in% colnames(x)))
 
+  if (fun %in% c("any", "all")) {
+    assert_that(lgl_ply(vars, col_is_lgl, x), !"N" %in% c(by, vars))
+  }
+
   switch(fun,
     mean   = x[, lapply(.SD, mean, na.rm = na_rm),   by = by, .SDcols = vars],
     median = x[, lapply(.SD, median, na.rm = na_rm), by = by, .SDcols = vars],
@@ -804,7 +810,18 @@ dt_gforce <- function(x,
     var    = x[, lapply(.SD, var, na.rm = na_rm),    by = by, .SDcols = vars],
     sd     = x[, lapply(.SD, sd, na.rm = na_rm),     by = by, .SDcols = vars],
     first  = x[, first(.SD),                         by = by, .SDcols = vars],
-    last   = x[, last(.SD),                          by = by, .SDcols = vars]
+    last   = x[, last(.SD),                          by = by, .SDcols = vars],
+    any = {
+      x <- x[, lapply(.SD, sum, na.rm = na_rm), by = by, .SDcols = vars]
+      x <- x[, c(vars) := lapply(.SD, as.logical), .SDcols = vars]
+      x
+    },
+    all = {
+      x <- x[, c(lapply(.SD, sum, na.rm = na_rm), .N), by = by, .SDcols = vars]
+      x <- x[, c(vars) := lapply(.SD, `==`, N), .SDcols = vars]
+      x <- x[, c("N") := NULL]
+      x
+    }
   )
 }
 

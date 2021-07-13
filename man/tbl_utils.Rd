@@ -64,7 +64,8 @@ is_unique(x, ...)
 
 dt_gforce(
   x,
-  fun = c("mean", "median", "min", "max", "sum", "prod", "var", "sd", "first", "last"),
+  fun = c("mean", "median", "min", "max", "sum", "prod", "var", "sd", "first", "last",
+    "any", "all"),
   by = meta_vars(x),
   vars = data_vars(x),
   na_rm = !fun \%in\% c("first", "last")

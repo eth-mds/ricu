@@ -422,12 +422,6 @@ load_concepts.lgl_cncpt <- function(x, aggregate = NULL, ...,
   res <- set(res, j = "val_var", value = force_lgl(res[["val_var"]]))
 
   res <- stats::aggregate(x, res, aggregate)
-
-  if (is.null(aggregate) || identical(aggregate, "any")) {
-    # default aggregation corresponds to any()
-    res <- set(res, j = "val_var", value = force_lgl(res[["val_var"]]))
-  }
-
   res <- rename_cols(res, x[["name"]], "val_var", by_ref = TRUE)
 
   res
