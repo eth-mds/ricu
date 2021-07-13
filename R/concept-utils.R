@@ -564,7 +564,10 @@ do_itm_load.itm <- function(x, id_type = "icustay", interval = hours(1L)) {
   fun <- switch(trg, id_tbl = load_id, ts_tbl = load_ts, win_tbl = load_win,
                 stop_ricu("Cannot load object with target class {trg}"))
 
-  fun(x, id_var = id_var(as_id_cfg(x)[id_type]), interval = interval)
+  idv <- id_var(as_id_cfg(x)[id_type])
+  ivl <- coalesce(interval(x), interval)
+
+  fun(x, id_var = idv, interval = ivl)
 }
 
 #' @export
@@ -613,12 +616,23 @@ do_itm_load.nul_itm <- function(x, id_type = "icustay", interval = hours(1L)) {
   res <- res[0L, ]
   res <- res[, c("val_var", xtr) := list(numeric(0L), NULL)]
 
-  if (identical(get_target(x), "ts_tbl")) {
+  if (target_inherits(x, "ts_tbl")) {
+
     res <- res[, c("index_var") := interval[0L]]
     res <- as_ts_tbl(res, interval = interval, by_ref = TRUE)
+
+    if (target_inherits(x, "win_tbl")) {
+      res <- res[, c("dur_var") := mins(integer())]
+      res <- as_win_tbl(res, dur_var = "dur_var", by_ref = TRUE)
+    }
   }
 
   res
+}
+
+target_inherits <- function(x, class) {
+  opts <- c("id_tbl", "ts_tbl", "win_tbl")
+  class %in% opts[seq_len(match(get_target(x), opts))]
 }
 
 #' @export
