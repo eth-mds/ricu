@@ -222,7 +222,8 @@ init_itm.rgx_itm <- function(x, table, sub_var, regex,
 }
 
 complete_tbl_itm <- function(x, callback, sub_var, id_var = NULL,
-                             index_var = NULL, ...) {
+                             index_var = NULL, dur_var = NULL, interval = NULL,
+                             ...) {
 
   res <- set_callback(x, callback)
   res <- try_add_vars(res, sub_var = sub_var, ...)
@@ -232,6 +233,14 @@ complete_tbl_itm <- function(x, callback, sub_var, id_var = NULL,
 
   res[["id_var"]]    <- coalesce(id_var,    id_var(tbl))
   res[["index_var"]] <- coalesce(index_var, index_var(tbl))
+
+  if (not_null(dur_var)) {
+    res[["dur_var"]] <- dur_var
+  }
+
+  if (not_null(interval)) {
+    res[["interval"]] <- as.difftime(interval)
+  }
 
   res
 }
@@ -368,8 +377,7 @@ try_add_vars.itm <- function(x, ...) {
         cur <- default_vars(as_src_tbl(x), var)
       }
 
-      old <- if (has_name(x[["vars"]], var)) x[["vars"]][[var]] else NULL
-      cur <- coalesce(old, cur)
+      cur <- coalesce(x[["vars"]][[var]], cur)
 
       if (is.null(cur)) next
 
@@ -627,7 +635,10 @@ index_var.itm <- function(x) {
 }
 
 #' @export
-dur_var.itm <- function(x) x[["vars"]][["dur_var"]]
+dur_var.itm <- function(x) x[["dur_var"]]
+
+#' @export
+interval.itm <- function(x) x[["interval"]]
 
 #' @export
 meta_vars.itm <- function(x) c(id_vars(x), index_var(x), dur_var(x))

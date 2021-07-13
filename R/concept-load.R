@@ -512,8 +512,13 @@ load_concepts.itm <- function(x, patient_ids = NULL, id_type = "icustay",
 
   res <- do_itm_load(x, id_type, interval = interval)
   res <- merge_patid(res, patient_ids)
+  res <- do_callback(x, res)
 
-  do_callback(x, res)
+  if (is_ts_tbl(res)) {
+    res <- change_interval(res, interval, index_var(res), by_ref = TRUE)
+  }
+
+  res
 }
 
 #' @export

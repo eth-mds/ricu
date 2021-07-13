@@ -90,7 +90,7 @@ reference}
 \item{new_interval}{Replacement interval length specified as scalar-valued
 \code{difftime} object}
 
-\item{new_unit}{Nex \code{difftime} unit for the \code{dur_var} column}
+\item{new_unit}{New \code{difftime} unit for the \code{dur_var} column}
 
 \item{mode}{Switch between \code{all} where all entries of a row have to be
 missing (for the selected columns) or \code{any}, where a single missing entry
