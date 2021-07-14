@@ -18,9 +18,9 @@
 \usage{
 prepare_query(x)
 
-try_add_vars(x, ...)
+try_add_vars(x, ..., var_lst = NULL, type = c("data_vars", "meta_vars"))
 
-get_itm_var(x, var = NULL)
+get_itm_var(x, var = NULL, type = c("data_vars", "meta_vars"))
 
 set_callback(x, fun)
 
@@ -45,7 +45,13 @@ subset_src(x, src)
 \arguments{
 \item{x}{Object defining the row-subsetting}
 
-\item{...}{Variable name}
+\item{...}{Variable specification}
+
+\item{var_lst}{List-based variable specification}
+
+\item{type}{Variable type (either data or meta)}
+
+\item{var}{Variable name (\code{NULL}) returns all available}
 
 \item{fun}{Callback function (passed as string)}
 

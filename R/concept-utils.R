@@ -225,18 +225,16 @@ complete_tbl_itm <- function(x, callback, sub_var, id_var = NULL,
                              index_var = NULL, dur_var = NULL, interval = NULL,
                              ...) {
 
+  set_not_null <- function(x, name, val, fun = identity) {
+    if (not_null(val)) x[[name]] <- fun(val)
+    x
+  }
+
   res <- set_callback(x, callback)
   res <- try_add_vars(res, sub_var = sub_var, ...)
   res <- try_add_vars(res, val_var = TRUE)
-
-  tbl <- as_src_tbl(x)
-
-  res[["id_var"]]    <- coalesce(id_var,    id_var(tbl))
-  res[["index_var"]] <- coalesce(index_var, index_var(tbl))
-
-  if (not_null(dur_var)) {
-    res[["dur_var"]] <- dur_var
-  }
+  res <- try_add_vars(res, id_var = id_var, index_var = index_var,
+                      dur_var = dur_var, type = "meta_vars")
 
   if (not_null(interval)) {
     res[["interval"]] <- as.difftime(interval)
@@ -336,13 +334,16 @@ prepare_query.col_itm <- function(x) rlang::quo(NULL)
 prepare_query.default <- function(x) stop_generic(x, .Generic)
 
 #' @param ... Variable specification
+#' @param var_lst List-based variable specification
+#' @param type Variable type (either data or meta)
 #'
 #' @rdname item_utils
 #' @keywords internal
 #' @export
-try_add_vars <- function(x, ...) {
+try_add_vars <- function(x, ..., var_lst = NULL,
+                         type = c("data_vars", "meta_vars")) {
 
-  if (...length() == 0L) {
+  if (...length() + length(var_lst) == 0L) {
     return(x)
   }
 
@@ -351,9 +352,11 @@ try_add_vars <- function(x, ...) {
 
 #' @keywords internal
 #' @export
-try_add_vars.itm <- function(x, ...) {
+try_add_vars.itm <- function(x, ..., var_lst = NULL,
+                             type = c("data_vars", "meta_vars")) {
 
-  vars <- list(...)
+  type <- match.arg(type)
+  vars <- c(list(...), var_lst)
   nmes <- names(vars)
 
   assert_that(same_length(nmes, vars), is_unique(nmes))
@@ -361,10 +364,11 @@ try_add_vars.itm <- function(x, ...) {
   for (var in nmes) {
 
     cur <- vars[[var]]
+    tmp <- get_itm_var(x, type = type)
 
     if (isFALSE(cur)) {
 
-      x[["vars"]] <- x[["vars"]][setdiff(names(x[["vars"]]), cur)]
+      x[[type]] <- tmp[setdiff(names(tmp), cur)]
 
     } else {
 
@@ -377,19 +381,25 @@ try_add_vars.itm <- function(x, ...) {
         cur <- default_vars(as_src_tbl(x), var)
       }
 
-      cur <- coalesce(x[["vars"]][[var]], cur)
+      cur <- coalesce(tmp[[var]], cur)
 
-      if (is.null(cur)) next
+      if (is.null(cur)) {
+        next
+      }
 
       assert_that(is.string(cur))
 
-      x[["vars"]][[var]] <- cur
+      x[[type]][[var]] <- cur
     }
   }
 
-  if (has_length(x[["vars"]])) {
-    assert_that(is_unique(unlist(x[["vars"]])))
-    x[["vars"]] <- x[["vars"]][order(names(x[["vars"]]))]
+  tmp <- get_itm_var(x, type = type)
+
+  if (has_length(tmp)) {
+
+    assert_that(is_unique(unlist(tmp)))
+
+    x[[type]] <- tmp[order(names(tmp))]
   }
 
   x
@@ -424,31 +434,29 @@ try_add_vars.rec_cncpt <- function(x, ...) x
 #' @export
 try_add_vars.default <- function(x, ...) stop_generic(x, .Generic)
 
-#' @param ... Variable name
-#'
+#' @param var Variable name (`NULL`) returns all available
 #' @rdname item_utils
 #' @keywords internal
 #' @export
-get_itm_var <- function(x, var = NULL) UseMethod("get_itm_var", x)
+get_itm_var <- function(x, var = NULL, type = c("data_vars", "meta_vars")) {
+  UseMethod("get_itm_var", x)
+}
 
 #' @keywords internal
 #' @export
-get_itm_var.itm <- function(x, var = NULL) {
+get_itm_var.itm <- function(x, var = NULL, type = c("data_vars", "meta_vars")) {
 
-  res <- x[["vars"]]
+  res <- x[[match.arg(type)]]
 
   if (is.null(var)) {
-
-    res
-
-  } else {
-
-    if (has_name(res, var)) {
-      res[[var]]
-    } else {
-      NULL
-    }
+    return(res)
   }
+
+  if (has_name(res, var)) {
+    return(res[[var]])
+  }
+
+  NULL
 }
 
 #' @export
@@ -500,8 +508,9 @@ do_callback <- function(x, ...) UseMethod("do_callback", x)
 do_callback.itm <- function(x, ...) {
 
   fun <- str_to_fun(x[["callback"]])
-  var <- x[["vars"]]
   env <- as_src_env(x)
+  var <- c(get_itm_var(x, type = "meta_vars"),
+           get_itm_var(x, type = "data_vars"))
 
   (function(x) {
 
@@ -640,16 +649,16 @@ do_itm_load.default <- function(x, ...) stop_generic(x, .Generic)
 
 #' @export
 id_vars.itm <- function(x) {
-  coalesce(x[["id_var"]], id_vars(as_src_tbl(x)))
+  coalesce(get_itm_var(x, "id_var", "meta_vars"), id_vars(as_src_tbl(x)))
 }
 
 #' @export
 index_var.itm <- function(x) {
-  coalesce(x[["index_var"]], index_var(as_src_tbl(x)))
+  coalesce(get_itm_var(x, "index_var", "meta_vars"), index_var(as_src_tbl(x)))
 }
 
 #' @export
-dur_var.itm <- function(x) x[["dur_var"]]
+dur_var.itm <- function(x) get_itm_var(x, "dur_var", "meta_vars")
 
 #' @export
 interval.itm <- function(x) x[["interval"]]
@@ -658,7 +667,10 @@ interval.itm <- function(x) x[["interval"]]
 meta_vars.itm <- function(x) c(id_vars(x), index_var(x), dur_var(x))
 
 #' @export
-dimnames.itm <- function(x) list(NULL, unlst(x[["vars"]]))
+dimnames.itm <- function(x) {
+  list(NULL, unlst(c(get_itm_var(x, type = "meta_vars"),
+                     get_itm_var(x, type = "data_vars"))))
+}
 
 #' @rdname data_items
 #' @export
