@@ -214,7 +214,7 @@ The final section (\ref{examples}) shows briefly how \pkg{ricu} could be used in
 
 # Data sources
 
-In order to make data available from different data sources, \pkg{ricu} provides abstractions using JSON-formatted configuration files and a set of S3 classes with associated S3 generic functions. This system is designed with extensibility in mind, allowing for incorporation of a wide variety of datasets. Provisions for several large-scale publicly available datasets in terms of required configuration information alongside class-specific implementations of the needed S3 generic functions are part of \pkg{ricu}, opening up access to these datasets. Data itself, however, is not part of \pkg{ricu} but rather can be downloaded from the Internet using tools provided by \pkg{ricu}. While the datasets are publicly available, access has to be granted by the dataset creators individually. Three datasets, MIMIC-III, eICU and HiRID are hosted on PhysioNet \citep{goldberger2000}, access to which requires an [account](https://physionet.org/register/), while the fourth, AmsterdamUMCdb is currently distributed via a separate platform, requiring a [download link](https://amsterdammedicaldatascience.nl/#amsterdamumcdb).
+In order to make data available from different data sources, \pkg{ricu} provides abstractions using JSON-formatted configuration files and a set of S3 classes with associated S3 generic functions. This system is designed with extensibility in mind, allowing for incorporation of external datasets that are sufficiently similar in format to the ones already included. Provisions for several large-scale publicly available datasets in terms of required configuration information alongside class-specific implementations of the needed S3 generic functions are part of \pkg{ricu}, opening up access to these datasets. Data itself, however, is not part of \pkg{ricu} but rather can be downloaded from the Internet using tools provided by \pkg{ricu}. While the datasets are publicly available, access has to be granted by the dataset creators individually. Three datasets, MIMIC-III, eICU and HiRID are hosted on PhysioNet \citep{goldberger2000}, access to which requires an [account](https://physionet.org/register/). The fourth dataset, AmsterdamUMCdb, is currently distributed via a separate platform, requiring a [download link](https://amsterdammedicaldatascience.nl/#amsterdamumcdb).
 
 For both MIMIC-III and eICU, small subsets of data are available as demo datasets that do not require credentialed access to PhysioNet. As the terms for distribution of these demo datasets are less restrictive, they can be made available as data packages \pkg{mimic.demo} and \pkg{eicu.demo}. Due to size constraints, however they are not available via CRAN, but can be installed from Github as
 
@@ -231,7 +231,7 @@ Provisions for datasets configured to be attached during package loading are mad
 
 Contingent on being granted access by the data owners, several large-scale ICU datasets collected from multiple hospitals in the US and Europe can be set up for access using \pkg{ricu} with minimal user effort. Download requires a stable Internet connection, as well as 50 to 100 GB of temporary disk storage for unpacking and preparing the data for efficient access. In terms of permanent storage, 5 to 10 GB per dataset are required, while memory requirements permit importing (and working with) even the largest tables using Laptop class hardware as only subsets of rows are read at once.
 
-The following paragraphs serve to give quick introductions to the included datasets to offer some guidance, outlining some strengths and weaknesses of each of the datasets. Especially the PhysioNet datasets [MIMIC-III](https://mimic.physionet.org/about/mimic/) and [eICU](https://eicu-crd.mit.edu/about/eicu/) offer good documentation on the respective websites. This section is concluded with a table summarizing similarities and differences among the datasets, outlined in the following paragraphs (see table \ref{tab:datasets}).
+The following paragraphs serve to give quick introductions to the included datasets to offer some guidance, outlining some strengths and weaknesses of each of the datasets. Especially the PhysioNet datasets [MIMIC-III](https://mimic.physionet.org/about/mimic/) and [eICU](https://eicu-crd.mit.edu/about/eicu/) offer good documentation on the respective websites. This section is concluded with a table summarizing similarities and differences among the datasets, outlined in the following paragraphs (see Table \ref{tab:datasets}).
 
 ### MIMIC-III
 
@@ -394,8 +394,8 @@ capt <- paste(
 tbl <- kable(summ, format = "latex", escape = FALSE, booktabs = TRUE,
              caption = capt, label = "datasets")
 tbl <- pack_rows(tbl, "Admission counts", 4, 6)
-tbl <- pack_rows(tbl, "Stay lengths [hr]", 7, 8)
-tbl <- pack_rows(tbl, "Frequency [1/hr]", 9, 10)
+tbl <- pack_rows(tbl, "Stay lengths [days]", 7, 8)
+tbl <- pack_rows(tbl, "Frequency [1/hour]", 9, 10)
 tbl <- footnote(tbl, symbol = paste(
   "These values represent the number of atomic concepts per data source.",
   "Additionally,", n_rec_cpt, "recursive concepts are available, which",
@@ -434,7 +434,7 @@ By using \pkg{rlang} pronouns (`.data` and `.env`), the distinction can readily 
 
 ### Data source set-up
 
-In order to make a dataset accessible to \pkg{ricu}, three steps are necessary, each handled by an exported S3 generic function: `download_scr()`, `import_src()` and `attach_src()`. The first two steps, download and import, are one-time procedures, whereas attaching is carried out every time the package namespace is loaded. By default, all data sources known to \pkg{ricu} are configured to be attached and in case some data is missing for a given data source, the missing data is downloaded and imported on first access. For data download, several environment variables can be configured:
+In order to make a dataset accessible to \pkg{ricu}, three steps are necessary, each handled by an exported S3 generic function: `download_src()`, `import_src()` and `attach_src()`. The first two steps, download and import, are one-time procedures, whereas attaching is carried out every time the package namespace is loaded. By default, all data sources known to \pkg{ricu} are configured to be attached and in case some data is missing for a given data source, the missing data is downloaded and imported on first access. For data download, several environment variables can be configured:
 
 * `RICU_PHYSIONET_USER`/`RICU_PHYSIONET_PASS`: PhysioNet user name and password with access to the requested dataset.
 * `RICU_AUMC_TOKEN`: Download token, extracted from the download URL received when requesting data access.
@@ -470,7 +470,7 @@ load_difftime("admissions", "mimic_demo", subject_id > 44000,
               cols = c("hadm_id", "admittime", "dischtime"))[]
 ```
 
-The function `load_difftime()` is expected to return timestamps as base R `difftime` vectors (using `mins` as time unit). The argument `id_hint` can be used to specify a preferred ID system but if not available in raw data, `load_difftime()` will return data using the ID system with highest cardinality. In the above example, if `icustay_id` were requested, data would be returned using `hadm_id`, whereas the a `subject_id` request would be honored, as these two ID columns are available for the `admissions` table.
+The function `load_difftime()` is expected to return timestamps as base R `difftime` vectors (using `mins` as time unit). The argument `id_hint` can be used to specify a preferred ID system but if not available in raw data, `load_difftime()` will return data using the ID system with highest cardinality. In the above example, if `icustay_id` were requested, data would be returned using `hadm_id`, whereas a `subject_id` request would be honored, as these two ID columns are available for the `admissions` table.
 
 Building on `load_difftime()` functionality, `load_id()` (and analogously `load_ts()`) returns an `id_tbl` (or `ts_tbl`) object with the requested ID system (passed as `id_var` argument). This uses raw data IDs if available or calls `change_id()` in order to convert to the desired ID system. Similarly, where `load_difftime()` returns data with fixed time interval of one minute, `load_id()` allows for arbitrary time intervals (using `change_interval()`).
 
