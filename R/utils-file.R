@@ -168,9 +168,9 @@ data_pkg_avail <- function(src) {
   }
 
   repos <- packageDescription("ricu", fields = "Additional_repositories")
-  pkgs  <- available.packages(repos = repos)
 
-  sub("_", ".", src) %in% pkgs[, "Package"]
+  curl::has_internet() &&
+    sub("_", ".", src) %in% available.packages(repos = repos)[, "Package"]
 }
 
 #' @importFrom utils install.packages
