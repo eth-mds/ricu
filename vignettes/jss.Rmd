@@ -50,6 +50,9 @@ preamble: >
   \usepackage{booktabs}
   \usepackage{makecell}
   \usepackage{threeparttablex}
+  \usepackage{tikz}
+  \usepackage{pgf}
+  \usetikzlibrary{positioning,shadows,arrows,shapes,shapes.arrows,shapes.geometric,arrows.meta,trees,shapes.misc}
 vignette: >
   %\VignetteIndexEntry{Accessing ICU data with R (Bennett & Plečko, JSS 2021)}
   %\VignetteEngine{knitr::rmarkdown}
@@ -67,6 +70,7 @@ pkgdown:
 
 ```{r setup, include = FALSE}
 knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_chunk$set(dev = "tikz")
 
 library(ricu)
 library(data.table)
@@ -406,15 +410,123 @@ tbl <- footnote(tbl, symbol = paste(
 tbl
 ```
 
-## Implementation details
+## Implementation details and external datasets
 
-Every dataset is represented by an environment with class attributes and associated metadata objects stored as object attributes to that environment. Dataset environments all inherit from `src_env` and from any number of class names constructed from data source name(s) with a suffix `_env` attached. The environment representing MIMIC-III, for example inherits from `src_env` and `mimic_env`, while the corresponding demo dataset inherits from `src_env`, `mimic_env` and `mimic_demo_env`. These sub-classes are later used for tailoring the process of data loading to particularities of individual datasets.
+In this subsection we cover the implementation details of the \pkg{ricu} and along the way explain which components of the implementation are required for adding an external dataset. Throughout the subsection, we make use of the graphical representation in Figure \ref{fig:infrastructure}, which represents some the steps necessary to load and preprocess the data. Each arrow in the figure represents a distinct step in the loading process and we discuss these steps in order. Above the arrow are indicated the functions which are used for each step, whereas below the arrow are indicated specific configuration settings or environment variables which are need for the specific step (in red).
+
+\begin{figure}
+	\centering
+	\begin{tikzpicture}[
+	  every node/.style={draw=none, align=center, fill=none, text centered, anchor=center,font=\it},
+	  every label/.style={circle, draw, fill = yellow},
+	  f1/.style={draw=,fill=gray!15,thick,inner sep=3pt,minimum width=10em, minimum height=4em, align=center, text centered},
+	  f2/.style={draw=none,fill=red!15,thick,inner sep=3pt,minimum width=5em,  align=center, text centered}
+	]
+
+	\node [f1, label={above left:{a}}] (ricu) at (0, 19) {\texttt{ricu} installed\\ no data};
+		\node [f1, label={above left:{b}}] (csv) at (10, 19) {unconverted tables\\ (.tar or .csv)};
+		\node [f1, label={above left:{c}}] (raw) at (0, 12) {raw tables\\ (.fst)};
+		% Refined Observational
+		\node [f1, label={above left:{d}}] (inmem) at (10, 12) {in-memory table\\
+		 (data.table)};
+		\node [f1, label={above left:{e}}] (reltime) at (0, 5) {in-memory table\\ relative timestamps\\ minute resolution};
+		\node [f1, label={above left:{f}}] (requestID) at (10, 5) {in-memory table\\ desired time stamps\\ requested ID system};
+
+		\draw [-Stealth] (ricu) to [bend right = 0] node[above, rotate=0]{\texttt{download\_src()} / manual} node[f2, below, rotate=0]{\texttt{RICU\_PHYSIONET\_USER}\\\texttt{RICU\_PHYSIONET\_PASS} \\ \texttt{RICU\_AUMC\_TOKEN}} (csv);
+		\draw [-Stealth] (csv) to [bend right = 0] node[above, rotate=35]{\texttt{import\_src()}} node[f2, below, rotate=35]{table config} (raw);
+		\draw [-Stealth] (raw) to [bend right = 0] node[above, rotate=0]{\texttt{subset()} / \texttt{load\_src()}} (inmem);
+		\draw [-Stealth] (inmem) to [bend left = 0] node[above, rotate=35]{\texttt{load\_difftime()}} node[f2, below, rotate=35]{\texttt{load\_difftime()} method\\ ID config, column config} (reltime);
+		\draw [-Stealth] (reltime) to [bend right = 0] node[above, rotate=0]{\texttt{load\_id()} / \texttt{load\_ts()}} node[f2, below, rotate=0]{ID conversion} (requestID);
+
+	\end{tikzpicture}
+	\caption{A graphical representation of the data-processing infrastructure of the \pkg{ricu} package.}
+	\label{fig:infrastructure}
+\end{figure}
+
+\subsubsection{Data download} \label{loading:download}
+The first step towards loading data is data download. For the datasets included in \pkg{ricu}, the S3 generic `download_src()` can be used. Prior to using the function, the following environment variables need to be set:
+
+* `RICU_PHYSIONET_USER`/`RICU_PHYSIONET_PASS`: PhysioNet user name and password with access to the requested dataset.
+* `RICU_AUMC_TOKEN`: Download token, extracted from the download URL received when requesting data access.
+If above mentioned access credentials are not available as environment variables, the user is queried in interactive sessions.
+
+If the user is interested in adding an external dataset, then the data download step should be done manually. The environment variable `RICU_DATA_PATH` contains the data storage location (can also be queried by calling `data_dir()`), in which a folder with the dataset name should be created and raw files placed within. This environment variable can be customized and set by the user.
+
+Each of the supported \pkg{ricu} datasets requires 5-10 GB disk space for permanent storage. Additionally, 50-100 GB of temporary disk storage is required during download and import of any of the datasets. Memory requirements are kept low by performing all set-up operations only on subsets of rows at the time, such that 8 GB of memory should suffice. Initial data source set up (depending on available download speeds and CPU/disk type) may take upwards of an hour per dataset.
+
+\subsubsection{Data import} \label{loading:import}
+After successful data download, importing prepares tables for efficient random row-access, for which the raw data format (.csv) is not well suited. For the import step, the S3 generic `import_src()` is used. Tables are read in using \pkg{readr} \citep{hester2020}, potentially (re-)partitioned row-wise, and re-saved using \pkg{fst}. Finally, attaching a dataset (using `attach_src()`) creates a corresponding `src_env` object, which, together with associated meta-data, is used by \pkg{ricu} to run queries against the data. Here it is worth mentioning another two environment variables that play an important role:
+
+* `RICU_CONFIG_PATH`: Comma-separated paths to directories containing configuration files (in addition to the default location; retrievable using `config_paths()`).
+* `RICU_SRC_LOAD`: Comma-separated data source names that are set up for being automatically attached on namespace loading (the current set of data sources is available as `auto_attach_srcs()`).
+
+Data source environments (and corresponding `src_tbl` objects) are constructed using source configuration objects: list-based structures, inheriting from `src_cfg` and from any number of data source-specific class names with suffix `_cfg` appended (as discussed at the beginning of Section \ref{implementation-details}). The exported function `load_src_cfg()` reads a JSON formatted file using \pkg{jsonlite} \citep{ooms2014}, and creates a `src_cfg` object per datasource and further therein contained objects.
+
+```{r mimic-cfg}
+cfg <- load_src_cfg("mimic_demo")
+str(cfg, max.level = 2L, width = 70L)
+mi_cfg <- cfg[["mimic_demo"]]
+```
+
+In addition to required fields `name` and `prefix` (used as class prefix), as well as further arbitrary fields (`url` in this case), several additional configuration objects are part of `src_cfg`: `id_cfg`, `col_cfg` and `tbl_cfg`. At the import stage, the `tbl_cfg` object plays an important role, which we now explain.
+
+#### Table configuration
+
+Objects of type `tbl_cfg` are used during the initial set-up of a data source. In order to create a representation of a table that is accessible from \pkg{ricu} from raw data, several key pieces of information are required:
+
+* File name(s): In the simplest case, a single file corresponds to a single table. Other scenarios that have been encountered (and are therefore handled) include tables partitioned into multiple files and .tar archives containing multiple tables.
+
+* Column specification: For each column, the expected data type has to be known, as well as a pair of names, one corresponding to the raw data column name and one corresponding to the column name to be used within \pkg{ricu}.
+
+* (Optional) number of rows: Used as sanity check whenever available.
+
+* (Optional) partitioning information: For very *long* tables it can be useful to specify a row-partitioning. This currently is only possible by applying a vector of breakpoints to a single numeric column, thereby defining a grouping.
+
+```{r mimic-tbl}
+as_tbl_cfg(mi_cfg)
+```
+
+For the `chartevents` table of the MIMIC-III demo dataset, for example, rows are partitioned into two groups, while all other tables are represented by a single partition. Furthermore, the expected number of rows is unknown (`??`) as this is missing from the corresponding `tbl_cfg` object.
+For an external dataset, the table configurations of all tables are needed for the import step (indicated in red in the $b \to c$ edge in Figure \ref{fig:infrastructure}). These table configurations need to be specified in the JSON file `data-sources.json` which is located at `RICU_CONFIG_PATH`. An example of what an entry would look like, for the `admissions` table of the AUMC database is
+```{}
+"admissions": {
+        "files": "admissions.csv",
+        "defaults": {
+          "index_var": "admittedat",
+          "time_vars": ["admittedat", "dischargedat", "dateofdeath"]
+        },
+        "num_rows": 23106,
+        "cols": {
+          "patientid": {
+            "name": "patientid",
+            "spec": "col_integer"
+          },
+          "admissionid": {
+            "name": "admissionid",
+            "spec": "col_integer"
+          },
+          "admissioncount": {
+            "name": "admissioncount",
+            "spec": "col_integer"
+          },
+          "location": {
+            "name": "location",
+            "spec": "col_character"
+          },
+          ...
+}
+```
+For inspecting the full configuration file, we invite the reader to have a look at our repository for adding an [external dataset](https://github.com/eth-mds/aumc). 
+
+Once the import step is successfully finished, each dataset is represented by an environment with class attributes and associated metadata objects stored as object attributes to that environment. Dataset environments all inherit from `src_env` and from any number of class names constructed from data source name(s) with a suffix `_env` attached. The environment representing MIMIC-III, for example inherits from `src_env` and `mimic_env`, while the corresponding demo dataset inherits from `src_env`, `mimic_env` and `mimic_demo_env`. These sub-classes are later used for tailoring the process of data loading to particularities of individual datasets.
 
 A `src_env` contains an active binding per contained table, which returns a `src_tbl` object representing the requested table. As is the case for `src_env` objects, `src_tbl` objects inherit from additional classes such that certain per-dataset behavior can be customized. The `admissions` table of the MIMIC-III demo dataset for example inherits from `mimic_demo_tbl` and `mimic_tbl` (alongside classes `src_tbl` and `prt`).
 
 ```{r mimic-adm, eval = srcs_avail("mimic_demo")}
 mimic_demo$admissions
 ```
+
+\subsubsection{Data loading} \label{loading:basic}
 
 Powered by the \pkg{prt} \citep{bennett2021} package, `src_tbl` objects represent row-partitioned tabular data stored as multiple binary files created by the \pkg{fst} \citep{klik2020} package. In addition to standard subsetting, `prt` objects can be subsetted via the base R S3 generic function `subset()` and using non-standard evaluation:
 
@@ -432,33 +544,16 @@ subset(mimic_demo$admissions, .data$subject_id %in% .env$subject_id,
 
 By using \pkg{rlang} pronouns (`.data` and `.env`), the distinction can readily be made between a name referring to an object within the context of the data and an object within the context of the calling environment.
 
-### Data source set-up
-
-In order to make a dataset accessible to \pkg{ricu}, three steps are necessary, each handled by an exported S3 generic function: `download_src()`, `import_src()` and `attach_src()`. The first two steps, download and import, are one-time procedures, whereas attaching is carried out every time the package namespace is loaded. By default, all data sources known to \pkg{ricu} are configured to be attached and in case some data is missing for a given data source, the missing data is downloaded and imported on first access. For data download, several environment variables can be configured:
-
-* `RICU_PHYSIONET_USER`/`RICU_PHYSIONET_PASS`: PhysioNet user name and password with access to the requested dataset.
-* `RICU_AUMC_TOKEN`: Download token, extracted from the download URL received when requesting data access.
-
-If any of the required access credentials are not available as environment variables, the user is queried in interactive sessions. Each of the datasets requires 5-10 GB disk space for permanent storage. Additionally, 50-100 GB of temporary disk storage is required during download and import of any of the datasets. Memory requirements are kept low by performing all set-up operations only on subsets of rows at the time, such that 8 GB of memory should suffice. Initial data source set up (depending on available download speeds and CPU/disk type) may take upwards of an hour per dataset.
-
-Further environment variables can be set to customize certain aspects of \pkg{ricu} data handling:
-
-* `RICU_DATA_PATH`: Data storage location (can be queried by calling `data_dir()`).
-* `RICU_CONFIG_PATH`: Comma-separated paths to directories containing configuration files (in addition to the default location; retrievable using `config_paths()`).
-* `RICU_SRC_LOAD`: Comma-separated data source names that are set up for being automatically attached on namespace loading (the current set of data sources is available as `auto_attach_srcs()`).
-
-After successful data download, importing prepares tables for efficient random row-access, for which the raw data format (.csv) is not well suited. Tables are read in using \pkg{readr} \citep{hester2020}, potentially (re-)partitioned row-wise, and re-saved using \pkg{fst}. Finally, attaching a dataset creates a corresponding `src_env` object which together with associated meta-data is used by \pkg{ricu} to run queries against the data.
-
-### Data loading
-
-The lowest level of data access is direct subsetting of `src_tbl` objects as shown at the start of this section (\ref{implementation-details}). Building on that, several S3 generic functions successively homogenize data representations, starting with `load_src()`, which provides a string-based interface to `subset()` for all but the row-subsetting expression.
+The lowest level of data access is direct subsetting of `src_tbl` objects as shown above. Building on that, several S3 generic functions successively homogenize data representations, starting with `load_src()`, which provides a string-based interface to `subset()` for all but the row-subsetting expression.
 
 ```{r load-src, eval = srcs_avail("mimic_demo")}
 load_src("admissions", "mimic_demo", subject_id > 44000,
          cols = c("hadm_id", "admittime", "dischtime"))
 ```
 
-As data sources differ in their representation of time-stamps, a next step in data homogenization is to converge to a common format: the time difference to the origin time-point of a given ID system.
+\subsubsection{Data loading - relative times in minutes} \label{loading:relative}
+
+As data sources differ in their representation of time-stamps, a next step in data homogenization is to converge to a common format: the time difference to the origin time-point of a given ID system. For doing so, the S3 generic `load_difftime()` is used.
 
 ```{r load-dt, eval = srcs_avail("mimic_demo")}
 load_difftime("admissions", "mimic_demo", subject_id > 44000,
@@ -469,9 +564,70 @@ load_difftime("admissions", "mimic_demo", subject_id > 44000,
 load_difftime("admissions", "mimic_demo", subject_id > 44000,
               cols = c("hadm_id", "admittime", "dischtime"))[]
 ```
+The function `load_difftime()` is expected to return timestamps as base R `difftime` vectors (using `mins` as time unit). The argument `id_hint` can be used to specify a preferred ID system, but if not available in raw data, `load_difftime()` will return data using the ID system with highest cardinality. In the above example, if `icustay_id` were requested, data would be returned using `hadm_id`, whereas a `subject_id` request would be honored, as these two ID columns are available for the `admissions` table.
 
-The function `load_difftime()` is expected to return timestamps as base R `difftime` vectors (using `mins` as time unit). The argument `id_hint` can be used to specify a preferred ID system but if not available in raw data, `load_difftime()` will return data using the ID system with highest cardinality. In the above example, if `icustay_id` were requested, data would be returned using `hadm_id`, whereas a `subject_id` request would be honored, as these two ID columns are available for the `admissions` table.
+When adding an external dataset, note that a method for the `load_difftime()` needs to be added. Furthermore, an ID configuration specification and a default column configuration specification and are necessary. We now explain what the two entail.
 
+#### ID configuration
+
+An `id_cfg` object contains an ordered set of key-value pairs representing patient ID systems in a dataset. An implicit assumption currently is that a given patient ID system is used consistently throughout a dataset, meaning that for example an ICU stay ID is always referred to by the same name throughout all tables containing a corresponding column. Owing to the relational origins of these datasets this has been fulfilled in all instances encountered so far. In MIMIC-III demo, ID systems
+
+```{r mimic-ids}
+as_id_cfg(mi_cfg)
+```
+
+are available, allowing for identification of individual patients, their (potentially multiple) hospital admissions over the course of the years and their corresponding ICU admissions (as well as potential re-admissions). Ordering corresponds to cardinality: moving to larger values implies moving along a one-to-many relationship. This information is used in data-loading, whenever the target ID system is not contained in the raw data. To specify the ID configuration of an external dataset, the appropriate information needs to be included in the `data-sources.json` file. For the AUMCdb, the entry would need to look as follows:
+```
+"id_cfg": {
+      "patient": {
+        "id": "patientid",
+        "position": 1,
+        "start": "firstadmittedat",
+        "end": "dateofdeath",
+        "table": "admissions"
+      },
+      "icustay": {
+        "id": "admissionid",
+        "position": 2,
+        "start": "admittedat",
+        "end": "dischargedat",
+        "table": "admissions"
+      }
+    }
+```
+In this dataset, only patients and their ICU stays can be distinguished (it is not possible to distinguish hospital re-admissions).
+
+#### Default column configuration
+
+During data loading, certain columns need to be used, as described above, to identify patient ICU or hospital stays. Another set of columns might encode timestamp information, and so on. Motivated by this, the following column keys are currently in use throughout \pkg{ricu}, but this set of keys can be extended to arbitrary new values:
+
+* `id_var`: In case a table does not contain at least one ID column corresponding to one of the ID systems specified as `id_cfg`, the default ID column can be set on a per-table basis as `id_var`^[This for example is the case for the `d_items` table in MIMIC-III, which does not contain any patient related data, but holds information on items encoding types of measurements, procedures, etc., used throughout other tables holding actual patient data for identifying the type data point, in line with the relational structure of the data source.].
+* `index_var`: A column that is used to define an ordering in time over rows, thereby providing a time-series index^[For the MIMIC-III table `inputevents_mv`, one of the four available time variables lends itself to be used as index variable more than the other candidates and therefore is set as default.].
+* `time_vars`: Columns which will be treated as time variables (important for converting between ID systems for example), but not necessarily as time-series indices^[In case of the `admissions` table in MIMIC-III for example, a total of five columns are considered to be time variables, none of which stands out as potential `index_var`.].
+* `unit_var`: Used in concept loading (more specifically for `num_cncpt` concepts, see Section \ref{concept-specification}) to identify columns that represent unit of measurement information.
+* `val_var`: Again used when loading data concepts, this identified a default value variable in a table, representing the column of interest to be used as returned data column. 
+
+This per-table set of key-value pairs specifies column defaults as a `col_cfg` object. Each key describes a type of column with special meaning and the corresponding value specifies said column for a given table.
+
+```{r mimic-col}
+as_col_cfg(mi_cfg)
+```
+
+While `id_var`, `index_var` and `time_vars` are used to provide sensible defaults to functions used for general data loading, `unit_var`, `val_var`, as well as potential user-defined defaults are only used in concept loading (see Section \ref{clinical-concepts}) and therefore need not be prioritized when integrating new data sources until data concepts have been mapped.
+
+Once again, for an external dataset, this information needs to be specified in the `data-sources.json` file, within a `"defaults"` field for each specific table. In the case of `admissions` table of AUMCdb, it looks as follows:
+```{}
+"admissions": {
+        "files": "admissions.csv",
+        "defaults": {
+          "index_var": "admittedat",
+          "time_vars": ["admittedat", "dischargedat", "dateofdeath"]
+        },
+        ...
+}
+```
+
+\subsubsection{Data loading - desired relative times and ID system} \label{loading:desired}
 Building on `load_difftime()` functionality, `load_id()` (and analogously `load_ts()`) returns an `id_tbl` (or `ts_tbl`) object with the requested ID system (passed as `id_var` argument). This uses raw data IDs if available or calls `change_id()` in order to convert to the desired ID system. Similarly, where `load_difftime()` returns data with fixed time interval of one minute, `load_id()` allows for arbitrary time intervals (using `change_interval()`).
 
 ```{r load-id, eval = srcs_avail("mimic_demo")}
@@ -484,69 +640,27 @@ load_id("admissions", "mimic_demo", subject_id > 44000,
         cols = c("admittime", "dischtime"), id_var = "hadm_id")[]
 ```
 
-### Data source configuration
+The call to `change_id()` helper function requires a construction of a table which contains the mapping between different ID systems, together with information about how . We now explain how such an ID conversion table can be constructed.
 
-Data source environments (and corresponding `src_tbl` objects) are constructed using source configuration objects: list-based structures, inheriting from `src_cfg` and from any number of data source-specific class names with suffix `_cfg` appended (as discussed at the beginning of Section \ref{implementation-details}). The exported function `load_src_cfg()` reads a JSON formatted file using \pkg{jsonlite} \citep{ooms2014}, and creates a `src_cfg` object per datasource and further therein contained objects.
-
-```{r mimic-cfg}
-cfg <- load_src_cfg("mimic_demo")
-str(cfg, max.level = 2L, width = 70L)
-mi_cfg <- cfg[["mimic_demo"]]
+#### ID conversion
+We first show what the ID conversion table looks like on the MIMIC-III demo dataset. It can be obtained by applying the `id_win_helper()` function:
+```{r, eval = srcs_avail("mimic_demo"), include = srcs_avail("mimic_demo")}
+id_win_helper(mimic_demo)
 ```
+Such a conversion table might be used in various places in the data loading process
+For an external dataset, the user needs to write a method for the S3 `id_win_helper()` generic. As the construction of such a table can be expensive (involving several merge operations of tables with 10^4^-10^5^ rows) and could be used frequently (potentially with every single data request), the resulting table will be internally cached in memory, with session persistence.
 
-In addition to required fields `name` and `prefix` (used as class prefix), as well as further arbitrary fields (`url` in this case), several additional configuration objects are part of `src_cfg`: `id_cfg`, `col_cfg` and `tbl_cfg`.
+## Adding external datasets: a recap
 
-#### ID configuration
+In order to add a new dataset to \pkg{ricu}, several aspects outlined in the previous subsections require consideration. The code for integrating AmsterdamUMCdb as an external dataset is available from [Github](https://github.com/eth-mds/aumc). While this is no longer needed for using the `aumc` data source, which is integrated in \pkg{ricu}, the repository serves as template to integration of new datasets. We now recap the most important components of adding an external datasets, referencing subsections in which they are discussed:
 
-An `id_cfg` object contains an ordered set of key-value pairs representing patient ID systems in a dataset. An implicit assumption currently is that a given patient ID system is used consistently throughout a dataset, meaning that for example an ICU stay ID is always referred to by the same name throughout all tables containing a corresponding column. Owing to the relational origins of these datasets this has been fulfilled in all instances encountered so far. In MIMIC-III, ID systems
-
-```{r mimic-ids}
-as_id_cfg(mi_cfg)
-```
-
-are available, allowing for identification of individual patients, their (potentially multiple) hospital admissions over the course of the years and their corresponding ICU admissions (as well as potential re-admissions). Ordering corresponds to cardinality: moving to larger values implies moving along a one-to-many relationship. This information is used in data-loading, whenever the target ID system is not contained in the raw data.
-
-#### Default column configuration
-
-Again used in data loading, this per-table set of key-value pairs specifies column defaults as `col_cfg` object. Each key describes a type of column with special meaning and the corresponding value specifies said column for a given table.
-
-```{r mimic-col}
-as_col_cfg(mi_cfg)
-```
-
-The following column defaults are currently in use throughout \pkg{ricu} but the set of keys can be extended to arbitrary new values:
-
-* `id_var`: In case a table does not contain at least one ID column corresponding to one of the ID systems specified as `id_cfg`, the default ID column can be set on a per-table basis as `id_var`^[This for example is the case for the `d_items` table in MIMIC-III, which does not contain any patient related data, but holds information on items encoding types of measurements, procedures, etc., used throughout other tables holding actual patient data for identifying the type data point, in line with the relational structure of the data source.].
-* `index_var`: A column that is used to define an ordering in time over rows, thereby providing a time-series index^[For the MIMIC-III table `inputevents_mv`, one of the four available time variables lends itself to be used as index variable more than the other candidates and therefore is set as default.].
-* `time_vars`: Columns which will be treated as time variables (important for converting between ID systems for example), but not as time-series indices^[In case of the `admissions` table in MIMIC-III for example, a total of five columns are considered to be time variables, none of which stands out as potential `index_var`.].
-* `unit_var`: Used in concept loading (more specifically for `num_cncpt` concepts, see Section \ref{concept-specification}) to identify columns that represent unit of measurement information.
-* `val_var`: Again used when loading data concepts, this identified a default value variable in a table, representing the column of interest to be used as returned data column.
-
-While `id_var`, `index_var` and `time_vars` are used to provide sensible defaults to functions used for general data loading (Section \ref{data-loading}), `unit_var`, `val_var`, as well as potential user-defined defaults are only used in concept loading (see Section \ref{clinical-concepts}) and therefore need not be prioritized when integrating new data sources until data concepts have been mapped.
-
-#### Table configuration
-
-Finally, `tbl_cfg` objects are used during the initial set-up of a data source. In order to create a representation of a table that is accessible from \pkg{ricu} from raw data, several key pieces of information are required:
-
-* File name(s): In the simplest case, a single file corresponds to a single table. Other scenarios that have been encountered (and are therefore handled) include tables partitioned into multiple files and .tar archives containing multiple tables.
-
-* Column specification: For each column, the expected data type has to be known, as well as a pair of names, one corresponding to the raw data column name and one corresponding to the column name to be used within \pkg{ricu}.
-
-* (Optional) number of rows: Used as sanity check whenever available.
-
-* (Optional) partitioning information: For very *long* tables it can be useful to specify a row-partitioning. This currently is only possible by applying a vector of breakpoints to a single numeric column, thereby defining a grouping.
-
-```{r mimic-tbl}
-as_tbl_cfg(mi_cfg)
-```
-
-For the `chartevents` table of the MIMIC-III demo dataset, for example, rows are partitioned into two groups, while all other tables are represented by a single partition. Furthermore, the expected number of rows is unknown (`??`) as this is missing from the corresponding `tbl_cfg` object.
-
-## Adding external datasets
-
-In order to add a new dataset to \pkg{ricu}, several aspects outlined in the previous subsections require consideration. For illustration purposes, code for integrating AmsterdamUMCdb as external dataset is available from [Github](https://github.com/eth-mds/aumc). While this is no longer needed for using the `aumc` data source, the repository will remain as it might serve as template to integration of new datasets.
-
-Using a configuration file as described in Section \ref{data-source-configuration} and pointing the `RICU_CONFIG_PATH` environment variable at its location, data can be prepared for use with \pkg{ricu} using `import_src()` and made available to \pkg{ricu} using `attach_src()`. In addition to providing a configuration file, dataset-specific implementations of some of the S3 generic functions involved in data-loading might be required. In the case of AmsterdamUMCdb, a class-specific implementation of `load_difftime()` is required, as raw time-stamps are recorded in milliseconds (instead of minutes), as well as a class-specific implementation of the S3 generic function `id_win_helper()`^[This method is used as part of `change_id()` which is called whenever the requested ID system is not available in raw data. A component central to conversion between patient ID systems is a table which contains patient IDs as columns alongside columns with start and end-points for each, thereby specifying a mapping between ID systems. Dataset-specific construction of such a table is handled by the S3 generic function `id_win_helper()`. As construction of such tables can be expensive (involving several merge operations of tables with 10^4^-10^5^ rows) and used frequently (potentially with every single data request), the resulting table is cached in memory with session persistence.].
+1. Placing the raw data in a folder in the location queried by `data_dir()` (see Section \ref{loading:download}),
+2. A `load_difftime()` class-specific method for the external dataset (see Section \ref{loading:relative}),
+3. `data-sources.json` configuration file, located in a folder included in `RICU_CONFIG_PATH`, containing:
+    i. Table configuration (see Section \ref{loading:import}),
+    ii. ID configuration (see Section \ref{loading:relative}),
+    iii. Default column configuration (see Section \ref{loading:desired}),
+4. An ID conversion table, obtained by writing a class-specific method for the S3 generic `id_win_helper()` (see Section \ref{loading:desired}).
 
 # Data concepts
 
