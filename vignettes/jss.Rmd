@@ -365,13 +365,12 @@ summarize <- function(src, avail) {
     `Lab tests\n(bilirubin)` = as_quant(lab)
   )
 }
-
-if (srcs_avail(c("mimic", "eicu", "hirid", "aumc"))) {
-  srcs <- c("MIMIC", "eICU", "HiRID", "AUMC")
-} else {
-  srcs <- c("MIMIC (demo)", "eICU (demo)")
-}
-
+# if (srcs_avail(c("mimic", "eicu", "hirid", "aumc"))) {
+#   srcs <- c("MIMIC", "eICU", "HiRID", "AUMC")
+# } else {
+#   srcs <- c("MIMIC (demo)", "eICU (demo)")
+# }
+srcs <- c("MIMIC (demo)", "eICU (demo)")
 dict <- load_dictionary(sub(" \\(demo\\)$", "_demo", tolower(srcs)))
 avai <- concept_availability(dict, include_rec = FALSE)
 summ <- vapply(sub(" \\(demo\\)$", "_demo", tolower(srcs)), summarize,
@@ -735,27 +734,29 @@ Callback functions can become rather involved (especially for more complex conce
 In order to briefly illustrate how \pkg{ricu} could be applied to real-world clinical questions, two toy examples are provided in the following sections. While the first example fully relies on data concepts that are included with \pkg{ricu}, the second one explores both how some data pre-processing can be added to an existing concept by creating a new `rec_cncpt` and how to create an new data concept altogether.
 
 ```{r src-sel-eval, echo = FALSE}
-eval_next <- demo_src_avail("mimic", msg = TRUE)
+eval_next <- srcs_avail("mimic_demo")
 ```
 
 ## Lactate and mortality
 
-First, we investigate the association of lactate levels and mortality. This problem has been studied before and it is widely accepted that both static and dynamic lactate indices are associated with increased mortality \citep{haas2016, nichol2011, van2013}. In order to model this relationship, we fit a time-varying proportional hazards Cox model \citep{therneau2000, therneau2015}, which includes the SOFA score as a general predictor of illness severity, using MIMIC-III data. `r if (srcs_avail("mimic")) "Furthermore, for the sake of this example, we are only interested in patients admitted from 2008 onwards of ages 25 to 65 years old."`
+First, we investigate the association of lactate levels and mortality. This problem has been studied before and it is widely accepted that both static and dynamic lactate indices are associated with increased mortality \citep{haas2016, nichol2011, van2013}. In order to model this relationship, we fit a time-varying proportional hazards Cox model \citep{therneau2000, therneau2015}, which includes the SOFA score as a general predictor of illness severity, using MIMIC-III demo data. 
 
-```{r cox-full, eval = srcs_avail("mimic"), include = srcs_avail("mimic")}
-src <- "mimic"
+<!-- `r if (srcs_avail("mimic")) "Furthermore, for the sake of this example, we are only interested in patients admitted from 2008 onwards of ages 25 to 65 years old."` -->
 
-cohort <- load_id("icustays", src, dbsource == "metavision",
-                  cols = NULL)
-cohort <- load_concepts("age", src, patient_ids = cohort,
-                        verbose = FALSE)
+<!-- ```{r cox-full, eval = srcs_avail("mimic"), include = srcs_avail("mimic")} -->
+<!-- src <- "mimic" -->
 
-dat <- load_concepts(c("lact", "death", "sofa", "sex"), src,
-                     patient_ids = cohort[age > 25 & age < 65],
-                     verbose = FALSE)
-```
+<!-- cohort <- load_id("icustays", src, dbsource == "metavision", -->
+<!--                   cols = NULL) -->
+<!-- cohort <- load_concepts("age", src, patient_ids = cohort, -->
+<!--                         verbose = FALSE) -->
 
-```{r cox-demo, eval = only_demo("mimic"), include = only_demo("mimic")}
+<!-- dat <- load_concepts(c("lact", "death", "sofa", "sex"), src, -->
+<!--                      patient_ids = cohort[age > 25 & age < 65], -->
+<!--                      verbose = FALSE) -->
+<!-- ``` -->
+
+```{r cox-demo, eval = srcs_avail("mimic_demo"), include = srcs_avail("mimic_demo")}
 src <- "mimic_demo"
 dat <- load_concepts(c("lact", "death", "sofa", "sex"), src,
                      verbose = FALSE)
@@ -777,7 +778,7 @@ cox_mod <- coxph(
 
 After loading the data, some minor pre-processing is still required before modeling: first, we want to make sure we only use data up to (and including) the hour in which the `death` flag switches to `TRUE`. After that we impute missing values for `lact` using a last observation carry forward (locf) scheme (observing the patient grouping) and we simply replace missing `death` values with the value `FALSE`. The resulting model fit can be visualized as:
 
-```{r cox_plot, eval = demo_src_avail("mimic"), echo = FALSE, warning = FALSE, message = FALSE, fig.width = 8}
+```{r cox_plot, eval = srcs_avail("mimic_demo"), echo = FALSE, warning = FALSE, message = FALSE, fig.width = 8}
 theme_fp <- function(...) {
   theme_bw(...) +
   theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(),
@@ -796,7 +797,7 @@ For the next example, again using MIMIC-III data, we turn to the usage of co-mor
 
 As there already is an insulin concept available, `ins24` can be implemented as `rec_cncpt`, loading `ins` with aggregation set to `sum()` (instead of `median()`) and inserting the callback function `ins_cb()` into the loading process. The callback function takes care of the pre-processing steps outlined above: first data is subsetted to fall into the the first 24 hours of ICU admissions, followed by binning of summed values.
 
-```{r ins24, eval = demo_src_avail("mimic")}
+```{r ins24, eval = srcs_avail("mimic_demo")}
 ins_breaks <- c(0, 1, 10, 20, 40, Inf)
 
 ins_cb <- function(ins, ...) {
@@ -824,7 +825,7 @@ ins24 <- concept("ins24", ins24, "insulin in first 24h", aggregate = "sum",
 
 The binary diabetes concept can be implemented as `lgl_cncpt`, for which ICD-9 codes are matched using a regular expression. As we're not only interested in retrieving diabetic patients, a `col_itm` is more suited for data retrieval over an `rgx_itm` and for creating the required callback function that produces a logical vector we can use `transform_fun()` coupled with a function like `grep_diab()`. The two concepts are then combined using `c()` and loaded via `load_concepts()`.
 
-```{r diab, eval = demo_src_avail("mimic")}
+```{r diab, eval = srcs_avail("mimic_demo")}
 grep_diab <- function(x) grepl("^250\\.?[0-9]{2}$", x)
 
 diab  <- item(src, table = "diagnoses_icd",
@@ -839,7 +840,7 @@ dat
 
 After this, we can visualize the difference between the two groups with a histogram:
 
-```{r diabetes-visualize, echo = FALSE, eval = demo_src_avail("mimic"), fig.height = 3}
+```{r diabetes-visualize, echo = FALSE, eval = srcs_avail("mimic_demo"), fig.height = 3}
 dat <- dat[, weight := 1 / .N, by = diab]
 ggplot(dat, aes(x = ins24, fill = diab)) +
   stat_count(aes(weight = weight), alpha = 0.75, position = "dodge") +
