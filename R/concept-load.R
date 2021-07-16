@@ -373,6 +373,39 @@ load_concepts.num_cncpt <- function(x, aggregate = NULL, ...,
   stats::aggregate(x, res, aggregate)
 }
 
+align_units <- function(x, target_unit) {
+
+  do_align <- function(val, unt) {
+    units::drop_units(set_units(set_units(val, unt[1L]), target_unit))
+  }
+
+  assert_that(has_cols(x, c("val_var", "unit_var")))
+
+  x <- x[, c("val_var") := do_align(get("val_var"), get("unit_var")),
+         by = c("unit_var")]
+
+  x
+}
+
+#' @rdname load_concepts
+#' @export
+load_concepts.unt_cncpt <- function(x, aggregate = NULL, ...,
+                                    progress = NULL) {
+
+  res <- load_concepts(as_item(x), ..., progress = progress)
+  res <- rm_na_val_var(res)
+
+  res <- align_units(res, units(x))
+  res <- filter_bounds(res, "val_var", min(x), max(x))
+
+  setattr(res[["val_var"]], "units", units(x))
+
+  res <- rm_cols(res, setdiff(data_vars(res), "val_var"), by_ref = TRUE)
+  res <- rename_cols(res, x[["name"]], "val_var", by_ref = TRUE)
+
+  stats::aggregate(x, res, aggregate)
+}
+
 #' @rdname load_concepts
 #' @export
 load_concepts.fct_cncpt <- function(x, aggregate = NULL, ...,

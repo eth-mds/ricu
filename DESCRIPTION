@@ -65,7 +65,8 @@ Suggests:
     survival,
     forestmodel,
     rticles,
-    kableExtra
+    kableExtra,
+    units
 RoxygenNote: 7.1.1
 Additional_repositories: https://eth-mds.github.io/physionet-demo
 VignetteBuilder: knitr

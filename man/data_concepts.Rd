@@ -5,6 +5,7 @@
 \alias{is_cncpt}
 \alias{init_cncpt}
 \alias{init_cncpt.num_cncpt}
+\alias{init_cncpt.unt_cncpt}
 \alias{init_cncpt.fct_cncpt}
 \alias{init_cncpt.cncpt}
 \alias{init_cncpt.rec_cncpt}
@@ -30,6 +31,8 @@ is_cncpt(x)
 init_cncpt(x, ...)
 
 \method{init_cncpt}{num_cncpt}(x, unit = NULL, min = NULL, max = NULL, ...)
+
+\method{init_cncpt}{unt_cncpt}(x, unit = NULL, min = NULL, max = NULL, ...)
 
 \method{init_cncpt}{fct_cncpt}(x, levels, ...)
 

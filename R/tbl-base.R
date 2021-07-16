@@ -76,6 +76,7 @@ tbl_sum.id_tbl <- function(x) {
 
   get_unit <- function(x) {
     if (inherits(x, "difftime")) ""
+    else if (inherits(x, "units")) units::deparse_unit(x)
     else if (has_attr(x, "units")) attr(x, "units")
     else ""
   }

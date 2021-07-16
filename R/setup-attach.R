@@ -141,6 +141,18 @@ attach_src.src_cfg <- function(x, assign_env = NULL,
   invisible(NULL)
 }
 
+#' @export
+attach_src.aumc_cfg <- function(x, assign_env = NULL,
+                                data_dir = src_data_dir(x), ...) {
+
+  if (requireNamespace("units", quietly = TRUE)) {
+    units::install_unit("uur", "h")
+    units::install_unit("dag", "d")
+  }
+
+  NextMethod()
+}
+
 #' @rdname attach_src
 #' @export
 attach_src.character <- function(x, assign_env = NULL,

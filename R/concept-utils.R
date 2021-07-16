@@ -921,7 +921,7 @@ new_cncpt <- function(name, items, description = name,
                       category = NA_character_, aggregate = NULL, ...,
                       target = "ts_tbl", class = "num_cncpt") {
 
-  assert_that(is.string(name), null_or(class, is.string), is.string(target),
+  assert_that(is.string(name), null_or(class, is.character), is.string(target),
               is.string(description), is.string(category))
 
   if (!is_concept(items)) {
@@ -963,6 +963,20 @@ init_cncpt.num_cncpt <- function(x, unit = NULL, min = NULL, max = NULL, ...) {
   x[todo] <- mget(todo)
 
   try_add_vars(x, unit_var = TRUE)
+}
+
+#' @rdname data_concepts
+#' @export
+init_cncpt.unt_cncpt <- function(x, unit = NULL, min = NULL, max = NULL, ...) {
+
+  if (!requireNamespace("units", quietly = TRUE)) {
+    stop_ricu("Initializing (and using) `unt_cncpt` data concepts requires the
+               `units` package.", class = "units_pkg_required")
+  }
+
+  assert_that(is.string(unit))
+
+  NextMethod()
 }
 
 #' @param levels A vector of possible values a categorical concept may take on
@@ -1149,6 +1163,15 @@ src_name.concept <- function(x) lapply(x, src_name)
 
 #' @export
 n_tick.concept <- function(x) sum(int_ply(x, n_tick))
+
+#' @export
+units.num_cncpt <- function(x) x[["unit"]]
+
+#' @export
+min.num_cncpt <- function(x, ...) warn_dot_ident(x[["min"]])
+
+#' @export
+max.num_cncpt <- function(x, ...) warn_dot_ident(x[["max"]])
 
 #' Load concept dictionaries
 #'

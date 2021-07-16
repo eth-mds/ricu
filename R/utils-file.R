@@ -149,7 +149,7 @@ src_data_dir <- function(srcs) {
 
   assert_that(is.string(srcs))
 
-  pkg <- sub("_", ".", srcs)
+  pkg <- src_to_pkg_name(srcs)
 
   if (is_pkg_installed(pkg)) {
     system.file("extdata", package = pkg)
@@ -159,6 +159,8 @@ src_data_dir <- function(srcs) {
     data_dir(srcs, create = FALSE)
   }
 }
+
+src_to_pkg_name <- function(x) sub("_", ".", x)
 
 #' @importFrom utils packageDescription available.packages
 data_pkg_avail <- function(src) {
@@ -170,7 +172,7 @@ data_pkg_avail <- function(src) {
   repos <- packageDescription("ricu", fields = "Additional_repositories")
 
   curl::has_internet() &&
-    sub("_", ".", src) %in% available.packages(repos = repos)[, "Package"]
+    src_to_pkg_name(src) %in% available.packages(repos = repos)[, "Package"]
 }
 
 #' @importFrom utils install.packages
@@ -182,7 +184,7 @@ install_data_pkgs <- function(srcs = c("mimic_demo", "eicu_demo")) {
 
   repos <- packageDescription("ricu", fields = "Additional_repositories")
 
-  install.packages(sub("_", ".", srcs), repos = repos)
+  install.packages(src_to_pkg_name(srcs), repos = repos)
 }
 
 #' @rdname file_utils

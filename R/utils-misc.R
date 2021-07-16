@@ -254,3 +254,5 @@ digest <- function(...) digest_lst(list(...))
 sys_name <- function() Sys.info()[["sysname"]]
 
 sys_env <- function(...) Sys.getenv(...)
+
+set_units <- function(x, value) units::set_units(x, value, mode = "standard")

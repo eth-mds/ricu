@@ -761,3 +761,11 @@ aumc_bxs <- function(x, val_var, dir_var, ...) {
 }
 
 aumc_rass <- function(x) as.integer(substr(x, 1L, 2L))
+
+aumc_rate <- function(x, val_var, unit_var, rate_var, ...) {
+
+  x <- x[, c(unit_var) := do_call(.SD, paste, sep = "/"),
+         .SDcols = c(unit_var, rate_var)]
+
+  align_units(x, val_var, unit_var)
+}

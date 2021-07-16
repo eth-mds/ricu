@@ -6,6 +6,7 @@
 \alias{load_concepts.concept}
 \alias{load_concepts.cncpt}
 \alias{load_concepts.num_cncpt}
+\alias{load_concepts.unt_cncpt}
 \alias{load_concepts.fct_cncpt}
 \alias{load_concepts.lgl_cncpt}
 \alias{load_concepts.rec_cncpt}
@@ -36,6 +37,8 @@ load_concepts(x, ...)
 \method{load_concepts}{cncpt}(x, aggregate = NULL, ..., progress = NULL)
 
 \method{load_concepts}{num_cncpt}(x, aggregate = NULL, ..., progress = NULL)
+
+\method{load_concepts}{unt_cncpt}(x, aggregate = NULL, ..., progress = NULL)
 
 \method{load_concepts}{fct_cncpt}(x, aggregate = NULL, ..., progress = NULL)
 
