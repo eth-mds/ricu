@@ -1944,8 +1944,8 @@ cfg <- list(
              callback = "transform_fun(comp_na(`==`, 'Geïntubeerd'))")
       ),
       miiv = list(
-        list(ids = c("1.0 ET/Trach", "No Response-ETT"), table = "chartevents",
-             sub_var = "value", callback = "transform_fun(set_val(TRUE))")
+        list(ids = "No Response-ETT", table = "chartevents", sub_var = "value",
+             callback = "transform_fun(set_val(TRUE))")
       )
     )
   ),
@@ -2848,6 +2848,39 @@ cfg <- list(
              callback = "transform_fun(set_val(TRUE))")
       )
     )
+  ),
+  dex = list(
+    unit = "ml/hr",
+    target = "win_tbl",
+    sources = list(
+      mimic = list(
+        list(ids = c(220950L, 228140L, 220952L), table = "inputevents_mv",
+             sub_var = "itemid", dur_var = "endtime", amount_var = "amount",
+             auom_var = "amountuom", callback = "combine_callbacks(
+               mimv_rate,
+               dex_to_10(c(228140L, 220952L), c(2, 5))
+             )")
+      ),
+      aumc = list(
+        list(ids = c(7254L, 7255L, 7256L, 8940L, 9571L), table = "drugitems",
+             sub_var = "itemid", dur_var = "stop", rate_var = "doserateunit",
+             callback = "combine_callbacks(
+                           aumc_rate,
+                           dex_to_10(list(7255L, 7256L, c(8940L, 9571L)),
+                                     c(2, 3, 4))
+                         )"
+        )
+      ),
+      miiv = list(
+        list(ids = c(220950L, 228140L, 220952L), table = "inputevents",
+             sub_var = "itemid", dur_var = "endtime", amount_var = "amount",
+             auom_var = "amountuom", callback = "combine_callbacks(
+               mimv_rate,
+               dex_to_10(c(228140L, 220952L), c(2, 5))
+             )")
+      )
+    ),
+    class = c("unt_cncpt", "num_cncpt")
   )
 )
 

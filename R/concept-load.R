@@ -375,14 +375,29 @@ load_concepts.num_cncpt <- function(x, aggregate = NULL, ...,
 
 align_units <- function(x, target_unit) {
 
-  do_align <- function(val, unt) {
-    units::drop_units(set_units(set_units(val, unt[1L]), target_unit))
+  do_align <- function(val, unt, trg) {
+    if (units::ud_are_convertible(unt[1L], trg)) {
+      units::drop_units(set_units(set_units(val, unt[1L]), trg))
+    } else {
+      rep_along(NA_real_, val)
+    }
   }
 
   assert_that(has_cols(x, c("val_var", "unit_var")))
 
-  x <- x[, c("val_var") := do_align(get("val_var"), get("unit_var")),
-         by = c("unit_var")]
+  x <- rm_na_val_var(x)
+
+  x <- x[, c("val_var") := do_align(get("val_var"), get("unit_var"),
+          target_unit), by = c("unit_var")]
+
+  rmed <- is.na(x[["val_var"]])
+
+  if (any(rmed)) {
+    hits <- table(x[["unit_var"]][rmed], useNA = "ifany")
+    msg_progress("not all units could be converted and `NA` values were
+      introduced: {concat(names(hits), ' (', prcnt(hits, nrow(x)), ')')}"
+    )
+  }
 
   x
 }
@@ -393,8 +408,6 @@ load_concepts.unt_cncpt <- function(x, aggregate = NULL, ...,
                                     progress = NULL) {
 
   res <- load_concepts(as_item(x), ..., progress = progress)
-  res <- rm_na_val_var(res)
-
   res <- align_units(res, units(x))
   res <- filter_bounds(res, "val_var", min(x), max(x))
 

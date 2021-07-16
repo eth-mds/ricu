@@ -762,10 +762,34 @@ aumc_bxs <- function(x, val_var, dir_var, ...) {
 
 aumc_rass <- function(x) as.integer(substr(x, 1L, 2L))
 
-aumc_rate <- function(x, val_var, unit_var, rate_var, ...) {
+dex_to_10 <- function(id, factor) {
 
+  assert_that(same_length(id, factor))
+
+  function(x, sub_var, val_var, ...) {
+
+    for (i in seq_along(id)) {
+      rows <- which(x[[sub_var]] %in% id[[i]])
+      set(x, i = rows, j = val_var, value = x[[val_var]][rows] * factor[[i]])
+    }
+
+    x
+  }
+}
+
+aumc_rate <- function(x, val_var, unit_var, rate_var, ...) {
   x <- x[, c(unit_var) := do_call(.SD, paste, sep = "/"),
          .SDcols = c(unit_var, rate_var)]
+  x
+}
 
-  align_units(x, val_var, unit_var)
+mimv_rate <- function(x, val_var, unit_var, dur_var, amount_var, auom_var,
+                      ...) {
+
+  x <- x[is.na(get(val_var)), c(val_var, unit_var) := list(
+    get(amount_var) / as.double(get(dur_var)),
+    paste0(get(auom_var), "/", sub("s$", "", units(get(dur_var))))
+  )]
+
+  x
 }

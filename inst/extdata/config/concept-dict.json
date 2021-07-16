@@ -1545,6 +1545,56 @@
       ]
     }
   },
+  "dex": {
+    "unit": "ml/hr",
+    "target": "win_tbl",
+    "sources": {
+      "aumc": [
+        {
+          "ids": [7254, 7255, 7256, 8940, 9571],
+          "table": "drugitems",
+          "sub_var": "itemid",
+          "dur_var": "stop",
+          "rate_var": "doserateunit",
+          "callback": "combine_callbacks(\n                           aumc_rate,\n                           dex_to_10(list(7255L, 7256L, c(8940L, 9571L)),\n                                     c(2, 3, 4))\n                         )"
+        }
+      ],
+      "miiv": [
+        {
+          "ids": [220950, 228140, 220952],
+          "table": "inputevents",
+          "sub_var": "itemid",
+          "dur_var": "endtime",
+          "amount_var": "amount",
+          "auom_var": "amountuom",
+          "callback": "combine_callbacks(\n               mimv_rate,\n               dex_to_10(c(228140L, 220952L), c(2, 5))\n             )"
+        }
+      ],
+      "mimic": [
+        {
+          "ids": [220950, 228140, 220952],
+          "table": "inputevents_mv",
+          "sub_var": "itemid",
+          "dur_var": "endtime",
+          "amount_var": "amount",
+          "auom_var": "amountuom",
+          "callback": "combine_callbacks(\n               mimv_rate,\n               dex_to_10(c(228140L, 220952L), c(2, 5))\n             )"
+        }
+      ],
+      "mimic_demo": [
+        {
+          "ids": [220950, 228140, 220952],
+          "table": "inputevents_mv",
+          "sub_var": "itemid",
+          "dur_var": "endtime",
+          "amount_var": "amount",
+          "auom_var": "amountuom",
+          "callback": "combine_callbacks(\n               mimv_rate,\n               dex_to_10(c(228140L, 220952L), c(2, 5))\n             )"
+        }
+      ]
+    },
+    "class": ["unt_cncpt", "num_cncpt"]
+  },
   "dobu_dur": {
     "description": "dobutamine duration",
     "category": "medications",
@@ -5338,7 +5388,7 @@
       ],
       "miiv": [
         {
-          "ids": ["1.0 ET/Trach", "No Response-ETT"],
+          "ids": "No Response-ETT",
           "table": "chartevents",
           "sub_var": "value",
           "callback": "transform_fun(set_val(TRUE))"
