@@ -811,29 +811,40 @@ get_one_unique <- function(x, na.rm = FALSE) {
   x
 }
 
-grp_mount_to_rate <- function(x, val_var, grp_var, unit_var, ...) {
+grp_mount_to_rate <- function(min_dur, extra_dur) {
 
-  index_var <- index_var(x)
-  id_vars   <- id_vars(x)
-  interval  <- interval(x)
+  assert_that(is_interval(min_dur), is_interval(extra_dur))
 
-  expr <- quote(
-    list(min(get(index_var)),
-         max(get(index_var)),
-         sum(get(val_var), na.rm = TRUE),
-         get_one_unique(get(unit_var), na.rm = TRUE)
+  function(x, val_var, grp_var, unit_var, ...) {
+
+    index_var <- index_var(x)
+    id_vars   <- id_vars(x)
+
+    expr <- quote(
+      list(min(get(index_var)),
+           max(get(index_var)),
+           sum(get(val_var), na.rm = TRUE),
+           get_one_unique(get(unit_var), na.rm = TRUE)
+      )
     )
-  )
-  names(expr) <- c("", index_var, "dur_var", val_var, unit_var)
+    names(expr) <- c("", index_var, "dur_var", val_var, unit_var)
 
-  res <- x[, eval(expr), by = c(id_vars, grp_var)]
-  res <- res[, c("dur_var") := get("dur_var") - get(index_var)]
-  res <- res[get("dur_var") == 0, dur_var := interval]
+    res <- x[, eval(expr), by = c(id_vars, grp_var)]
+    res <- res[, c("dur_var") := get("dur_var") - get(index_var)]
 
-  res <- res[, c(val_var, unit_var) := list(
-    get(val_var) / as.double(get("dur_var")),
-    paste0(get(unit_var), "/", units_to_unit(get("dur_var")))
-  )]
+    time_unit <- time_unit(res)
 
-  as_win_tbl(res, dur_var = "dur_var", by_ref = TRUE)
+    res <- res[, dur_var := data.table::fifelse(
+      dur_var == 0,
+      `units<-`(min_dur, time_unit),
+      dur_var + `units<-`(extra_dur, time_unit)
+    )]
+
+    res <- res[, c(val_var, unit_var) := list(
+      get(val_var) / as.double(get("dur_var")),
+      paste0(get(unit_var), "/", units_to_unit(get("dur_var")))
+    )]
+
+    as_win_tbl(res, dur_var = "dur_var", by_ref = TRUE)
+  }
 }

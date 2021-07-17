@@ -2851,6 +2851,8 @@ cfg <- list(
   ),
   dex = list(
     unit = "ml/hr",
+    description = "dextrose (as D10)",
+    category = "medications",
     target = "win_tbl",
     sources = list(
       mimic = list(
@@ -2862,18 +2864,21 @@ cfg <- list(
              )"),
         list(ids = c(30016L, 30017L), table = "inputevents_cv",
              sub_var = "itemid", grp_var = "linkorderid", val_var = "amount",
-             unit_var = "amountuom", target = "ts_tbl",
-             callback = "combine_callbacks(grp_mount_to_rate,
-                                           dex_to_10(30017L, 2))")
+             unit_var = "amountuom", target = "ts_tbl", interval = "00:01:00",
+             callback = "combine_callbacks(
+               grp_mount_to_rate(mins(1L), hours(1L)),
+               dex_to_10(30017L, 2)
+             )")
       ),
       hirid = list(
-        list(ids = c(1000022L, 1000690L, 1000689L, 1000060L, 1000545L,
-                     1000567L), table = "pharma", sub_var = "pharmaid",
-             grp_var = "infusionid", target = "ts_tbl",
+        list(ids = c(1000022L, 1000690L, 1000689L, 1000544L, 1000746L,
+                     1000835L, 1000060L, 1000545L, 1000567L),
+             table = "pharma", sub_var = "pharmaid", grp_var = "infusionid",
+             target = "ts_tbl", interval = "00:01:00",
              callback = "combine_callbacks(
-               grp_mount_to_rate,
-               dex_to_10(c(1000689L, 1000060L, 1000545L, 1000567L),
-                         c(2, 3, 4, 5))
+               grp_mount_to_rate(mins(1L), hours(1L)),
+               dex_to_10(list(c(1000689L, 1000544L, 1000746L, 1000835L),
+                                1000060L, 1000545L, 1000567L), c(2, 3, 4, 5))
              )")
       ),
       aumc = list(

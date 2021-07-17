@@ -1547,6 +1547,8 @@
   },
   "dex": {
     "unit": "ml/hr",
+    "description": "dextrose (as D10)",
+    "category": "medications",
     "target": "win_tbl",
     "sources": {
       "aumc": [
@@ -1561,12 +1563,13 @@
       ],
       "hirid": [
         {
-          "ids": [1000022, 1000690, 1000689, 1000060, 1000545, 1000567],
+          "ids": [1000022, 1000690, 1000689, 1000544, 1000746, 1000835, 1000060, 1000545, 1000567],
           "table": "pharma",
           "sub_var": "pharmaid",
           "grp_var": "infusionid",
           "target": "ts_tbl",
-          "callback": "combine_callbacks(\n               grp_mount_to_rate,\n               dex_to_10(c(1000689L, 1000060L, 1000545L, 1000567L),\n                         c(2, 3, 4, 5))\n             )"
+          "interval": "00:01:00",
+          "callback": "combine_callbacks(\n               grp_mount_to_rate(mins(1L), hours(1L)),\n               dex_to_10(list(c(1000689L, 1000544L, 1000746L, 1000835L),\n                                1000060L, 1000545L, 1000567L), c(2, 3, 4, 5))\n             )"
         }
       ],
       "miiv": [
@@ -1598,7 +1601,8 @@
           "val_var": "amount",
           "unit_var": "amountuom",
           "target": "ts_tbl",
-          "callback": "combine_callbacks(grp_mount_to_rate,\n                                           dex_to_10(30017L, 2))"
+          "interval": "00:01:00",
+          "callback": "combine_callbacks(\n               grp_mount_to_rate(mins(1L), hours(1L)),\n               dex_to_10(30017L, 2)\n             )"
         }
       ],
       "mimic_demo": [
@@ -1619,7 +1623,8 @@
           "val_var": "amount",
           "unit_var": "amountuom",
           "target": "ts_tbl",
-          "callback": "combine_callbacks(grp_mount_to_rate,\n                                           dex_to_10(30017L, 2))"
+          "interval": "00:01:00",
+          "callback": "combine_callbacks(\n               grp_mount_to_rate(mins(1L), hours(1L)),\n               dex_to_10(30017L, 2)\n             )"
         }
       ]
     },
