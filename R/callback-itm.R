@@ -788,8 +788,52 @@ mimv_rate <- function(x, val_var, unit_var, dur_var, amount_var, auom_var,
 
   x <- x[is.na(get(val_var)), c(val_var, unit_var) := list(
     get(amount_var) / as.double(get(dur_var)),
-    paste0(get(auom_var), "/", sub("s$", "", units(get(dur_var))))
+    paste0(get(auom_var), "/", units_to_unit(get(dur_var)))
   )]
 
   x
+}
+
+units_to_unit <- function(x) sub("s$", "", units(x))
+
+get_one_unique <- function(x, na.rm = FALSE) {
+
+  if (isTRUE(na.rm)) {
+    x <- x[!is.na(x)]
+  }
+
+  x <- unique(x)
+
+  if (length(x) > 1L) {
+    x <- NA_character_
+  }
+
+  x
+}
+
+grp_mount_to_rate <- function(x, val_var, grp_var, unit_var, ...) {
+
+  index_var <- index_var(x)
+  id_vars   <- id_vars(x)
+  interval  <- interval(x)
+
+  expr <- quote(
+    list(min(get(index_var)),
+         max(get(index_var)),
+         sum(get(val_var), na.rm = TRUE),
+         get_one_unique(get(unit_var), na.rm = TRUE)
+    )
+  )
+  names(expr) <- c("", index_var, "dur_var", val_var, unit_var)
+
+  res <- x[, eval(expr), by = c(id_vars, grp_var)]
+  res <- res[, c("dur_var") := get("dur_var") - get(index_var)]
+  res <- res[get("dur_var") == 0, dur_var := interval]
+
+  res <- res[, c(val_var, unit_var) := list(
+    get(val_var) / as.double(get("dur_var")),
+    paste0(get(unit_var), "/", units_to_unit(get("dur_var")))
+  )]
+
+  as_win_tbl(res, dur_var = "dur_var", by_ref = TRUE)
 }

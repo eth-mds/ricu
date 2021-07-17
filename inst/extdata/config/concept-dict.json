@@ -1559,6 +1559,16 @@
           "callback": "combine_callbacks(\n                           aumc_rate,\n                           dex_to_10(list(7255L, 7256L, c(8940L, 9571L)),\n                                     c(2, 3, 4))\n                         )"
         }
       ],
+      "hirid": [
+        {
+          "ids": [1000022, 1000690, 1000689, 1000060, 1000545, 1000567],
+          "table": "pharma",
+          "sub_var": "pharmaid",
+          "grp_var": "infusionid",
+          "target": "ts_tbl",
+          "callback": "combine_callbacks(\n               grp_mount_to_rate,\n               dex_to_10(c(1000689L, 1000060L, 1000545L, 1000567L),\n                         c(2, 3, 4, 5))\n             )"
+        }
+      ],
       "miiv": [
         {
           "ids": [220950, 228140, 220952],
@@ -1579,6 +1589,16 @@
           "amount_var": "amount",
           "auom_var": "amountuom",
           "callback": "combine_callbacks(\n               mimv_rate,\n               dex_to_10(c(228140L, 220952L), c(2, 5))\n             )"
+        },
+        {
+          "ids": [30016, 30017],
+          "table": "inputevents_cv",
+          "sub_var": "itemid",
+          "grp_var": "linkorderid",
+          "val_var": "amount",
+          "unit_var": "amountuom",
+          "target": "ts_tbl",
+          "callback": "combine_callbacks(grp_mount_to_rate,\n                                           dex_to_10(30017L, 2))"
         }
       ],
       "mimic_demo": [
@@ -1590,6 +1610,16 @@
           "amount_var": "amount",
           "auom_var": "amountuom",
           "callback": "combine_callbacks(\n               mimv_rate,\n               dex_to_10(c(228140L, 220952L), c(2, 5))\n             )"
+        },
+        {
+          "ids": [30016, 30017],
+          "table": "inputevents_cv",
+          "sub_var": "itemid",
+          "grp_var": "linkorderid",
+          "val_var": "amount",
+          "unit_var": "amountuom",
+          "target": "ts_tbl",
+          "callback": "combine_callbacks(grp_mount_to_rate,\n                                           dex_to_10(30017L, 2))"
         }
       ]
     },

@@ -2859,6 +2859,21 @@ cfg <- list(
              auom_var = "amountuom", callback = "combine_callbacks(
                mimv_rate,
                dex_to_10(c(228140L, 220952L), c(2, 5))
+             )"),
+        list(ids = c(30016L, 30017L), table = "inputevents_cv",
+             sub_var = "itemid", grp_var = "linkorderid", val_var = "amount",
+             unit_var = "amountuom", target = "ts_tbl",
+             callback = "combine_callbacks(grp_mount_to_rate,
+                                           dex_to_10(30017L, 2))")
+      ),
+      hirid = list(
+        list(ids = c(1000022L, 1000690L, 1000689L, 1000060L, 1000545L,
+                     1000567L), table = "pharma", sub_var = "pharmaid",
+             grp_var = "infusionid", target = "ts_tbl",
+             callback = "combine_callbacks(
+               grp_mount_to_rate,
+               dex_to_10(c(1000689L, 1000060L, 1000545L, 1000567L),
+                         c(2, 3, 4, 5))
              )")
       ),
       aumc = list(
