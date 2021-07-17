@@ -1561,6 +1561,26 @@
           "callback": "combine_callbacks(\n                           aumc_rate,\n                           dex_to_10(list(7255L, 7256L, c(8940L, 9571L)),\n                                     c(2, 3, 4))\n                         )"
         }
       ],
+      "eicu": [
+        {
+          "regex": "(d50|dextrose.+50 ?%)",
+          "table": "medication",
+          "sub_var": "drugname",
+          "dur_var": "drugstopoffset",
+          "callback": "eicu_dex",
+          "class": "rgx_itm"
+        }
+      ],
+      "eicu_demo": [
+        {
+          "regex": "(d50|dextrose.+50 ?%)",
+          "table": "medication",
+          "sub_var": "drugname",
+          "dur_var": "drugstopoffset",
+          "callback": "eicu_dex",
+          "class": "rgx_itm"
+        }
+      ],
       "hirid": [
         {
           "ids": [1000022, 1000690, 1000689, 1000544, 1000746, 1000835, 1000060, 1000545, 1000567],

@@ -2870,6 +2870,12 @@ cfg <- list(
                dex_to_10(30017L, 2)
              )")
       ),
+      eicu = list(
+        list(regex = "(d50|dextrose.+50 ?%)", table = "medication",
+             sub_var = "drugname", dur_var = "drugstopoffset",
+             callback = "eicu_dex", class = "rgx_itm"
+        )
+      ),
       hirid = list(
         list(ids = c(1000022L, 1000690L, 1000689L, 1000544L, 1000746L,
                      1000835L, 1000060L, 1000545L, 1000567L),
