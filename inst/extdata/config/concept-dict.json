@@ -1546,6 +1546,7 @@
     }
   },
   "dex": {
+    "min": 0,
     "unit": "ml/hr",
     "description": "dextrose (as D10)",
     "category": "medications",
@@ -1567,7 +1568,15 @@
           "table": "medication",
           "sub_var": "drugname",
           "dur_var": "drugstopoffset",
-          "callback": "eicu_dex",
+          "callback": "eicu_dex_med",
+          "class": "rgx_itm"
+        },
+        {
+          "regex": "(d10|dextrose.+10 ?%).+ml/hr",
+          "table": "infusiondrug",
+          "sub_var": "drugname",
+          "callback": "eicu_dex_inf",
+          "target": "ts_tbl",
           "class": "rgx_itm"
         }
       ],
@@ -1577,7 +1586,15 @@
           "table": "medication",
           "sub_var": "drugname",
           "dur_var": "drugstopoffset",
-          "callback": "eicu_dex",
+          "callback": "eicu_dex_med",
+          "class": "rgx_itm"
+        },
+        {
+          "regex": "(d10|dextrose.+10 ?%).+ml/hr",
+          "table": "infusiondrug",
+          "sub_var": "drugname",
+          "callback": "eicu_dex_inf",
+          "target": "ts_tbl",
           "class": "rgx_itm"
         }
       ],

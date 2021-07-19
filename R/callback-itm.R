@@ -849,13 +849,28 @@ grp_mount_to_rate <- function(min_dur, extra_dur) {
   }
 }
 
-eicu_dex <- function(x, val_var, dur_var, ...) {
+eicu_dex_med <- function(x, val_var, dur_var, ...) {
+
   x <- x[, c(val_var, "unit_var") := data.table::tstrsplit(get(val_var), " ")]
   x <- x[, c(val_var) := as.numeric(sub("^(.+-|Manual)", "", get(val_var)))]
+
   x <- x[grepl("^m?g.*m?", get("unit_var"), ignore.case = TRUE),
           c(val_var) := get(val_var) * 2]
+
   x <- x[get(dur_var) <= 0, c(dur_var) := mins(1L)]
+
   x <- x[, c(val_var, "unit_var") := list(
     get(val_var) / as.double(get(dur_var)) * 5, "ml/min"
   )]
+}
+
+eicu_dex_inf <- function(x, val_var, ...) {
+
+  ival <- `units<-`(interval(x), "mins")
+
+  x <- x[, c(val_var, "dur_var", "unit_var") := list(
+    as.numeric(get(val_var)), ival, "ml/hr"
+  )]
+
+  as_win_tbl(x, dur_var = "dur_var", by_ref = TRUE)
 }

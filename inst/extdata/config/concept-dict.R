@@ -2850,6 +2850,7 @@ cfg <- list(
     )
   ),
   dex = list(
+    min = 0,
     unit = "ml/hr",
     description = "dextrose (as D10)",
     category = "medications",
@@ -2873,8 +2874,10 @@ cfg <- list(
       eicu = list(
         list(regex = "(d50|dextrose.+50 ?%)", table = "medication",
              sub_var = "drugname", dur_var = "drugstopoffset",
-             callback = "eicu_dex", class = "rgx_itm"
-        )
+             callback = "eicu_dex_med", class = "rgx_itm"),
+        list(regex = "(d10|dextrose.+10 ?%).+ml/hr", table = "infusiondrug",
+             sub_var = "drugname", callback = "eicu_dex_inf", target = "ts_tbl",
+             class = "rgx_itm")
       ),
       hirid = list(
         list(ids = c(1000022L, 1000690L, 1000689L, 1000544L, 1000746L,
