@@ -1991,8 +1991,8 @@ cfg <- list(
           "tazidime", "adroxil", "epime", "otetan", "otaxime", "podoxime",
           "uroxime)", "(doxy", "mino", "tetra)cycline", "(levofl", "moxifl",
           "ofl)oxacin", "macro(bid", "dantin)", "(una", "zo)syn", sep = "|"),
-          table = "prescriptions", sub_var = "drug",
-          callback = "mimic_abx_presc", class = "fun_itm"
+          table = "prescriptions", sub_var = "drug", interval = "00:01:00",
+          callback = "mimic_abx_presc", class = "rgx_itm"
         ),
         list(ids = c(
           225798L, 225837L, 225838L, 225840L, 225842L, 225843L, 225844L,
@@ -2872,7 +2872,7 @@ cfg <- list(
              )")
       ),
       eicu = list(
-        list(regex = "(d50|dextrose.+50 ?%)", table = "medication",
+        list(regex = "^dextrose 50% (syringe|vial)$", table = "medication",
              sub_var = "drugname", dur_var = "drugstopoffset",
              callback = "eicu_dex_med", class = "rgx_itm"),
         list(regex = "(d10|dextrose.+10 ?%).+ml/hr", table = "infusiondrug",

@@ -72,8 +72,9 @@
           "regex": "aztreonam|bactrim|cephalexin|chloramphenicol|cipro|flagyl|metronidazole|nitrofurantoin|tazobactam|rifampin|sulfadiazine|timentin|trimethoprim|(amika|gentami|vanco)cin|(amoxi|ampi|dicloxa|naf|oxa|peni|pipera)cillin|(azithro|clarithro|erythro|clinda|strepto|tobra|vanco)mycin|cef(azolin|tazidime|adroxil|epime|otetan|otaxime|podoxime|uroxime)|(doxy|mino|tetra)cycline|(levofl|moxifl|ofl)oxacin|macro(bid|dantin)|(una|zo)syn",
           "table": "prescriptions",
           "sub_var": "drug",
+          "interval": "00:01:00",
           "callback": "mimic_abx_presc",
-          "class": "fun_itm"
+          "class": "rgx_itm"
         },
         {
           "ids": [225798, 225837, 225838, 225840, 225842, 225843, 225844, 225845, 225847, 225848, 225850, 225851, 225853, 225855, 225857, 225859, 225860, 225862, 225863, 225865, 225866, 225868, 225869, 225871, 225873, 225875, 225876, 225877, 225879, 225881, 225882, 225883, 225884, 225885, 225886, 225888, 225889, 225890, 225892, 225893, 225895, 225896, 225897, 225898, 225899, 225900, 225902, 225903, 225905, 227691, 228003],
@@ -87,8 +88,9 @@
           "regex": "aztreonam|bactrim|cephalexin|chloramphenicol|cipro|flagyl|metronidazole|nitrofurantoin|tazobactam|rifampin|sulfadiazine|timentin|trimethoprim|(amika|gentami|vanco)cin|(amoxi|ampi|dicloxa|naf|oxa|peni|pipera)cillin|(azithro|clarithro|erythro|clinda|strepto|tobra|vanco)mycin|cef(azolin|tazidime|adroxil|epime|otetan|otaxime|podoxime|uroxime)|(doxy|mino|tetra)cycline|(levofl|moxifl|ofl)oxacin|macro(bid|dantin)|(una|zo)syn",
           "table": "prescriptions",
           "sub_var": "drug",
+          "interval": "00:01:00",
           "callback": "mimic_abx_presc",
-          "class": "fun_itm"
+          "class": "rgx_itm"
         },
         {
           "ids": [225798, 225837, 225838, 225840, 225842, 225843, 225844, 225845, 225847, 225848, 225850, 225851, 225853, 225855, 225857, 225859, 225860, 225862, 225863, 225865, 225866, 225868, 225869, 225871, 225873, 225875, 225876, 225877, 225879, 225881, 225882, 225883, 225884, 225885, 225886, 225888, 225889, 225890, 225892, 225893, 225895, 225896, 225897, 225898, 225899, 225900, 225902, 225903, 225905, 227691, 228003],
@@ -1564,7 +1566,7 @@
       ],
       "eicu": [
         {
-          "regex": "(d50|dextrose.+50 ?%)",
+          "regex": "^dextrose 50% (syringe|vial)$",
           "table": "medication",
           "sub_var": "drugname",
           "dur_var": "drugstopoffset",
@@ -1582,7 +1584,7 @@
       ],
       "eicu_demo": [
         {
-          "regex": "(d50|dextrose.+50 ?%)",
+          "regex": "^dextrose 50% (syringe|vial)$",
           "table": "medication",
           "sub_var": "drugname",
           "dur_var": "drugstopoffset",
