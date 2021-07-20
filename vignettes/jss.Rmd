@@ -53,6 +53,7 @@ preamble: >
   \usepackage{tikz}
   \usepackage{pgf}
   \usetikzlibrary{positioning,shadows,arrows,shapes,shapes.arrows,shapes.geometric,arrows.meta,trees,shapes.misc}
+  \newcommand{\drago}[1]{{\color{red} Drago: {#1}}}
 vignette: >
   %\VignetteIndexEntry{Accessing ICU data with R (Bennett & Plečko, JSS 2021)}
   %\VignetteEngine{knitr::rmarkdown}
@@ -450,7 +451,7 @@ The first step towards loading data is data download. For the datasets included 
 * `RICU_AUMC_TOKEN`: Download token, extracted from the download URL received when requesting data access.
 If above mentioned access credentials are not available as environment variables, the user is queried in interactive sessions.
 
-If the user is interested in adding an external dataset, then the data download step should be done manually. The environment variable `RICU_DATA_PATH` contains the data storage location {\color{red} Drago: Not sure this is true. For me this environment variable is empty... does that mean it is only used for overriding the default?} (can also be queried by calling `data_dir()`), in which a folder with the dataset name should be created and raw files placed within. This environment variable can be customized by the user.
+If the user is interested in adding an external dataset, then the data download step should be done manually. The environment variable `RICU_DATA_PATH` contains the data storage location \drago{Not sure this is true. For me this environment variable is empty... does that mean it is only used for overriding the default?} (can also be queried by calling `data_dir()`), in which a folder with the dataset name should be created and raw files placed within. This environment variable can be customized by the user.
 
 Each of the supported \pkg{ricu} datasets requires 5-10 GB disk space for permanent storage. Additionally, 50-100 GB of temporary disk storage is required during download and import of any of the datasets. Memory requirements are kept low by performing all set-up operations only on subsets of rows at the time, such that 8 GB of memory should suffice. Initial data source set up (depending on available download speeds and CPU/disk type) may take upwards of an hour per dataset.
 
@@ -518,7 +519,7 @@ For an external dataset, the table configurations of all tables are needed for t
 ```
 For inspecting the full configuration file, we invite the reader to have a look at our repository for adding an [external dataset](https://github.com/eth-mds/aumc). 
 
-Once the import step is successfully finished, each dataset is represented by an environment with class attributes and associated metadata objects stored as object attributes to that environment. Dataset environments all inherit from `src_env` and from any number of class names constructed from data source name(s) with a suffix `_env` attached. The environment representing MIMIC-III, for example inherits from `src_env` and `mimic_env`, while the corresponding demo dataset inherits from `src_env`, `mimic_env` and `mimic_demo_env`. These sub-classes are later used for tailoring the process of data loading to particularities of individual datasets.
+Once the import step is successfully finished, each dataset is, as mentioned above, represented by an environment with class attributes and associated metadata objects stored as object attributes to that environment. Dataset environments all inherit from `src_env` and from any number of class names constructed from data source name(s) with a suffix `_env` attached. The environment representing MIMIC-III, for example inherits from `src_env` and `mimic_env`, while the corresponding demo dataset inherits from `src_env`, `mimic_env` and `mimic_demo_env`. These sub-classes are later used for tailoring the process of data loading to particularities of individual datasets.
 
 A `src_env` contains an active binding per contained table, which returns a `src_tbl` object representing the requested table. As is the case for `src_env` objects, `src_tbl` objects inherit from additional classes such that certain per-dataset behavior can be customized. The `admissions` table of the MIMIC-III demo dataset for example inherits from `mimic_demo_tbl` and `mimic_tbl` (alongside classes `src_tbl` and `prt`).
 
@@ -553,7 +554,7 @@ load_src("admissions", "mimic_demo", subject_id > 44000,
 
 \subsubsection{Data loading - relative times in minutes} \label{loading:relative}
 
-As data sources differ in their representation of time-stamps, a next step in data homogenization is to converge to a common format: the time difference to the origin time-point of a given ID system (by an ID system we refer to a set of identifiers of patient ICU stays, or patient hospital stays; to be discussed shortly). For doing so, the S3 generic `load_difftime()` is used.
+As data sources differ in their representation of time-stamps, a next step in data homogenization is to converge to a common format: the time difference to the origin time-point of a given ID system (by an ID system we refer to a set of identifiers of patient ICU stays, patient hospital stays or patients as individuals; discussed further below). For doing so, the S3 generic `load_difftime()` is used.
 
 ```{r load-dt, eval = srcs_avail("mimic_demo")}
 load_difftime("admissions", "mimic_demo", subject_id > 44000,
@@ -564,7 +565,7 @@ load_difftime("admissions", "mimic_demo", subject_id > 44000,
 load_difftime("admissions", "mimic_demo", subject_id > 44000,
               cols = c("hadm_id", "admittime", "dischtime"))[]
 ```
-The function `load_difftime()` is expected to return timestamps as base R `difftime` vectors (using `mins` as time unit). The argument `id_hint` can be used to specify a preferred ID system, but if not available in raw data, `load_difftime()` will return data using the ID system with highest cardinality. In the above example, if `icustay_id` were requested, data would be returned using `hadm_id`, whereas a `subject_id` request would be honored, as these two ID columns are available for the `admissions` table.
+The function `load_difftime()` is expected to return timestamps as base R `difftime` vectors (using `mins` as time unit). The argument `id_hint` can be used to specify a preferred ID system, but if not available in specified raw table, `load_difftime()` will return data using the ID system with highest cardinality. In the above example, if `icustay_id` were requested, data would be returned using `hadm_id`, because `icustay_id` column is not available in the table, and the cardinality of `hadm_id` is higher than that of `subject_id` (there are always more unique hospital stay than unique patients). However, a `subject_id` request would be honored, as this identifier is available as a column in the `admissions` table.
 
 When adding an external dataset, note that a method for the `load_difftime()` needs to be added. Furthermore, an ID configuration specification and a default column configuration specification and are necessary. We now explain what the two entail.
 
@@ -647,7 +648,7 @@ To begin with, we show what the ID conversion table looks like on the MIMIC-III 
 ```{r, eval = srcs_avail("mimic_demo"), include = srcs_avail("mimic_demo")}
 id_win_helper(mimic_demo)
 ```
-{\color{red} Drago: I do not get any output here?}
+\drago{for some reason I do not get any output here?}
 Such a conversion table might be used in various places in the data loading process
 For an external dataset, the user needs to write a method for the S3 `id_win_helper()` generic. For sake of brevity, we do not show in full detail how to do it for the AUMC dataset, but rather point to user to the code for [constructing the `id_win_helper()` method](https://github.com/eth-mds/aumc/blob/220776b671f90ddb3a0b795cf6d89292e14d8bdd/r/ricu.R#L60). As the construction of the ID conversion table can be expensive (involving several merge operations of tables with 10^4^-10^5^ rows) and could be used frequently (potentially with every single data request), the resulting table will be internally cached in memory, with session persistence.
 
