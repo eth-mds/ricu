@@ -2872,7 +2872,7 @@ cfg <- list(
              )")
       ),
       eicu = list(
-        list(regex = "^dextrose 50% (syringe|vial)$", table = "medication",
+        list(regex = "(d50|dextrose.+50 ?%)", table = "medication",
              sub_var = "drugname", dur_var = "drugstopoffset",
              callback = "eicu_dex_med", class = "rgx_itm"),
         list(regex = "(d10|dextrose.+10 ?%).+ml/hr", table = "infusiondrug",
