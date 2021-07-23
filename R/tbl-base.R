@@ -260,8 +260,10 @@ rbind_lst <- function(x, ...) {
 
   x <- x[int_ply(x, nrow) > 0L]
 
-  if (length(x) <= 1L) {
+  if (length(x) == 0L) {
     return(x)
+  } else if (length(x) == 1L) {
+    return(x[[1L]])
   }
 
   win_tbl <- lgl_ply(x, is_win_tbl)
