@@ -258,6 +258,12 @@ rbind_lst <- function(x, ...) {
     rename_cols(x, fun(new), fun(x), by_ref = TRUE)
   }
 
+  x <- x[int_ply(x, nrow) > 0L]
+
+  if (length(x) <= 1L) {
+    return(x)
+  }
+
   win_tbl <- lgl_ply(x, is_win_tbl)
 
   id_tbl <- lgl_ply(x, is_id_tbl)
