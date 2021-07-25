@@ -258,11 +258,19 @@ rbind_lst <- function(x, ...) {
     rename_cols(x, fun(new), fun(x), by_ref = TRUE)
   }
 
-  x <- x[int_ply(x, nrow) > 0L]
-
   if (length(x) == 0L) {
-    return(x)
-  } else if (length(x) == 1L) {
+    return(data.table())
+  }
+
+  rows <- int_ply(x, nrow)
+
+  if (all(rows == 0L)) {
+    return(x[[1L]])
+  }
+
+  x <- x[rows > 0L]
+
+  if (length(x) == 1L) {
     return(x[[1L]])
   }
 
