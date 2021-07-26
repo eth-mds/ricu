@@ -104,4 +104,4 @@
   detach_src(attached_srcs())
 } # nocov end
 
-.datatable.aware = TRUE
+.datatable.aware <- TRUE

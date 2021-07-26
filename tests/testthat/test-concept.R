@@ -103,7 +103,7 @@ test_that("load concepts", {
 
   expect_type(dat5, "list")
   expect_length(dat5, 1L)
-  expect_identical(dat4, dat5[[1L]])
+  expect_identical(dat4, dat5[[1L]], ignore_attr = TRUE)
 
   expect_error(
     load_concepts(gluc, aggregate = "identity", verbose = FALSE)
@@ -129,7 +129,7 @@ test_that("load concepts", {
 
   dat6 <- load_concepts(gluc2, verbose = FALSE)
 
-  expect_identical(dat1, dat6)
+  expect_identical(dat1, dat6, ignore_attr = TRUE)
 
   gcs_con <- load_dictionary(concepts = "gcs")
   gcs_raw <- concept("gcs_raw", gcs_con, set_sed_max = FALSE,

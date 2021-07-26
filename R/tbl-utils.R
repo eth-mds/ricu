@@ -783,6 +783,8 @@ dt_gforce <- function(x,
 
   col_is_lgl <- function(col, tbl) is.logical(tbl[[col]])
 
+  .N <- NULL
+
   if (getOption("datatable.optimize") < 2L) {
     warn_ricu("the setting `datatable.optimize` prevents GForce optimizations
                from being applied.", "gforce_disabled")
@@ -818,7 +820,7 @@ dt_gforce <- function(x,
     },
     all = {
       x <- x[, c(lapply(.SD, sum, na.rm = na_rm), .N), by = by, .SDcols = vars]
-      x <- x[, c(vars) := lapply(.SD, `==`, N), .SDcols = vars]
+      x <- x[, c(vars) := lapply(.SD, `==`, get("N")), .SDcols = vars]
       x <- x[, c("N") := NULL]
       x
     }
