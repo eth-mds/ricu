@@ -62,6 +62,7 @@ Suggests:
     knitr,
     rmarkdown,
     ggplot2,
+    cowplot,
     survival,
     forestmodel,
     rticles,

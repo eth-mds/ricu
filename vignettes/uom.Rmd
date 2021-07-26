@@ -106,9 +106,83 @@ if (srcs_avail(full)) {
 ```
 
 ```{r sep-itms, eval = eval_next}
-assign_id <- function(id, itm) `$<-`(itm, "ids", id)
+assign_id <- function(id, itm, nme) `[[<-`(itm, nme, id)
 
-rep_itm <- function(itm) as_item(lapply(itm$ids, assign_id, itm))
+rep_itm <- function(itm, nme = "ids", fun = identity) {
+  as_item(lapply(fun(itm[[nme]]), assign_id, itm, nme))
+}
+
+unlst <- function(x) unlist(x, recursive = FALSE, use.names = FALSE)
+
+split_ind <- function(x, s) {
+  unlst(Map(substr, s, c(1L, x + 1L), c(x - 1L, nchar(s))))
+}
+
+greg <- function(...) {
+  res <- lapply(gregexpr(...), `attributes<-`, NULL)
+  res[vapply(res, identical, logical(1L), -1L)] <- list(integer())
+  res
+}
+
+find_paren <- function(x) {
+
+  sta <- greg("\\(", x)
+  end <- greg("\\)", x)
+
+  res <- Map(rep, 0L, nchar(x))
+  res <- Map(`[<-`, res, sta, 1L)
+
+  res <- Map(`[<-`, res, end, lapply(Map(`[`, res, end), `-`, 1L))
+  res <- lapply(res, cumsum)
+
+  res <- lapply(res, `==`, 0L)
+  res <- Map(`[<-`, res, Map(c, sta, end), NA_integer_)
+
+  res
+}
+
+expand_lst <- function(x) {
+  apply(do.call(expand.grid, x), 1L, paste0, collapse = "")
+}
+
+seq_nna <- function(x) {
+  nna <- !is.na(x)
+  x[nna] <- seq_len(sum(nna))
+  x
+}
+
+rep_paren <- function(x) {
+
+  rln <- lapply(find_paren(x), rle)
+  sqs <- lapply(lapply(rln, `[[`, "values"), seq_nna)
+  rln <- Map(`[[<-`, rln, "values", sqs)
+  rln <- lapply(rln , inverse.rle)
+
+  res <- Map(split, strsplit(x, ""), rln)
+  res <- lapply(res, lapply, paste0, collapse = "")
+
+  res <- lapply(res, lapply, split_rgx)
+  res <- lapply(res, expand_lst)
+
+  unlst(res)
+}
+
+split_pipe <- function(x) {
+
+  ind <- find_paren(x)
+
+  spt <- greg("\\|", x)
+  tdo <- lengths(spt) > 0L
+
+  spt <- Map(`[`, spt, Map(`[`, ind, spt))
+  res <- Map(split_ind, spt, x)
+
+  res[tdo] <- lapply(res[tdo], rep_paren)
+
+  unlst(res)
+}
+
+split_rgx <- function(rgx) unlst(split_pipe(rgx))
 
 split_items <- function(x) {
 
@@ -117,7 +191,11 @@ split_items <- function(x) {
   }
 
   if (inherits(x, "sel_itm")) {
-    return(rep_itm(x))
+    return(rep_itm(x, "ids"))
+  }
+
+  if (inherits(x, "rgx_itm")) {
+    return(rep_itm(x, "regex", split_rgx))
   }
 
   if (inherits(x, "itm")) {
@@ -133,33 +211,45 @@ split_items <- function(x) {
   x
 }
 
-concepts <- c("map", "lact" , "crea", "bili", "plt")
+concepts <- c("map", "lact", "bili", "gcs", "abx")
 
-dict <- load_dictionary(srcs, c(concepts, "gcs"))
+dict <- load_dictionary(srcs, concepts)
 dict <- split_items(dict)
 ```
 
 Next, for the actual data loading we substitute the internally called function `do_itm_load()` with a modified version that throws a warning whenever zero rows are returned.
 
 ```{r itm-load, eval = eval_next, cache = TRUE}
-itm_load_warn_empty <- function(x, ...) {
+empty_items <- list()
+
+itm_load_report_empty <- function(x, ...) {
 
   res <- do_itm_load(x, ...)
 
   if (!nrow(res) && !inherits(x, "nul_itm")) {
-    warning("empty load for id ", x$ids, " in table ", x$src, "::", x$table)
+    add_empty <- list(name = get0("x", envir = parent.frame(5))$name,
+                      id = x$ids, source = x$src, table = x$table)
+    empty_items <<- c(empty_items, list(add_empty))
   }
 
   res
 }
 
 dat <- mockthat::with_mock(
-  do_itm_load = itm_load_warn_empty,
+  do_itm_load = itm_load_report_empty,
   load_concepts(dict, srcs, merge = FALSE, verbose = FALSE)
 )
+
+empty_items <- data.table::rbindlist(empty_items)
+
+if (length(empty_items)) {
+  knitr::kable(empty_items, caption = paste("For the given concepts, the",
+    "listed item IDs do not return any data when the respective tables and",
+    "data sources are queried.")
+}
 ```
 
-If no error was thrown during data loading, every single ID that is part of a `sel_itm` actually returns some data. For other types of data items this means that for every single item as a whole, some data was returned. There are limitations to this type of sanity check though: It might be the case that one of the supplied IDs associated with a `num_cncpt` concept returns data in an unexpected unit of measurement which may cause the range filter to remove all of that data again. In such a scenario though, this will be reported (if `TRUE` is passed as `verbose` argument to `load_concept()`). Paying attention to the output produced by `load_concept()` should help spot such issues, albeit no longer at item resolution but only at concept level.
+If table is printed given the modified data loading above, every single ID that is part of a `sel_itm` or an `rgx_itm` actually returns some data. For other types of data items this means that for every single item as a whole, some data was returned. There are limitations to this type of sanity check though: It might be the case that one of the supplied IDs associated with a `num_cncpt` concept returns data in an unexpected unit of measurement which may cause the range filter to remove all of that data again. In such a scenario though, this will be reported (if `TRUE` is passed as `verbose` argument to `load_concept()`). Paying attention to the output produced by `load_concept()` should help spot such issues, albeit no longer at item resolution but only at concept level.
 
 Next, we will investigate the number of measurements available per concept and stay day. For each stay ID and concept we calculate the number of measurements and note the stay duration. From this we can visualize how the number of measurements per day is distributed over the datasets alongside the percentage of patients that have at least one measurement available.
 
@@ -188,7 +278,7 @@ los <- load_concepts("los_icu", srcs, verbose = FALSE)
 los <- los[los_icu > 0, ]
 
 counts <- lapply(dat, count_meas)
-counts <- lapply(counts, merge, los_icu)
+counts <- lapply(counts, merge, los)
 counts <- Map(meas_stats, counts, names(counts))
 counts <- do.call(rbind, counts)
 counts <- merge(counts, los[, list(total_pat = .N), by = "source"],
@@ -226,7 +316,6 @@ cowplot::plot_grid(
   cowplot::get_legend(boxplots + theme(legend.position = "bottom")),
   ncol = 1L, rel_heights = c(0.9, 0.1)
 )
-
 ```
 
 Finally, we compare the densities we obtain by looking concept values per dataset, as visualized in the following plot.
