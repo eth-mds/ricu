@@ -724,28 +724,14 @@ los_callback <- function(x, id_type, interval) {
   res
 }
 
-mimic_abx_presc <- function(x, id_type, interval) {
+mimic_abx_presc <- function(x, val_var, ...) {
 
-  itm_cb <- function(x, val_var, ...) {
+  idx <- index_var(x)
 
-    idx <- index_var(x)
-
-    x <- x[, c(idx, val_var) := list(get(idx) + mins(720L), TRUE)]
-    x
-  }
-
-  itm <- set_callback(x, itm_cb)
-  itm <- do.call(new_itm, c(itm, list(class = "rgx_itm")))
-  res <- do_itm_load(itm, "hadm", mins(1L))
-
-  res <- change_id(res, id_type, src_name(x), keep_old_id = FALSE,
-                   id_type = TRUE)
-
-  res <- do_callback(itm, res)
-  res <- change_interval(res, interval, by_ref = TRUE)
-
-  res
+  x <- x[, c(idx, val_var) := list(get(idx) + mins(720L), TRUE)]
+  x
 }
+
 
 aumc_death <- function(x, val_var, ...) {
 
