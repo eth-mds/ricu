@@ -379,7 +379,7 @@ try_add_vars.itm <- function(x, ..., var_lst = NULL,
         cur <- default_vars(as_src_tbl(x), var)
       }
 
-      cur <- coalesce(tmp[[var]], cur)
+      cur <- coalesce(if (has_name(tmp, var)) tmp[[var]], cur)
 
       if (is.null(cur)) {
         next
