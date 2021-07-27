@@ -105,7 +105,7 @@ if (srcs_avail(full)) {
 }
 ```
 
-```{r sep-itms, eval = eval_next}
+```{r sep-itms, eval = eval_next, include = FALSE}
 assign_id <- function(id, itm, nme) `[[<-`(itm, nme, id)
 
 rep_itm <- function(itm, nme = "ids", fun = identity) {
@@ -245,7 +245,7 @@ empty_items <- data.table::rbindlist(empty_items)
 if (length(empty_items)) {
   knitr::kable(empty_items, caption = paste("For the given concepts, the",
     "listed item IDs do not return any data when the respective tables and",
-    "data sources are queried.")
+    "data sources are queried."))
 }
 ```
 
