@@ -162,6 +162,19 @@ information can be identified.</p>
 
 <span class='fu'>as_ts_tbl</span><span class='op'>(</span><span class='va'>x</span>, id_vars <span class='op'>=</span> <span class='cn'>NULL</span>, index_var <span class='op'>=</span> <span class='cn'>NULL</span>, interval <span class='op'>=</span> <span class='cn'>NULL</span>, by_ref <span class='op'>=</span> <span class='cn'>FALSE</span><span class='op'>)</span>
 
+<span class='fu'>win_tbl</span><span class='op'>(</span><span class='va'>...</span>, id_vars <span class='op'>=</span> <span class='cn'>NULL</span>, index_var <span class='op'>=</span> <span class='cn'>NULL</span>, interval <span class='op'>=</span> <span class='cn'>NULL</span>, dur_var <span class='op'>=</span> <span class='cn'>NULL</span><span class='op'>)</span>
+
+<span class='fu'>is_win_tbl</span><span class='op'>(</span><span class='va'>x</span><span class='op'>)</span>
+
+<span class='fu'>as_win_tbl</span><span class='op'>(</span>
+  <span class='va'>x</span>,
+  id_vars <span class='op'>=</span> <span class='cn'>NULL</span>,
+  index_var <span class='op'>=</span> <span class='cn'>NULL</span>,
+  interval <span class='op'>=</span> <span class='cn'>NULL</span>,
+  dur_var <span class='op'>=</span> <span class='cn'>NULL</span>,
+  by_ref <span class='op'>=</span> <span class='cn'>FALSE</span>
+<span class='op'>)</span>
+
 <span class='co'># S3 method for id_tbl</span>
 <span class='fu'>as.data.table</span><span class='op'>(</span><span class='va'>x</span>, keep.rownames <span class='op'>=</span> <span class='cn'>FALSE</span>, by_ref <span class='op'>=</span> <span class='cn'>FALSE</span>, <span class='va'>...</span><span class='op'>)</span>
 
@@ -198,6 +211,10 @@ reference</p></td>
       <th>interval</th>
       <td><p>Time series interval length specified as scalar-valued
 <code>difftime</code> object</p></td>
+    </tr>
+    <tr>
+      <th>dur_var</th>
+      <td><p>Column name of the duration column</p></td>
     </tr>
     <tr>
       <th>keep.rownames</th>
@@ -340,16 +357,16 @@ however the ID column is removed the only sensible thing to return is a
 #&gt; <span style='color: #949494;'># Id var:      `c`</span>
 #&gt;        c      b
 #&gt;    <span style='color: #949494; font-style: italic;'>&lt;int&gt;</span>  <span style='color: #949494; font-style: italic;'>&lt;dbl&gt;</span>
-#&gt;  <span style='color: #949494;'>1</span>     1 -<span style='color: #BB0000;'>1.54</span>
-#&gt;  <span style='color: #949494;'>2</span>     2  0.795
-#&gt;  <span style='color: #949494;'>3</span>     3 -<span style='color: #BB0000;'>1.40</span>
-#&gt;  <span style='color: #949494;'>4</span>     4 -<span style='color: #BB0000;'>1.47</span>
-#&gt;  <span style='color: #949494;'>5</span>     5  0.421
-#&gt;  <span style='color: #949494;'>6</span>     6  0.779
-#&gt;  <span style='color: #949494;'>7</span>     7 -<span style='color: #BB0000;'>1.35</span>
-#&gt;  <span style='color: #949494;'>8</span>     8  1.32
-#&gt;  <span style='color: #949494;'>9</span>     9  0.360
-#&gt; <span style='color: #949494;'>10</span>    10 -<span style='color: #BB0000;'>1.93</span></div><div class='input'>
+#&gt;  <span style='color: #949494;'>1</span>     1  0.151
+#&gt;  <span style='color: #949494;'>2</span>     2 -<span style='color: #BB0000;'>0.293</span>
+#&gt;  <span style='color: #949494;'>3</span>     3  0.255
+#&gt;  <span style='color: #949494;'>4</span>     4 -<span style='color: #BB0000;'>0.553</span>
+#&gt;  <span style='color: #949494;'>5</span>     5  1.41
+#&gt;  <span style='color: #949494;'>6</span>     6 -<span style='color: #BB0000;'>0.795</span>
+#&gt;  <span style='color: #949494;'>7</span>     7 -<span style='color: #BB0000;'>1.57</span>
+#&gt;  <span style='color: #949494;'>8</span>     8 -<span style='color: #BB0000;'>1.04</span>
+#&gt;  <span style='color: #949494;'>9</span>     9  1.02
+#&gt; <span style='color: #949494;'>10</span>    10 -<span style='color: #BB0000;'>0.702</span></div><div class='input'>
 <span class='va'>tbl</span> <span class='op'>&lt;-</span> <span class='fu'>id_tbl</span><span class='op'>(</span>a <span class='op'>=</span> <span class='fl'>1</span><span class='op'>:</span><span class='fl'>10</span>, b <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/stats/Normal.html'>rnorm</a></span><span class='op'>(</span><span class='fl'>10</span><span class='op'>)</span><span class='op'>)</span>
 <span class='fu'>validate_tbl</span><span class='op'>(</span><span class='fu'>data.table</span><span class='fu'>::</span><span class='fu'><a href='https://Rdatatable.gitlab.io/data.table/reference/setattr.html'>setnames</a></span><span class='op'>(</span><span class='va'>tbl</span>, <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"c"</span>, <span class='st'>"b"</span><span class='op'>)</span><span class='op'>)</span><span class='op'>)</span>
 </div><div class='output co'>#&gt; [1] "x does not contain column `a`"
@@ -362,43 +379,43 @@ however the ID column is removed the only sensible thing to return is a
 <span class='va'>tbl</span><span class='op'>[</span>, <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"a"</span>, <span class='st'>"c"</span><span class='op'>)</span>, with <span class='op'>=</span> <span class='cn'>FALSE</span><span class='op'>]</span>
 </div><div class='output co'>#&gt; <span style='color: #949494;'># An `id_tbl`: 10 ✖ 2</span>
 #&gt; <span style='color: #949494;'># Id var:      `a`</span>
-#&gt;        a       c
-#&gt;    <span style='color: #949494; font-style: italic;'>&lt;int&gt;</span>   <span style='color: #949494; font-style: italic;'>&lt;dbl&gt;</span>
-#&gt;  <span style='color: #949494;'>1</span>     1 -<span style='color: #BB0000;'>0.566</span>
-#&gt;  <span style='color: #949494;'>2</span>     1 -<span style='color: #BB0000;'>0.834</span>
-#&gt;  <span style='color: #949494;'>3</span>     1  0.398
-#&gt;  <span style='color: #949494;'>4</span>     1 -<span style='color: #BB0000;'>1.47</span>
-#&gt;  <span style='color: #949494;'>5</span>     1 -<span style='color: #BB0000;'>0.395</span>
-#&gt;  <span style='color: #949494;'>6</span>     2 -<span style='color: #BB0000;'>0.131</span>
-#&gt;  <span style='color: #949494;'>7</span>     2 -<span style='color: #BB0000;'>2.00</span>
-#&gt;  <span style='color: #949494;'>8</span>     2 -<span style='color: #BB0000;'>0.996</span>
-#&gt;  <span style='color: #949494;'>9</span>     2  0.420
-#&gt; <span style='color: #949494;'>10</span>     2 -<span style='color: #BB0000;'>0.062</span><span style='color: #BB0000; text-decoration: underline;'>9</span></div><div class='input'><span class='va'>tbl</span><span class='op'>[</span>, <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"b"</span>, <span class='st'>"c"</span><span class='op'>)</span>, with <span class='op'>=</span> <span class='cn'>FALSE</span><span class='op'>]</span>
-</div><div class='output co'>#&gt;           b           c
-#&gt;  1: 1 hours -0.56647935
-#&gt;  2: 2 hours -0.83383531
-#&gt;  3: 3 hours  0.39825915
-#&gt;  4: 4 hours -1.47453793
-#&gt;  5: 5 hours -0.39544120
-#&gt;  6: 1 hours -0.13070247
-#&gt;  7: 2 hours -1.99949395
-#&gt;  8: 3 hours -0.99593086
-#&gt;  9: 4 hours  0.42011400
-#&gt; 10: 5 hours -0.06286163</div><div class='input'><span class='va'>tbl</span><span class='op'>[</span>, <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span><span class='op'>(</span><span class='va'>a</span>, b <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/double.html'>as.double</a></span><span class='op'>(</span><span class='va'>b</span><span class='op'>)</span>, <span class='va'>c</span><span class='op'>)</span><span class='op'>]</span>
+#&gt;        a      c
+#&gt;    <span style='color: #949494; font-style: italic;'>&lt;int&gt;</span>  <span style='color: #949494; font-style: italic;'>&lt;dbl&gt;</span>
+#&gt;  <span style='color: #949494;'>1</span>     1 -<span style='color: #BB0000;'>0.691</span>
+#&gt;  <span style='color: #949494;'>2</span>     1  1.34
+#&gt;  <span style='color: #949494;'>3</span>     1  2.74
+#&gt;  <span style='color: #949494;'>4</span>     1 -<span style='color: #BB0000;'>0.944</span>
+#&gt;  <span style='color: #949494;'>5</span>     1 -<span style='color: #BB0000;'>1.78</span>
+#&gt;  <span style='color: #949494;'>6</span>     2 -<span style='color: #BB0000;'>0.716</span>
+#&gt;  <span style='color: #949494;'>7</span>     2  0.911
+#&gt;  <span style='color: #949494;'>8</span>     2 -<span style='color: #BB0000;'>0.772</span>
+#&gt;  <span style='color: #949494;'>9</span>     2 -<span style='color: #BB0000;'>0.782</span>
+#&gt; <span style='color: #949494;'>10</span>     2 -<span style='color: #BB0000;'>0.432</span></div><div class='input'><span class='va'>tbl</span><span class='op'>[</span>, <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"b"</span>, <span class='st'>"c"</span><span class='op'>)</span>, with <span class='op'>=</span> <span class='cn'>FALSE</span><span class='op'>]</span>
+</div><div class='output co'>#&gt;           b          c
+#&gt;  1: 1 hours -0.6912054
+#&gt;  2: 2 hours  1.3398599
+#&gt;  3: 3 hours  2.7361084
+#&gt;  4: 4 hours -0.9441017
+#&gt;  5: 5 hours -1.7810619
+#&gt;  6: 1 hours -0.7160587
+#&gt;  7: 2 hours  0.9110785
+#&gt;  8: 3 hours -0.7721921
+#&gt;  9: 4 hours -0.7820777
+#&gt; 10: 5 hours -0.4321952</div><div class='input'><span class='va'>tbl</span><span class='op'>[</span>, <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span><span class='op'>(</span><span class='va'>a</span>, b <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/double.html'>as.double</a></span><span class='op'>(</span><span class='va'>b</span><span class='op'>)</span>, <span class='va'>c</span><span class='op'>)</span><span class='op'>]</span>
 </div><div class='output co'>#&gt; <span style='color: #949494;'># An `id_tbl`: 10 ✖ 3</span>
 #&gt; <span style='color: #949494;'># Id var:      `a`</span>
-#&gt;        a     b       c
-#&gt;    <span style='color: #949494; font-style: italic;'>&lt;int&gt;</span> <span style='color: #949494; font-style: italic;'>&lt;dbl&gt;</span>   <span style='color: #949494; font-style: italic;'>&lt;dbl&gt;</span>
-#&gt;  <span style='color: #949494;'>1</span>     1     1 -<span style='color: #BB0000;'>0.566</span>
-#&gt;  <span style='color: #949494;'>2</span>     1     2 -<span style='color: #BB0000;'>0.834</span>
-#&gt;  <span style='color: #949494;'>3</span>     1     3  0.398
-#&gt;  <span style='color: #949494;'>4</span>     1     4 -<span style='color: #BB0000;'>1.47</span>
-#&gt;  <span style='color: #949494;'>5</span>     1     5 -<span style='color: #BB0000;'>0.395</span>
-#&gt;  <span style='color: #949494;'>6</span>     2     1 -<span style='color: #BB0000;'>0.131</span>
-#&gt;  <span style='color: #949494;'>7</span>     2     2 -<span style='color: #BB0000;'>2.00</span>
-#&gt;  <span style='color: #949494;'>8</span>     2     3 -<span style='color: #BB0000;'>0.996</span>
-#&gt;  <span style='color: #949494;'>9</span>     2     4  0.420
-#&gt; <span style='color: #949494;'>10</span>     2     5 -<span style='color: #BB0000;'>0.062</span><span style='color: #BB0000; text-decoration: underline;'>9</span></div><div class='input'>
+#&gt;        a     b      c
+#&gt;    <span style='color: #949494; font-style: italic;'>&lt;int&gt;</span> <span style='color: #949494; font-style: italic;'>&lt;dbl&gt;</span>  <span style='color: #949494; font-style: italic;'>&lt;dbl&gt;</span>
+#&gt;  <span style='color: #949494;'>1</span>     1     1 -<span style='color: #BB0000;'>0.691</span>
+#&gt;  <span style='color: #949494;'>2</span>     1     2  1.34
+#&gt;  <span style='color: #949494;'>3</span>     1     3  2.74
+#&gt;  <span style='color: #949494;'>4</span>     1     4 -<span style='color: #BB0000;'>0.944</span>
+#&gt;  <span style='color: #949494;'>5</span>     1     5 -<span style='color: #BB0000;'>1.78</span>
+#&gt;  <span style='color: #949494;'>6</span>     2     1 -<span style='color: #BB0000;'>0.716</span>
+#&gt;  <span style='color: #949494;'>7</span>     2     2  0.911
+#&gt;  <span style='color: #949494;'>8</span>     2     3 -<span style='color: #BB0000;'>0.772</span>
+#&gt;  <span style='color: #949494;'>9</span>     2     4 -<span style='color: #BB0000;'>0.782</span>
+#&gt; <span style='color: #949494;'>10</span>     2     5 -<span style='color: #BB0000;'>0.432</span></div><div class='input'>
 </div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">

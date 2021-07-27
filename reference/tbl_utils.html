@@ -177,6 +177,8 @@ to handle column renaming correctly.</p>
 
 <span class='fu'>change_interval</span><span class='op'>(</span><span class='va'>x</span>, <span class='va'>new_interval</span>, cols <span class='op'>=</span> <span class='fu'><a href='id_vars.html'>time_vars</a></span><span class='op'>(</span><span class='va'>x</span><span class='op'>)</span>, by_ref <span class='op'>=</span> <span class='cn'>FALSE</span><span class='op'>)</span>
 
+<span class='fu'>change_dur_unit</span><span class='op'>(</span><span class='va'>x</span>, <span class='va'>new_unit</span>, by_ref <span class='op'>=</span> <span class='cn'>FALSE</span><span class='op'>)</span>
+
 <span class='fu'>rm_na</span><span class='op'>(</span><span class='va'>x</span>, cols <span class='op'>=</span> <span class='fu'><a href='id_vars.html'>data_vars</a></span><span class='op'>(</span><span class='va'>x</span><span class='op'>)</span>, mode <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"all"</span>, <span class='st'>"any"</span><span class='op'>)</span><span class='op'>)</span>
 
 <span class='co'># S3 method for id_tbl</span>
@@ -214,7 +216,8 @@ to handle column renaming correctly.</p>
 
 <span class='fu'>dt_gforce</span><span class='op'>(</span>
   <span class='va'>x</span>,
-  fun <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"mean"</span>, <span class='st'>"median"</span>, <span class='st'>"min"</span>, <span class='st'>"max"</span>, <span class='st'>"sum"</span>, <span class='st'>"prod"</span>, <span class='st'>"var"</span>, <span class='st'>"sd"</span>, <span class='st'>"first"</span>, <span class='st'>"last"</span><span class='op'>)</span>,
+  fun <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"mean"</span>, <span class='st'>"median"</span>, <span class='st'>"min"</span>, <span class='st'>"max"</span>, <span class='st'>"sum"</span>, <span class='st'>"prod"</span>, <span class='st'>"var"</span>, <span class='st'>"sd"</span>, <span class='st'>"first"</span>, <span class='st'>"last"</span>,
+    <span class='st'>"any"</span>, <span class='st'>"all"</span><span class='op'>)</span>,
   by <span class='op'>=</span> <span class='fu'><a href='id_vars.html'>meta_vars</a></span><span class='op'>(</span><span class='va'>x</span><span class='op'>)</span>,
   vars <span class='op'>=</span> <span class='fu'><a href='id_vars.html'>data_vars</a></span><span class='op'>(</span><span class='va'>x</span><span class='op'>)</span>,
   na_rm <span class='op'>=</span> <span class='op'>!</span><span class='va'>fun</span> <span class='op'>%in%</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"first"</span>, <span class='st'>"last"</span><span class='op'>)</span>
@@ -255,6 +258,10 @@ reference</p></td>
       <th>new_interval</th>
       <td><p>Replacement interval length specified as scalar-valued
 <code>difftime</code> object</p></td>
+    </tr>
+    <tr>
+      <th>new_unit</th>
+      <td><p>New <code>difftime</code> unit for the <code>dur_var</code> column</p></td>
     </tr>
     <tr>
       <th>mode</th>

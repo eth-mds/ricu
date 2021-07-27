@@ -160,11 +160,12 @@ over time-windows selected in absolute terms.</p>
 
     <pre class="usage"><span class='fu'>expand</span><span class='op'>(</span>
   <span class='va'>x</span>,
-  start_var <span class='op'>=</span> <span class='st'>"start"</span>,
-  end_var <span class='op'>=</span> <span class='st'>"end"</span>,
-  step_size <span class='op'>=</span> <span class='cn'>NULL</span>,
-  new_index <span class='op'>=</span> <span class='cn'>NULL</span>,
-  keep_vars <span class='op'>=</span> <span class='fu'><a href='id_vars.html'>id_vars</a></span><span class='op'>(</span><span class='va'>x</span><span class='op'>)</span>
+  start_var <span class='op'>=</span> <span class='fu'><a href='id_vars.html'>index_var</a></span><span class='op'>(</span><span class='va'>x</span><span class='op'>)</span>,
+  end_var <span class='op'>=</span> <span class='cn'>NULL</span>,
+  step_size <span class='op'>=</span> <span class='fu'><a href='id_vars.html'>time_step</a></span><span class='op'>(</span><span class='va'>x</span><span class='op'>)</span>,
+  new_index <span class='op'>=</span> <span class='va'>start_var</span>,
+  keep_vars <span class='op'>=</span> <span class='cn'>NULL</span>,
+  aggregate <span class='op'>=</span> <span class='cn'>FALSE</span>
 <span class='op'>)</span>
 
 <span class='fu'>collapse</span><span class='op'>(</span>
@@ -228,6 +229,10 @@ windows bounds</p></td>
     <tr>
       <th>keep_vars</th>
       <td><p>Names of the columns to hold onto</p></td>
+    </tr>
+    <tr>
+      <th>aggregate</th>
+      <td><p>Function for aggregating values in overlapping intervals</p></td>
     </tr>
     <tr>
       <th>id_vars, index_var</th>

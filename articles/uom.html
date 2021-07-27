@@ -134,11 +134,284 @@
 <span class="co">#&gt; 139,144 mimic_demo     298685 318 hours    NA   12</span>
 <span class="co">#&gt; # … with 139,134 more rows</span></code></pre></div>
 <p>Messages raised during loading of lactate values, for example, indicate that 0.62% of retrieved values are specified in mEq/L instead of mmol/L (which requires an identity transformation for unit conversion), while the remaining discrepancies are false positives (both mmole/L and MMOLL can be assumed to mean mmol/L). For mean arterial bloop pressure values, the target unit is specified as mmHg (with the alternative spelling mm Hg being accepted as well), however, due to the data organization in eICU<a href="#fn2" class="footnote-ref" id="fnref2"><sup>2</sup></a>, no explicit measurement units are specified for this variable, in turn causing the large percentage of missing unit values reported.</p>
-<p>Several utility functions are exported from <code>ricu</code> for helping with creating callback functions that handle unit conversion. Data items corresponding to the bilirubin concept for the European datasets HiRID and AUMCdb, for example, have a callback entry specified as <code>convert_unit(binary_op(``*``, 0.058467), "mg/dL")</code>. This creates a callback functions which applies <code>binary_op(``*``, 0.058467)</code> to the column specified as <code>val_var</code> and replaces existing values in the column identified by <code>unit_var</code> with the value <code>"mg/dl"</code>. In case the loaded data already is comprised of a mix of units, a regular expression passed as <code>rgx</code> can be specified, which will be used to identify the rows on which to operate. Finally, the function <code>binary_op</code> turns a binary function into an unary function by fixing the second operand.</p>
-<p>As a sanity check to see whether measurement units (and data values in general) are aligned when compared across datasets, density plots may be employed.</p>
+<p>Several utility functions are exported from <code>ricu</code> for helping with creating callback functions that handle unit conversion. Data items corresponding to the bilirubin concept for the European datasets HiRID and AUMCdb, for example, have a callback entry specified as <code><a href="../reference/transform_fun.html">convert_unit(binary_op(`*`, 0.058467), "mg/dL")</a></code>. This creates a callback functions which applies <code><a href="../reference/transform_fun.html">binary_op(`*`, 0.058467)</a></code> to the column specified as <code>val_var</code> and replaces existing values in the column identified by <code>unit_var</code> with the value <code>"mg/dl"</code>. In case the loaded data already is comprised of a mix of units, a regular expression passed as <code>rgx</code> can be specified, which will be used to identify the rows on which to operate. Finally, the function <code>binary_op</code> turns a binary function into an unary function by fixing the second operand.</p>
+<p>As a first sanity check we will slightly modify data loading in order to be warned about item IDs that do not appear in the data. For this we slightly modify data items loaded from the dictionary such that items of type <code>sel_itm</code> which may contain several IDs, are split into separate items.</p>
 <pre><code>#&gt; Note: The following code chunks are intended to be run using data from
 #&gt; `mimic` and `eicu` which is not available. Alternatively, data from
 #&gt; `mimic_demo` and `eicu_demo` is used instead.</code></pre>
+<p>Next, for the actual data loading we substitute the internally called function <code><a href="../reference/prepare_query.html">do_itm_load()</a></code> with a modified version that throws a warning whenever zero rows are returned.</p>
+<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">empty_items</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span><span class="op">(</span><span class="op">)</span>
+
+<span class="va">itm_load_report_empty</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">x</span>, <span class="va">...</span><span class="op">)</span> <span class="op">{</span>
+
+  <span class="va">res</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/prepare_query.html">do_itm_load</a></span><span class="op">(</span><span class="va">x</span>, <span class="va">...</span><span class="op">)</span>
+
+  <span class="kw">if</span> <span class="op">(</span><span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/nrow.html">nrow</a></span><span class="op">(</span><span class="va">res</span><span class="op">)</span> <span class="op">&amp;&amp;</span> <span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/class.html">inherits</a></span><span class="op">(</span><span class="va">x</span>, <span class="st">"nul_itm"</span><span class="op">)</span><span class="op">)</span> <span class="op">{</span>
+    <span class="va">add_empty</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span><span class="op">(</span>name <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/exists.html">get0</a></span><span class="op">(</span><span class="st">"x"</span>, envir <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/sys.parent.html">parent.frame</a></span><span class="op">(</span><span class="fl">5</span><span class="op">)</span><span class="op">)</span><span class="op">$</span><span class="va">name</span>,
+                      id <span class="op">=</span> <span class="va">x</span><span class="op">$</span><span class="va">ids</span>, source <span class="op">=</span> <span class="va">x</span><span class="op">$</span><span class="va">src</span>, table <span class="op">=</span> <span class="va">x</span><span class="op">$</span><span class="va">table</span><span class="op">)</span>
+    <span class="va">empty_items</span> <span class="op">&lt;&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="va">empty_items</span>, <span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span><span class="op">(</span><span class="va">add_empty</span><span class="op">)</span><span class="op">)</span>
+  <span class="op">}</span>
+
+  <span class="va">res</span>
+<span class="op">}</span>
+
+<span class="va">dat</span> <span class="op">&lt;-</span> <span class="fu">mockthat</span><span class="fu">::</span><span class="fu"><a href="https://nbenn.github.io/mockthat/reference/mock.html">with_mock</a></span><span class="op">(</span>
+  do_itm_load <span class="op">=</span> <span class="va">itm_load_report_empty</span>,
+  <span class="fu"><a href="../reference/load_concepts.html">load_concepts</a></span><span class="op">(</span><span class="va">dict</span>, <span class="va">srcs</span>, merge <span class="op">=</span> <span class="cn">FALSE</span>, verbose <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span>
+<span class="op">)</span>
+
+<span class="va">empty_items</span> <span class="op">&lt;-</span> <span class="fu">data.table</span><span class="fu">::</span><span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/rbindlist.html">rbindlist</a></span><span class="op">(</span><span class="va">empty_items</span><span class="op">)</span>
+<span class="co">#&gt; Warning in data.table::rbindlist(empty_items): Column 2 ['id'] of item 2 is</span>
+<span class="co">#&gt; length 0. This (and 1 other like it) has been filled with NA (NULL for list</span>
+<span class="co">#&gt; columns) to make each item uniform.</span>
+
+<span class="kw">if</span> <span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/length.html">length</a></span><span class="op">(</span><span class="va">empty_items</span><span class="op">)</span><span class="op">)</span> <span class="op">{</span>
+  <span class="fu">knitr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html">kable</a></span><span class="op">(</span><span class="va">empty_items</span>, caption <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html">paste</a></span><span class="op">(</span><span class="st">"For the given concepts, the"</span>,
+    <span class="st">"listed item IDs do not return any data when the respective tables and"</span>,
+    <span class="st">"data sources are queried."</span><span class="op">)</span><span class="op">)</span>
+<span class="op">}</span></code></pre></div>
+<table class="table">
+<caption>For the given concepts, the listed item IDs do not return any data when the respective tables and data sources are queried.</caption>
+<thead><tr class="header">
+<th align="left">name</th>
+<th align="right">id</th>
+<th align="left">source</th>
+<th align="left">table</th>
+</tr></thead>
+<tbody>
+<tr class="odd">
+<td align="left">map</td>
+<td align="right">6072</td>
+<td align="left">mimic_demo</td>
+<td align="left">chartevents</td>
+</tr>
+<tr class="even">
+<td align="left">abx</td>
+<td align="right">NA</td>
+<td align="left">mimic_demo</td>
+<td align="left">prescriptions</td>
+</tr>
+<tr class="odd">
+<td align="left">abx</td>
+<td align="right">225838</td>
+<td align="left">mimic_demo</td>
+<td align="left">inputevents_mv</td>
+</tr>
+<tr class="even">
+<td align="left">abx</td>
+<td align="right">225840</td>
+<td align="left">mimic_demo</td>
+<td align="left">inputevents_mv</td>
+</tr>
+<tr class="odd">
+<td align="left">abx</td>
+<td align="right">225844</td>
+<td align="left">mimic_demo</td>
+<td align="left">inputevents_mv</td>
+</tr>
+<tr class="even">
+<td align="left">abx</td>
+<td align="right">225847</td>
+<td align="left">mimic_demo</td>
+<td align="left">inputevents_mv</td>
+</tr>
+<tr class="odd">
+<td align="left">abx</td>
+<td align="right">225848</td>
+<td align="left">mimic_demo</td>
+<td align="left">inputevents_mv</td>
+</tr>
+<tr class="even">
+<td align="left">abx</td>
+<td align="right">225857</td>
+<td align="left">mimic_demo</td>
+<td align="left">inputevents_mv</td>
+</tr>
+<tr class="odd">
+<td align="left">abx</td>
+<td align="right">225862</td>
+<td align="left">mimic_demo</td>
+<td align="left">inputevents_mv</td>
+</tr>
+<tr class="even">
+<td align="left">abx</td>
+<td align="right">225866</td>
+<td align="left">mimic_demo</td>
+<td align="left">inputevents_mv</td>
+</tr>
+<tr class="odd">
+<td align="left">abx</td>
+<td align="right">225868</td>
+<td align="left">mimic_demo</td>
+<td align="left">inputevents_mv</td>
+</tr>
+<tr class="even">
+<td align="left">abx</td>
+<td align="right">225871</td>
+<td align="left">mimic_demo</td>
+<td align="left">inputevents_mv</td>
+</tr>
+<tr class="odd">
+<td align="left">abx</td>
+<td align="right">225873</td>
+<td align="left">mimic_demo</td>
+<td align="left">inputevents_mv</td>
+</tr>
+<tr class="even">
+<td align="left">abx</td>
+<td align="right">225875</td>
+<td align="left">mimic_demo</td>
+<td align="left">inputevents_mv</td>
+</tr>
+<tr class="odd">
+<td align="left">abx</td>
+<td align="right">225876</td>
+<td align="left">mimic_demo</td>
+<td align="left">inputevents_mv</td>
+</tr>
+<tr class="even">
+<td align="left">abx</td>
+<td align="right">225877</td>
+<td align="left">mimic_demo</td>
+<td align="left">inputevents_mv</td>
+</tr>
+<tr class="odd">
+<td align="left">abx</td>
+<td align="right">225882</td>
+<td align="left">mimic_demo</td>
+<td align="left">inputevents_mv</td>
+</tr>
+<tr class="even">
+<td align="left">abx</td>
+<td align="right">225885</td>
+<td align="left">mimic_demo</td>
+<td align="left">inputevents_mv</td>
+</tr>
+<tr class="odd">
+<td align="left">abx</td>
+<td align="right">225886</td>
+<td align="left">mimic_demo</td>
+<td align="left">inputevents_mv</td>
+</tr>
+<tr class="even">
+<td align="left">abx</td>
+<td align="right">225889</td>
+<td align="left">mimic_demo</td>
+<td align="left">inputevents_mv</td>
+</tr>
+<tr class="odd">
+<td align="left">abx</td>
+<td align="right">225890</td>
+<td align="left">mimic_demo</td>
+<td align="left">inputevents_mv</td>
+</tr>
+<tr class="even">
+<td align="left">abx</td>
+<td align="right">225895</td>
+<td align="left">mimic_demo</td>
+<td align="left">inputevents_mv</td>
+</tr>
+<tr class="odd">
+<td align="left">abx</td>
+<td align="right">225896</td>
+<td align="left">mimic_demo</td>
+<td align="left">inputevents_mv</td>
+</tr>
+<tr class="even">
+<td align="left">abx</td>
+<td align="right">225897</td>
+<td align="left">mimic_demo</td>
+<td align="left">inputevents_mv</td>
+</tr>
+<tr class="odd">
+<td align="left">abx</td>
+<td align="right">225898</td>
+<td align="left">mimic_demo</td>
+<td align="left">inputevents_mv</td>
+</tr>
+<tr class="even">
+<td align="left">abx</td>
+<td align="right">225900</td>
+<td align="left">mimic_demo</td>
+<td align="left">inputevents_mv</td>
+</tr>
+<tr class="odd">
+<td align="left">abx</td>
+<td align="right">225903</td>
+<td align="left">mimic_demo</td>
+<td align="left">inputevents_mv</td>
+</tr>
+<tr class="even">
+<td align="left">abx</td>
+<td align="right">225905</td>
+<td align="left">mimic_demo</td>
+<td align="left">inputevents_mv</td>
+</tr>
+<tr class="odd">
+<td align="left">abx</td>
+<td align="right">228003</td>
+<td align="left">mimic_demo</td>
+<td align="left">inputevents_mv</td>
+</tr>
+<tr class="even">
+<td align="left">abx</td>
+<td align="right">NA</td>
+<td align="left">eicu_demo</td>
+<td align="left">infusiondrug</td>
+</tr>
+</tbody>
+</table>
+<p>If table is printed given the modified data loading above, every single ID that is part of a <code>sel_itm</code> or an <code>rgx_itm</code> actually returns some data. For other types of data items this means that for every single item as a whole, some data was returned. There are limitations to this type of sanity check though: It might be the case that one of the supplied IDs associated with a <code>num_cncpt</code> concept returns data in an unexpected unit of measurement which may cause the range filter to remove all of that data again. In such a scenario though, this will be reported (if <code>TRUE</code> is passed as <code>verbose</code> argument to <code>load_concept()</code>). Paying attention to the output produced by <code>load_concept()</code> should help spot such issues, albeit no longer at item resolution but only at concept level.</p>
+<p>Next, we will investigate the number of measurements available per concept and stay day. For each stay ID and concept we calculate the number of measurements and note the stay duration. From this we can visualize how the number of measurements per day is distributed over the datasets alongside the percentage of patients that have at least one measurement available.</p>
+<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">count_meas</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="op">{</span>
+  <span class="va">x</span><span class="op">[</span><span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html">is.na</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/get.html">get</a></span><span class="op">(</span><span class="fu"><a href="../reference/id_vars.html">data_var</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span><span class="op">)</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span><span class="op">(</span>count <span class="op">=</span> <span class="va">.N</span><span class="op">)</span>, by <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fu"><a href="../reference/id_vars.html">id_vars</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span><span class="op">)</span><span class="op">]</span>
+<span class="op">}</span>
+
+<span class="va">meas_day</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">x</span>, <span class="va">los</span><span class="op">)</span> <span class="op">{</span>
+  <span class="fu"><a href="https://rdrr.io/r/base/merge.html">merge</a></span><span class="op">(</span><span class="va">x</span>, <span class="va">los</span><span class="op">)</span><span class="op">[</span>, <span class="va">count</span> <span class="op">:=</span> <span class="va">count</span> <span class="op">/</span> <span class="va">los_icu</span><span class="op">]</span>
+<span class="op">}</span>
+
+<span class="va">quants</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="op">{</span>
+  <span class="fu"><a href="https://rdrr.io/r/stats/setNames.html">setNames</a></span><span class="op">(</span>
+    <span class="fu"><a href="https://rdrr.io/r/base/list.html">as.list</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/stats/quantile.html">quantile</a></span><span class="op">(</span><span class="va">x</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">0.05</span>, <span class="fl">0.25</span>, <span class="fl">0.5</span>, <span class="fl">0.75</span>, <span class="fl">0.95</span><span class="op">)</span><span class="op">)</span><span class="op">)</span>,
+    <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"min"</span>, <span class="st">"lwr"</span>, <span class="st">"med"</span>, <span class="st">"upr"</span>, <span class="st">"max"</span><span class="op">)</span>
+  <span class="op">)</span>
+<span class="op">}</span>
+
+<span class="va">meas_stats</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">x</span>, <span class="va">concept</span><span class="op">)</span> <span class="op">{</span>
+  <span class="va">x</span><span class="op">[</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span><span class="op">(</span>concept <span class="op">=</span> <span class="va">concept</span>, n_pat <span class="op">=</span> <span class="va">.N</span><span class="op">)</span>, <span class="fu">quants</span><span class="op">(</span><span class="va">count</span> <span class="op">/</span> <span class="va">los_icu</span><span class="op">)</span><span class="op">)</span>,
+    by <span class="op">=</span> <span class="st">"source"</span><span class="op">]</span>
+<span class="op">}</span>
+
+<span class="va">los</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/load_concepts.html">load_concepts</a></span><span class="op">(</span><span class="st">"los_icu"</span>, <span class="va">srcs</span>, verbose <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span>
+<span class="va">los</span> <span class="op">&lt;-</span> <span class="va">los</span><span class="op">[</span><span class="va">los_icu</span> <span class="op">&gt;</span> <span class="fl">0</span>, <span class="op">]</span>
+
+<span class="va">counts</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/lapply.html">lapply</a></span><span class="op">(</span><span class="va">dat</span>, <span class="va">count_meas</span><span class="op">)</span>
+<span class="va">counts</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/lapply.html">lapply</a></span><span class="op">(</span><span class="va">counts</span>, <span class="va">merge</span>, <span class="va">los</span><span class="op">)</span>
+<span class="va">counts</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/funprog.html">Map</a></span><span class="op">(</span><span class="va">meas_stats</span>, <span class="va">counts</span>, <span class="fu"><a href="https://rdrr.io/r/base/names.html">names</a></span><span class="op">(</span><span class="va">counts</span><span class="op">)</span><span class="op">)</span>
+<span class="va">counts</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/do.call.html">do.call</a></span><span class="op">(</span><span class="va">rbind</span>, <span class="va">counts</span><span class="op">)</span>
+<span class="va">counts</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/merge.html">merge</a></span><span class="op">(</span><span class="va">counts</span>, <span class="va">los</span><span class="op">[</span>, <span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span><span class="op">(</span>total_pat <span class="op">=</span> <span class="va">.N</span><span class="op">)</span>, by <span class="op">=</span> <span class="st">"source"</span><span class="op">]</span>,
+                by <span class="op">=</span> <span class="st">"source"</span><span class="op">)</span>
+
+<span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span><span class="op">(</span><span class="va">counts</span><span class="op">)</span>
+<span class="co">#&gt;        source concept n_pat        min        lwr        med       upr</span>
+<span class="co">#&gt; 1:  eicu_demo     map  2343  8.1547749 18.7905901 22.5195482 23.737428</span>
+<span class="co">#&gt; 2:  eicu_demo    lact   838  0.1607749  0.4263825  0.9270397  1.868192</span>
+<span class="co">#&gt; 3:  eicu_demo    bili  1823  0.2477931  0.6470456  1.2080537  2.244740</span>
+<span class="co">#&gt; 4:  eicu_demo     gcs  1685  0.8112936  2.4503687  5.5598456 10.942249</span>
+<span class="co">#&gt; 5:  eicu_demo     abx     5  0.5166736  0.6880076  0.8330923  1.325967</span>
+<span class="co">#&gt; 6: mimic_demo     map   132 14.8758279 19.7455626 21.5032468 22.526516</span>
+<span class="co">#&gt;          max total_pat</span>
+<span class="co">#&gt; 1: 24.959050      2508</span>
+<span class="co">#&gt; 2:  6.116601      2508</span>
+<span class="co">#&gt; 3:  8.122924      2508</span>
+<span class="co">#&gt; 4: 26.725444      2508</span>
+<span class="co">#&gt; 5:  1.699814      2508</span>
+<span class="co">#&gt; 6: 23.453204       136</span></code></pre></div>
+<p><img src="uom_files/figure-html/count-plot-1.png" width="576"></p>
+<p>Finally, we compare the densities we obtain by looking concept values per dataset, as visualized in the following plot.</p>
 <p><img src="uom_files/figure-html/uom-hist-1.png" width="576"><img src="uom_files/figure-html/uom-hist-2.png" width="576"><img src="uom_files/figure-html/uom-hist-3.png" width="576"><img src="uom_files/figure-html/uom-hist-4.png" width="576"><img src="uom_files/figure-html/uom-hist-5.png" width="576"></p>
 <p>When extending the <code>ricu</code> dictionary to both new data sources and new data concepts, it might be worthwhile to visually inspect the returned data in a fashion similar to the above in order to have a high-level confirmation that measurement units roughly agree.</p>
 </div>
