@@ -225,24 +225,11 @@ complete_tbl_itm <- function(x, callback, sub_var, id_var = NULL,
                              index_var = NULL, dur_var = NULL, interval = NULL,
                              ...) {
 
-  set_not_null <- function(x, name, val, fun = identity) {
-    if (not_null(val)) x[[name]] <- fun(val)
-    x
-  }
-
-  if (is.null(id_var) || is.null(index_var)) {
-    tbl <- as_src_tbl(x)
-  }
-
   res <- set_callback(x, callback)
   res <- try_add_vars(res, sub_var = sub_var, ...)
   res <- try_add_vars(res, val_var = TRUE)
-
-  res <- try_add_vars(res,
-    id_var = coalesce(id_var, id_vars(tbl)),
-    index_var = coalesce(index_var, index_var(tbl)),
-    dur_var = dur_var, type = "meta_vars"
-  )
+  res <- try_add_vars(res, id_var = id_var, index_var = index_var,
+                      dur_var = dur_var, type = "meta_vars")
 
   if (not_null(interval)) {
     res[["interval"]] <- as.difftime(interval)

@@ -8,12 +8,7 @@ test_that("load hirid items", {
       class = c("hirid_tbl", "src_tbl"),
       col_cfg = new_col_cfg("hirid", "observations", index_var = "datetime",
                             time_vars = c("datetime", "entertime"),
-                            val_var = "value"),
-      src_env = structure(list(),
-        class = c("hirid_env", "src_env"),
-        id_cfg = new_id_cfg("hirid",  "icustay", "patientid", 1L,
-                            "admissiontime", NA_character_, "general")
-      )
+                            val_var = "value")
     ),
     parse_dictionary(read_dictionary("concept-dict"), "hirid", "glu")
   )
@@ -21,6 +16,8 @@ test_that("load hirid items", {
   expect_identical(n_tick(gluc), 2L)
 
   gluc <- as_item(gluc)[[1L]]
+  gluc <- try_add_vars(gluc, id_var = "patientid", index_var = "datetime",
+                       type = "meta_vars")
 
   dat <- mockthat::with_mock(
     load_ts = ts_tbl(
