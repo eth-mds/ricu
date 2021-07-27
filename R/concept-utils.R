@@ -73,6 +73,8 @@
 #' @param src The data source name
 #' @param ... Further specification of the `itm` object (passed to
 #' [init_itm()])
+#' @param interval A default data loading interval (either specified as scalar
+#' difftime or string such as "00:01:00")
 #' @param target Item target class (e.g. "id_tbl"), `NA` indicates no specific
 #' class requirement
 #' @param class Sub class for customizing `itm` behavior
@@ -111,12 +113,18 @@
 #'
 #' @export
 #'
-new_itm <- function(src, ..., target = NA_character_, class = "sel_itm") {
+new_itm <- function(src, ..., interval = NULL, target = NA_character_,
+                    class = "sel_itm") {
 
   assert_that(is.string(src), is.character(class), has_length(class))
 
-  init_itm(structure(list(src = src, target = target),
-           class = c(class, "itm")), ...)
+  res <- structure(list(src = src, target = target), class = c(class, "itm"))
+
+  if (not_null(interval)) {
+    res[["interval"]] <- as.difftime(interval)
+  }
+
+  init_itm(res, ...)
 }
 
 #' @param x Object to query/dispatch on
@@ -194,7 +202,7 @@ init_itm.hrd_itm <- function(x, table, sub_var, ids,
 #'
 #' @rdname data_items
 #' @export
-init_itm.col_itm <- function(x, table, sub_var, unit_val = NULL,
+init_itm.col_itm <- function(x, table, unit_val = NULL,
                              callback = "identity_callback", ...) {
 
   assert_that(is.string(table), null_or(unit_val, is.string))
@@ -222,18 +230,13 @@ init_itm.rgx_itm <- function(x, table, sub_var, regex,
 }
 
 complete_tbl_itm <- function(x, callback, sub_var, id_var = NULL,
-                             index_var = NULL, dur_var = NULL, interval = NULL,
-                             ...) {
+                             index_var = NULL, dur_var = NULL, ...) {
 
   res <- set_callback(x, callback)
   res <- try_add_vars(res, sub_var = sub_var, ...)
   res <- try_add_vars(res, val_var = TRUE)
   res <- try_add_vars(res, id_var = id_var, index_var = index_var,
                       dur_var = dur_var, type = "meta_vars")
-
-  if (not_null(interval)) {
-    res[["interval"]] <- as.difftime(interval)
-  }
 
   res
 }

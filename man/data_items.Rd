@@ -16,7 +16,7 @@
 \alias{is_item}
 \title{Data items}
 \usage{
-new_itm(src, ..., target = NA_character_, class = "sel_itm")
+new_itm(src, ..., interval = NULL, target = NA_character_, class = "sel_itm")
 
 is_itm(x)
 
@@ -26,14 +26,7 @@ init_itm(x, ...)
 
 \method{init_itm}{hrd_itm}(x, table, sub_var, ids, callback = "identity_callback", ...)
 
-\method{init_itm}{col_itm}(
-  x,
-  table,
-  sub_var,
-  unit_val = NULL,
-  callback = "identity_callback",
-  ...
-)
+\method{init_itm}{col_itm}(x, table, unit_val = NULL, callback = "identity_callback", ...)
 
 \method{init_itm}{rgx_itm}(x, table, sub_var, regex, callback = "identity_callback", ...)
 
@@ -54,6 +47,9 @@ is_item(x)
 
 \item{...}{Further specification of the \code{itm} object (passed to
 \code{\link[=init_itm]{init_itm()}})}
+
+\item{interval}{A default data loading interval (either specified as scalar
+difftime or string such as "00:01:00")}
 
 \item{target}{Item target class (e.g. "id_tbl"), \code{NA} indicates no specific
 class requirement}
