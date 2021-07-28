@@ -59,7 +59,7 @@ One challenge when working with electronic healthcare (EHR) data from different 
 
 ## `ricu` data concepts
 
-Data concepts of type `num_cncpt` can specify an expected units as character vector (where the string in position 1 is added as per-column attribute `units`). Due to the complexity involved, unit conversion to the specified target unit currently is not handled automatically^[Support for automatically handling this, using the [units](https://cran.r-project.org/package=units) packages, is being considered, but so far has not been implemented]. Instead, item-specific callback functions are responsible for handling this, while unit mismatches are reported as messages during concept loading.
+Data concepts of type `num_cncpt` can specify an expected units as character vector (where the string in position 1 is added as per-column attribute `units`). When using concepts of this type, unit conversion to the specified target unit is not handled automatically but is up to the user via a callback function. Unit mismatches are reported as messages during concept loading^[Recently, experimental support for automatic unit conversion has been added via the `unt_cncpt` class. Such a concept will attempt to convert data columns using the [units](https://cran.r-project.org/package=units) package and therefore requires that both the source- and target-units are recognized and convertible (see `units::ud_are_convertible()`).].
 
 ```{r demo-load}
 (dat <- load_concepts(c("lact", "map"), demo))
@@ -69,7 +69,7 @@ Messages raised during loading of lactate values, for example, indicate that 0.6
 
 Several utility functions are exported from `ricu` for helping with creating callback functions that handle unit conversion. Data items corresponding to the bilirubin concept for the European datasets HiRID and AUMCdb, for example, have a callback entry specified as ``convert_unit(binary_op(`*`, 0.058467), "mg/dL")``. This creates a callback functions which applies ``binary_op(`*`, 0.058467)`` to the column specified as `val_var` and replaces existing values in the column identified by `unit_var` with the value `"mg/dl"`. In case the loaded data already is comprised of a mix of units, a regular expression passed as `rgx` can be specified, which will be used to identify the rows on which to operate. Finally, the function `binary_op` turns a binary function into an unary function by fixing the second operand.
 
-As a first sanity check we will slightly modify data loading in order to be warned about item IDs that do not appear in the data. For this we slightly modify data items loaded from the dictionary such that items of type `sel_itm` which may contain several IDs, are split into separate items.
+As a first sanity check we will slightly modify data loading in order to be warned about item IDs that do not appear in the data. For this we chop up data items loaded from the dictionary such that items of type `sel_itm` which may contain several IDs, are split into separate items and regular expressions in `rgx_itm` items are taken apart such that aggregate expressions such as `(foo|bar)baz` are turned into `foobaz` and `barbaz`.
 
 ```{r sep-itms, include = FALSE}
 assign_id <- function(id, itm, nme) `[[<-`(itm, nme, id)
@@ -177,9 +177,9 @@ split_items <- function(x) {
   x
 }
 
-report_empty <- function(dict, ...) {
+empty_items <- list()
 
-  empty_items <- list()
+report_empty <- function(dict, ...) {
 
   itm_load_report_empty <- quote({
 
@@ -190,7 +190,7 @@ report_empty <- function(dict, ...) {
       i <- 1
 
       while (!identical(.GlobalEnv, env <- parent.frame(i)) &&
-             !inherits(cncpt <- get0("x", envir = env))) {
+             !inherits(cncpt <- get0("x", envir = env), "cncpt")) {
         i <- i + 1
       }
 
@@ -217,7 +217,7 @@ report_empty <- function(dict, ...) {
 }
 ```
 
-Next, for the actual data loading we substitute the internally called function `do_itm_load()` with a modified version that throws a warning whenever zero rows are returned.
+Next, for the actual data loading, `report_empty()` substitutes the internally called function `do_itm_load()` with a modified version that takes note of the offending IDs alongside concept, table and data source names whenever zero rows are returned for a given `itm` object.
 
 ```{r itm-load, cache = TRUE}
 concepts <- c("map", "lact", "bili", "gcs", "abx")
@@ -237,7 +237,7 @@ knitr::kable(
 )
 ```
 
-If table is printed given the modified data loading above, every single ID that is part of a `sel_itm` or an `rgx_itm` actually returns some data. For other types of data items this means that for every single item as a whole, some data was returned. There are limitations to this type of sanity check though: It might be the case that one of the supplied IDs associated with a `num_cncpt` concept returns data in an unexpected unit of measurement which may cause the range filter to remove all of that data again. In such a scenario though, this will be reported (if `TRUE` is passed as `verbose` argument to `load_concept()`). Paying attention to the output produced by `load_concept()` should help spot such issues, albeit no longer at item resolution but only at concept level.
+If no table is printed given the modified data loading above, every single ID that is part of a `sel_itm` or an `rgx_itm` actually returns some data. For other types of data items this means that for every single item as a whole, some data was returned. There are limitations to this type of sanity check though: It might be the case that one of the supplied IDs associated with a `num_cncpt` concept returns data in an unexpected unit of measurement which may cause the range filter to remove all of that data again. In such a scenario though, this will be reported (if `TRUE` is passed as `verbose` argument to `load_concept()`). Paying attention to the output produced by `load_concept()` should help spot such issues, albeit no longer at item resolution but only at concept level.
 
 Next, we will investigate the number of measurements available per concept and stay day. For each stay ID and concept we calculate the number of measurements and note the stay duration. From this we can visualize how the number of measurements per day is distributed over the datasets alongside the percentage of patients that have at least one measurement available.
 
