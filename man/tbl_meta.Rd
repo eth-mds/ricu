@@ -90,9 +90,14 @@ function queries a \code{ts_tbl} object for its name.
 with the given designation. As a \code{ts_tbl} object is required to have
 exactly one column marked as index, this function always returns for
 \code{ts_tbl} objects (and fails for \code{id_tbl} objects).
+\item \code{dur_var()}: For \code{win_tbl} objects, this returns the name of the column
+encoding the data validity interval.
+\item \code{dur_col()}: Similarly to \code{index_col()}, this returns the \code{difftime}
+vector corresponding to the \code{dur_var()}.
 \item \code{meta_vars()}: For \code{ts_tbl} objects, meta variables represent the union
-of ID and index variables, while for \code{id_tbl} objects meta variables
-consist pf ID variables.
+of ID and index variables (for \code{win_tbl}, this also includes the
+\code{dur_var()}), while for \code{id_tbl} objects meta variables consist pf ID
+variables.
 \item \code{data_vars()}: Data variables on the other hand are all columns that are
 not meta variables.
 \item \code{data_var()}: Similarly to \code{id_var()}, this function either returns the
@@ -103,7 +108,8 @@ exists, an error is thrown.
 \item \code{time_vars()}: Time variables are all columns in an object inheriting
 from \code{\link[base:data.frame]{data.frame}} that are of type
 \code{\link[base:difftime]{difftime}}. Therefore in a \code{ts_tbl} object the index
-column is one of (potentially) several time variables.
+column is one of (potentially) several time variables. For a \code{win_tbl},
+however the \code{dur_var()} is not among the \code{time_vars()}.
 \item \code{interval()}: The time series interval length is represented a scalar
 valued \code{\link[base:difftime]{difftime}} object.
 \item \code{time_unit()}: The time unit of the time series interval, represented by

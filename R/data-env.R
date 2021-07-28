@@ -130,6 +130,17 @@
 #' demographic information corresponding to the 20,000 individual patients
 #' is spread over 7 tables.
 #'
+#' @section MIMIC-IV:
+#' With the recent v1.0 release of MIMIC-IV, experimental support has been
+#' added in `ricu`. Building on the success of MIMIC-III, this next iteration
+#' contains data on patients admitted to an ICU or the emergency department
+#' between 2008 - 2019 at BIDMC. Therefore, relative to MIMIC-III, patients
+#' admitted prior to 2008 (whose data is stored in a CareVue-based system) has
+#' been removed, while data onward of 2012 has been added. This simplifies
+#' data queries considerably, as the CareVue/Metavision data split in MIMIC-III
+#' no longer applies. While addition of ED data is planned, this is not part
+#' of the initial v1.0 release and currently is not supported by `ricu`.
+#'
 #' @format
 #' The exported `data` environment contains all datasets that have been made
 #' available to `ricu`. For datasets that are attached during package loading
@@ -174,6 +185,15 @@
 #'
 #' Elbers, Dr. P.W.G. (Amsterdam UMC) (2019): AmsterdamUMCdb v1.0.2. DANS.
 #' https://doi.org/10.17026/dans-22u-f8vd
+#'
+#' Johnson, A., Bulgarelli, L., Pollard, T., Horng, S., Celi, L. A., & Mark, R.
+#' (2021). MIMIC-IV (version 1.0). PhysioNet.
+#' https://doi.org/10.13026/s6n6-xd98.
+#'
+#' Goldberger, A., Amaral, L., Glass, L., Hausdorff, J., Ivanov, P. C., Mark,
+#' R., ... & Stanley, H. E. (2000). PhysioBank, PhysioToolkit, and PhysioNet:
+#' Components of a new research resource for complex physiologic signals.
+#' Circulation [Online]. 101 (23), pp. e215–e220.
 #'
 #' @encoding UTF-8
 #' @rdname data_env

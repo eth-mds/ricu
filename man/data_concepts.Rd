@@ -143,6 +143,8 @@ recursive concepts up to arbitrary recursion depth. Owing to the more
 complicated nature of such concepts, a \code{callback} function can be
 specified which is used in data loading for concept-specific post-
 processing steps.
+\item \code{unt_cncpt}: A recent (experimental) addition which inherits from
+\code{num_cncpt} but instead of manual unit conversion, leverages
 }
 
 Class instantiation is organized in the same fashion as for

@@ -77,15 +77,16 @@ reference}
     See also the \code{make.names} argument of the \code{matrix} method.}
 }
 \value{
-Constructors \code{id_tbl()}/\code{ts_tbl()}, as well as coercion functions
-\code{as_id_tbl()}/\code{as_ts_tbl()} return \code{id_tbl}/\code{ts_tbl} objects respectively,
-while inheritance testers \code{is_id_tbl()}/\code{is_ts_tbl()} return logical flags
-and \code{validate_tbl()} returns either \code{TRUE} or a string describing the
-validation failure.
+Constructors \code{id_tbl()}/\code{ts_tbl()}/\code{win_tbl()}, as well as coercion
+functions \code{as_id_tbl()}/\code{as_ts_tbl()}/\code{as_win_tbl()} return
+\code{id_tbl}/\code{ts_tbl}/\code{win_tbl} objects respectively,
+while inheritance testers \code{is_id_tbl()}/\code{is_ts_tbl()}/\code{is_win_tbl()} return
+logical flags and \code{validate_tbl()} returns either \code{TRUE} or a string
+describing the validation failure.
 }
 \description{
-In order to simplify handling or tabular ICU data, \code{ricu} provides two
-S3 classes, \code{id_tbl} and \code{ts_tbl}. The two classes essentially
+In order to simplify handling or tabular ICU data, \code{ricu} provides
+S3 classes, \code{id_tbl}, \code{ts_tbl}, and \code{win_tbl}. These classes essentially
 consist of a \code{data.table} object, alongside some meta data and S3 dispatch
 is used to enable more natural behavior for some data manipulation tasks.
 For example, when merging two tables, a default for the \code{by} argument can
@@ -93,7 +94,8 @@ be chosen more sensibly if columns representing patient ID and timestamp
 information can be identified.
 }
 \details{
-The two classes are designed for two often encountered data scenarios:
+The introduced classes are designed for several often encountered data
+scenarios:
 \itemize{
 \item \code{id_tbl} objects can be used to represent static (with respect to
 relevant time scales) patient data such as patient age and such an object
@@ -108,23 +110,31 @@ a string, tracking the column holding time-stamps
 (\link[=index_var]{index_var}) and a scalar \code{difftime} object determining
 the time-series step size \link[=interval]{interval}. Again, all further
 columns are treated as \link[=data_vars]{data_vars}.
+\item \code{win_tbl}: In addition to representing grouped time-series data as does
+a \code{ts_tbl}, \code{win_tbl} objects also encode a validity interval for each
+time-stamped measurement (as \link[=dur_var]{dur_var}). This can for example
+be useful when a drug is administered at a certain infusion rate for a
+given time period.
 }
 
 Owing to the nested structure of required meta data, \code{ts_tbl} inherits from
-\code{id_tbl}. Furthermore, both classes inherit from \code{data.table}. As such,
-\code{data.table} \link[data.table:assign]{reference semantics} are available for
-some operations, indicated by presence of a \code{by_ref} argument. At default,
-value, \code{by_ref} is set to \code{FALSE} as this is in line with base R behavior
-at the cost of potentially incurring unnecessary data copies. Some care has
-to be taken when passing \code{by_ref = TRUE} and enabling by reference
-operations as this can have side effects (see examples).
+\code{id_tbl} and \code{win_tbl} from \code{ts_tbl}. Furthermore, both classes inherit from
+\code{data.table}. As such, \code{data.table} \link[data.table:assign]{reference semantics}
+are available for some operations, indicated by presence of a \code{by_ref}
+argument. At default, value, \code{by_ref} is set to \code{FALSE} as this is in line
+with base R behavior at the cost of potentially incurring unnecessary data
+copies. Some care has to be taken when passing \code{by_ref = TRUE} and enabling
+by reference operations as this can have side effects (see examples).
 
 For instantiating \code{ts_tbl} objects, both \code{index_var} and \code{interval} can be
 automatically determined if not specified. For the index column, the only
 requirement is that a single \code{\link[base:difftime]{difftime}} column is
 present, while for the time step, the minimal difference between two
 consecutive observations is chosen (and all differences are therefore
-required to be multiples of the minimum difference).
+required to be multiples of the minimum difference). Similarly, for a
+\code{win_tbl}, exactly two \code{\link[base:difftime]{difftime}} columns are required
+where the first is assumed to be corresponding to the \code{index_var} and the
+second to the \code{dur_var}.
 
 Upon instantiation, the data might be rearranged: columns are reordered
 such that ID columns are moved to the front, followed by the index column
@@ -135,12 +145,12 @@ improve efficiency of subsequent transformations such as merging or grouped
 operations. Furthermore, \code{NA} values in either ID or index columns are not
 allowed and therefore corresponding rows are silently removed.
 
-Coercion between \code{id_tbl} and \code{ts_tbl} by default keeps intersecting
-attributes fixed and new attributes are by default inferred as for class
-instantiation. Each class comes with a class-specific implementation of the
-S3 generic function \code{validate_tbl()} which returns \code{TRUE} if the object is
-considered valid or a string outlining the type of validation failure that
-was encountered. Validity requires
+Coercion between \code{id_tbl} and \code{ts_tbl} (and \code{win_tbl}) by default keeps
+intersecting attributes fixed and new attributes are by default inferred as
+for class instantiation. Each class comes with a class-specific
+implementation of the S3 generic function \code{validate_tbl()} which returns
+\code{TRUE} if the object is considered valid or a string outlining the type of
+validation failure that was encountered. Validity requires
 \enumerate{
 \item inheriting from \code{data.table} and unique column names
 \item for \code{id_tbl} that all columns specified by the non-zero length character
@@ -148,12 +158,15 @@ vector holding onto the \code{id_vars} specification are available
 \item for \code{ts_tbl} that the string-valued \code{index_var} column is available and
 does not intersect with \code{id_vars} and that the index column obeys the
 specified interval.
+\item for \code{win_tbl} that the string-valued \code{dur_var} corresponds to a \code{difftime}
+vector and is not among the columns marked as index or ID variables
 }
 
 Finally, inheritance can be checked by calling \code{is_id_tbl()} and
 \code{is_ts_tbl()}. Note that due to \code{ts_tbl} inheriting from \code{id_tbl},
-\code{is_id_tbl()} returns \code{TRUE} for both \code{id_tbl} and \code{ts_tbl} objects, while
-\code{is_ts_tbl()} only returns \code{TRUE} for \code{ts_tbl} objects.
+\code{is_id_tbl()} returns \code{TRUE} for both \code{id_tbl} and \code{ts_tbl} objects (and
+similarly for \code{win_tbl}), while \code{is_ts_tbl()} only returns \code{TRUE} for
+\code{ts_tbl} objects.
 }
 \section{Relationship to \code{data.table}}{
 

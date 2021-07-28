@@ -1,8 +1,8 @@
 
 #' Tabular ICU data classes
 #'
-#' In order to simplify handling or tabular ICU data, `ricu` provides two
-#' S3 classes, `id_tbl` and `ts_tbl`. The two classes essentially
+#' In order to simplify handling or tabular ICU data, `ricu` provides
+#' S3 classes, `id_tbl`, `ts_tbl`, and `win_tbl`. These classes essentially
 #' consist of a `data.table` object, alongside some meta data and S3 dispatch
 #' is used to enable more natural behavior for some data manipulation tasks.
 #' For example, when merging two tables, a default for the `by` argument can
@@ -10,7 +10,8 @@
 #' information can be identified.
 #'
 #' @details
-#' The two classes are designed for two often encountered data scenarios:
+#' The introduced classes are designed for several often encountered data
+#' scenarios:
 #'
 #' * `id_tbl` objects can be used to represent static (with respect to
 #'   relevant time scales) patient data such as patient age and such an object
@@ -25,22 +26,30 @@
 #'   ([index_var][index_var()]) and a scalar `difftime` object determining
 #'   the time-series step size [interval][interval()]. Again, all further
 #'   columns are treated as [data_vars][data_vars()].
+#' * `win_tbl`: In addition to representing grouped time-series data as does
+#'   a `ts_tbl`, `win_tbl` objects also encode a validity interval for each
+#'   time-stamped measurement (as [dur_var][dur_var()]). This can for example
+#'   be useful when a drug is administered at a certain infusion rate for a
+#'   given time period.
 #'
 #' Owing to the nested structure of required meta data, `ts_tbl` inherits from
-#' `id_tbl`. Furthermore, both classes inherit from `data.table`. As such,
-#' `data.table` [reference semantics][data.table::set()] are available for
-#' some operations, indicated by presence of a `by_ref` argument. At default,
-#' value, `by_ref` is set to `FALSE` as this is in line with base R behavior
-#' at the cost of potentially incurring unnecessary data copies. Some care has
-#' to be taken when passing `by_ref = TRUE` and enabling by reference
-#' operations as this can have side effects (see examples).
+#' `id_tbl` and `win_tbl` from `ts_tbl`. Furthermore, both classes inherit from
+#' `data.table`. As such, `data.table` [reference semantics][data.table::set()]
+#' are available for some operations, indicated by presence of a `by_ref`
+#' argument. At default, value, `by_ref` is set to `FALSE` as this is in line
+#' with base R behavior at the cost of potentially incurring unnecessary data
+#' copies. Some care has to be taken when passing `by_ref = TRUE` and enabling
+#' by reference operations as this can have side effects (see examples).
 #'
 #' For instantiating `ts_tbl` objects, both `index_var` and `interval` can be
 #' automatically determined if not specified. For the index column, the only
 #' requirement is that a single [`difftime`][base::difftime()] column is
 #' present, while for the time step, the minimal difference between two
 #' consecutive observations is chosen (and all differences are therefore
-#' required to be multiples of the minimum difference).
+#' required to be multiples of the minimum difference). Similarly, for a
+#' `win_tbl`, exactly two [`difftime`][base::difftime()] columns are required
+#' where the first is assumed to be corresponding to the `index_var` and the
+#' second to the `dur_var`.
 #'
 #' Upon instantiation, the data might be rearranged: columns are reordered
 #' such that ID columns are moved to the front, followed by the index column
@@ -51,12 +60,12 @@
 #' operations. Furthermore, `NA` values in either ID or index columns are not
 #' allowed and therefore corresponding rows are silently removed.
 #'
-#' Coercion between `id_tbl` and `ts_tbl` by default keeps intersecting
-#' attributes fixed and new attributes are by default inferred as for class
-#' instantiation. Each class comes with a class-specific implementation of the
-#' S3 generic function `validate_tbl()` which returns `TRUE` if the object is
-#' considered valid or a string outlining the type of validation failure that
-#' was encountered. Validity requires
+#' Coercion between `id_tbl` and `ts_tbl` (and `win_tbl`) by default keeps
+#' intersecting attributes fixed and new attributes are by default inferred as
+#' for class instantiation. Each class comes with a class-specific
+#' implementation of the S3 generic function `validate_tbl()` which returns
+#' `TRUE` if the object is considered valid or a string outlining the type of
+#' validation failure that was encountered. Validity requires
 #'
 #' 1. inheriting from `data.table` and unique column names
 #' 1. for `id_tbl` that all columns specified by the non-zero length character
@@ -64,11 +73,14 @@
 #' 1. for `ts_tbl` that the string-valued `index_var` column is available and
 #'    does not intersect with `id_vars` and that the index column obeys the
 #'    specified interval.
+#' 1. for `win_tbl` that the string-valued `dur_var` corresponds to a `difftime`
+#'    vector and is not among the columns marked as index or ID variables
 #'
 #' Finally, inheritance can be checked by calling `is_id_tbl()` and
 #' `is_ts_tbl()`. Note that due to `ts_tbl` inheriting from `id_tbl`,
-#' `is_id_tbl()` returns `TRUE` for both `id_tbl` and `ts_tbl` objects, while
-#' `is_ts_tbl()` only returns `TRUE` for `ts_tbl` objects.
+#' `is_id_tbl()` returns `TRUE` for both `id_tbl` and `ts_tbl` objects (and
+#' similarly for `win_tbl`), while `is_ts_tbl()` only returns `TRUE` for
+#' `ts_tbl` objects.
 #'
 #' @section Relationship to `data.table`:
 #' Both `id_tbl` and `ts_tbl` inherit from `data.table` and as such, functions
@@ -134,11 +146,12 @@
 #' @param ... forwarded to [data.table::data.table()] or generic consistency
 #' @param id_vars Column name(s) to be used as `id` column(s)
 #'
-#' @return Constructors `id_tbl()`/`ts_tbl()`, as well as coercion functions
-#' `as_id_tbl()`/`as_ts_tbl()` return `id_tbl`/`ts_tbl` objects respectively,
-#' while inheritance testers `is_id_tbl()`/`is_ts_tbl()` return logical flags
-#' and `validate_tbl()` returns either `TRUE` or a string describing the
-#' validation failure.
+#' @return Constructors `id_tbl()`/`ts_tbl()`/`win_tbl()`, as well as coercion
+#' functions `as_id_tbl()`/`as_ts_tbl()`/`as_win_tbl()` return
+#' `id_tbl`/`ts_tbl`/`win_tbl` objects respectively,
+#' while inheritance testers `is_id_tbl()`/`is_ts_tbl()`/`is_win_tbl()` return
+#' logical flags and `validate_tbl()` returns either `TRUE` or a string
+#' describing the validation failure.
 #'
 #' @rdname id_tbl
 #' @export

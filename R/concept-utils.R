@@ -854,6 +854,9 @@ is_target <- function(x, dat) is_type(get_target(x))(dat)
 #'   complicated nature of such concepts, a `callback` function can be
 #'   specified which is used in data loading for concept-specific post-
 #'   processing steps.
+#' * `unt_cncpt`: A recent (experimental) addition which inherits from
+#'   `num_cncpt` but instead of manual unit conversion, leverages
+#    `units::set_units()` in order to automate this.
 #'
 #' Class instantiation is organized in the same fashion as for
 #' [`item`][new_itm()] objects: `concept()` maps vector-valued arguments

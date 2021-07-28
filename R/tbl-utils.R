@@ -29,9 +29,14 @@
 #'   with the given designation. As a `ts_tbl` object is required to have
 #'   exactly one column marked as index, this function always returns for
 #'   `ts_tbl` objects (and fails for `id_tbl` objects).
+#' * `dur_var()`: For `win_tbl` objects, this returns the name of the column
+#'   encoding the data validity interval.
+#' * `dur_col()`: Similarly to `index_col()`, this returns the `difftime`
+#'   vector corresponding to the `dur_var()`.
 #' * `meta_vars()`: For `ts_tbl` objects, meta variables represent the union
-#'   of ID and index variables, while for `id_tbl` objects meta variables
-#'   consist pf ID variables.
+#'   of ID and index variables (for `win_tbl`, this also includes the
+#'   `dur_var()`), while for `id_tbl` objects meta variables consist pf ID
+#'   variables.
 #' * `data_vars()`: Data variables on the other hand are all columns that are
 #'   not meta variables.
 #' * `data_var()`: Similarly to `id_var()`, this function either returns the
@@ -42,7 +47,8 @@
 #' * `time_vars()`: Time variables are all columns in an object inheriting
 #'   from [`data.frame`][base::data.frame()] that are of type
 #'   [`difftime`][base::difftime()]. Therefore in a `ts_tbl` object the index
-#'   column is one of (potentially) several time variables.
+#'   column is one of (potentially) several time variables. For a `win_tbl`,
+#'   however the `dur_var()` is not among the `time_vars()`.
 #' * `interval()`: The time series interval length is represented a scalar
 #'   valued [`difftime`][base::difftime()] object.
 #' * `time_unit()`: The time unit of the time series interval, represented by
@@ -310,8 +316,8 @@ is_prt <- is_type("prt")
 #' @param ... In case a function is passed as `new`, further arguments are
 #' forwarded to that function
 #'
-#' @return Most of the utility functions return either an `id_tbl` or a
-#' `ts_tbl`, potentially modified by reference, depending on the type of the
+#' @return Most of the utility functions return an object inheriting from
+#' `id_tbl`, potentially modified by reference, depending on the type of the
 #' object passed as `x`. The functions `is_sorted()`, `anyDuplicated()` and
 #' `is_unique()` return logical flags, while `duplicated()` returns a logical
 #' vector of the length `nrow(x)`.

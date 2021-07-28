@@ -122,8 +122,8 @@ columns to the front.}
 \item{type}{ character, one of \emph{"const"}, \emph{"locf"} or \emph{"nocb"}. Defaults to \code{"const"}. }
 }
 \value{
-Most of the utility functions return either an \code{id_tbl} or a
-\code{ts_tbl}, potentially modified by reference, depending on the type of the
+Most of the utility functions return an object inheriting from
+\code{id_tbl}, potentially modified by reference, depending on the type of the
 object passed as \code{x}. The functions \code{is_sorted()}, \code{anyDuplicated()} and
 \code{is_unique()} return logical flags, while \code{duplicated()} returns a logical
 vector of the length \code{nrow(x)}.

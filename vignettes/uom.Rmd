@@ -271,7 +271,7 @@ los <- los[los_icu > 0, ]
 
 concepts <- c("map", "lact", "crea", "bili", "plt")
 
-dat <- load_concepts(concepts, srcs)
+dat <- load_concepts(concepts, srcs, merge = FALSE, verbose = FALSE)
 
 counts <- lapply(dat, count_meas)
 counts <- lapply(counts, merge, los)
