@@ -40,8 +40,8 @@
 
 
 <meta property="og:title" content="Tabular ICU data classes — id_tbl" />
-<meta property="og:description" content="In order to simplify handling or tabular ICU data, ricu provides two
-S3 classes, id_tbl and ts_tbl. The two classes essentially
+<meta property="og:description" content="In order to simplify handling or tabular ICU data, ricu provides
+S3 classes, id_tbl, ts_tbl, and win_tbl. These classes essentially
 consist of a data.table object, alongside some meta data and S3 dispatch
 is used to enable more natural behavior for some data manipulation tasks.
 For example, when merging two tables, a default for the by argument can
@@ -141,8 +141,8 @@ information can be identified." />
     </div>
 
     <div class="ref-description">
-    <p>In order to simplify handling or tabular ICU data, <code>ricu</code> provides two
-S3 classes, <code>id_tbl</code> and <code>ts_tbl</code>. The two classes essentially
+    <p>In order to simplify handling or tabular ICU data, <code>ricu</code> provides
+S3 classes, <code>id_tbl</code>, <code>ts_tbl</code>, and <code>win_tbl</code>. These classes essentially
 consist of a <code>data.table</code> object, alongside some meta data and S3 dispatch
 is used to enable more natural behavior for some data manipulation tasks.
 For example, when merging two tables, a default for the <code>by</code> argument can
@@ -239,14 +239,16 @@ reference</p></td>
 
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
-    <p>Constructors <code>id_tbl()</code>/<code>ts_tbl()</code>, as well as coercion functions
-<code>as_id_tbl()</code>/<code>as_ts_tbl()</code> return <code>id_tbl</code>/<code>ts_tbl</code> objects respectively,
-while inheritance testers <code>is_id_tbl()</code>/<code>is_ts_tbl()</code> return logical flags
-and <code>validate_tbl()</code> returns either <code>TRUE</code> or a string describing the
-validation failure.</p>
+    <p>Constructors <code>id_tbl()</code>/<code>ts_tbl()</code>/<code>win_tbl()</code>, as well as coercion
+functions <code>as_id_tbl()</code>/<code>as_ts_tbl()</code>/<code>as_win_tbl()</code> return
+<code>id_tbl</code>/<code>ts_tbl</code>/<code>win_tbl</code> objects respectively,
+while inheritance testers <code>is_id_tbl()</code>/<code>is_ts_tbl()</code>/<code>is_win_tbl()</code> return
+logical flags and <code>validate_tbl()</code> returns either <code>TRUE</code> or a string
+describing the validation failure.</p>
     <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
 
-    <p>The two classes are designed for two often encountered data scenarios:</p><ul>
+    <p>The introduced classes are designed for several often encountered data
+scenarios:</p><ul>
 <li><p><code>id_tbl</code> objects can be used to represent static (with respect to
 relevant time scales) patient data such as patient age and such an object
 is simply a <code>data.table</code> combined with a non-zero length character vector
@@ -260,22 +262,30 @@ a string, tracking the column holding time-stamps
 (<a href='id_vars.html'>index_var</a>) and a scalar <code>difftime</code> object determining
 the time-series step size <a href='id_vars.html'>interval</a>. Again, all further
 columns are treated as <a href='id_vars.html'>data_vars</a>.</p></li>
+<li><p><code>win_tbl</code>: In addition to representing grouped time-series data as does
+a <code>ts_tbl</code>, <code>win_tbl</code> objects also encode a validity interval for each
+time-stamped measurement (as <a href='id_vars.html'>dur_var</a>). This can for example
+be useful when a drug is administered at a certain infusion rate for a
+given time period.</p></li>
 </ul>
 
 <p>Owing to the nested structure of required meta data, <code>ts_tbl</code> inherits from
-<code>id_tbl</code>. Furthermore, both classes inherit from <code>data.table</code>. As such,
-<code>data.table</code> reference semantics are available for
-some operations, indicated by presence of a <code>by_ref</code> argument. At default,
-value, <code>by_ref</code> is set to <code>FALSE</code> as this is in line with base R behavior
-at the cost of potentially incurring unnecessary data copies. Some care has
-to be taken when passing <code>by_ref = TRUE</code> and enabling by reference
-operations as this can have side effects (see examples).</p>
+<code>id_tbl</code> and <code>win_tbl</code> from <code>ts_tbl</code>. Furthermore, both classes inherit from
+<code>data.table</code>. As such, <code>data.table</code> reference semantics
+are available for some operations, indicated by presence of a <code>by_ref</code>
+argument. At default, value, <code>by_ref</code> is set to <code>FALSE</code> as this is in line
+with base R behavior at the cost of potentially incurring unnecessary data
+copies. Some care has to be taken when passing <code>by_ref = TRUE</code> and enabling
+by reference operations as this can have side effects (see examples).</p>
 <p>For instantiating <code>ts_tbl</code> objects, both <code>index_var</code> and <code>interval</code> can be
 automatically determined if not specified. For the index column, the only
 requirement is that a single <code><a href='https://rdrr.io/r/base/difftime.html'>difftime</a></code> column is
 present, while for the time step, the minimal difference between two
 consecutive observations is chosen (and all differences are therefore
-required to be multiples of the minimum difference).</p>
+required to be multiples of the minimum difference). Similarly, for a
+<code>win_tbl</code>, exactly two <code><a href='https://rdrr.io/r/base/difftime.html'>difftime</a></code> columns are required
+where the first is assumed to be corresponding to the <code>index_var</code> and the
+second to the <code>dur_var</code>.</p>
 <p>Upon instantiation, the data might be rearranged: columns are reordered
 such that ID columns are moved to the front, followed by the index column
 and a <code><a href='https://Rdatatable.gitlab.io/data.table/reference/setkey.html'>data.table::key()</a></code> is set on meta columns, causing rows to be sorted
@@ -284,24 +294,27 @@ convenience for printing, while setting a key on meta columns is done to
 improve efficiency of subsequent transformations such as merging or grouped
 operations. Furthermore, <code>NA</code> values in either ID or index columns are not
 allowed and therefore corresponding rows are silently removed.</p>
-<p>Coercion between <code>id_tbl</code> and <code>ts_tbl</code> by default keeps intersecting
-attributes fixed and new attributes are by default inferred as for class
-instantiation. Each class comes with a class-specific implementation of the
-S3 generic function <code>validate_tbl()</code> which returns <code>TRUE</code> if the object is
-considered valid or a string outlining the type of validation failure that
-was encountered. Validity requires</p><ol>
+<p>Coercion between <code>id_tbl</code> and <code>ts_tbl</code> (and <code>win_tbl</code>) by default keeps
+intersecting attributes fixed and new attributes are by default inferred as
+for class instantiation. Each class comes with a class-specific
+implementation of the S3 generic function <code>validate_tbl()</code> which returns
+<code>TRUE</code> if the object is considered valid or a string outlining the type of
+validation failure that was encountered. Validity requires</p><ol>
 <li><p>inheriting from <code>data.table</code> and unique column names</p></li>
 <li><p>for <code>id_tbl</code> that all columns specified by the non-zero length character
 vector holding onto the <code>id_vars</code> specification are available</p></li>
 <li><p>for <code>ts_tbl</code> that the string-valued <code>index_var</code> column is available and
 does not intersect with <code>id_vars</code> and that the index column obeys the
 specified interval.</p></li>
+<li><p>for <code>win_tbl</code> that the string-valued <code>dur_var</code> corresponds to a <code>difftime</code>
+vector and is not among the columns marked as index or ID variables</p></li>
 </ol>
 
 <p>Finally, inheritance can be checked by calling <code>is_id_tbl()</code> and
 <code>is_ts_tbl()</code>. Note that due to <code>ts_tbl</code> inheriting from <code>id_tbl</code>,
-<code>is_id_tbl()</code> returns <code>TRUE</code> for both <code>id_tbl</code> and <code>ts_tbl</code> objects, while
-<code>is_ts_tbl()</code> only returns <code>TRUE</code> for <code>ts_tbl</code> objects.</p>
+<code>is_id_tbl()</code> returns <code>TRUE</code> for both <code>id_tbl</code> and <code>ts_tbl</code> objects (and
+similarly for <code>win_tbl</code>), while <code>is_ts_tbl()</code> only returns <code>TRUE</code> for
+<code>ts_tbl</code> objects.</p>
     <h2 class="hasAnchor" id="relationship-to-data-table"><a class="anchor" href="#relationship-to-data-table"></a>Relationship to <code>data.table</code></h2>
 
     

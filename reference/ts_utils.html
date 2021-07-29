@@ -314,7 +314,14 @@ yields a <code>ts_tbl</code> where time-steps encoded by columns <code>start_var
 repeated. The inverse operation is available as <code>collapse()</code>, which groups
 by <code>id_vars</code>, represents <code>index_var</code> as group-wise extrema in two new
 columns <code>start_var</code> and <code>end_var</code> and allows for further data summary using
-<code>...</code>.</p>
+<code>...</code>. An aspect to keep in mind when applying <code>expand()</code> to a <code>win_tbl</code>
+object is that values simply are repeated for all time-steps that fall into
+a given validity interval. This gives correct results when a <code>win_tbl</code> for
+example contains data on infusions as rates, but might not lead to correct
+results when infusions are represented as drug amounts administered over a
+given time-span. In such a scenario it might be desirable to evenly
+distribute the total amount over the corresponding time steps (currently not
+implemented).</p>
 <p>Sliding-window type operations are available as <code>slide()</code>, <code>slide_index()</code>
 and <code>hop()</code> (function naming is inspired by the CRAN package <code>slider</code>). The
 most flexible of the three, <code>hop</code> takes as input a <code>ts_tbl</code> object <code>x</code>

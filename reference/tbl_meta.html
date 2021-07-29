@@ -218,9 +218,14 @@ function queries a <code>ts_tbl</code> object for its name.</p></li>
 with the given designation. As a <code>ts_tbl</code> object is required to have
 exactly one column marked as index, this function always returns for
 <code>ts_tbl</code> objects (and fails for <code>id_tbl</code> objects).</p></li>
+<li><p><code>dur_var()</code>: For <code>win_tbl</code> objects, this returns the name of the column
+encoding the data validity interval.</p></li>
+<li><p><code>dur_col()</code>: Similarly to <code>index_col()</code>, this returns the <code>difftime</code>
+vector corresponding to the <code>dur_var()</code>.</p></li>
 <li><p><code>meta_vars()</code>: For <code>ts_tbl</code> objects, meta variables represent the union
-of ID and index variables, while for <code>id_tbl</code> objects meta variables
-consist pf ID variables.</p></li>
+of ID and index variables (for <code>win_tbl</code>, this also includes the
+<code>dur_var()</code>), while for <code>id_tbl</code> objects meta variables consist pf ID
+variables.</p></li>
 <li><p><code>data_vars()</code>: Data variables on the other hand are all columns that are
 not meta variables.</p></li>
 <li><p><code>data_var()</code>: Similarly to <code>id_var()</code>, this function either returns the
@@ -231,7 +236,8 @@ exists, an error is thrown.</p></li>
 <li><p><code>time_vars()</code>: Time variables are all columns in an object inheriting
 from <code><a href='https://rdrr.io/r/base/data.frame.html'>data.frame</a></code> that are of type
 <code><a href='https://rdrr.io/r/base/difftime.html'>difftime</a></code>. Therefore in a <code>ts_tbl</code> object the index
-column is one of (potentially) several time variables.</p></li>
+column is one of (potentially) several time variables. For a <code>win_tbl</code>,
+however the <code>dur_var()</code> is not among the <code>time_vars()</code>.</p></li>
 <li><p><code>interval()</code>: The time series interval length is represented a scalar
 valued <code><a href='https://rdrr.io/r/base/difftime.html'>difftime</a></code> object.</p></li>
 <li><p><code>time_unit()</code>: The time unit of the time series interval, represented by
