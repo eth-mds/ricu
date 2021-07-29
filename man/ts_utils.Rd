@@ -142,7 +142,14 @@ yields a \code{ts_tbl} where time-steps encoded by columns \code{start_var} and
 repeated. The inverse operation is available as \code{collapse()}, which groups
 by \code{id_vars}, represents \code{index_var} as group-wise extrema in two new
 columns \code{start_var} and \code{end_var} and allows for further data summary using
-\code{...}.
+\code{...}. An aspect to keep in mind when applying \code{expand()} to a \code{win_tbl}
+object is that values simply are repeated for all time-steps that fall into
+a given validity interval. This gives correct results when a \code{win_tbl} for
+example contains data on infusions as rates, but might not lead to correct
+results when infusions are represented as drug amounts administered over a
+given time-span. In such a scenario it might be desirable to evenly
+distribute the total amount over the corresponding time steps (currently not
+implemented).
 
 Sliding-window type operations are available as \code{slide()}, \code{slide_index()}
 and \code{hop()} (function naming is inspired by the CRAN package \code{slider}). The

@@ -31,7 +31,14 @@
 #' repeated. The inverse operation is available as `collapse()`, which groups
 #' by `id_vars`, represents `index_var` as group-wise extrema in two new
 #' columns `start_var` and `end_var` and allows for further data summary using
-#' `...`.
+#' `...`. An aspect to keep in mind when applying `expand()` to a `win_tbl`
+#' object is that values simply are repeated for all time-steps that fall into
+#' a given validity interval. This gives correct results when a `win_tbl` for
+#' example contains data on infusions as rates, but might not lead to correct
+#' results when infusions are represented as drug amounts administered over a
+#' given time-span. In such a scenario it might be desirable to evenly
+#' distribute the total amount over the corresponding time steps (currently not
+#' implemented).
 #'
 #' Sliding-window type operations are available as `slide()`, `slide_index()`
 #' and `hop()` (function naming is inspired by the CRAN package `slider`). The
