@@ -7,7 +7,7 @@ vignette: >
   %\VignetteEncoding{UTF-8}
 ---
 
-```{r, include = FALSE}
+```{r, setup, include = FALSE}
 srcs_avail <- function(x) all(is_data_avail(x))
 
 paste1 <- function(x) {
@@ -22,6 +22,41 @@ paste1 <- function(x) {
          paste0(tail(x, n = 2L), collapse = " and "))
 }
 
+demo_instead_full_msg <- function(demo, full) {
+  paste0(
+    "> Note: The following code blocks are run using demo (",
+    paste1(demo)", ) instead of full datasets (", paste1(full)", ) and ",
+    "therefore might be less useful. For data set up, please consult the ",
+    "manual at `?attach_src`. The full version of this vignette is available ",
+    "from [CRAN](https://CRAN.R-project.org/package=ricu/vignettes/uom.html)."
+  )
+}
+
+demo_missing_msg <- function(demo) {
+  paste0(
+    "> Note: Code in this vignette requires that datasets ", paste1(demo),
+    " are available, which can be installed by running\n",
+    ">\n",
+    ">     install.packages(\n",
+    ">       c(", paste0("\"", demo, "\"", collapse = ", "), "),\n",
+    ">       repos = \"https://eth-mds.github.io/physionet-demo\"\n",
+    ">     )\n",
+    ">\n",
+    "> As long as the corresponding datasets are not accessible, certain code ",
+    "blocks are not evaluated. The full version of this vignette is available ",
+    "from [CRAN](https://CRAN.R-project.org/package=ricu/vignettes/uom.html)."
+  )
+}
+
+assign_dataset_names <- function(srcs) {
+  name <- deparse(substitute(srcs))
+  paste0(
+    "```{r, assign-", name, ", eval = FALSE}\n",
+    name, " <- c(", paste0("\"", srcs, "\"", collapse = ", "), ")\n",
+    "```"
+  )
+}
+
 knitr::opts_chunk$set(
   collapse = TRUE,
   comment = "#>"
@@ -30,29 +65,13 @@ knitr::opts_chunk$set(
 library(ricu)
 library(ggplot2)
 
-demo  <- c("mimic_demo", "eicu_demo")
-full  <- c("mimic", "eicu", "aumc", "hirid", "miiv")
-
-if (!srcs_avail(demo)) {
-  knitr::opts_chunk$set(eval = FALSE)
-}
-
-if (srcs_avail(full)) {
-  srcs <- full
-} else {
-  srcs <- demo
-}
+demo <- c("mimic_demo", "eicu_demo")
+srcs <- c("mimic", "eicu", "aumc", "hirid", "miiv")
 ```
 
-```{asis, echo = !srcs_avail(demo)}
-> Note: Code in this vignette requires that datasets `r paste1(demo)` are available, which can be installed by running
->
->     install.packages(
->       c("mimic.demo", "eicu.demo"),
->       repos = "https://eth-mds.github.io/physionet-demo"
->     )
->
-> As long as the corresponding datasets are not accessible, certain code blocks are not evaluated. The full version of this vignette is available from [CRAN](https://CRAN.R-project.org/package=ricu/vignettes/uom.html).
+```{r, demo-miss, echo = FALSE, eval = !srcs_avail(demo), results = "asis"}
+demo_missing_msg(demo)
+knitr::opts_chunk$set(eval = FALSE)
 ```
 
 One challenge when working with electronic healthcare (EHR) data from different hospitals, which is accentuated if the intensive care units (ICUs) collecting the data are located in different geographic regions, is the use of different measurement unit systems. In part, this can be attributed to the use of imperial units in English speaking countries (e.g. patient weight being reported in lbs instead of kg), but more subtle differences in practice are involved as well, such as reporting lab test results in mg/dL instead of the SI unit mmol/L. While discrepancies of the former type are easy to resolve, harmonization of different notions of concentration is slightly more involved due to the conversion factor being substance-specific.
@@ -61,7 +80,11 @@ One challenge when working with electronic healthcare (EHR) data from different 
 
 Data concepts of type `num_cncpt` can specify an expected units as character vector (where the string in position 1 is added as per-column attribute `units`). When using concepts of this type, unit conversion to the specified target unit is not handled automatically but is up to the user via a callback function. Unit mismatches are reported as messages during concept loading^[Recently, experimental support for automatic unit conversion has been added via the `unt_cncpt` class. Such a concept will attempt to convert data columns using the [units](https://cran.r-project.org/package=units) package and therefore requires that both the source- and target-units are recognized and convertible (see `units::ud_are_convertible()`).].
 
-```{r demo-load}
+```{r, results = "asis"}
+assign_dataset_names(demo)
+```
+
+```{r, demo-load}
 (dat <- load_concepts(c("lact", "map"), demo))
 ```
 
@@ -71,7 +94,7 @@ Several utility functions are exported from `ricu` for helping with creating cal
 
 As a first sanity check we will slightly modify data loading in order to be warned about item IDs that do not appear in the data. For this we chop up data items loaded from the dictionary such that items of type `sel_itm` which may contain several IDs, are split into separate items and regular expressions in `rgx_itm` items are taken apart such that aggregate expressions such as `(foo|bar)baz` are turned into `foobaz` and `barbaz`.
 
-```{r sep-itms, include = FALSE}
+```{r, sep-itms, include = FALSE}
 assign_id <- function(id, itm, nme) `[[<-`(itm, nme, id)
 
 rep_itm <- function(itm, nme = "ids", fun = identity) {
@@ -219,7 +242,7 @@ report_empty <- function(dict, ...) {
 
 Next, for the actual data loading, `report_empty()` substitutes the internally called function `do_itm_load()` with a modified version that takes note of the offending IDs alongside concept, table and data source names whenever zero rows are returned for a given `itm` object.
 
-```{r itm-load, cache = TRUE}
+```{r, itm-load, cache = TRUE}
 concepts <- c("map", "lact", "bili", "gcs", "abx")
 
 dict <- load_dictionary(demo, concepts)
@@ -227,7 +250,7 @@ dict <- load_dictionary(demo, concepts)
 empty_items <- report_empty(dict, merge = FALSE, verbose = FALSE)
 ```
 
-```{r itm-print, eval = length(empty_items) > 0L, echo = FALSE}
+```{r, itm-print, eval = length(empty_items) > 0L, echo = FALSE}
 knitr::kable(
   data.table::rbindlist(empty_items),
   caption = paste(
@@ -241,11 +264,38 @@ If no table is printed given the modified data loading above, every single ID th
 
 Next, we will investigate the number of measurements available per concept and stay day. For each stay ID and concept we calculate the number of measurements and note the stay duration. From this we can visualize how the number of measurements per day is distributed over the datasets alongside the percentage of patients that have at least one measurement available.
 
-```{asis, echo = !srcs_avail(full)}
-> Note: The following code blocks are run using demo (`r paste1(demo)`) instead of full datasets (`r paste1(full)`) and therefore might be less usefull. For data set up, please consult the manual at `?attach_src`. The full version of this vignette is available from [CRAN](https://CRAN.R-project.org/package=ricu/vignettes/uom.html).
+```{r, full-miss, echo = FALSE, eval = !srcs_avail(srcs), results = "asis"}
+demo_instead_full_msg(demo, srcs)
+srcs <- demo
 ```
 
-```{r itm-counts, cache = TRUE}
+```{r, itm-count-funs}
+count_meas <- function(x) {
+  x[!is.na(get(data_var(x))), list(count = .N), by = c(id_vars(x))]
+}
+
+meas_day <- function(x, los) {
+  merge(x, los)[, count := count / los_icu]
+}
+
+quants <- function(x) {
+  setNames(
+    as.list(quantile(x, c(0.05, 0.25, 0.5, 0.75, 0.95))),
+    c("min", "lwr", "med", "upr", "max")
+  )
+}
+
+meas_stats <- function(x, concept) {
+  x[, c(list(concept = concept, n_pat = .N), quants(count / los_icu)),
+    by = "source"]
+}
+```
+
+```{r, results = "asis"}
+assign_dataset_names(srcs)
+```
+
+```{r, itm-counts, cache = TRUE}
 count_meas <- function(x) {
   x[!is.na(get(data_var(x))), list(count = .N), by = c(id_vars(x))]
 }
@@ -283,7 +333,7 @@ counts <- merge(counts, los[, list(total_pat = .N), by = "source"],
 head(counts)
 ```
 
-```{r count-plot, echo = FALSE, fig.width = 6}
+```{r, count-plot, echo = FALSE, fig.width = 6}
 boxplots <- ggplot(counts, aes(concept)) +
   geom_boxplot(
      aes(ymin = min, lower = lwr, middle = med, upper = upr, ymax = max,
@@ -303,20 +353,25 @@ pat_perc <- ggplot(counts, aes(concept)) +
         axis.ticks.y = element_blank()) +
   ylab("Percentage of patients")
 
-cowplot::plot_grid(
+if (requireNamespace("cowplot", quietly = TRUE))
   cowplot::plot_grid(
-    boxplots + theme(legend.position = "none"),
-    pat_perc + theme(legend.position = "none"),
-    nrow = 1L, rel_widths = c(0.7, 0.3)
-  ),
-  cowplot::get_legend(boxplots + theme(legend.position = "bottom")),
-  ncol = 1L, rel_heights = c(0.9, 0.1)
-)
+    cowplot::plot_grid(
+      boxplots + theme(legend.position = "none"),
+      pat_perc + theme(legend.position = "none"),
+      nrow = 1L, rel_widths = c(0.7, 0.3)
+    ),
+    cowplot::get_legend(boxplots + theme(legend.position = "bottom")),
+    ncol = 1L, rel_heights = c(0.9, 0.1)
+  )
+} else {
+  boxplots
+  pat_perc
+}
 ```
 
 Finally, we compare the densities we obtain by looking concept values per dataset, as visualized in the following plot.
 
-```{r uom-hist, echo = FALSE, fig.width = 6}
+```{r, uom-hist, echo = FALSE, fig.width = 6}
 filter_quants <- function(x, lwr, upr) {
 
   do_filter <- function(x) {
