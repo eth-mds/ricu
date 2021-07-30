@@ -25,7 +25,7 @@ paste1 <- function(x) {
 demo_instead_full_msg <- function(demo, full) {
   paste0(
     "> Note: The following code blocks are run using demo (",
-    paste1(demo)", ) instead of full datasets (", paste1(full)", ) and ",
+    paste1(demo), ", ) instead of full datasets (", paste1(full), ", ) and ",
     "therefore might be less useful. For data set up, please consult the ",
     "manual at `?attach_src`. The full version of this vignette is available ",
     "from [CRAN](https://CRAN.R-project.org/package=ricu/vignettes/uom.html)."
@@ -38,7 +38,8 @@ demo_missing_msg <- function(demo) {
     " are available, which can be installed by running\n",
     ">\n",
     ">     install.packages(\n",
-    ">       c(", paste0("\"", demo, "\"", collapse = ", "), "),\n",
+    ">       c(", paste0("\"", sub("_", ".", demo), "\"", collapse = ", "),
+             "),\n",
     ">       repos = \"https://eth-mds.github.io/physionet-demo\"\n",
     ">     )\n",
     ">\n",
