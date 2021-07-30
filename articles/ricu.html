@@ -113,16 +113,15 @@
 <h2 class="hasAnchor">
 <a href="#demo-datasets" class="anchor"></a>Demo datasets</h2>
 <p>The two demo datasets <code>mimic_demo</code> and <code>eicu_demo</code> are listed as <code>Suggests</code> dependencies and therefore their availability is determined by the value passed as <code>dependencies</code> to the above package installation function. The following call explicitly installs the demo dataset packages</p>
-<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html">install.packages</a></span><span class="op">(</span>
-  <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"mimic.demo"</span>, <span class="st">"eicu.demo"</span><span class="op">)</span>,
-  repos <span class="op">=</span> <span class="st">"https://eth-mds.github.io/physionet-demo"</span>
-<span class="op">)</span></code></pre></div>
+<pre><code><a href="https://rdrr.io/r/utils/install.packages.html">install.packages(
+  c("mimic.demo", "eicu.demo"),
+  repos = "https://eth-mds.github.io/physionet-demo"
+)</a></code></pre>
 </div>
 <div id="full-datasets" class="section level2">
 <h2 class="hasAnchor">
 <a href="#full-datasets" class="anchor"></a>Full datasets</h2>
-<p>Included with <code>ricu</code> are functions for download and setup of the following datasets: <code>mimic</code>, <code>eicu</code>, <code>hirid</code> and <code>aumc</code>, which can be invoked in several different ways.</p>
+<p>Included with <code>ricu</code> are functions for download and setup of the following datasets: <code>mimic</code> (MIMIC-III), <code>eicu</code>, <code>hirid</code>, <code>aumc</code> and <code>miiv</code> (MIMIC-IV), which can be invoked in several different ways.</p>
 <ul>
 <li>To begin with, a directory is needed where the data can permanently be stored. The default location is platform dependent and can be overridden using the environment variable <code>RICU_DATA_PATH</code>. The current value can be retrieved by calling <code><a href="../reference/data_dir.html">data_dir()</a></code>.</li>
 <li>Access to both the PhysioNet datasets (MIMIC-III, eICU and HiRID), as well as to AUMCdb is free but credentialed. In addition to setting up an <a href="https://physionet.org/register/">account with PhysioNet</a>, <a href="https://physionet.org/settings/credentialing/">credentialing</a> is required, which, in the case of HiRID, must also be followed by submitting an <a href="https://physionet.org/request-access/hirid/1.1.1/">access request</a> to the data-owners. Details on the procedure for requesting access to AUMCdb is available from <a href="https://amsterdammedicaldatascience.nl/#amsterdamumcdb">here</a> and consists of filling out a <a href="https://amsterdammedicaldatascience.nl/arfeula_v1.6.pdf">form</a> and completing a training course such as <a href="https://physionet.org/about/citi-course/">Data or Specimens Only Research (DSOR)</a> which, together with proof of training course completion, can be submitted by <a href="mailto:access@amsterdammedicaldatascience.nl">email</a>.</li>
