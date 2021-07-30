@@ -14,40 +14,13 @@ knitr::opts_chunk$set(
 )
 
 library(ricu)
+
+source(system.file("extdata", "vignettes", "helpers.R", package = "ricu"))
 ```
 
-```{r, echo = FALSE}
-demo  <- c("mimic_demo", "eicu_demo")
-alls  <- demo
-
-avail <- is_data_avail(alls)
-
-srcs_avail <- function(x) all(avail[x])
-
-paste1 <- function(x) {
-
-  x <- paste0("`", x, "`")
-
-  if (length(x) <= 2L) {
-    return(paste0(x, collapse = " and "))
-  }
-
-  paste0(paste0(head(x, n = length(x) - 2L), collapse = ", "), ", ",
-         paste0(tail(x, n = 2L), collapse = " and "))
-}
-
-if (!srcs_avail(alls)) {
-
-  msg <- paste(
-    "Note: Examples in this vignette require that datasets",
-    paste1(alls[!avail]), "are available. Chunks that depend on certain",
-    "datasets will not be evaluated if the corresponding dataset is missing.",
-    "The full version of this vignette is available from",
-    "https://CRAN.R-project.org/package=ricu/vignettes/ricu.html"
-  )
-
-  message(paste(strwrap(msg), collapse = "\n"))
-}
+```{r, demo-miss, echo = FALSE, eval = !srcs_avail(demo), results = "asis"}
+demo_missing_msg(demo)
+knitr::opts_chunk$set(eval = FALSE)
 ```
 
 In order to set up `ricu`, download of datasets from several platforms is required. Two data sources, `mimic_demo` and `eicu_demo` are available directly as R packages, hosted on Github. The respective full-featured versions `mimic` and `eicu`, as well as the `hirid` dataset are available from [PhysioNet](https://physionet.org), while access to the remaining standard dataset `aumc` is available from yet another [website](https://amsterdammedicaldatascience.nl/). The following steps guide through package installation, data source set up and conclude with some example data queries.
@@ -70,16 +43,19 @@ remotes::install_github("eth-mds/ricu")
 
 The two demo datasets `mimic_demo` and `eicu_demo` are listed as `Suggests` dependencies and therefore their availability is determined by the value passed as `dependencies` to the above package installation function. The following call explicitly installs the demo dataset packages
 
-```{r, eval = FALSE}
-install.packages(
-  c("mimic.demo", "eicu.demo"),
-  repos = "https://eth-mds.github.io/physionet-demo"
+```{r, echo = FALSE, results = "asis"}
+cat(
+  "    install.packages(\n",
+  "      c(", paste0("\"", sub("_", ".", demo), "\"", collapse = ", "), "),\n",
+  "      repos = \"https://eth-mds.github.io/physionet-demo\"\n",
+  "    )\n",
+  sep = ""
 )
 ```
 
 ## Full datasets
 
-Included with `ricu` are functions for download and setup of the following datasets: `mimic`, `eicu`, `hirid` and `aumc`, which can be invoked in several different ways.
+Included with `ricu` are functions for download and setup of the following datasets: `mimic` (MIMIC-III), `eicu`, `hirid`, `aumc` and `miiv` (MIMIC-IV), which can be invoked in several different ways.
 
 - To begin with, a directory is needed where the data can permanently be  stored. The default location is platform dependent and can be overridden using the environment variable `RICU_DATA_PATH`. The current value can be retrieved by calling `data_dir()`.
 - Access to both the PhysioNet datasets (MIMIC-III, eICU and HiRID), as well as to AUMCdb is free but credentialed. In addition to setting up an [account with PhysioNet](https://physionet.org/register/), [credentialing](https://physionet.org/settings/credentialing/) is required, which, in the case of HiRID, must also be followed by submitting an [access request](https://physionet.org/request-access/hirid/1.1.1/) to the data-owners. Details on the procedure for requesting access to AUMCdb is available from [here](https://amsterdammedicaldatascience.nl/#amsterdamumcdb) and consists of filling out a [form](https://amsterdammedicaldatascience.nl/arfeula_v1.6.pdf) and completing a training course such as [Data or Specimens Only Research (DSOR)](https://physionet.org/about/citi-course/) which, together with proof of training course completion, can be submitted by [email](mailto:access@amsterdammedicaldatascience.nl).
@@ -93,14 +69,14 @@ Included with `ricu` are functions for download and setup of the following datas
 
 Many commonly used clinical data concepts are available for all data sources, where the required data exists. An overview of available concepts is available by calling `explain_dictionary()` and concepts can be loaded using `load_concepts()`:
 
-```{r, eval = srcs_avail(demo)}
+```{r, load-ts}
 head(explain_dictionary(src = c("mimic_demo", "eicu_demo")))
 load_concepts("alb", "mimic_demo", verbose = FALSE)
 ```
 
 Concepts representing time-dependent measurements are loaded as `ts_tbl` objects, whereas static information is retrieved as `id_tbl` object. Both classes inherit from `data.table` (and therefore also from `data.frame`) and can be coerced to any of the base classes using `as.data.table()` and `as.data.frame()`, respectively. Using `data.table` 'by-reference' operations, this is available as zero-copy operation by passing `by_ref = TRUE`
 
-```{r, eval = srcs_avail("eicu_demo")}
+```{r, load-id}
 (dat <- load_concepts("height", "eicu_demo", verbose = FALSE))
 head(as.data.frame(dat, by_ref = TRUE))
 ```
@@ -113,7 +89,7 @@ In addition to the ~100 concepts that are available by default, adding user-defi
 
 - Data concepts consist of zero, one, or several data items per data source, encoding how to retrieve the corresponding data. The constructors `concept()` and `item()` can be used to instantiate concepts as R objects.
 
-    ```{r, eval = srcs_avail("mimic_demo")}
+    ```{r, create-concept}
     ldh <- concept("ldh",
       item("mimic_demo", "labevents", "itemid", 50954),
       description = "Lactate dehydrogenase",

@@ -30,7 +30,7 @@ One challenge when working with electronic healthcare (EHR) data from different 
 
 Data concepts of type `num_cncpt` can specify an expected units as character vector (where the string in position 1 is added as per-column attribute `units`). When using concepts of this type, unit conversion to the specified target unit is not handled automatically but is up to the user via a callback function. Unit mismatches are reported as messages during concept loading^[Recently, experimental support for automatic unit conversion has been added via the `unt_cncpt` class. Such a concept will attempt to convert data columns using the [units](https://cran.r-project.org/package=units) package and therefore requires that both the source- and target-units are recognized and convertible (see `units::ud_are_convertible()`).].
 
-```{r, results = "asis"}
+```{r, echo = FALSE, results = "asis"}
 assign_dataset_names(demo)
 ```
 
@@ -241,7 +241,7 @@ meas_stats <- function(x, concept) {
 }
 ```
 
-```{r, results = "asis"}
+```{r, echo = FALSE, results = "asis"}
 assign_dataset_names(srcs)
 ```
 

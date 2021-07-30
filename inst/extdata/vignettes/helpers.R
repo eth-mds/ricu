@@ -13,17 +13,18 @@ paste1 <- function(x) {
 }
 
 demo_instead_full_msg <- function(demo, full) {
-  paste0(
+  cat(
     "> Note: The following code blocks are run using demo (",
     paste1(demo), ", ) instead of full datasets (", paste1(full), ", ) and ",
     "therefore might be less useful. For data set up, please consult the ",
     "manual at `?attach_src`. The full version of this vignette is available ",
-    "from [CRAN](https://CRAN.R-project.org/package=ricu/vignettes/uom.html)."
+    "from [CRAN](https://CRAN.R-project.org/package=ricu/vignettes/uom.html).",
+    sep = ""
   )
 }
 
 demo_missing_msg <- function(demo) {
-  paste0(
+  cat(
     "> Note: Code in this vignette requires that datasets ", paste1(demo),
     " are available, which can be installed by running\n",
     ">\n",
@@ -35,16 +36,18 @@ demo_missing_msg <- function(demo) {
     ">\n",
     "> As long as the corresponding datasets are not accessible, certain code ",
     "blocks are not evaluated. The full version of this vignette is available ",
-    "from [CRAN](https://CRAN.R-project.org/package=ricu/vignettes/uom.html)."
+    "from [CRAN](https://CRAN.R-project.org/package=ricu/vignettes/uom.html).",
+    sep = ""
   )
 }
 
 assign_dataset_names <- function(srcs) {
   name <- deparse(substitute(srcs))
-  paste0(
+  cat(
     "```{r, assign-", name, ", eval = FALSE}\n",
     name, " <- c(", paste0("\"", srcs, "\"", collapse = ", "), ")\n",
-    "```"
+    "```",
+    sep = ""
   )
 }
 
