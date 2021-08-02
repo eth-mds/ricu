@@ -560,6 +560,10 @@ group_measurements <- function(x, max_gap = hours(6L), group_var = "grp_var") {
 
   grp_calc  <- function(x) {
 
+    if (length(x) == 0L) {
+      return(integer())
+    }
+
     tmp <- rle(x <= max_gap)
 
     val <- tmp[["values"]]
