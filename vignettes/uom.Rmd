@@ -8,20 +8,27 @@ vignette: >
 ---
 
 ```{r, setup, include = FALSE}
+source(system.file("extdata", "vignettes", "helpers.R", package = "ricu"))
+
+demo <- c("mimic_demo", "eicu_demo")
+srcs <- c("mimic", "eicu", "aumc", "hirid", "miiv")
+
 knitr::opts_chunk$set(
   collapse = TRUE,
-  comment = "#>"
+  comment = "#>",
+  eval = srcs_avail(demo)
+)
+
+knitr::knit_hooks$set(
+  document = combine_chunks
 )
 
 library(ricu)
 library(ggplot2)
-
-source(system.file("extdata", "vignettes", "helpers.R", package = "ricu"))
 ```
 
 ```{r, demo-miss, echo = FALSE, eval = !srcs_avail(demo), results = "asis"}
-demo_missing_msg(demo)
-knitr::opts_chunk$set(eval = FALSE)
+demo_missing_msg(demo, "uom.html")
 ```
 
 One challenge when working with electronic healthcare (EHR) data from different hospitals, which is accentuated if the intensive care units (ICUs) collecting the data are located in different geographic regions, is the use of different measurement unit systems. In part, this can be attributed to the use of imperial units in English speaking countries (e.g. patient weight being reported in lbs instead of kg), but more subtle differences in practice are involved as well, such as reporting lab test results in mg/dL instead of the SI unit mmol/L. While discrepancies of the former type are easy to resolve, harmonization of different notions of concentration is slightly more involved due to the conversion factor being substance-specific.
@@ -30,7 +37,7 @@ One challenge when working with electronic healthcare (EHR) data from different 
 
 Data concepts of type `num_cncpt` can specify an expected units as character vector (where the string in position 1 is added as per-column attribute `units`). When using concepts of this type, unit conversion to the specified target unit is not handled automatically but is up to the user via a callback function. Unit mismatches are reported as messages during concept loading^[Recently, experimental support for automatic unit conversion has been added via the `unt_cncpt` class. Such a concept will attempt to convert data columns using the [units](https://cran.r-project.org/package=units) package and therefore requires that both the source- and target-units are recognized and convertible (see `units::ud_are_convertible()`).].
 
-```{r, echo = FALSE, results = "asis"}
+```{r, echo = FALSE, eval = TRUE, results = "asis"}
 assign_dataset_names(demo)
 ```
 
@@ -200,7 +207,7 @@ dict <- load_dictionary(demo, concepts)
 empty_items <- report_empty(dict, merge = FALSE, verbose = FALSE)
 ```
 
-```{r, itm-print, eval = length(empty_items) > 0L, echo = FALSE}
+```{r, itm-print, eval = length(get0("empty_items")) > 0L, echo = FALSE}
 knitr::kable(
   data.table::rbindlist(empty_items),
   caption = paste(
@@ -214,8 +221,8 @@ If no table is printed given the modified data loading above, every single ID th
 
 Next, we will investigate the number of measurements available per concept and stay day. For each stay ID and concept we calculate the number of measurements and note the stay duration. From this we can visualize how the number of measurements per day is distributed over the datasets alongside the percentage of patients that have at least one measurement available.
 
-```{r, full-miss, echo = FALSE, eval = !srcs_avail(srcs), results = "asis"}
-demo_instead_full_msg(demo, srcs)
+```{r, full-miss, echo = FALSE, eval = srcs_avail(demo) && !srcs_avail(srcs), results = "asis"}
+demo_instead_full_msg(demo, srcs, "uom.html")
 srcs <- demo
 ```
 
@@ -241,31 +248,11 @@ meas_stats <- function(x, concept) {
 }
 ```
 
-```{r, echo = FALSE, results = "asis"}
+```{r, echo = FALSE, eval = TRUE, results = "asis"}
 assign_dataset_names(srcs)
 ```
 
 ```{r, itm-counts, cache = TRUE}
-count_meas <- function(x) {
-  x[!is.na(get(data_var(x))), list(count = .N), by = c(id_vars(x))]
-}
-
-meas_day <- function(x, los) {
-  merge(x, los)[, count := count / los_icu]
-}
-
-quants <- function(x) {
-  setNames(
-    as.list(quantile(x, c(0.05, 0.25, 0.5, 0.75, 0.95))),
-    c("min", "lwr", "med", "upr", "max")
-  )
-}
-
-meas_stats <- function(x, concept) {
-  x[, c(list(concept = concept, n_pat = .N), quants(count / los_icu)),
-    by = "source"]
-}
-
 los <- load_concepts("los_icu", srcs, verbose = FALSE)
 los <- los[los_icu > 0, ]
 
