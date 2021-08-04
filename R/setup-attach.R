@@ -277,7 +277,8 @@ setup_src_env.src_cfg <- function(x, data_dir = src_data_dir(x),
         return(src_tbl_cache)
       }
 
-      msg_ricu("Data for `{src_name(src)}` is missing", "miss_tbl_msg")
+      msg_ricu("Data for `{src_name(src)}` is missing", "miss_tbl_msg",
+               tbl_cfg = tbl)
 
       if (is_interactive()) {
 

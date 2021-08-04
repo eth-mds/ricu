@@ -587,7 +587,7 @@ safe_tbl_get <- function(x, env) {
 
   tryCatch(
     get0(x, envir = env, inherits = FALSE),
-    miss_tbl_msg = function(msg) NULL
+    miss_tbl_msg = function(msg) msg[["tbl_cfg"]]
   )
 }
 
