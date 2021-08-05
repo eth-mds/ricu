@@ -10,23 +10,25 @@ vignette: >
 ```{r, setup, include = FALSE}
 source(system.file("extdata", "vignettes", "helpers.R", package = "ricu"))
 
-demo <- c("mimic_demo", "eicu_demo")
-
 knitr::opts_chunk$set(
   collapse = TRUE,
-  comment = "#>",
-  eval = srcs_avail(demo)
-)
-
-knitr::knit_hooks$set(
-  document = combine_chunks
+  comment = "#>"
 )
 
 library(ricu)
 ```
 
+```{r, assign-src, echo = FALSE}
+src  <- "mimic_demo"
+```
+
+```{r, assign-demo, echo = FALSE}
+demo <- c(src, "eicu_demo")
+```
+
 ```{r, demo-miss, echo = FALSE, eval = !srcs_avail(demo), results = "asis"}
 demo_missing_msg(demo, "ricu.html")
+knitr::opts_chunk$set(eval = FALSE)
 ```
 
 In order to set up `ricu`, download of datasets from several platforms is required. Two data sources, `mimic_demo` and `eicu_demo` are available directly as R packages, hosted on Github. The respective full-featured versions `mimic` and `eicu`, as well as the `hirid` dataset are available from [PhysioNet](https://physionet.org), while access to the remaining standard dataset `aumc` is available from yet another [website](https://amsterdammedicaldatascience.nl/). The following steps guide through package installation, data source set up and conclude with some example data queries.
@@ -77,20 +79,20 @@ Included with `ricu` are functions for download and setup of the following datas
 
 Many commonly used clinical data concepts are available for all data sources, where the required data exists. An overview of available concepts is available by calling `explain_dictionary()` and concepts can be loaded using `load_concepts()`:
 
-```{r, assign-demo, eval = TRUE, echo = FALSE, results = "asis"}
-assign_dataset_names(demo)
-```
-
 ```{r, load-ts}
+<<assign-src>>
+<<assign-demo>>
+
 head(explain_dictionary(src = demo))
-load_concepts("alb", demo[1], verbose = FALSE)
+load_concepts("alb", src, verbose = FALSE)
 ```
 
-Concepts representing time-dependent measurements are loaded as `ts_tbl` objects, whereas static information is retrieved as `id_tbl` object. Both classes inherit from `data.table` (and therefore also from `data.frame`) and can be coerced to any of the base classes using `as.data.table()` and `as.data.frame()`, respectively. Using `data.table` 'by-reference' operations, this is available as zero-copy operation by passing `by_ref = TRUE`.
+Concepts representing time-dependent measurements are loaded as `ts_tbl` objects, whereas static information is retrieved as `id_tbl` object. Both classes inherit from `data.table` (and therefore also from `data.frame`) and can be coerced to any of the base classes using `as.data.table()` and `as.data.frame()`, respectively. Using `data.table` 'by-reference' operations, this is available as zero-copy operation by passing `by_ref = TRUE`^[While `data.table` by-reference operations can be very useful due to their inherent efficiency benefits, much care is required if enabled, as they break with the usual base R by-value (copy-on-modify) semantics.].
 
 ```{r, load-id}
-(dat <- load_concepts("height", demo[1], verbose = FALSE))
-head(as.data.frame(dat, by_ref = TRUE))
+(dat <- load_concepts("height", src, verbose = FALSE))
+head(tmp <- as.data.frame(dat, by_ref = TRUE))
+identical(dat, tmp)
 ```
 
 Many functions exported by `ricu` use `id_tbl` and `ts_tbl` objects in order to enable more concise semantics. Merging an `id_tbl` with a `ts_tbl`, for example, will automatically use the columns identified by `id_vars()` of both tables, as `by.x`/`by.y` arguments, while for two `ts_tbl` object, respective columns reported by `id_vars()` and `index_var()` will be used to merge on.

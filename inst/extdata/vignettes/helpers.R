@@ -42,17 +42,3 @@ demo_missing_msg <- function(demo, file) {
     ").", sep = ""
   )
 }
-
-assign_dataset_names <- function(srcs) {
-  name <- deparse(substitute(srcs))
-  cat(
-    "```r\n",
-    name, " <- ", capture.output(dput(srcs)), "\n",
-    "```\n",
-    sep = ""
-  )
-}
-
-combine_chunks <- function(x) {
-  gsub("```\n*```r*\n*", "\n", paste0(x, collapse = "\n"))
-}
