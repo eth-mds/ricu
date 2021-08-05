@@ -97,16 +97,6 @@ CH-8092 Zürich\\
 \footnotetext{$^{*}$These authors contributed equally.}
 \renewcommand*{\thefootnote}{\arabic{footnote}}
 
-\begin{CodeChunk}
-\begin{CodeOutput}
-Note: Examples in this vignette require that datasets `mimic`, `eicu`,
-`hirid` and `aumc` are available. Chunks that depend on certain
-datasets will not be evaluated if the corresponding dataset is missing.
-The full version of this vignette is available from
-https://CRAN.R-project.org/package=ricu/vignettes/jss.pdf
-\end{CodeOutput}
-\end{CodeChunk}
-
 \hypertarget{introduction}{%
 \section{Introduction}\label{introduction}}
 
@@ -224,7 +214,8 @@ vignette}.
     demo datasets can be set up by installing the data packages
     \texttt{mimic.demo} and/or \texttt{eicu.demo}, passing
     \texttt{"https://eth-mds.github.io/physionet-demo"} as
-    \texttt{repos} argument to \texttt{install.packages()}
+    \texttt{repos} argument to \texttt{install.packages()} (see code
+    snippet in Section \ref{data-sources})
   \item
     the complete MIMIC-III, eICU and HiRID datasets can be accessed by
     setting up an account at
@@ -416,33 +407,25 @@ as critical care procedures, organized as a 26-table relational
 structure.
 
 \begin{CodeChunk}
-\begin{CodeOutput}
-Note: The following code chunks are intended to be run using data from
-`mimic` which is not available. Alternatively, data from `mimic_demo`
-is used instead.
-\end{CodeOutput}
-\end{CodeChunk}
-
-\begin{CodeChunk}
 \begin{CodeInput}
-R> mimic_demo
+R> mimic
 \end{CodeInput}
 \begin{CodeOutput}
-<mimic_demo_env[25]>
+<mimic_env[26]>
         admissions            callout         caregivers        chartevents 
-        [129 x 19]          [77 x 24]        [7,567 x 4]     [758,355 x 15] 
+     [58,976 x 19]      [34,499 x 24]        [7,567 x 4] [330,712,483 x 15] 
          cptevents              d_cpt    d_icd_diagnoses   d_icd_procedures 
-      [1,579 x 12]          [134 x 9]       [14,567 x 4]        [3,882 x 4] 
+    [573,146 x 12]          [134 x 9]       [14,567 x 4]        [3,882 x 4] 
            d_items         d_labitems     datetimeevents      diagnoses_icd 
-     [12,487 x 10]          [753 x 6]      [15,551 x 14]        [1,761 x 5] 
+     [12,487 x 10]          [753 x 6]   [4,485,937 x 14]      [651,047 x 5] 
           drgcodes           icustays     inputevents_cv     inputevents_mv 
-         [297 x 8]         [136 x 12]      [34,799 x 22]      [13,224 x 31] 
-         labevents microbiologyevents       outputevents           patients 
-      [76,074 x 9]       [2,003 x 16]      [11,320 x 13]          [100 x 8] 
-     prescriptions procedureevents_mv     procedures_icd           services 
-     [10,398 x 19]         [753 x 25]          [506 x 5]          [163 x 6] 
-         transfers 
-        [524 x 13] 
+     [125,557 x 8]      [61,532 x 12]  [17,527,935 x 22]   [3,618,991 x 31] 
+         labevents microbiologyevents         noteevents       outputevents 
+  [27,854,055 x 9]     [631,726 x 16]   [2,083,180 x 11]   [4,349,218 x 13] 
+          patients      prescriptions procedureevents_mv     procedures_icd 
+      [46,520 x 8]   [4,156,450 x 19]     [258,066 x 25]      [240,095 x 5] 
+          services          transfers 
+      [73,343 x 6]     [261,897 x 13] 
 \end{CodeOutput}
 \end{CodeChunk}
 
@@ -483,41 +466,33 @@ PhysioNet. Patients with discharge dates in 2014 or 2015 were
 considered, with stays in low acuity units being removed.
 
 \begin{CodeChunk}
-\begin{CodeOutput}
-Note: The following code chunks are intended to be run using data from
-`eicu` which is not available. Alternatively, data from `eicu_demo` is
-used instead.
-\end{CodeOutput}
-\end{CodeChunk}
-
-\begin{CodeChunk}
 \begin{CodeInput}
-R> eicu_demo
+R> eicu
 \end{CodeInput}
 \begin{CodeOutput}
-<eicu_demo_env[31]>
+<eicu_env[31]>
             admissiondrug               admissiondx                   allergy 
-             [7,417 x 14]               [7,578 x 6]              [2,475 x 13] 
+           [874,920 x 14]             [626,858 x 6]            [251,949 x 13] 
              apacheapsvar       apachepatientresult             apachepredvar 
-             [2,205 x 26]              [3,676 x 23]              [2,205 x 51] 
+           [171,177 x 26]            [297,064 x 23]            [171,177 x 51] 
      careplancareprovider               careplaneol           careplangeneral 
-              [5,627 x 8]                  [15 x 5]              [33,148 x 6] 
+            [502,765 x 8]               [1,433 x 5]           [3,115,018 x 6] 
              careplangoal careplaninfectiousdisease                 customlab 
-              [3,633 x 7]                 [112 x 8]                  [30 x 7] 
+            [504,139 x 7]               [8,056 x 8]               [1,082 x 7] 
                 diagnosis                  hospital              infusiondrug 
-             [24,978 x 7]                 [186 x 4]              [38,256 x 9] 
+          [2,710,672 x 7]                 [208 x 4]           [4,803,719 x 9] 
              intakeoutput                       lab                medication 
-           [100,466 x 12]            [434,660 x 10]             [75,604 x 15] 
+        [12,030,289 x 12]         [39,132,531 x 10]          [7,301,853 x 15] 
                  microlab                      note           nurseassessment 
-                [342 x 7]              [24,758 x 8]              [91,589 x 8] 
+             [16,996 x 7]           [2,254,179 x 8]          [15,602,498 x 8] 
                 nursecare             nursecharting               pasthistory 
-             [42,080 x 8]           [1,477,163 x 8]              [12,109 x 8] 
+          [8,311,132 x 8]         [151,604,232 x 8]           [1,149,180 x 8] 
                   patient              physicalexam           respiratorycare 
-             [2,520 x 29]              [84,058 x 6]              [5,436 x 34] 
+           [200,859 x 29]           [9,212,316 x 6]            [865,381 x 34] 
       respiratorycharting                 treatment            vitalaperiodic 
-            [176,089 x 7]              [38,290 x 5]            [274,088 x 13] 
+         [20,168,176 x 7]           [3,688,745 x 5]         [25,075,074 x 13] 
             vitalperiodic 
-         [1,634,960 x 19] 
+       [146,671,642 x 19] 
 \end{CodeOutput}
 \end{CodeChunk}
 
@@ -573,6 +548,13 @@ tables\footnote{The data is available in three states: as raw data and
 \begin{CodeInput}
 R> hirid
 \end{CodeInput}
+\begin{CodeOutput}
+<hirid_env[5]>
+          general      observations           ordinal            pharma 
+     [33,905 x 5] [776,921,131 x 8]          [72 x 3] [16,270,399 x 14] 
+        variables 
+        [712 x 5] 
+\end{CodeOutput}
 \end{CodeChunk}
 
 Collected during the period of January 2008 through June 2016, roughly
@@ -610,6 +592,13 @@ succinctly as a 7-table relational structure.
 \begin{CodeInput}
 R> aumc
 \end{CodeInput}
+\begin{CodeOutput}
+<aumc_env[7]>
+         admissions           drugitems       freetextitems           listitems 
+      [23,106 x 17]    [4,907,269 x 31]      [651,248 x 11]   [30,744,065 x 11] 
+       numericitems procedureorderitems        processitems 
+ [977,625,612 x 15]     [2,188,626 x 8]       [256,715 x 6] 
+\end{CodeOutput}
 \end{CodeChunk}
 
 A slightly different approach to data anonymization was chosen for this
@@ -623,13 +612,15 @@ procedures. In terms of patient identifiers, it is possible to link ICU
 admissions corresponding to the same individual, but it is not possible
 to identify separate hospital admissions.
 
-\begin{CodeChunk}
-\begin{CodeOutput}
-Note: The following code chunks are intended to be run using data from
-`mimic` and `eicu` which is not available. Alternatively, data from
-`mimic_demo` and `eicu_demo` is used instead.
-\end{CodeOutput}
-\end{CodeChunk}
+\begin{quote}
+Note: The following code blocks are run using demo (\texttt{mimic\_demo}
+and \texttt{eicu\_demo}) instead of full (\texttt{mimic}, \texttt{eicu},
+\texttt{aumc} and \texttt{hirid}) datasets and therefore might be less
+useful. For data set up, please consult the manual at
+\texttt{?attach\_src}. The full version of this vignette is available
+from
+\href{https://CRAN.R-project.org/package=ricu/vignettes/uom.html}{CRAN}.
+\end{quote}
 
 \begin{table}
 
@@ -1176,7 +1167,10 @@ Heart rate, for example can be loaded using the \texttt{hr} concept as
 
 \begin{CodeChunk}
 \begin{CodeInput}
-R> load_concepts("hr", c("mimic_demo", "eicu_demo"), verbose = FALSE)
+R> src  <- "mimic_demo"
+R> demo <- c(src, "eicu_demo")
+R> 
+R> load_concepts("hr", demo, verbose = FALSE)
 \end{CodeInput}
 \begin{CodeOutput}
 # A `ts_tbl`: 152,197 x 4
@@ -1423,11 +1417,11 @@ R> (dat <- ts_tbl(a = 1:5, b = hours(1:5), c = rnorm(5)))
 # Index var:  `b` (1 hours)
       a b             c
   <int> <drtn>    <dbl>
-1     1 1 hours -1.41
-2     2 2 hours -0.0873
-3     3 3 hours -1.24
-4     4 4 hours  0.108
-5     5 5 hours  1.74
+1     1 1 hours  1.61
+2     2 2 hours  0.669
+3     3 3 hours  1.21
+4     4 4 hours -0.254
+5     5 5 hours  0.0305
 \end{CodeOutput}
 \begin{CodeInput}
 R> dat[["b"]] <- dat[["b"]] + mins(30)
@@ -1438,11 +1432,11 @@ R> dat
 # Id var:      `a`
       a b                c
   <int> <drtn>       <dbl>
-1     1  5400 secs -1.41
-2     2  9000 secs -0.0873
-3     3 12600 secs -1.24
-4     4 16200 secs  0.108
-5     5 19800 secs  1.74
+1     1  5400 secs  1.61
+2     2  9000 secs  0.669
+3     3 12600 secs  1.21
+4     4 16200 secs -0.254
+5     5 19800 secs  0.0305
 \end{CodeOutput}
 \end{CodeChunk}
 
@@ -1487,7 +1481,10 @@ display some concept meta-data.
 
 \begin{CodeChunk}
 \begin{CodeInput}
-R> dict <- load_dictionary(c("mimic_demo", "eicu_demo"))
+R> src  <- "mimic_demo"
+R> demo <- c(src, "eicu_demo")
+R> 
+R> dict <- load_dictionary(demo)
 R> head(dict)
 \end{CodeInput}
 \begin{CodeOutput}
@@ -1543,7 +1540,7 @@ hematology assays.
 
 \begin{CodeChunk}
 \begin{CodeInput}
-R> load_concepts(c("alb", "glu"), "mimic_demo", interval = mins(15L),
+R> load_concepts(c("alb", "glu"), src, interval = mins(15L),
 +               verbose = FALSE)
 \end{CodeInput}
 \begin{CodeOutput}
@@ -1593,7 +1590,7 @@ merging will duplicate static data over all time-points.
 
 \begin{CodeChunk}
 \begin{CodeInput}
-R> load_concepts(c("age", "glu"), "mimic_demo", verbose = FALSE)
+R> load_concepts(c("age", "glu"), src, verbose = FALSE)
 \end{CodeInput}
 \begin{CodeOutput}
 # A `ts_tbl`: 1,914 x 4
@@ -1675,8 +1672,8 @@ administered for at least 60 minutes).
 
 \begin{CodeChunk}
 \begin{CodeInput}
-R> load_concepts(c("abx", "vent_ind", "norepi_rate", "norepi_dur"),
-+               "mimic_demo", verbose = FALSE)
+R> load_concepts(c("abx", "vent_ind", "norepi_rate", "norepi_dur"), src,
++               verbose = FALSE)
 \end{CodeInput}
 \begin{CodeOutput}
 # A `ts_tbl`: 12,434 x 6
@@ -1732,7 +1729,7 @@ score construction.
 
 \begin{CodeChunk}
 \begin{CodeInput}
-R> load_concepts(c("sirs", "death"), "mimic_demo", verbose = FALSE,
+R> load_concepts(c("sirs", "death"), src, verbose = FALSE,
 +               keep_components = TRUE)
 \end{CodeInput}
 \begin{CodeOutput}
@@ -1781,14 +1778,6 @@ how some data pre-processing can be added to an existing concept by
 creating a new \texttt{rec\_cncpt} and how to create an new data concept
 altogether.
 
-\begin{CodeChunk}
-\begin{CodeOutput}
-Note: The following code chunks are intended to be run using data from
-`mimic` which is not available. Alternatively, data from `mimic_demo`
-is used instead.
-\end{CodeOutput}
-\end{CodeChunk}
-
 \hypertarget{lactate-and-mortality}{%
 \subsection{Lactate and mortality}\label{lactate-and-mortality}}
 
@@ -1799,17 +1788,23 @@ mortality \citep{haas2016, nichol2011, van2013}. In order to model this
 relationship, we fit a time-varying proportional hazards Cox model
 \citep{therneau2000, therneau2015}, which includes the SOFA score as a
 general predictor of illness severity, using MIMIC-III data.
+Furthermore, for the sake of this example, we are only interested in
+patients admitted from 2008 onwards (corresponding to the MetaVision
+database) of ages 20 to 90 years old.
 
 \begin{CodeChunk}
 \begin{CodeInput}
 R> src <- "mimic_demo"
+R> 
+R> cohort <- load_id("icustays", src, dbsource == "metavision",
++                   cols = NULL)
+R> cohort <- load_concepts("age", src, patient_ids = cohort,
++                         verbose = FALSE)
+R> 
 R> dat <- load_concepts(c("lact", "death", "sofa", "sex"), src,
++                      patient_ids = cohort[age > 20 & age < 90, ],
 +                      verbose = FALSE)
-\end{CodeInput}
-\end{CodeChunk}
-
-\begin{CodeChunk}
-\begin{CodeInput}
+R> 
 R> dat <- dat[, head(.SD, n = match(TRUE, death, .N)), by = c(id_vars(dat))]
 R> dat <- fill_gaps(dat)
 R> 
@@ -1836,7 +1831,7 @@ as:
 \begin{CodeChunk}
 
 
-\begin{center}\includegraphics{/private/var/folders/24/8k48jl6d249_n_qfxwsl6xvm0000gn/T/RtmpxZ1F4C/file81c4bde96f8/articles/jss_files/figure-latex/cox_plot-1} \end{center}
+\begin{center}\includegraphics{/private/var/folders/24/8k48jl6d249_n_qfxwsl6xvm0000gn/T/RtmppcV1AL/file6ab7714b210/articles/jss_files/figure-latex/cox-plot-1} \end{center}
 
 \end{CodeChunk}
 
@@ -1913,6 +1908,7 @@ R> diab  <- concept("diab", diab, "diabetes", target = "id_tbl",
 R> 
 R> dat <- load_concepts(c(ins24, diab), id_type = "icustay", verbose = FALSE)
 R> dat <- replace_na(dat, "[0,1)", vars = "ins24")
+R> 
 R> dat
 \end{CodeInput}
 \end{CodeChunk}
@@ -1923,13 +1919,16 @@ a histogram:
 \begin{CodeChunk}
 
 
-\begin{center}\includegraphics{/private/var/folders/24/8k48jl6d249_n_qfxwsl6xvm0000gn/T/RtmpxZ1F4C/file81c4bde96f8/articles/jss_files/figure-latex/diabetes-visualize-1} \end{center}
+\begin{center}\includegraphics{/private/var/folders/24/8k48jl6d249_n_qfxwsl6xvm0000gn/T/RtmppcV1AL/file6ab7714b210/articles/jss_files/figure-latex/diabetes-visualize-1} \end{center}
 
 \end{CodeChunk}
 
-The plot suggests that during the first day of ICU stay, perhaps
-unsurprisingly, diabetic patients receive more insulin compared to
-non-diabetic patients, especially as insulin dose increases.
+The plot suggests that for the cohort defined in the previous example
+and during the first day of ICU stay, perhaps unsurprisingly, with
+increasing insulin dosage, diabetic patients receive more insulin
+compared to non-diabetic patients. This effect is more pronounced when
+looking at the full MINIC-III data instead of the demo subset which
+includes only data corresponding to 136 ICU stays.
 
 \hypertarget{acknowledgments}{%
 \section{Acknowledgments}\label{acknowledgments}}
