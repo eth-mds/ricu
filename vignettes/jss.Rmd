@@ -66,7 +66,7 @@ pkgdown:
 ---
 
 ```{r setup, include = FALSE}
-knitr::opts_chunk$set(echo = TRUE)
+source(system.file("extdata", "vignettes", "helpers.R", package = "ricu"))
 
 library(ricu)
 library(data.table)
@@ -76,6 +76,16 @@ library(ggplot2)
 
 options(kableExtra.latex.load_packages = FALSE)
 library(kableExtra)
+
+srcs <- c("mimic", "eicu", "aumc", "hirid")
+```
+
+```{r, assign-src, echo = FALSE}
+src  <- "mimic_demo"
+```
+
+```{r, assign-demo, echo = FALSE}
+demo <- c(src, "eicu_demo")
 ```
 
 \maketitle
@@ -84,66 +94,9 @@ library(kableExtra)
 \footnotetext{$^{*}$These authors contributed equally.}
 \renewcommand*{\thefootnote}{\arabic{footnote}}
 
-```{r data-avail, echo = FALSE}
-srcs  <- c("mimic", "mimic_demo", "eicu", "eicu_demo", "hirid", "aumc")
-avail <- is_data_avail(srcs)
-
-srcs_avail <- function(x) all(avail[x])
-
-paste1 <- function(x) {
-
-  x <- paste0("`", x, "`")
-
-  if (length(x) <= 2L) {
-    return(paste0(x, collapse = " and "))
-  }
-
-  paste0(paste0(head(x, n = length(x) - 2L), collapse = ", "), ", ",
-         paste0(tail(x, n = 2L), collapse = " and "))
-}
-
-if (!srcs_avail(srcs)) {
-
-  msg <- paste(
-    "Note: Examples in this vignette require that datasets",
-    paste1(srcs[!avail]), "are available. Chunks that depend on certain",
-    "datasets will not be evaluated if the corresponding dataset is missing.",
-    "The full version of this vignette is available from",
-    "https://CRAN.R-project.org/package=ricu/vignettes/jss.pdf"
-  )
-
-  message(paste(strwrap(msg), collapse = "\n"))
-}
-
-demo_src_avail <- function(x, msg = FALSE) {
-
-  if (srcs_avail(x)) {
-    return(TRUE)
-  }
-
-  demo <- paste0(x, "_demo")
-
-  if (srcs_avail(demo)) {
-
-    txt <- paste(
-      "Note: The following code chunks are intended to be run using data",
-      "from", paste1(x), "which is not available. Alternatively, data from",
-      paste1(demo), "is used instead."
-    )
-
-    if (msg) {
-      message(paste(strwrap(txt), collapse = "\n"))
-    }
-
-    TRUE
-
-  } else {
-
-    FALSE
-  }
-}
-
-only_demo <- function(x, ...) !srcs_avail(x) && demo_src_avail(x, ...)
+```{r, demo-miss, echo = FALSE, eval = !srcs_avail(demo), results = "asis"}
+demo_missing_msg(demo, "jss.pdf")
+knitr::opts_chunk$set(eval = FALSE)
 ```
 
 # Introduction
@@ -170,7 +123,7 @@ The following list gives a quick outline of the steps required for setting up an
 
 1. Requesting access to datasets and data source setup:
 
-    * demo datasets can be set up by installing the data packages `mimic.demo` and/or `eicu.demo`, passing `"https://eth-mds.github.io/physionet-demo"` as `repos` argument to `install.packages()`
+    * demo datasets can be set up by installing the data packages `mimic.demo` and/or `eicu.demo`, passing `"https://eth-mds.github.io/physionet-demo"` as `repos` argument to `install.packages()` (see code snippet in Section \ref{data-sources})
 
     * the complete MIMIC-III, eICU and HiRID datasets can be accessed by setting up an account at [PhysioNet](https://physionet.org/register)
 
@@ -237,16 +190,8 @@ The following paragraphs serve to give quick introductions to the included datas
 
 The [Medical Information Mart for Intensive Care III (MIMIC-III)](https://physionet.org/content/mimiciii/1.4/) represents the third iteration of the arguably most influential initiative for collecting and providing to the public large-scale ICU data^[The initial MIMIC (at the time short for Multi-parameter Intelligent Monitoring for Intensive Care) data release dates back 20 years and contained data on roughly 100 patients recorded from patient monitors in the medical, surgical, and cardiac intensive care units of Boston's Beth Israel Hospital during the years 1992-1999 \citep{moody1996}. Significantly broadened in scope, MIMIC-II was released 10 years after, now including data on almost 27,000 adult hospital admissions collected from ICUs of Beth Israel Deaconess Medical Center (BIDMC) from 2001 to 2008 \citep{lee2011}. Following MIMIC-III, release of MIMIC-IV is imminent with a first development version having been released in summer 2020. This iteration of MIMIC too is planned to be included with \pkg{ricu} as soon a first stable version is released.]. The dataset comprises de-identified health related data of roughly 46,000 patients admitted to critical care units of BIDMC during the years 2001-2012. Amounting to just over 61,000 individual ICU admission, data is available on demographics, routine vital sign measurements (at approximately 1 hour resolution), laboratory tests, medication, as well as critical care procedures, organized as a 26-table relational structure.
 
-```{r mimic-tbls, eval = srcs_avail("mimic"), include = srcs_avail("mimic")}
+```{r mimic-tbls, eval = TRUE}
 mimic
-```
-
-```{r mimic_demo-tbls-eval, echo = FALSE}
-eval_next <- only_demo("mimic", TRUE)
-```
-
-```{r mimic_demo-tbls, eval = eval_next, include = eval_next}
-mimic_demo
 ```
 
 One thing of note from a data-organizational perspective is that a change in electronic health care systems occurred in 2008. Owing to this, roughly 48,000 ICU admissions spanning the years 2001 though 2008 are documented using the CareVue system, while for 2008 and onwards, data was extracted from the MetaVision system. Item identifiers differ between the two systems, requiring queries to consider both ID mappings (heart rate for example being available both as `itemid` number `211` for CareVue and `220045` for MetaVision) as does documentation of infusions and other procedures that are considered as input events (c.f. `inputevents_cv` and `inputevents_mv` tables). Especially with respect to such input event data, MetaVision data generally is of superior quality.
@@ -257,16 +202,8 @@ In terms of patient identifiers, MIMIC-III allows for identifying both individua
 
 Unlike the single-center focus of other datasets, the [eICU Collaborative Research Database](https://physionet.org/content/eicu-crd/2.0/) constitutes an amalgamation of data from critical care units of over 200 hospitals throughout the continental United States. Large-scale data collected via the Philips eICU program which provides telehealth infrastructure for intensive care units, is available from the Philips eICU Research Institute (eRI), albeit neither publicly nor freely. Only data corresponding to roughly 200,000 ICU admissions, sampled from a larger population of over 3 million ICU admissions and stratified by hospital, is being made available via PhysioNet. Patients with discharge dates in 2014 or 2015 were considered, with stays in low acuity units being removed.
 
-```{r eicu-tbls, eval = srcs_avail("eicu"), include = srcs_avail("eicu")}
+```{r eicu-tbls, eval = TRUE}
 eicu
-```
-
-```{r eicu_demo-tbls-eval, echo = FALSE}
-eval_next <- only_demo("eicu", TRUE)
-```
-
-```{r eicu_demo-tbls, eval = eval_next, include = eval_next}
-eicu_demo
 ```
 
 The data is organized into 31 tables and includes patient demographics, routine vital signs, laboratory measurements, medication administrations, admission diagnoses, as well as treatment information. Owing to the wide range of hospitals participating in this data collection initiative, spanning small, rural, non-teaching health centers with fewer than 100 beds to large teaching hospitals with an excess of 500 beds, data availability varies. Even if data was being recorded at the bedside it might end up missing from the eICU dataset due to technical limitations of the collection process. As for patient identifiers, while it is possible to link ICU admissions corresponding to the same hospital stay, it is not possible to identify patients across hospital stays.
@@ -277,7 +214,7 @@ Data resolution again varies considerably over included variables. The `vitalper
 
 Developed for early prediction of circulatory failure \citep{hyland2020}, the [High Time Resolution ICU Dataset (HiRID)](https://physionet.org/content/hirid/1.0/) contains data on almost 34,000 admissions to the Department of Intensive Care Medicine of the Bern University Hospital, Switzerland, an interdisciplinary 60-bed unit. Given the clear focus on a concrete application during data collection, this dataset is the most limited in terms of breadth of available information, which is also reflected in a comparatively simple data layout comprising only 5 tables^[The data is available in three states: as raw data and in preprocessed form, with preprocessed data being represented by two intermediary pipeline stages from \citep{hyland2020}. While \pkg{ricu} focuses exclusively on raw data, the *merged* stage represents a selection of variables that were deemed most predictive for determining circulatory failure, which are then merged into 18 meta-variables, representing different clinical concepts. Time stamps in *merged* data are left unchanged, yielding irregular time series, whereas for the *imputed* stage, data is down-sampled to a 5 minute grid and missing values are imputed using a scheme discussed in \citep{hyland2020}.].
 
-```{r hirid-tbls, eval = srcs_avail("hirid")}
+```{r hirid-tbls, eval = TRUE}
 hirid
 ```
 
@@ -287,18 +224,18 @@ Collected during the period of January 2008 through June 2016, roughly 700 disti
 
 As a second European dataset, also focusing on increased time-resolution over the US datasets, [AmsterdamUMCdb](https://amsterdammedicaldatascience.nl/#amsterdamumcdb) has been made available in late 2019, containing data on over 23,000 intensive care unit and high dependency unit admissions of adult patients during the years 2003 through 2016. The department of Intensive Care at Amsterdam University Medical Center is a mixed medical-surgical ICU with up to 32 bed ICU and 12 bed high dependency units with an average of 1000-2000 yearly admissions. Covering middle ground between the US datasets and HiRID in terms of breadth of included data, while providing a maximal time-resolution of 1 minute, AmsterdamUMCdb constitutes a well organized high quality ICU data resource organized succinctly as a 7-table relational structure.
 
-```{r aumc-tbls, eval = srcs_avail("aumc")}
+```{r aumc-tbls, eval = TRUE}
 aumc
 ```
 
 A slightly different approach to data anonymization was chosen for this dataset, yielding demographic information such as patient weight, height and age only available as binned variables instead of raw numeric values. Apart from this, there is information on patient origin, mortality, admission diagnoses, as well as numerical measurements including vital parameters, lab results, outputs from drains and catheters, information on administered medication, and other medical procedures. In terms of patient identifiers, it is possible to link ICU admissions corresponding to the same individual, but it is not possible to identify separate hospital admissions.
 
-```{r src-overview-eval, echo = FALSE}
-eval_next <- srcs_avail(c("mimic", "eicu", "hirid", "aumc")) ||
-  demo_src_avail(c("mimic", "eicu"), msg = TRUE)
+```{r, full-miss, echo = FALSE, eval = srcs_avail(demo) && !srcs_avail(srcs), results = "asis"}
+demo_instead_full_msg(demo, srcs, "uom.html")
+srcs <- demo
 ```
 
-```{r src-overview, eval = eval_next, echo = FALSE, results = "asis"}
+```{r src-overview, echo = FALSE, results = "asis", cache = TRUE}
 as_quant <- function(x) {
 
   if (identical(length(x), 0L)) {
@@ -366,18 +303,18 @@ summarize <- function(src, avail) {
   )
 }
 
-if (srcs_avail(c("mimic", "eicu", "hirid", "aumc"))) {
-  srcs <- c("MIMIC", "eICU", "HiRID", "AUMC")
-} else {
-  srcs <- c("MIMIC (demo)", "eICU (demo)")
-}
+src_names <- c(
+  mimic = "MIMIC-III", eicu = "eICU", hirid = "HiRID", aumc = "AUMC",
+  miiv = "MIMIC-IV", mimic_demo = "MIMIC (demo)", eicu_demo = "eICU (demo)"
+)[srcs]
 
-dict <- load_dictionary(sub(" \\(demo\\)$", "_demo", tolower(srcs)))
+src_names[is.na(src_names)] <- srcs[is.na(src_names)]
+
+dict <- load_dictionary(srcs)
 avai <- concept_availability(dict, include_rec = FALSE)
-summ <- vapply(sub(" \\(demo\\)$", "_demo", tolower(srcs)), summarize,
-               character(10L), avai)
+summ <- vapply(srcs, summarize, character(10L), avai)
 
-colnames(summ)     <- srcs
+colnames(summ)     <- src_names
 rownames(summ)     <- linebreak(rownames(summ), align = "l")
 rownames(summ)[3L] <- paste0(rownames(summ)[3L],
                              footnote_marker_symbol(1, "latex"))
@@ -461,7 +398,7 @@ load_src("admissions", "mimic_demo", subject_id > 44000,
 
 As data sources differ in their representation of time-stamps, a next step in data homogenization is to converge to a common format: the time difference to the origin time-point of a given ID system.
 
-```{r load-dt, eval = srcs_avail("mimic_demo")}
+```{r load-dt, eval = FALSE}
 load_difftime("admissions", "mimic_demo", subject_id > 44000,
               cols = c("hadm_id", "admittime", "dischtime"))
 ```
@@ -475,7 +412,7 @@ The function `load_difftime()` is expected to return timestamps as base R `difft
 
 Building on `load_difftime()` functionality, `load_id()` (and analogously `load_ts()`) returns an `id_tbl` (or `ts_tbl`) object with the requested ID system (passed as `id_var` argument). This uses raw data IDs if available or calls `change_id()` in order to convert to the desired ID system. Similarly, where `load_difftime()` returns data with fixed time interval of one minute, `load_id()` allows for arbitrary time intervals (using `change_interval()`).
 
-```{r load-id, eval = srcs_avail("mimic_demo")}
+```{r load-id, eval = FALSE}
 load_id("admissions", "mimic_demo", subject_id > 44000,
         cols = c("admittime", "dischtime"), id_var = "hadm_id")
 ```
@@ -489,7 +426,7 @@ load_id("admissions", "mimic_demo", subject_id > 44000,
 
 Data source environments (and corresponding `src_tbl` objects) are constructed using source configuration objects: list-based structures, inheriting from `src_cfg` and from any number of data source-specific class names with suffix `_cfg` appended (as discussed at the beginning of Section \ref{implementation-details}). The exported function `load_src_cfg()` reads a JSON formatted file using \pkg{jsonlite} \citep{ooms2014}, and creates a `src_cfg` object per datasource and further therein contained objects.
 
-```{r mimic-cfg}
+```{r mimic-cfg, eval = TRUE}
 cfg <- load_src_cfg("mimic_demo")
 str(cfg, max.level = 2L, width = 70L)
 mi_cfg <- cfg[["mimic_demo"]]
@@ -501,7 +438,7 @@ In addition to required fields `name` and `prefix` (used as class prefix), as we
 
 An `id_cfg` object contains an ordered set of key-value pairs representing patient ID systems in a dataset. An implicit assumption currently is that a given patient ID system is used consistently throughout a dataset, meaning that for example an ICU stay ID is always referred to by the same name throughout all tables containing a corresponding column. Owing to the relational origins of these datasets this has been fulfilled in all instances encountered so far. In MIMIC-III, ID systems
 
-```{r mimic-ids}
+```{r mimic-ids, eval = TRUE}
 as_id_cfg(mi_cfg)
 ```
 
@@ -511,7 +448,7 @@ are available, allowing for identification of individual patients, their (potent
 
 Again used in data loading, this per-table set of key-value pairs specifies column defaults as `col_cfg` object. Each key describes a type of column with special meaning and the corresponding value specifies said column for a given table.
 
-```{r mimic-col}
+```{r mimic-col, eval = TRUE}
 as_col_cfg(mi_cfg)
 ```
 
@@ -537,7 +474,7 @@ Finally, `tbl_cfg` objects are used during the initial set-up of a data source. 
 
 * (Optional) partitioning information: For very *long* tables it can be useful to specify a row-partitioning. This currently is only possible by applying a vector of breakpoints to a single numeric column, thereby defining a grouping.
 
-```{r mimic-tbl}
+```{r mimic-tbl, eval = TRUE}
 as_tbl_cfg(mi_cfg)
 ```
 
@@ -553,8 +490,11 @@ Using a configuration file as described in Section \ref{data-source-configuratio
 
 One of the key components of \pkg{ricu} is a scheme for specifying how to retrieve data corresponding to pre-defined clinical concepts from a given data source, in turn enabling dataset agnostic code for analysis. Heart rate, for example can be loaded using the `hr` concept as
 
-```{r, eval = srcs_avail(c("mimic_demo", "eicu_demo"))}
-load_concepts("hr", c("mimic_demo", "eicu_demo"), verbose = FALSE)
+```{r, load-conc, eval = srcs_avail(demo)}
+<<assign-src>>
+<<assign-demo>>
+
+load_concepts("hr", demo, verbose = FALSE)
 ```
 
 This requires some form of infrastructure for concisely specifying how to retrieve data subsets (Section \ref{concept-specification}), which is both extensible (to new concepts and new datasets) and flexible enough to handle  concept-specific pre-processing. Additionally, \pkg{ricu} has included a dictionary with over 100 concepts implemented for all four supported datasets (where possible; see also Section \ref{clinical-concepts}). A quick remark on terminology before diving into more details on how to specify data concepts: A *concept* corresponds to a clinical variable such as a bilirubin measurement or the ventilation status of a patient, and an *item* encodes how to retrieve data corresponding to a given concept from a data source. A *concept* therefore contains several *items* (zero, one or several are possible per data source).
@@ -651,7 +591,7 @@ In order to represent tabular ICU data, \pkg{ricu} provides several classes, all
 
 Meta data is transiently added to `data.table` objects by classes inheriting from `id_tbl` and S3 generic functions which allow for object modifications, down-casting is implicit:
 
-```{r id-tbl}
+```{r id-tbl, eval = TRUE}
 (dat <- ts_tbl(a = 1:5, b = hours(1:5), c = rnorm(5)))
 dat[["b"]] <- dat[["b"]] + mins(30)
 dat
@@ -667,15 +607,18 @@ The current selection of clinical concepts that is included with \pkg{ricu} cove
 
 Available concepts can be enumerated using `load_dictionary()` and the utility function `explain_dictionary()` can be used to display some concept meta-data.
 
-```{r, eval = srcs_avail(c("mimic_demo", "eicu_demo"))}
-dict <- load_dictionary(c("mimic_demo", "eicu_demo"))
+```{r, load-dict, eval = srcs_avail(demo)}
+<<assign-src>>
+<<assign-demo>>
+
+dict <- load_dictionary(demo)
 head(dict)
 explain_dictionary(head(dict))
 ```
 
 The following sub-sections serve to introduce some of the included concepts as well as highlight limitations that come with current implementations. Grouping the available concepts by category yields the following counts
 
-```{r, eval = srcs_avail(c("mimic_demo", "eicu_demo"))}
+```{r, dict-cat, eval = srcs_avail(demo)}
 table(vapply(dict, `[[`, character(1L), "category"))
 ```
 
@@ -683,8 +626,8 @@ table(vapply(dict, `[[`, character(1L), "category"))
 
 The largest and most well established group of concepts (covering more than half of all currently included concepts) includes physiological patient measurements such as routine vital signs, respiratory variables, fluid discharge amounts, as well as many kinds of laboratory tests including blood gas measurements, chemical analysis of body fluids and hematology assays.
 
-```{r, eval = srcs_avail("mimic_demo")}
-load_concepts(c("alb", "glu"), "mimic_demo", interval = mins(15L),
+```{r, load-phys, eval = srcs_avail(src)}
+load_concepts(c("alb", "glu"), src, interval = mins(15L),
               verbose = FALSE)
 ```
 
@@ -696,8 +639,8 @@ Moving on from dynamic, time-varying patient data, this group of concepts focuse
 
 Whenever requesting concepts which are returned with associated time-stamps (e.g. glucose) alongside time-constant data (e.g. age), merging will duplicate static data over all time-points.
 
-```{r, eval = srcs_avail("mimic_demo")}
-load_concepts(c("age", "glu"), "mimic_demo", verbose = FALSE)
+```{r, load-demog, eval = srcs_avail(src)}
+load_concepts(c("age", "glu"), src, verbose = FALSE)
 ```
 
 Despite a best-effort approach, data availability can be a limiting factor. While for physiological variables, there is good agreement even across continents, data-privacy considerations, as well as lack of a common standard for data encoding, may cause issues that are hard to resolve. In some cases, this can be somewhat mitigated while in others, this is a limitation to be kept in mind. In AmsterdamUMCdb, for example, patient age, height and weight are not available as continuous variables, but as factor with patients binned into groups. Such variables are then approximated by returning the respective mid-points of groups for `aumc` data^[Prioritizing consistency over accuracy, one could apply the same binning to datasets which report numeric values, but the concepts included with \pkg{ricu} attempt to strike a balance between consistency and amount of applied pre-processing. With the extensible architecture of data concepts, however, such categorical variants of patient demographic concepts could easily be added.]. Other concepts, such as `adm` (categorizing admission types) or a prospective `icd` concept (diagnoses as ICD-9 codes) can only return data if available from the data source in question. Unfortunately, neither `aumc` nor `hirid` contain ICD-9 encoded diagnoses, and in the case of `hirid`, no diagnosis information is available at all.
@@ -710,9 +653,9 @@ Ventilation is represented by several concepts: a ventilation indicator variable
 
 The singular concept addressing antibiotics (`abx`) returns an indicator signaling whenever an antibiotic was administered. This includes any route of administration (intravenous, oral, topical, etc.) and does neither report dosage, nor active ingredient. Finally, vasopressor administration is reported by several concepts representing different vasoactive drugs (including dopamine, dobutamine, epinephrine, noreponephrine and vasopressin), as well as different administration aspects such as rate, duration (and for use in SOFA scoring, rate administered for at least 60 minutes).
 
-```{r, eval = srcs_avail("mimic_demo")}
-load_concepts(c("abx", "vent_ind", "norepi_rate", "norepi_dur"),
-              "mimic_demo", verbose = FALSE)
+```{r, load-treat, eval = srcs_avail(src)}
+load_concepts(c("abx", "vent_ind", "norepi_rate", "norepi_dur"), src,
+              verbose = FALSE)
 ```
 
 As cautioned in Section \ref{patient-demographics}, variability in data reporting across datasets can lead to issues: the `prescriptions` table included with MIMIC-III, for example, reports time-stamps as dates only, yielding a discrepancy of up to 24 hours when merged with data where time-accuracy is on the order of minutes. This effect is somewhat mitigated by shifting time-stamps from midnight to mid-day, but the underlying accuracy issue of course remains. Another problem exists with concepts that attempt to report administration windows, as some datasets do not describe infusions with clear cut start/endpoints but rather report infusion parameters at (somewhat) regular time intervals. This can cause artifacts when the requested time step-size deviates from the dataset inherent time grid.
@@ -723,8 +666,8 @@ A group of more loosely associated concepts can be used to describe patient stat
 
 While the more straightforward outcomes can be retrieved directly from data, clinical scores often incorporate multiple variables, based upon which a numeric score is constructed. This can typically be achieved by using concepts of type `rec_cncpt`, specifying the needed components and supplying a callback function that applies rules for score construction.
 
-```{r, eval = srcs_avail("mimic_demo")}
-load_concepts(c("sirs", "death"), "mimic_demo", verbose = FALSE,
+```{r, load-out, eval = srcs_avail(src)}
+load_concepts(c("sirs", "death"), src, verbose = FALSE,
               keep_components = TRUE)
 ```
 
@@ -734,16 +677,12 @@ Callback functions can become rather involved (especially for more complex conce
 
 In order to briefly illustrate how \pkg{ricu} could be applied to real-world clinical questions, two toy examples are provided in the following sections. While the first example fully relies on data concepts that are included with \pkg{ricu}, the second one explores both how some data pre-processing can be added to an existing concept by creating a new `rec_cncpt` and how to create an new data concept altogether.
 
-```{r src-sel-eval, echo = FALSE}
-eval_next <- demo_src_avail("mimic", msg = TRUE)
-```
-
 ## Lactate and mortality
 
-First, we investigate the association of lactate levels and mortality. This problem has been studied before and it is widely accepted that both static and dynamic lactate indices are associated with increased mortality \citep{haas2016, nichol2011, van2013}. In order to model this relationship, we fit a time-varying proportional hazards Cox model \citep{therneau2000, therneau2015}, which includes the SOFA score as a general predictor of illness severity, using MIMIC-III data. `r if (srcs_avail("mimic")) "Furthermore, for the sake of this example, we are only interested in patients admitted from 2008 onwards of ages 25 to 65 years old."`
+First, we investigate the association of lactate levels and mortality. This problem has been studied before and it is widely accepted that both static and dynamic lactate indices are associated with increased mortality \citep{haas2016, nichol2011, van2013}. In order to model this relationship, we fit a time-varying proportional hazards Cox model \citep{therneau2000, therneau2015}, which includes the SOFA score as a general predictor of illness severity, using MIMIC-III data. Furthermore, for the sake of this example, we are only interested in patients admitted from 2008 onwards (corresponding to the MetaVision database) of ages 20 to 90 years old.
 
-```{r cox-full, eval = srcs_avail("mimic"), include = srcs_avail("mimic")}
-src <- "mimic"
+```{r cox-surv, eval = srcs_avail("mimic_demo")}
+src <- "mimic_demo"
 
 cohort <- load_id("icustays", src, dbsource == "metavision",
                   cols = NULL)
@@ -751,17 +690,9 @@ cohort <- load_concepts("age", src, patient_ids = cohort,
                         verbose = FALSE)
 
 dat <- load_concepts(c("lact", "death", "sofa", "sex"), src,
-                     patient_ids = cohort[age > 25 & age < 65],
+                     patient_ids = cohort[age > 20 & age < 90, ],
                      verbose = FALSE)
-```
 
-```{r cox-demo, eval = only_demo("mimic"), include = only_demo("mimic")}
-src <- "mimic_demo"
-dat <- load_concepts(c("lact", "death", "sofa", "sex"), src,
-                     verbose = FALSE)
-```
-
-```{r cox-model, eval = eval_next}
 dat <- dat[, head(.SD, n = match(TRUE, death, .N)), by = c(id_vars(dat))]
 dat <- fill_gaps(dat)
 
@@ -777,7 +708,7 @@ cox_mod <- coxph(
 
 After loading the data, some minor pre-processing is still required before modeling: first, we want to make sure we only use data up to (and including) the hour in which the `death` flag switches to `TRUE`. After that we impute missing values for `lact` using a last observation carry forward (locf) scheme (observing the patient grouping) and we simply replace missing `death` values with the value `FALSE`. The resulting model fit can be visualized as:
 
-```{r cox_plot, eval = demo_src_avail("mimic"), echo = FALSE, warning = FALSE, message = FALSE, fig.width = 8}
+```{r cox-plot, eval = srcs_avail(src), echo = FALSE, warning = FALSE, message = FALSE, fig.width = 8}
 theme_fp <- function(...) {
   theme_bw(...) +
   theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(),
@@ -796,7 +727,7 @@ For the next example, again using MIMIC-III data, we turn to the usage of co-mor
 
 As there already is an insulin concept available, `ins24` can be implemented as `rec_cncpt`, loading `ins` with aggregation set to `sum()` (instead of `median()`) and inserting the callback function `ins_cb()` into the loading process. The callback function takes care of the pre-processing steps outlined above: first data is subsetted to fall into the the first 24 hours of ICU admissions, followed by binning of summed values.
 
-```{r ins24, eval = demo_src_avail("mimic")}
+```{r ins24, eval = srcs_avail(src)}
 ins_breaks <- c(0, 1, 10, 20, 40, Inf)
 
 ins_cb <- function(ins, ...) {
@@ -824,7 +755,7 @@ ins24 <- concept("ins24", ins24, "insulin in first 24h", aggregate = "sum",
 
 The binary diabetes concept can be implemented as `lgl_cncpt`, for which ICD-9 codes are matched using a regular expression. As we're not only interested in retrieving diabetic patients, a `col_itm` is more suited for data retrieval over an `rgx_itm` and for creating the required callback function that produces a logical vector we can use `transform_fun()` coupled with a function like `grep_diab()`. The two concepts are then combined using `c()` and loaded via `load_concepts()`.
 
-```{r diab, eval = demo_src_avail("mimic")}
+```{r diab, eval = srcs_avail(src)}
 grep_diab <- function(x) grepl("^250\\.?[0-9]{2}$", x)
 
 diab  <- item(src, table = "diagnoses_icd",
@@ -834,12 +765,13 @@ diab  <- concept("diab", diab, "diabetes", target = "id_tbl",
 
 dat <- load_concepts(c(ins24, diab), id_type = "icustay", verbose = FALSE)
 dat <- replace_na(dat, "[0,1)", vars = "ins24")
+
 dat
 ```
 
 After this, we can visualize the difference between the two groups with a histogram:
 
-```{r diabetes-visualize, echo = FALSE, eval = demo_src_avail("mimic"), fig.height = 3}
+```{r diabetes-visualize, echo = FALSE, eval = srcs_avail(src), fig.height = 3}
 dat <- dat[, weight := 1 / .N, by = diab]
 ggplot(dat, aes(x = ins24, fill = diab)) +
   stat_count(aes(weight = weight), alpha = 0.75, position = "dodge") +
@@ -849,7 +781,7 @@ ggplot(dat, aes(x = ins24, fill = diab)) +
   theme_bw(10)
 ```
 
-The plot suggests that during the first day of ICU stay, perhaps unsurprisingly, diabetic patients receive more insulin compared to non-diabetic patients, especially as insulin dose increases.
+The plot suggests that for the cohort defined in the previous example and during the first day of ICU stay, perhaps unsurprisingly, with increasing insulin dosage, diabetic patients receive more insulin compared to non-diabetic patients. This effect is more pronounced when looking at the full MINIC-III data instead of the demo subset which includes only data corresponding to `r nrow(mimic_demo$icustays)` ICU stays.
 
 # Acknowledgments
 
