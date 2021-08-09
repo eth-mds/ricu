@@ -323,7 +323,11 @@ rbind_lst <- function(x, ...) {
 
   res <- reclass_tbl(dt_rbl(x, ...), ptyp)
 
-  sort(res, by_ref = TRUE)
+  if (is_id_tbl(res)) {
+    res <- sort(res, by_ref = TRUE)
+  }
+
+  res
 }
 
 #' @rdname tbl_reshape
