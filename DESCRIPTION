@@ -67,7 +67,8 @@ Suggests:
     forestmodel,
     rticles,
     kableExtra,
-    units
+    units,
+    pdftools
 RoxygenNote: 7.1.1
 Additional_repositories: https://eth-mds.github.io/physionet-demo
 VignetteBuilder: knitr
