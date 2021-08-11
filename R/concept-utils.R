@@ -269,6 +269,13 @@ init_itm.itm <- function(x, ...) {
 #' @export
 init_itm.default <- function(x, ...) stop_generic(x, .Generic)
 
+#' @export
+print.itm <- function(x, ...) {
+  cat_line(
+    paste0("<", class(x)[1L], "[", src_name(x), ", ", get_target(x), "]>")
+  )
+}
+
 #' Internal utilities for `item`/`concept` objects
 #'
 #' Several internal utilities for modifying, querying ans subsetting item and
@@ -1072,6 +1079,14 @@ init_cncpt.rec_cncpt <- function(x,
 
 #' @export
 init_cncpt.default <- function(x, ...) stop_generic(x, .Generic)
+
+#' @export
+print.cncpt <- function(x, ...) {
+  itm <- x[["items"]]
+  cat_line(paste0("<", class(x)[1L], "[", length(itm), "]>"))
+  vctrs::obj_print_data(itm, ...)
+  invisible(x)
+}
 
 #' @export
 src_name.cncpt <- function(x) src_name(x[["items"]])

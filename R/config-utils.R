@@ -29,6 +29,14 @@ as_src_cfg.src_env <- function(x) {
 #' @export
 as_src_cfg.default <- function(x) as_src_cfg(as_src_env(x))
 
+#' @export
+print.src_cfg <- function(x, ...) {
+  id <- as_id_cfg(x)
+  cat_line(class_descr(x, names(id), id_cfg_op(id), sep = "", collapse = " "))
+  vctrs::obj_print_data(as_tbl_cfg(x), ...)
+  invisible(x)
+}
+
 #' @rdname src_cfg
 #' @keywords internal
 is_id_cfg <- is_type("id_cfg")

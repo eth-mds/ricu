@@ -8,7 +8,7 @@
     fun_name <- fun_name[3L]
     fun_body <- body(fun)
 
-    if (class(fun_body)[1L] != "{") {
+    if (!inherits(fun_body, "{")) {
       fun_body <- as.call(c(as.name("{"), fun_body))
     }
 
@@ -38,8 +38,11 @@
 
   if (base::getRversion() < "4.0.0") {
 
-    if (missing(pkgname)) prefix <- ""
-    else                  prefix <- paste0(methods::getPackageName(), "::")
+    if (missing(pkgname)) {
+      prefix <- ""
+    } else {
+      prefix <- paste0(methods::getPackageName(), "::")
+    }
 
     cbind_fix <- paste0(
       "if (!identical(class(..1), 'data.frame')) for (x in list(...)) { ",

@@ -120,8 +120,6 @@ str.id_tbl <- function(object, ...) invisible(prt::str_dt(object, ...))
 #'
 #' @rdname tbl_reshape
 #' @keywords internal
-#'
-#' @export
 .cbind.id_tbl <- function(..., keep.rownames = FALSE, check.names = FALSE,
                           key = NULL, stringsAsFactors = FALSE) {
 
@@ -145,10 +143,7 @@ str.id_tbl <- function(object, ...) invisible(prt::str_dt(object, ...))
 }
 
 #' @param use.names,fill,idcol Forwarded to [data.table::rbindlist]
-#'
 #' @rdname tbl_reshape
-#'
-#' @export
 .rbind.id_tbl <- function(..., use.names = TRUE, fill = FALSE, idcol = NULL) {
   rbind_lst(list(...), use.names = use.names, fill = fill, idcol = idcol)
 }

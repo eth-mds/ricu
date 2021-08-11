@@ -19,7 +19,7 @@ assert_that <- function(..., env = parent.frame(), msg = NULL, class = NULL) {
     msg <- fmt_msg(msg, envir = env)
   }
 
-  cls <- c(class, attr(msg, "assert_class"), "assertError", "ricu_err")
+  cls <- c(attr(msg, "assert_class"), class, "ricu_err", "assertError")
 
   rlang::abort(msg, class = cls)
 }
