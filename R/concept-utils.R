@@ -230,13 +230,18 @@ init_itm.rgx_itm <- function(x, table, sub_var, regex,
 }
 
 complete_tbl_itm <- function(x, callback, sub_var, id_var = NULL,
-                             index_var = NULL, dur_var = NULL, ...) {
+                             index_var = NULL, dur_var = NULL,
+                             time_vars = NULL, ...) {
 
   res <- set_callback(x, callback)
   res <- try_add_vars(res, sub_var = sub_var, ...)
   res <- try_add_vars(res, val_var = TRUE)
   res <- try_add_vars(res, id_var = id_var, index_var = index_var,
                       dur_var = dur_var, type = "meta_vars")
+
+  if (not_null(time_vars)) {
+    res[["time_vars"]] <- time_vars
+  }
 
   res
 }
@@ -650,6 +655,14 @@ id_vars.itm <- function(x) {
 #' @export
 index_var.itm <- function(x) {
   coalesce(get_itm_var(x, "index_var", "meta_vars"), index_var(as_src_tbl(x)))
+}
+
+#' @export
+time_vars.itm <- function(x) {
+  coalesce(
+    if (has_name(x, "time_vars")) x[["time_vars"]],
+    time_vars(as_src_tbl(x))
+  )
 }
 
 #' @export

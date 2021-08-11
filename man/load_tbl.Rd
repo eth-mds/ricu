@@ -35,7 +35,14 @@ load_id(x, ...)
 
 \method{load_id}{character}(x, src, ...)
 
-\method{load_id}{itm}(x, cols = colnames(x), id_var = id_vars(x), ...)
+\method{load_id}{itm}(
+  x,
+  cols = colnames(x),
+  id_var = id_vars(x),
+  interval = hours(1L),
+  time_vars = ricu::time_vars(x),
+  ...
+)
 
 \method{load_id}{fun_itm}(x, ...)
 
@@ -61,6 +68,8 @@ load_ts(x, ...)
   cols = colnames(x),
   id_var = id_vars(x),
   index_var = ricu::index_var(x),
+  interval = hours(1L),
+  time_vars = ricu::time_vars(x),
   ...
 )
 
@@ -90,7 +99,10 @@ load_win(x, ...)
   cols = colnames(x),
   id_var = id_vars(x),
   index_var = ricu::index_var(x),
+  interval = hours(1L),
   dur_var = ricu::dur_var(x),
+  dur_is_end = TRUE,
+  time_vars = ricu::time_vars(x),
   ...
 )
 

@@ -176,8 +176,8 @@ check_prefix <- function(x, suffix) {
 #' @rdname src_cfg
 #' @keywords internal
 #'
-new_id_cfg <- function(src, name, id, pos, start = NULL, end = NULL,
-                       table = NULL, class_prefix = src) {
+new_id_cfg <- function(src, name, id, pos = seq_along(name), start = NULL,
+                       end = NULL, table = NULL, class_prefix = src) {
 
   name <- check_scalar(name, FALSE)
 
@@ -555,38 +555,45 @@ read_src_cfg <- function(src = NULL, name = "data-sources", cfg_dirs = NULL) {
   }
 }
 
-parse_src_cfg <- function(x) {
+mk_id_cfg <- function(name, id_cfg, class_prefix = name, ...) {
 
-  mk_id_cfg <- function(name, id_cfg, class_prefix = name, ...) {
+  if (all_fun(id_cfg, is.string)) {
+
+    args <- list(name, names(id_cfg), chr_xtr(id_cfg, 1L))
+
+  } else {
 
     args <- list(
       name, names(id_cfg), chr_xtr(id_cfg, "id"), int_xtr(id_cfg, "position"),
       chr_xtr_null(id_cfg, "start"), chr_xtr_null(id_cfg, "end"),
       chr_xtr_null(id_cfg, "table"), class_prefix = class_prefix
     )
-
-    do.call(new_id_cfg, args)
   }
 
-  mk_col_cfg <- function(name, tables, class_prefix = name, ...) {
+  do.call(new_id_cfg, args)
+}
 
-    args <- c(list(src = name, table = names(tables)),
-              lst_inv(lst_xtr(tables, "defaults")),
-              list(class_prefix = class_prefix))
+mk_col_cfg <- function(name, tables, class_prefix = name, ...) {
 
-    do.call(new_col_cfg, args)
-  }
+  args <- c(list(src = name, table = names(tables)),
+            lst_inv(lst_xtr(tables, "defaults")),
+            list(class_prefix = class_prefix))
 
-  mk_tbl_cfg <- function(name, tables, class_prefix = name, ...) {
+  do.call(new_col_cfg, args)
+}
 
-    rest <- lapply(lapply(tables, names), setdiff, "defaults")
-    rest <- Map(`[`, tables, rest)
+mk_tbl_cfg <- function(name, tables, class_prefix = name, ...) {
 
-    args <- c(list(src = name, table = names(tables)), lst_inv(rest),
-              list(class_prefix = class_prefix))
+  rest <- lapply(lapply(tables, names), setdiff, "defaults")
+  rest <- Map(`[`, tables, rest)
 
-    do.call(new_tbl_cfg, args)
-  }
+  args <- c(list(src = name, table = names(tables)), lst_inv(rest),
+            list(class_prefix = class_prefix))
+
+  do.call(new_tbl_cfg, args)
+}
+
+parse_src_cfg <- function(x) {
 
   assert_that(is.list(x), has_name(x, c("name", "id_cfg", "tables")))
 

@@ -334,8 +334,12 @@ load_id.character <- function(x, src, ...) {
 
 #' @rdname load_tbl
 #' @export
-load_id.itm <- function(x, cols = colnames(x), id_var = id_vars(x), ...) {
-  load_id(as_src_tbl(x), !!prepare_query(x), cols, id_var, ...)
+load_id.itm <- function(x, cols = colnames(x), id_var = id_vars(x),
+                        interval = hours(1L), time_vars = ricu::time_vars(x),
+                        ...) {
+
+  load_id(as_src_tbl(x), !!prepare_query(x), cols, id_var, interval,
+          time_vars, ...)
 }
 
 #' @rdname load_tbl
@@ -387,9 +391,12 @@ load_ts.character <- function(x, src, ...) {
 #' @rdname load_tbl
 #' @export
 load_ts.itm <- function(x, cols = colnames(x), id_var = id_vars(x),
-                        index_var = ricu::index_var(x), ...) {
+                        index_var = ricu::index_var(x),
+                        interval = hours(1L), time_vars = ricu::time_vars(x),
+                        ...) {
 
-  load_ts(as_src_tbl(x), !!prepare_query(x), cols, id_var, index_var, ...)
+  load_ts(as_src_tbl(x), !!prepare_query(x), cols, id_var, index_var,
+          interval, time_vars, ...)
 }
 
 #' @rdname load_tbl
@@ -446,10 +453,12 @@ load_win.character <- function(x, src, ...) load_win(as_src_tbl(x, src), ...)
 #' @export
 load_win.itm <- function(x, cols = colnames(x), id_var = id_vars(x),
                          index_var = ricu::index_var(x),
-                         dur_var = ricu::dur_var(x), ...) {
+                         interval = hours(1L), dur_var = ricu::dur_var(x),
+                         dur_is_end = TRUE, time_vars = ricu::time_vars(x),
+                         ...) {
 
-  load_win(as_src_tbl(x), !!prepare_query(x), cols, id_var, index_var, ...,
-           dur_var = dur_var)
+  load_win(as_src_tbl(x), !!prepare_query(x), cols, id_var, index_var,
+           interval, dur_var, dur_is_end, time_vars, ...)
 }
 
 #' @rdname load_tbl

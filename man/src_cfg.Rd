@@ -28,7 +28,7 @@ new_id_cfg(
   src,
   name,
   id,
-  pos,
+  pos = seq_along(name),
   start = NULL,
   end = NULL,
   table = NULL,
