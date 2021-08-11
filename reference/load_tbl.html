@@ -165,7 +165,14 @@ argument) for time series data.</p>
 <span class='fu'>load_id</span><span class='op'>(</span><span class='va'>x</span>, <span class='va'>src</span>, <span class='va'>...</span><span class='op'>)</span>
 
 <span class='co'># S3 method for itm</span>
-<span class='fu'>load_id</span><span class='op'>(</span><span class='va'>x</span>, cols <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/colnames.html'>colnames</a></span><span class='op'>(</span><span class='va'>x</span><span class='op'>)</span>, id_var <span class='op'>=</span> <span class='fu'><a href='id_vars.html'>id_vars</a></span><span class='op'>(</span><span class='va'>x</span><span class='op'>)</span>, <span class='va'>...</span><span class='op'>)</span>
+<span class='fu'>load_id</span><span class='op'>(</span>
+  <span class='va'>x</span>,
+  cols <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/colnames.html'>colnames</a></span><span class='op'>(</span><span class='va'>x</span><span class='op'>)</span>,
+  id_var <span class='op'>=</span> <span class='fu'><a href='id_vars.html'>id_vars</a></span><span class='op'>(</span><span class='va'>x</span><span class='op'>)</span>,
+  interval <span class='op'>=</span> <span class='fu'><a href='secs.html'>hours</a></span><span class='op'>(</span><span class='fl'>1L</span><span class='op'>)</span>,
+  time_vars <span class='op'>=</span> <span class='fu'>ricu</span><span class='fu'>::</span><span class='fu'><a href='id_vars.html'>time_vars</a></span><span class='op'>(</span><span class='va'>x</span><span class='op'>)</span>,
+  <span class='va'>...</span>
+<span class='op'>)</span>
 
 <span class='co'># S3 method for fun_itm</span>
 <span class='fu'>load_id</span><span class='op'>(</span><span class='va'>x</span>, <span class='va'>...</span><span class='op'>)</span>
@@ -196,6 +203,8 @@ argument) for time series data.</p>
   cols <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/colnames.html'>colnames</a></span><span class='op'>(</span><span class='va'>x</span><span class='op'>)</span>,
   id_var <span class='op'>=</span> <span class='fu'><a href='id_vars.html'>id_vars</a></span><span class='op'>(</span><span class='va'>x</span><span class='op'>)</span>,
   index_var <span class='op'>=</span> <span class='fu'>ricu</span><span class='fu'>::</span><span class='fu'><a href='id_vars.html'>index_var</a></span><span class='op'>(</span><span class='va'>x</span><span class='op'>)</span>,
+  interval <span class='op'>=</span> <span class='fu'><a href='secs.html'>hours</a></span><span class='op'>(</span><span class='fl'>1L</span><span class='op'>)</span>,
+  time_vars <span class='op'>=</span> <span class='fu'>ricu</span><span class='fu'>::</span><span class='fu'><a href='id_vars.html'>time_vars</a></span><span class='op'>(</span><span class='va'>x</span><span class='op'>)</span>,
   <span class='va'>...</span>
 <span class='op'>)</span>
 
@@ -230,7 +239,10 @@ argument) for time series data.</p>
   cols <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/colnames.html'>colnames</a></span><span class='op'>(</span><span class='va'>x</span><span class='op'>)</span>,
   id_var <span class='op'>=</span> <span class='fu'><a href='id_vars.html'>id_vars</a></span><span class='op'>(</span><span class='va'>x</span><span class='op'>)</span>,
   index_var <span class='op'>=</span> <span class='fu'>ricu</span><span class='fu'>::</span><span class='fu'><a href='id_vars.html'>index_var</a></span><span class='op'>(</span><span class='va'>x</span><span class='op'>)</span>,
+  interval <span class='op'>=</span> <span class='fu'><a href='secs.html'>hours</a></span><span class='op'>(</span><span class='fl'>1L</span><span class='op'>)</span>,
   dur_var <span class='op'>=</span> <span class='fu'>ricu</span><span class='fu'>::</span><span class='fu'><a href='id_vars.html'>dur_var</a></span><span class='op'>(</span><span class='va'>x</span><span class='op'>)</span>,
+  dur_is_end <span class='op'>=</span> <span class='cn'>TRUE</span>,
+  time_vars <span class='op'>=</span> <span class='fu'>ricu</span><span class='fu'>::</span><span class='fu'><a href='id_vars.html'>time_vars</a></span><span class='op'>(</span><span class='va'>x</span><span class='op'>)</span>,
   <span class='va'>...</span>
 <span class='op'>)</span>
 

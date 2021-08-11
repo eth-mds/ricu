@@ -158,13 +158,13 @@ functions, as well as functions to extract pieces of information from these
 objects are provided.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>new_src_cfg</span><span class='op'>(</span><span class='va'>name</span>, <span class='va'>id_cfg</span>, <span class='va'>col_cfg</span>, tbl_cfg <span class='op'>=</span> <span class='cn'>NULL</span>, <span class='va'>...</span>, class_prefix <span class='op'>=</span> <span class='va'>name</span><span class='op'>)</span>
+    <pre class="usage"><span class='fu'>new_src_cfg</span><span class='op'>(</span><span class='va'>name</span>, <span class='va'>id_cfg</span>, <span class='va'>col_cfg</span>, <span class='va'>tbl_cfg</span>, <span class='va'>...</span>, class_prefix <span class='op'>=</span> <span class='va'>name</span><span class='op'>)</span>
 
 <span class='fu'>new_id_cfg</span><span class='op'>(</span>
   <span class='va'>src</span>,
   <span class='va'>name</span>,
   <span class='va'>id</span>,
-  <span class='va'>pos</span>,
+  pos <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/seq.html'>seq_along</a></span><span class='op'>(</span><span class='va'>name</span><span class='op'>)</span>,
   start <span class='op'>=</span> <span class='cn'>NULL</span>,
   end <span class='op'>=</span> <span class='cn'>NULL</span>,
   table <span class='op'>=</span> <span class='cn'>NULL</span>,
