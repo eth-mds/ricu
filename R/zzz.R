@@ -41,16 +41,16 @@
     if (missing(pkgname)) {
       prefix <- ""
     } else {
-      prefix <- paste0(methods::getPackageName(), ":::")
+      prefix <- paste0(methods::getPackageName(), "::")
     }
 
     cbind_fix <- paste0(
       "if (!identical(class(..1), 'data.frame')) for (x in list(...)) { ",
-      "if (inherits(x, 'id_tbl')) return(", prefix, ".cbind.id_tbl(...)) }"
+      "if (inherits(x, 'id_tbl')) return(", prefix, "cbind_id_tbl(...)) }"
     )
 
     rbind_fix <- paste0("for (x in list(...)) { ",
-      "if (inherits(x, 'id_tbl')) return(", prefix, ".rbind.id_tbl(...)) }")
+      "if (inherits(x, 'id_tbl')) return(", prefix, "rbind_id_tbl(...)) }")
 
     fix_base_fun(base::cbind.data.frame, cbind_fix)
     fix_base_fun(base::rbind.data.frame, rbind_fix)
