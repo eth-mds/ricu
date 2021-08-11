@@ -199,44 +199,44 @@ vignette}.
 
   \begin{itemize}
   \item
-    the latest release of \pkg{ricu} can be installed from CRAN as
-    \texttt{install.packages("ricu")}
+    The latest release of \pkg{ricu} can be installed from CRAN as
+    \texttt{install.packages("ricu")}.
   \item
-    alternatively, the latest development version is available from
+    Alternatively, the latest development version is available from
     \href{https://github.com/eth-mds/ricu}{Github} by running
-    \texttt{remotes::install\_github("eth-mds/ricu")}
+    \texttt{remotes::install\_github("eth-mds/ricu")}.
   \end{itemize}
 \item
   Requesting access to datasets and data source setup:
 
   \begin{itemize}
   \item
-    demo datasets can be set up by installing the data packages
+    Demo datasets can be set up by installing the data packages
     \texttt{mimic.demo} and/or \texttt{eicu.demo}, passing
     \texttt{"https://eth-mds.github.io/physionet-demo"} as
     \texttt{repos} argument to \texttt{install.packages()} (see code
-    snippet in Section \ref{ready-to-use-datasets})
+    snippet in Section \ref{ready-to-use-datasets}).
   \item
-    the complete MIMIC-III, eICU and HiRID datasets can be accessed by
+    The complete MIMIC-III, eICU and HiRID datasets can be accessed by
     setting up an account at
-    \href{https://physionet.org/register}{PhysioNet}
+    \href{https://physionet.org/register}{PhysioNet}.
   \item
-    access to AUMCdb is available via the
+    Access to AUMCdb is available via the
     \href{https://amsterdammedicaldatascience.nl/\#amsterdamumcdb}{Amsterdam
-    Medical Data Science Website}
+    Medical Data Science Website}.
   \item
-    the obtained credentials can be configured for PhysioNet datasets by
+    The obtained credentials can be configured for PhysioNet datasets by
     setting environment variables \texttt{RICU\_PHYSIONET\_USER} and
     \texttt{RICU\_PHYSIONET\_PASS}, while the download token for AUMCdb
-    can be set as \texttt{RICU\_AUMC\_TOKEN}
+    can be set as \texttt{RICU\_AUMC\_TOKEN}.
   \item
-    datasets are downloaded and set up either automatically upon the
+    Datasets are downloaded and set up either automatically upon the
     first access attempt or manually by running
     \texttt{setup\_data\_src()}; the environment variable
-    \texttt{RICU\_DATA\_PATH} can be set to control data location
+    \texttt{RICU\_DATA\_PATH} can be set to control data location.
   \item
-    dataset availability can be queried by calling
-    \texttt{src\_data\_avail()}
+    Dataset availability can be queried by calling
+    \texttt{src\_data\_avail()}.
   \end{itemize}
 
   A more detailed description of the supported datasets is given in
@@ -250,14 +250,14 @@ vignette}.
 
   \begin{itemize}
   \item
-    currently, over 100 data concepts are available for the 4 supported
+    Currently, over 100 data concepts are available for the 4 supported
     datasets (see
     \texttt{concept\_availability()}/\texttt{explain\_dictionary()} for
-    names, availability etc.)
+    names, availability etc.).
   \item
-    both concepts and data sources can be specified as strings; for
+    Both concepts and data sources can be specified as strings; for
     example, glucose and age data can be loaded from MIMIC-III as
-    \texttt{load\_concepts(c("age",\ "glu"),\ "mimic")}
+    \texttt{load\_concepts(c("age",\ "glu"),\ "mimic")}.
   \end{itemize}
 
   Section \ref{data-concepts} goes into more detail on how data concepts
@@ -269,16 +269,16 @@ vignette}.
 
   \begin{itemize}
   \item
-    data concepts can be specified in code using the constructors
+    Data concepts can be specified in code using the constructors
     \texttt{concept()}/\texttt{item()} or
-    \texttt{new\_concept()}/\texttt{new\_item()}
+    \texttt{new\_concept()}/\texttt{new\_item()}.
   \item
-    for session persistence, data concepts can also be specified as JSON
-    formatted objects
+    For session persistence, data concepts can also be specified as JSON
+    formatted objects.
   \item
     JSON-based concept dictionaries can either extend or replace others
     and they can be pointed to by setting the environment variable
-    \texttt{RICU\_CONFIG\_PATH}
+    \texttt{RICU\_CONFIG\_PATH}.
   \end{itemize}
 
   The JSON format used to encode data concepts is discussed in more
@@ -288,12 +288,12 @@ vignette}.
 
   \begin{itemize}
   \item
-    a JSON-based dataset configuration file is required, from which the
+    A JSON-based dataset configuration file is required, from which the
     configuration objects described in Section
-    \ref{data-source-configuration} are created
+    \ref{data-source-configuration} are created.
   \item
-    in order for concepts to be available from the new dataset, the
-    dictionary requires extension by adding new data items
+    In order for concepts to be available from the new dataset, the
+    dictionary requires extension by adding new data items.
   \end{itemize}
 
   Further information about adding a custom dataset is available from
@@ -359,9 +359,9 @@ a stable Internet connection, as well as 50 to 100 GB of temporary disk
 storage for unpacking and preparing the data for efficient access. In
 terms of permanent storage, 5 to 10 GB per dataset are required, while
 memory requirements are kept reasonably low by iterating over row-chunks
-for set-up operations. Laptop class hardware (8-16 GB of memory) should
+for setup operations. Laptop class hardware (8-16 GB of memory) should
 suffice for setup and many analysis tasks which focus only on subsets of
-rows (and columns). Initial data source set up (depending on available
+rows (and columns). Initial data source setup (depending on available
 download speeds and CPU/disk type) may take upwards of an hour per
 dataset.
 
@@ -706,20 +706,21 @@ see also Section \ref{ready-to-use-concepts}).
 In order to represent tabular ICU data, \pkg{ricu} provides several
 classes, all inheriting from \texttt{data.table}. The most basic of
 which, \texttt{id\_tbl}, marks one (or several) columns as
-\texttt{id\_vars} which serve to define a grouping (i.e.~identify
+\texttt{id\_vars} which serve to define a grouping (i.e., identify
 patients or unit stays). Inheriting from \texttt{id\_tbl},
 \texttt{ts\_tbl} is capable of representing grouped time series data. In
 addition to \texttt{id\_var} column(s), a single column is marked as
-\texttt{index\_var} and is required to hold a base R \texttt{difftime}
-vector. Furthermore, \texttt{ts\_tbl} contains a scalar-valued
-\texttt{difftime} object as \texttt{interval} attribute, specifying the
-time series step size. More recently, a further class \texttt{win\_tbl},
-inheriting from \texttt{ts\_tbl} has been added. Objects of this class
-can be used for time-stamped measurements associated with a validity
-period. A set of drug infusions, consisting of both rates and intervals
-can as such be conveniently represented by a \texttt{win\_tbl} object.
+\texttt{index\_var} and is required to hold a base \proglang{R}
+\texttt{difftime} vector. Furthermore, \texttt{ts\_tbl} contains a
+scalar-valued \texttt{difftime} object as \texttt{interval} attribute,
+specifying the time series step size. More recently, a further class
+\texttt{win\_tbl}, inheriting from \texttt{ts\_tbl} has been added.
+Objects of this class can be used for time-stamped measurements
+associated with a validity period. A set of drug infusions, consisting
+of both rates and intervals can as such be conveniently represented by a
+\texttt{win\_tbl} object.
 
-Meta data is transiently added to \texttt{data.table} objects by classes
+Metadata is transiently added to \texttt{data.table} objects by classes
 inheriting from \texttt{id\_tbl} and for S3 generic functions which
 allow for object modifications, down-casting is implicit:
 
@@ -731,13 +732,13 @@ R> (dat <- ts_tbl(a = 1:5, b = hours(1:5), c = rnorm(5)))
 # A `ts_tbl`: 5 x 3
 # Id var:     `a`
 # Index var:  `b` (1 hours)
-      a b           c
-  <int> <drtn>  <dbl>
-1     1 1 hours 2.06
-2     2 2 hours 0.718
-3     3 3 hours 1.87
-4     4 4 hours 1.41
-5     5 5 hours 1.19
+      a b             c
+  <int> <drtn>    <dbl>
+1     1 1 hours  0.0478
+2     2 2 hours  1.52
+3     3 3 hours -1.51
+4     4 4 hours  0.598
+5     5 5 hours  0.712
 \end{CodeOutput}
 \begin{CodeInput}
 R> dat[["b"]] <- dat[["b"]] + mins(30)
@@ -746,13 +747,13 @@ R> dat
 \begin{CodeOutput}
 # An `id_tbl`: 5 x 3
 # Id var:      `a`
-      a b              c
-  <int> <drtn>     <dbl>
-1     1  5400 secs 2.06
-2     2  9000 secs 0.718
-3     3 12600 secs 1.87
-4     4 16200 secs 1.41
-5     5 19800 secs 1.19
+      a b                c
+  <int> <drtn>       <dbl>
+1     1  5400 secs  0.0478
+2     2  9000 secs  1.52
+3     3 12600 secs -1.51
+4     4 16200 secs  0.598
+5     5 19800 secs  0.712
 \end{CodeOutput}
 \end{CodeChunk}
 
@@ -773,10 +774,10 @@ Coercion to base classes \texttt{data.frame} and \texttt{data.table} is
 easily possible using \texttt{as.data.frame()} and
 \texttt{as.data.table()}, which simply strips away the extra attributes.
 Coercion is also available as \texttt{data.table}-style by-reference
-operation (albeit user caution is advised as this does break with base R
-by-value or copy-on-modify semantics and may lead to unexpected
-behavior) by passing \texttt{by\_ref\ =\ TRUE} to any of the above
-coercion functions.
+operation (albeit user caution is advised as this does break with base
+\proglang{R} by-value or copy-on-modify semantics and may lead to
+unexpected behavior) by passing \texttt{by\_ref\ =\ TRUE} to any of the
+above coercion functions.
 
 In its current form, \texttt{win\_tbl} objects can both be used to
 represent for example drug rates or drug amounts administered over a
@@ -797,11 +798,11 @@ R> (dat <- win_tbl(a = 1:5, b = hours(1:5), c = mins(rep(90, 5)),
 # Duration var: `c`
       a b       c            d
   <int> <drtn>  <drtn>   <dbl>
-1     1 1 hours 90 mins 0.0355
-2     2 2 hours 90 mins 0.128
-3     3 3 hours 90 mins 0.331
-4     4 4 hours 90 mins 0.352
-5     5 5 hours 90 mins 0.467
+1     1 1 hours 90 mins 0.746
+2     2 2 hours 90 mins 0.703
+3     3 3 hours 90 mins 0.315
+4     4 4 hours 90 mins 0.0208
+5     5 5 hours 90 mins 0.665
 \end{CodeOutput}
 \begin{CodeInput}
 R> expand(dat)
@@ -812,16 +813,16 @@ R> expand(dat)
 # Index var:  `b` (1 hours)
        a b            d
    <int> <drtn>   <dbl>
- 1     1 1 hours 0.0355
- 2     1 2 hours 0.0355
- 3     2 2 hours 0.128
- 4     2 3 hours 0.128
- 5     3 3 hours 0.331
- 6     3 4 hours 0.331
- 7     4 4 hours 0.352
- 8     4 5 hours 0.352
- 9     5 5 hours 0.467
-10     5 6 hours 0.467
+ 1     1 1 hours 0.746
+ 2     1 2 hours 0.746
+ 3     2 2 hours 0.703
+ 4     2 3 hours 0.703
+ 5     3 3 hours 0.315
+ 6     3 4 hours 0.315
+ 7     4 4 hours 0.0208
+ 8     4 5 hours 0.0208
+ 9     5 5 hours 0.665
+10     5 6 hours 0.665
 \end{CodeOutput}
 \end{CodeChunk}
 
@@ -832,7 +833,7 @@ scenario to be evenly divided by -- and the resulting fractions assigned
 to -- the corresponding time steps. Allowing for this distinction is
 being considered but as of yet has not been implemented.
 
-Utilizing the attached meta-data of objects inheriting from
+Utilizing the attached metadata of objects inheriting from
 \texttt{id\_tbl}, several utility functions can be called with concise
 semantics (as seen in the above example, where \texttt{expand()} is able
 to determine the required column names from the \texttt{win\_tbl} object
@@ -865,7 +866,7 @@ and therefore no corresponding column is added.
 
 Available concepts can be enumerated using \texttt{load\_dictionary()}
 and the utility function \texttt{explain\_dictionary()} can be used to
-display some concept meta-data.
+display some concept metadata.
 
 \begin{CodeChunk}
 \begin{CodeInput}
@@ -970,7 +971,7 @@ concepts of this group will be mainly returned as \texttt{id\_tbl}
 objects with no corresponding time-stamps included.
 
 Whenever requesting concepts which are returned with associated
-time-stamps (e.g.~glucose) alongside time-constant data (e.g.~age),
+time-stamps (e.g., glucose) alongside time-constant data (e.g., age),
 merging will duplicate static data over all time-points.
 
 \begin{CodeChunk}
@@ -1190,7 +1191,7 @@ forwarded\footnote{Some care has to be taken as when requesting multiple
   arguments. When for example requesting multiple scores (such as SOFA
   or SIRS), it is currently not possible to enable
   \texttt{keep\_components} for only a subset thereof. Furthermore this
-  set-up requires that all involved callback functions are allowed to be
+  setup requires that all involved callback functions are allowed to be
   called with the given set of extra arguments.}.
 
 \hypertarget{concept-specification}{%
@@ -1210,7 +1211,7 @@ corresponding to a given concept from a data source. A \emph{concept}
 therefore contains several \emph{items} (zero, one or several are
 possible per data source).
 
-All concepts consist of minimal meta-data including a name, target class
+All concepts consist of minimal metadata including a name, target class
 (defaults to \texttt{ts\_tbl}; see Section \ref{data-classes}), an
 aggregation specification\footnote{Every concept needs a default
   aggregation method which can be used during data loading to return
@@ -1249,7 +1250,7 @@ data (\texttt{hr}) for example can be specified as
 }
 \end{verbatim}
 
-Meta-data is used during concept loading for data-preprocessing. For
+Metadata is used during concept loading for data-preprocessing. For
 numeric concepts, the specified measurement unit is compared to that of
 the data (if available), with messages being displayed in case of
 mismatches, while the range of plausible values is used to filter out
@@ -1439,8 +1440,8 @@ Powered by the \pkg{prt} \citep{bennett2021} package, \texttt{src\_tbl}
 objects represent row-partitioned tabular data stored as multiple binary
 files created by the \pkg{fst} \citep{klik2020} package. In addition to
 standard subsetting, \texttt{prt} objects can be subsetted via the base
-R S3 generic function \texttt{subset()} and using non-standard
-evaluation (NSE):
+\proglang{R} S3 generic function \texttt{subset()} and using
+non-standard evaluation (NSE):
 
 \begin{CodeChunk}
 \begin{CodeInput}
@@ -1486,8 +1487,8 @@ distinction can readily be made between a name referring to an object
 within the context of the data and an object within the context of the
 calling environment.
 
-\hypertarget{data-source-set-up}{%
-\subsection{Data source set-up}\label{data-source-set-up}}
+\hypertarget{data-source-setup}{%
+\subsection{Data source setup}\label{data-source-setup}}
 
 In order to make a dataset accessible to \pkg{ricu}, three steps are
 necessary, each handled by an exported S3 generic function:
@@ -1498,27 +1499,27 @@ package namespace is loaded. By default, all data sources known to
 \pkg{ricu} are configured to be attached and in case some data is
 missing for a given data source, the missing data is downloaded and
 imported on first access. An outline of the steps involved for data
-source set-up is shown in Figure \ref{fig:src-setup}.
+source setup is shown in Figure \ref{fig:src-setup}.
 
 \begin{CodeChunk}
 \begin{figure}
 
-{\centering \includegraphics{/private/var/folders/24/8k48jl6d249_n_qfxwsl6xvm0000gn/T/Rtmp87yRoQ/file94f1a22b992/articles/jss_files/figure-latex/src-setup-1} 
+{\centering \includegraphics{/private/var/folders/24/8k48jl6d249_n_qfxwsl6xvm0000gn/T/RtmpzlrCY3/file95c232779f1/articles/jss_files/figure-latex/src-setup-1} 
 
 }
 
-\caption[Making a dataset available to \pkg{ricu} involves several steps, starting with data download, followed by preparation for efficient access and finalized by instantiation of data structures containing relevant meta data]{Making a dataset available to \pkg{ricu} involves several steps, starting with data download, followed by preparation for efficient access and finalized by instantiation of data structures containing relevant meta data. Displayed above arrows are the functions which are used for each step and below are indicated specific configuration settings or environment variables which are need for (or can be used to customize) the specific step (in red).}\label{fig:src-setup}
+\caption[Making a dataset available to \pkg{ricu} involves several steps, starting with data download, followed by preparation for efficient access and finalized by instantiation of data structures containing relevant metadata]{Making a dataset available to \pkg{ricu} involves several steps, starting with data download, followed by preparation for efficient access and finalized by instantiation of data structures containing relevant metadata. Displayed above arrows are the functions which are used for each step and below are indicated specific configuration settings or environment variables which are need for (or can be used to customize) the specific step (in red).}\label{fig:src-setup}
 \end{figure}
 \end{CodeChunk}
 
 \hypertarget{data-download}{%
 \subsubsection{Data download}\label{data-download}}
 
-The first step towards loading data is data download, taken care of the
-S3 generic \texttt{download\_src()}. For the datasets included in
-\pkg{ricu}, prior to calling \texttt{download\_src()}, the following
-environment variables can be set (indicated in red in the \(a \to b\)
-edge in Figure \ref{fig:src-setup}):
+The first step towards loading data is data download, taken care of by
+the S3 generic function \texttt{download\_src()}. For the datasets
+included in \pkg{ricu}, prior to calling \texttt{download\_src()}, the
+following environment variables can be set (indicated in red in the
+\(a \to b\) edge in Figure \ref{fig:src-setup}):
 
 \begin{itemize}
 \tightlist
@@ -1537,9 +1538,9 @@ and an error is thrown otherwise.
 
 Each of the supported datasets requires 5-10 GB disk space for permanent
 storage and 50-100 GB of temporary disk storage during download and
-import . Memory requirements are kept low (8-16 GB) by performing all
-set-up operations only on subsets of rows at the time. Initial data
-source set up can be expected to take upwards of an hour per dataset.
+import. Memory requirements are kept low (8-16 GB) by performing all
+setup operations only on subsets of rows at the time. Initial data
+source setup can be expected to take upwards of an hour per dataset.
 
 \hypertarget{data-import}{%
 \subsubsection{Data import}\label{data-import}}
@@ -1578,7 +1579,7 @@ information on the construction of \texttt{tbl\_cfg} objects.
 
 Finally, attaching a dataset creates a corresponding \texttt{src\_env}
 object, containing several \texttt{src\_tbl} objects, which together
-with associated meta-data is used by \pkg{ricu} to run queries against
+with associated metadata is used by \pkg{ricu} to run queries against
 the data (edge \(c \to d\) in Figure \ref{fig:src-setup}). The
 environment variable \texttt{RICU\_SRC\_LOAD} can contain a
 comma-separated list of data source names that are set up for being
@@ -1598,21 +1599,21 @@ patient identifiers (such as hospital stay ID and ICU stay ID).
 \subsection{Data loading}\label{data-loading}}
 
 The lowest level of data access is direct subsetting of
-\texttt{src\_tbl} objects as shown at the start of this section
-(\ref{data-sources}). As \texttt{src\_tbl} inherits from \texttt{prt}
-the \texttt{subset()} implementation provided by \pkg{prt} can be used
-for NSE of data-expressions against on-disk, tabular data. Building on
-that, several S3 generic functions successively homogenize data
-representations as visulaized in Figure \ref{fig:data-loading}.
+\texttt{src\_tbl} objects as shown at the start of Section
+\ref{data-sources}. As \texttt{src\_tbl} inherits from \texttt{prt} the
+\texttt{subset()} implementation provided by \pkg{prt} can be used for
+NSE of data-expressions against on-disk, tabular data. Building on that,
+several S3 generic functions successively homogenize data
+representations as visualized in Figure \ref{fig:data-loading}.
 
 \begin{CodeChunk}
 \begin{figure}
 
-{\centering \includegraphics{/private/var/folders/24/8k48jl6d249_n_qfxwsl6xvm0000gn/T/Rtmp87yRoQ/file94f1a22b992/articles/jss_files/figure-latex/data-loading-1} 
+{\centering \includegraphics{/private/var/folders/24/8k48jl6d249_n_qfxwsl6xvm0000gn/T/RtmpzlrCY3/file95c232779f1/articles/jss_files/figure-latex/data-loading-1} 
 
 }
 
-\caption{Data loading proceeds though several layers, each contributing a step twoards harmonizing discrepancies among raw data representations provided by the different data sources. Raw data tables are represented by \pkg{ricu} as \code{src\_tbl} objects which can be queried using \code{load\_src()}. Absolute time-stamps in the returned \code{data.table} are converted to times relative to admission (in minutes) by \code{load\_difftime()} and finally, \code{load\_id()}/\allowbreak\code{load\_ts()}/\allowbreak\code{load\_win()} ensure a given ID system and time interval.}\label{fig:data-loading}
+\caption{Data loading proceeds through several layers, each contributing a step towards harmonizing discrepancies among raw data representations provided by the different data sources. Raw data tables are represented by \pkg{ricu} as \code{src\_tbl} objects which can be queried using \code{load\_src()}. Absolute time-stamps in the returned \code{data.table} are converted to times relative to admission (in minutes) by \code{load\_difftime()} and finally, \code{load\_id()}/\allowbreak\code{load\_ts()}/\allowbreak\code{load\_win()} ensure a given ID system and time interval.}\label{fig:data-loading}
 \end{figure}
 \end{CodeChunk}
 
@@ -1667,14 +1668,15 @@ R> load_difftime(mimic_demo$admissions, subject_id > 44000,
 \end{CodeChunk}
 
 The function \texttt{load\_difftime()} is expected to return timestamps
-as base R \texttt{difftime} vectors (in minutes; edge \(b \to c\) in
-Figure \ref{fig:data-loading}). The argument \texttt{id\_hint} can be
-used to specify a preferred ID system but if not available in raw data,
-\texttt{load\_difftime()} will return data using the ID system with
-highest cardinality. In the above example, if \texttt{icustay\_id} were
-requested, data would be returned using \texttt{hadm\_id}, whereas a
-\texttt{subject\_id} request would be honored, as the corresponding ID
-column is available in the \texttt{admissions} table.
+as base \proglang{R} \texttt{difftime} vectors (in minutes; edge
+\(b \to c\) in Figure \ref{fig:data-loading}). The argument
+\texttt{id\_hint} can be used to specify a preferred ID system, but if
+not available in raw data, \texttt{load\_difftime()} will return data
+using the ID system with highest cardinality. In the above example, if
+\texttt{icustay\_id} were requested, data would be returned using
+\texttt{hadm\_id}, whereas a \texttt{subject\_id} request would be
+honored, as the corresponding ID column is available in the
+\texttt{admissions} table.
 
 Building on \texttt{load\_difftime()} functionality, functions
 \texttt{load\_id()}/\allowbreak\texttt{load\_ts()}/\allowbreak\texttt{load\_win()}
@@ -1722,13 +1724,14 @@ use as \texttt{index\_var}. For more information on the construction of
 
 A call to \texttt{change\_id()} requires the construction of a table
 which contains the mapping between different ID systems, together with
-information about how convert timestamps between these ID systems (edge
-\(c \to d\) in Figure \ref{fig:data-loading}). The function responsible
-for providing the necessary information is \texttt{id\_windows()} and
-the associated S3 generic functions \texttt{id\_win\_helper()}. The
-entry point \texttt{id\_windows()} wraps \texttt{id\_win\_helper()},
-providing memoization, as the resulting structure is expensive to
-compute relative to the frequency of being required.
+information about how to convert timestamps between these ID systems
+(edge \(c \to d\) in Figure \ref{fig:data-loading}). The function
+responsible for providing the necessary information is
+\texttt{id\_windows()} and the associated S3 generic functions
+\texttt{id\_win\_helper()}. The entry point \texttt{id\_windows()} wraps
+\texttt{id\_win\_helper()}, providing memoization, as the resulting
+structure is expensive to compute relative to the frequency of being
+required.
 
 \begin{CodeChunk}
 \begin{CodeInput}
@@ -1949,9 +1952,9 @@ until data concepts have been mapped.
 \hypertarget{table-configuration}{%
 \subsubsection{Table configuration}\label{table-configuration}}
 
-Finally, \texttt{tbl\_cfg} objects are used during the initial set-up of
+Finally, \texttt{tbl\_cfg} objects are used during the initial setup of
 a data source. In order to create a representation of a table that is
-accessible from \pkg{ricu} from raw data, several key pieces of
+accessible by \pkg{ricu} from raw data, several key pieces of
 information are required:
 
 \begin{itemize}
@@ -2097,17 +2100,21 @@ Minimally required is simply an entry indicating the data source
 membership of a table (if not partitioned; c.f. \texttt{freetextitems}).
 This does slightly complicate data exploration, as if no
 \texttt{defaults} are specified, no default values can be provided to
-calls to \texttt{load\_ts()} and related functions. For partitioned
-tables, the basic structure of a \texttt{partitioning} entry is
-required, but the content itself is irrelevant, as this is only used for
-set-up (c.f. \texttt{numericitems}). The length of \texttt{breaks},
-however, is required to match the number of partitions (i.e.~a length 23
-\texttt{breaks} specification corresponds to a partitioning into 24
-row-groups.)\footnote{Originally it was intended to use partitioning
-  information during data loading in order to narrow down the set of
-  partitions that have to be accessed. So far, this optimization has not
-  been implemented.}. The directory containing such a
-\texttt{data-sources.json} can then be pointed to by the environment
+calls to \texttt{load\_ts()} and related functions. Also, when
+specifying data items in such a setup, the per-table column names for
+special columns such as \texttt{index\_var}, \texttt{val\_var}, etc.,
+have to be repeated for each individual item entry.
+
+For partitioned tables, the basic structure of a \texttt{partitioning}
+entry is required, but the content itself is irrelevant, as this is only
+used for setup (c.f. \texttt{numericitems}). The length of
+\texttt{breaks}, however, is required to match the number of partitions
+(i.e., a length 23 \texttt{breaks} specification corresponds to a
+partitioning into 24 row-groups.)\footnote{Originally it was intended to
+  use partitioning information during data loading in order to narrow
+  down the set of partitions that have to be accessed. So far, this
+  optimization has not been implemented.}. The directory containing such
+a \texttt{data-sources.json} can then be pointed to by the environment
 variable \texttt{RICU\_CONFIG\_PATH}, making it available to \pkg{ricu}.
 
 As for functions that are required, currently there is no default method
@@ -2147,7 +2154,7 @@ R> aumc_difftime <- function(x, rows, cols = colnames(x),
 \end{CodeInput}
 \end{CodeChunk}
 
-Such a function attempts to use the ID as requested but falls back to
+Such a function attempts to use the ID as requested, but falls back to
 the best possible alternative (using the ordering as previously
 specified in the \texttt{id\_cfg} JSON configuration) if not provided by
 the data. Both row-subsetting expression and column selection are passed
@@ -2201,7 +2208,7 @@ resulting \texttt{id\_tbl} is marked as \texttt{patientid}\footnote{The
 A final step in making a new dataset accessible to \pkg{ricu} lies in
 specifying concept items. To this end, a file \texttt{concept-dict.json}
 can be added to the directory pointed to by \texttt{RICU\_CONFIG\_PATH},
-containing entries like the following:, which will make it possible to
+containing entries like the following, which will make it possible to
 use the \texttt{hr} concept across both datasets included with
 \pkg{ricu}, alongside the newly added dataset.
 
@@ -2221,13 +2228,18 @@ use the \texttt{hr} concept across both datasets included with
 }
 \end{verbatim}
 
-The above outline serves only as an example on how to proceed when
-adding new data to \pkg{ricu}. Aspects like having multiple patient IDs,
-for example, could be further simplified. Also, owing to the extensive
-use of S3 generic functions, \pkg{ricu} offers considerable flexibility
-for customizing certain behavior to specifics of a given data source,
-while providing fallback procedures whenever more general treatment can
-be applied.
+The above outline serves as an example on how to proceed when adding new
+data to \pkg{ricu}. Aspects like having multiple patient IDs, for
+example, could be further simplified\footnote{An example for such a
+  reduced setup is available from the
+  \href{https://github.com/eth-mds/aumc}{AUMC Github repository} as
+  \texttt{aumc\_min}. Moving to only a single patient identifier also
+  does away with the need for a \texttt{id\_win\_helper()}
+  implementation, as \texttt{change\_id()} will not be called in such a
+  scenario.}. Also, owing to the extensive use of S3 generic functions,
+\pkg{ricu} offers considerable flexibility for customizing certain
+behavior to specifics of a given data source, while providing fallback
+procedures whenever more general treatment can be applied.
 
 \hypertarget{examples}{%
 \section{Examples}\label{examples}}
@@ -2293,7 +2305,7 @@ as:
 \begin{CodeChunk}
 
 
-\begin{center}\includegraphics{/private/var/folders/24/8k48jl6d249_n_qfxwsl6xvm0000gn/T/Rtmp87yRoQ/file94f1a22b992/articles/jss_files/figure-latex/cox-plot-1} \end{center}
+\begin{center}\includegraphics{/private/var/folders/24/8k48jl6d249_n_qfxwsl6xvm0000gn/T/RtmpzlrCY3/file95c232779f1/articles/jss_files/figure-latex/cox-plot-1} \end{center}
 
 \end{CodeChunk}
 
@@ -2382,7 +2394,7 @@ a histogram:
 \begin{CodeChunk}
 
 
-\begin{center}\includegraphics{/private/var/folders/24/8k48jl6d249_n_qfxwsl6xvm0000gn/T/Rtmp87yRoQ/file94f1a22b992/articles/jss_files/figure-latex/diabetes-visualize-1} \end{center}
+\begin{center}\includegraphics{/private/var/folders/24/8k48jl6d249_n_qfxwsl6xvm0000gn/T/RtmpzlrCY3/file95c232779f1/articles/jss_files/figure-latex/diabetes-visualize-1} \end{center}
 
 \end{CodeChunk}
 
