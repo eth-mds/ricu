@@ -41,7 +41,7 @@
     if (missing(pkgname)) {
       prefix <- ""
     } else {
-      prefix <- paste0(methods::getPackageName(), "::")
+      prefix <- paste0(methods::getPackageName(), ":::")
     }
 
     cbind_fix <- paste0(

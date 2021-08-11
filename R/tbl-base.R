@@ -120,8 +120,8 @@ str.id_tbl <- function(object, ...) invisible(prt::str_dt(object, ...))
 #'
 #' @rdname tbl_reshape
 #' @keywords internal
-.cbind.id_tbl <- function(..., keep.rownames = FALSE, check.names = FALSE,
-                          key = NULL, stringsAsFactors = FALSE) {
+cbind_id_tbl <- function(..., keep.rownames = FALSE, check.names = FALSE,
+                         key = NULL, stringsAsFactors = FALSE) {
 
   lst <- list(...)
   check <- lgl_ply(lst, is_id_tbl)
@@ -144,15 +144,15 @@ str.id_tbl <- function(object, ...) invisible(prt::str_dt(object, ...))
 
 #' @param use.names,fill,idcol Forwarded to [data.table::rbindlist]
 #' @rdname tbl_reshape
-.rbind.id_tbl <- function(..., use.names = TRUE, fill = FALSE, idcol = NULL) {
+rbind_id_tbl <- function(..., use.names = TRUE, fill = FALSE, idcol = NULL) {
   rbind_lst(list(...), use.names = use.names, fill = fill, idcol = idcol)
 }
 
 #' @rawNamespace if (getRversion() >= "4.0.0") { S3method(cbind, id_tbl) }
-cbind.id_tbl <- .cbind.id_tbl
+cbind.id_tbl <- cbind_id_tbl
 
 #' @rawNamespace if (getRversion() >= "4.0.0") { S3method(rbind, id_tbl) }
-rbind.id_tbl <- .rbind.id_tbl
+rbind.id_tbl <- rbind_id_tbl
 
 #' @param x,y Objects to combine
 #' @param by,by.x,by.y Column names used for combining data
