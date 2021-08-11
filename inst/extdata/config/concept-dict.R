@@ -2734,7 +2734,7 @@ cfg <- list(
     unit = "%",
     description = "Hemoglobin A1C",
     category = "hematology",
-    source = list(
+    sources = list(
       mimic = list(
         list(ids = 50852L, table = "labevents", sub_var = "itemid")
       ),

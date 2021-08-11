@@ -72,21 +72,14 @@
 #' @rdname src_cfg
 #' @keywords internal
 #'
-new_src_cfg <- function(name, id_cfg, col_cfg, tbl_cfg = NULL, ...,
+new_src_cfg <- function(name, id_cfg, col_cfg, tbl_cfg, ...,
                         class_prefix = name) {
-
-  if (all_fun(tbl_cfg, is.null) || length(tbl_cfg) == 0L) {
-    tbl_cfg <- NULL
-  }
 
   assert_that(
     is.string(name), is_id_cfg(id_cfg), is_col_cfg(col_cfg),
-    null_or(tbl_cfg, is_tbl_cfg), is.character(class_prefix)
+    is_tbl_cfg(tbl_cfg), setequal(names(col_cfg), names(tbl_cfg)),
+    is.character(class_prefix)
   )
-
-  if (not_null(tbl_cfg)) {
-    assert_that(setequal(names(col_cfg), names(tbl_cfg)))
-  }
 
   structure(
     list(name = name, prefix = class_prefix, id_cfg = id_cfg,

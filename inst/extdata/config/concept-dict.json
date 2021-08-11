@@ -2654,14 +2654,7 @@
     "unit": "%",
     "description": "Hemoglobin A1C",
     "category": "hematology",
-    "source": {
-      "mimic": [
-        {
-          "ids": 50852,
-          "table": "labevents",
-          "sub_var": "itemid"
-        }
-      ],
+    "sources": {
       "aumc": [
         {
           "ids": [11812, 16166],
@@ -2670,6 +2663,20 @@
         }
       ],
       "miiv": [
+        {
+          "ids": 50852,
+          "table": "labevents",
+          "sub_var": "itemid"
+        }
+      ],
+      "mimic": [
+        {
+          "ids": 50852,
+          "table": "labevents",
+          "sub_var": "itemid"
+        }
+      ],
+      "mimic_demo": [
         {
           "ids": 50852,
           "table": "labevents",

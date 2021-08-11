@@ -616,12 +616,9 @@ do_itm_load.fun_itm <- function(x, id_type = "icustay", interval = hours(1L)) {
 do_itm_load.nul_itm <- function(x, id_type = "icustay", interval = hours(1L)) {
 
   idc <- id_type_to_name(x, id_type)
-  xtr <- new_names(idc)
-
-  res <- id_origin(x, id_type_to_name(x, id_type), origin_name = xtr,
-                   copy = FALSE)
+  res <- id_map(x, idc, idc)
   res <- res[0L, ]
-  res <- res[, c("val_var", xtr) := list(numeric(0L), NULL)]
+  res <- res[, c("val_var") := numeric(0L)]
 
   if (target_inherits(x, "ts_tbl")) {
 

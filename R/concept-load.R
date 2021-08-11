@@ -429,7 +429,10 @@ load_concepts.fct_cncpt <- function(x, aggregate = NULL, ...,
   res <- load_concepts(as_item(x), ..., progress = progress)
   res <- rm_na_val_var(res)
 
-  if (is.character(lvl)) {
+  if (nrow(res) == 0L) {
+    keep <- TRUE
+    res  <- set(res, j = "val_var", value = character())
+  } else if (is.character(lvl)) {
     keep <- res[["val_var"]] %chin% lvl
   } else {
     keep <- res[["val_var"]] %in% lvl
