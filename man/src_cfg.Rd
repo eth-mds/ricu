@@ -22,7 +22,7 @@
 \alias{default_vars}
 \title{Internal utilities for working with data source configurations}
 \usage{
-new_src_cfg(name, id_cfg, col_cfg, tbl_cfg = NULL, ..., class_prefix = name)
+new_src_cfg(name, id_cfg, col_cfg, tbl_cfg, ..., class_prefix = name)
 
 new_id_cfg(
   src,

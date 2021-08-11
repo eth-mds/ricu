@@ -68,6 +68,8 @@ pkgdown:
 ```{r setup, include = FALSE}
 source(system.file("extdata", "vignettes", "helpers.R", package = "ricu"))
 
+options(width = 78)
+
 library(ricu)
 library(data.table)
 library(forestmodel)
@@ -182,7 +184,7 @@ The following list gives a quick outline of the steps required for setting up an
 
     * in order for concepts to be available from the new dataset, the dictionary requires extension by adding new data items
 
-    Some further information about adding a custom dataset is available from Section \ref{adding-external-datasets}, albeit not in much detail. Some code used when AUMCdb was not yet fully integrated with \pkg{ricu} is available from [Github](https://github.com/eth-mds/aumc).
+    Further information about adding a custom dataset is available from Section \ref{adding-external-datasets}. Some code used when AUMCdb was not yet fully integrated with \pkg{ricu} is available from [Github](https://github.com/eth-mds/aumc) and is used for demonstration purposes for setting up AUMCdb as external dataset `aumc_ext`.
 
 The final section (\ref{examples}) shows briefly how \pkg{ricu} could be used in practice to address clinical questions by presenting two small examples.
 
@@ -625,12 +627,13 @@ In order to make a dataset accessible to \pkg{ricu}, three steps are necessary, 
   \draw [-Stealth] (csv) to [bend right = 0] node[above, rotate=35]{
     \texttt{import\_src()}
   } node[f2, below, rotate=35]{
-    \texttt{RICU\_DATA\_PATH}\\ \texttt{RICU\_CONFIG\_PATH}\\table config
+    \texttt{RICU\_DATA\_PATH}\\ \texttt{RICU\_CONFIG\_PATH}\\
+    \texttt{tbl\_cfg}
   } (fst);
   \draw [-Stealth] (fst) to [bend right = 0] node[above, rotate=0]{
     \texttt{attach\_src()}
   } node[f2, below, rotate=0]{
-    \texttt{RICU\_SRC\_LOAD}\\ source config
+    \texttt{RICU\_SRC\_LOAD}\\ \texttt{id\_cfg}, \texttt{col\_cfg}
   } (env);
 
 \end{tikzpicture}
@@ -638,7 +641,7 @@ In order to make a dataset accessible to \pkg{ricu}, three steps are necessary, 
 
 ### Data download
 
-The first step towards loading data is data download, taken care of the S3 generic `download_src()`. For the datasets included in \pkg{ricu}, prior to calling `download_src()`, the following environment variables can be set:
+The first step towards loading data is data download, taken care of the S3 generic `download_src()`. For the datasets included in \pkg{ricu}, prior to calling `download_src()`, the following environment variables can be set (indicated in red in the $a \to b$ edge in Figure \ref{fig:src-setup}):
 
 * `RICU_PHYSIONET_USER`/`RICU_PHYSIONET_PASS`: PhysioNet user name and password with access to the requested dataset.
 * `RICU_AUMC_TOKEN`: Download token, extracted from the download URL received when requesting data access.
@@ -649,16 +652,16 @@ Each of the supported datasets requires 5-10 GB disk space for permanent storage
 
 ### Data import
 
-After successful data download, importing prepares tables for efficient random row- and column-access, for which the raw data format (.csv) is not well suited. Tables are read in using \pkg{readr} \citep{hester2020}, potentially (re-)partitioned row-wise, and re-saved using \pkg{fst}. Environment variables that can be set to customize \pkg{ricu} data handling, relevant for import and attaching include:
+After successful data download, importing prepares tables for efficient random row- and column-access, for which the raw data format (.csv) is not well suited (see edge $b \to c$ in Figure \ref{fig:src-setup}). Tables are read in using \pkg{readr} \citep{hester2020}, potentially (re-)partitioned row-wise, and re-saved using \pkg{fst}. Environment variables that can be set to customize \pkg{ricu} data handling, relevant for import and attaching include:
 
 * `RICU_DATA_PATH`: Optional data storage location (if unset, this defaults to a system-specific, user-specific directory). The current value used for this setting can be queried by calling `data_dir()`.
 * `RICU_CONFIG_PATH`: Comma-separated paths to directories containing configuration files. The current set of paths is retrievable by calling `config_paths()` and the ordering of paths determines precedence of how configuration files are combined (if multiple files of the same name are available).
 
-For importing, the information contained in `tbl_cfg` configuration objects is most relevant. This determines column data types, table pratitioning and sanity checks like number of rows per table. Please refer to Section \ref{table-configuration} for more information on the construction of `tbl_cfg` objects.
+For importing, the information contained in `tbl_cfg` configuration objects is most relevant. This determines column data types, table partitioning and sanity checks like number of rows per table. Please refer to Section \ref{table-configuration} for more information on the construction of `tbl_cfg` objects.
 
 ### Data attaching
 
-Finally, attaching a dataset creates a corresponding `src_env` object, containing several `src_tbl` objects, which together with associated meta-data is used by \pkg{ricu} to run queries against the data. The environment variable `RICU_SRC_LOAD` can contain a comma-separated list of data source names that are set up for being automatically attached on namespace loading. This defaults to all currently supported datasets and the current set of source names is available as `auto_attach_srcs()`.
+Finally, attaching a dataset creates a corresponding `src_env` object, containing several `src_tbl` objects, which together with associated meta-data is used by \pkg{ricu} to run queries against the data (edge $c \to d$ in Figure \ref{fig:src-setup}). The environment variable `RICU_SRC_LOAD` can contain a comma-separated list of data source names that are set up for being automatically attached on namespace loading. This defaults to all currently supported datasets and the current set of source names is available as `auto_attach_srcs()`.
 
 Two configuration objects which are important for data loading (see the following Section \ref{data-loading}) are `id_cfg` (Section \ref{id-configuration}) and `col_cfg` (Section \ref{default-column-configuration}), providing default values for certain types of columns, including time-stamp, measurement value and measurement unit columns, as well as defining relationships between patient identifiers (such as hospital stay ID and ICU stay ID).
 
@@ -704,7 +707,7 @@ The lowest level of data access is direct subsetting of `src_tbl` objects as sho
 \end{tikzpicture}
 ```
 
-The most basic layer in data loading is provided by the S3 generic function `load_src()`, which provides a string-based interface to `subset()` for all but the row-subsetting expression.
+The most basic layer in data loading is provided by the S3 generic function `load_src()`, which provides a string-based interface to `subset()` for all but the row-subsetting expression (see edge $a \to b$ in Figure \ref{fig:data-loading}).
 
 ```{r load-src, eval = srcs_avail("mimic_demo")}
 load_src(mimic_demo$admissions, subject_id > 44000,
@@ -723,9 +726,9 @@ load_difftime(mimic_demo$admissions, subject_id > 44000,
               cols = c("hadm_id", "admittime", "dischtime"))[]
 ```
 
-The function `load_difftime()` is expected to return timestamps as base R `difftime` vectors (in minutes). The argument `id_hint` can be used to specify a preferred ID system but if not available in raw data, `load_difftime()` will return data using the ID system with highest cardinality. In the above example, if `icustay_id` were requested, data would be returned using `hadm_id`, whereas a `subject_id` request would be honored, as the corresponding ID column is available in the `admissions` table.
+The function `load_difftime()` is expected to return timestamps as base R `difftime` vectors (in minutes; edge $b \to c$ in Figure \ref{fig:data-loading}). The argument `id_hint` can be used to specify a preferred ID system but if not available in raw data, `load_difftime()` will return data using the ID system with highest cardinality. In the above example, if `icustay_id` were requested, data would be returned using `hadm_id`, whereas a `subject_id` request would be honored, as the corresponding ID column is available in the `admissions` table.
 
-Building on `load_difftime()` functionality, `load_id()`/\allowbreak`load_ts()`/\allowbreak`load_win()` return `id_tbl`/\allowbreak`ts_tbl`/\allowbreak`win_tbl` objects with the requested ID system (passed as `id_var` argument). This uses raw data IDs if available or calls `change_id()` in order to convert to the desired ID system. Similarly, where `load_difftime()` returns data with fixed time interval of one minute, `load_id()` allows for arbitrary time intervals (using `change_interval()`; defaults to 1 hour).
+Building on `load_difftime()` functionality, functions `load_id()`/\allowbreak`load_ts()`/\allowbreak`load_win()` return `id_tbl`/\allowbreak`ts_tbl`/\allowbreak`win_tbl` objects with the requested ID system (passed as `id_var` argument). This uses raw data IDs if available or calls `change_id()` in order to convert to the desired ID system (edge $c \to d$ in Figure \ref{fig:data-loading}). Similarly, where `load_difftime()` returns data with fixed time interval of one minute, `load_id()` allows for arbitrary time intervals (using `change_interval()`; defaults to 1 hour).
 
 ```{r load-id, eval = FALSE}
 load_id(mimic_demo$admissions, subject_id > 44000,
@@ -739,13 +742,13 @@ load_id(mimic_demo$admissions, subject_id > 44000,
 
 Throughout several of theses functions, `col_cfg` objects are used to provide sensible defaults. In order to convert to relative times, for example, `load_difftime()` requires names of columns for which this applies (provided by the `time_vars` entry), and `load_ts()` needs to know which of the `time_vars` to use as `index_var`. For more information on the construction of `col_cfg` objects, please refer to Section \ref{default-column-configuration}.
 
-A call to `change_id()` requires the construction of a table which contains the mapping between different ID systems, together with information about how convert timestamps between these ID systems. The function responsible for providing the necessary information is `id_windows()` and the associated S3 generic functions `id_win_helper()`. The entry point `id_windows()` wraps `id_win_helper()`, providing memoization, as the resulting structure is expensive to compute relative to the frequency of being required.
+A call to `change_id()` requires the construction of a table which contains the mapping between different ID systems, together with information about how convert timestamps between these ID systems (edge $c \to d$ in Figure \ref{fig:data-loading}). The function responsible for providing the necessary information is `id_windows()` and the associated S3 generic functions `id_win_helper()`. The entry point `id_windows()` wraps `id_win_helper()`, providing memoization, as the resulting structure is expensive to compute relative to the frequency of being required.
 
 ```{r id-win, eval = srcs_avail("mimic_demo")}
 id_windows(mimic_demo)
 ```
 
-Analogously, the function pair `id_origin()` and `id_orig_helper()`, with the former wrapping the latter and again providing memoization, is used for datasets where time-stamps are represented by absolute times, returning the origin time-points for a given ID system which then can be used to calculate relative times.
+Analogously, the function pair `id_origin()` and `id_orig_helper()`, with the former wrapping the latter and again providing memoization, is used for datasets where time-stamps are represented by absolute times, returning the origin time-points for a given ID system which then can be used to calculate relative times (edge $b \to c$ in Figure \ref{fig:data-loading}).
 
 ```{r id-orig, eval = srcs_avail("mimic_demo")}
 id_origin(mimic_demo, "icustay_id")
@@ -805,6 +808,8 @@ Finally, `tbl_cfg` objects are used during the initial set-up of a data source. 
 
 * (Optional) partitioning information: For very *long* tables it can be useful to specify a row-partitioning. This currently is only possible by applying a vector of breakpoints to a single numeric column, thereby defining a grouping.
 
+Both file name and column specification are only used within the context of `download_src()` and `import_src()` and are therefore not required if download and import are carried out manually.
+
 ```{r mimic-tbl, eval = TRUE}
 as_tbl_cfg(mi_cfg)
 ```
@@ -813,9 +818,143 @@ For the `chartevents` table of the MIMIC-III demo dataset, for example, rows are
 
 ## Adding external datasets
 
-In order to add a new dataset to \pkg{ricu}, several aspects outlined in the previous subsections require consideration. For illustration purposes, code for integrating AmsterdamUMCdb as external dataset is available from [Github](https://github.com/eth-mds/aumc). While this is no longer needed for using the `aumc` data source, the repository will remain as it might serve as template to integration of new datasets.
+In order to add a new dataset to \pkg{ricu}, several aspects outlined in the previous subsections require consideration. For illustration purposes, code for integrating AmsterdamUMCdb as external dataset is available from [Github](https://github.com/eth-mds/aumc). While this is no longer needed for using the `aumc` data source, the repository will remain as it might serve as template to integration of new datasets. Throughout this repository (and the following paragraphs), the AmsterdamUMCdb data treated as an \pkg{ricu}-external dataset is referred to as `aumc_ext`.
 
-Using a configuration file as described in Section \ref{data-source-configuration} and pointing the `RICU_CONFIG_PATH` environment variable at its location, data can be prepared for use with \pkg{ricu} using `import_src()` and made available to \pkg{ricu} using `attach_src()`. In addition to providing a configuration file, dataset-specific implementations of some of the S3 generic functions involved in data-loading might be required. In the case of AmsterdamUMCdb, a class-specific implementation of `load_difftime()` is required, as raw time-stamps are recorded in milliseconds (instead of minutes), as well as a class-specific implementation of the S3 generic function `id_win_helper()`^[This method is used as part of `change_id()` which is called whenever the requested ID system is not available in raw data. A component central to conversion between patient ID systems is a table which contains patient IDs as columns alongside columns with start and end-points for each, thereby specifying a mapping between ID systems. Dataset-specific construction of such a table is handled by the S3 generic function `id_win_helper()`. As construction of such tables can be expensive (involving several merge operations of tables with 10^4^-10^5^ rows) and used frequently (potentially with every single data request), the resulting table is cached in memory with session persistence.].
+Central to adding a new dataset to \pkg{ricu} is providing some configuration information in a `data-sources.json` file pointed to by the environment variable `RICU_CONFIG_PATH`. Depending on particularities of the dataset in question, corresponding implementations of several (or none) of the S3 generic functions mentioned throughout Sections \ref{data-source-set-up} and \ref{data-loading} might have to be provided. The amount of confirmation information required to get started also depends on the desired level of integration. As data download and import are one-time procedures, these steps can be carried out manually, negating the need for specifying column data types in `data-sources.json` and providing data source specific methods for the `download_src()` and `import_src()` generics.
+
+The basic organization of a data source configuration entry, as it could be used for `aumc_ext`, specified as JSON is as follows:
+
+```
+{
+  "name": "aumc_ext",
+  "id_cfg": {
+    "patient": {
+      "id": "patientid",
+      "position": 1
+    },
+    "icustay": {
+      "id": "admissionid",
+      "position": 2
+    }
+  },
+  "tables": {
+    ...
+  }
+}
+```
+
+The shown `id_cfg` entry represents the minimally required set of entries, where for each ID specification, `start`, `end` and `table` are omitted (when compared to the `aumc` configuration provided by \pkg{ricu}). The `tables` entry expands to something like the following:
+
+```
+"tables": {
+  "freetextitems": {
+  },
+  "drugitems": {
+    "defaults": {
+      "index_var": "start",
+      "val_var": "dose",
+      "unit_var": "doseunit",
+      "time_vars": ["start", "stop"]
+    }
+  },
+  "numericitems": {
+    "defaults": {
+      "index_var": "measuredat",
+      "val_var": "value",
+      "unit_var": "unit",
+      "time_vars": ["measuredat", "registeredat", "updatedat"]
+    },
+    "partitioning": {
+      "col": "",
+      "breaks": [
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+        0, 0, 0, 0, 0
+      ]
+    }
+  },
+  ...
+}
+```
+
+Minimally required is simply an entry indicating the data source membership of a table (if not partitioned; c.f. `freetextitems`). This does slightly complicate data exploration, as if no `defaults` are specified, no default values can be provided to calls to `load_ts()` and related functions. For partitioned tables, the basic structure of a `partitioning` entry is required, but the content itself is irrelevant, as this is only used for set-up (c.f. `numericitems`). The length of `breaks`, however, is required to match the number of partitions (i.e. a length 23 `breaks` specification corresponds to a partitioning into 24 row-groups.)^[Originally it was intended to use partitioning information during data loading in order to narrow down the set of partitions that have to be accessed. So far, this optimization has not been implemented.]. The directory containing such a `data-sources.json` can then be pointed to by the environment variable `RICU_CONFIG_PATH`, making it available to \pkg{ricu}.
+
+As for functions that are required, currently there is no default method available for the loading step provided by `load_difftime()` and most likely an implementation of `id_win_helper()` will be required as well. For `aumc_ext`, `load_difftime()` could be implemented as
+
+```{r, ext-difftime}
+ms_as_min <- function(x) as.difftime(as.integer(x / 6e4), units = "mins")
+
+aumc_difftime <- function(x, rows, cols = colnames(x),
+                          id_hint = id_vars(x),
+                          time_vars = ricu::time_vars(x), ...) {
+
+  if (id_hint %in% colnames(x)) {
+    id_sel <- id_hint
+  } else {
+    id_opt <- id_var_opts(sort(as_id_cfg(x), decreasing = TRUE))
+    id_sel <- intersect(id_opt, colnames(x))[1L]
+  }
+
+  stopifnot(is.character(id_sel), length(id_sel) == 1L)
+
+  if (!id_sel %in% cols) {
+    cols <- c(id_sel, cols)
+  }
+
+  time_vars <- intersect(time_vars, cols)
+
+  dat <- load_src(x, {{ rows }}, cols)
+  dat <- dat[, c(time_vars) := lapply(.SD, ms_as_min), .SDcols = time_vars]
+
+  as_id_tbl(dat, id_vars = id_sel, by_ref = TRUE)
+}
+```
+
+Such a function attempts to use the ID as requested but falls back to the best possible alternative (using the ordering as previously specified in the `id_cfg` JSON configuration) if not provided by the data. Both row-subsetting expression and column selection are passed on to `load_src()` and all columns specified as `time_vars` are converted to `difftime` vectors in minutes. Operations can safely be carried out using by-reference semantics, as intermediate objects are not exposed to the user.
+
+For a possible implementation of the `id_win_helper()` generic, column and table names to assemble the desired lookup table are hard coded instead of provided by the corresponding `id_cfg` object.
+
+```{r, ext-win}
+aumc_windows <- function(x) {
+
+  ids <- c("admissionid", "patientid")
+  sta <- c("admittedat", "firstadmittedat")
+  end <- c("dischargedat", "dateofdeath")
+
+  tbl <- as_src_tbl(x, "admissions")
+
+  res <- tbl[, c(ids, sta[1L], end)]
+  res <- res[, c(sta[2L]) := 0L]
+  res <- res[, c(sta, end) := lapply(.SD, ms_as_min), .SDcols = c(sta, end)]
+
+  res <- data.table::setcolorder(res, c(ids, sta, end))
+  res <- rename_cols(res, c(ids, paste0(ids, "_start"),
+                                 paste0(ids, "_end")), by_ref = TRUE)
+
+  as_id_tbl(res, ids[2L], by_ref = TRUE)
+}
+```
+
+As all the required information is available form the `admissions` table, `aumc_windows()` simply loads the corresponding columns, converts them to minute resolution, followed by some renaming. ICU admissions and discharges in this table are relative to initial hospital admissions and therefore an all-zero column `firstadmittedat` is added and the `id_var` of the resulting `id_tbl` is marked as `patientid`^[The patient ID created in this way is limited to what is possible in MIMIC-III, for example, where patient data of birth is available. An approximate data of birth could be constructed if ages were reported more precisely, but given the rough binning available here, this might be considered an acceptable limitation of resulting patient IDs. Nevertheless awareness of such differences in data presentation is important.].
+
+A final step in making a new dataset accessible to \pkg{ricu} lies in specifying concept items. To this end, a file `concept-dict.json` can be added to the directory pointed to by `RICU_CONFIG_PATH`, containing entries like the following:, which will make it possible to use the `hr` concept across both datasets included with \pkg{ricu}, alongside the newly added dataset.
+
+```
+{
+  "hr": {
+    "sources": {
+      "aumc_ext": [
+        {
+          "ids": 6640,
+          "table": "numericitems",
+          "sub_var": "itemid"
+        }
+      ]
+    }
+  }
+}
+```
+
+The above outline serves only as an example on how to proceed when adding new data to \pkg{ricu}. Aspects like having multiple patient IDs, for example, could be further simplified. Also, owing to the extensive use of S3 generic functions, \pkg{ricu} offers considerable flexibility for customizing certain behavior to specifics of a given data source, while providing fallback procedures whenever more general treatment can be applied.
 
 # Examples
 
