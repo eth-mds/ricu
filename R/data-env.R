@@ -81,7 +81,7 @@
 #' measurements made at the bedside (~1 data point per hour), laboratory test
 #' results, procedures, medications, caregiver notes, imaging reports, and
 #' mortality (both in and out of hospital). For further information, please
-#' refer to the [MIMIC-III documentation](https://mimic.physionet.org/iii/).
+#' refer to the [MIMIC-III documentation](https://mimic.mit.edu/docs/iii/).
 #'
 #' The corresponding
 #' [demo dataset](https://physionet.org/content/mimiciii-demo/)
@@ -139,7 +139,9 @@
 #' been removed, while data onward of 2012 has been added. This simplifies
 #' data queries considerably, as the CareVue/Metavision data split in MIMIC-III
 #' no longer applies. While addition of ED data is planned, this is not part
-#' of the initial v1.0 release and currently is not supported by `ricu`.
+#' of the initial v1.0 release and currently is not supported by `ricu`. For
+#' further information, please refer to the [MIMIC-III documentation
+#' ](https://mimic.mit.edu/docs/iii/).
 #'
 #' @format
 #' The exported `data` environment contains all datasets that have been made

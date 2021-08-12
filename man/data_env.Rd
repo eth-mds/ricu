@@ -138,7 +138,7 @@ The database includes information such as demographics, vital sign
 measurements made at the bedside (~1 data point per hour), laboratory test
 results, procedures, medications, caregiver notes, imaging reports, and
 mortality (both in and out of hospital). For further information, please
-refer to the \href{https://mimic.physionet.org/iii/}{MIMIC-III documentation}.
+refer to the \href{https://mimic.mit.edu/docs/iii/}{MIMIC-III documentation}.
 
 The corresponding
 \href{https://physionet.org/content/mimiciii-demo/}{demo dataset}
@@ -200,7 +200,8 @@ admitted prior to 2008 (whose data is stored in a CareVue-based system) has
 been removed, while data onward of 2012 has been added. This simplifies
 data queries considerably, as the CareVue/Metavision data split in MIMIC-III
 no longer applies. While addition of ED data is planned, this is not part
-of the initial v1.0 release and currently is not supported by \code{ricu}.
+of the initial v1.0 release and currently is not supported by \code{ricu}. For
+further information, please refer to the \href{https://mimic.mit.edu/docs/iii/}{MIMIC-III documentation }.
 }
 
 \references{
