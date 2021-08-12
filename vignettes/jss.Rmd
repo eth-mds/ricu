@@ -324,6 +324,8 @@ summarize <- function(src, avail) {
   )
 }
 
+srcs <- demo
+
 src_names <- c(
   mimic = "MIMIC-III", eicu = "eICU", hirid = "HiRID", aumc = "AUMC",
   miiv = "MIMIC-IV", mimic_demo = "MIMIC (demo)", eicu_demo = "eICU (demo)"
@@ -820,7 +822,7 @@ For the `chartevents` table of the MIMIC-III demo dataset, for example, rows are
 
 In order to add a new dataset to \pkg{ricu}, several aspects outlined in the previous subsections require consideration. For illustration purposes, code for integrating AmsterdamUMCdb as external dataset is available from [Github](https://github.com/eth-mds/aumc). While this is no longer needed for using the `aumc` data source, the repository will remain as it might serve as template to integration of new datasets. Throughout this repository (and the following paragraphs), the AmsterdamUMCdb data treated as an \pkg{ricu}-external dataset is referred to as `aumc_ext`.
 
-Central to adding a new dataset to \pkg{ricu} is providing some configuration information in a `data-sources.json` file pointed to by the environment variable `RICU_CONFIG_PATH`. Depending on particularities of the dataset in question, corresponding implementations of several (or none) of the S3 generic functions mentioned throughout Sections \ref{data-source-set-up} and \ref{data-loading} might have to be provided. The amount of confirmation information required to get started also depends on the desired level of integration. As data download and import are one-time procedures, these steps can be carried out manually, negating the need for specifying column data types in `data-sources.json` and providing data source specific methods for the `download_src()` and `import_src()` generics.
+Central to adding a new dataset to \pkg{ricu} is providing some configuration information in a `data-sources.json` file pointed to by the environment variable `RICU_CONFIG_PATH`. Depending on particularities of the dataset in question, corresponding implementations of several (or none) of the S3 generic functions mentioned throughout Sections \ref{data-source-setup} and \ref{data-loading} might have to be provided. The amount of confirmation information required to get started also depends on the desired level of integration. As data download and import are one-time procedures, these steps can be carried out manually, negating the need for specifying column data types in `data-sources.json` and providing data source specific methods for the `download_src()` and `import_src()` generics.
 
 The basic organization of a data source configuration entry, as it could be used for `aumc_ext`, specified as JSON is as follows:
 
@@ -958,6 +960,41 @@ A final step in making a new dataset accessible to \pkg{ricu} lies in specifying
 
 The above outline serves as an example on how to proceed when adding new data to \pkg{ricu}. Aspects like having multiple patient IDs, for example, could be further simplified^[An example for such a reduced setup is available from the [AUMC Github repository](https://github.com/eth-mds/aumc) as `aumc_min`. Moving to only a single patient identifier also does away with the need for a `id_win_helper()` implementation, as `change_id()` will not be called in such a scenario.]. Also, owing to the extensive use of S3 generic functions, \pkg{ricu} offers considerable flexibility for customizing certain behavior to specifics of a given data source, while providing fallback procedures whenever more general treatment can be applied.
 
+A quick recap of the steps required to add a new dataset:
+
+1. Place tables converted to `.fst` files into the folder returned by `src_data_dir("dataset_name")` (or write methods for `src_download()` and `src_import()`).
+
+1. Create a minimal data source configuration file `data-sources.json` and place it under `RICU_CONFIG_PATH`. For AmsterdamUMCdb, this could be as minimal as (assuming no partitioning):
+
+        {
+          "name": "aumc_min",
+          "id_cfg": {
+            "icustay": "admissionid"
+          },
+          "tables": {
+            "admissions": {},
+            "drugitems": {},
+            "freetextitems": {},
+            "listitems": {},
+            "numericitems": {},
+            "procedureorderitems": {},
+            "processitems": {}
+          }
+        }
+
+    File names have to match table names, i.e., the admissions table should be named `admissions.fst`. Upon a call to `attach_src()` (or next loading of the package and having added the data source name to `RICU_SRC_LOAD`) the new datasource can be explored using `load_src()`.
+
+1. Write a `load_difftime()` method that:
+
+    - passes a row-subsetting expression to `load_src()` using the \pkg{rlang} curly-curly operator,
+    - converts columns passed as `time_vars` to minute-resolution difftime vectors,
+    - returns an `id_tbl` object where patient identifiers are chosen such that time-stamps are relative to corresponding admission,
+    - (Optional) if multiple identifiers are available from data uses the column passed as `id_hint` for patient identifiers.
+
+1. (Optional) if the source configuration specifies multiple patient identifiers which are not all available from all tables directly, an implementation of `id_win_helper()` most likely will be required (see Section \ref{data-loading}).
+
+1. Expand the configuration with per-table column defaults and start adding data items to the concepts included with \pkg{ricu} for the new dataset by creating a `concept-dict.json` under the path pointed to by `RICU_CONFIG_PATH`. For more information on readily available concepts, refer to Section \ref{ready-to-use-concepts} and for specifying new concepts altogether, pointers are available in section \ref{concept-specification}.
+
 # Examples
 
 In order to briefly illustrate how \pkg{ricu} could be applied to real-world clinical questions, two toy examples are provided in the following sections. While the first example fully relies on data concepts that are included with \pkg{ricu}, the second one explores both how some data pre-processing can be added to an existing concept by creating a new `rec_cncpt` and how to create an new data concept altogether.
@@ -1066,7 +1103,7 @@ ggplot(dat, aes(x = ins24, fill = diab)) +
   theme_bw(10)
 ```
 
-The plot suggests that for the cohort defined in the previous example and during the first day of ICU stay, perhaps unsurprisingly, with increasing insulin dosage, diabetic patients receive more insulin compared to non-diabetic patients. This effect is more pronounced when looking at the full MINIC-III data instead of the demo subset which includes only data corresponding to `r nrow(mimic_demo$icustays)` ICU stays.
+The plot suggests that for the cohort defined in the previous example and during the first day of ICU stay, perhaps unsurprisingly, with increasing insulin dosage, diabetic patients receive more insulin compared to non-diabetic patients. This effect is more pronounced when looking at the full MIMIC-III data instead of the demo subset which includes only data corresponding to `r nrow(mimic_demo$icustays)` ICU stays.
 
 # Acknowledgments
 
