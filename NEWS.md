@@ -1,3 +1,12 @@
+# ricu 0.5.0
+
+* adds `miiv` data source (MIMIC-IV)
+* new data class `win_tbl` (inheriting from `ts_tbl`), which allows for
+  specifying a validity duration (for example for infusions consisting of both
+  a rate and a duration)
+* automatic unit conversion is available by specifying the `unt_cncpt` concept
+  type
+
 # ricu 0.4.0
 
 * CRAN release which includes `aumc` data source and `sep3` concept
