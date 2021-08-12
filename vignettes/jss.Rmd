@@ -2,7 +2,7 @@
 title:
   plain: "ricu: R's Interface to Intensive Care Data"
   formatted: "\\pkg{ricu}: \\proglang{R}'s Interface to Intensive Care Data"
-  short: "\\pkg{ricu}: R meets ICU data"
+  short: "\\pkg{ricu}: \\proglang{R} meets ICU data"
 author:
   - name: "Nicolas Bennett\\footnotemark[1]"
     affiliation: ETH Zürich
@@ -186,7 +186,7 @@ The following list gives a quick outline of the steps required for setting up an
 
     Further information about adding a custom dataset is available from Section \ref{adding-external-datasets}. Some code used when AUMCdb was not yet fully integrated with \pkg{ricu} is available from [Github](https://github.com/eth-mds/aumc) and is used for demonstration purposes for setting up AUMCdb as external dataset `aumc_ext`.
 
-The final section (\ref{examples}) shows briefly how \pkg{ricu} could be used in practice to address clinical questions by presenting two small examples.
+Finally, Section \ref{examples} shows briefly how \pkg{ricu} could be used in practice to address clinical questions by presenting two small examples.
 
 # Ready to use datasets
 
