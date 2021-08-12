@@ -41,7 +41,7 @@ author:
       | CH-8092 Zürich
     email: \email{peter.buehlmann@stat.math.ethz.ch}
 abstract: >
-  Providing computational infrastructure for handling diverse intensive care unit (ICU) datasets, the \proglang{R} package \pkg{ricu} enables writing dataset-agnostic analysis code, thereby facilitating multi-center training and validation of machine learning models. The package is designed with an emphasis on extensibility both to new datasets as well as clinical data concepts, and currently supports the loading of around 100 patient variables corresponding to a total of 319,402 ICU admissions from 4 data sources collected in Europe and the United States. By allowing for the addition of user-specified medical concepts and data sources the aim of \pkg{ricu} is to foster robust, data-based intensive care research, allowing the user to externally validate their method or conclusion with relative ease, and in turn facilitating reproducible and therefore transparent work in this field.
+  Providing computational infrastructure for handling diverse intensive care unit (ICU) datasets, the \proglang{R} package \pkg{ricu} enables writing dataset-agnostic analysis code, thereby facilitating multi-center training and validation of machine learning models. The package is designed with an emphasis on extensibility both to new datasets as well as clinical data concepts, and currently supports the loading of around 100 patient variables corresponding to a total of 395,941 ICU admissions from five data sources collected in Europe and the United States. By allowing for the addition of user-specified medical concepts and data sources the aim of \pkg{ricu} is to foster robust, data-based intensive care research, allowing the user to externally validate their method or conclusion with relative ease, and in turn facilitating reproducible and therefore transparent work in this field.
 keywords:
   formatted: [electronic health records, computational physiology, critical care medicine]
   plain:     [electronic health records, computational physiology, critical care medicine]
@@ -50,6 +50,7 @@ preamble: >
   \usepackage{booktabs}
   \usepackage{makecell}
   \usepackage{threeparttablex}
+  \usepackage{pdflscape}
 vignette: >
   %\VignetteIndexEntry{Accessing ICU data with R (Bennett & Plečko, JSS 2021)}
   %\VignetteEngine{knitr::rmarkdown}
@@ -79,7 +80,7 @@ library(ggplot2)
 options(kableExtra.latex.load_packages = FALSE)
 library(kableExtra)
 
-srcs <- c("mimic", "eicu", "aumc", "hirid")
+srcs <- c("mimic", "eicu", "aumc", "hirid", "miiv")
 ```
 
 ```{r, assign-src, echo = FALSE}
@@ -126,9 +127,9 @@ knitr::opts_chunk$set(eval = FALSE)
 
 Collection of electronic health records has seen a significant rise in recent years \citep{evans2016}, opening up opportunities and providing the grounds for a large body of data-driven research oriented towards helping clinicians in decision-making and therefore improving patient care and health outcomes \citep{jiang2017}.
 
-One example of a problem that has received much attention from the machine learning community is early prediction of sepsis in the intensive care unit \citep[ICU;][]{desautels2016, nemati2018, futoma2017, kam2017}. Interestingly, there is evidence that a large proportion of the publications are based on the same dataset \citep{fleuren2019}, the Medical Information Mart for Intensive Care III \citep[MIMIC-III;][]{johnson2016}, which shows a systematic lack of external validation. Part of this problem might well be the need for computational infrastructure handling multiple datasets. The MIMIC-III dataset consists of 26 different tables containing about 20GB of data. While much work and care has gone into data preprocessing in order to provide a self-contained ready-to-use data resource with MIMIC-III, seemingly simple tasks such as computing a Sequential Organ Failure Assessment (SOFA) score \citep{vincent1996} remains a non-trivial effort^[There is considerable heterogeneity in number of patients satisfying the Sepsis-3 criterion \citep[of which SOFA provides a major component;][]{singer2016} among studies investigating MIMIC-III. Reported Sepsis-3 prevalence ranges from 11.3% \citep{desautels2016}, over 23.9% \citep{nemati2018} and 25.4% \citep{wang2018}, up to 49.1% \citep{johnson2018}. While some of this variation may be explained by differing patient inclusion criteria, diversity in label implementation must also contribute significantly.]. This is only exacerbated when aiming to co-integrate multiple different datasets of this form, spanning hospitals and even countries, in order to capture effects of differing practice and demographics.
+One example of a problem that has received much attention from the machine learning community is early prediction of sepsis in the intensive care unit \citep[ICU;][]{desautels2016, nemati2018, futoma2017, kam2017}. Interestingly, there is evidence that a large proportion of the publications are based on the same dataset \citep{fleuren2019}, the Medical Information Mart for Intensive Care III \citep[MIMIC-III;][]{johnson2016}, which shows a systematic lack of external validation. Part of this problem might well be the need for computational infrastructure handling multiple datasets. The MIMIC-III dataset consists of 26 different tables containing about 20GB of data. While much work and care has gone into data preprocessing in order to provide a self-contained ready-to-use data resource with MIMIC-III, seemingly simple tasks such as computing a Sepsis-Related Organ Failure Assessment (SOFA) score \citep{vincent1996} remains a non-trivial effort^[There is considerable heterogeneity in number of patients satisfying the Sepsis-3 criterion \citep[of which SOFA provides a major component;][]{singer2016} among studies investigating MIMIC-III. Reported Sepsis-3 prevalence ranges from 11.3% \citep{desautels2016}, over 23.9% \citep{nemati2018} and 25.4% \citep{wang2018}, up to 49.1% \citep{johnson2018}. While some of this variation may be explained by differing patient inclusion criteria, diversity in label implementation must also contribute significantly.]. This is only exacerbated when aiming to co-integrate multiple different datasets of this form, spanning hospitals and even countries, in order to capture effects of differing practice and demographics.
 
-The aim of the [\pkg{ricu}](https://cran.r-project.org/package=ricu) package is to provide computational infrastructure allowing users to investigate complex research questions in the context of critical care medicine as easily as possible by providing a unified interface to a heterogeneous set of data sources. The package enables users to write dataset-agnostic code which can simplify implementation and shorten the time necessary for prototyping code querying different datasets. In its current form, the package handles four large-scale, publicly available intensive care databases out of the box: MIMIC-III from the Beth Israel Deaconess Medical Center in Boston, Massachusetts \citep{johnson2016}, the eICU Collaborative Research Database \citep{pollard2018}, containing data collected from 208 hospitals across the United States, the High Time Resolution ICU Dataset (HiRID) from the Department of Intensive Care Medicine of the Bern University Hospital, Switzerland \citep{faltys2021} and the Amsterdam University Medical Center Database (AmsterdamUMCdb) from the Amsterdam University Medical Center \citep{thoral2021}. Furthermore, \pkg{ricu} was designed with extensibility in mind such that adding further public and/or private user-provided datasets is possible. Being implemented in \proglang{R}, a programming language popular among statisticians and data analysts, it is our hope to contribute to accessible and reproducible research by using a familiar environment and requiring only few system dependencies, thereby simplifying setup considerably.
+The aim of the [\pkg{ricu}](https://cran.r-project.org/package=ricu) package is to provide computational infrastructure allowing users to investigate complex research questions in the context of critical care medicine as easily as possible by providing a unified interface to a heterogeneous set of data sources. The package enables users to write dataset-agnostic code which can simplify implementation and shorten the time necessary for prototyping code querying different datasets. In its current form, the package handles five large-scale, publicly available intensive care databases out of the box: MIMIC-III from the Beth Israel Deaconess Medical Center in Boston, Massachusetts \citep{johnson2016}, the eICU Collaborative Research Database \citep{pollard2018}, containing data collected from 208 hospitals across the United States, the High Time Resolution ICU Dataset (HiRID) from the Department of Intensive Care Medicine of the Bern University Hospital, Switzerland \citep{faltys2021} and the Amsterdam University Medical Center Database (AmsterdamUMCdb) from the Amsterdam University Medical Center \citep{thoral2021}. Furthermore, \pkg{ricu} was designed with extensibility in mind such that adding further public and/or private user-provided datasets is possible. Being implemented in \proglang{R}, a programming language popular among statisticians and data analysts, it is our hope to contribute to accessible and reproducible research by using a familiar environment and requiring only few system dependencies, thereby simplifying setup considerably.
 
 To our knowledge, infrastructure that provides a common interface to multiple such datasets is a novel contribution. While there have been efforts \citep{adibuzzaman2016, wang2020} attempting to abstract away some specifics of a dataset, these have so far exclusively focused on MIMIC-III, the most popular of public ICU datsets, and have not been designed with dataset interoperability in mind.
 
@@ -190,7 +191,7 @@ Finally, Section \ref{examples} shows briefly how \pkg{ricu} could be used in pr
 
 # Ready to use datasets
 
-Several large-scale ICU datasets collected from multiple hospitals in the US and Europe can be set up for access using \pkg{ricu} with minimal user effort. Provisions in terms of required configuration information alongside functions for download and setup are part of \pkg{ricu}, opening up easy access to these datasets. Data itself, however, is not part of \pkg{ricu} and while the supported datasets are publicly available, access has to be granted by the dataset creators individually. Three datasets, MIMIC-III, eICU and HiRID are hosted on PhysioNet \citep{goldberger2000}, access to which requires an [account](https://physionet.org/register/), while the fourth, AmsterdamUMCdb is currently distributed via a separate platform, requiring a [download link](https://amsterdammedicaldatascience.nl/#amsterdamumcdb).
+Several large-scale ICU datasets collected from multiple hospitals in the US and Europe can be set up for access using \pkg{ricu} with minimal user effort. Provisions in terms of required configuration information alongside functions for download and setup are part of \pkg{ricu}, opening up easy access to these datasets. Data itself, however, is not part of \pkg{ricu} and while the supported datasets are publicly available, access has to be granted by the dataset creators individually. Four datasets, MIMIC-III, MIMIC-IV, eICU and HiRID are hosted on PhysioNet \citep{goldberger2000}, access to which requires an [account](https://physionet.org/register/), while the fifth, AmsterdamUMCdb is currently distributed via a separate platform, requiring a [download link](https://amsterdammedicaldatascience.nl/#amsterdamumcdb).
 
 For both MIMIC-III and eICU, small subsets of data are available as demo datasets that do not require credentialed access to PhysioNet. As the terms for distribution of these demo datasets are less restrictive, they can be made available as data packages \pkg{mimic.demo} and \pkg{eicu.demo}. Due to size constraints, however they are not available via CRAN, but can be installed from Github as
 
@@ -205,11 +206,11 @@ Provisions for datasets configured to be attached during package loading are mad
 
 Contingent on being granted access by the data owners, download requires a stable Internet connection, as well as 50 to 100 GB of temporary disk storage for unpacking and preparing the data for efficient access. In terms of permanent storage, 5 to 10 GB per dataset are required, while memory requirements are kept reasonably low by iterating over row-chunks for setup operations. Laptop class hardware (8-16 GB of memory) should suffice for setup and many analysis tasks which focus only on subsets of rows (and columns). Initial data source setup (depending on available download speeds and CPU/disk type) may take upwards of an hour per dataset.
 
-The following paragraphs serve to give quick introductions to the included datasets to offer some guidance, outlining some strengths and weaknesses of each of the datasets. Especially the PhysioNet datasets [MIMIC-III](https://mimic.physionet.org/about/mimic/) and [eICU](https://eicu-crd.mit.edu/about/eicu/) offer good documentation on the respective websites. This section is concluded with a table summarizing similarities and differences among the datasets, outlined in the following paragraphs (see Table \ref{tab:datasets}).
+The following paragraphs serve to give quick introductions to the included datasets to offer some guidance, outlining some strengths and weaknesses of each of the datasets. Especially the PhysioNet datasets [MIMIC-III](https://mimic.physionet.org/about/mimic/) and [eICU](https://eicu-crd.mit.edu/about/eicu/) offer good documentation on the respective websites. Datasets are listed in order of being added to \pkg{ricu} and the section is concluded with a table summarizing similarities and differences among the datasets (see Table \ref{tab:datasets}).
 
 ## MIMIC-III
 
-The [Medical Information Mart for Intensive Care III (MIMIC-III)](https://physionet.org/content/mimiciii/1.4/) represents the third iteration of the arguably most influential initiative for collecting and providing to the public large-scale ICU data^[The initial MIMIC (at the time short for Multi-parameter Intelligent Monitoring for Intensive Care) data release dates back 20 years and contained data on roughly 100 patients recorded from patient monitors in the medical, surgical, and cardiac intensive care units of Boston's Beth Israel Hospital during the years 1992-1999 \citep{moody1996}. Significantly broadened in scope, MIMIC-II was released 10 years after, now including data on almost 27,000 adult hospital admissions collected from ICUs of Beth Israel Deaconess Medical Center (BIDMC) from 2001 to 2008 \citep{lee2011}. The next iteration, MIMIC-IV has recently been released as first stable version \citep{johnson2021} and experimental support in \pkg{ricu} is available as dataset `miiv`.]. The dataset comprises de-identified health related data of roughly 46,000 patients admitted to critical care units of BIDMC during the years 2001-2012. Amounting to just over 61,000 individual ICU admission, data is available on demographics, routine vital sign measurements (at approximately 1 hour resolution), laboratory tests, medication, as well as critical care procedures, organized as a 26-table relational structure.
+The [Medical Information Mart for Intensive Care III (MIMIC-III)](https://physionet.org/content/mimiciii/1.4/) represents the third iteration of the arguably most influential initiative for collecting and providing to the public large-scale ICU data^[The initial MIMIC (at the time short for Multi-parameter Intelligent Monitoring for Intensive Care) data release dates back 20 years and contained data on roughly 100 patients recorded from patient monitors in the medical, surgical, and cardiac intensive care units of Boston's Beth Israel Hospital during the years 1992-1999 \citep{moody1996}. Significantly broadened in scope, MIMIC-II was released 10 years after, now including data on almost 27,000 adult hospital admissions collected from ICUs of Beth Israel Deaconess Medical Center (BIDMC) from 2001 to 2008 \citep{lee2011}.]. The dataset comprises de-identified health related data of roughly 46,000 patients admitted to critical care units of BIDMC during the years 2001-2012. Amounting to just over 61,000 individual ICU admission, data is available on demographics, routine vital sign measurements (at approximately 1 hour resolution), laboratory tests, medication, as well as critical care procedures, organized as a 26-table relational structure.
 
 ```{r mimic-tbls, eval = TRUE}
 mimic
@@ -233,7 +234,7 @@ Data resolution again varies considerably over included variables. The `vitalper
 
 ## HiRID
 
-Developed for early prediction of circulatory failure \citep{hyland2020}, the [High Time Resolution ICU Dataset (HiRID)](https://physionet.org/content/hirid/1.0/) contains data on almost 34,000 admissions to the Department of Intensive Care Medicine of the Bern University Hospital, Switzerland, an interdisciplinary 60-bed unit. Given the clear focus on a concrete application during data collection, this dataset is the most limited in terms of breadth of available information, which is also reflected in a comparatively simple data layout comprising only 5 tables^[The data is available in three states: as raw data and in preprocessed form, with preprocessed data being represented by two intermediary pipeline stages from \citep{hyland2020}. While \pkg{ricu} focuses exclusively on raw data, the *merged* stage represents a selection of variables that were deemed most predictive for determining circulatory failure, which are then merged into 18 meta-variables, representing different clinical concepts. Time stamps in *merged* data are left unchanged, yielding irregular time series, whereas for the *imputed* stage, data is down-sampled to a 5 minute grid and missing values are imputed using a scheme discussed in \citep{hyland2020}.].
+Developed for early prediction of circulatory failure \citep{hyland2020}, the [High Time Resolution ICU Dataset (HiRID)](https://physionet.org/content/hirid/1.0/) contains data on almost 34,000 admissions to the Department of Intensive Care Medicine of the Bern University Hospital, Switzerland, an interdisciplinary 60-bed unit. Given the clear focus on a concrete application during data collection, this dataset is the most limited in terms of data availability, which is also reflected in a comparatively simple data layout comprising only 5 tables^[The data is available in three states: as raw data and in two intermediary preprocessing stages from \citep{hyland2020}. While \pkg{ricu} focuses exclusively on raw data, the *merged* stage represents a selection of variables that were deemed most predictive for determining circulatory failure, which are then merged into 18 meta-variables, representing different clinical concepts. Time stamps in *merged* data are left unchanged, yielding irregular time series, whereas for the *imputed* stage, data is down-sampled to a 5 minute grid and missing values are imputed using a scheme discussed in \citep{hyland2020}.].
 
 ```{r hirid-tbls, eval = TRUE}
 hirid
@@ -249,17 +250,20 @@ As a second European dataset, also focusing on increased time-resolution over th
 aumc
 ```
 
-A slightly different approach to data anonymization was chosen for this dataset, yielding demographic information such as patient weight, height and age only available as binned variables instead of raw numeric values. Apart from this, there is information on patient origin, mortality, admission diagnoses, as well as numerical measurements including vital parameters, lab results, outputs from drains and catheters, information on administered medication, and other medical procedures. In terms of patient identifiers, it is possible to link ICU admissions corresponding to the same individual, but it is not possible to identify separate hospital admissions.
+For data anonymization purposes, demographic information such as patient weight, height and age only available as binned variables instead of raw numeric values. Apart from this, there is information on patient origin, mortality, admission diagnoses, as well as numerical measurements including vital parameters, lab results, outputs from drains and catheters, information on administered medication, and other medical procedures. In terms of patient identifiers, it is possible to link ICU admissions corresponding to the same individual, but it is not possible to identify separate hospital admissions.
 
-```{r, full-miss, echo = FALSE, eval = srcs_avail(demo) && !srcs_avail(srcs), results = "asis"}
-demo_instead_full_msg(demo, srcs, "jss.pdf")
-srcs <- demo
+## MIMIC-IV
+
+The next iteration in the MIMIC line of datasets, MIMIC-IV, has recently been released as first stable version \citep{johnson2021} and support in \pkg{ricu} is available as dataset `miiv`. Compared to MIMIC-III, this release shifts focus to newer data, dropping all CareVue-documented patients and with that, patients who were admitted before 2008, while adding patients up to 2019. The resulting dataset contains data on over 256,000 patients of which, 53,000 were admitted to ICUs, resulting in 76,000 unique ICU and almost 70,000 related hospital admissions.
+
+```{r miiv-tbls, eval = TRUE}
+miiv
 ```
 
 ```{r src-overview, echo = FALSE, results = "asis", cache = TRUE}
 as_quant <- function(x) {
 
-  if (identical(length(x), 0L)) {
+  if (identical(length(x), 0L) || is.na(x)) {
     return("-")
   }
 
@@ -269,12 +273,12 @@ as_quant <- function(x) {
 
   res <- format_2(quantile(x, probs = seq(0.25, 0.75, 0.25), na.rm = TRUE))
 
-  linebreak(paste0(res[2L], "\n(", res[1L], " - ", res[3L], ")"))
+  paste0(res[2L], " (", res[1L], "--", res[3L], ")")
 }
 
 big_mark <- function(x) {
 
-  if (identical(length(x), 0L)) {
+  if (identical(length(x), 0L) || is.na(x)) {
     return("-")
   }
 
@@ -285,10 +289,45 @@ format_2 <- function(x) {
   formatC(x, digits = 2L, format = "f")
 }
 
+n_patient <- function(x, type) {
+  if (type %in% names(as_id_cfg(x))) nrow(stay_windows(x, type)) else NA
+}
+
+feat_freq <- function(src, concept, time_span = "hours") {
+  res <- load_concepts(concept, src, interval = mins(1L), verbose = FALSE)
+  res <- res[, 1 / diff(as.double(get(index_var(res)), units = time_span)),
+             by = c(id_var(res))]
+  res
+}
+
+years <- function(src) {
+  switch(src,
+    mimic = "2001--2012",
+    eicu = "2014--2015",
+    hirid = "2008--2016",
+    aumc = "2003--2016",
+    miiv = "2008--2019",
+    NA
+  )
+}
+
+country <- function(src) {
+  switch(src,
+    mimic = "United States",
+    eicu = "United States",
+    hirid = "Switzerland",
+    aumc = "Netherlands",
+    miiv = "United States",
+    NA
+  )
+}
+
 summarize <- function(src, avail) {
 
   ids <- as_id_cfg(src)
   cnc <- avail[, src]
+
+  nrow(stay_windows(src, "icustay"))
 
   los_icu <- load_concepts("los_icu", src, verbose = FALSE)
 
@@ -296,32 +335,30 @@ summarize <- function(src, avail) {
     load_concepts("los_hosp", src, id_type = "hadm", verbose = FALSE)
   }
 
-  sex <- if ("patient" %in% names(ids)) {
-    load_concepts("sex", src, id_type = "patient", verbose = FALSE)
-  }
-
   fil <- list.files(src_data_dir(src), recursive = TRUE, full.names = TRUE)
   siz <- sum(vapply(fil, file.size, numeric(1L))) * 1e-9
-
-  vit <- load_concepts("hr", src, interval = mins(1L), verbose = FALSE)
-  vit <- vit[, 1 / diff(as.double(get(index_var(vit)), units = "hours")),
-             by = c(id_var(vit))]
-
-  lab <- load_concepts("bili", src, interval = mins(1L), verbose = FALSE)
-  lab <- lab[, 1 / diff(as.double(get(index_var(lab)), units = "hours")),
-             by = c(id_var(lab))]
+  row <- vapply(as_src_env(src), nrow, integer(1L))
 
   c(`Number of tables` = big_mark(length(as_src_env(src))),
     `Disk storage [GB]` = format_2(siz),
+    `Largest table (rows)` = big_mark(max(row)),
     `Available concepts` = sum(cnc),
-    `ICU` = big_mark(nrow(los_icu)),
-    `Hospital` = big_mark(nrow(hosp_len)),
-    `Unique patients` = big_mark(nrow(sex)),
+    `Time span` = years(src),
+    `Country of origin` = country(src),
+    `ICU` = big_mark(n_patient(src, "icustay")),
+    `Hospital` = big_mark(n_patient(src, "hadm")),
+    `Unique patients` = big_mark(n_patient(src, "patient")),
     `ICU stays` = as_quant(los_icu),
     `Hospital stays` = as_quant(hosp_len),
-    `Vital signs\n(heart rate)` = as_quant(vit),
-    `Lab tests\n(bilirubin)` = as_quant(lab)
+    `Heart rate` = as_quant(feat_freq(src, "hr")),
+    `Mean arterial pressure` = as_quant(feat_freq(src, "map")),
+    `Bilirubin` = as_quant(feat_freq(src, "bili", "days")),
+    `Lactate` = as_quant(feat_freq(src, "lact", "days"))
   )
+}
+
+if (srcs_avail(demo) && !srcs_avail(srcs)) {
+  srcs <- demo
 }
 
 src_names <- c(
@@ -333,11 +370,11 @@ src_names[is.na(src_names)] <- srcs[is.na(src_names)]
 
 dict <- load_dictionary(srcs)
 avai <- concept_availability(dict, include_rec = FALSE)
-summ <- vapply(srcs, summarize, character(10L), avai)
+summ <- vapply(srcs, summarize, character(15L), avai)
 
 colnames(summ)     <- src_names
-rownames(summ)     <- linebreak(rownames(summ), align = "l")
-rownames(summ)[3L] <- paste0(rownames(summ)[3L],
+rownames(summ)     <- rownames(summ)
+rownames(summ)[4L] <- paste0(rownames(summ)[4L],
                              footnote_marker_symbol(1, "latex"))
 
 n_rec_cpt <- nrow(concept_availability(dict, include_rec = TRUE)) -
@@ -345,16 +382,18 @@ n_rec_cpt <- nrow(concept_availability(dict, include_rec = TRUE)) -
 
 capt <- paste(
   "Comparison of datasets supported by \\pkg{ricu}, highlighting some of",
-  "the major similarities and distinguishing features among the four data",
+  "the major similarities and distinguishing features among the five data",
   "sources described in the preceding paragraphs. Values followed by",
   "parenthesized ranges represent medians and are accompanied by quartiles."
 )
 
 tbl <- kable(summ, format = "latex", escape = FALSE, booktabs = TRUE,
              caption = capt, label = "datasets")
-tbl <- pack_rows(tbl, "Admission counts", 4, 6)
-tbl <- pack_rows(tbl, "Stay lengths [day]", 7, 8)
-tbl <- pack_rows(tbl, "Frequency [1/day]", 9, 10)
+tbl <- pack_rows(tbl, "Data collection", 5, 6)
+tbl <- pack_rows(tbl, "Admission counts", 7, 9)
+tbl <- pack_rows(tbl, "Stay lengths [day]", 10, 11)
+tbl <- pack_rows(tbl, "Vital signs [1/hour]", 12, 13)
+tbl <- pack_rows(tbl, "Lab tests [1/day]", 14, 15)
 tbl <- footnote(tbl, symbol = paste(
   "These values represent the number of atomic concepts per data source.",
   "Additionally,", n_rec_cpt, "recursive concepts are available, which",
@@ -362,8 +401,19 @@ tbl <- footnote(tbl, symbol = paste(
   "(see Section \\\\ref{concept-specification} for details)."),
   threeparttable = TRUE, escape = FALSE
 )
-tbl
+
+if (identical(srcs, demo)) {
+  tbl
+} else {
+  landscape(tbl)
+}
 ```
+
+```{r, full-miss, echo = FALSE, eval = identical(srcs, demo), results = "asis"}
+demo_instead_full_msg(demo, srcs, "jss.pdf")
+```
+
+In addition to including newer ICU data, this MIMIC release puts both more emphasis on data collected outside the ICU, newly including emergency department (ED). In a similar vein, the set of considered data types is also expanded by adding chest X-ray (CXR) imagery, while expanding the amount unstructured text data (not yet publicly available). Despite these interesting developments, the focus of \pkg{ricu} remains on data that lies in the intersection of the supported datasets and therefore both ED and CXR data cannot be accessed by the current `miiv` implementation.
 
 # Data concepts
 
@@ -376,7 +426,7 @@ One of the key components of \pkg{ricu} is a scheme for specifying how to retrie
 load_concepts("hr", demo, verbose = FALSE)
 ```
 
-This requires some form of infrastructure for specifying how to retrieve data subsets (Section \ref{concept-specification}), which is both extensible (to new concepts and new datasets) and flexible enough to handle concept-specific pre-processing, while providing abstractions that allow for code re-use for common data transformation tasks. Building on this, \pkg{ricu} has included a dictionary with over 100 concepts implemented for all four supported datasets (where possible; see also Section \ref{ready-to-use-concepts}).
+This requires some form of infrastructure for specifying how to retrieve data subsets (Section \ref{concept-specification}), which is both extensible (to new concepts and new datasets) and flexible enough to handle concept-specific pre-processing, while providing abstractions that allow for code re-use for common data transformation tasks. Building on this, \pkg{ricu} has included a dictionary with over 100 concepts implemented for all five supported datasets (where possible; see also Section \ref{ready-to-use-concepts}).
 
 ## Data classes
 
