@@ -69,7 +69,7 @@ pkgdown:
 ```{r setup, include = FALSE}
 source(system.file("extdata", "vignettes", "helpers.R", package = "ricu"))
 
-options(width = 78)
+options(width = 76)
 
 library(ricu)
 library(data.table)
@@ -224,8 +224,16 @@ In terms of patient identifiers, MIMIC-III allows for identifying both individua
 
 Unlike the single-center focus of other datasets, the [eICU Collaborative Research Database](https://physionet.org/content/eicu-crd/2.0/) constitutes an amalgamation of data from critical care units of over 200 hospitals throughout the continental United States. Large-scale data collected via the Philips eICU program which provides telehealth infrastructure for intensive care units, is available from the Philips eICU Research Institute (eRI), albeit neither publicly nor freely. Only data corresponding to roughly 200,000 ICU admissions, sampled from a larger population of over 3 million ICU admissions and stratified by hospital, is being made available via PhysioNet. Patients with discharge dates in 2014 or 2015 were considered, with stays in low acuity units being removed.
 
+```{r width-inc, include = FALSE}
+old_width <- options(width = 78)[["width"]]
+```
+
 ```{r eicu-tbls, eval = TRUE}
 eicu
+```
+
+```{r width-dec, include = FALSE}
+options(width = old_width)
 ```
 
 The data is organized into 31 tables and includes patient demographics, routine vital signs, laboratory measurements, medication administrations, admission diagnoses, as well as treatment information. Owing to the wide range of hospitals participating in this data collection initiative, spanning small, rural, non-teaching health centers with fewer than 100 beds to large teaching hospitals with an excess of 500 beds, data availability varies. Even if data was being recorded at the bedside it might end up missing from the eICU dataset due to technical limitations of the collection process. As for patient identifiers, while it is possible to link ICU admissions corresponding to the same hospital stay, it is not possible to identify patients across hospital stays.
@@ -341,7 +349,7 @@ summarize <- function(src, avail) {
 
   c(`Number of tables` = big_mark(length(as_src_env(src))),
     `Disk storage [GB]` = format_2(siz),
-    `Largest table (rows)` = big_mark(max(row)),
+    `Largest table [rows]` = big_mark(max(row)),
     `Available concepts` = sum(cnc),
     `Time span` = years(src),
     `Country of origin` = country(src),
@@ -414,7 +422,7 @@ if (identical(srcs, demo)) {
 demo_instead_full_msg(demo, srcs, "jss.pdf")
 ```
 
-In addition to including newer ICU data, this MIMIC release puts both more emphasis on data collected outside the ICU, newly including emergency department (ED). In a similar vein, the set of considered data types is also expanded by adding chest X-ray (CXR) imagery, while expanding the amount unstructured text data (not yet publicly available). Despite these interesting developments, the focus of \pkg{ricu} remains on data that lies in the intersection of the supported datasets and therefore both ED and CXR data cannot be accessed by the current `miiv` implementation.
+In addition to including newer ICU data, this MIMIC release puts both more emphasis on data collected outside the ICU, newly making emergency department (ED) data available. In a similar vein, the set of considered data types is also expanded by including chest X-ray (CXR) imagery directly with MIMIC data, using the same patient identifiers, while expanding the amount of unstructured text data (still to be made publicly available). Despite these promising developments, the focus of \pkg{ricu} remains on data that lies in the intersection of the supported datasets and therefore both ED and CXR data cannot be accessed by the current `miiv` implementation. Finally, documentation of medication administration has been much improved by not only reporting prescriptions, but, using an electronic Medicine Administration Record (eMAR) system, including time-stamped data on administration of individual formulary units.
 
 # Data concepts
 
@@ -427,7 +435,7 @@ One of the key components of \pkg{ricu} is a scheme for specifying how to retrie
 load_concepts("hr", demo, verbose = FALSE)
 ```
 
-This requires some form of infrastructure for specifying how to retrieve data subsets (Section \ref{concept-specification}), which is both extensible (to new concepts and new datasets) and flexible enough to handle concept-specific pre-processing, while providing abstractions that allow for code re-use for common data transformation tasks. Building on this, \pkg{ricu} has included a dictionary with over 100 concepts implemented for all five supported datasets (where possible; see also Section \ref{ready-to-use-concepts}).
+This requires infrastructure for specifying how to retrieve data subsets (Section \ref{concept-specification}) that is both extensible (to new concepts and new datasets) and flexible enough to handle concept-specific pre-processing. Furthermore, abstractions that allow for code re-use for common data transformation tasks are important for simplifying both code development and maintenance. Building on this framework, \pkg{ricu} has included a dictionary with over 100 concepts implemented for all five supported datasets (where possible; see also Section \ref{ready-to-use-concepts}).
 
 ## Data classes
 
@@ -502,7 +510,7 @@ Despite a best-effort approach, data availability can be a limiting factor. Whil
 
 The largest group of concepts dealing with treatment-related information is described by the `medications` category. In addition to drug administrations, only basic ventilation information is currently provided as ready-to-use concept. Just like availability of common ICU procedures, patient medication is also underdeveloped, covering mainly vasopressor administrations, as well as corticosteroids, antibiotics and dextrose infusions. The current concepts retrieving treatment-related information are mostly focused on providing data required for constructing clinical scores described in Section \ref{outcomes}. While this group of concepts lends itself to use of `win_tbl` objects, bear in mind that when requesting multiple concepts which do not all return data as `win_tbl`s, all `win_tbl` objects are converted to `ts_tbl` in order to be merged with the non-`win_tbl` objects.
 
-Ventilation is represented by several concepts: a ventilation indicator variable (`vent_ind`), as well as ventilation durations (`vent_dur`) are constructed from start and end events (`vent_start` and `vent_end`). This includes any kind of mechanical ventilation (invasive via an endotracheal or tracheostomy tube), as well as non-invasive ventilation via face or nasal masks. In line with other concepts belonging to this group, the current state is far from being comprehensive and expansion to further ventilation parameters is desirable.
+Ventilation is represented by several concepts: a ventilation indicator variable (`vent_ind`), as well as ventilation durations (`vent_dur`) are constructed from start and end events (concepts `vent_start` and `vent_end`). This includes any kind of mechanical ventilation (invasive via an endotracheal or tracheostomy tube), as well as non-invasive ventilation via face or nasal masks. In line with other concepts belonging to this group, the current state is far from being comprehensive and expansion to further ventilation parameters is desirable.
 
 The singular concept addressing antibiotics (`abx`) returns an indicator signaling whenever an antibiotic was administered. This includes any route of administration (intravenous, oral, topical, etc.) and does neither report dosage, nor active ingredient. Finally, vasopressor administration is reported by several concepts representing different vasoactive drugs (including dopamine, dobutamine, epinephrine, norepinephrine and vasopressin), as well as different administration aspects such as rate, duration (and for use in SOFA scoring, rate administered for at least 60 minutes).
 
@@ -580,7 +588,7 @@ Specification of how data can be retrieved from a data source is encoded by data
 
 Analogously to how different types of concepts are used to represent different types of data, different types of items handle different types of data loading. The most common scenario is selecting a subset of rows from a table by matching a set of ID values (`sub_itm`). In the above example, heart rate data in MIMIC-III can be located by searching for ID values 211 and 220045 in column `itemid` of table `chartevents` (heart rate data is stored in *long* format). Conversely, heart rate data in eICU is stored in *wide* format, requiring no row-subsetting. Column `heartrate` of table `vitalperiodic` contains all corresponding data and such data situations are handled by the `col_itm` class. Other item classes include `rgx_itm` where a regular expression is used for selecting rows and `fun_itm` where an arbitrary function can be used for data loading. If a data loading scenario is not covered by these classes, adding further `itm` subclasses is encouraged.
 
-In order to extend the current concept library both to new datasets and new concepts, further JSON files can be incorporated by adding their paths to `RICU_CONFIG_PATH`. Concepts with names that already exist are only used for their `sources` entries, such that `hr` for `new_dataset` can be specified as
+In order to extend the current concept library both to new datasets and new concepts, further JSON files can be incorporated by adding paths to their enclosing directories to `RICU_CONFIG_PATH`. Concepts with names that exist in files of the same name but with higher precedence are only used for their `sources` entries, such that `hr` for `new_dataset` can be specified as follows, while concepts with non-existing names are treated as new concepts.
 
 ```
 "hr": {
@@ -595,8 +603,6 @@ In order to extend the current concept library both to new datasets and new conc
   }
 }
 ```
-
-whereas concepts with non-existing names are treated as new concepts.
 
 Central to providing the required flexibility for loading of certain data concepts that require some specific pre-processing are callback functions that can be specified for several *item* types. Functions (with appropriate signatures), designated as callback functions, are invoked on individual data items, before concept-related preprocessing is applied. A common scenario for this is unit of measurement conversion: In MIMIC-III data for example, several `itemid` values correspond to temperature measurements, some of which refer to temperatures measured in degrees Celsius whereas others are used for measurements in degrees Fahrenheit. As the information encoding which measurement corresponds to which `itemid` values is no longer available during concept-related preprocessing, this is best resolved at the level of individual data items. Several function factories are available for generating callback functions and `convert_unit()` is intended for covering unit conversions^[A more recent addition to \pkg{ricu} has been experimental support for automatic unit conversion using the \pkg{units} package \citep{pebesma2016}. In order to leverage these capabilities, a concept can be specified as `unt_cncpt` and values will be converted to the singular unit stated by the concept definition. Source units are taken to be what is returned by the `unit_var` column.]. Data *items* corresponding to the `temp` concept for MIMIC-III are specified as
 
@@ -712,7 +718,7 @@ For importing, the information contained in `tbl_cfg` configuration objects is m
 
 ### Data attaching
 
-Finally, attaching a dataset creates a corresponding `src_env` object, containing for each table a corresponding `src_tbl` object, which together with associated metadata are used by \pkg{ricu} to run queries against the data (edge $c \to d$ in Figure \ref{fig:src-setup}). The environment variable `RICU_SRC_LOAD` can contain a comma-separated list of data source names that are set up for being automatically attached on namespace loading. This defaults to all currently supported datasets and the current set of source names is available as `auto_attach_srcs()`.
+Finally, attaching a dataset creates a corresponding `src_env` object, containing for each table a corresponding `src_tbl` object, which together with associated metadata are used by \pkg{ricu} to run queries against the data (edge $c \to d$ in Figure \ref{fig:src-setup}). The environment variable `RICU_SRC_LOAD` can contain a comma-separated list of data source names that are set up for being automatically attached on namespace loading. This defaults to all currently supported datasets and the current set of source names is available as `auto_attach_srcs()`. Apart from this automatism, the process of attaching a dataset can be manually invoked by calling `attach_src()`, which can be convenient when for example the data source configuration has been modified, in order for this to take effect.
 
 Two configuration objects which are important for data loading (see the following Section \ref{data-loading}) are `id_cfg` (Section \ref{id-configuration}) and `col_cfg` (Section \ref{default-column-configuration}), providing default values for certain types of columns, including time-stamp, measurement value and measurement unit columns, as well as defining relationships between patient identifiers (such as hospital stay ID and ICU stay ID).
 
@@ -981,7 +987,8 @@ aumc_windows <- function(x) {
 
   res <- tbl[, c(ids, sta[1L], end)]
   res <- res[, c(sta[2L]) := 0L]
-  res <- res[, c(sta, end) := lapply(.SD, ms_as_min), .SDcols = c(sta, end)]
+  res <- res[, c(sta, end) := lapply(.SD, ms_as_min),
+             .SDcols = c(sta, end)]
 
   res <- data.table::setcolorder(res, c(ids, sta, end))
   res <- rename_cols(res, c(ids, paste0(ids, "_start"),
@@ -1015,11 +1022,11 @@ The above outline serves as an example on how to proceed when adding new data to
 
 ### Summary of required steps
 
-Summarizing aspects explained in more detail in the previous sections, the following points list the required steps for adding new data in the order they should be considered in.
+Summarizing aspects explained in more detail in the previous sections, the following points list the required steps for adding new data in the order they should be considered in. The approach taken here being to start simple and build from that.
 
-1. Tables converted to `.fst` files should be moved to the folder returned by `src_data_dir()` when passed the dataset name (alternatively, data source specific methods for `src_download()` and `src_import()` are required).
+1. Tables saved as `.fst` files should be moved to the folder returned by `src_data_dir()` when passed the dataset name (alternatively, methods implementing `src_download()` and `src_import()` are required).
 
-1. A minimal data source configuration file `data-sources.json` is required under `RICU_CONFIG_PATH`. For AmsterdamUMCdb, this could be as minimal as (assuming no partitioning):
+1. A minimal data source configuration file `data-sources.json` is required in the directory pointed to by `RICU_CONFIG_PATH`. For AmsterdamUMCdb, this could be as minimal as (assuming no partitioning):
 
         {
           "name": "aumc_min",
@@ -1046,17 +1053,19 @@ Summarizing aspects explained in more detail in the previous sections, the follo
     - returns an `id_tbl` object where patient identifiers are chosen such that time-stamps are relative to corresponding admission,
     - (Optional) if multiple identifiers are available from data uses the column passed as `id_hint` for patient identifiers.
 
+    Upon registering this method with S3 dispatch, higher-level data loading functions such as `load_ts()` become available (given that no changes in patient identifiers are requested).
+
 1. (Optional) if the source configuration specifies multiple patient identifiers which are not all available from all tables directly, an implementation of `id_win_helper()` most likely will be required (see Section \ref{data-loading}).
 
 1. Now, the source configuration can be expanded with per-table column defaults and data items can be added to the concepts included with \pkg{ricu} by creating a `concept-dict.json` under the path pointed to by `RICU_CONFIG_PATH`. For more information on readily available concepts, refer to Section \ref{ready-to-use-concepts} and for specifying new concepts altogether, pointers are available in section \ref{concept-specification}.
 
 # Examples
 
-In order to briefly illustrate how \pkg{ricu} could be applied to real-world clinical questions, two examples are provided in the following sections. While the first example fully relies on data concepts that are included with \pkg{ricu}, the second one explores both how some data pre-processing can be added to an existing concept by creating a new `rec_cncpt` and how to create an new data concept altogether.
+In order to briefly illustrate how \pkg{ricu} could be applied to real-world clinical questions, two examples are provided in the following sections. The first example fully relies on data concepts that are included with \pkg{ricu}. Whereas the second one explores both how some data pre-processing can be added to an existing concept, by creating a recursive concept (or `rec_cncpt`), as well as how to create an entirely new data concept in code (instead of JSON specification as outlined in Section \ref{concept-specification}), using constructors `item()` and `concept()`.
 
 ## Lactate and mortality
 
-First, we investigate the association of lactate levels and mortality. This problem has been studied before and it is widely accepted that both static and dynamic lactate indices are associated with increased mortality \citep{haas2016, nichol2011, van2013}. In order to model this relationship, we fit a time-varying proportional hazards Cox model \citep{therneau2000, therneau2015}, which includes the SOFA score as a general predictor of illness severity, using MIMIC-III demo data. Furthermore, for the sake of this example, we are only interested in patients admitted from 2008 onwards (corresponding to the MetaVision database) of ages 20 to 90 years old.
+First, the association of lactate levels and mortality is investigated. This problem has been studied before and it is widely accepted that both static and dynamic lactate indices are associated with increased mortality \citep{haas2016, nichol2011, van2013}. In order to model this relationship, a time-varying proportional hazards Cox model \citep{therneau2000, therneau2015} is fitted, which includes the SOFA score as a general predictor of illness severity, using MIMIC-III demo data. Furthermore, for the sake of this example, the patient cohort is defined to be patients admitted from 2008 onwards (corresponding to the MetaVision database) of ages 20 to 90 years old.
 
 ```{r cox-surv, eval = srcs_avail("mimic_demo")}
 src <- "mimic_demo"
@@ -1083,7 +1092,7 @@ cox_mod <- coxph(
 )
 ```
 
-After loading the data, some minor pre-processing is still required before modeling: first, we want to make sure we only use data up to (and including) the hour in which the `death` flag switches to `TRUE`. After that we impute missing values for `lact` using a last observation carry forward (locf) scheme (observing the patient grouping) and we simply replace missing `death` values with the value `FALSE`. The resulting model fit can be visualized as:
+After loading the data, some minor pre-processing is still required before modeling: first, data is filtered such that only data up to (and including) the hour in which the `death` flag switches to `TRUE` is used. Following that, missing values for `lact` are imputed using a last observation carry forward (locf) scheme (observing the patient grouping) and missing `death` values are set to `FALSE`. The resulting model fit can be visualized as:
 
 ```{r cox-plot, eval = srcs_avail(src), echo = FALSE, warning = FALSE, message = FALSE, fig.width = 8}
 theme_fp <- function(...) {
@@ -1100,7 +1109,7 @@ A simple exploration already shows that the increased values of lactate are asso
 
 ## Diabetes and insulin treatment
 
-For the next example, again using MIMIC-III demo data, we turn to the usage of comorbidities and treatment related information. We look at the amount of insulin administered to patients in the first 24 hours from their ICU admission. In particular, we investigate if diabetic patients receive more insulin in the first day of their stay compared to non-diabetic patients. For this we create two concepts: `ins24`, a binned variable representing the cumulative amount of insulin administered within the first 24 hours of an ICU admission, and `diab`, a logical variable encoding diabetes comorbidity.
+For the next example, again using MIMIC-III demo data, comorbidities and treatment related information are used: the amount of insulin administered to patients in the first 24 hours from their ICU admission is analyzed, in connection with diabetic status, in order to determine whether diabetic patients receive more insulin over that time-span, when compared to non-diabetic patients. For this two concepts are introduced: `ins24`, a binned variable representing the cumulative amount of insulin administered within the first 24 hours of an ICU admission, and `diab`, a logical variable encoding diabetes comorbidity.
 
 As there already is an insulin concept available, `ins24` can be implemented as `rec_cncpt`, loading `ins` with aggregation set to `sum()` instead of the default `median()` and inserting the callback function `ins_cb()` into the loading process. The callback function takes care of the pre-processing steps outlined above: first data is subsetted to fall into the first 24 hours of ICU admissions, followed by binning of summed values.
 
@@ -1126,11 +1135,12 @@ ins_cb <- function(ins, ...) {
 }
 
 ins24 <- load_dictionary(src, "ins")
-ins24 <- concept("ins24", ins24, "insulin in first 24h", aggregate = "sum",
-                 callback = ins_cb, target = "id_tbl", class = "rec_cncpt")
+ins24 <- concept("ins24", ins24, "insulin in first 24h",
+                 aggregate = "sum", callback = ins_cb,
+                 target = "id_tbl", class = "rec_cncpt")
 ```
 
-The binary diabetes concept can be implemented as `lgl_cncpt`, for which ICD-9 codes are matched using a regular expression. As we're not only interested in retrieving diabetic patients, a `col_itm` is more suited for data retrieval over an `rgx_itm` and for creating the required callback function that produces a logical vector we can use `transform_fun()` coupled with a function like `grep_diab()`. The two concepts are then combined using `c()` and loaded via `load_concepts()`.
+The binary diabetes concept can be implemented as `lgl_cncpt`, for which ICD-9 codes are matched using a regular expression. As not only the subset of diabetic patients is of interest, a `col_itm` is more suited for diabetes status retrieval over a `rgx_itm`. For creating the required callback function that produces a logical vector, `transform_fun()` can be employed, coupled with a function like `grep_diab()`. The two concepts are then combined using `c()` and loaded via `load_concepts()`.
 
 ```{r diab, eval = srcs_avail(src)}
 grep_diab <- function(x) grepl("^250\\.?[0-9]{2}$", x)
@@ -1140,13 +1150,14 @@ diab  <- item(src, table = "diagnoses_icd",
 diab  <- concept("diab", diab, "diabetes", target = "id_tbl",
                  class = "lgl_cncpt")
 
-dat <- load_concepts(c(ins24, diab), id_type = "icustay", verbose = FALSE)
+dat <- load_concepts(c(ins24, diab), id_type = "icustay",
+                     verbose = FALSE)
 dat <- replace_na(dat, "[0,1)", vars = "ins24")
 
 dat
 ```
 
-After this, we can visualize the difference between the two groups with a histogram:
+Following this, the difference between the two groups can be visualized with a histogram over the binned insulin administration values:
 
 ```{r diabetes-visualize, echo = FALSE, eval = srcs_avail(src), fig.height = 3}
 dat <- dat[, weight := 1 / .N, by = diab]
@@ -1158,7 +1169,7 @@ ggplot(dat, aes(x = ins24, fill = diab)) +
   theme_bw(10)
 ```
 
-The plot suggests that for the cohort defined in the previous example and during the first day of ICU stay, perhaps unsurprisingly, with increasing insulin dosage, diabetic patients receive more insulin compared to non-diabetic patients. This effect is more pronounced when looking at the full MIMIC-III data instead of the demo subset which includes only data corresponding to `r nrow(mimic_demo$icustays)` ICU stays.
+The plot suggests that for the MetaVision cohort defined in the previous example, without age subsettung, and during the first day of ICU stay, perhaps unsurprisingly, with increasing insulin dosage, diabetic patients receive more insulin compared to non-diabetic patients. This effect is more pronounced when looking at the full MIMIC-III data instead of the demo subset which includes only data corresponding to `r nrow(mimic_demo$icustays)` ICU stays.
 
 # Acknowledgments
 
