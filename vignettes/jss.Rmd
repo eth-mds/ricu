@@ -324,8 +324,6 @@ summarize <- function(src, avail) {
   )
 }
 
-srcs <- demo
-
 src_names <- c(
   mimic = "MIMIC-III", eicu = "eICU", hirid = "HiRID", aumc = "AUMC",
   miiv = "MIMIC-IV", mimic_demo = "MIMIC (demo)", eicu_demo = "eICU (demo)"
