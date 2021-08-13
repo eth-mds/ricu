@@ -82,7 +82,7 @@ triggered by the user at any time. If such a convenience link as described
 above is desired by the user, an environment such as \code{.GlobalEnv} has to be
 passed as \code{assign_env} to \code{attach_src()}.
 
-Data sets are set up as \code{src_env} objects irrespectively of whether all (or
+Data sets are set up as \code{src_env} objects irrespective of whether all (or
 any) of the required data is available. If some (or all) data is missing,
 the user is asked for permission to download in interactive sessions and an
 error is thrown in non-interactive sessions. Downloading demo datasets

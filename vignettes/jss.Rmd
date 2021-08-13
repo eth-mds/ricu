@@ -41,7 +41,7 @@ author:
       | CH-8092 Zürich
     email: \email{peter.buehlmann@stat.math.ethz.ch}
 abstract: >
-  Providing computational infrastructure for handling diverse intensive care unit (ICU) datasets, the \proglang{R} package \pkg{ricu} enables writing dataset-agnostic analysis code, thereby facilitating multi-center training and validation of machine learning models. The package is designed with an emphasis on extensibility both to new datasets as well as clinical data concepts, and currently supports the loading of around 100 patient variables corresponding to a total of 395,941 ICU admissions from five data sources collected in Europe and the United States. By allowing for the addition of user-specified medical concepts and data sources the aim of \pkg{ricu} is to foster robust, data-based intensive care research, allowing the user to externally validate their method or conclusion with relative ease, and in turn facilitating reproducible and therefore transparent work in this field.
+  Providing computational infrastructure for handling diverse intensive care unit (ICU) datasets, the \proglang{R} package \pkg{ricu} enables writing dataset-agnostic analysis code, thereby facilitating multi-center training and validation of machine learning models. The package is designed with an emphasis on extensibility both to new datasets as well as clinical data concepts, and currently supports the loading of around 100 patient variables corresponding to a total of 395,941 ICU admissions from five data sources collected in Europe and the United States. By allowing for the addition of user-specified medical concepts and data sources, the aim of \pkg{ricu} is to foster robust, data-based intensive care research, allowing the user to externally validate their method or conclusion with relative ease, and in turn facilitating reproducible and therefore transparent work in this field.
 keywords:
   formatted: [electronic health records, computational physiology, critical care medicine]
   plain:     [electronic health records, computational physiology, critical care medicine]
@@ -127,13 +127,15 @@ knitr::opts_chunk$set(eval = FALSE)
 
 Collection of electronic health records has seen a significant rise in recent years \citep{evans2016}, opening up opportunities and providing the grounds for a large body of data-driven research oriented towards helping clinicians in decision-making and therefore improving patient care and health outcomes \citep{jiang2017}.
 
-One example of a problem that has received much attention from the machine learning community is early prediction of sepsis in the intensive care unit \citep[ICU;][]{desautels2016, nemati2018, futoma2017, kam2017}. Interestingly, there is evidence that a large proportion of the publications are based on the same dataset \citep{fleuren2019}, the Medical Information Mart for Intensive Care III \citep[MIMIC-III;][]{johnson2016}, which shows a systematic lack of external validation. Part of this problem might well be the need for computational infrastructure handling multiple datasets. The MIMIC-III dataset consists of 26 different tables containing about 20GB of data. While much work and care has gone into data preprocessing in order to provide a self-contained ready-to-use data resource with MIMIC-III, seemingly simple tasks such as computing a Sepsis-Related Organ Failure Assessment (SOFA) score \citep{vincent1996} remains a non-trivial effort^[There is considerable heterogeneity in number of patients satisfying the Sepsis-3 criterion \citep[of which SOFA provides a major component;][]{singer2016} among studies investigating MIMIC-III. Reported Sepsis-3 prevalence ranges from 11.3% \citep{desautels2016}, over 23.9% \citep{nemati2018} and 25.4% \citep{wang2018}, up to 49.1% \citep{johnson2018}. While some of this variation may be explained by differing patient inclusion criteria, diversity in label implementation must also contribute significantly.]. This is only exacerbated when aiming to co-integrate multiple different datasets of this form, spanning hospitals and even countries, in order to capture effects of differing practice and demographics.
+One example of a problem that has received much attention from the machine learning community is early prediction of sepsis in the intensive care unit \citep[ICU;][]{desautels2016, nemati2018, futoma2017, kam2017}. Interestingly, there is evidence that a large proportion of the publications are based on the same dataset \citep{fleuren2019}, the Medical Information Mart for Intensive Care III \citep[MIMIC-III;][]{johnson2016}, which shows a systematic lack of external validation. This issue has recently again been highlighted by a study demonstrating poor performance in external validation of a widely adopted proprietary sepsis prediction model \citep{wong2021}.
 
-The aim of the [\pkg{ricu}](https://cran.r-project.org/package=ricu) package is to provide computational infrastructure allowing users to investigate complex research questions in the context of critical care medicine as easily as possible by providing a unified interface to a heterogeneous set of data sources. The package enables users to write dataset-agnostic code which can simplify implementation and shorten the time necessary for prototyping code querying different datasets. In its current form, the package handles five large-scale, publicly available intensive care databases out of the box: MIMIC-III from the Beth Israel Deaconess Medical Center in Boston, Massachusetts \citep{johnson2016}, the eICU Collaborative Research Database \citep{pollard2018}, containing data collected from 208 hospitals across the United States, the High Time Resolution ICU Dataset (HiRID) from the Department of Intensive Care Medicine of the Bern University Hospital, Switzerland \citep{faltys2021} and the Amsterdam University Medical Center Database (AmsterdamUMCdb) from the Amsterdam University Medical Center \citep{thoral2021}. Furthermore, \pkg{ricu} was designed with extensibility in mind such that adding further public and/or private user-provided datasets is possible. Being implemented in \proglang{R}, a programming language popular among statisticians and data analysts, it is our hope to contribute to accessible and reproducible research by using a familiar environment and requiring only few system dependencies, thereby simplifying setup considerably.
+Contributing to this problem might well be the lack of computational infrastructure handling multiple datasets. The MIMIC-III dataset consists of 26 different tables containing about 20GB of data. While much work and care has gone into data preprocessing in order to provide a self-contained ready-to-use data resource with MIMIC-III, seemingly simple tasks such as computing a Sepsis-3 label \citep{singer2016} remain non-trivial efforts^[There is considerable heterogeneity in number of patients satisfying the Sepsis-3 criterion \citep{singer2016} among studies investigating MIMIC-III. Reported Sepsis-3 prevalence ranges from 11.3% \citep{desautels2016}, over 23.9% \citep{nemati2018} and 25.4% \citep{wang2018}, up to 49.1% \citep{johnson2018}. While some of this variation may be explained by differing patient inclusion criteria, diversity in label implementation must also contribute significantly.]. This is only exacerbated when aiming to co-integrate multiple different datasets of this form, spanning hospitals and even countries, in order to capture effects of differing practice and demographics.
+
+The aim of \pkg{ricu} is to provide computational infrastructure allowing users to investigate complex research questions in the context of critical care medicine as easily as possible by providing a unified interface to a heterogeneous set of data sources. The package enables users to write dataset-agnostic code which can simplify implementation and shorten the time necessary for prototyping code querying different datasets. In its current form, the package handles five large-scale, publicly available intensive care databases out of the box: MIMIC-III from the Beth Israel Deaconess Medical Center in Boston, Massachusetts \citep[BIDMC;][]{johnson2016}, the eICU Collaborative Research Database \citep{pollard2018}, containing data collected from 208 hospitals across the United States, the High Time Resolution ICU Dataset (HiRID) from the Department of Intensive Care Medicine of the Bern University Hospital, Switzerland \citep{faltys2021}, the Amsterdam University Medical Center Database (AmsterdamUMCdb) from the Amsterdam University Medical Center \citep{thoral2021} and MIMIC-IV, again using data from BIDMC \citep{johnson2021}. Furthermore, \pkg{ricu} was designed with extensibility in mind such that adding new public and/or private user-provided datasets is possible. Being implemented in \proglang{R}, a programming language popular among statisticians and data analysts, it is our hope to contribute to accessible and reproducible research by using a familiar environment and requiring only few system dependencies, thereby simplifying setup considerably.
 
 To our knowledge, infrastructure that provides a common interface to multiple such datasets is a novel contribution. While there have been efforts \citep{adibuzzaman2016, wang2020} attempting to abstract away some specifics of a dataset, these have so far exclusively focused on MIMIC-III, the most popular of public ICU datsets, and have not been designed with dataset interoperability in mind.
 
-Given the somewhat narrow focus of the targeted datasets, combined with the fact that in some cases data is even extracted from identical patient care management systems, it may come as a surprise as to how heterogeneous the resulting datasets are. In MIMIC-III and HiRID, for example, time-stamps are reported as absolute times (albeit randomly shifted due to data privacy concerns), whereas eICU and AUMC use relative times (with origins being admission times). Another example involves different types of patient identifiers and their use among datasets. Common to all is the notion of an ICU admission identifier (ID), but apart from that, the amount of available information varies: While ICU (and hospital) readmissions for a given patient can be identified in some, this is not possible in other datasets. Furthermore, use of identifier systems might not be consistent over tables. In MIMIC-III, for example, some tables refer to ICU stay IDs while others use hospital stay IDs, which slightly complicates data retrieval for a given ID system. Additionally, table layouts vary (*long* versus *wide* data arrangement) and data organization in general is far from consistent over datasets.
+Given the somewhat narrow focus of the targeted datasets, it may come as a surprise as to how heterogeneous the resulting datasets are. In MIMIC-III and HiRID, for example, time-stamps are reported as absolute times (albeit randomly shifted due to data privacy concerns), whereas eICU and AmsterdamUMCdb use relative times (with origins being admission times). Another example involves different types of patient identifiers and their use among datasets. Common to all is the notion of an ICU admission identifier (ID), but apart from that, the amount of available information varies: While ICU (and hospital) readmissions for a given patient can be identified in some, this is not possible in other datasets. Furthermore, use of identifier systems might not be consistent over tables. In MIMIC-III, for example, some tables refer to ICU stay IDs while others use hospital stay IDs, which slightly complicates data retrieval for a fixed ID system. Additionally, table layouts vary (*long* versus *wide* data arrangement) and data organization in general is far from consistent over datasets.
 
 # Quick start guide
 
@@ -147,13 +149,13 @@ The following list gives a quick outline of the steps required for setting up an
 
 1. Requesting access to datasets and data source setup:
 
-    * Demo datasets can be set up by installing the data packages `mimic.demo` and/or `eicu.demo`, passing `"https://eth-mds.github.io/physionet-demo"` as `repos` argument to `install.packages()` (see code snippet in Section \ref{ready-to-use-datasets}).
+    * Demo datasets can be set up by installing the data packages `mimic.demo` and/or `eicu.demo` from [GitHub]("https://eth-mds.github.io/physionet-demo") using `install.packages()` as shown in Section \ref{ready-to-use-datasets}.
 
-    * The complete MIMIC-III, eICU and HiRID datasets can be accessed by [registering](https://physionet.org/register) and setting up a [credentialed account](https://physionet.org/settings/credentialing) at [PhysioNet](https://physionet.org).
+    * The complete MIMIC-III, eICU, HiRID and MIMIC-IV datasets can be accessed by [registering](https://physionet.org/register) and setting up a [credentialed account](https://physionet.org/settings/credentialing) at [PhysioNet](https://physionet.org).
 
-    * Access to AUMCdb is available via the [Amsterdam Medical Data Science Website](https://amsterdammedicaldatascience.nl/#amsterdamumcdb).
+    * Access to AmsterdamUMCdb can be requested via the [Amsterdam Medical Data Science Website](https://amsterdammedicaldatascience.nl/#amsterdamumcdb).
 
-    * The obtained credentials can be configured for PhysioNet datasets by setting environment variables `RICU_PHYSIONET_USER` and `RICU_PHYSIONET_PASS`, while the download token for AUMCdb can be set as `RICU_AUMC_TOKEN`.
+    * The obtained credentials can be configured for PhysioNet datasets by setting environment variables `RICU_PHYSIONET_USER` and `RICU_PHYSIONET_PASS`, while the download token for AmsterdamUMCdb can be set as `RICU_AUMC_TOKEN`.
 
     * Datasets are downloaded and set up either automatically upon the first access attempt or manually by running `setup_data_src()`; the environment variable `RICU_DATA_PATH` can be set to control data location.
 
@@ -165,7 +167,7 @@ The following list gives a quick outline of the steps required for setting up an
 
     * Currently, over 100 data concepts are available for the 4 supported datasets (see `concept_availability()`/`explain_dictionary()` for names, availability etc.).
 
-    * Both concepts and data sources can be specified as strings; for example, glucose and age data can be loaded from MIMIC-III as `load_concepts(c("age", "glu"), "mimic")`.
+    * For example, glucose and age data can be loaded by passing `c("age", "glu")` to `load_concepts()`.
 
     Section \ref{data-concepts} goes into more detail on how data concepts are represented within \pkg{ricu} and an overview of the preconfigured concepts is available from Section \ref{ready-to-use-concepts}.
 
@@ -185,7 +187,7 @@ The following list gives a quick outline of the steps required for setting up an
 
     * In order for concepts to be available from the new dataset, the dictionary requires extension by adding new data items.
 
-    Further information about adding a custom dataset is available from Section \ref{adding-external-datasets}. Some code used when AUMCdb was not yet fully integrated with \pkg{ricu} is available from [GitHub](https://github.com/eth-mds/aumc) and is used for demonstration purposes for setting up AUMCdb as an external dataset `aumc_ext`.
+    Further information about adding a new dataset is available from Section \ref{adding-external-datasets}. Some code used when AmsterdamUMCdb was not yet fully integrated with \pkg{ricu} is available from [GitHub](https://github.com/eth-mds/aumc) and is used for demonstration purposes to set up AmsterdamUMCdb as an external dataset `aumc_ext`.
 
 Finally, Section \ref{examples} shows briefly how \pkg{ricu} could be used in practice to address clinical questions by presenting two small examples.
 
@@ -204,25 +206,25 @@ install.packages(
 
 Provisions for datasets configured to be attached during package loading are made irrespective of whether data is actually available. Upon access of an incomplete dataset, the user is asked for permission to download in interactive sessions and an error is thrown otherwise. Credentials can either be provided as environment variables (`RICU_PHYSIONET_USER` and `RICU_PHYSIONET_PASS` for access to PhysioNet data, as well as `RICU_AUMC_TOKEN` for AmsterdamUMCdb) and if the corresponding variables are unset, user input is again required in interactive sessions. For non-interactive sessions, functionality is exported such that data can be downloaded and set up ahead of first access (see `?setup_src_data`).
 
-Contingent on being granted access by the data owners, download requires a stable Internet connection, as well as 50 to 100 GB of temporary disk storage for unpacking and preparing the data for efficient access. In terms of permanent storage, 5 to 10 GB per dataset are required, while memory requirements are kept reasonably low by iterating over row-chunks for setup operations. Laptop class hardware (8-16 GB of memory) should suffice for setup and many analysis tasks which focus only on subsets of rows (and columns). Initial data source setup (depending on available download speeds and CPU/disk type) may take upwards of an hour per dataset.
+Contingent on being granted access by the data owners, download requires a stable Internet connection, as well as 50 to 100 GB of temporary disk storage for unpacking and preparing the data for efficient access. In terms of permanent storage, 5 to 10 GB per dataset are required (see Table \ref{tab:datasets}), while memory requirements are kept reasonably low by iterating over row-chunks for setup operations. Laptop class hardware (8-16 GB of memory) should suffice for setup and many analysis tasks which focus only on subsets of rows (and columns). Initial data source setup (depending on available download speeds and CPU/disk type) may take upwards of an hour per dataset.
 
-The following paragraphs serve to give quick introductions to the included datasets to offer some guidance, outlining some strengths and weaknesses of each of the datasets. Especially the PhysioNet datasets [MIMIC-III](https://mimic.physionet.org/about/mimic/) and [eICU](https://eicu-crd.mit.edu/about/eicu/) offer good documentation on the respective websites. Datasets are listed in order of being added to \pkg{ricu} and the section is concluded with a table summarizing similarities and differences among the datasets (see Table \ref{tab:datasets}).
+The following paragraphs serve to give quick introductions to the included datasets, outlining some strengths and weaknesses of each of the datasets. Especially the PhysioNet datasets [MIMIC-III and MIMIC-IV](https://mimic.mit.edu/docs/), as well as [eICU](https://eicu-crd.mit.edu/about/eicu/) offer good documentation on the respective websites. Datasets are listed in order of being added to \pkg{ricu} and the section is concluded with a table summarizing similarities and differences among the datasets (see Table \ref{tab:datasets}).
 
 ## MIMIC-III
 
-The [Medical Information Mart for Intensive Care III (MIMIC-III)](https://physionet.org/content/mimiciii/1.4/) represents the third iteration of the arguably most influential initiative for collecting and providing to the public large-scale ICU data^[The initial MIMIC (at the time short for Multi-parameter Intelligent Monitoring for Intensive Care) data release dates back 20 years and contained data on roughly 100 patients recorded from patient monitors in the medical, surgical, and cardiac intensive care units of Boston's Beth Israel Hospital during the years 1992-1999 \citep{moody1996}. Significantly broadened in scope, MIMIC-II was released 10 years after, now including data on almost 27,000 adult hospital admissions collected from ICUs of Beth Israel Deaconess Medical Center (BIDMC) from 2001 to 2008 \citep{lee2011}.]. The dataset comprises de-identified health related data of roughly 46,000 patients admitted to critical care units of BIDMC during the years 2001-2012. Amounting to just over 61,000 individual ICU admission, data is available on demographics, routine vital sign measurements (at approximately 1 hour resolution), laboratory tests, medication, as well as critical care procedures, organized as a 26-table relational structure.
+The [Medical Information Mart for Intensive Care III (MIMIC-III)](https://physionet.org/content/mimiciii/1.4/) represents the third iteration of the arguably most influential initiative for collecting and providing large-scale ICU data to the public^[The initial MIMIC (at the time short for Multi-parameter Intelligent Monitoring for Intensive Care) data release dates back 20 years and initially contained data on roughly 100 patients recorded from patient monitors in the medical, surgical, and cardiac intensive care units of Boston's Beth Israel Hospital during the years 1992-1999 \citep{moody1996}. Significantly broadened in scope, MIMIC-II was released 10 years after, now including data on almost 27,000 adult hospital admissions collected from ICUs of Beth Israel Deaconess Medical Center from 2001 to 2008 \citep{lee2011}.]. The dataset comprises de-identified health related data of roughly 46,000 patients admitted to critical care units of BIDMC during the years 2001-2012. Amounting to just over 61,000 individual ICU admission, data is available on demographics, routine vital sign measurements (at approximately 1 hour resolution), laboratory tests, medication, as well as critical care procedures, organized as a 26-table relational structure.
 
 ```{r mimic-tbls, eval = TRUE}
 mimic
 ```
 
-One thing of note from a data-organizational perspective is that a change in electronic health care systems occurred in 2008. Owing to this, roughly 38,000 ICU admissions spanning the years 2001 though 2008 are documented using the CareVue system, while for 2008 and onwards, data was extracted from the MetaVision system. Item identifiers differ between the two systems, requiring queries to consider both ID mappings (heart rate for example being available both as `itemid` number `211` for CareVue and `220045` for MetaVision) as does documentation of infusions and other procedures that are considered as input events (cf., `inputevents_cv` and `inputevents_mv` tables). Especially with respect to such input event data, MetaVision data generally is of superior quality.
+One thing of note from a data-organizational perspective is that a change in electronic health care systems occurred in 2008. Owing to this, roughly 38,000 ICU admissions spanning the years 2001 though 2008 are documented using the CareVue system, while for 2008 and onwards, data was extracted from the MetaVision clinical information system. Item identifiers differ between the two systems, requiring queries to consider both ID mappings (heart rate for example being available both as `itemid` number `211` for CareVue and `220045` for MetaVision) as does documentation of infusions and other procedures that are considered as input events (cf., `inputevents_cv` and `inputevents_mv` tables). Especially with respect to such input event data, MetaVision generally provides data of superior quality.
 
-In terms of patient identifiers, MIMIC-III allows for identifying both individual patients (`subject_id`) across hospital admissions (`hadm_id`) and for connecting ICU (re-)admissions (`icustay_id`) to hospital admissions. Using the respective one-to-many relationships, \pkg{ricu} can retrieve patient data using any of the above IDs, irrespective of how the raw data is organized.
+In terms of patient identifiers, MIMIC-III allows for identifying both individual patients (`subject_id`) across hospital admissions (`hadm_id`) and for connecting ICU (re)admissions (`icustay_id`) to hospital admissions. Using the respective one-to-many relationships, \pkg{ricu} can retrieve patient data using any of the above IDs, irrespective of how the raw data is organized.
 
 ## eICU
 
-Unlike the single-center focus of other datasets, the [eICU Collaborative Research Database](https://physionet.org/content/eicu-crd/2.0/) constitutes an amalgamation of data from critical care units of over 200 hospitals throughout the continental United States. Large-scale data collected via the Philips eICU program which provides telehealth infrastructure for intensive care units, is available from the Philips eICU Research Institute (eRI), albeit neither publicly nor freely. Only data corresponding to roughly 200,000 ICU admissions, sampled from a larger population of over 3 million ICU admissions and stratified by hospital, is being made available via PhysioNet. Patients with discharge dates in 2014 or 2015 were considered, with stays in low acuity units being removed.
+Unlike the single-center focus of other datasets, the [eICU Collaborative Research Database](https://physionet.org/content/eicu-crd/2.0/) constitutes an amalgamation of data from critical care units of over 200 hospitals throughout the continental United States. Large-scale data collected via the Philips eICU program, which provides telehealth infrastructure for intensive care units, is available from the Philips eICU Research Institute (eRI), albeit neither publicly nor freely. Only data corresponding to roughly 200,000 ICU admissions, sampled from a larger population of over 3 million ICU admissions and stratified by hospital, is being made available via PhysioNet. Patients with discharge dates in 2014 or 2015 were considered, with stays in low acuity units being removed.
 
 ```{r width-inc, include = FALSE}
 old_width <- options(width = 78)[["width"]]
@@ -238,11 +240,11 @@ options(width = old_width)
 
 The data is organized into 31 tables and includes patient demographics, routine vital signs, laboratory measurements, medication administrations, admission diagnoses, as well as treatment information. Owing to the wide range of hospitals participating in this data collection initiative, spanning small, rural, non-teaching health centers with fewer than 100 beds to large teaching hospitals with an excess of 500 beds, data availability varies. Even if data was being recorded at the bedside it might end up missing from the eICU dataset due to technical limitations of the collection process. As for patient identifiers, while it is possible to link ICU admissions corresponding to the same hospital stay, it is not possible to identify patients across hospital stays.
 
-Data resolution again varies considerably over included variables. The `vitalperiodic` table stands out as one of the few examples of a *wide* table organization (laying out variables as columns), as opposed to the *long* presentation (following an entity–attribute–value) of most other tables containing patient measurement data. The average time step in `vitalperiodic` is around 5 minutes, but data missingness ranges from around 1% for heart rate and pulse oximetry to around 80-90% for blood pressure measurements, therefore giving approximately hourly resolution for such variables.
+Data resolution again varies considerably over included variables. The `vitalperiodic` table stands out as one of the few examples of a *wide* table organization (laying out variables as columns), as opposed to the *long* presentation (following an entity–attribute–value model) of most other tables containing patient measurement data. The average time step in `vitalperiodic` is around 5 minutes, but data missingness ranges from around 1% for heart rate and pulse oximetry to around 80-90% for blood pressure measurements, therefore giving approximately hourly resolution for such variables.
 
 ## HiRID
 
-Developed for early prediction of circulatory failure \citep{hyland2020}, the [High Time Resolution ICU Dataset (HiRID)](https://physionet.org/content/hirid/1.0/) contains data on almost 34,000 admissions to the Department of Intensive Care Medicine of the Bern University Hospital, Switzerland, an interdisciplinary 60-bed unit. Given the clear focus on a concrete application during data collection, this dataset is the most limited in terms of data availability, which is also reflected in a comparatively simple data layout comprising only 5 tables^[The data is available in three states: as raw data and in two intermediary preprocessing stages from \citep{hyland2020}. While \pkg{ricu} focuses exclusively on raw data, the *merged* stage represents a selection of variables that were deemed most predictive for determining circulatory failure, which are then merged into 18 meta-variables, representing different clinical concepts. Time stamps in *merged* data are left unchanged, yielding irregular time series, whereas for the *imputed* stage, data is down-sampled to a 5 minute grid and missing values are imputed using a scheme discussed in \citep{hyland2020}.].
+Developed for early prediction of circulatory failure \citep{hyland2020}, the [High Time Resolution ICU Dataset (HiRID)](https://physionet.org/content/hirid/1.0/) contains data on almost 34,000 admissions to the Department of Intensive Care Medicine of the Bern University Hospital, Switzerland, an interdisciplinary 60-bed unit. Given the clear focus on a concrete application during data collection, this dataset is the most limited in terms of data breadth, which is also reflected in a comparatively simple data layout comprising only 5 tables^[The data is available in three states: as raw data and in two intermediary preprocessing stages explained in \cite{hyland2020}. While \pkg{ricu} focuses exclusively on raw data, the *merged* stage represents a selection of variables that were deemed most predictive for determining circulatory failure, which are then merged into 18 meta-variables, representing different clinical concepts. Time stamps in *merged* data are left unchanged, yielding irregular time series, whereas for the *imputed* stage, data is down-sampled to a 5 minute grid and missing values are imputed using a scheme discussed in \cite{hyland2020}.].
 
 ```{r hirid-tbls, eval = TRUE}
 hirid
@@ -262,7 +264,7 @@ For data anonymization purposes, demographic information such as patient weight,
 
 ## MIMIC-IV
 
-The next iteration in the MIMIC line of datasets, MIMIC-IV, has recently been released as first stable version \citep{johnson2021} and support in \pkg{ricu} is available as dataset `miiv`. Compared to MIMIC-III, this release shifts focus to newer data, dropping all CareVue-documented patients and with that, patients who were admitted before 2008, while adding patients up to 2019. The resulting dataset contains data on over 256,000 patients of which, 53,000 were admitted to ICUs, resulting in 76,000 unique ICU and almost 70,000 related hospital admissions.
+The most recently released dataset and next iteration in the MIMIC line of datasets, MIMIC-IV, has recently been released as first stable version \citep{johnson2021} and support in \pkg{ricu} is available as dataset `miiv`. Compared to MIMIC-III, this release shifts focus to newer data, dropping all CareVue-documented patients and with that, patients who were admitted before 2008, while adding patients admitted up to and including 2019. The resulting dataset contains data on over 256,000 patients of which, 53,000 were admitted to ICUs, resulting in 76,000 unique ICU and almost 70,000 related hospital admissions.
 
 ```{r miiv-tbls, eval = TRUE}
 miiv
@@ -370,7 +372,7 @@ if (srcs_avail(demo) && !srcs_avail(srcs)) {
 }
 
 src_names <- c(
-  mimic = "MIMIC-III", eicu = "eICU", hirid = "HiRID", aumc = "AUMC",
+  mimic = "MIMIC-III", eicu = "eICU", hirid = "HiRID", aumc = "AmsterdamUMCdb",
   miiv = "MIMIC-IV", mimic_demo = "MIMIC (demo)", eicu_demo = "eICU (demo)"
 )[srcs]
 
@@ -391,7 +393,7 @@ n_rec_cpt <- nrow(concept_availability(dict, include_rec = TRUE)) -
 capt <- paste(
   "Comparison of datasets supported by \\pkg{ricu}, highlighting some of",
   "the major similarities and distinguishing features among the five data",
-  "sources described in the preceding paragraphs. Values followed by",
+  "sources described in the preceding sections. Values followed by",
   "parenthesized ranges represent medians and are accompanied by",
   "interquartile ranges."
 )
@@ -435,13 +437,13 @@ One of the key components of \pkg{ricu} is a scheme for specifying how to retrie
 load_concepts("hr", demo, verbose = FALSE)
 ```
 
-This requires infrastructure for specifying how to retrieve data subsets (Section \ref{concept-specification}) that is both extensible (to new concepts and new datasets) and flexible enough to handle concept-specific preprocessing. Furthermore, abstractions that allow for code re-use for common data transformation tasks are important for simplifying both code development and maintenance. Building on this framework, \pkg{ricu} has included a dictionary with over 100 concepts implemented for all five supported datasets (where possible; see also Section \ref{ready-to-use-concepts}).
+This requires infrastructure for specifying how to retrieve data subsets (Section \ref{concept-specification}) that is both extensible (to new concepts and new datasets) and flexible enough to handle concept-specific preprocessing. Furthermore, allowing for code re-use for common data transformation tasks is important for simplifying both code development and maintenance. Building on this framework, \pkg{ricu} has included a dictionary with over 100 concepts implemented for all five supported datasets (where possible; see also Section \ref{ready-to-use-concepts} for further details).
 
 ## Data classes
 
-In order to represent tabular ICU data, \pkg{ricu} provides several classes, all inheriting from `data.table`. The most basic of which, `id_tbl`, marks one (or several) columns as `id_vars` which serve to define a grouping (i.e., identify patients or unit stays). Inheriting from `id_tbl`, `ts_tbl` is capable of representing grouped time series data. In addition to `id_var` column(s), a single column is marked as `index_var` and is required to hold a base \proglang{R} `difftime` vector. Furthermore, `ts_tbl` contains a scalar-valued `difftime` object as `interval` attribute, specifying the time series step size. More recently, a further class `win_tbl`, inheriting from `ts_tbl` has been added. Objects of this class can be used for time-stamped measurements associated with a validity period. A set of drug infusions, consisting of both rates and intervals can as such be conveniently represented by a `win_tbl` object.
+In order to represent tabular ICU data, \pkg{ricu} provides several classes, all inheriting from `data.table`. The most basic of which, `id_tbl`, marks one (or several) columns as `id_vars` which serve to define a grouping (i.e., identify patients or unit stays). Inheriting from `id_tbl`, `ts_tbl` is capable of representing grouped time series data. In addition to `id_var` column(s), a single column is marked as `index_var` and is required to hold a base \proglang{R} `difftime` vector. Furthermore, `ts_tbl` contains a scalar-valued `difftime` object as `interval` attribute, specifying the time series step size. More recently, a further class, `win_tbl`, inheriting from `ts_tbl` has been added. Objects of this class can be used for time-stamped measurements associated with a validity period. A set of drug infusions, consisting of both rates and intervals can as such be conveniently represented by a `win_tbl` object.
 
-Metadata is transiently added to `data.table` objects by classes inheriting from `id_tbl` and for S3 generic functions which allow for object modifications, down-casting is implicit:
+Metadata for classes inheriting from `id_tbl` is transiently added to `data.table` objects and for S3 generic functions which allow for object modifications, down-casting is implicit:
 
 ```{r id-tbl, eval = TRUE}
 (dat <- ts_tbl(a = 1:5, b = hours(1:5), c = rnorm(5)))
@@ -449,11 +451,11 @@ dat[["b"]] <- dat[["b"]] + mins(30)
 dat
 ```
 
-Due to time series step size of `dat` being specified as 1 hour, an internal inconsistency is encountered when shifting time stamps by 30 minutes, as time steps are no longer multiples of the time series interval, in turn causing down-casting to `id_tbl`. If column `a` were to be removed, direct down-casting to `data.table` would be required in order to resolve inconsistencies^[Updating an object inheriting from `id_tbl` using `data.table::set()` bypasses consistency checks as this is not an S3 generic function and therefore its behavior cannot be tailored to requirements of `id_tbl` objects. It therefore is up to the user to avoid creating invalid `id_tbl` objects in such a way.].
+Due to time series step size of `dat` being specified as 1 hour, an internal inconsistency is encountered when shifting time stamps by 30 minutes, as time steps are no longer multiples of the time series interval, in turn causing down-casting to `id_tbl`. Furthermore, if column `a` were to be removed, direct down-casting to `data.table` would be required in order to resolve resulting inconsistencies^[Updating an object inheriting from `id_tbl` using `data.table::set()` bypasses consistency checks as this is not an S3 generic function and therefore its behavior cannot be tailored to requirements of `id_tbl` objects. It therefore is up to the user to avoid creating invalid `id_tbl` objects in such a way.].
 
-Coercion to base classes `data.frame` and `data.table` by simply stripping away the extra attributes, is easily possible using functions `as.data.frame()` and `as.data.table()`. Coercion is also available as `data.table`-style by-reference operation (albeit user caution is advised as this does break with base \proglang{R} by-value or copy-on-modify semantics and may lead to unexpected behavior) by passing `by_ref = TRUE` to any of the above coercion functions.
+Coercion to base classes `data.frame` and `data.table`, by stripping away the extra attributes, is easily possible using functions `as.data.frame()` and `as.data.table()`. Coercion is also available as `data.table`-style by-reference operation by passing `by_ref = TRUE` to any of the above coercion functions. User caution is advised, as this does break with base \proglang{R} by-value (or copy-on-modify) semantics and may lead to unexpected behavior.
 
-In its current form, `win_tbl` objects can both be used to represent for example drug rates or drug amounts administered over a specified time-period. When calling the utility function `expand()` however, which creates a `ts_tbl` from a `win_tbl` by assigning values to the corresponding time steps, values are assumed to be *valid* for the given interval.
+In its current form, `win_tbl` objects can both be used to represent for example drug rates or drug amounts, administered over a specified time-period. When calling the utility function `expand()` however, which creates a `ts_tbl` from a `win_tbl` by assigning values to the corresponding time steps, values are assumed to be *valid* for the given interval.
 
 ```{r win-tbl, eval = TRUE}
 (dat <- win_tbl(a = 1:5, b = hours(1:5), c = mins(rep(90, 5)),
@@ -463,11 +465,11 @@ expand(dat)
 
 In a case where `d` represented drug amounts instead of drug rates, the current implementation of `expand()` would produce incorrect results. One would expect the overall amount in such a scenario to be evenly divided by -- and the resulting fractions assigned to -- the corresponding time steps. Allowing for this distinction is being considered, but, as of yet, has not been implemented.
 
-Utilizing the attached metadata of objects inheriting from `id_tbl`, several utility functions can be called with concise semantics (as seen in the above example, where `expand()` is able to determine the required column names from the `win_tbl` object by default). Utilities include functions for sorting, checking for duplicates, aggregating data per combination of `id_vars` (and time step/time duration), checking time series data for gaps, verifying whether the time series is regular and converting between irregular and regular time series, as well as functions for several types of moving window operations. Adding to those class-specific implementations, `id_tbl` objects inherit from `data.table` (and therefore from `data.frame`), ensuring compatibility with a wide range of functionality targeted at these base-classes.
+Utilizing the attached metadata of objects inheriting from `id_tbl`, several utility functions can be called with concise semantics (as seen in the above example, where `expand()` is able to determine the required column names from the `win_tbl` object by default). Utilities include functions for sorting, checking for duplicates, aggregating data per combination of `id_vars` (and time step/time duration), checking time series data for gaps, verifying time series regularity and converting between irregular and regular time series, as well as functions for several types of moving window operations. Adding to those class-specific implementations, `id_tbl` objects inherit from `data.table` (and therefore from `data.frame`), ensuring compatibility with a wide range of functionality targeted at these base-classes.
 
 ## Ready-to-use concepts
 
-The current selection of clinical concepts that is included with \pkg{ricu} covers many physiological variables that are available throughout the included datasets. Treatment-related information on the other hand, being more heterogeneous in nature and therefore harder to harmonize across datasets, has been added on an as-needed basis and therefore is more limited in breadth. A quick note on loading from multiple sources simultaneously: In the introductory example, heart rate was loaded from multiple data sources, resulting in a column `source` being added. This allows for identifying patient IDs corresponding to the respective data sources and the extra column is added to the set of `id_vars`. In the following calls to `load_concepts()`, only data from a single source is requested and therefore no corresponding column is added.
+The current selection of clinical concepts that is included with \pkg{ricu} covers many physiological variables that are available throughout the included datasets. Treatment-related information on the other hand, being more heterogeneous in nature and therefore harder to harmonize across datasets, has been added on an as-needed basis and therefore is more limited in breadth. A quick note on loading from multiple sources simultaneously: In the introductory example, heart rate was loaded from multiple data sources, resulting in a column `source` being added. This allows for identifying patient IDs corresponding to the respective data sources and the extra column is added to the set of `id_vars`. In the following calls to `load_concepts()`, only data from a single source is requested and therefore no corresponding `source` column is added.
 
 Available concepts can be enumerated using `load_dictionary()` and the utility function `explain_dictionary()` can be used to display some concept metadata.
 
@@ -492,7 +494,7 @@ load_concepts(c("alb", "glu"), src, interval = mins(15L),
               verbose = FALSE)
 ```
 
-Most concepts of this kind are represented by `num_cncpt` objects with an associated unit of measurement and a range of permissible values. Data is mainly returned as `ts_tbl` objects, representing time-dependent observations. Apart from conversion to a common unit (possibly using the `convert_unit()` callback function), little has to be done in terms of preprocessing: values are simply reported at time-points rounded to the requested interval.
+Most concepts of this kind are represented by `num_cncpt` objects (see Section \ref{concept-specification}) with an associated unit of measurement and a range of permissible values. Data is mainly returned as `ts_tbl` objects, representing time-dependent observations. Apart from conversion to a common unit (using functionality offered by the \pkg{units} package \citep{pebesma2016} or possibly using the `convert_unit()` callback function), little has to be done in terms of preprocessing: values are simply reported at time-points rounded to the requested interval.
 
 ### Patient demographics
 
@@ -504,15 +506,15 @@ Whenever requesting concepts which are returned with associated time-stamps (e.g
 load_concepts(c("age", "glu"), src, verbose = FALSE)
 ```
 
-Despite a best-effort approach, data availability can be a limiting factor. While for physiological variables, there is good agreement even across continents, data-privacy considerations, as well as lack of a common standard for data encoding, may cause issues that are hard to resolve. In some cases, this can be somewhat mitigated while in others, this is a limitation to be kept in mind. In AmsterdamUMCdb, for example, patient age, height and weight are not available as continuous variables, but as factor variables with patients binned into groups. Such variables are then approximated by returning the respective mid-points of groups for `aumc` data^[Prioritizing consistency over accuracy, one could apply the same binning to datasets which report numeric values, but the concepts included with \pkg{ricu} attempt to strike a balance between consistency and amount of applied preprocessing. With the extensible architecture of data concepts, however, such categorical variants of patient demographic concepts could easily be added.]. Other concepts, such as `adm` (categorizing admission types) or a potential `icd` concept (diagnoses as ICD-9 codes) can only return data if available from the data source in question. Unfortunately, neither `aumc` nor `hirid` contain ICD-9 encoded diagnoses, and in the case of `hirid`, no diagnosis information is available at all.
+Despite a best-effort approach, data availability can be a limiting factor. While for physiological variables, there is good agreement even across countries, data-privacy considerations, as well as lack of a common standard for data encoding, may cause issues that are hard to resolve. In some cases, this can be somewhat mitigated while in others, this is a limitation to be kept in mind. In AmsterdamUMCdb, for example, patient age, height and weight are not available as continuous variables, but as factor variables with patients binned into groups. Such variables are then approximated by returning the respective mid-points of groups for `aumc` data^[Prioritizing consistency over accuracy, one could apply the same binning to datasets which report numeric values, but the concepts included with \pkg{ricu} attempt to strike a balance between consistency and amount of applied preprocessing. With the extensible architecture of data concepts, however, such categorical variants of patient demographic concepts could easily be added.]. Other concepts, such as `adm` (categorizing admission types) or a potential `icd` concept (diagnoses as ICD-9 codes) can only return data if available from the data source in question. Unfortunately, neither `aumc` nor `hirid` contain ICD-9 encoded diagnoses, and in the case of `hirid`, no diagnosis information is available at all.
 
 ### Treatment-related information
 
-The largest group of concepts dealing with treatment-related information is described by the `medications` category. In addition to drug administrations, only basic ventilation information is currently provided as ready-to-use concept. Just like availability of common ICU procedures, patient medication is also underdeveloped, covering mainly vasopressor administrations, as well as corticosteroids, antibiotics and dextrose infusions. The current concepts retrieving treatment-related information are mostly focused on providing data required for constructing clinical scores described in Section \ref{outcomes}. While this group of concepts lends itself to use of `win_tbl` objects, bear in mind that when requesting multiple concepts which do not all return data as `win_tbl`s, all `win_tbl` objects are converted to `ts_tbl` in order to be merged with the non-`win_tbl` objects.
+The largest group of concepts dealing with treatment-related information is described by the `medications` category. In addition to drug administrations, only basic ventilation information is currently provided as ready-to-use concept. Just like availability of common ICU procedures, patient medication is also underdeveloped, covering mainly vasopressor administrations, as well as corticosteroids, antibiotics and dextrose infusions. The current concepts retrieving treatment-related information are mostly focused on providing data required for constructing clinical scores described in Section \ref{outcomes}. While this group of concepts lends itself to use of `win_tbl` objects, a call to `load_concepts()`, requesting multiple concepts which do not all return data as `win_tbl` (while leaving the `merge` argument at default value `TRUE`), all `win_tbl` objects are converted to `ts_tbl` in order to be merged with the non-`win_tbl` objects.
 
 Ventilation is represented by several concepts: a ventilation indicator variable (`vent_ind`), as well as ventilation durations (`vent_dur`) are constructed from start and end events (concepts `vent_start` and `vent_end`). This includes any kind of mechanical ventilation (invasive via an endotracheal or tracheostomy tube), as well as non-invasive ventilation via face or nasal masks. In line with other concepts belonging to this group, the current state is far from being comprehensive and expansion to further ventilation parameters is desirable.
 
-The singular concept addressing antibiotics (`abx`) returns an indicator signaling whenever an antibiotic was administered. This includes any route of administration (intravenous, oral, topical, etc.) and does neither report dosage, nor active ingredient. Finally, vasopressor administration is reported by several concepts representing different vasoactive drugs (including dopamine, dobutamine, epinephrine, norepinephrine and vasopressin), as well as different administration aspects such as rate, duration (and for use in SOFA scoring, rate administered for at least 60 minutes).
+The singular concept addressing antibiotics (`abx`) returns an indicator signaling whenever an antibiotic was administered. This includes any route of administration (intravenous, oral, topical, etc.) and does neither report dosage, nor active ingredient. Finally, vasopressor administration is reported by several concepts representing different vasoactive drugs (including dopamine, dobutamine, epinephrine, norepinephrine and vasopressin), as well as different administration aspects such as rate, duration and rate administered for at least 60 minutes, which is used in Sepsis-Related Organ Failure Assessment (SOFA) scoring \citep{vincent1996}.
 
 <!-- TODO: use more `win_tbl` examples here -->
 
@@ -533,20 +535,20 @@ Furthermore for a concept like dextrose administration as implemented in `dex`, 
 
 A group of more loosely associated concepts can be used to describe patient state. This includes common clinical endpoints, such as death or length of ICU stay, as well as scoring systems such as SOFA, the systemic inflammatory response syndrome \citep[SIRS;][]{bone1992} criterion, the National Early Warning Score \citep[NEWS;][]{jones2012} and the Modified Early Warning Score \citep[MEWS;][]{subbe2001}.
 
-While the more straightforward outcomes can be retrieved directly from data, clinical scores often incorporate multiple variables, based upon which a numeric score is constructed. This can typically be achieved by using concepts of type `rec_cncpt`, specifying the needed components and supplying a callback function that applies rules for score construction.
+While the more straightforward outcomes can be retrieved directly from data, clinical scores often incorporate multiple variables, based upon which a numeric score is constructed. This can typically be achieved by using concepts of type `rec_cncpt` (see Section \ref{concept-specification}), specifying the needed components and supplying a callback function that applies rules for score construction.
 
 ```{r, load-out, eval = srcs_avail(src)}
 load_concepts(c("sirs", "death"), src, verbose = FALSE,
               keep_components = TRUE)
 ```
 
-Callback functions can become rather involved (especially for more complex concepts such as SOFA) and may include arbitrary arguments to tune their behavior. As callback functions to `rec_cncpt` objects are typically called internally from `load_concepts()`, arguments not used by `load_concepts()`, such as `keep_components` in the above example (causing not only the score column, but also individual score components to be retained) are forwarded^[Some care has to be taken as when requesting multiple concepts within the same call to `load_concepts()`, while passing arguments intended for concept-level callback functions, as all involved callback functions will be called with the same forwarded arguments. When for example requesting multiple scores (such as SOFA or SIRS), it is currently not possible to enable `keep_components` for only a subset thereof. Furthermore this setup requires that all involved callback functions are allowed to be called with the given set of extra arguments.].
+Callback functions can become rather involved (especially for more complex concepts such as SOFA) and may offer arbitrary arguments to tune their behavior. As callback functions to `rec_cncpt` objects are typically called internally from `load_concepts()`, arguments not used by `load_concepts()`, such as `keep_components` in the above example (causing not only the score column, but also individual score components to be retained) are forwarded. Therefore, some care has to be taken as when requesting multiple concepts within the same call to `load_concepts()`, while passing arguments intended for concept-level callback functions, as all involved callback functions will be called with the same forwarded arguments. When for example requesting multiple scores (such as SOFA or SIRS), it is currently not possible to enable `keep_components` for only a subset thereof. This setup consequently also requires that all involved callback functions are allowed to be called with the given set of extra arguments.
 
 ## Concept specification
 
-Just like data source configuration (as discussed in Section \ref{data-source-configuration}), concept specification relies on JSON-formatted text files, parsed by \pkg{jsonlite} \citep{ooms2014}. A default dictionary of concepts is included with \pkg{ricu} containing a selection of commonly used clinical concepts. Several types of concepts exist within \pkg{ricu} and with extensibility in mind, new types can easily be added. A quick remark on terminology before diving into more details on how to specify data concepts: A *concept* corresponds to a clinical variable such as a bilirubin measurement or the ventilation status of a patient, and an *item* encodes how to retrieve data corresponding to a given concept from a data source. A *concept* therefore contains several *items* (zero, one or several are possible per data source).
+Just like data source configuration (as discussed in Section \ref{data-source-configuration}), concept specification relies on JSON-formatted text files, parsed by \pkg{jsonlite} \citep{ooms2014}. A default dictionary of concepts is included with \pkg{ricu}, containing a selection of commonly used clinical concepts. Several types of concepts exist within \pkg{ricu} and with extensibility in mind, new types can easily be added. A quick remark on terminology before diving into more details on how to specify data concepts: A *concept* corresponds to a clinical variable such as a bilirubin measurement or the ventilation status of a patient, and an *item* encodes how to retrieve data corresponding to a given concept from a data source. A *concept* therefore contains several *items* (zero, one or multiple are possible per data source).
 
-All concepts consist of minimal metadata including a name, target class (defaults to `ts_tbl`; see Section \ref{data-classes}), an aggregation specification^[Every concept needs a default aggregation method which can be used during data loading to return data that is unique per key (either per `id_vars` group or per combination of `ìd_vars` and `index_var`) otherwise down-stream merging of multiple concepts is ill-defined. The aggregation default can be manually overridden during loading or automatically, by specification as part of a `rec_cncpt` object. If no aggregation method is explicitly indicated the global default is `first()` for character, `median()` for numeric and `sum()` for logical vectors. For logical data, if a concept of type `lgl_cncpt` is used, the count of `TRUE` values is converted back to logical, thereby providing `any()` type functionality.] and class information (`num_concept` if not otherwise specified), as well as optional `description` and `category` information. Adding to that, depending on concept class, further fields can be added. In the case of the most widespread concept type (`num_cncpt`; used to represent numeric data) this is `unit` which encodes one (or several synonymous) unit(s) of measurement, as well as a minimal and maximal plausible values (specified as `min` and `max`). The concept for heart rate data (`hr`) for example can be specified as
+All concepts consist of minimal metadata including a name, target class (defaults to `ts_tbl`; see Section \ref{data-classes}), an aggregation specification^[Every concept needs a default aggregation method which can be used during data loading to return data that is unique per key (either per `id_vars` group or per combination of `ìd_vars` and `index_var`) otherwise down-stream merging of multiple concepts is ill-defined. The aggregation default can be manually overridden during loading or automatically, by specification as part of a `rec_cncpt` object. If no aggregation method is explicitly indicated the global default is `first()` for character, `median()` for numeric and `any()` for logical vectors.] and class information (`num_concept` if not otherwise specified), as well as optional `description` and `category` information. Adding to that, depending on concept class, further fields can be supplied. In the case of the most widespread concept type (`num_cncpt`; used to represent numeric data) this is `unit` which encodes one (or several synonymous) unit(s) of measurement, as well as a minimal and maximal plausible values (specified as `min` and `max`). The concept for heart rate data (`hr`) for example can be specified as
 
 ```
 {
@@ -565,7 +567,9 @@ All concepts consist of minimal metadata including a name, target class (default
 
 Metadata is used during concept loading for data-preprocessing. For numeric concepts, the specified measurement unit is compared to that of the data (if available), with messages being displayed in case of mismatches, while the range of plausible values is used to filter out measurements that fall outside the specified interval. Other types of concepts include categorical concepts (`fct_cncpt`), concepts representing binary data (`lgl_cncpt`), as well as recursive concepts (`rec_cncpt`), which build on other *atomic* concepts^[An example for a recursive concept is the PaO~2~/FiO~2~ ratio, used for instance to assess patients with acute respiratory distress syndrome (ARDS) or for Sepsis-Related Organ Failure Assessment (SOFA) \citep{villar2013, vincent1996}. Given both PaO~2~ and FiO~2~ as individual concepts, the PaO~2~/FiO~2~ ratio is provided by \pkg{ricu} as a recursive concept (`pafi`), requesting the two atomic concepts `pao2` and `fio2` and performing some form of imputation for when at a given time step one or both values are missing.].
 
-Specification of how data can be retrieved from a data source is encoded by data *items*. Lists of data items (associated with data source names) are provided as `sources` element (instead of `...` in the above code block). For the demo datasets corresponding to eICU and MIMIC-III, heart rate data retrieval is specified as
+Finally, the most recently added concept class, `unt_cncpt`, inheriting from `num_cncpt`, aims to simplify manual conversion to target units, leveraging capabilities provided by the \pkg{units} package. For this to work, both source and target units have to be recognized and convertible (as reported by `units::ud_are_convertible()`). Measurement units that are not available by default can be registered using `units::install_unit()`.
+
+Specification of how data can be retrieved from a data source is encoded by data *items*. Lists of data items (associated with data source names) are provided as `sources` element. For the demo datasets corresponding to eICU and MIMIC-III, heart rate data retrieval is specified as
 
 ```
 {
@@ -586,7 +590,7 @@ Specification of how data can be retrieved from a data source is encoded by data
 }
 ```
 
-Analogously to how different types of concepts are used to represent different types of data, different types of items handle different types of data loading. The most common scenario is selecting a subset of rows from a table by matching a set of ID values (`sub_itm`). In the above example, heart rate data in MIMIC-III can be located by searching for ID values 211 and 220045 in column `itemid` of table `chartevents` (heart rate data is stored in *long* format). Conversely, heart rate data in eICU is stored in *wide* format, requiring no row-subsetting. Column `heartrate` of table `vitalperiodic` contains all corresponding data and such data situations are handled by the `col_itm` class. Other item classes include `rgx_itm` where a regular expression is used for selecting rows and `fun_itm` where an arbitrary function can be used for data loading. If a data loading scenario is not covered by these classes, adding further `itm` subclasses is encouraged.
+Analogously to how different concept classes are used to represent different types of data, different item classes handle different data loading requirements. The most common scenario is selecting a subset of rows from a table by matching a set of ID values (`sub_itm`). In the above example, heart rate data in MIMIC-III can be located by searching for ID values 211 and 220045 in column `itemid` of table `chartevents` (heart rate data is stored in *long* format). Conversely, heart rate data in eICU is stored in *wide* format, requiring no row-subsetting. Column `heartrate` of table `vitalperiodic` contains all corresponding data and such data situations are handled by the `col_itm` class. Other item classes include `rgx_itm` where a regular expression is used for selecting rows and `fun_itm` where an arbitrary function can be used for data loading. If a data loading scenario is not covered by these classes, adding further `itm` subclasses is encouraged.
 
 In order to extend the current concept library both to new datasets and new concepts, further JSON files can be incorporated by adding paths to their enclosing directories to `RICU_CONFIG_PATH`. Concepts with names that exist in files of the same name but with higher precedence are only used for their `sources` entries, such that `hr` for `new_dataset` can be specified as follows, while concepts with non-existing names are treated as new concepts.
 
@@ -604,7 +608,7 @@ In order to extend the current concept library both to new datasets and new conc
 }
 ```
 
-Central to providing the required flexibility for loading of certain data concepts that require some specific preprocessing are callback functions that can be specified for several *item* types. Functions (with appropriate signatures), designated as callback functions, are invoked on individual data items, before concept-related preprocessing is applied. A common scenario for this is unit of measurement conversion: In MIMIC-III data for example, several `itemid` values correspond to temperature measurements, some of which refer to temperatures measured in degrees Celsius whereas others are used for measurements in degrees Fahrenheit. As the information encoding which measurement corresponds to which `itemid` values is no longer available during concept-related preprocessing, this is best resolved at the level of individual data items. Several function factories are available for generating callback functions and `convert_unit()` is intended for covering unit conversions^[A more recent addition to \pkg{ricu} has been experimental support for automatic unit conversion using the \pkg{units} package \citep{pebesma2016}. In order to leverage these capabilities, a concept can be specified as `unt_cncpt` and values will be converted to the singular unit stated by the concept definition. Source units are taken to be what is returned by the `unit_var` column.]. Data *items* corresponding to the `temp` concept for MIMIC-III are specified as
+Central to providing the required flexibility for loading of certain data concepts that require some specific preprocessing are callback functions that can be specified for several *item* types. Functions (with appropriate signatures), designated as callback functions, are invoked on individual data items, before concept-related preprocessing is applied. A common scenario for this is unit of measurement conversion: In MIMIC-III data for example, several `itemid` values correspond to temperature measurements, some of which refer to temperatures measured in degrees Celsius whereas others are used for measurements in degrees Fahrenheit. As the information encoding which measurement corresponds to which `itemid` values is no longer available during concept-related preprocessing, this is best resolved at the level of individual data items. Several function factories are available for generating callback functions and `convert_unit()` is intended for covering unit conversions^[The presented implementation of this concept predates the addition of automatic unit conversion using the \pkg{units} package. While the concept definition as used by \pkg{ricu} will be updated to reflect these new capabilities, this example remains for illustration purposes.]. Data *items* corresponding to the `temp` concept for MIMIC-III are specified as
 
 ```
 {
@@ -630,7 +634,7 @@ indicating that for ID values 676, 677 and 223762 no preprocessing is required a
 
 Every dataset is represented by an environment with class attributes and associated metadata objects stored as object attributes to that environment. Dataset environments all inherit from `src_env` and from any number of class names constructed from data source name(s) with a suffix `_env` attached. The environment representing MIMIC-III, for example inherits from `src_env` and `mimic_env`, while the corresponding demo dataset inherits from `src_env`, `mimic_env` and `mimic_demo_env`. These sub-classes are later used for tailoring the process of data loading to particularities of individual datasets.
 
-A `src_env` contains an active binding per contained table, which returns a `src_tbl` object representing the requested table. As is the case for `src_env` objects, `src_tbl` objects inherit from additional classes such that certain per-dataset behavior can be customized. The `admissions` table of the MIMIC-III demo dataset for example inherits from `mimic_demo_tbl` and `mimic_tbl` (alongside classes `src_tbl` and `prt`).
+A `src_env` contains an active binding per associated table, which returns a `src_tbl` object representing the requested table. As is the case for `src_env` objects, `src_tbl` objects inherit from additional classes for reasons explained above. The `admissions` table of the MIMIC-III demo dataset for example, inherits from `mimic_demo_tbl` and `mimic_tbl` (alongside classes `src_tbl` and `prt`).
 
 ```{r mimic-adm, eval = srcs_avail("mimic_demo")}
 mimic_demo$admissions
@@ -654,9 +658,9 @@ By using \pkg{rlang} pronouns (`.data` and `.env`), the distinction can readily 
 
 ## Data source setup
 
-In order to make a dataset accessible to \pkg{ricu}, three steps are necessary, each handled by an exported S3 generic function: `download_scr()`, `import_src()` and `attach_src()`. The first two steps, download and import, are one-time procedures, whereas attaching is carried out every time the package namespace is loaded. By default, all data sources known to \pkg{ricu} are configured to be attached and in case some data is missing for a given data source, the missing data is downloaded and imported on first access. An outline of the steps involved for data source setup is shown in Figure \ref{fig:src-setup}.
+In order to make a dataset accessible to \pkg{ricu}, three steps are necessary, each handled by an exported S3 generic function: `download_scr()`, `import_src()` and `attach_src()`. The first two steps, data download and import, are one-time procedures, whereas attaching is carried out every time the package namespace is loaded. By default, all data sources known to \pkg{ricu} are configured to be attached and in case some data is missing for a given data source, the missing data is downloaded and imported on first access. An outline of the steps involved for data source setup is shown in Figure \ref{fig:src-setup}.
 
-```{tikz, src-setup, fig.cap = "Making a dataset available to \\pkg{ricu} involves several steps, starting with data download, followed by preparation for efficient access and finalized by instantiation of data structures containing relevant metadata. Displayed above arrows are the functions which are used for each step and below are indicated specific configuration settings or environment variables which are need for (or can be used to customize) the specific step (in red).", fig.ext = "png", cache=TRUE, echo = FALSE}
+```{tikz, src-setup, fig.cap = "Making a dataset available to \\pkg{ricu} involves several steps, starting with data download, followed by preparation for efficient access and finalized by instantiation of data structures containing relevant metadata. The functions which are used for each step are displayed above arrows and below (in red) are indicated specific configuration settings or environment variables which are need for (or can be used to customize) the specific step.", fig.ext = "png", cache=TRUE, echo = FALSE}
 
 <<tikz-setup>>
 
@@ -698,14 +702,14 @@ In order to make a dataset accessible to \pkg{ricu}, three steps are necessary, 
 
 ### Data download
 
-The first step towards loading data is data download, taken care of by the S3 generic function `download_src()`. For the datasets included in \pkg{ricu}, prior to calling `download_src()`, the following environment variables can be set (indicated in red in the $a \to b$ edge in Figure \ref{fig:src-setup}):
+The first step towards accessing data is data download, taken care of by the S3 generic function `download_src()`. For the datasets included with \pkg{ricu}, prior to calling `download_src()`, the following environment variables can be set (indicated in red in the $a \to b$ edge in Figure \ref{fig:src-setup}):
 
-* `RICU_PHYSIONET_USER`/`RICU_PHYSIONET_PASS`: PhysioNet login credentials with access to the requested dataset.
-* `RICU_AUMC_TOKEN`: Download token, extracted from the download URL received when requesting data access.
+* `RICU_PHYSIONET_USER`/`RICU_PHYSIONET_PASS`: PhysioNet login credentials with access to the requested dataset(s).
+* `RICU_AUMC_TOKEN`: Download token, extracted from the download URL received after being granted data access.
 
 If any of the required access credentials are not available as environment variables, they can be supplied as function arguments to `download_src()` or the user is queried in interactive sessions and an error is thrown otherwise.
 
-Each of the supported datasets requires 5-10 GB disk space for permanent storage and 50-100 GB of temporary disk storage during download and import. Memory requirements are kept low (8-16 GB) by performing all setup operations only on subsets of rows at the time. Initial data source setup can be expected to take upwards of an hour per dataset.
+As a quick reminder on system requirements for initial data setup operations: Each of the supported datasets requires 5-10 GB disk space for permanent storage and 50-100 GB of temporary disk storage during download and import. Memory requirements are kept low (8-16 GB) by performing all setup operations only on subsets of rows at the time. Initial data source setup can be expected to take upwards of an hour per dataset.
 
 ### Data import
 
@@ -718,13 +722,13 @@ For importing, the information contained in `tbl_cfg` configuration objects is m
 
 ### Data attaching
 
-Finally, attaching a dataset creates a corresponding `src_env` object, containing for each table a corresponding `src_tbl` object, which together with associated metadata are used by \pkg{ricu} to run queries against the data (edge $c \to d$ in Figure \ref{fig:src-setup}). The environment variable `RICU_SRC_LOAD` can contain a comma-separated list of data source names that are set up for being automatically attached on namespace loading. This defaults to all currently supported datasets and the current set of source names is available as `auto_attach_srcs()`. Apart from this automatism, the process of attaching a dataset can be manually invoked by calling `attach_src()`, which can be convenient when for example the data source configuration has been modified, in order for this to take effect.
+Finally, attaching a dataset creates a corresponding `src_env` object, containing a corresponding `src_tbl` object for each table, which together with associated metadata are used by \pkg{ricu} to run queries against the data (edge $c \to d$ in Figure \ref{fig:src-setup}). The environment variable `RICU_SRC_LOAD` may contain a comma-separated list of data source names that are set up for being automatically attached on namespace loading. This defaults to all currently supported datasets and the active set of source names is available as `auto_attach_srcs()`. Apart from this automatism, the process of attaching a dataset can be manually invoked by calling `attach_src()`, which can be convenient when for example updating the data source configuration after it has been modified.
 
-Two configuration objects which are important for data loading (see the following Section \ref{data-loading}) are `id_cfg` (Section \ref{id-configuration}) and `col_cfg` (Section \ref{default-column-configuration}), providing default values for certain types of columns, including time-stamp, measurement value and measurement unit columns, as well as defining relationships between patient identifiers (such as hospital stay ID and ICU stay ID).
+Two configuration objects which are important for data loading (see the following Section \ref{data-loading}) are `id_cfg` and `col_cfg` (described in Sections \ref{id-configuration} and \ref{default-column-configuration}, respectively), providing default values for certain types of columns, including time-stamp, measurement value and measurement unit column names, as well as defining relationships between patient identifiers (such as hospital stay ID and ICU stay ID).
 
 ## Data loading
 
-The lowest level of data access is direct subsetting of `src_tbl` objects as shown at the start of Section \ref{data-sources}. As `src_tbl` inherits from `prt` the `subset()` implementation provided by \pkg{prt} can be used for NSE of data-expressions against on-disk, tabular data. Building on that, several S3 generic functions successively homogenize data representations as visualized in Figure \ref{fig:data-loading}.
+The lowest level of data access is direct subsetting of `src_tbl` objects as shown at the start of Section \ref{data-sources}. As `src_tbl` inherits from `prt`, the `subset()` implementation provided by \pkg{prt} can be used for NSE of data-expressions against on-disk, tabular data. Building on that, several S3 generic functions successively homogenize data representations as visualized in Figure \ref{fig:data-loading}.
 
 ```{tikz, data-loading, fig.cap = "Data loading proceeds through several layers, each contributing a step towards harmonizing discrepancies among raw data representations provided by the different data sources. Raw data tables are represented by \\pkg{ricu} as \\code{src\\_tbl} objects which can be queried using \\code{load\\_src()}. Absolute time-stamps in the returned \\code{data.table} are converted to times relative to admission (in minutes) by \\code{load\\_difftime()} and finally, \\code{load\\_id()}/\\allowbreak\\code{load\\_ts()}/\\allowbreak\\code{load\\_win()} ensure a given ID system and time interval.", fig.ext = "png", cache=TRUE, echo = FALSE}
 
@@ -764,7 +768,7 @@ The lowest level of data access is direct subsetting of `src_tbl` objects as sho
 \end{tikzpicture}
 ```
 
-The most basic layer in data loading is provided by the S3 generic function `load_src()`, which provides a string-based interface to `subset()` for all but the row-subsetting expression (see edge $a \to b$ in Figure \ref{fig:data-loading}).
+The most basic layer in data loading is provided by the S3 generic function `load_src()`, which provides a string-based interface to the `cols` argument of `subset()` while forwarding the unevaluated expression passed as `rows` (see edge $a \to b$ in Figure \ref{fig:data-loading}).
 
 ```{r load-src, eval = srcs_avail("mimic_demo")}
 load_src(mimic_demo$admissions, subject_id > 44000,
@@ -783,7 +787,7 @@ load_difftime(mimic_demo$admissions, subject_id > 44000,
               cols = c("hadm_id", "admittime", "dischtime"))[]
 ```
 
-The function `load_difftime()` is expected to return timestamps as base \proglang{R} `difftime` vectors (in minutes; edge $b \to c$ in Figure \ref{fig:data-loading}). The argument `id_hint` can be used to specify a preferred ID system, but if not available in raw data, `load_difftime()` will return data using the ID system with highest cardinality. In the above example, if `icustay_id` were requested, data would be returned using `hadm_id`, whereas a `subject_id` request would be honored, as the corresponding ID column is available in the `admissions` table.
+The function `load_difftime()` is expected to return timestamps as base \proglang{R} `difftime` vectors (in minutes; edge $b \to c$ in Figure \ref{fig:data-loading}). The argument `id_hint` can be used to specify a preferred ID system, but if not available in raw data, `load_difftime()` will return data using the ID system with highest cardinality (i.e., ICU stay ID is preferred over hospital stay ID). In the above example, if `icustay_id` were requested, data would be returned using `hadm_id`, whereas a `subject_id` request would be honored, as the corresponding ID column is available in the `admissions` table.
 
 Building on `load_difftime()` functionality, functions `load_id()`/\allowbreak`load_ts()`/\allowbreak`load_win()` return `id_tbl`/\allowbreak`ts_tbl`/\allowbreak`win_tbl` objects with the requested ID system (passed as `id_var` argument). This uses raw data IDs if available or calls `change_id()` in order to convert to the desired ID system (edge $c \to d$ in Figure \ref{fig:data-loading}). Similarly, where `load_difftime()` returns data with fixed time interval of one minute, `load_id()` allows for arbitrary time intervals (using `change_interval()`; defaults to 1 hour).
 
@@ -797,9 +801,9 @@ load_id(mimic_demo$admissions, subject_id > 44000,
         cols = c("admittime", "dischtime"), id_var = "hadm_id")[]
 ```
 
-Throughout several of theses functions, `col_cfg` objects are used to provide sensible defaults. In order to convert to relative times, for example, `load_difftime()` requires names of columns for which this applies (provided by the `time_vars` entry), and `load_ts()` needs to know which of the `time_vars` to use as `index_var`. For more information on the construction of `col_cfg` objects, please refer to Section \ref{default-column-configuration}.
+Throughout several of theses functions, `col_cfg` objects are used to provide sensible defaults. In order to convert to relative times, `load_difftime()`, for example, requires names of columns for which this applies (provided by the `time_vars` entry), and `load_ts()` needs to know which of the `time_vars` to use as `index_var`. For more information on the construction of `col_cfg` objects, please refer to Section \ref{default-column-configuration}.
 
-A call to `change_id()` requires the construction of a table which contains the mapping between different ID systems, together with information about how to convert timestamps between these ID systems (edge $c \to d$ in Figure \ref{fig:data-loading}). The function responsible for providing the necessary information is `id_windows()` and the associated S3 generic functions `id_win_helper()`. The entry point `id_windows()` wraps `id_win_helper()`, providing memoization, as the resulting structure is expensive to compute relative to the frequency of being required.
+A call to `change_id()` requires the construction of a table which contains the mapping between different ID systems, together with information about how to convert timestamps between these ID systems (edge $c \to d$ in Figure \ref{fig:data-loading}). The function responsible for providing the necessary information is `id_windows()` and the associated S3 generic function `id_win_helper()`. The entry point `id_windows()` wraps `id_win_helper()`, providing memoization, as the resulting structure is expensive to compute relative to the frequency of being required.
 
 ```{r id-win, eval = srcs_avail("mimic_demo")}
 id_windows(mimic_demo)
@@ -811,7 +815,7 @@ Analogously, the function pair `id_origin()` and `id_orig_helper()`, with the fo
 id_origin(mimic_demo, "icustay_id")
 ```
 
-The implementations of `id_win_helper()` and `id_orig_helper()` for the included datasets use information contained in `id_cfg` objects (see Section \ref{id-configuration}) to determine which columns in which tables are used for constructing the required lookup tables. Doing so, however, is not required: an `id_win_helper()` implementation for a new dataset could forego this by hard-coding table/column names as part of the function logic, in-turn simplifying the corresponding `id_cfg` object to merely providing naming and ordering information.
+For the included datasets, the implementations of `id_win_helper()` and `id_orig_helper()`, use information contained in `id_cfg` objects (see Section \ref{id-configuration}) to determine which columns in which tables are required for constructing the corresponding lookup tables. Doing so, however, is not necessary: an `id_win_helper()` implementation for a new dataset could forego this by hard-coding table/column names as part of the function logic, in-turn simplifying the corresponding `id_cfg` object to merely providing naming and ordering information.
 
 ## Data source configuration
 
@@ -823,11 +827,11 @@ str(cfg, max.level = 3L, width = 70L)
 mi_cfg <- cfg[["mimic_demo"]]
 ```
 
-In addition to required fields `name` and `prefix` (used as class prefix), as well as further arbitrary fields contained in `extra` (`url` in this case), several additional configuration objects are part of `src_cfg`: `id_cfg`, `col_cfg` and `tbl_cfg`.
+In addition to required fields `name` and `prefix` (used as class prefix), as well as further arbitrary fields contained in `extra` (`url` in this case), several configuration objects are part of `src_cfg`: `id_cfg`, `col_cfg` and `tbl_cfg`.
 
 ### ID configuration
 
-An `id_cfg` object contains an ordered set of key-value pairs representing patient ID systems in a dataset. An implicit assumption currently is that a given patient ID system is used consistently throughout a dataset, meaning that for example an ICU stay ID is always referred to by the same name throughout all tables containing a corresponding column. Owing to the relational origins of these datasets this has been fulfilled in all instances encountered so far. In MIMIC-III, ID systems
+An `id_cfg` object contains an ordered set of key-value pairs representing patient identifiers in a dataset. An implicit assumption currently is that a given patient ID system is used consistently throughout a dataset, meaning that for example an ICU stay ID is always referred to by the same name throughout all tables containing a corresponding column. Owing to the relational origins of these datasets this has been fulfilled in all instances encountered so far. In MIMIC-III, ID systems
 
 ```{r mimic-ids, eval = TRUE}
 as_id_cfg(mi_cfg)
@@ -837,7 +841,7 @@ are available, allowing for identification of individual patients, their (potent
 
 ### Default column configuration
 
-Again used in data loading, this per-table set of key-value pairs specifies column defaults as `col_cfg` object. Each key describes a type of column with special meaning and the corresponding value specifies said column for a given table.
+Again used in data loading, this per-table set of key-value pairs specifies column defaults as `col_cfg` object. Each key describes a type of column with special meaning and the corresponding value specifies said column for a given table. The print method for `col_cfg` reports all keys alongside the per-table counts of accordingly registered values (i.e., columns).
 
 ```{r mimic-col, eval = TRUE}
 as_col_cfg(mi_cfg)
@@ -845,8 +849,8 @@ as_col_cfg(mi_cfg)
 
 The following column defaults are currently in use throughout \pkg{ricu} but the set of keys can be extended to arbitrary new values:
 
-* `id_var`: In case a table does not contain at least one ID column corresponding to one of the ID systems specified as `id_cfg`, the default ID column can be set on a per-table basis as `id_var`^[This for example is the case for the `d_items` table in MIMIC-III, which does not contain any patient related data, but holds information on items encoding types of measurements, procedures, etc., used throughout other tables holding actual patient data for identifying the type data point, in line with the relational structure of the data source.].
-* `index_var`: A column that is used to define an ordering in time over rows, thereby providing a time series index^[For the MIMIC-III table `inputevents_mv`, one of the four available time variables lends itself to be used as index variable more than the other candidates and therefore is set as default.].
+* `id_var`: In case a table does not contain at least one ID column corresponding to one of the ID systems specified as `id_cfg`, the default ID column can be set on a per-table basis as `id_var`^[This for example is the case for the `d_items` table in MIMIC-III, which does not contain any patient related data, but holds information on items encoding types of measurements, procedures, etc., used throughout other tables holding actual patient data.].
+* `index_var`: A column that is used to define an ordering in time over rows, thereby providing a time series index^[For the MIMIC-III table `inputevents_mv`, of the four available time variables (`starttime`, `endtime`, `storetime`, `comments_date`), `starttime` lends itself to be used as index variable more than the other candidates and therefore is set as default.].
 * `time_vars`: Columns which will be treated as time variables (important for converting between ID systems for example), but not as time series indices^[In case of the `admissions` table in MIMIC-III for example, a total of five columns are considered to be time variables, none of which stands out as potential `index_var`.].
 * `unit_var`: Used in concept loading (more specifically for `num_cncpt` concepts, see Section \ref{concept-specification}) to identify columns that represent unit of measurement information.
 * `val_var`: Again used when loading data concepts, this identified a default value variable in a table, representing the column of interest to be used as returned data column.
@@ -865,13 +869,13 @@ Finally, `tbl_cfg` objects are used during the initial setup of a data source. I
 
 * (Optional) partitioning information: For very *long* tables it can be useful to specify a row-partitioning. This currently is only possible by applying a vector of breakpoints to a single numeric column, thereby defining a grouping.
 
-Both file name and column specification are only used within the context of `download_src()` and `import_src()` and are therefore not required if download and import are carried out manually.
+Table configuration objects are only used within the context of the functions `download_src()` and `import_src()` and are therefore not required if download and import are carried out manually.
 
 ```{r mimic-tbl, eval = TRUE}
 as_tbl_cfg(mi_cfg)
 ```
 
-For the `chartevents` table of the MIMIC-III demo dataset, for example, rows are partitioned into two groups, while all other tables are represented by a single partition. Furthermore, the expected number of rows is unknown (`??`) as this is missing from the corresponding `tbl_cfg` object.
+For the `chartevents` table of the MIMIC-III demo dataset, rows are partitioned into two groups, while all other tables are represented by a single partition. Furthermore, the expected number of rows is unknown (`??`) as this is missing from the corresponding `tbl_cfg` object.
 
 ## Adding external datasets
 
@@ -879,7 +883,7 @@ In order to add a new dataset to \pkg{ricu}, several aspects outlined in the pre
 
 ### Adding configuration information
 
-Central to adding a new dataset to \pkg{ricu} is providing some configuration information in a `data-sources.json` file pointed to by the environment variable `RICU_CONFIG_PATH`. Depending on particularities of the dataset in question, corresponding implementations of several (or none) of the S3 generic functions mentioned throughout Sections \ref{data-source-setup} and \ref{data-loading} might have to be provided. The amount of confirmation information required to get started also depends on the desired level of integration. As data download and import are one-time procedures, these steps can be carried out manually, negating the need for specifying column data types in `data-sources.json` and providing data source specific methods for the `download_src()` and `import_src()` generics.
+Central to adding a new dataset to \pkg{ricu} is providing some configuration information in a `data-sources.json` file pointed to by the environment variable `RICU_CONFIG_PATH`. Depending on particularities of the dataset in question, corresponding implementations of some of the S3 generic functions mentioned throughout Sections \ref{data-source-setup} and \ref{data-loading} might have to be provided. The amount of confirmation information required to get started also depends on the desired level of integration. As data download and import are one-time procedures, these steps can be carried out manually, negating the need for specifying column data types in `data-sources.json` and providing data source specific methods for the `download_src()` and `import_src()` generics.
 
 The basic organization of a data source configuration entry, as it could be used for `aumc_ext`, specified as JSON is as follows:
 
@@ -935,7 +939,7 @@ The shown `id_cfg` entry represents the minimally required set of entries, where
 }
 ```
 
-Minimally required is simply an entry indicating the data source membership of a table (if not partitioned; cf., `freetextitems`). This does slightly complicate data exploration, as if no `defaults` are specified, no default values can be provided to calls to `load_ts()` and related functions. Also, when specifying data items in such a setup, the per-table column names for special columns such as `index_var`, `val_var`, etc., have to be repeated for each individual item entry.
+Minimally required is simply an entry indicating the data source membership of a table (if not partitioned; cf., `freetextitems`). This does slightly complicate data exploration, as if no `defaults` are available, no default values can be provided to calls to `load_ts()` and related functions and therefore repeatedly have to be specified in corresponding function calls. Also, when specifying data items in such a setup, the per-table column names for special columns such as `index_var`, `val_var`, etc., have to be repeated for each individual item entry.
 
 For partitioned tables, the basic structure of a `partitioning` entry is required, but the content itself is irrelevant, as this is only used for setup (cf., `numericitems`). The length of `breaks`, however, is required to match the number of partitions (i.e., a length 23 `breaks` specification corresponds to a partitioning into 24 row-groups.)^[Originally it was intended to use partitioning information during data loading in order to narrow down the set of partitions that have to be accessed. So far, this optimization has not been implemented.]. The directory containing such a `data-sources.json` can then be pointed to by the environment variable `RICU_CONFIG_PATH`, making it available to \pkg{ricu}.
 
@@ -944,7 +948,9 @@ For partitioned tables, the basic structure of a `partitioning` entry is require
 As for functions that are required, currently there is no default method available for the loading step provided by `load_difftime()` and most likely an implementation of the generic function `id_win_helper()` will be required as well. For `aumc_ext`, `load_difftime()` could be implemented as
 
 ```{r, ext-difftime}
-ms_as_min <- function(x) as.difftime(as.integer(x / 6e4), units = "mins")
+ms_as_min <- function(x) {
+  as.difftime(as.integer(x / 6e4), units = "mins")
+}
 
 aumc_difftime <- function(x, rows, cols = colnames(x),
                           id_hint = id_vars(x),
@@ -966,15 +972,16 @@ aumc_difftime <- function(x, rows, cols = colnames(x),
   time_vars <- intersect(time_vars, cols)
 
   dat <- load_src(x, {{ rows }}, cols)
-  dat <- dat[, c(time_vars) := lapply(.SD, ms_as_min), .SDcols = time_vars]
+  dat <- dat[, c(time_vars) := lapply(.SD, ms_as_min),
+             .SDcols = time_vars]
 
   as_id_tbl(dat, id_vars = id_sel, by_ref = TRUE)
 }
 ```
 
-Such a function attempts to use the ID as requested, but falls back to the best possible alternative (using the ordering as previously specified in the `id_cfg` JSON configuration) if not provided by the data. Both row-subsetting expression and column selection are passed on to `load_src()` and all columns specified as `time_vars` are converted to `difftime` vectors in minutes. Operations can safely be carried out using by-reference semantics, as intermediate objects are not exposed to the user.
+Such a function attempts to use the ID as requested as `id_hint`, but falls back to the best possible alternative (using the ordering as previously specified in the `id_cfg` JSON configuration) if not provided by the data. The helper function `id_var_opts()` returns the dataset-specific column names of an `id_cfg` object (as opposed to the dataset-agnostic ID names; cf., `subject_id` and `patient`). Both the row-subsetting expression and column selection are passed on to `load_src()` and all columns specified as `time_vars` are converted to `difftime` vectors in minutes. Operations can safely be carried out using by-reference semantics, as intermediate objects are not exposed to the user.
 
-For a possible implementation of the `id_win_helper()` generic, column and table names to assemble the desired lookup table are hard coded instead of provided by the corresponding `id_cfg` object.
+For a possible implementation of the `id_win_helper()` generic, column and table names to assemble the desired lookup table are hard coded instead of provided by the corresponding `id_cfg` object (as is the case in the \pkg{ricu}-internal implementation).
 
 ```{r, ext-win}
 aumc_windows <- function(x) {
@@ -998,9 +1005,9 @@ aumc_windows <- function(x) {
 }
 ```
 
-As all the required information is available form the `admissions` table, `aumc_windows()` simply loads the corresponding columns, converts them to minute resolution, followed by some renaming. ICU admissions and discharges in this table are relative to initial hospital admissions and therefore an all-zero column `firstadmittedat` is added and the `id_var` of the resulting `id_tbl` is marked as `patientid`^[The patient ID created in this way is limited to what is possible in MIMIC-III, for example, where patient data of birth is available. An approximate data of birth could be constructed if ages were reported more precisely, but given the rough binning available here, this might be considered an acceptable limitation of resulting patient IDs. Nevertheless awareness of such differences in data presentation is important.].
+As all the required information is available form the `admissions` table, `aumc_windows()` simply loads the corresponding columns, converts them to minute resolution, followed by some renaming. ICU admissions and discharges in this table are relative to initial hospital admissions and therefore an all-zero column `firstadmittedat` is added and the `id_var` of the resulting `id_tbl` is marked as `patientid`^[The patient ID created in this way is different to that available for MIMIC-III, where patient date of birth is provided. An approximate date of birth could be constructed if ages were reported more precisely, but given the rough binning available here, this might be considered an acceptable limitation of resulting patient IDs. Nevertheless awareness of such differences in data presentation is important.].
 
-A final step in making a new dataset accessible to \pkg{ricu} lies in specifying concept items. To this end, a file `concept-dict.json` can be added to the directory pointed to by the environment variable `RICU_CONFIG_PATH`, containing entries like the following, which will make it possible to use the `hr` concept across both datasets included with \pkg{ricu}, alongside the newly added dataset.
+A final step in making a new dataset accessible to \pkg{ricu} lies in specifying concept items. To this end, a file `concept-dict.json` can be added to the directory pointed to by the environment variable `RICU_CONFIG_PATH`, containing entries like the following, which will make it possible to use the `hr` concept across all datasets included with \pkg{ricu}, alongside the newly added dataset.
 
 ```
 {
@@ -1018,11 +1025,11 @@ A final step in making a new dataset accessible to \pkg{ricu} lies in specifying
 }
 ```
 
-The above outline serves as an example on how to proceed when adding new data to \pkg{ricu}. Aspects like having multiple patient IDs, for example, could be further simplified^[An example for such a reduced setup is available from the [AUMC GitHub repository](https://github.com/eth-mds/aumc) as `aumc_min`. Moving to only a single patient identifier also does away with the need for a `id_win_helper()` implementation, as `change_id()` will not be called in such a scenario.]. Also, owing to the extensive use of S3 generic functions, \pkg{ricu} offers considerable flexibility for customizing certain behavior to specifics of a given data source, while providing fallback procedures whenever more general treatment can be applied.
+The above outline serves as an example on how to proceed when adding new data to \pkg{ricu}. Aspects like having multiple patient IDs, for example, could be further simplified^[An example for such a reduced setup is available from the [AUMC GitHub repository](https://github.com/eth-mds/aumc) as `aumc_min`. Moving to only a single patient identifier also does away with the need for a `id_win_helper()` implementation, as `change_id()` will not be called in such a scenario.]. Owing to the extensive use of S3 generic functions, \pkg{ricu} offers considerable flexibility for customizing certain behavior to specifics of a given data source, while providing fallback procedures whenever more general treatment can be applied.
 
 ### Summary of required steps
 
-Summarizing aspects explained in more detail in the previous sections, the following points list the required steps for adding new data in the order they should be considered in. The approach taken here being to start simple and build from that.
+Summarizing aspects explained in more detail in the previous sections, the following points list the required steps for adding new data in the order they should be considered in. The approach taken here being is to start simple and expand.
 
 1. Tables saved as `.fst` files should be moved to the folder returned by `src_data_dir()` when passed the dataset name (alternatively, methods implementing `src_download()` and `src_import()` are required).
 
@@ -1051,7 +1058,7 @@ Summarizing aspects explained in more detail in the previous sections, the follo
     - passes a row-subsetting expression to `load_src()` using the \pkg{rlang} curly-curly operator,
     - converts columns passed as `time_vars` to minute-resolution `difftime` vectors,
     - returns an `id_tbl` object where patient identifiers are chosen such that time-stamps are relative to corresponding admission,
-    - (Optional) if multiple identifiers are available from data uses the column passed as `id_hint` for patient identifiers.
+    - (optionally) uses the column passed as `id_hint` for patient identifiers, if multiple identifiers are available from data.
 
     Upon registering this method with S3 dispatch, higher-level data loading functions such as `load_ts()` become available (given that no changes in patient identifiers are requested).
 
@@ -1079,7 +1086,10 @@ dat <- load_concepts(c("lact", "death", "sofa"), src,
                      patient_ids = cohort[age > 20 & age < 90, ],
                      verbose = FALSE)
 
-dat <- dat[, head(.SD, n = match(TRUE, death, .N)), by = c(id_vars(dat))]
+dat <- dat[,
+  head(.SD, n = match(TRUE, death, .N)), by = c(id_vars(dat))
+]
+
 dat <- fill_gaps(dat)
 
 dat <- replace_na(dat, c(NA, FALSE), type = c("locf", "const"),
@@ -1105,13 +1115,13 @@ theme_fp <- function(...) {
 forest_model(cox_mod, theme = theme_fp(16))
 ```
 
-A simple exploration already shows that the increased values of lactate are associated with mortality, even after adjusting for the SOFA score.
+A simple exploration already shows that the increased values of lactate are associated with mortality, even after adjusting for the SOFA score. Using abstractions provided by \pkg{ricu}, this analysis could now also be applied to other datasets with minimal effort.
 
 ## Diabetes and insulin treatment
 
-For the next example, again using MIMIC-III demo data, comorbidities and treatment related information are used: the amount of insulin administered to patients in the first 24 hours from their ICU admission is analyzed, in connection with diabetic status, in order to determine whether diabetic patients receive more insulin over that time-span, when compared to non-diabetic patients. For this two concepts are introduced: `ins24`, a binned variable representing the cumulative amount of insulin administered within the first 24 hours of an ICU admission, and `diab`, a logical variable encoding diabetes comorbidity.
+For the next example, again using MIMIC-III demo data, comorbidities and treatment related information are used: the amount of insulin administered to patients in the first 24 hours from their ICU admission is analyzed, in connection with diabetic status, in order to determine whether diabetic patients receive more insulin over that time-span, when compared to non-diabetic patients. For this, two concepts are introduced: `ins24`, a binned variable representing the cumulative amount of insulin administered within the first 24 hours of an ICU admission, and `diab`, a logical variable encoding diabetes comorbidity.
 
-As there already is an insulin concept available, `ins24` can be implemented as `rec_cncpt`, loading `ins` with aggregation set to `sum()` instead of the default `median()` and inserting the callback function `ins_cb()` into the loading process. The callback function takes care of the preprocessing steps outlined above: first data is subsetted to fall into the first 24 hours of ICU admissions, followed by binning of summed values.
+As there already is an insulin concept available, `ins24` can be implemented as `rec_cncpt`, requesting data from the `ins` concept. In order to be able to calculate the total amount of insulin administered, it is required to change the default aggregation method from `median()` to `sum()`. Failing to do so would yield under-reported values whenever several insulin administrations fall within a given time-step. The callback function `ins_cb()` is then inserted into the loading process, performing of the preprocessing steps outlined above: first data is subsetted to fall into the first 24 hours of ICU admissions, followed by binning of summed values.
 
 ```{r ins24, eval = srcs_avail(src)}
 ins_breaks <- c(0, 1, 10, 20, 40, Inf)
@@ -1140,13 +1150,17 @@ ins24 <- concept("ins24", ins24, "insulin in first 24h",
                  target = "id_tbl", class = "rec_cncpt")
 ```
 
-The binary diabetes concept can be implemented as `lgl_cncpt`, for which ICD-9 codes are matched using a regular expression. As not only the subset of diabetic patients is of interest, a `col_itm` is more suited for diabetes status retrieval over a `rgx_itm`. For creating the required callback function that produces a logical vector, `transform_fun()` can be employed, coupled with a function like `grep_diab()`. The two concepts are then combined using `c()` and loaded via `load_concepts()`.
+The binary diabetes concept can be implemented as `lgl_cncpt`, for which ICD-9 codes are matched using a regular expression. As not only the subset of diabetic patients is of interest, a `col_itm` is more suited for diabetes status retrieval over a `rgx_itm`. For creating the required callback function, which produces a logical vector, the exported function factory `transform_fun()` can be employed, coupled with a function like `grep_diab()`, performing the desired transformation. The two concepts are then combined using `c()` and loaded via `load_concepts()`.
 
 ```{r diab, eval = srcs_avail(src)}
-grep_diab <- function(x) grepl("^250\\.?[0-9]{2}$", x)
+grep_diab <- function(x) {
+  grepl("^250\\.?[0-9]{2}$", x)
+}
 
 diab  <- item(src, table = "diagnoses_icd",
-              callback = transform_fun(grep_diab), class = "col_itm")
+              callback = transform_fun(grep_diab),
+              class = "col_itm")
+
 diab  <- concept("diab", diab, "diabetes", target = "id_tbl",
                  class = "lgl_cncpt")
 
@@ -1169,7 +1183,7 @@ ggplot(dat, aes(x = ins24, fill = diab)) +
   theme_bw(10)
 ```
 
-The plot suggests that for the MetaVision cohort defined in the previous example, without age subsetting, and during the first day of ICU stay, perhaps unsurprisingly, with increasing insulin dosage, diabetic patients receive more insulin compared to non-diabetic patients. This effect is more pronounced when looking at the full MIMIC-III data instead of the demo subset which includes only data corresponding to roughly 130 ICU stays.
+The plot suggests that for the MetaVision cohort defined in the previous example (without age subsetting) and during the first day of ICU stay, perhaps unsurprisingly, with increasing insulin dosage, diabetic patients receive more insulin compared to non-diabetic patients. This effect is more pronounced when looking at the full MIMIC-III data instead of the demo subset which includes only data corresponding to roughly 130 ICU stays.
 
 # Acknowledgments
 

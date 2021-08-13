@@ -263,7 +263,7 @@ data_env <- function() get("data", envir = pkg_env(), mode = "environment")
 #' with `src_env` objects. This allows certain functionality, for example data
 #' loading, to be adapted to data source-specific requirements.
 #'
-#' Instantiation and set up of `src_env` objects is possible irrespectively of
+#' Instantiation and set up of `src_env` objects is possible irrespective of
 #' whether the underlying data is available. If some (or all) data is missing,
 #' the user is asked for permission to download in interactive sessions and an
 #' error is thrown in non-interactive sessions upon first access of a
