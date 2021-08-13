@@ -212,7 +212,7 @@ is used to define a patient cohort for which data can be requested. Values
 may either be a vector of IDs (which are assumed to be of the same type as
 specified by the \code{id_type} argument) or a tabular object inheriting from
 \code{data.frame}, which must contain a column named after the data set-specific
-ID system identifier (for MIIMIC-III and an \code{id_type} argument of \code{hadm},
+ID system identifier (for MIMIC-III and an \code{id_type} argument of \code{hadm},
 for example, that would be \code{hadm_id}).
 }
 

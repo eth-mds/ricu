@@ -49,7 +49,7 @@ is_item(x)
 \code{\link[=init_itm]{init_itm()}})}
 
 \item{interval}{A default data loading interval (either specified as scalar
-difftime or string such as "00:01:00")}
+\code{difftime} or string such as "00:01:00")}
 
 \item{target}{Item target class (e.g. "id_tbl"), \code{NA} indicates no specific
 class requirement}

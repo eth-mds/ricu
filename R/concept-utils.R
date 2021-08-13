@@ -74,7 +74,7 @@
 #' @param ... Further specification of the `itm` object (passed to
 #' [init_itm()])
 #' @param interval A default data loading interval (either specified as scalar
-#' difftime or string such as "00:01:00")
+#' `difftime` or string such as "00:01:00")
 #' @param target Item target class (e.g. "id_tbl"), `NA` indicates no specific
 #' class requirement
 #' @param class Sub class for customizing `itm` behavior

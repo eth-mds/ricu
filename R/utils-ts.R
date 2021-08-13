@@ -458,7 +458,7 @@ hopper <- function(x, expr, windows, full_window = FALSE,
   rename_cols(res, win_cols, tmp_col, by_ref = TRUE)
 }
 
-#' Difftime utilities
+#' Utilities for `difftime`
 #'
 #' As [base::difftime()] vectors are used throughout `ricu`, a set of wrapper
 #' functions are exported for convenience of instantiation [base::difftime()]

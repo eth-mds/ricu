@@ -137,7 +137,7 @@
 #' between 2008 - 2019 at BIDMC. Therefore, relative to MIMIC-III, patients
 #' admitted prior to 2008 (whose data is stored in a CareVue-based system) has
 #' been removed, while data onward of 2012 has been added. This simplifies
-#' data queries considerably, as the CareVue/Metavision data split in MIMIC-III
+#' data queries considerably, as the CareVue/MetaVision data split in MIMIC-III
 #' no longer applies. While addition of ED data is planned, this is not part
 #' of the initial v1.0 release and currently is not supported by `ricu`. For
 #' further information, please refer to the [MIMIC-III documentation

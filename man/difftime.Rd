@@ -6,7 +6,7 @@
 \alias{hours}
 \alias{days}
 \alias{weeks}
-\title{Difftime utilities}
+\title{Utilities for \code{difftime}}
 \usage{
 secs(x)
 

@@ -101,7 +101,7 @@
 #' may either be a vector of IDs (which are assumed to be of the same type as
 #' specified by the `id_type` argument) or a tabular object inheriting from
 #' `data.frame`, which must contain a column named after the data set-specific
-#' ID system identifier (for MIIMIC-III and an `id_type` argument of `hadm`,
+#' ID system identifier (for MIMIC-III and an `id_type` argument of `hadm`,
 #' for example, that would be `hadm_id`).
 #'
 #' @section Extensions:

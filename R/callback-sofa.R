@@ -78,7 +78,7 @@
 #' evaluated score, only certain time points are of interest, this can be
 #' specified using the `explicit_wins` argument: passing for example
 #' `hours(24, 48)` will yield for every patient a score at hours 24 and 48
-#' relative to the orgin of the current ID system (for example ICU stay).
+#' relative to the origin of the current ID system (for example ICU stay).
 #'
 #' @return A `ts_tbl` object.
 #'

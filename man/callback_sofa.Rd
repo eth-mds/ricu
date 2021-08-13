@@ -119,7 +119,7 @@ from the first available measurement to the last. In instead of a regularly
 evaluated score, only certain time points are of interest, this can be
 specified using the \code{explicit_wins} argument: passing for example
 \code{hours(24, 48)} will yield for every patient a score at hours 24 and 48
-relative to the orgin of the current ID system (for example ICU stay).
+relative to the origin of the current ID system (for example ICU stay).
 }
 \references{
 Vincent, J.-L., Moreno, R., Takala, J. et al. The SOFA (Sepsis-related Organ
