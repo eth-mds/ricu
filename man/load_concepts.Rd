@@ -111,7 +111,7 @@ concepts and the value passed as \code{merge_data}.
 Concept objects are used in \code{ricu} as a way to specify how a clinical
 concept, such as heart rate can be loaded from a data source. Building on
 this abstraction, \code{load_concepts()} powers concise loading of data with
-data source specific pre-processing hidden away from the user, thereby
+data source specific preprocessing hidden away from the user, thereby
 providing a data source agnostic interface to data loading. At default
 value of the argument \code{merge_data}, a tabular data structure (either a
 \code{\link[=ts_tbl]{ts_tbl}} or an \code{\link[=id_tbl]{id_tbl}}, depending on what kind of
