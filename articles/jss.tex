@@ -793,13 +793,13 @@ R> (dat <- ts_tbl(a = 1:5, b = hours(1:5), c = rnorm(5)))
 # A `ts_tbl`: 5 x 3
 # Id var:     `a`
 # Index var:  `b` (1 hours)
-      a b             c
-  <int> <drtn>    <dbl>
-1     1 1 hours  0.727
-2     2 2 hours -1.14
-3     3 3 hours  0.104
-4     4 4 hours -0.0548
-5     5 5 hours -0.967
+      a b           c
+  <int> <drtn>  <dbl>
+1     1 1 hours -1.29
+2     2 2 hours  1.52
+3     3 3 hours  1.45
+4     4 4 hours -1.02
+5     5 5 hours  1.31
 \end{CodeOutput}
 \begin{CodeInput}
 R> dat[["b"]] <- dat[["b"]] + mins(30)
@@ -808,13 +808,13 @@ R> dat
 \begin{CodeOutput}
 # An `id_tbl`: 5 x 3
 # Id var:      `a`
-      a b                c
-  <int> <drtn>       <dbl>
-1     1  5400 secs  0.727
-2     2  9000 secs -1.14
-3     3 12600 secs  0.104
-4     4 16200 secs -0.0548
-5     5 19800 secs -0.967
+      a b              c
+  <int> <drtn>     <dbl>
+1     1  5400 secs -1.29
+2     2  9000 secs  1.52
+3     3 12600 secs  1.45
+4     4 16200 secs -1.02
+5     5 19800 secs  1.31
 \end{CodeOutput}
 \end{CodeChunk}
 
@@ -859,11 +859,11 @@ R> (dat <- win_tbl(a = 1:5, b = hours(1:5), c = mins(rep(90, 5)),
 # Duration var: `c`
       a b       c           d
   <int> <drtn>  <drtn>  <dbl>
-1     1 1 hours 90 mins 0.277
-2     2 2 hours 90 mins 0.727
-3     3 3 hours 90 mins 0.577
-4     4 4 hours 90 mins 0.584
-5     5 5 hours 90 mins 0.437
+1     1 1 hours 90 mins 0.290
+2     2 2 hours 90 mins 0.582
+3     3 3 hours 90 mins 0.485
+4     4 4 hours 90 mins 0.535
+5     5 5 hours 90 mins 0.321
 \end{CodeOutput}
 \begin{CodeInput}
 R> expand(dat)
@@ -874,16 +874,16 @@ R> expand(dat)
 # Index var:  `b` (1 hours)
        a b           d
    <int> <drtn>  <dbl>
- 1     1 1 hours 0.277
- 2     1 2 hours 0.277
- 3     2 2 hours 0.727
- 4     2 3 hours 0.727
- 5     3 3 hours 0.577
- 6     3 4 hours 0.577
- 7     4 4 hours 0.584
- 8     4 5 hours 0.584
- 9     5 5 hours 0.437
-10     5 6 hours 0.437
+ 1     1 1 hours 0.290
+ 2     1 2 hours 0.290
+ 3     2 2 hours 0.582
+ 4     2 3 hours 0.582
+ 5     3 3 hours 0.485
+ 6     3 4 hours 0.485
+ 7     4 4 hours 0.535
+ 8     4 5 hours 0.535
+ 9     5 5 hours 0.321
+10     5 6 hours 0.321
 \end{CodeOutput}
 \end{CodeChunk}
 
@@ -1569,7 +1569,7 @@ source setup is shown in Figure \ref{fig:src-setup}.
 \begin{CodeChunk}
 \begin{figure}
 
-{\centering \includegraphics{/private/var/folders/24/8k48jl6d249_n_qfxwsl6xvm0000gn/T/RtmpIr13Z3/file185f1d204ebe/articles/jss_files/figure-latex/src-setup-1} 
+{\centering \includegraphics{/private/var/folders/24/8k48jl6d249_n_qfxwsl6xvm0000gn/T/RtmphWEY3h/file7f874613b0e/articles/jss_files/figure-latex/src-setup-1} 
 
 }
 
@@ -1678,7 +1678,7 @@ representations as visualized in Figure \ref{fig:data-loading}.
 \begin{CodeChunk}
 \begin{figure}
 
-{\centering \includegraphics{/private/var/folders/24/8k48jl6d249_n_qfxwsl6xvm0000gn/T/RtmpIr13Z3/file185f1d204ebe/articles/jss_files/figure-latex/data-loading-1} 
+{\centering \includegraphics{/private/var/folders/24/8k48jl6d249_n_qfxwsl6xvm0000gn/T/RtmphWEY3h/file7f874613b0e/articles/jss_files/figure-latex/data-loading-1} 
 
 }
 
@@ -2467,7 +2467,7 @@ set to \texttt{FALSE}. The resulting model fit can be visualized as:
 \begin{CodeChunk}
 
 
-\begin{center}\includegraphics{/private/var/folders/24/8k48jl6d249_n_qfxwsl6xvm0000gn/T/RtmpIr13Z3/file185f1d204ebe/articles/jss_files/figure-latex/cox-plot-1} \end{center}
+\begin{center}\includegraphics{/private/var/folders/24/8k48jl6d249_n_qfxwsl6xvm0000gn/T/RtmphWEY3h/file7f874613b0e/articles/jss_files/figure-latex/cox-plot-1} \end{center}
 
 \end{CodeChunk}
 
@@ -2558,7 +2558,7 @@ with a histogram over the binned insulin administration values:
 \begin{CodeChunk}
 
 
-\begin{center}\includegraphics{/private/var/folders/24/8k48jl6d249_n_qfxwsl6xvm0000gn/T/RtmpIr13Z3/file185f1d204ebe/articles/jss_files/figure-latex/diabetes-visualize-1} \end{center}
+\begin{center}\includegraphics{/private/var/folders/24/8k48jl6d249_n_qfxwsl6xvm0000gn/T/RtmphWEY3h/file7f874613b0e/articles/jss_files/figure-latex/diabetes-visualize-1} \end{center}
 
 \end{CodeChunk}
 
