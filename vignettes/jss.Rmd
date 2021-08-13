@@ -1169,7 +1169,7 @@ ggplot(dat, aes(x = ins24, fill = diab)) +
   theme_bw(10)
 ```
 
-The plot suggests that for the MetaVision cohort defined in the previous example, without age subsettung, and during the first day of ICU stay, perhaps unsurprisingly, with increasing insulin dosage, diabetic patients receive more insulin compared to non-diabetic patients. This effect is more pronounced when looking at the full MIMIC-III data instead of the demo subset which includes only data corresponding to `r nrow(mimic_demo$icustays)` ICU stays.
+The plot suggests that for the MetaVision cohort defined in the previous example, without age subsettung, and during the first day of ICU stay, perhaps unsurprisingly, with increasing insulin dosage, diabetic patients receive more insulin compared to non-diabetic patients. This effect is more pronounced when looking at the full MIMIC-III data instead of the demo subset which includes only data corresponding to roughly 130 ICU stays.
 
 # Acknowledgments
 

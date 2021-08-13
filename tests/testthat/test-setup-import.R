@@ -3,12 +3,14 @@ tmp_cars <- withr::local_tempdir()
 
 write.csv(mtcars, file.path(tmp_cars, "mtcars.csv"), row.names = FALSE)
 
-Map(
-  write.csv,
-  split(mtcars, mtcars$vs),
-  lapply(file.path(tmp_cars, paste0("cars_", unique(mtcars$vs), ".csv.gz")),
-         gzfile),
-  row.names = FALSE
+invisible(
+  Map(
+    write.csv,
+    split(mtcars, mtcars$vs),
+    lapply(file.path(tmp_cars, paste0("cars_", unique(mtcars$vs), ".csv.gz")),
+           gzfile),
+    row.names = FALSE
+  )
 )
 
 spec <- list(
