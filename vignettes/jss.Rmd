@@ -143,7 +143,7 @@ The following list gives a quick outline of the steps required for setting up an
 
     * Installation from [CRAN](https://CRAN.R-project.org) as `install.packages("ricu")` provides the most recently released version of \pkg{ricu}.
 
-    * Alternatively, the latest development version is available from [Github](https://github.com/eth-mds/ricu) by running `remotes::install_github("eth-mds/ricu")`.
+    * Alternatively, the latest development version is available from [GitHub](https://github.com/eth-mds/ricu) by running `remotes::install_github("eth-mds/ricu")`.
 
 1. Requesting access to datasets and data source setup:
 
@@ -167,7 +167,7 @@ The following list gives a quick outline of the steps required for setting up an
 
     * Both concepts and data sources can be specified as strings; for example, glucose and age data can be loaded from MIMIC-III as `load_concepts(c("age", "glu"), "mimic")`.
 
-    Section \ref{data-concepts} goes into more detail on how data concepts are represented within \pkg{ricu} and an overview of the pre-configured concepts is available from Section \ref{ready-to-use-concepts}.
+    Section \ref{data-concepts} goes into more detail on how data concepts are represented within \pkg{ricu} and an overview of the preconfigured concepts is available from Section \ref{ready-to-use-concepts}.
 
 1. Extending the concept dictionary:
 
@@ -185,7 +185,7 @@ The following list gives a quick outline of the steps required for setting up an
 
     * In order for concepts to be available from the new dataset, the dictionary requires extension by adding new data items.
 
-    Further information about adding a custom dataset is available from Section \ref{adding-external-datasets}. Some code used when AUMCdb was not yet fully integrated with \pkg{ricu} is available from [Github](https://github.com/eth-mds/aumc) and is used for demonstration purposes for setting up AUMCdb as an external dataset `aumc_ext`.
+    Further information about adding a custom dataset is available from Section \ref{adding-external-datasets}. Some code used when AUMCdb was not yet fully integrated with \pkg{ricu} is available from [GitHub](https://github.com/eth-mds/aumc) and is used for demonstration purposes for setting up AUMCdb as an external dataset `aumc_ext`.
 
 Finally, Section \ref{examples} shows briefly how \pkg{ricu} could be used in practice to address clinical questions by presenting two small examples.
 
@@ -193,7 +193,7 @@ Finally, Section \ref{examples} shows briefly how \pkg{ricu} could be used in pr
 
 Several large-scale ICU datasets collected from multiple hospitals in the US and Europe can be set up for access using \pkg{ricu} with minimal user effort. Provisions in terms of required configuration information alongside functions for download and setup are part of \pkg{ricu}, opening up easy access to these datasets. Data itself, however, is not part of \pkg{ricu} and while the supported datasets are publicly available, access has to be granted by the dataset creators individually. Four datasets, MIMIC-III, MIMIC-IV, eICU and HiRID are hosted on PhysioNet \citep{goldberger2000}, access to which requires an [account](https://physionet.org/register/), while the fifth, AmsterdamUMCdb is currently distributed via a separate platform, requiring a [download link](https://amsterdammedicaldatascience.nl/#amsterdamumcdb).
 
-For both MIMIC-III and eICU, small subsets of data are available as demo datasets that do not require credentialed access to PhysioNet. As the terms for distribution of these demo datasets are less restrictive, they can be made available as data packages \pkg{mimic.demo} and \pkg{eicu.demo}. Due to size constraints, however they are not available via CRAN, but can be installed from Github as
+For both MIMIC-III and eICU, small subsets of data are available as demo datasets that do not require credentialed access to PhysioNet. As the terms for distribution of these demo datasets are less restrictive, they can be made available as data packages \pkg{mimic.demo} and \pkg{eicu.demo}. Due to size constraints, however they are not available via CRAN, but can be installed from GitHub as
 
 ```{r demo-data, eval = FALSE}
 install.packages(
@@ -426,7 +426,7 @@ In addition to including newer ICU data, this MIMIC release puts both more empha
 
 # Data concepts
 
-One of the key components of \pkg{ricu} is a scheme for specifying how to retrieve data corresponding to pre-defined clinical concepts from a given data source. This abstraction provides a mechanism for hiding away the data source specific implementation of a concept, in turn enabling dataset agnostic code for analysis. Heart rate, for example can be loaded from datasets `r paste1(demo)` using the `hr` concept as
+One of the key components of \pkg{ricu} is a scheme for specifying how to retrieve data corresponding to predefined clinical concepts from a given data source. This abstraction provides a mechanism for hiding away the data source specific implementation of a concept, in turn enabling dataset agnostic code for analysis. Heart rate, for example can be loaded from datasets `r paste1(demo)` using the `hr` concept as
 
 ```{r, load-conc, eval = srcs_avail(demo)}
 <<assign-src>>
@@ -435,7 +435,7 @@ One of the key components of \pkg{ricu} is a scheme for specifying how to retrie
 load_concepts("hr", demo, verbose = FALSE)
 ```
 
-This requires infrastructure for specifying how to retrieve data subsets (Section \ref{concept-specification}) that is both extensible (to new concepts and new datasets) and flexible enough to handle concept-specific pre-processing. Furthermore, abstractions that allow for code re-use for common data transformation tasks are important for simplifying both code development and maintenance. Building on this framework, \pkg{ricu} has included a dictionary with over 100 concepts implemented for all five supported datasets (where possible; see also Section \ref{ready-to-use-concepts}).
+This requires infrastructure for specifying how to retrieve data subsets (Section \ref{concept-specification}) that is both extensible (to new concepts and new datasets) and flexible enough to handle concept-specific preprocessing. Furthermore, abstractions that allow for code re-use for common data transformation tasks are important for simplifying both code development and maintenance. Building on this framework, \pkg{ricu} has included a dictionary with over 100 concepts implemented for all five supported datasets (where possible; see also Section \ref{ready-to-use-concepts}).
 
 ## Data classes
 
@@ -492,7 +492,7 @@ load_concepts(c("alb", "glu"), src, interval = mins(15L),
               verbose = FALSE)
 ```
 
-Most concepts of this kind are represented by `num_cncpt` objects with an associated unit of measurement and a range of permissible values. Data is mainly returned as `ts_tbl` objects, representing time-dependent observations. Apart from conversion to a common unit (possibly using the `convert_unit()` callback function), little has to be done in terms of pre-processing: values are simply reported at time-points rounded to the requested interval.
+Most concepts of this kind are represented by `num_cncpt` objects with an associated unit of measurement and a range of permissible values. Data is mainly returned as `ts_tbl` objects, representing time-dependent observations. Apart from conversion to a common unit (possibly using the `convert_unit()` callback function), little has to be done in terms of preprocessing: values are simply reported at time-points rounded to the requested interval.
 
 ### Patient demographics
 
@@ -504,7 +504,7 @@ Whenever requesting concepts which are returned with associated time-stamps (e.g
 load_concepts(c("age", "glu"), src, verbose = FALSE)
 ```
 
-Despite a best-effort approach, data availability can be a limiting factor. While for physiological variables, there is good agreement even across continents, data-privacy considerations, as well as lack of a common standard for data encoding, may cause issues that are hard to resolve. In some cases, this can be somewhat mitigated while in others, this is a limitation to be kept in mind. In AmsterdamUMCdb, for example, patient age, height and weight are not available as continuous variables, but as factor variables with patients binned into groups. Such variables are then approximated by returning the respective mid-points of groups for `aumc` data^[Prioritizing consistency over accuracy, one could apply the same binning to datasets which report numeric values, but the concepts included with \pkg{ricu} attempt to strike a balance between consistency and amount of applied pre-processing. With the extensible architecture of data concepts, however, such categorical variants of patient demographic concepts could easily be added.]. Other concepts, such as `adm` (categorizing admission types) or a potential `icd` concept (diagnoses as ICD-9 codes) can only return data if available from the data source in question. Unfortunately, neither `aumc` nor `hirid` contain ICD-9 encoded diagnoses, and in the case of `hirid`, no diagnosis information is available at all.
+Despite a best-effort approach, data availability can be a limiting factor. While for physiological variables, there is good agreement even across continents, data-privacy considerations, as well as lack of a common standard for data encoding, may cause issues that are hard to resolve. In some cases, this can be somewhat mitigated while in others, this is a limitation to be kept in mind. In AmsterdamUMCdb, for example, patient age, height and weight are not available as continuous variables, but as factor variables with patients binned into groups. Such variables are then approximated by returning the respective mid-points of groups for `aumc` data^[Prioritizing consistency over accuracy, one could apply the same binning to datasets which report numeric values, but the concepts included with \pkg{ricu} attempt to strike a balance between consistency and amount of applied preprocessing. With the extensible architecture of data concepts, however, such categorical variants of patient demographic concepts could easily be added.]. Other concepts, such as `adm` (categorizing admission types) or a potential `icd` concept (diagnoses as ICD-9 codes) can only return data if available from the data source in question. Unfortunately, neither `aumc` nor `hirid` contain ICD-9 encoded diagnoses, and in the case of `hirid`, no diagnosis information is available at all.
 
 ### Treatment-related information
 
@@ -604,7 +604,7 @@ In order to extend the current concept library both to new datasets and new conc
 }
 ```
 
-Central to providing the required flexibility for loading of certain data concepts that require some specific pre-processing are callback functions that can be specified for several *item* types. Functions (with appropriate signatures), designated as callback functions, are invoked on individual data items, before concept-related preprocessing is applied. A common scenario for this is unit of measurement conversion: In MIMIC-III data for example, several `itemid` values correspond to temperature measurements, some of which refer to temperatures measured in degrees Celsius whereas others are used for measurements in degrees Fahrenheit. As the information encoding which measurement corresponds to which `itemid` values is no longer available during concept-related preprocessing, this is best resolved at the level of individual data items. Several function factories are available for generating callback functions and `convert_unit()` is intended for covering unit conversions^[A more recent addition to \pkg{ricu} has been experimental support for automatic unit conversion using the \pkg{units} package \citep{pebesma2016}. In order to leverage these capabilities, a concept can be specified as `unt_cncpt` and values will be converted to the singular unit stated by the concept definition. Source units are taken to be what is returned by the `unit_var` column.]. Data *items* corresponding to the `temp` concept for MIMIC-III are specified as
+Central to providing the required flexibility for loading of certain data concepts that require some specific preprocessing are callback functions that can be specified for several *item* types. Functions (with appropriate signatures), designated as callback functions, are invoked on individual data items, before concept-related preprocessing is applied. A common scenario for this is unit of measurement conversion: In MIMIC-III data for example, several `itemid` values correspond to temperature measurements, some of which refer to temperatures measured in degrees Celsius whereas others are used for measurements in degrees Fahrenheit. As the information encoding which measurement corresponds to which `itemid` values is no longer available during concept-related preprocessing, this is best resolved at the level of individual data items. Several function factories are available for generating callback functions and `convert_unit()` is intended for covering unit conversions^[A more recent addition to \pkg{ricu} has been experimental support for automatic unit conversion using the \pkg{units} package \citep{pebesma2016}. In order to leverage these capabilities, a concept can be specified as `unt_cncpt` and values will be converted to the singular unit stated by the concept definition. Source units are taken to be what is returned by the `unit_var` column.]. Data *items* corresponding to the `temp` concept for MIMIC-III are specified as
 
 ```
 {
@@ -624,7 +624,7 @@ Central to providing the required flexibility for loading of certain data concep
 }
 ```
 
-indicating that for ID values 676, 677 and 223762 no pre-processing is required and for the remaining ID values the function `fahr_to_cels()` is applied to entries of the `val_var` column where the regular expression `"f"` is `TRUE` for the `unit_var` column (the values of which being ultimately replaced with `"C"`).
+indicating that for ID values 676, 677 and 223762 no preprocessing is required and for the remaining ID values the function `fahr_to_cels()` is applied to entries of the `val_var` column where the regular expression `"f"` is `TRUE` for the `unit_var` column (the values of which being ultimately replaced with `"C"`).
 
 # Data sources
 
@@ -875,7 +875,7 @@ For the `chartevents` table of the MIMIC-III demo dataset, for example, rows are
 
 ## Adding external datasets
 
-In order to add a new dataset to \pkg{ricu}, several aspects outlined in the previous subsections require consideration. For illustration purposes, code for integrating AmsterdamUMCdb as external dataset is available from [Github](https://github.com/eth-mds/aumc). While this is no longer needed for using the `aumc` data source, the repository will remain as it might serve as template to integration of new datasets. Throughout this repository (and the following paragraphs), the AmsterdamUMCdb data treated as an \pkg{ricu}-external dataset is referred to as `aumc_ext`.
+In order to add a new dataset to \pkg{ricu}, several aspects outlined in the previous subsections require consideration. For illustration purposes, code for integrating AmsterdamUMCdb as external dataset is available from [GitHub](https://github.com/eth-mds/aumc). While this is no longer needed for using the `aumc` data source, the repository will remain as it might serve as template to integration of new datasets. Throughout this repository (and the following paragraphs), the AmsterdamUMCdb data treated as an \pkg{ricu}-external dataset is referred to as `aumc_ext`.
 
 ### Adding configuration information
 
@@ -1018,7 +1018,7 @@ A final step in making a new dataset accessible to \pkg{ricu} lies in specifying
 }
 ```
 
-The above outline serves as an example on how to proceed when adding new data to \pkg{ricu}. Aspects like having multiple patient IDs, for example, could be further simplified^[An example for such a reduced setup is available from the [AUMC Github repository](https://github.com/eth-mds/aumc) as `aumc_min`. Moving to only a single patient identifier also does away with the need for a `id_win_helper()` implementation, as `change_id()` will not be called in such a scenario.]. Also, owing to the extensive use of S3 generic functions, \pkg{ricu} offers considerable flexibility for customizing certain behavior to specifics of a given data source, while providing fallback procedures whenever more general treatment can be applied.
+The above outline serves as an example on how to proceed when adding new data to \pkg{ricu}. Aspects like having multiple patient IDs, for example, could be further simplified^[An example for such a reduced setup is available from the [AUMC GitHub repository](https://github.com/eth-mds/aumc) as `aumc_min`. Moving to only a single patient identifier also does away with the need for a `id_win_helper()` implementation, as `change_id()` will not be called in such a scenario.]. Also, owing to the extensive use of S3 generic functions, \pkg{ricu} offers considerable flexibility for customizing certain behavior to specifics of a given data source, while providing fallback procedures whenever more general treatment can be applied.
 
 ### Summary of required steps
 
@@ -1061,7 +1061,7 @@ Summarizing aspects explained in more detail in the previous sections, the follo
 
 # Examples
 
-In order to briefly illustrate how \pkg{ricu} could be applied to real-world clinical questions, two examples are provided in the following sections. The first example fully relies on data concepts that are included with \pkg{ricu}. Whereas the second one explores both how some data pre-processing can be added to an existing concept, by creating a recursive concept (or `rec_cncpt`), as well as how to create an entirely new data concept in code (instead of JSON specification as outlined in Section \ref{concept-specification}), using constructors `item()` and `concept()`.
+In order to briefly illustrate how \pkg{ricu} could be applied to real-world clinical questions, two examples are provided in the following sections. The first example fully relies on data concepts that are included with \pkg{ricu}. Whereas the second one explores both how some data preprocessing can be added to an existing concept, by creating a recursive concept (or `rec_cncpt`), as well as how to create an entirely new data concept in code (instead of JSON specification as outlined in Section \ref{concept-specification}), using constructors `item()` and `concept()`.
 
 ## Lactate and mortality
 
@@ -1092,7 +1092,7 @@ cox_mod <- coxph(
 )
 ```
 
-After loading the data, some minor pre-processing is still required before modeling: first, data is filtered such that only data up to (and including) the hour in which the `death` flag switches to `TRUE` is used. Following that, missing values for `lact` are imputed using a last observation carry forward (locf) scheme (observing the patient grouping) and missing `death` values are set to `FALSE`. The resulting model fit can be visualized as:
+After loading the data, some minor preprocessing is still required before modeling: first, data is filtered such that only data up to (and including) the hour in which the `death` flag switches to `TRUE` is used. Following that, missing values for `lact` are imputed using a last observation carry forward (LOCF) scheme (observing the patient grouping) and missing `death` values are set to `FALSE`. The resulting model fit can be visualized as:
 
 ```{r cox-plot, eval = srcs_avail(src), echo = FALSE, warning = FALSE, message = FALSE, fig.width = 8}
 theme_fp <- function(...) {
@@ -1111,7 +1111,7 @@ A simple exploration already shows that the increased values of lactate are asso
 
 For the next example, again using MIMIC-III demo data, comorbidities and treatment related information are used: the amount of insulin administered to patients in the first 24 hours from their ICU admission is analyzed, in connection with diabetic status, in order to determine whether diabetic patients receive more insulin over that time-span, when compared to non-diabetic patients. For this two concepts are introduced: `ins24`, a binned variable representing the cumulative amount of insulin administered within the first 24 hours of an ICU admission, and `diab`, a logical variable encoding diabetes comorbidity.
 
-As there already is an insulin concept available, `ins24` can be implemented as `rec_cncpt`, loading `ins` with aggregation set to `sum()` instead of the default `median()` and inserting the callback function `ins_cb()` into the loading process. The callback function takes care of the pre-processing steps outlined above: first data is subsetted to fall into the first 24 hours of ICU admissions, followed by binning of summed values.
+As there already is an insulin concept available, `ins24` can be implemented as `rec_cncpt`, loading `ins` with aggregation set to `sum()` instead of the default `median()` and inserting the callback function `ins_cb()` into the loading process. The callback function takes care of the preprocessing steps outlined above: first data is subsetted to fall into the first 24 hours of ICU admissions, followed by binning of summed values.
 
 ```{r ins24, eval = srcs_avail(src)}
 ins_breaks <- c(0, 1, 10, 20, 40, Inf)
