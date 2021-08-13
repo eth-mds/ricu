@@ -1,4 +1,6 @@
 
+skip_on_cran()
+
 tmp_cars <- withr::local_tempdir()
 
 write.csv(mtcars, file.path(tmp_cars, "mtcars.csv"), row.names = FALSE)

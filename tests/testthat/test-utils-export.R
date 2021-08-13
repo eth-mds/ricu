@@ -1,4 +1,6 @@
 
+skip_on_cran()
+
 test_that("psv export", {
 
   tmp <- withr::local_tempdir()
