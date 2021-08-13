@@ -793,13 +793,13 @@ R> (dat <- ts_tbl(a = 1:5, b = hours(1:5), c = rnorm(5)))
 # A `ts_tbl`: 5 x 3
 # Id var:     `a`
 # Index var:  `b` (1 hours)
-      a b            c
-  <int> <drtn>   <dbl>
-1     1 1 hours -1.17
-2     2 2 hours  0.552
-3     3 3 hours  0.523
-4     4 4 hours  0.514
-5     5 5 hours -0.506
+      a b             c
+  <int> <drtn>    <dbl>
+1     1 1 hours  0.727
+2     2 2 hours -1.14
+3     3 3 hours  0.104
+4     4 4 hours -0.0548
+5     5 5 hours -0.967
 \end{CodeOutput}
 \begin{CodeInput}
 R> dat[["b"]] <- dat[["b"]] + mins(30)
@@ -808,13 +808,13 @@ R> dat
 \begin{CodeOutput}
 # An `id_tbl`: 5 x 3
 # Id var:      `a`
-      a b               c
-  <int> <drtn>      <dbl>
-1     1  5400 secs -1.17
-2     2  9000 secs  0.552
-3     3 12600 secs  0.523
-4     4 16200 secs  0.514
-5     5 19800 secs -0.506
+      a b                c
+  <int> <drtn>       <dbl>
+1     1  5400 secs  0.727
+2     2  9000 secs -1.14
+3     3 12600 secs  0.104
+4     4 16200 secs -0.0548
+5     5 19800 secs -0.967
 \end{CodeOutput}
 \end{CodeChunk}
 
@@ -857,13 +857,13 @@ R> (dat <- win_tbl(a = 1:5, b = hours(1:5), c = mins(rep(90, 5)),
 # Id var:       `a`
 # Index var:    `b` (1 hours)
 # Duration var: `c`
-      a b       c            d
-  <int> <drtn>  <drtn>   <dbl>
-1     1 1 hours 90 mins 0.558
-2     2 2 hours 90 mins 0.276
-3     3 3 hours 90 mins 0.0360
-4     4 4 hours 90 mins 0.311
-5     5 5 hours 90 mins 0.291
+      a b       c           d
+  <int> <drtn>  <drtn>  <dbl>
+1     1 1 hours 90 mins 0.277
+2     2 2 hours 90 mins 0.727
+3     3 3 hours 90 mins 0.577
+4     4 4 hours 90 mins 0.584
+5     5 5 hours 90 mins 0.437
 \end{CodeOutput}
 \begin{CodeInput}
 R> expand(dat)
@@ -872,18 +872,18 @@ R> expand(dat)
 # A `ts_tbl`: 10 x 3
 # Id var:     `a`
 # Index var:  `b` (1 hours)
-       a b            d
-   <int> <drtn>   <dbl>
- 1     1 1 hours 0.558
- 2     1 2 hours 0.558
- 3     2 2 hours 0.276
- 4     2 3 hours 0.276
- 5     3 3 hours 0.0360
- 6     3 4 hours 0.0360
- 7     4 4 hours 0.311
- 8     4 5 hours 0.311
- 9     5 5 hours 0.291
-10     5 6 hours 0.291
+       a b           d
+   <int> <drtn>  <dbl>
+ 1     1 1 hours 0.277
+ 2     1 2 hours 0.277
+ 3     2 2 hours 0.727
+ 4     2 3 hours 0.727
+ 5     3 3 hours 0.577
+ 6     3 4 hours 0.577
+ 7     4 4 hours 0.584
+ 8     4 5 hours 0.584
+ 9     5 5 hours 0.437
+10     5 6 hours 0.437
 \end{CodeOutput}
 \end{CodeChunk}
 
@@ -1569,7 +1569,7 @@ source setup is shown in Figure \ref{fig:src-setup}.
 \begin{CodeChunk}
 \begin{figure}
 
-{\centering \includegraphics{/private/var/folders/24/8k48jl6d249_n_qfxwsl6xvm0000gn/T/RtmpZQxDL4/file71a65faaef7/articles/jss_files/figure-latex/src-setup-1} 
+{\centering \includegraphics{/private/var/folders/24/8k48jl6d249_n_qfxwsl6xvm0000gn/T/RtmpIr13Z3/file185f1d204ebe/articles/jss_files/figure-latex/src-setup-1} 
 
 }
 
@@ -1678,7 +1678,7 @@ representations as visualized in Figure \ref{fig:data-loading}.
 \begin{CodeChunk}
 \begin{figure}
 
-{\centering \includegraphics{/private/var/folders/24/8k48jl6d249_n_qfxwsl6xvm0000gn/T/RtmpZQxDL4/file71a65faaef7/articles/jss_files/figure-latex/data-loading-1} 
+{\centering \includegraphics{/private/var/folders/24/8k48jl6d249_n_qfxwsl6xvm0000gn/T/RtmpIr13Z3/file185f1d204ebe/articles/jss_files/figure-latex/data-loading-1} 
 
 }
 
@@ -2467,7 +2467,7 @@ set to \texttt{FALSE}. The resulting model fit can be visualized as:
 \begin{CodeChunk}
 
 
-\begin{center}\includegraphics{/private/var/folders/24/8k48jl6d249_n_qfxwsl6xvm0000gn/T/RtmpZQxDL4/file71a65faaef7/articles/jss_files/figure-latex/cox-plot-1} \end{center}
+\begin{center}\includegraphics{/private/var/folders/24/8k48jl6d249_n_qfxwsl6xvm0000gn/T/RtmpIr13Z3/file185f1d204ebe/articles/jss_files/figure-latex/cox-plot-1} \end{center}
 
 \end{CodeChunk}
 
@@ -2558,7 +2558,7 @@ with a histogram over the binned insulin administration values:
 \begin{CodeChunk}
 
 
-\begin{center}\includegraphics{/private/var/folders/24/8k48jl6d249_n_qfxwsl6xvm0000gn/T/RtmpZQxDL4/file71a65faaef7/articles/jss_files/figure-latex/diabetes-visualize-1} \end{center}
+\begin{center}\includegraphics{/private/var/folders/24/8k48jl6d249_n_qfxwsl6xvm0000gn/T/RtmpIr13Z3/file185f1d204ebe/articles/jss_files/figure-latex/diabetes-visualize-1} \end{center}
 
 \end{CodeChunk}
 
@@ -2567,8 +2567,8 @@ example, without age subsettung, and during the first day of ICU stay,
 perhaps unsurprisingly, with increasing insulin dosage, diabetic
 patients receive more insulin compared to non-diabetic patients. This
 effect is more pronounced when looking at the full MIMIC-III data
-instead of the demo subset which includes only data corresponding to 136
-ICU stays.
+instead of the demo subset which includes only data corresponding to
+roughly 130 ICU stays.
 
 \hypertarget{acknowledgments}{%
 \section{Acknowledgments}\label{acknowledgments}}
