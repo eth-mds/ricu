@@ -217,21 +217,22 @@ dataset and the <code>icustays</code> table, this gives<div class="r"></p><pre><
 <span class='co'>## # ID options:  subject_id (patient) &lt; hadm_id (hadm) &lt; icustay_id (icustay)</span>
 <span class='co'>## # Defaults:    `intime` (index), `last_careunit` (val)</span>
 <span class='co'>## # Time vars:   `intime`, `outtime`</span>
-<span class='co'>##     row_id subject_id hadm_id icustay_id dbsource first_careunit last_careunit</span>
-<span class='co'>##      &lt;int&gt;      &lt;int&gt;   &lt;int&gt;      &lt;int&gt; &lt;chr&gt;    &lt;chr&gt;          &lt;chr&gt;</span>
-<span class='co'>##   1  12742      10006  142345     206504 carevue  MICU           MICU</span>
-<span class='co'>##   2  12747      10011  105331     232110 carevue  MICU           MICU</span>
-<span class='co'>##   3  12749      10013  165520     264446 carevue  MICU           MICU</span>
-<span class='co'>##   4  12754      10017  199207     204881 carevue  CCU            CCU</span>
-<span class='co'>##   5  12755      10019  177759     228977 carevue  MICU           MICU</span>
+<span class='co'>##     row_id subject_id hadm_id icustay_id dbsource first_careunit</span>
+<span class='co'>##      &lt;int&gt;      &lt;int&gt;   &lt;int&gt;      &lt;int&gt; &lt;chr&gt;    &lt;chr&gt;</span>
+<span class='co'>##   1  12742      10006  142345     206504 carevue  MICU</span>
+<span class='co'>##   2  12747      10011  105331     232110 carevue  MICU</span>
+<span class='co'>##   3  12749      10013  165520     264446 carevue  MICU</span>
+<span class='co'>##   4  12754      10017  199207     204881 carevue  CCU</span>
+<span class='co'>##   5  12755      10019  177759     228977 carevue  MICU</span>
 <span class='co'>## ...</span>
-<span class='co'>## 132  42676      44083  198330     286428 metavis~ CCU            CCU</span>
-<span class='co'>## 133  42691      44154  174245     217724 metavis~ MICU           MICU</span>
-<span class='co'>## 134  42709      44212  163189     239396 metavis~ MICU           MICU</span>
-<span class='co'>## 135  42712      44222  192189     238186 metavis~ CCU            CCU</span>
-<span class='co'>## 136  42714      44228  103379     217992 metavis~ SICU           SICU</span>
-<span class='co'>## # ... with 126 more rows, and 5 more variables: first_wardid &lt;int&gt;,</span>
-<span class='co'>## #   last_wardid &lt;int&gt;, intime &lt;dttm&gt;, outtime &lt;dttm&gt;, los &lt;dbl&gt;</span>
+<span class='co'>## 132  42676      44083  198330     286428 metavis~ CCU</span>
+<span class='co'>## 133  42691      44154  174245     217724 metavis~ MICU</span>
+<span class='co'>## 134  42709      44212  163189     239396 metavis~ MICU</span>
+<span class='co'>## 135  42712      44222  192189     238186 metavis~ CCU</span>
+<span class='co'>## 136  42714      44228  103379     217992 metavis~ SICU</span>
+<span class='co'>## # ... with 126 more rows, and 6 more variables: last_careunit &lt;chr&gt;,</span>
+<span class='co'>## #   first_wardid &lt;int&gt;, last_wardid &lt;int&gt;, intime &lt;dttm&gt;, outtime &lt;dttm&gt;,</span>
+<span class='co'>## #   los &lt;dbl&gt;</span>
 </pre>
 
 <p>Table subsets can be loaded into memory for example using the
@@ -243,16 +244,21 @@ memory are represented as <code><a href='https://Rdatatable.gitlab.io/data.table
 Extending the above example, if only ICU stays corresponding to the patient
 with <code>subject_id == 10124</code> are of interest, the respective data can be
 loaded as<div class="r"></p><pre><span class='fu'><a href='https://rdrr.io/r/base/subset.html'>subset</a></span><span class='op'>(</span><span class='va'>mimic_demo</span><span class='op'>$</span><span class='va'>icustays</span>, <span class='va'>subject_id</span> <span class='op'>==</span> <span class='fl'>10124</span><span class='op'>)</span>
-</pre><p></div></p><pre><span class='co'>##    row_id subject_id hadm_id icustay_id dbsource first_careunit last_careunit</span>
-<span class='co'>## 1:  12863      10124  182664     261764  carevue           MICU          MICU</span>
-<span class='co'>## 2:  12864      10124  170883     222779  carevue           MICU          MICU</span>
-<span class='co'>## 3:  12865      10124  170883     295043  carevue            CCU           CCU</span>
-<span class='co'>## 4:  12866      10124  170883     237528  carevue           MICU          MICU</span>
-<span class='co'>##    first_wardid last_wardid              intime             outtime     los</span>
-<span class='co'>## 1:           23          23 2192-03-29 10:46:51 2192-04-01 06:36:00  2.8258</span>
-<span class='co'>## 2:           50          50 2192-04-16 20:58:32 2192-04-20 08:51:28  3.4951</span>
-<span class='co'>## 3:            7           7 2192-04-24 02:29:49 2192-04-26 23:59:45  2.8958</span>
-<span class='co'>## 4:           23          23 2192-04-30 14:50:44 2192-05-15 23:34:21 15.3636</span>
+</pre><p></div></p><pre><span class='co'>##    row_id subject_id hadm_id icustay_id dbsource first_careunit</span>
+<span class='co'>## 1:  12863      10124  182664     261764  carevue           MICU</span>
+<span class='co'>## 2:  12864      10124  170883     222779  carevue           MICU</span>
+<span class='co'>## 3:  12865      10124  170883     295043  carevue            CCU</span>
+<span class='co'>## 4:  12866      10124  170883     237528  carevue           MICU</span>
+<span class='co'>##    last_careunit first_wardid last_wardid              intime</span>
+<span class='co'>## 1:          MICU           23          23 2192-03-29 10:46:51</span>
+<span class='co'>## 2:          MICU           50          50 2192-04-16 20:58:32</span>
+<span class='co'>## 3:           CCU            7           7 2192-04-24 02:29:49</span>
+<span class='co'>## 4:          MICU           23          23 2192-04-30 14:50:44</span>
+<span class='co'>##                outtime     los</span>
+<span class='co'>## 1: 2192-04-01 06:36:00  2.8258</span>
+<span class='co'>## 2: 2192-04-20 08:51:28  3.4951</span>
+<span class='co'>## 3: 2192-04-26 23:59:45  2.8958</span>
+<span class='co'>## 4: 2192-05-15 23:34:21 15.3636</span>
 </pre>
 
 <p>Much care has been taken to make <code>ricu</code> extensible to new datasets. For
