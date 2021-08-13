@@ -208,7 +208,7 @@ vignette}.
     released version of \pkg{ricu}.
   \item
     Alternatively, the latest development version is available from
-    \href{https://github.com/eth-mds/ricu}{Github} by running
+    \href{https://github.com/eth-mds/ricu}{GitHub} by running
     \texttt{remotes::install\_github("eth-mds/ricu")}.
   \end{itemize}
 \item
@@ -267,9 +267,8 @@ vignette}.
   \end{itemize}
 
   Section \ref{data-concepts} goes into more detail on how data concepts
-  are represented within \pkg{ricu} and an overview of the
-  pre-configured concepts is available from Section
-  \ref{ready-to-use-concepts}.
+  are represented within \pkg{ricu} and an overview of the preconfigured
+  concepts is available from Section \ref{ready-to-use-concepts}.
 \item
   Extending the concept dictionary:
 
@@ -305,7 +304,7 @@ vignette}.
   Further information about adding a custom dataset is available from
   Section \ref{adding-external-datasets}. Some code used when AUMCdb was
   not yet fully integrated with \pkg{ricu} is available from
-  \href{https://github.com/eth-mds/aumc}{Github} and is used for
+  \href{https://github.com/eth-mds/aumc}{GitHub} and is used for
   demonstration purposes for setting up AUMCdb as an external dataset
   \texttt{aumc\_ext}.
 \end{enumerate}
@@ -337,7 +336,7 @@ datasets that do not require credentialed access to PhysioNet. As the
 terms for distribution of these demo datasets are less restrictive, they
 can be made available as data packages \pkg{mimic.demo} and
 \pkg{eicu.demo}. Due to size constraints, however they are not available
-via CRAN, but can be installed from Github as
+via CRAN, but can be installed from GitHub as
 
 \begin{CodeChunk}
 \begin{CodeInput}
@@ -715,7 +714,7 @@ individual formulary units.
 \section{Data concepts}\label{data-concepts}}
 
 One of the key components of \pkg{ricu} is a scheme for specifying how
-to retrieve data corresponding to pre-defined clinical concepts from a
+to retrieve data corresponding to predefined clinical concepts from a
 given data source. This abstraction provides a mechanism for hiding away
 the data source specific implementation of a concept, in turn enabling
 dataset agnostic code for analysis. Heart rate, for example can be
@@ -754,8 +753,8 @@ R> load_concepts("hr", demo, verbose = FALSE)
 This requires infrastructure for specifying how to retrieve data subsets
 (Section \ref{concept-specification}) that is both extensible (to new
 concepts and new datasets) and flexible enough to handle
-concept-specific pre-processing. Furthermore, abstractions that allow
-for code re-use for common data transformation tasks are important for
+concept-specific preprocessing. Furthermore, abstractions that allow for
+code re-use for common data transformation tasks are important for
 simplifying both code development and maintenance. Building on this
 framework, \pkg{ricu} has included a dictionary with over 100 concepts
 implemented for all five supported datasets (where possible; see also
@@ -793,13 +792,13 @@ R> (dat <- ts_tbl(a = 1:5, b = hours(1:5), c = rnorm(5)))
 # A `ts_tbl`: 5 x 3
 # Id var:     `a`
 # Index var:  `b` (1 hours)
-      a b           c
-  <int> <drtn>  <dbl>
-1     1 1 hours -1.29
-2     2 2 hours  1.52
-3     3 3 hours  1.45
-4     4 4 hours -1.02
-5     5 5 hours  1.31
+      a b            c
+  <int> <drtn>   <dbl>
+1     1 1 hours -1.38
+2     2 2 hours  1.01
+3     3 3 hours  0.835
+4     4 4 hours  0.278
+5     5 5 hours  1.79
 \end{CodeOutput}
 \begin{CodeInput}
 R> dat[["b"]] <- dat[["b"]] + mins(30)
@@ -808,13 +807,13 @@ R> dat
 \begin{CodeOutput}
 # An `id_tbl`: 5 x 3
 # Id var:      `a`
-      a b              c
-  <int> <drtn>     <dbl>
-1     1  5400 secs -1.29
-2     2  9000 secs  1.52
-3     3 12600 secs  1.45
-4     4 16200 secs -1.02
-5     5 19800 secs  1.31
+      a b               c
+  <int> <drtn>      <dbl>
+1     1  5400 secs -1.38
+2     2  9000 secs  1.01
+3     3 12600 secs  0.835
+4     4 16200 secs  0.278
+5     5 19800 secs  1.79
 \end{CodeOutput}
 \end{CodeChunk}
 
@@ -857,13 +856,13 @@ R> (dat <- win_tbl(a = 1:5, b = hours(1:5), c = mins(rep(90, 5)),
 # Id var:       `a`
 # Index var:    `b` (1 hours)
 # Duration var: `c`
-      a b       c           d
-  <int> <drtn>  <drtn>  <dbl>
-1     1 1 hours 90 mins 0.290
-2     2 2 hours 90 mins 0.582
-3     3 3 hours 90 mins 0.485
-4     4 4 hours 90 mins 0.535
-5     5 5 hours 90 mins 0.321
+      a b       c            d
+  <int> <drtn>  <drtn>   <dbl>
+1     1 1 hours 90 mins 0.150
+2     2 2 hours 90 mins 0.512
+3     3 3 hours 90 mins 0.873
+4     4 4 hours 90 mins 0.546
+5     5 5 hours 90 mins 0.0545
 \end{CodeOutput}
 \begin{CodeInput}
 R> expand(dat)
@@ -872,18 +871,18 @@ R> expand(dat)
 # A `ts_tbl`: 10 x 3
 # Id var:     `a`
 # Index var:  `b` (1 hours)
-       a b           d
-   <int> <drtn>  <dbl>
- 1     1 1 hours 0.290
- 2     1 2 hours 0.290
- 3     2 2 hours 0.582
- 4     2 3 hours 0.582
- 5     3 3 hours 0.485
- 6     3 4 hours 0.485
- 7     4 4 hours 0.535
- 8     4 5 hours 0.535
- 9     5 5 hours 0.321
-10     5 6 hours 0.321
+       a b            d
+   <int> <drtn>   <dbl>
+ 1     1 1 hours 0.150
+ 2     1 2 hours 0.150
+ 3     2 2 hours 0.512
+ 4     2 3 hours 0.512
+ 5     3 3 hours 0.873
+ 6     3 4 hours 0.873
+ 7     4 4 hours 0.546
+ 8     4 5 hours 0.546
+ 9     5 5 hours 0.0545
+10     5 6 hours 0.0545
 \end{CodeOutput}
 \end{CodeChunk}
 
@@ -1019,7 +1018,7 @@ objects with an associated unit of measurement and a range of
 permissible values. Data is mainly returned as \texttt{ts\_tbl} objects,
 representing time-dependent observations. Apart from conversion to a
 common unit (possibly using the \texttt{convert\_unit()} callback
-function), little has to be done in terms of pre-processing: values are
+function), little has to be done in terms of preprocessing: values are
 simply reported at time-points rounded to the requested interval.
 
 \hypertarget{patient-demographics}{%
@@ -1076,7 +1075,7 @@ mid-points of groups for \texttt{aumc} data\footnote{Prioritizing
   consistency over accuracy, one could apply the same binning to
   datasets which report numeric values, but the concepts included with
   \pkg{ricu} attempt to strike a balance between consistency and amount
-  of applied pre-processing. With the extensible architecture of data
+  of applied preprocessing. With the extensible architecture of data
   concepts, however, such categorical variants of patient demographic
   concepts could easily be added.}. Other concepts, such as \texttt{adm}
 (categorizing admission types) or a potential \texttt{icd} concept
@@ -1398,7 +1397,7 @@ concepts with non-existing names are treated as new concepts.
 \end{verbatim}
 
 Central to providing the required flexibility for loading of certain
-data concepts that require some specific pre-processing are callback
+data concepts that require some specific preprocessing are callback
 functions that can be specified for several \emph{item} types. Functions
 (with appropriate signatures), designated as callback functions, are
 invoked on individual data items, before concept-related preprocessing
@@ -1439,7 +1438,7 @@ as
 }
 \end{verbatim}
 
-indicating that for ID values 676, 677 and 223762 no pre-processing is
+indicating that for ID values 676, 677 and 223762 no preprocessing is
 required and for the remaining ID values the function
 \texttt{fahr\_to\_cels()} is applied to entries of the \texttt{val\_var}
 column where the regular expression \texttt{"f"} is \texttt{TRUE} for
@@ -1569,7 +1568,7 @@ source setup is shown in Figure \ref{fig:src-setup}.
 \begin{CodeChunk}
 \begin{figure}
 
-{\centering \includegraphics{/private/var/folders/24/8k48jl6d249_n_qfxwsl6xvm0000gn/T/RtmphWEY3h/file7f874613b0e/articles/jss_files/figure-latex/src-setup-1} 
+{\centering \includegraphics{/private/var/folders/24/8k48jl6d249_n_qfxwsl6xvm0000gn/T/RtmpAK46hZ/file6a243003ec7/articles/jss_files/figure-latex/src-setup-1} 
 
 }
 
@@ -1678,7 +1677,7 @@ representations as visualized in Figure \ref{fig:data-loading}.
 \begin{CodeChunk}
 \begin{figure}
 
-{\centering \includegraphics{/private/var/folders/24/8k48jl6d249_n_qfxwsl6xvm0000gn/T/RtmphWEY3h/file7f874613b0e/articles/jss_files/figure-latex/data-loading-1} 
+{\centering \includegraphics{/private/var/folders/24/8k48jl6d249_n_qfxwsl6xvm0000gn/T/RtmpAK46hZ/file6a243003ec7/articles/jss_files/figure-latex/data-loading-1} 
 
 }
 
@@ -2085,7 +2084,7 @@ corresponding \texttt{tbl\_cfg} object.
 In order to add a new dataset to \pkg{ricu}, several aspects outlined in
 the previous subsections require consideration. For illustration
 purposes, code for integrating AmsterdamUMCdb as external dataset is
-available from \href{https://github.com/eth-mds/aumc}{Github}. While
+available from \href{https://github.com/eth-mds/aumc}{GitHub}. While
 this is no longer needed for using the \texttt{aumc} data source, the
 repository will remain as it might serve as template to integration of
 new datasets. Throughout this repository (and the following paragraphs),
@@ -2309,7 +2308,7 @@ The above outline serves as an example on how to proceed when adding new
 data to \pkg{ricu}. Aspects like having multiple patient IDs, for
 example, could be further simplified\footnote{An example for such a
   reduced setup is available from the
-  \href{https://github.com/eth-mds/aumc}{AUMC Github repository} as
+  \href{https://github.com/eth-mds/aumc}{AUMC GitHub repository} as
   \texttt{aumc\_min}. Moving to only a single patient identifier also
   does away with the need for a \texttt{id\_win\_helper()}
   implementation, as \texttt{change\_id()} will not be called in such a
@@ -2373,7 +2372,7 @@ start simple and build from that.
     \pkg{rlang} curly-curly operator,
   \item
     converts columns passed as \texttt{time\_vars} to minute-resolution
-    difftime vectors,
+    \texttt{difftime} vectors,
   \item
     returns an \texttt{id\_tbl} object where patient identifiers are
     chosen such that time-stamps are relative to corresponding
@@ -2409,11 +2408,11 @@ In order to briefly illustrate how \pkg{ricu} could be applied to
 real-world clinical questions, two examples are provided in the
 following sections. The first example fully relies on data concepts that
 are included with \pkg{ricu}. Whereas the second one explores both how
-some data pre-processing can be added to an existing concept, by
-creating a recursive concept (or \texttt{rec\_cncpt}), as well as how to
-create an entirely new data concept in code (instead of JSON
-specification as outlined in Section \ref{concept-specification}), using
-constructors \texttt{item()} and \texttt{concept()}.
+some data preprocessing can be added to an existing concept, by creating
+a recursive concept (or \texttt{rec\_cncpt}), as well as how to create
+an entirely new data concept in code (instead of JSON specification as
+outlined in Section \ref{concept-specification}), using constructors
+\texttt{item()} and \texttt{concept()}.
 
 \hypertarget{lactate-and-mortality}{%
 \subsection{Lactate and mortality}\label{lactate-and-mortality}}
@@ -2456,18 +2455,18 @@ R> cox_mod <- coxph(
 \end{CodeInput}
 \end{CodeChunk}
 
-After loading the data, some minor pre-processing is still required
+After loading the data, some minor preprocessing is still required
 before modeling: first, data is filtered such that only data up to (and
 including) the hour in which the \texttt{death} flag switches to
 \texttt{TRUE} is used. Following that, missing values for \texttt{lact}
-are imputed using a last observation carry forward (locf) scheme
+are imputed using a last observation carry forward (LOCF) scheme
 (observing the patient grouping) and missing \texttt{death} values are
 set to \texttt{FALSE}. The resulting model fit can be visualized as:
 
 \begin{CodeChunk}
 
 
-\begin{center}\includegraphics{/private/var/folders/24/8k48jl6d249_n_qfxwsl6xvm0000gn/T/RtmphWEY3h/file7f874613b0e/articles/jss_files/figure-latex/cox-plot-1} \end{center}
+\begin{center}\includegraphics{/private/var/folders/24/8k48jl6d249_n_qfxwsl6xvm0000gn/T/RtmpAK46hZ/file6a243003ec7/articles/jss_files/figure-latex/cox-plot-1} \end{center}
 
 \end{CodeChunk}
 
@@ -2493,8 +2492,8 @@ implemented as \texttt{rec\_cncpt}, loading \texttt{ins} with
 aggregation set to \texttt{sum()} instead of the default
 \texttt{median()} and inserting the callback function \texttt{ins\_cb()}
 into the loading process. The callback function takes care of the
-pre-processing steps outlined above: first data is subsetted to fall
-into the first 24 hours of ICU admissions, followed by binning of summed
+preprocessing steps outlined above: first data is subsetted to fall into
+the first 24 hours of ICU admissions, followed by binning of summed
 values.
 
 \begin{CodeChunk}
@@ -2558,12 +2557,12 @@ with a histogram over the binned insulin administration values:
 \begin{CodeChunk}
 
 
-\begin{center}\includegraphics{/private/var/folders/24/8k48jl6d249_n_qfxwsl6xvm0000gn/T/RtmphWEY3h/file7f874613b0e/articles/jss_files/figure-latex/diabetes-visualize-1} \end{center}
+\begin{center}\includegraphics{/private/var/folders/24/8k48jl6d249_n_qfxwsl6xvm0000gn/T/RtmpAK46hZ/file6a243003ec7/articles/jss_files/figure-latex/diabetes-visualize-1} \end{center}
 
 \end{CodeChunk}
 
 The plot suggests that for the MetaVision cohort defined in the previous
-example, without age subsettung, and during the first day of ICU stay,
+example, without age subsetting, and during the first day of ICU stay,
 perhaps unsurprisingly, with increasing insulin dosage, diabetic
 patients receive more insulin compared to non-diabetic patients. This
 effect is more pronounced when looking at the full MIMIC-III data
