@@ -59,7 +59,10 @@ output: >
   if (packageVersion("rticles") < 0.5 || rmarkdown::pandoc_version() >= 2)
     rticles::jss_article else rmarkdown::html_vignette
 documentclass: jss
-classoption: notitle
+classoption:
+  - notitle
+  - nojss
+  - noheadings
 bibliography: jss.bib
 pkgdown:
   as_is: true
@@ -125,9 +128,9 @@ knitr::opts_chunk$set(eval = FALSE)
 
 # Introduction
 
-Collection of electronic health records has seen a significant rise in recent years \citep{evans2016}, opening up opportunities and providing the grounds for a large body of data-driven research oriented towards helping clinicians in decision-making and therefore improving patient care and health outcomes \citep{jiang2017}.
+Collection of electronic health records has seen a significant rise in recent years \citep{evans2016}, opening up opportunities and providing the grounds for a large body of data-driven research oriented towards helping clinicians in decision-making and therefore improving patient care and health outcomes \citep{jiang2017}. While growing amounts of collected patient data might contribute to an increasingly hard task for intensivists to focus on relevant subsets thereof \citep{pickering2013}, this poses an opportunity for the application of machine learning (ML) methods.
 
-One example of a problem that has received much attention from the machine learning community is early prediction of sepsis in the intensive care unit \citep[ICU;][]{desautels2016, nemati2018, futoma2017, kam2017}. Interestingly, there is evidence that a large proportion of the publications are based on the same dataset \citep{fleuren2019}, the Medical Information Mart for Intensive Care III \citep[MIMIC-III;][]{johnson2016}, which shows a systematic lack of external validation. This issue has recently again been highlighted by a study demonstrating poor performance in external validation of a widely adopted proprietary sepsis prediction model \citep{wong2021}.
+One example of a problem that has received much attention from the ML community is early prediction of sepsis in the intensive care unit \citep[ICU;][]{desautels2016, nemati2018, futoma2017, kam2017}. Interestingly, there is evidence that a large proportion of the publications are based on the same dataset \citep{fleuren2019}, the Medical Information Mart for Intensive Care III \citep[MIMIC-III;][]{johnson2016}, which shows a systematic lack of external validation. This issue has recently again been highlighted by a study demonstrating poor performance in external validation of a widely adopted proprietary sepsis prediction model \citep{wong2021}.
 
 Contributing to this problem might well be the lack of computational infrastructure handling multiple datasets. The MIMIC-III dataset consists of 26 different tables containing about 20GB of data. While much work and care has gone into data preprocessing in order to provide a self-contained ready-to-use data resource with MIMIC-III, seemingly simple tasks such as computing a Sepsis-3 label \citep{singer2016} remain non-trivial efforts^[There is considerable heterogeneity in number of patients satisfying the Sepsis-3 criterion \citep{singer2016} among studies investigating MIMIC-III. Reported Sepsis-3 prevalence ranges from 11.3% \citep{desautels2016}, over 23.9% \citep{nemati2018} and 25.4% \citep{wang2018}, up to 49.1% \citep{johnson2018}. While some of this variation may be explained by differing patient inclusion criteria, diversity in label implementation must also contribute significantly.]. This is only exacerbated when aiming to co-integrate multiple different datasets of this form, spanning hospitals and even countries, in order to capture effects of differing practice and demographics.
 
@@ -240,7 +243,7 @@ options(width = old_width)
 
 The data is organized into 31 tables and includes patient demographics, routine vital signs, laboratory measurements, medication administrations, admission diagnoses, as well as treatment information. Owing to the wide range of hospitals participating in this data collection initiative, spanning small, rural, non-teaching health centers with fewer than 100 beds to large teaching hospitals with an excess of 500 beds, data availability varies. Even if data was being recorded at the bedside it might end up missing from the eICU dataset due to technical limitations of the collection process. As for patient identifiers, while it is possible to link ICU admissions corresponding to the same hospital stay, it is not possible to identify patients across hospital stays.
 
-Data resolution again varies considerably over included variables. The `vitalperiodic` table stands out as one of the few examples of a *wide* table organization (laying out variables as columns), as opposed to the *long* presentation (following an entity–attribute–value model) of most other tables containing patient measurement data. The average time step in `vitalperiodic` is around 5 minutes, but data missingness ranges from around 1% for heart rate and pulse oximetry to around 80-90% for blood pressure measurements, therefore giving approximately hourly resolution for such variables.
+Data resolution again varies considerably over included variables. The `vitalperiodic` table stands out as one of the few examples of a *wide* table organization (laying out variables as columns), as opposed to the *long* presentation (following an entity–attribute–value model) of most other tables containing patient measurement data. The average time step in `vitalperiodic` is around 5 minutes, but data missingness ranges from around 1% for heart rate and pulse oximetry to roughly 10% for respiration rate and up to 80% for systemic and 90% for pulmonary artery blood pressure measurements, therefore giving approximately hourly resolution for such variables.
 
 ## HiRID
 
