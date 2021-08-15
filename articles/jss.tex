@@ -799,13 +799,13 @@ R> (dat <- ts_tbl(a = 1:5, b = hours(1:5), c = rnorm(5)))
 # A `ts_tbl`: 5 x 3
 # Id var:     `a`
 # Index var:  `b` (1 hours)
-      a b            c
-  <int> <drtn>   <dbl>
-1     1 1 hours -0.463
-2     2 2 hours -0.109
-3     3 3 hours -0.165
-4     4 4 hours -0.828
-5     5 5 hours -1.08
+      a b             c
+  <int> <drtn>    <dbl>
+1     1 1 hours  0.967
+2     2 2 hours  1.67
+3     3 3 hours  0.734
+4     4 4 hours -0.668
+5     5 5 hours  0.0133
 \end{CodeOutput}
 \begin{CodeInput}
 R> dat[["b"]] <- dat[["b"]] + mins(30)
@@ -814,13 +814,13 @@ R> dat
 \begin{CodeOutput}
 # An `id_tbl`: 5 x 3
 # Id var:      `a`
-      a b               c
-  <int> <drtn>      <dbl>
-1     1  5400 secs -0.463
-2     2  9000 secs -0.109
-3     3 12600 secs -0.165
-4     4 16200 secs -0.828
-5     5 19800 secs -1.08
+      a b                c
+  <int> <drtn>       <dbl>
+1     1  5400 secs  0.967
+2     2  9000 secs  1.67
+3     3 12600 secs  0.734
+4     4 16200 secs -0.668
+5     5 19800 secs  0.0133
 \end{CodeOutput}
 \end{CodeChunk}
 
@@ -864,11 +864,11 @@ R> (dat <- win_tbl(a = 1:5, b = hours(1:5), c = mins(rep(90, 5)),
 # Duration var: `c`
       a b       c           d
   <int> <drtn>  <drtn>  <dbl>
-1     1 1 hours 90 mins 0.443
-2     2 2 hours 90 mins 0.836
-3     3 3 hours 90 mins 0.549
-4     4 4 hours 90 mins 0.969
-5     5 5 hours 90 mins 0.265
+1     1 1 hours 90 mins 0.622
+2     2 2 hours 90 mins 0.511
+3     3 3 hours 90 mins 0.607
+4     4 4 hours 90 mins 0.608
+5     5 5 hours 90 mins 0.914
 \end{CodeOutput}
 \begin{CodeInput}
 R> expand(dat)
@@ -879,16 +879,16 @@ R> expand(dat)
 # Index var:  `b` (1 hours)
        a b           d
    <int> <drtn>  <dbl>
- 1     1 1 hours 0.443
- 2     1 2 hours 0.443
- 3     2 2 hours 0.836
- 4     2 3 hours 0.836
- 5     3 3 hours 0.549
- 6     3 4 hours 0.549
- 7     4 4 hours 0.969
- 8     4 5 hours 0.969
- 9     5 5 hours 0.265
-10     5 6 hours 0.265
+ 1     1 1 hours 0.622
+ 2     1 2 hours 0.622
+ 3     2 2 hours 0.511
+ 4     2 3 hours 0.511
+ 5     3 3 hours 0.607
+ 6     3 4 hours 0.607
+ 7     4 4 hours 0.608
+ 8     4 5 hours 0.608
+ 9     5 5 hours 0.914
+10     5 6 hours 0.914
 \end{CodeOutput}
 \end{CodeChunk}
 
@@ -1581,7 +1581,7 @@ source setup is shown in Figure \ref{fig:src-setup}.
 \begin{CodeChunk}
 \begin{figure}
 
-{\centering \includegraphics{/private/var/folders/24/8k48jl6d249_n_qfxwsl6xvm0000gn/T/RtmpbRcj50/file6c93e5fa7d6/articles/jss_files/figure-latex/src-setup-1} 
+{\centering \includegraphics{/private/var/folders/24/8k48jl6d249_n_qfxwsl6xvm0000gn/T/RtmpJ5dTtV/file7c97c25b1ae/articles/jss_files/figure-latex/src-setup-1} 
 
 }
 
@@ -1692,7 +1692,7 @@ representations as visualized in Figure \ref{fig:data-loading}.
 \begin{CodeChunk}
 \begin{figure}
 
-{\centering \includegraphics{/private/var/folders/24/8k48jl6d249_n_qfxwsl6xvm0000gn/T/RtmpbRcj50/file6c93e5fa7d6/articles/jss_files/figure-latex/data-loading-1} 
+{\centering \includegraphics{/private/var/folders/24/8k48jl6d249_n_qfxwsl6xvm0000gn/T/RtmpJ5dTtV/file7c97c25b1ae/articles/jss_files/figure-latex/data-loading-1} 
 
 }
 
@@ -2497,7 +2497,7 @@ set to \texttt{FALSE}. The resulting model fit can be visualized as:
 \begin{CodeChunk}
 
 
-\begin{center}\includegraphics{/private/var/folders/24/8k48jl6d249_n_qfxwsl6xvm0000gn/T/RtmpbRcj50/file6c93e5fa7d6/articles/jss_files/figure-latex/cox-plot-1} \end{center}
+\begin{center}\includegraphics{/private/var/folders/24/8k48jl6d249_n_qfxwsl6xvm0000gn/T/RtmpJ5dTtV/file7c97c25b1ae/articles/jss_files/figure-latex/cox-plot-1} \end{center}
 
 \end{CodeChunk}
 
@@ -2599,7 +2599,7 @@ with a histogram over the binned insulin administration values:
 \begin{CodeChunk}
 
 
-\begin{center}\includegraphics{/private/var/folders/24/8k48jl6d249_n_qfxwsl6xvm0000gn/T/RtmpbRcj50/file6c93e5fa7d6/articles/jss_files/figure-latex/diabetes-visualize-1} \end{center}
+\begin{center}\includegraphics{/private/var/folders/24/8k48jl6d249_n_qfxwsl6xvm0000gn/T/RtmpJ5dTtV/file7c97c25b1ae/articles/jss_files/figure-latex/diabetes-visualize-1} \end{center}
 
 \end{CodeChunk}
 
