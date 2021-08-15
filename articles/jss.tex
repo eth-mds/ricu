@@ -1,5 +1,7 @@
 \documentclass[
-  notitle]{jss}
+  notitle,
+  nojss,
+  noheadings]{jss}
 
 \usepackage[utf8]{inputenc}
 
@@ -105,11 +107,14 @@ Collection of electronic health records has seen a significant rise in
 recent years \citep{evans2016}, opening up opportunities and providing
 the grounds for a large body of data-driven research oriented towards
 helping clinicians in decision-making and therefore improving patient
-care and health outcomes \citep{jiang2017}.
+care and health outcomes \citep{jiang2017}. While growing amounts of
+collected patient data might contribute to an increasingly hard task for
+intensivists to focus on relevant subsets thereof \citep{pickering2013},
+this poses an opportunity for the application of machine learning (ML)
+methods.
 
-One example of a problem that has received much attention from the
-machine learning community is early prediction of sepsis in the
-intensive care unit
+One example of a problem that has received much attention from the ML
+community is early prediction of sepsis in the intensive care unit
 \citep[ICU;][]{desautels2016, nemati2018, futoma2017, kam2017}.
 Interestingly, there is evidence that a large proportion of the
 publications are based on the same dataset \citep{fleuren2019}, the
@@ -513,7 +518,8 @@ opposed to the \emph{long} presentation (following an
 entity--attribute--value model) of most other tables containing patient
 measurement data. The average time step in \texttt{vitalperiodic} is
 around 5 minutes, but data missingness ranges from around 1\% for heart
-rate and pulse oximetry to around 80-90\% for blood pressure
+rate and pulse oximetry to roughly 10\% for respiration rate and up to
+80\% for systemic and 90\% for pulmonary artery blood pressure
 measurements, therefore giving approximately hourly resolution for such
 variables.
 
@@ -793,13 +799,13 @@ R> (dat <- ts_tbl(a = 1:5, b = hours(1:5), c = rnorm(5)))
 # A `ts_tbl`: 5 x 3
 # Id var:     `a`
 # Index var:  `b` (1 hours)
-      a b             c
-  <int> <drtn>    <dbl>
-1     1 1 hours  1.77
-2     2 2 hours  0.799
-3     3 3 hours -1.32
-4     4 4 hours -0.0269
-5     5 5 hours  1.04
+      a b            c
+  <int> <drtn>   <dbl>
+1     1 1 hours -0.463
+2     2 2 hours -0.109
+3     3 3 hours -0.165
+4     4 4 hours -0.828
+5     5 5 hours -1.08
 \end{CodeOutput}
 \begin{CodeInput}
 R> dat[["b"]] <- dat[["b"]] + mins(30)
@@ -808,13 +814,13 @@ R> dat
 \begin{CodeOutput}
 # An `id_tbl`: 5 x 3
 # Id var:      `a`
-      a b                c
-  <int> <drtn>       <dbl>
-1     1  5400 secs  1.77
-2     2  9000 secs  0.799
-3     3 12600 secs -1.32
-4     4 16200 secs -0.0269
-5     5 19800 secs  1.04
+      a b               c
+  <int> <drtn>      <dbl>
+1     1  5400 secs -0.463
+2     2  9000 secs -0.109
+3     3 12600 secs -0.165
+4     4 16200 secs -0.828
+5     5 19800 secs -1.08
 \end{CodeOutput}
 \end{CodeChunk}
 
@@ -858,11 +864,11 @@ R> (dat <- win_tbl(a = 1:5, b = hours(1:5), c = mins(rep(90, 5)),
 # Duration var: `c`
       a b       c           d
   <int> <drtn>  <drtn>  <dbl>
-1     1 1 hours 90 mins 0.188
-2     2 2 hours 90 mins 0.629
-3     3 3 hours 90 mins 0.323
-4     4 4 hours 90 mins 0.360
-5     5 5 hours 90 mins 0.966
+1     1 1 hours 90 mins 0.443
+2     2 2 hours 90 mins 0.836
+3     3 3 hours 90 mins 0.549
+4     4 4 hours 90 mins 0.969
+5     5 5 hours 90 mins 0.265
 \end{CodeOutput}
 \begin{CodeInput}
 R> expand(dat)
@@ -873,16 +879,16 @@ R> expand(dat)
 # Index var:  `b` (1 hours)
        a b           d
    <int> <drtn>  <dbl>
- 1     1 1 hours 0.188
- 2     1 2 hours 0.188
- 3     2 2 hours 0.629
- 4     2 3 hours 0.629
- 5     3 3 hours 0.323
- 6     3 4 hours 0.323
- 7     4 4 hours 0.360
- 8     4 5 hours 0.360
- 9     5 5 hours 0.966
-10     5 6 hours 0.966
+ 1     1 1 hours 0.443
+ 2     1 2 hours 0.443
+ 3     2 2 hours 0.836
+ 4     2 3 hours 0.836
+ 5     3 3 hours 0.549
+ 6     3 4 hours 0.549
+ 7     4 4 hours 0.969
+ 8     4 5 hours 0.969
+ 9     5 5 hours 0.265
+10     5 6 hours 0.265
 \end{CodeOutput}
 \end{CodeChunk}
 
@@ -1575,7 +1581,7 @@ source setup is shown in Figure \ref{fig:src-setup}.
 \begin{CodeChunk}
 \begin{figure}
 
-{\centering \includegraphics{/private/var/folders/24/8k48jl6d249_n_qfxwsl6xvm0000gn/T/Rtmp6RodU1/filed732cf02934/articles/jss_files/figure-latex/src-setup-1} 
+{\centering \includegraphics{/private/var/folders/24/8k48jl6d249_n_qfxwsl6xvm0000gn/T/RtmpbRcj50/file6c93e5fa7d6/articles/jss_files/figure-latex/src-setup-1} 
 
 }
 
@@ -1686,7 +1692,7 @@ representations as visualized in Figure \ref{fig:data-loading}.
 \begin{CodeChunk}
 \begin{figure}
 
-{\centering \includegraphics{/private/var/folders/24/8k48jl6d249_n_qfxwsl6xvm0000gn/T/Rtmp6RodU1/filed732cf02934/articles/jss_files/figure-latex/data-loading-1} 
+{\centering \includegraphics{/private/var/folders/24/8k48jl6d249_n_qfxwsl6xvm0000gn/T/RtmpbRcj50/file6c93e5fa7d6/articles/jss_files/figure-latex/data-loading-1} 
 
 }
 
@@ -2491,7 +2497,7 @@ set to \texttt{FALSE}. The resulting model fit can be visualized as:
 \begin{CodeChunk}
 
 
-\begin{center}\includegraphics{/private/var/folders/24/8k48jl6d249_n_qfxwsl6xvm0000gn/T/Rtmp6RodU1/filed732cf02934/articles/jss_files/figure-latex/cox-plot-1} \end{center}
+\begin{center}\includegraphics{/private/var/folders/24/8k48jl6d249_n_qfxwsl6xvm0000gn/T/RtmpbRcj50/file6c93e5fa7d6/articles/jss_files/figure-latex/cox-plot-1} \end{center}
 
 \end{CodeChunk}
 
@@ -2593,7 +2599,7 @@ with a histogram over the binned insulin administration values:
 \begin{CodeChunk}
 
 
-\begin{center}\includegraphics{/private/var/folders/24/8k48jl6d249_n_qfxwsl6xvm0000gn/T/Rtmp6RodU1/filed732cf02934/articles/jss_files/figure-latex/diabetes-visualize-1} \end{center}
+\begin{center}\includegraphics{/private/var/folders/24/8k48jl6d249_n_qfxwsl6xvm0000gn/T/RtmpbRcj50/file6c93e5fa7d6/articles/jss_files/figure-latex/diabetes-visualize-1} \end{center}
 
 \end{CodeChunk}
 
