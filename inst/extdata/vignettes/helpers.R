@@ -29,7 +29,7 @@ demo_missing_msg <- function(demo, file) {
     "> Note: Code in this vignette requires that datasets ", paste1(demo),
     " are available, which can be installed by running\n",
     ">\n",
-    "> ```r\n",
+    "> ```\n",
     "> install.packages(\n",
     ">   c(", paste0("\"", sub("_", ".", demo), "\"", collapse = ", "), "),\n",
     ">   repos = \"https://eth-mds.github.io/physionet-demo\"\n",
