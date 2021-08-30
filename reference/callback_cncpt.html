@@ -75,7 +75,7 @@ steps." />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">ICU data with R</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.5.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.5.0.9000</span>
       </span>
     </div>
 
@@ -160,9 +160,7 @@ steps.</p>
   interval <span class='op'>=</span> <span class='cn'>NULL</span>
 <span class='op'>)</span>
 
-<span class='fu'>vent_dur</span><span class='op'>(</span><span class='va'>...</span>, match_win <span class='op'>=</span> <span class='fu'><a href='secs.html'>hours</a></span><span class='op'>(</span><span class='fl'>6L</span><span class='op'>)</span>, min_length <span class='op'>=</span> <span class='fu'><a href='secs.html'>mins</a></span><span class='op'>(</span><span class='fl'>30L</span><span class='op'>)</span>, interval <span class='op'>=</span> <span class='cn'>NULL</span><span class='op'>)</span>
-
-<span class='fu'>vent_ind</span><span class='op'>(</span><span class='va'>...</span>, interval <span class='op'>=</span> <span class='cn'>NULL</span><span class='op'>)</span>
+<span class='fu'>vent_ind</span><span class='op'>(</span><span class='va'>...</span>, match_win <span class='op'>=</span> <span class='fu'><a href='secs.html'>hours</a></span><span class='op'>(</span><span class='fl'>6L</span><span class='op'>)</span>, min_length <span class='op'>=</span> <span class='fu'><a href='secs.html'>mins</a></span><span class='op'>(</span><span class='fl'>30L</span><span class='op'>)</span>, interval <span class='op'>=</span> <span class='cn'>NULL</span><span class='op'>)</span>
 
 <span class='fu'>sed</span><span class='op'>(</span><span class='va'>...</span>, interval <span class='op'>=</span> <span class='cn'>NULL</span><span class='op'>)</span>
 
@@ -291,18 +289,16 @@ FiO2 measurement is available</p></li>
 <p>Finally, <code>fix_na_fio2</code> imputes all remaining missing FiO<sub>2</sub> with 21,
 the percentage (by volume) of oxygen in (tropospheric) air.</p>
 
-<h3 class='hasAnchor' id='arguments'><a class='anchor' href='#arguments'></a><code>vent_dur</code> and <code>vent_ind</code></h3>
+<h3 class='hasAnchor' id='arguments'><a class='anchor' href='#arguments'></a><code>vent_ind</code></h3>
 
 
-<p>Building on the atomic concepts <code>vent_start</code> and <code>vent_end</code>, <code>vent_dur</code>
+<p>Building on the atomic concepts <code>vent_start</code> and <code>vent_end</code>, <code>vent_ind</code>
 determines time windows during which patients are mechanically ventilated
 by combining start and end events that are separated by at most <code>match_win</code>
-and at least <code>min_length</code>. Durations can be converted into an indicator
-variable represented by <code>vent_ind</code>, where time-points (as determined by
-<code>interval</code>) that fall into such ventilation windows are set to <code>TRUE</code>,
-while missingness (<code>NA</code>) or <code>FALSE</code> indicate no mechanical ventilation.
-Currently, no clear distinction between invasive an non-invasive
-ventilation is made.</p>
+and at least <code>min_length</code>. Durations are represented by the <code>dur_var</code> column
+in the returned <code>win_tbl</code> and the <code>data_var</code> column simply indicates the
+ventilation status with <code>TRUE</code> values. Currently, no clear distinction
+between invasive an non-invasive ventilation is made.</p>
 
 <h3 class='hasAnchor' id='arguments'><a class='anchor' href='#arguments'></a><code>sed</code></h3>
 
