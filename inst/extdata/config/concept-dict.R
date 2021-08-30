@@ -2550,19 +2550,13 @@ cfg <- list(
     callback = "safi",
     class = "rec_cncpt"
   ),
-  vent_dur = list(
+  vent_ind = list(
     concepts = c("vent_start", "vent_end"),
     description = "ventilation durations",
     category = "respiratory",
     interval = "00:01:00",
-    callback = "vent_dur",
-    class = "rec_cncpt"
-  ),
-  vent_ind = list(
-    concepts = "vent_dur",
-    description = "ventilation indicator",
-    category = "respiratory",
     callback = "vent_ind",
+    target = "win_tbl",
     class = "rec_cncpt"
   ),
   vaso_ind = list(

@@ -4,7 +4,6 @@
 \name{pafi}
 \alias{pafi}
 \alias{safi}
-\alias{vent_dur}
 \alias{vent_ind}
 \alias{sed}
 \alias{gcs}
@@ -33,9 +32,7 @@ safi(
   interval = NULL
 )
 
-vent_dur(..., match_win = hours(6L), min_length = mins(30L), interval = NULL)
-
-vent_ind(..., interval = NULL)
+vent_ind(..., match_win = hours(6L), min_length = mins(30L), interval = NULL)
 
 sed(..., interval = NULL)
 
@@ -153,17 +150,15 @@ Finally, \code{fix_na_fio2} imputes all remaining missing FiO\ifelse{latex
 the percentage (by volume) of oxygen in (tropospheric) air.
 }
 
-\subsection{\code{vent_dur} and \code{vent_ind}}{
+\subsection{\code{vent_ind}}{
 
-Building on the atomic concepts \code{vent_start} and \code{vent_end}, \code{vent_dur}
+Building on the atomic concepts \code{vent_start} and \code{vent_end}, \code{vent_ind}
 determines time windows during which patients are mechanically ventilated
 by combining start and end events that are separated by at most \code{match_win}
-and at least \code{min_length}. Durations can be converted into an indicator
-variable represented by \code{vent_ind}, where time-points (as determined by
-\code{interval}) that fall into such ventilation windows are set to \code{TRUE},
-while missingness (\code{NA}) or \code{FALSE} indicate no mechanical ventilation.
-Currently, no clear distinction between invasive an non-invasive
-ventilation is made.
+and at least \code{min_length}. Durations are represented by the \code{dur_var} column
+in the returned \code{win_tbl} and the \code{data_var} column simply indicates the
+ventilation status with \code{TRUE} values. Currently, no clear distinction
+between invasive an non-invasive ventilation is made.
 }
 
 \subsection{\code{sed}}{

@@ -84,22 +84,21 @@ dataset and the \code{icustays} table, this gives\if{html}{\out{<div class="r">}
 ## # ID options:  subject_id (patient) < hadm_id (hadm) < icustay_id (icustay)
 ## # Defaults:    `intime` (index), `last_careunit` (val)
 ## # Time vars:   `intime`, `outtime`
-##     row_id subject_id hadm_id icustay_id dbsource first_careunit
-##      <int>      <int>   <int>      <int> <chr>    <chr>
-##   1  12742      10006  142345     206504 carevue  MICU
-##   2  12747      10011  105331     232110 carevue  MICU
-##   3  12749      10013  165520     264446 carevue  MICU
-##   4  12754      10017  199207     204881 carevue  CCU
-##   5  12755      10019  177759     228977 carevue  MICU
+##     row_id subject_id hadm_id icustay_id dbsource first_careunit last_careunit
+##      <int>      <int>   <int>      <int> <chr>    <chr>          <chr>
+##   1  12742      10006  142345     206504 carevue  MICU           MICU
+##   2  12747      10011  105331     232110 carevue  MICU           MICU
+##   3  12749      10013  165520     264446 carevue  MICU           MICU
+##   4  12754      10017  199207     204881 carevue  CCU            CCU
+##   5  12755      10019  177759     228977 carevue  MICU           MICU
 ## ...
-## 132  42676      44083  198330     286428 metavis~ CCU
-## 133  42691      44154  174245     217724 metavis~ MICU
-## 134  42709      44212  163189     239396 metavis~ MICU
-## 135  42712      44222  192189     238186 metavis~ CCU
-## 136  42714      44228  103379     217992 metavis~ SICU
-## # ... with 126 more rows, and 6 more variables: last_careunit <chr>,
-## #   first_wardid <int>, last_wardid <int>, intime <dttm>, outtime <dttm>,
-## #   los <dbl>
+## 132  42676      44083  198330     286428 metavis~ CCU            CCU
+## 133  42691      44154  174245     217724 metavis~ MICU           MICU
+## 134  42709      44212  163189     239396 metavis~ MICU           MICU
+## 135  42712      44222  192189     238186 metavis~ CCU            CCU
+## 136  42714      44228  103379     217992 metavis~ SICU           SICU
+## # ... with 126 more rows, and 5 more variables: first_wardid <int>,
+## #   last_wardid <int>, intime <dttm>, outtime <dttm>, los <dbl>
 }
 
 Table subsets can be loaded into memory for example using the
@@ -111,21 +110,16 @@ memory are represented as \code{\link[data.table:data.table]{data.table}} object
 Extending the above example, if only ICU stays corresponding to the patient
 with \code{subject_id == 10124} are of interest, the respective data can be
 loaded as\if{html}{\out{<div class="r">}}\preformatted{subset(mimic_demo$icustays, subject_id == 10124)
-}\if{html}{\out{</div>}}\preformatted{##    row_id subject_id hadm_id icustay_id dbsource first_careunit
-## 1:  12863      10124  182664     261764  carevue           MICU
-## 2:  12864      10124  170883     222779  carevue           MICU
-## 3:  12865      10124  170883     295043  carevue            CCU
-## 4:  12866      10124  170883     237528  carevue           MICU
-##    last_careunit first_wardid last_wardid              intime
-## 1:          MICU           23          23 2192-03-29 10:46:51
-## 2:          MICU           50          50 2192-04-16 20:58:32
-## 3:           CCU            7           7 2192-04-24 02:29:49
-## 4:          MICU           23          23 2192-04-30 14:50:44
-##                outtime     los
-## 1: 2192-04-01 06:36:00  2.8258
-## 2: 2192-04-20 08:51:28  3.4951
-## 3: 2192-04-26 23:59:45  2.8958
-## 4: 2192-05-15 23:34:21 15.3636
+}\if{html}{\out{</div>}}\preformatted{##    row_id subject_id hadm_id icustay_id dbsource first_careunit last_careunit
+## 1:  12863      10124  182664     261764  carevue           MICU          MICU
+## 2:  12864      10124  170883     222779  carevue           MICU          MICU
+## 3:  12865      10124  170883     295043  carevue            CCU           CCU
+## 4:  12866      10124  170883     237528  carevue           MICU          MICU
+##    first_wardid last_wardid              intime             outtime     los
+## 1:           23          23 2192-03-29 10:46:51 2192-04-01 06:36:00  2.8258
+## 2:           50          50 2192-04-16 20:58:32 2192-04-20 08:51:28  3.4951
+## 3:            7           7 2192-04-24 02:29:49 2192-04-26 23:59:45  2.8958
+## 4:           23          23 2192-04-30 14:50:44 2192-05-15 23:34:21 15.3636
 }
 
 Much care has been taken to make \code{ricu} extensible to new datasets. For

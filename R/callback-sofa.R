@@ -154,12 +154,17 @@ sofa_resp <- function(..., interval = NULL) {
     )
   }
 
-  cnc <- c("pafi", "vent_ind")
-  dat <- collect_dots(cnc, interval, ..., merge_dat = TRUE)
+  vent_var <- "vent_ind"
+  pafi_var <- "pafi"
 
-  dat <- dat[is_true(get("pafi") < 200) & !is_true(get("vent_ind")),
-             c("pafi") := 200]
-  dat <- dat[, c("sofa_resp") := score_calc(get("pafi"))]
+  cnc <- c(pafi_var, vent_var)
+  dat <- collect_dots(cnc, interval, ...)
+  dat <- merge(dat[[pafi_var]], expand(dat[[vent_var]], aggregate = "any"),
+               all = TRUE)
+
+  dat <- dat[is_true(get(pafi_var) < 200) & !is_true(get(vent_var)),
+             c(pafi_var) := 200]
+  dat <- dat[, c("sofa_resp") := score_calc(get(pafi_var))]
 
   dat <- rm_cols(dat, cnc, by_ref = TRUE)
 

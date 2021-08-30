@@ -141,16 +141,14 @@ rename_data_var <- function(new_name, old_name = NULL) {
 #' }{\out{\textsubscript{2}}}{\ifelse{html}{\out{<sub>2</sub>}}{2}} with 21,
 #' the percentage (by volume) of oxygen in (tropospheric) air.
 #'
-#' ## `vent_dur` and `vent_ind`
-#' Building on the atomic concepts `vent_start` and `vent_end`, `vent_dur`
+#' ## `vent_ind`
+#' Building on the atomic concepts `vent_start` and `vent_end`, `vent_ind`
 #' determines time windows during which patients are mechanically ventilated
 #' by combining start and end events that are separated by at most `match_win`
-#' and at least `min_length`. Durations can be converted into an indicator
-#' variable represented by `vent_ind`, where time-points (as determined by
-#' `interval`) that fall into such ventilation windows are set to `TRUE`,
-#' while missingness (`NA`) or `FALSE` indicate no mechanical ventilation.
-#' Currently, no clear distinction between invasive an non-invasive
-#' ventilation is made.
+#' and at least `min_length`. Durations are represented by the `dur_var` column
+#' in the returned `win_tbl` and the `data_var` column simply indicates the
+#' ventilation status with `TRUE` values. Currently, no clear distinction
+#' between invasive an non-invasive ventilation is made.
 #'
 #' ## `sed`
 #' In order to construct an indicator for patient sedation, information from
@@ -291,7 +289,7 @@ match_fio2 <- function(x, match_win, mode, fio2 = NULL) {
 #' @rdname callback_cncpt
 #' @export
 #'
-vent_dur <- function(..., match_win = hours(6L), min_length = mins(30L),
+vent_ind <- function(..., match_win = hours(6L), min_length = mins(30L),
                      interval = NULL) {
 
   subset_true <- function(x, col) x[is_true(get(col))]
@@ -340,25 +338,10 @@ vent_dur <- function(..., match_win = hours(6L), min_length = mins(30L),
   }
 
   res <- change_interval(res, final_int, by_ref = TRUE)
-
-  aggregate(res, "max")
-}
-
-#' @rdname callback_cncpt
-#' @export
-#'
-vent_ind <- function(..., interval = NULL) {
-
-  cnc <- "vent_dur"
-  res <- collect_dots(cnc, interval, ...)
-  idx <- index_var(res)
-  res <- res[, c(cnc) := get(idx) + get(cnc)]
-
-  res <- expand(res, idx, cnc)
-  res <- unique(res)
+  res <- aggregate(res, "max")
   res <- res[, c("vent_ind") := TRUE]
 
-  res
+  as_win_tbl(res, dur_var = var, by_ref = TRUE)
 }
 
 #' @rdname callback_cncpt
@@ -552,11 +535,15 @@ vaso_ind <- function(..., interval = NULL) {
 #' @export
 supp_o2 <- function(..., interval = NULL) {
 
-  cnc <- c("vent_ind", "fio2")
-  res <- collect_dots(cnc, interval, ..., merge_dat = TRUE)
+  vent_var <- "vent_ind"
+  fio2_var <- "fio2"
 
-  res <- res[, c("supp_o2", "vent_ind", "fio2") := list(
-    get("vent_ind") | get("fio2") > 21, NULL, NULL
+  res <- collect_dots(c(vent_var, fio2_var), interval, ...)
+  res <- merge(res[[fio2_var]], expand(res[[vent_var]], aggregate = "any"),
+               all = TRUE)
+
+  res <- res[, c("supp_o2", vent_var, fio2_var) := list(
+    is_true(get(vent_var) | get(fio2_var) > 21), NULL, NULL
   )]
 
   res
