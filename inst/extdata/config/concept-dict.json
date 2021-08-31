@@ -3625,6 +3625,44 @@
       ]
     }
   },
+  "mech_vent": {
+    "class": "fct_cncpt",
+    "target": "win_tbl",
+    "levels": ["invasive", "noninvasive"],
+    "description": "mechanical ventilation windows",
+    "category": "respiratory",
+    "sources": {
+      "aumc": [
+        {
+          "ids": [9328, 10740, 12635],
+          "table": "processitems",
+          "sub_var": "itemid",
+          "dur_var": "stop",
+          "callback": "apply_map(c(`Beademen`              = 'invasive',\n                                     `Beademen non-invasief` = 'noninvasive',\n                                     `Tracheostoma`          = 'invasive'))"
+        }
+      ],
+      "hirid": [
+        {
+          "ids": 15001552,
+          "table": "observations",
+          "sub_var": "variableid",
+          "target": "ts_tbl",
+          "interval": "00:01:00",
+          "class": "hrd_itm",
+          "callback": "combine_callbacks(hirid_vent,\n                                           apply_map(c(`1` = 'invasive',\n                                                       `2` = 'invasive',\n                                                       `3` = 'noninvasive',\n                                                       `4` = 'noninvasive',\n                                                       `5` = 'noninvasive',\n                                                       `6` = 'noninvasive')))"
+        }
+      ],
+      "miiv": [
+        {
+          "ids": [225792, 225794],
+          "table": "procedureevents",
+          "sub_var": "itemid",
+          "dur_var": "endtime",
+          "callback": "apply_map(c(`225792` = 'invasive',\n                                     `225794` = 'noninvasive'),\n                                   var = 'sub_var')"
+        }
+      ]
+    }
+  },
   "methb": {
     "unit": "%",
     "min": 0,

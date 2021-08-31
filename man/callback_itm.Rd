@@ -17,7 +17,7 @@ comp_na(op, y)
 
 set_val(val)
 
-apply_map(map)
+apply_map(map, var = "val_var")
 
 convert_unit(fun, new, rgx = NULL, ignore_case = TRUE, ...)
 }
@@ -34,6 +34,9 @@ convert_unit(fun, new, rgx = NULL, ignore_case = TRUE, ...)
 
 \item{map}{Named atomic vector used for mapping a set of values (the names
 of \code{map}) to a different set (the values of \code{map})}
+
+\item{var}{Argument which is used to determine the column the mapping is
+applied to}
 
 \item{new}{Name(s) of transformed units}
 

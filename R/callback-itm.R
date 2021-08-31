@@ -213,15 +213,21 @@ hirid_death <- function(x, val_var, sub_var, env, ...) {
 
 #' @param map Named atomic vector used for mapping a set of values (the names
 #' of `map`) to a different set (the values of `map`)
+#' @param var Argument which is used to determine the column the mapping is
+#' applied to
 #'
 #' @rdname callback_itm
 #' @export
-apply_map <- function(map) {
+apply_map <- function(map, var = "val_var") {
 
-  assert_that(is.atomic(map), !is.null(names(map)), has_length(map))
+  assert_that(is.atomic(map), !is.null(names(map)), has_length(map),
+              is.string(var))
 
-  function(x, val_var, ...) {
-    set(x, j = val_var, value = map[x[[val_var]]])
+  function(x, ...) {
+    args <- list(...)
+    map_var <- args[[var]]
+    val_var <- args[["val_var"]]
+    set(x, j = val_var, value = unname(map)[match(x[[map_var]], names(map))])
     x
   }
 }
@@ -849,6 +855,8 @@ eicu_dex_med <- function(x, val_var, dur_var, ...) {
   x <- x[, c(val_var, "unit_var") := list(
     get(val_var) / as.double(get(dur_var)) * 5, "ml/min"
   )]
+
+  x
 }
 
 eicu_dex_inf <- function(x, val_var, ...) {
@@ -858,6 +866,18 @@ eicu_dex_inf <- function(x, val_var, ...) {
   x <- x[, c(val_var, "dur_var", "unit_var") := list(
     as.numeric(get(val_var)), ival, "ml/hr"
   )]
+
+  as_win_tbl(x, dur_var = "dur_var", by_ref = TRUE)
+}
+
+hirid_vent <- function(x, ...) {
+
+  idx <- index_var(x)
+  idv <- id_vars(x)
+  xtr <- `units<-`(hours(6L), time_unit(x))
+
+  x <- x[, c("dur_var") := padded_diff(get(idx), xtr), by = c(idv)]
+  x <- x[get("dur_var") <= hours(24L), ]
 
   as_win_tbl(x, dur_var = "dur_var", by_ref = TRUE)
 }

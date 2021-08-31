@@ -1926,6 +1926,41 @@ cfg <- list(
       )
     )
   ),
+  mech_vent = list(
+    class = "fct_cncpt",
+    target = "win_tbl",
+    levels = c("invasive", "noninvasive"),
+    description = "mechanical ventilation windows",
+    category = "respiratory",
+    sources = list(
+      aumc = list(
+        list(ids = c(9328L, 10740L, 12635L), table = "processitems",
+             sub_var = "itemid", dur_var = "stop",
+             callback = "apply_map(c(`Beademen`              = 'invasive',
+                                     `Beademen non-invasief` = 'noninvasive',
+                                     `Tracheostoma`          = 'invasive'))"
+        )
+      ),
+      miiv = list(
+        list(ids = c(225792L, 225794L), table = "procedureevents",
+             sub_var = "itemid", dur_var = "endtime",
+             callback = "apply_map(c(`225792` = 'invasive',
+                                     `225794` = 'noninvasive'),
+                                   var = 'sub_var')")
+      ),
+      hirid = list(
+        list(ids = 15001552L, table = "observations", sub_var = "variableid",
+             target = "ts_tbl", interval = "00:01:00", class = "hrd_itm",
+             callback = "combine_callbacks(hirid_vent,
+                                           apply_map(c(`1` = 'invasive',
+                                                       `2` = 'invasive',
+                                                       `3` = 'noninvasive',
+                                                       `4` = 'noninvasive',
+                                                       `5` = 'noninvasive',
+                                                       `6` = 'noninvasive')))")
+      )
+    )
+  ),
   trach = list(
     class = "lgl_cncpt",
     description = "tracheostomy",
