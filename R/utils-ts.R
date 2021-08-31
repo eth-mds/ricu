@@ -598,6 +598,12 @@ group_measurements <- function(x, max_gap = hours(6L), group_var = "grp_var") {
 
 padded_diff <- function(x, final) c(diff(x), final)
 
+padded_capped_diff <- function(x, final, max) {
+  res <- padded_diff(x, final)
+  res[res > max] <- final
+  res
+}
+
 trunc_time <- function(x, min, max) {
 
   if (not_null(min)) {

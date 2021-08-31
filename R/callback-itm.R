@@ -874,10 +874,10 @@ hirid_vent <- function(x, ...) {
 
   idx <- index_var(x)
   idv <- id_vars(x)
-  xtr <- `units<-`(hours(6L), time_unit(x))
+  xtr <- `units<-`(hours(4L), time_unit(x))
 
-  x <- x[, c("dur_var") := padded_diff(get(idx), xtr), by = c(idv)]
-  x <- x[get("dur_var") <= hours(24L), ]
+  x <- x[, c("dur_var") := padded_capped_diff(get(idx), xtr, hours(12L)),
+         by = c(idv)]
 
   as_win_tbl(x, dur_var = "dur_var", by_ref = TRUE)
 }

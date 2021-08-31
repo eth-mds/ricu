@@ -5666,15 +5666,6 @@
     "description": "ventilation end",
     "category": "respiratory",
     "sources": {
-      "aumc": [
-        {
-          "ids": 9328,
-          "sub_var": "itemid",
-          "index_var": "stop",
-          "table": "processitems",
-          "callback": "transform_fun(set_val(TRUE))"
-        }
-      ],
       "eicu": [
         {
           "table": "respiratorycare",
@@ -5714,29 +5705,6 @@
           "table": "respiratorycharting",
           "sub_var": "respchartvalue",
           "val_var": "respchartvaluelabel",
-          "callback": "transform_fun(set_val(TRUE))"
-        }
-      ],
-      "hirid": [
-        {
-          "ids": 15001552,
-          "table": "observations",
-          "sub_var": "variableid",
-          "callback": "transform_fun(comp_na(`>`, 2))",
-          "class": "hrd_itm"
-        }
-      ],
-      "miiv": [
-        {
-          "ids": [225468, 225477, 227194],
-          "table": "procedureevents",
-          "sub_var": "itemid",
-          "callback": "transform_fun(set_val(TRUE))"
-        },
-        {
-          "ids": 226732,
-          "table": "chartevents",
-          "sub_var": "itemid",
           "callback": "transform_fun(set_val(TRUE))"
         }
       ],
@@ -5771,7 +5739,7 @@
     }
   },
   "vent_ind": {
-    "concepts": ["vent_start", "vent_end"],
+    "concepts": ["vent_start", "vent_end", "mech_vent"],
     "description": "ventilation durations",
     "category": "respiratory",
     "interval": "00:01:00",
@@ -5784,14 +5752,6 @@
     "description": "ventilation start",
     "category": "respiratory",
     "sources": {
-      "aumc": [
-        {
-          "ids": 9328,
-          "sub_var": "itemid",
-          "table": "processitems",
-          "callback": "transform_fun(set_val(TRUE))"
-        }
-      ],
       "eicu": [
         {
           "table": "respiratorycare",
@@ -5829,23 +5789,6 @@
           "ids": ["Start", "Continued", "respFlowPtVentData"],
           "table": "respiratorycharting",
           "sub_var": "respcharttypecat",
-          "callback": "transform_fun(set_val(TRUE))"
-        }
-      ],
-      "hirid": [
-        {
-          "ids": 15001552,
-          "table": "observations",
-          "sub_var": "variableid",
-          "callback": "transform_fun(comp_na(`==`, 1))",
-          "class": "hrd_itm"
-        }
-      ],
-      "miiv": [
-        {
-          "ids": [220339, 223848, 223849, 224419, 224684, 224685, 224686, 224687, 224695, 224696, 224697, 224700, 224701, 224702, 224703, 224704, 224705, 224706, 224707, 224709, 224738, 224746, 224747, 224750, 226873, 227187],
-          "table": "chartevents",
-          "sub_var": "itemid",
           "callback": "transform_fun(set_val(TRUE))"
         }
       ],

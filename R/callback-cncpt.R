@@ -297,7 +297,7 @@ vent_ind <- function(..., match_win = hours(6L), min_length = mins(30L),
 
   final_int <- interval
 
-  cnc <- c("vent_start", "vent_end")
+  cnc <- c("vent_start", "vent_end", "mech_vent")
   res <- collect_dots(cnc, NULL, ...)
 
   interval <- check_interval(res)
@@ -310,6 +310,17 @@ vent_ind <- function(..., match_win = hours(6L), min_length = mins(30L),
     is_interval(final_int), is_interval(match_win), is_interval(min_length),
     min_length < match_win, interval < min_length
   )
+
+  if (has_rows(res[[3L]])) {
+
+    assert_that(nrow(res[[1L]]) == 0L, nrow(res[[2L]]) == 0L)
+
+    res <- res[[3L]][, c("vent_ind", "mech_vent") := list(
+      !is.na(get("mech_vent")), NULL
+    )]
+
+    return(res)
+  }
 
   units(match_win) <- units(interval)
   units(min_length) <- units(interval)

@@ -1867,26 +1867,6 @@ cfg <- list(
         list(ids = c("Start", "Continued", "respFlowPtVentData"),
              table = "respiratorycharting", sub_var = "respcharttypecat",
              callback = "transform_fun(set_val(TRUE))")
-      ),
-      hirid = list(
-        list(ids = 15001552L, table = "observations", sub_var = "variableid",
-             callback = "transform_fun(comp_na(`==`, 1))", class = "hrd_itm")
-      ),
-      aumc = list(
-        list(ids = 9328L, sub_var = "itemid", table = "processitems",
-             callback = "transform_fun(set_val(TRUE))")
-      ),
-      miiv = list(
-        list(
-          ids = c(
-            220339L, 223848L, 223849L, 224419L, 224684L, 224685L, 224686L,
-            224687L, 224695L, 224696L, 224697L, 224700L, 224701L, 224702L,
-            224703L, 224704L, 224705L, 224706L, 224707L, 224709L, 224738L,
-            224746L, 224747L, 224750L, 226873L, 227187L
-          ),
-          table = "chartevents", sub_var = "itemid",
-          callback = "transform_fun(set_val(TRUE))"
-        )
       )
     )
   ),
@@ -1908,20 +1888,6 @@ cfg <- list(
              callback = "vent_flag", class = "col_itm"),
         list(ids = c("off", "Off", "Suspended"), table = "respiratorycharting",
              sub_var = "respchartvalue", val_var = "respchartvaluelabel",
-             callback = "transform_fun(set_val(TRUE))")
-      ),
-      hirid = list(
-        list(ids = 15001552L, table = "observations", sub_var = "variableid",
-             callback = "transform_fun(comp_na(`>`, 2))", class = "hrd_itm")
-      ),
-      aumc = list(
-        list(ids = 9328L, sub_var = "itemid", index_var = "stop",
-             table = "processitems", callback = "transform_fun(set_val(TRUE))")
-      ),
-      miiv = list(
-        list(ids = c(225468L, 225477L, 227194L), table = "procedureevents",
-             sub_var = "itemid", callback = "transform_fun(set_val(TRUE))"),
-        list(ids = 226732L, table = "chartevents", sub_var = "itemid",
              callback = "transform_fun(set_val(TRUE))")
       )
     )
@@ -2586,7 +2552,7 @@ cfg <- list(
     class = "rec_cncpt"
   ),
   vent_ind = list(
-    concepts = c("vent_start", "vent_end"),
+    concepts = c("vent_start", "vent_end", "mech_vent"),
     description = "ventilation durations",
     category = "respiratory",
     interval = "00:01:00",
