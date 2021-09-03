@@ -1927,7 +1927,7 @@ cfg <- list(
       )
     )
   ),
-  trach = list(
+  ett_gcs = list(
     class = "lgl_cncpt",
     description = "tracheostomy",
     category = "respiratory",
@@ -2567,16 +2567,16 @@ cfg <- list(
     callback = "vaso_ind",
     class = "rec_cncpt"
   ),
-  sed = list(
-    concepts = c("trach", "rass"),
+  sed_gcs = list(
+    concepts = c("ett_gcs", "rass"),
     description = "sedation status",
     category = "neurological",
     aggregate = c(NA, "min"),
-    callback = "sed",
+    callback = "sed_gcs",
     class = "rec_cncpt"
   ),
   gcs = list(
-    concepts = c("egcs", "mgcs", "vgcs", "tgcs", "sed"),
+    concepts = c("egcs", "mgcs", "vgcs", "tgcs", "sed_gcs"),
     description = "Glasgow coma scale (non-sedated)",
     category = "neurological",
     aggregate = c("min", "min", "min", "min", NA),

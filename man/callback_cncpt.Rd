@@ -5,7 +5,7 @@
 \alias{pafi}
 \alias{safi}
 \alias{vent_ind}
-\alias{sed}
+\alias{sed_gcs}
 \alias{gcs}
 \alias{urine24}
 \alias{vaso60}
@@ -34,7 +34,7 @@ safi(
 
 vent_ind(..., match_win = hours(6L), min_length = mins(30L), interval = NULL)
 
-sed(..., interval = NULL)
+sed_gcs(..., interval = NULL)
 
 gcs(
   ...,
@@ -161,12 +161,12 @@ ventilation status with \code{TRUE} values. Currently, no clear distinction
 between invasive an non-invasive ventilation is made.
 }
 
-\subsection{\code{sed}}{
+\subsection{\code{sed_gcs}}{
 
-In order to construct an indicator for patient sedation, information from
-the two concepts \code{trach} and \code{rass} is pooled: A patient is considered
-sedated if intubated or has less or equal to -2 on the Richmond
-Agitation-Sedation Scale.
+In order to construct an indicator for patient sedation (used within the
+context of \code{gcs}), information from the two concepts \code{ett_gcs} and \code{rass} is
+pooled: A patient is considered sedated if intubated or has less or equal to
+-2 on the Richmond Agitation-Sedation Scale.
 }
 
 \subsection{\code{gcs}}{
@@ -177,7 +177,7 @@ coinciding availability of an eye (\code{egcs}), verbal (\code{vgcs}) and motor
 (\code{mgcs}) score. In order to match values, a last observation carry forward
 imputation scheme over the time span specified by \code{valid_win} is performed.
 Furthermore passing \code{"max"} as \code{sed_impute} will assume maximal points for
-time steps where the patient is sedated (as indicated by \code{sed}), while
+time steps where the patient is sedated (as indicated by \code{sed_gcs}), while
 passing \code{"prev"}, will assign the last observed value previous to the
 current sedation window and finally passing \code{FALSE} will in turn use raw
 values. Finally, passing \code{TRUE} as \code{set_na_max} will assume maximal points

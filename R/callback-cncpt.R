@@ -150,11 +150,11 @@ rename_data_var <- function(new_name, old_name = NULL) {
 #' ventilation status with `TRUE` values. Currently, no clear distinction
 #' between invasive an non-invasive ventilation is made.
 #'
-#' ## `sed`
-#' In order to construct an indicator for patient sedation, information from
-#' the two concepts `trach` and `rass` is pooled: A patient is considered
-#' sedated if intubated or has less or equal to -2 on the Richmond
-#' Agitation-Sedation Scale.
+#' ## `sed_gcs`
+#' In order to construct an indicator for patient sedation (used within the
+#' context of `gcs`), information from the two concepts `ett_gcs` and `rass` is
+#' pooled: A patient is considered sedated if intubated or has less or equal to
+#' -2 on the Richmond Agitation-Sedation Scale.
 #'
 #' ## `gcs`
 #' Aggregating components of the Glasgow Coma Scale into a total score
@@ -163,7 +163,7 @@ rename_data_var <- function(new_name, old_name = NULL) {
 #' (`mgcs`) score. In order to match values, a last observation carry forward
 #' imputation scheme over the time span specified by `valid_win` is performed.
 #' Furthermore passing `"max"` as `sed_impute` will assume maximal points for
-#' time steps where the patient is sedated (as indicated by `sed`), while
+#' time steps where the patient is sedated (as indicated by `sed_gcs`), while
 #' passing `"prev"`, will assign the last observed value previous to the
 #' current sedation window and finally passing `FALSE` will in turn use raw
 #' values. Finally, passing `TRUE` as `set_na_max` will assume maximal points
@@ -360,12 +360,12 @@ vent_ind <- function(..., match_win = hours(6L), min_length = mins(30L),
 #' @rdname callback_cncpt
 #' @export
 #'
-sed <- function(..., interval = NULL) {
+sed_gcs <- function(..., interval = NULL) {
 
-  cnc <- c("trach", "rass")
+  cnc <- c("ett_gcs", "rass")
   res <- collect_dots(cnc, interval, ..., merge_dat = TRUE)
 
-  res <- res[, c("sed", cnc) := list(
+  res <- res[, c("sed_gcs", cnc) := list(
     get(cnc[1L]) | get(cnc[2L]) <= -2, NULL, NULL)
   ]
 
@@ -390,11 +390,18 @@ gcs <- function(..., valid_win = hours(6L), sed_impute = c("max", "prev"),
     sed_impute <- match.arg(sed_impute)
   }
 
-  cnc <- c("egcs", "vgcs", "mgcs", "tgcs", "sed")
+  cnc <- c("egcs", "vgcs", "mgcs", "tgcs", "sed_gcs")
   res <- collect_dots(cnc, interval, ..., merge_dat = TRUE)
 
   assert_that(is_interval(valid_win), valid_win > check_interval(res),
               is.flag(set_na_max))
+
+  expr <- substitute(list(egcs = fun1(egcs), vgcs = fun1(vgcs),
+                          mgcs = fun1(mgcs), tgcs = fun1(tgcs),
+                          sed_gcs = fun2(sed_gcs)),
+                     list(fun1 = locf, fun2 = last_elem))
+
+  res <- slide(res, !!expr, before = valid_win)
 
   if (identical(sed_impute, "max")) {
     res <- res[is_true(get(cnc[5L])), c(cnc[-5L]) := list(4, 5, 6, 15)]
@@ -406,12 +413,6 @@ gcs <- function(..., valid_win = hours(6L), sed_impute = c("max", "prev"),
                .SDcols = cnc[-5L], by = c(idv)]
     res <- res[, c(cnc[-5L]) := lapply(.SD, zero_to_na), .SDcols = cnc[-5L]]
   }
-
-  expr <- substitute(list(egcs = fun(egcs), vgcs = fun(vgcs),
-                          mgcs = fun(mgcs), tgcs = fun(tgcs)),
-                     list(fun = locf))
-
-  res <- slide(res, !!expr, before = valid_win)
 
   if (set_na_max) {
     res <- res[, c(cnc[1L:3L]) := Map(replace_na, .SD, c(4, 5, 6)),
@@ -426,7 +427,7 @@ gcs <- function(..., valid_win = hours(6L), sed_impute = c("max", "prev"),
   }
 
   res <- rename_cols(res, "gcs", cnc[4L])
-  res <- rm_cols(res, cnc[1L:3L])
+  res <- rm_cols(res, cnc[-4L])
 
   res
 }

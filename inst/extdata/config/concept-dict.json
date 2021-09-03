@@ -2422,6 +2422,54 @@
       ]
     }
   },
+  "ett_gcs": {
+    "class": "lgl_cncpt",
+    "description": "tracheostomy",
+    "category": "respiratory",
+    "sources": {
+      "aumc": [
+        {
+          "ids": 6735,
+          "table": "listitems",
+          "sub_var": "itemid",
+          "callback": "transform_fun(comp_na(`==`, 'Geïntubeerd'))"
+        }
+      ],
+      "hirid": [
+        {
+          "ids": 15001552,
+          "table": "observations",
+          "sub_var": "variableid",
+          "callback": "transform_fun(comp_na(`==`, 2))",
+          "class": "hrd_itm"
+        }
+      ],
+      "miiv": [
+        {
+          "ids": "No Response-ETT",
+          "table": "chartevents",
+          "sub_var": "value",
+          "callback": "transform_fun(set_val(TRUE))"
+        }
+      ],
+      "mimic": [
+        {
+          "ids": ["1.0 ET/Trach", "No Response-ETT"],
+          "table": "chartevents",
+          "sub_var": "value",
+          "callback": "transform_fun(set_val(TRUE))"
+        }
+      ],
+      "mimic_demo": [
+        {
+          "ids": ["1.0 ET/Trach", "No Response-ETT"],
+          "table": "chartevents",
+          "sub_var": "value",
+          "callback": "transform_fun(set_val(TRUE))"
+        }
+      ]
+    }
+  },
   "fgn": {
     "unit": "mg/dL",
     "min": 0,
@@ -2572,7 +2620,7 @@
     }
   },
   "gcs": {
-    "concepts": ["egcs", "mgcs", "vgcs", "tgcs", "sed"],
+    "concepts": ["egcs", "mgcs", "vgcs", "tgcs", "sed_gcs"],
     "description": "Glasgow coma scale (non-sedated)",
     "category": "neurological",
     "aggregate": ["min", "min", "min", "min", null],
@@ -5105,12 +5153,12 @@
       ]
     }
   },
-  "sed": {
-    "concepts": ["trach", "rass"],
+  "sed_gcs": {
+    "concepts": ["ett_gcs", "rass"],
     "description": "sedation status",
     "category": "neurological",
     "aggregate": [null, "min"],
-    "callback": "sed",
+    "callback": "sed_gcs",
     "class": "rec_cncpt"
   },
   "sep3": {
@@ -5479,54 +5527,6 @@
           "ids": 51003,
           "table": "labevents",
           "sub_var": "itemid"
-        }
-      ]
-    }
-  },
-  "trach": {
-    "class": "lgl_cncpt",
-    "description": "tracheostomy",
-    "category": "respiratory",
-    "sources": {
-      "aumc": [
-        {
-          "ids": 6735,
-          "table": "listitems",
-          "sub_var": "itemid",
-          "callback": "transform_fun(comp_na(`==`, 'Geïntubeerd'))"
-        }
-      ],
-      "hirid": [
-        {
-          "ids": 15001552,
-          "table": "observations",
-          "sub_var": "variableid",
-          "callback": "transform_fun(comp_na(`==`, 2))",
-          "class": "hrd_itm"
-        }
-      ],
-      "miiv": [
-        {
-          "ids": "No Response-ETT",
-          "table": "chartevents",
-          "sub_var": "value",
-          "callback": "transform_fun(set_val(TRUE))"
-        }
-      ],
-      "mimic": [
-        {
-          "ids": ["1.0 ET/Trach", "No Response-ETT"],
-          "table": "chartevents",
-          "sub_var": "value",
-          "callback": "transform_fun(set_val(TRUE))"
-        }
-      ],
-      "mimic_demo": [
-        {
-          "ids": ["1.0 ET/Trach", "No Response-ETT"],
-          "table": "chartevents",
-          "sub_var": "value",
-          "callback": "transform_fun(set_val(TRUE))"
         }
       ]
     }
