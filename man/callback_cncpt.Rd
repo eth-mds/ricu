@@ -39,7 +39,7 @@ sed(..., interval = NULL)
 gcs(
   ...,
   valid_win = hours(6L),
-  set_sed_max = TRUE,
+  sed_impute = c("max", "prev"),
   set_na_max = TRUE,
   interval = NULL
 )
@@ -88,7 +88,7 @@ time}
 \item{valid_win}{Maximal time window for which a GCS value is valid
 if no newer measurement is available}
 
-\item{set_sed_max}{Logical flag for considering sedation}
+\item{sed_impute}{Logical flag for considering sedation}
 
 \item{set_na_max}{Logical flag controlling imputation of missing GCS values
 with the respective maximum values}
@@ -176,10 +176,12 @@ Aggregating components of the Glasgow Coma Scale into a total score
 coinciding availability of an eye (\code{egcs}), verbal (\code{vgcs}) and motor
 (\code{mgcs}) score. In order to match values, a last observation carry forward
 imputation scheme over the time span specified by \code{valid_win} is performed.
-Furthermore passing \code{TRUE} as \code{set_sed_max} will assume maximal points for
-time steps where the patient is sedated (as indicated by \code{sed}) and passing
-\code{TRUE} as \code{set_na_max} will assume maximal points for missing values (after
-matching and potentially applying \code{set_sed_max}).
+Furthermore passing \code{"max"} as \code{sed_impute} will assume maximal points for
+time steps where the patient is sedated (as indicated by \code{sed}), while
+passing \code{"prev"}, will assign the last observed value previous to the
+current sedation window and finally passing \code{FALSE} will in turn use raw
+values. Finally, passing \code{TRUE} as \code{set_na_max} will assume maximal points
+for missing values (after matching and potentially applying \code{sed_impute}).
 }
 
 \subsection{\code{urine24}}{

@@ -129,7 +129,7 @@ test_that("load concepts", {
   expect_identical(dat1, dat6, ignore_attr = TRUE)
 
   gcs_con <- load_dictionary(concepts = "gcs")
-  gcs_raw <- concept("gcs_raw", gcs_con, set_sed_max = FALSE,
+  gcs_raw <- concept("gcs_raw", gcs_con, sed_impute = FALSE,
                      class = "rec_cncpt")
 
   dat7 <- load_concepts(gcs_raw, "mimic_demo", verbose = FALSE)

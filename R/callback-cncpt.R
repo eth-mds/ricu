@@ -162,10 +162,12 @@ rename_data_var <- function(new_name, old_name = NULL) {
 #' coinciding availability of an eye (`egcs`), verbal (`vgcs`) and motor
 #' (`mgcs`) score. In order to match values, a last observation carry forward
 #' imputation scheme over the time span specified by `valid_win` is performed.
-#' Furthermore passing `TRUE` as `set_sed_max` will assume maximal points for
-#' time steps where the patient is sedated (as indicated by `sed`) and passing
-#' `TRUE` as `set_na_max` will assume maximal points for missing values (after
-#' matching and potentially applying `set_sed_max`).
+#' Furthermore passing `"max"` as `sed_impute` will assume maximal points for
+#' time steps where the patient is sedated (as indicated by `sed`), while
+#' passing `"prev"`, will assign the last observed value previous to the
+#' current sedation window and finally passing `FALSE` will in turn use raw
+#' values. Finally, passing `TRUE` as `set_na_max` will assume maximal points
+#' for missing values (after matching and potentially applying `sed_impute`).
 #'
 #' ## `urine24`
 #' Single urine output events are aggregated into a 24 hour moving window sum.
@@ -325,7 +327,7 @@ vent_ind <- function(..., match_win = hours(6L), min_length = mins(30L),
   units(match_win) <- units(interval)
   units(min_length) <- units(interval)
 
-  res <- Map(subset_true, res, cnc)
+  res <- Map(subset_true, res[-3L], cnc[-3L])
   var <- "vent_dur"
 
   if (has_rows(res[[2L]])) {
@@ -372,24 +374,37 @@ sed <- function(..., interval = NULL) {
 
 #' @param valid_win Maximal time window for which a GCS value is valid
 #' if no newer measurement is available
-#' @param set_sed_max Logical flag for considering sedation
+#' @param sed_impute Logical flag for considering sedation
 #' @param set_na_max Logical flag controlling imputation of missing GCS values
 #' with the respective maximum values
 #'
 #' @rdname callback_cncpt
 #' @export
 #'
-gcs <- function(..., valid_win = hours(6L), set_sed_max = TRUE,
+gcs <- function(..., valid_win = hours(6L), sed_impute = c("max", "prev"),
                 set_na_max = TRUE, interval = NULL) {
+
+  zero_to_na <- function(x) replace(x, x == 0, NA_real_)
+
+  if (!isFALSE(sed_impute)) {
+    sed_impute <- match.arg(sed_impute)
+  }
 
   cnc <- c("egcs", "vgcs", "mgcs", "tgcs", "sed")
   res <- collect_dots(cnc, interval, ..., merge_dat = TRUE)
 
   assert_that(is_interval(valid_win), valid_win > check_interval(res),
-              is.flag(set_sed_max), is.flag(set_na_max))
+              is.flag(set_na_max))
 
-  if (set_sed_max) {
+  if (identical(sed_impute, "max")) {
     res <- res[is_true(get(cnc[5L])), c(cnc[-5L]) := list(4, 5, 6, 15)]
+  } else if (identical(sed_impute, "prev")) {
+    idv <- id_vars(res)
+    res <- res[, c(cnc[-5L]) := lapply(.SD, replace_na, 0), .SDcols = cnc[-5L]]
+    res <- res[is_true(get(cnc[5L])), c(cnc[-5L]) := NA_real_]
+    res <- res[, c(cnc[-5L]) := lapply(.SD, replace_na, type = "locf"),
+               .SDcols = cnc[-5L], by = c(idv)]
+    res <- res[, c(cnc[-5L]) := lapply(.SD, zero_to_na), .SDcols = cnc[-5L]]
   }
 
   expr <- substitute(list(egcs = fun(egcs), vgcs = fun(vgcs),
