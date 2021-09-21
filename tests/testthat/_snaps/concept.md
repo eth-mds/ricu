@@ -67,15 +67,13 @@
     Code
       print(itms)
     Output
-      <item[23]>
+      <item[21]>
       mimic_demo  eicu_demo mimic_demo  eicu_demo mimic_demo  eicu_demo  eicu_demo 
        <col_itm>  <col_itm>  <sel_itm>  <sel_itm>  <sel_itm>  <sel_itm>  <sel_itm> 
       mimic_demo  eicu_demo mimic_demo  eicu_demo mimic_demo  eicu_demo mimic_demo 
        <sel_itm>  <sel_itm>  <sel_itm>  <sel_itm>  <sel_itm>  <sel_itm>  <sel_itm> 
        eicu_demo mimic_demo  eicu_demo mimic_demo  eicu_demo mimic_demo  eicu_demo 
-       <sel_itm>  <sel_itm>  <nul_itm>  <sel_itm>  <sel_itm>  <sel_itm>  <nul_itm> 
-      mimic_demo  eicu_demo 
-       <sel_itm>  <sel_itm> 
+       <sel_itm>  <sel_itm>  <fun_itm>  <sel_itm>  <nul_itm>  <sel_itm>  <sel_itm> 
 
 ---
 
