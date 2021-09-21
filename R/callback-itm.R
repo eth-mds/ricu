@@ -136,7 +136,7 @@ transform_fun <- function(fun, ...) {
 
   dots <- list(...)
 
-  function(x, val_var, ...) {
+  function(x, val_var = data_var(x), ...) {
     set(x, j = val_var, value = do.call(fun, c(list(x[[val_var]]), dots)))
     x
   }
@@ -880,4 +880,28 @@ hirid_vent <- function(x, ...) {
          by = c(idv)]
 
   as_win_tbl(x, dur_var = "dur_var", by_ref = TRUE)
+}
+
+ts_to_win_tbl <- function(win_dur) {
+
+  assert_that(is_interval(win_dur), is.scalar(win_dur))
+
+  function(x, ...) {
+    x <- x[, c("dur_var") := win_dur]
+    as_win_tbl(x, dur_var = "dur_var", by_ref = TRUE)
+  }
+}
+
+fwd_concept <- function(concept) {
+
+  assert_that(is.string(concept))
+
+  function(x, ...) {
+
+    res <- load_concepts(concept, src_name(x), ..., aggregate = FALSE,
+                         verbose = FALSE)
+
+    res <- rename_cols(res, "val_var", data_var(res), by_ref = TRUE)
+    res
+  }
 }

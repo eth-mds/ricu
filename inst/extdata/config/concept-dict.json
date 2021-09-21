@@ -2426,22 +2426,32 @@
     "class": "lgl_cncpt",
     "description": "tracheostomy",
     "category": "respiratory",
+    "target": "win_tbl",
     "sources": {
       "aumc": [
         {
           "ids": 6735,
           "table": "listitems",
           "sub_var": "itemid",
-          "callback": "transform_fun(comp_na(`==`, 'Geïntubeerd'))"
+          "callback": "combine_callbacks(\n               transform_fun(comp_na(`==`, 'Geïntubeerd')),\n               ts_to_win_tbl(mins(1L))\n             )"
+        }
+      ],
+      "eicu": [
+        {
+          "class": "fun_itm",
+          "callback": "combine_callbacks(\n               fwd_concept('rass'),\n               transform_fun(comp_na(`<=`, -3)),\n               ts_to_win_tbl(mins(360L))\n             )"
+        }
+      ],
+      "eicu_demo": [
+        {
+          "class": "fun_itm",
+          "callback": "combine_callbacks(\n               fwd_concept('rass'),\n               transform_fun(comp_na(`<=`, -3)),\n               ts_to_win_tbl(mins(360L))\n             )"
         }
       ],
       "hirid": [
         {
-          "ids": 15001552,
-          "table": "observations",
-          "sub_var": "variableid",
-          "callback": "transform_fun(comp_na(`==`, 2))",
-          "class": "hrd_itm"
+          "class": "fun_itm",
+          "callback": "combine_callbacks(\n               fwd_concept('mech_vent'),\n               transform_fun(comp_na(`==`, 'invasive'))\n             )"
         }
       ],
       "miiv": [
@@ -2449,7 +2459,7 @@
           "ids": "No Response-ETT",
           "table": "chartevents",
           "sub_var": "value",
-          "callback": "transform_fun(set_val(TRUE))"
+          "callback": "combine_callbacks(\n               transform_fun(set_val(TRUE)),\n               ts_to_win_tbl(mins(1L))\n             )"
         }
       ],
       "mimic": [
@@ -2457,7 +2467,7 @@
           "ids": ["1.0 ET/Trach", "No Response-ETT"],
           "table": "chartevents",
           "sub_var": "value",
-          "callback": "transform_fun(set_val(TRUE))"
+          "callback": "combine_callbacks(\n               transform_fun(set_val(TRUE)),\n               ts_to_win_tbl(mins(1L))\n             )"
         }
       ],
       "mimic_demo": [
@@ -2465,7 +2475,7 @@
           "ids": ["1.0 ET/Trach", "No Response-ETT"],
           "table": "chartevents",
           "sub_var": "value",
-          "callback": "transform_fun(set_val(TRUE))"
+          "callback": "combine_callbacks(\n               transform_fun(set_val(TRUE)),\n               ts_to_win_tbl(mins(1L))\n             )"
         }
       ]
     }

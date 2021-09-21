@@ -39,7 +39,7 @@ sed_gcs(..., interval = NULL)
 gcs(
   ...,
   valid_win = hours(6L),
-  sed_impute = c("max", "prev"),
+  sed_impute = c("max", "prev", "none", "verb"),
   set_na_max = TRUE,
   interval = NULL
 )
@@ -88,7 +88,8 @@ time}
 \item{valid_win}{Maximal time window for which a GCS value is valid
 if no newer measurement is available}
 
-\item{sed_impute}{Logical flag for considering sedation}
+\item{sed_impute}{Imputation scheme for values taken when patient was
+sedated (i.e. unconscious).}
 
 \item{set_na_max}{Logical flag controlling imputation of missing GCS values
 with the respective maximum values}

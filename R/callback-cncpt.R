@@ -324,10 +324,13 @@ vent_ind <- function(..., match_win = hours(6L), min_length = mins(30L),
     return(res)
   }
 
+  assert_that(nrow(res[[3L]]) == 0L)
+
   units(match_win) <- units(interval)
   units(min_length) <- units(interval)
 
-  res <- Map(subset_true, res[-3L], cnc[-3L])
+  cnc <- cnc[-3L]
+  res <- Map(subset_true, res[-3L], cnc)
   var <- "vent_dur"
 
   if (has_rows(res[[2L]])) {
@@ -357,55 +360,64 @@ vent_ind <- function(..., match_win = hours(6L), min_length = mins(30L),
   as_win_tbl(res, dur_var = var, by_ref = TRUE)
 }
 
-#' @rdname callback_cncpt
-#' @export
-#'
-sed_gcs <- function(..., interval = NULL) {
-
-  cnc <- c("ett_gcs", "rass")
-  res <- collect_dots(cnc, interval, ..., merge_dat = TRUE)
-
-  res <- res[, c("sed_gcs", cnc) := list(
-    get(cnc[1L]) | get(cnc[2L]) <= -2, NULL, NULL)
-  ]
-
-  res
-}
-
 #' @param valid_win Maximal time window for which a GCS value is valid
 #' if no newer measurement is available
-#' @param sed_impute Logical flag for considering sedation
+#' @param sed_impute Imputation scheme for values taken when patient was
+#' sedated (i.e. unconscious).
 #' @param set_na_max Logical flag controlling imputation of missing GCS values
 #' with the respective maximum values
 #'
 #' @rdname callback_cncpt
 #' @export
 #'
-gcs <- function(..., valid_win = hours(6L), sed_impute = c("max", "prev"),
+gcs <- function(..., valid_win = hours(6L),
+                sed_impute = c("max", "prev", "none", "verb"),
                 set_na_max = TRUE, interval = NULL) {
 
   zero_to_na <- function(x) replace(x, x == 0, NA_real_)
 
-  if (!isFALSE(sed_impute)) {
-    sed_impute <- match.arg(sed_impute)
-  }
+  sed_impute <- match.arg(sed_impute)
 
-  cnc <- c("egcs", "vgcs", "mgcs", "tgcs", "sed_gcs")
-  res <- collect_dots(cnc, interval, ..., merge_dat = TRUE)
+  cnc <- c("egcs", "vgcs", "mgcs", "tgcs", "ett_gcs")
+  res <- collect_dots(cnc, interval, ...)
 
   assert_that(is_interval(valid_win), valid_win > check_interval(res),
               is.flag(set_na_max))
 
-  expr <- substitute(list(egcs = fun1(egcs), vgcs = fun1(vgcs),
-                          mgcs = fun1(mgcs), tgcs = fun1(tgcs),
-                          sed_gcs = fun2(sed_gcs)),
-                     list(fun1 = locf, fun2 = last_elem))
+  sed <- res[[cnc[5L]]]
+  res <- reduce(merge, res[cnc[-5L]], all = TRUE)
+
+  expr <- substitute(list(egcs = fun(egcs), vgcs = fun(vgcs),
+                          mgcs = fun(mgcs), tgcs = fun(tgcs)),
+                     list(fun = locf))
 
   res <- slide(res, !!expr, before = valid_win)
 
+  if (identical(sed_impute, "none")) {
+
+    cnc <- cnc[-5L]
+
+  } else {
+
+    sed <- sed[is_true(get(cnc[5L])), ]
+
+    if (is_win_tbl(sed)) {
+      sed <- expand(sed, aggregate = "any")
+    }
+
+    res <- merge(res, sed, all.x = TRUE)
+  }
+
   if (identical(sed_impute, "max")) {
-    res <- res[is_true(get(cnc[5L])), c(cnc[-5L]) := list(4, 5, 6, 15)]
+
+    res <- res[is_true(get(cnc[5L])), c(cnc[4]) := 15]
+
+  } else if (identical(sed_impute, "verb")) {
+
+    res <- res[is_true(get(cnc[5L])), c(cnc[c(2L, 4L)]) := list(5, NA_real_)]
+
   } else if (identical(sed_impute, "prev")) {
+
     idv <- id_vars(res)
     res <- res[, c(cnc[-5L]) := lapply(.SD, replace_na, 0), .SDcols = cnc[-5L]]
     res <- res[is_true(get(cnc[5L])), c(cnc[-5L]) := NA_real_]
@@ -426,8 +438,8 @@ gcs <- function(..., valid_win = hours(6L), sed_impute = c("max", "prev"),
     res <- res[, c(cnc[4L]) := list(replace_na(get(cnc[4L]), 15))]
   }
 
-  res <- rename_cols(res, "gcs", cnc[4L])
-  res <- rm_cols(res, cnc[-4L])
+  res <- rename_cols(res, "gcs", cnc[4L], by_ref = TRUE)
+  res <- rm_cols(res, cnc[-4L], by_ref = TRUE)
 
   res
 }

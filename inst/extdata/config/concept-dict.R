@@ -1931,22 +1931,41 @@ cfg <- list(
     class = "lgl_cncpt",
     description = "tracheostomy",
     category = "respiratory",
+    target = "win_tbl",
     sources = list(
       mimic = list(
         list(ids = c("1.0 ET/Trach", "No Response-ETT"), table = "chartevents",
-             sub_var = "value", callback = "transform_fun(set_val(TRUE))")
+             sub_var = "value", callback = "combine_callbacks(
+               transform_fun(set_val(TRUE)),
+               ts_to_win_tbl(mins(1L))
+             )")
       ),
       hirid = list(
-        list(ids = 15001552L, table = "observations", sub_var = "variableid",
-             callback = "transform_fun(comp_na(`==`, 2))", class = "hrd_itm")
+        list(class = "fun_itm", callback = "combine_callbacks(
+               fwd_concept('mech_vent'),
+               transform_fun(comp_na(`==`, 'invasive'))
+             )")
       ),
       aumc = list(
         list(ids = 6735L, table = "listitems", sub_var = "itemid",
-             callback = "transform_fun(comp_na(`==`, 'Geïntubeerd'))")
+             callback = "combine_callbacks(
+               transform_fun(comp_na(`==`, 'Geïntubeerd')),
+               ts_to_win_tbl(mins(1L))
+             )")
       ),
       miiv = list(
         list(ids = "No Response-ETT", table = "chartevents", sub_var = "value",
-             callback = "transform_fun(set_val(TRUE))")
+             callback = "combine_callbacks(
+               transform_fun(set_val(TRUE)),
+               ts_to_win_tbl(mins(1L))
+             )")
+      ),
+      eicu = list(
+        list(class = "fun_itm", callback = "combine_callbacks(
+               fwd_concept('rass'),
+               transform_fun(comp_na(`<=`, -3)),
+               ts_to_win_tbl(mins(360L))
+             )")
       )
     )
   ),
@@ -2567,19 +2586,11 @@ cfg <- list(
     callback = "vaso_ind",
     class = "rec_cncpt"
   ),
-  sed_gcs = list(
-    concepts = c("ett_gcs", "rass"),
-    description = "sedation status",
-    category = "neurological",
-    aggregate = c(NA, "min"),
-    callback = "sed_gcs",
-    class = "rec_cncpt"
-  ),
   gcs = list(
-    concepts = c("egcs", "mgcs", "vgcs", "tgcs", "sed_gcs"),
+    concepts = c("egcs", "mgcs", "vgcs", "tgcs", "ett_gcs"),
     description = "Glasgow coma scale (non-sedated)",
     category = "neurological",
-    aggregate = c("min", "min", "min", "min", NA),
+    aggregate = c("min", "min", "min", "min", "any"),
     callback = "gcs",
     class = "rec_cncpt"
   ),

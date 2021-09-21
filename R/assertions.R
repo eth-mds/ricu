@@ -1,6 +1,6 @@
 
 #' @importFrom assertthat see_if on_failure<- validate_that
-#' @importFrom assertthat is.string is.flag is.dir is.count
+#' @importFrom assertthat is.string is.flag is.dir is.count is.scalar
 #' @importFrom assertthat has_name has_attr are_equal is.number
 #' @importFrom rlang as_label
 NULL
