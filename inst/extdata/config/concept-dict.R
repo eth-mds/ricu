@@ -1935,7 +1935,8 @@ cfg <- list(
     sources = list(
       mimic = list(
         list(ids = c("1.0 ET/Trach", "No Response-ETT"), table = "chartevents",
-             sub_var = "value", callback = "combine_callbacks(
+             sub_var = "value", target = "ts_tbl",
+             callback = "combine_callbacks(
                transform_fun(set_val(TRUE)),
                ts_to_win_tbl(mins(1L))
              )")
@@ -1948,14 +1949,14 @@ cfg <- list(
       ),
       aumc = list(
         list(ids = 6735L, table = "listitems", sub_var = "itemid",
-             callback = "combine_callbacks(
+             target = "ts_tbl", callback = "combine_callbacks(
                transform_fun(comp_na(`==`, 'Geïntubeerd')),
                ts_to_win_tbl(mins(1L))
              )")
       ),
       miiv = list(
         list(ids = "No Response-ETT", table = "chartevents", sub_var = "value",
-             callback = "combine_callbacks(
+             target = "ts_tbl", callback = "combine_callbacks(
                transform_fun(set_val(TRUE)),
                ts_to_win_tbl(mins(1L))
              )")

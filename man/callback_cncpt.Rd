@@ -5,7 +5,6 @@
 \alias{pafi}
 \alias{safi}
 \alias{vent_ind}
-\alias{sed_gcs}
 \alias{gcs}
 \alias{urine24}
 \alias{vaso60}
@@ -33,8 +32,6 @@ safi(
 )
 
 vent_ind(..., match_win = hours(6L), min_length = mins(30L), interval = NULL)
-
-sed_gcs(..., interval = NULL)
 
 gcs(
   ...,

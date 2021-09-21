@@ -2433,6 +2433,7 @@
           "ids": 6735,
           "table": "listitems",
           "sub_var": "itemid",
+          "target": "ts_tbl",
           "callback": "combine_callbacks(\n               transform_fun(comp_na(`==`, 'Geïntubeerd')),\n               ts_to_win_tbl(mins(1L))\n             )"
         }
       ],
@@ -2459,6 +2460,7 @@
           "ids": "No Response-ETT",
           "table": "chartevents",
           "sub_var": "value",
+          "target": "ts_tbl",
           "callback": "combine_callbacks(\n               transform_fun(set_val(TRUE)),\n               ts_to_win_tbl(mins(1L))\n             )"
         }
       ],
@@ -2467,6 +2469,7 @@
           "ids": ["1.0 ET/Trach", "No Response-ETT"],
           "table": "chartevents",
           "sub_var": "value",
+          "target": "ts_tbl",
           "callback": "combine_callbacks(\n               transform_fun(set_val(TRUE)),\n               ts_to_win_tbl(mins(1L))\n             )"
         }
       ],
@@ -2475,6 +2478,7 @@
           "ids": ["1.0 ET/Trach", "No Response-ETT"],
           "table": "chartevents",
           "sub_var": "value",
+          "target": "ts_tbl",
           "callback": "combine_callbacks(\n               transform_fun(set_val(TRUE)),\n               ts_to_win_tbl(mins(1L))\n             )"
         }
       ]
@@ -2630,10 +2634,10 @@
     }
   },
   "gcs": {
-    "concepts": ["egcs", "mgcs", "vgcs", "tgcs", "sed_gcs"],
+    "concepts": ["egcs", "mgcs", "vgcs", "tgcs", "ett_gcs"],
     "description": "Glasgow coma scale (non-sedated)",
     "category": "neurological",
-    "aggregate": ["min", "min", "min", "min", null],
+    "aggregate": ["min", "min", "min", "min", "any"],
     "callback": "gcs",
     "class": "rec_cncpt"
   },
@@ -5162,14 +5166,6 @@
         }
       ]
     }
-  },
-  "sed_gcs": {
-    "concepts": ["ett_gcs", "rass"],
-    "description": "sedation status",
-    "category": "neurological",
-    "aggregate": [null, "min"],
-    "callback": "sed_gcs",
-    "class": "rec_cncpt"
   },
   "sep3": {
     "concepts": ["sofa", "susp_inf"],
