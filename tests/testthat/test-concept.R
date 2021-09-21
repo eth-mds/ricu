@@ -188,7 +188,7 @@ test_that("load external dictionary", {
   itms <- as_item(dict)
 
   expect_s3_class(itms, "item")
-  expect_length(itms, 23L)
+  expect_length(itms, 21L)
   expect_setequal(names(itms), srcs)
 
   expect_snapshot(print(itms))
