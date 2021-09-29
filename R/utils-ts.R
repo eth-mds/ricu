@@ -106,31 +106,15 @@ expand <- function(x, start_var = index_var(x), end_var = NULL,
         value = as.difftime(unlist(lst), units = unit))
   }
 
-  assert_that(is_dt(x), is.string(new_index), is_scalar(step_size),
-              is.numeric(step_size))
-
-  if (identical(nrow(x), 0L)) {
-    return(x)
-  }
+  assert_that(is_dt(x), is_scalar(step_size), is.numeric(step_size))
 
   start_var <- coalesce(start_var, if (is_ts_tbl(x)) index_var(x), "start")
   end_var   <- coalesce(end_var, if (is_win_tbl(x)) new_names(x), "end")
   time_unit <- units(x[[start_var]])
   interval  <- as.difftime(step_size, units = time_unit)
+  data_var  <- data_vars(x)
 
-  if (is_win_tbl(x) && !end_var %in% colnames(x)) {
-
-    on.exit(rm_cols(x, end_var, by_ref = TRUE))
-
-    dura_var <- dur_var(x)
-    data_var <- data_vars(x)
-
-    x <- x[, c(end_var) := re_time(get(start_var) + get(dura_var), interval)]
-    x <- x[get(end_var) < 0, c(end_var) := as.difftime(0, units = time_unit)]
-  }
-
-  assert_that(has_time_cols(x, c(start_var, end_var), 2L),
-              same_unit(x[[start_var]], x[[end_var]]))
+  assert_that(is.string(start_var), is.string(end_var), is.string(new_index))
 
   if (is.null(keep_vars)) {
     keep_vars <- id_vars(x)
@@ -138,6 +122,32 @@ expand <- function(x, start_var = index_var(x), end_var = NULL,
       keep_vars <- c(keep_vars, data_var)
     }
   }
+
+  if (identical(nrow(x), 0L)) {
+
+    if (is_win_tbl(x)) {
+      x <- as_ts_tbl(x, index_var = new_index, interval = interval,
+                     by_ref = TRUE)
+    }
+
+    x <- rm_cols(x, setdiff(colnames(x), c(keep_vars, new_index)),
+                 by_ref = TRUE)
+
+    return(x)
+  }
+
+  if (is_win_tbl(x) && !end_var %in% colnames(x)) {
+
+    on.exit(rm_cols(x, end_var, by_ref = TRUE))
+
+    dura_var <- dur_var(x)
+
+    x <- x[, c(end_var) := re_time(get(start_var) + get(dura_var), interval)]
+    x <- x[get(end_var) < 0, c(end_var) := as.difftime(0, units = time_unit)]
+  }
+
+  assert_that(has_time_cols(x, c(start_var, end_var), 2L),
+              same_unit(x[[start_var]], x[[end_var]]))
 
   res <- rm_na(x, c(start_var, end_var), "any")
   res <- res[get(start_var) <= get(end_var), c(keep_vars, start_var, end_var),
