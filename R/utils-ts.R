@@ -657,3 +657,12 @@ min_time_unit <- function(x) {
   else if (any(x == "weeks")) "weeks"
   else stop_ricu("unknown time units", class = "unknown_time_unit")
 }
+
+as_interval <- function(x, length = 1L) {
+
+  x <- as.difftime(x)
+
+  assert_that(is_interval(x, length))
+
+  x
+}

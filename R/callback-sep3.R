@@ -84,10 +84,13 @@ sep3 <- function(..., si_window = c("first", "last", "any"),
   cnc <- c("sofa", "susp_inf")
   res <- collect_dots(cnc, interval, ...)
 
-  assert_that(is.count(sofa_thresh), is.function(delta_fun),
-              is_interval(si_lwr), is_interval(si_upr),
-              is.flag(keep_components))
+  assert_that(is.count(sofa_thresh), is.flag(keep_components),
+              not_null(delta_fun))
 
+  si_lwr <- as_interval(si_lwr)
+  si_upr <- as_interval(si_upr)
+
+  delta_fun <- str_to_fun(delta_fun)
   si_window <- match.arg(si_window)
 
   sofa <- res[["sofa"]]
@@ -254,10 +257,13 @@ susp_inf <- function(..., abx_count_win = hours(24L), abx_min_count = 1L,
 
   si_mode <- match.arg(si_mode)
 
+  abx_count_win <- as_interval(abx_count_win)
+
+  abx_win  <- as_interval(abx_win)
+  samp_win <- as_interval(samp_win)
+
   assert_that(is.count(abx_min_count), is.flag(positive_cultures),
-              is_interval(abx_count_win), is_interval(abx_win),
-              is_interval(samp_win), is.flag(by_ref),
-              is.flag(keep_components))
+              is.flag(by_ref), is.flag(keep_components))
 
   cnc <- c("abx", "samp")
   res <- collect_dots(cnc, interval, ...)

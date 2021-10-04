@@ -65,10 +65,19 @@ on_failure(is_intish) <- function(call, env) {
   format_assert("{as_label(call$x)} integer-values", "is_intish_assert")
 }
 
-has_length <- function(x) length(x) > 0L
+has_length <- function(x, length = NA) {
+ if (is.na(length)) length(x) > 0L else length(x) == length
+}
 
 on_failure(has_length) <- function(call, env) {
-  format_assert("{as_label(call$x)} has zero length", "has_length_assert")
+
+  len <- eval(call$length, env)
+
+  if (is.na(len)) {
+    format_assert("{as_label(call$x)} has zero length", "has_length_assert")
+  } else {
+    format_assert("{as_label(call$x)} is not length {len}", "has_length_assert")
+  }
 }
 
 has_rows <- function(x) nrow(x) > 0L
@@ -149,8 +158,9 @@ on_failure(has_interval) <- function(call, env) {
   )
 }
 
-is_interval <- function(x) {
-  assert_that(is_difftime(x), has_length(x)) && all(x >= 0, na.rm = TRUE)
+is_interval <- function(x, length = NA) {
+  assert_that(is_difftime(x), has_length(x, length)) &&
+    all(x >= 0, na.rm = TRUE)
 }
 
 on_failure(is_interval) <- function(call, env) {

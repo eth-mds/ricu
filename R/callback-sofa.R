@@ -99,6 +99,11 @@ sofa_score <- function(..., worst_val_fun = max_or_na, explicit_wins = FALSE,
            "sofa_cns", "sofa_renal")
   dat <- collect_dots(cnc, interval, ..., merge_dat = TRUE)
 
+  assert_that(not_null(worst_val_fun))
+
+  win_length    <- as_interval(win_length)
+  worst_val_fun <- str_to_fun(worst_val_fun)
+
   expr <- substitute(lapply(.SD, fun), list(fun = worst_val_fun))
 
   if (isFALSE(explicit_wins)) {
@@ -122,8 +127,9 @@ sofa_score <- function(..., worst_val_fun = max_or_na, explicit_wins = FALSE,
 
     } else {
 
-      res <- slide_index(dat, !!expr, explicit_wins, before = win_length,
-                         full_window = FALSE, .SDcols = cnc)
+      res <- slide_index(dat, !!expr, as_interval(explicit_wins, length = NA),
+                         before = win_length, full_window = FALSE,
+                         .SDcols = cnc)
     }
   }
 

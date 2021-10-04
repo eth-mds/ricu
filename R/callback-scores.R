@@ -24,7 +24,9 @@ sirs_score <- function(..., win_length = hours(24L), keep_components = FALSE,
   rspi <- function(re, pa) fifelse(re > 20 | pa < 32, 1L, 0L)
   wbcn <- function(wb, ba) fifelse(wb < 4 | wb > 12 | ba > 10, 1L, 0L)
 
-  assert_that(is.flag(keep_components), is_interval(win_length))
+  win_length <- as_interval(win_length)
+
+  assert_that(is.flag(keep_components))
 
   cnc <- c("temp", "hr", "resp", "wbc", "pco2", "bnd")
   res <- collect_dots(cnc, interval, ..., merge_dat = TRUE)
@@ -57,7 +59,9 @@ qsofa_score <- function(..., win_length = hours(24L), keep_components = FALSE,
   gte <- function(x, val) is_true(x >= val)
   lte <- function(x, val) is_true(x <= val)
 
-  assert_that(is_interval(win_length), is.flag(keep_components))
+  win_length <- as_interval(win_length)
+
+  assert_that(is.flag(keep_components))
 
   cnc <- c("gcs", "sbp", "resp")
   res <- collect_dots(cnc, interval, ..., merge_dat = TRUE)
@@ -94,7 +98,9 @@ news_score <- function(..., win_length = hours(24L), keep_components = FALSE,
   suppo2 <- function(x) fifelse(x, 2L, 0L)
   avpu   <- function(x) fifelse(x == "A", 0L, 3L)
 
-  assert_that(is_interval(win_length), is.flag(keep_components))
+  win_length <- as_interval(win_length)
+
+  assert_that(is.flag(keep_components))
 
   cnc <- c("hr", "avpu", "supp_o2", "o2sat", "temp", "sbp", "resp")
   res <- collect_dots(cnc, interval, ..., merge_dat = TRUE)
@@ -132,7 +138,9 @@ mews_score <- function(..., win_length = hours(24L), keep_components = FALSE,
 
   avpu <- function(x) setNames(c(0L, 1L, 2L, 3L), c("A", "V", "P", "U"))[x]
 
-  assert_that(is_interval(win_length), is.flag(keep_components))
+  win_length <- as_interval(win_length)
+
+  assert_that(is.flag(keep_components))
 
   cnc <- c("hr", "avpu", "temp", "sbp", "resp")
   res <- collect_dots(cnc, interval, ..., merge_dat = TRUE)

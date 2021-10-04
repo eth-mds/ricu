@@ -247,7 +247,9 @@ safi <- function(..., match_win = hours(2L),
 
 match_fio2 <- function(x, match_win, mode, fio2 = NULL) {
 
-  assert_that(is_interval(match_win), match_win > check_interval(x))
+  match_win <- as_interval(match_win)
+
+  assert_that(match_win > check_interval(x))
 
   if (identical(mode, "match_vals")) {
 
@@ -308,9 +310,11 @@ vent_ind <- function(..., match_win = hours(6L), min_length = mins(30L),
     final_int <- interval
   }
 
+  match_win  <- as_interval(match_win)
+  min_length <- as_interval(min_length)
+
   assert_that(
-    is_interval(final_int), is_interval(match_win), is_interval(min_length),
-    min_length < match_win, interval < min_length
+    is_interval(final_int), min_length < match_win, interval < min_length
   )
 
   if (has_rows(res[[3L]])) {
@@ -383,8 +387,9 @@ gcs <- function(..., valid_win = hours(6L),
   cnc <- c("egcs", "vgcs", "mgcs", "tgcs", "ett_gcs")
   res <- collect_dots(cnc, interval, ...)
 
-  assert_that(is_interval(valid_win), valid_win > check_interval(res),
-              is.flag(set_na_max))
+  valid_win <- as_interval(valid_win)
+
+  assert_that(valid_win > check_interval(res), is.flag(set_na_max))
 
   sed <- res[[cnc[5L]]]
   res <- reduce(merge, res[cnc[-5L]], all = TRUE)
@@ -466,13 +471,14 @@ urine24 <- function(..., min_win = hours(12L), limits = NULL,
 
   res      <- collect_dots("urine", interval, ...)
   interval <- check_interval(res)
+  min_win  <- as_interval(min_win)
+
+  assert_that(min_win > interval, min_win <= hours(24L))
 
   if (nrow(res) == 0L) {
     res <- rename_cols(res, "urine24", "urine")
     return(res)
   }
-
-  assert_that(is_interval(min_win), min_win > interval, min_win <= hours(24L))
 
   min_steps   <- ceiling(convert_dt(min_win) / as.double(interval))
   step_factor <- convert_dt(hours(24L)) / as.double(interval)
@@ -506,6 +512,8 @@ vaso60 <- function(..., max_gap = mins(5L), interval = NULL) {
   if (is.null(final_int)) {
     final_int <- interval
   }
+
+  max_gap <- as_interval(max_gap)
 
   assert_that(is_interval(final_int))
 
