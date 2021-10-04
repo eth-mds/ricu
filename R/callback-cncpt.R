@@ -321,6 +321,8 @@ vent_ind <- function(..., match_win = hours(6L), min_length = mins(30L),
       !is.na(get("mech_vent")), NULL
     )]
 
+    res <- change_interval(res, final_int, by_ref = TRUE)
+
     return(res)
   }
 
