@@ -803,11 +803,11 @@ R> (dat <- ts_tbl(a = 1:5, b = hours(1:5), c = rnorm(5)))
 # Index var:  `b` (1 hours)
       a b            c
   <int> <drtn>   <dbl>
-1     1 1 hours -1.15
-2     2 2 hours -0.709
-3     3 3 hours -0.622
-4     4 4 hours -0.334
-5     5 5 hours  0.944
+1     1 1 hours -1.28
+2     2 2 hours -0.181
+3     3 3 hours  0.495
+4     4 4 hours -1.32
+5     5 5 hours -1.19
 \end{CodeOutput}
 \begin{CodeInput}
 R> dat[["b"]] <- dat[["b"]] + mins(30)
@@ -818,11 +818,11 @@ R> dat
 # Id var:      `a`
       a b               c
   <int> <drtn>      <dbl>
-1     1  5400 secs -1.15
-2     2  9000 secs -0.709
-3     3 12600 secs -0.622
-4     4 16200 secs -0.334
-5     5 19800 secs  0.944
+1     1  5400 secs -1.28
+2     2  9000 secs -0.181
+3     3 12600 secs  0.495
+4     4 16200 secs -1.32
+5     5 19800 secs -1.19
 \end{CodeOutput}
 \end{CodeChunk}
 
@@ -866,11 +866,11 @@ R> (dat <- win_tbl(a = 1:5, b = hours(1:5), c = mins(rep(90, 5)),
 # Duration var: `c`
       a b       c           d
   <int> <drtn>  <drtn>  <dbl>
-1     1 1 hours 90 mins 0.329
-2     2 2 hours 90 mins 0.219
-3     3 3 hours 90 mins 0.203
-4     4 4 hours 90 mins 0.932
-5     5 5 hours 90 mins 0.827
+1     1 1 hours 90 mins 0.800
+2     2 2 hours 90 mins 0.710
+3     3 3 hours 90 mins 0.796
+4     4 4 hours 90 mins 0.997
+5     5 5 hours 90 mins 0.847
 \end{CodeOutput}
 \begin{CodeInput}
 R> expand(dat)
@@ -881,16 +881,16 @@ R> expand(dat)
 # Index var:  `b` (1 hours)
        a b           d
    <int> <drtn>  <dbl>
- 1     1 1 hours 0.329
- 2     1 2 hours 0.329
- 3     2 2 hours 0.219
- 4     2 3 hours 0.219
- 5     3 3 hours 0.203
- 6     3 4 hours 0.203
- 7     4 4 hours 0.932
- 8     4 5 hours 0.932
- 9     5 5 hours 0.827
-10     5 6 hours 0.827
+ 1     1 1 hours 0.800
+ 2     1 2 hours 0.800
+ 3     2 2 hours 0.710
+ 4     2 3 hours 0.710
+ 5     3 3 hours 0.796
+ 6     3 4 hours 0.796
+ 7     4 4 hours 0.997
+ 8     4 5 hours 0.997
+ 9     5 5 hours 0.847
+10     5 6 hours 0.847
 \end{CodeOutput}
 \end{CodeChunk}
 
@@ -1583,7 +1583,7 @@ source setup is shown in Figure \ref{fig:src-setup}.
 \begin{CodeChunk}
 \begin{figure}
 
-{\centering \includegraphics{/private/var/folders/24/8k48jl6d249_n_qfxwsl6xvm0000gn/T/RtmpJdcCG1/file208f22c178f3/articles/jss_files/figure-latex/src-setup-1} 
+{\centering \includegraphics{/private/var/folders/24/8k48jl6d249_n_qfxwsl6xvm0000gn/T/RtmpmWv08U/file503e1fac61ea/articles/jss_files/figure-latex/src-setup-1} 
 
 }
 
@@ -1694,7 +1694,7 @@ representations as visualized in Figure \ref{fig:data-loading}.
 \begin{CodeChunk}
 \begin{figure}
 
-{\centering \includegraphics{/private/var/folders/24/8k48jl6d249_n_qfxwsl6xvm0000gn/T/RtmpJdcCG1/file208f22c178f3/articles/jss_files/figure-latex/data-loading-1} 
+{\centering \includegraphics{/private/var/folders/24/8k48jl6d249_n_qfxwsl6xvm0000gn/T/RtmpmWv08U/file503e1fac61ea/articles/jss_files/figure-latex/data-loading-1} 
 
 }
 
@@ -2499,7 +2499,7 @@ set to \texttt{FALSE}. The resulting model fit can be visualized as:
 \begin{CodeChunk}
 
 
-\begin{center}\includegraphics{/private/var/folders/24/8k48jl6d249_n_qfxwsl6xvm0000gn/T/RtmpJdcCG1/file208f22c178f3/articles/jss_files/figure-latex/cox-plot-1} \end{center}
+\begin{center}\includegraphics{/private/var/folders/24/8k48jl6d249_n_qfxwsl6xvm0000gn/T/RtmpmWv08U/file503e1fac61ea/articles/jss_files/figure-latex/cox-plot-1} \end{center}
 
 \end{CodeChunk}
 
@@ -2601,7 +2601,7 @@ with a histogram over the binned insulin administration values:
 \begin{CodeChunk}
 
 
-\begin{center}\includegraphics{/private/var/folders/24/8k48jl6d249_n_qfxwsl6xvm0000gn/T/RtmpJdcCG1/file208f22c178f3/articles/jss_files/figure-latex/diabetes-visualize-1} \end{center}
+\begin{center}\includegraphics{/private/var/folders/24/8k48jl6d249_n_qfxwsl6xvm0000gn/T/RtmpmWv08U/file503e1fac61ea/articles/jss_files/figure-latex/diabetes-visualize-1} \end{center}
 
 \end{CodeChunk}
 
