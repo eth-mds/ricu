@@ -73,7 +73,7 @@ on_failure(has_length) <- function(call, env) {
 
   len <- eval(call$length, env)
 
-  if (is.na(len)) {
+  if (is.null(len) || is.na(len)) {
     format_assert("{as_label(call$x)} has zero length", "has_length_assert")
   } else {
     format_assert("{as_label(call$x)} is not length {len}", "has_length_assert")

@@ -187,14 +187,17 @@ init_itm.hrd_itm <- function(x, table, sub_var, ids,
 
   x[["table"]] <- table
 
-  units <- load_id("variables", x, .data$id %in% .env$ids,
-                   cols = "unit", id_var = "id")
+  units <- get_hirid_ids(x, ids)
   units <- rename_cols(rm_na(units), sub_var, "id")
 
   todo <- c("ids", "units")
   x[todo] <- mget(todo)
 
   complete_tbl_itm(x, callback, sub_var, ...)
+}
+
+get_hirid_ids <- function(x, ids) {
+  load_id("variables", x, .data$id %in% .env$ids, cols = "unit", id_var = "id")
 }
 
 #' @param unit_val String valued unit to be used in case no `unit_var` is
