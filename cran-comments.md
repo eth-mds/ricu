@@ -10,4 +10,4 @@
 
 0 errors | 0 warnings | 0 notes
 
-* This is a new release
+* Maintenance release for upcoming rlang API change

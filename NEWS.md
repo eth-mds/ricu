@@ -1,5 +1,9 @@
 # ricu (development version)
 
+# ricu 0.5.1
+
+* maintenance release due to upcoming API change of `rlang` v1.0.0
+
 # ricu 0.5.0
 
 * adds `miiv` data source (MIMIC-IV)
