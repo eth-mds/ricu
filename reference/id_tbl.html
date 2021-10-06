@@ -404,7 +404,17 @@ however the ID column is removed the only sensible thing to return is a
 #&gt;  <span style='color: #949494;'>8</span>     2 -<span style='color: #BB0000;'>0.772</span>
 #&gt;  <span style='color: #949494;'>9</span>     2 -<span style='color: #BB0000;'>0.782</span>
 #&gt; <span style='color: #949494;'>10</span>     2 -<span style='color: #BB0000;'>0.432</span></div><div class='input'><span class='va'>tbl</span><span class='op'>[</span>, <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"b"</span>, <span class='st'>"c"</span><span class='op'>)</span>, with <span class='op'>=</span> <span class='cn'>FALSE</span><span class='op'>]</span>
-</div><div class='output co'>#&gt; <span class='error'>Error in if (is.na(len)) {    format_assert("{as_label(call$x)} has zero length", "has_length_assert")} else {    format_assert("{as_label(call$x)} is not length {len}", "has_length_assert")}: argument is of length zero</span></div><div class='input'><span class='va'>tbl</span><span class='op'>[</span>, <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span><span class='op'>(</span><span class='va'>a</span>, b <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/double.html'>as.double</a></span><span class='op'>(</span><span class='va'>b</span><span class='op'>)</span>, <span class='va'>c</span><span class='op'>)</span><span class='op'>]</span>
+</div><div class='output co'>#&gt;           b          c
+#&gt;  1: 1 hours -0.6912054
+#&gt;  2: 2 hours  1.3398599
+#&gt;  3: 3 hours  2.7361084
+#&gt;  4: 4 hours -0.9441017
+#&gt;  5: 5 hours -1.7810619
+#&gt;  6: 1 hours -0.7160587
+#&gt;  7: 2 hours  0.9110785
+#&gt;  8: 3 hours -0.7721921
+#&gt;  9: 4 hours -0.7820777
+#&gt; 10: 5 hours -0.4321952</div><div class='input'><span class='va'>tbl</span><span class='op'>[</span>, <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span><span class='op'>(</span><span class='va'>a</span>, b <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/double.html'>as.double</a></span><span class='op'>(</span><span class='va'>b</span><span class='op'>)</span>, <span class='va'>c</span><span class='op'>)</span><span class='op'>]</span>
 </div><div class='output co'>#&gt; <span style='color: #949494;'># An `id_tbl`: 10 ✖ 3</span>
 #&gt; <span style='color: #949494;'># Id var:      `a`</span>
 #&gt;        a     b      c
