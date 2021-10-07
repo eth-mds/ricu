@@ -1595,7 +1595,7 @@ cfg <- list(
       ),
       hirid = list(
         list(ids = 426L, table = "pharma", sub_var = "pharmaid",
-             grp_var = "infusionid", callback = "hirid_duration")
+             grp_var = "infusionid", callback = "hirid_dur")
       ),
       aumc = list(
         list(ids = 7178L, table = "drugitems", sub_var = "itemid",
@@ -1739,7 +1739,7 @@ cfg <- list(
       hirid = list(
         list(ids = c(1000462L, 1000656L, 1000657L, 1000658L), table = "pharma",
              sub_var = "pharmaid", grp_var = "infusionid",
-             callback = "hirid_duration")
+             callback = "hirid_dur")
       ),
       aumc = list(
         list(ids = 7229L, table = "drugitems", sub_var = "itemid",
@@ -1816,7 +1816,7 @@ cfg <- list(
       hirid = list(
         list(ids = c(71L, 1000649L, 1000650L, 1000655L, 1000750L),
              table = "pharma", sub_var = "pharmaid", grp_var = "infusionid",
-             callback = "hirid_duration")
+             callback = "hirid_dur")
       ),
       aumc = list(
         list(ids = 6818L, table = "drugitems", sub_var = "itemid",
@@ -2588,7 +2588,7 @@ cfg <- list(
     class = "rec_cncpt"
   ),
   gcs = list(
-    concepts = c("egcs", "mgcs", "vgcs", "tgcs", "ett_gcs"),
+    concepts = c("egcs", "mgcs", "vgcs", "tgcs", "sed_gcs"),
     description = "Glasgow coma scale (non-sedated)",
     category = "neurological",
     aggregate = c("min", "min", "min", "min", "any"),
@@ -2917,6 +2917,53 @@ cfg <- list(
       )
     ),
     class = c("unt_cncpt", "num_cncpt")
+  ),
+  sed_gcs = list(
+    description = "sedation (used for gcs)",
+    category = "medications",
+    target = "win_tbl",
+    class = "lgl_cncpt",
+    sources = list(
+      mimic = list(
+        list(ids = c(30118L, 30124L, 30126L, 30131L, 30139L, 30149L, 30150L,
+                     30153L, 30308L, 41733L, 43387L, 44306L, 45520L, 45764L,
+                     46725L), table = "inputevents_cv", sub_var = "itemid",
+             target = "ts_tbl", callback = "combine_callbacks(
+               transform_fun(set_val(TRUE)),
+               ts_to_win_tbl(hours(12L))
+             )"),
+        list(ids = c(221385L, 221623L, 221668L, 221744L, 221833L, 222168L,
+                     225154L, 225942L, 225972L, 227520L),
+             table = "inputevents_mv", sub_var = "itemid",
+             dur_var = "endtime")
+      ),
+      hirid = list(
+        list(ids = c(    202L,     208L,     245L,     246L,     251L,
+                         252L,     442L, 1000239L, 1000418L, 1000475L,
+                     1000491L, 1000607L, 1000691L, 1000699L, 1000700L,
+                     1000847L, 1000902L, 1000976L, 1000977L, 1000978L,
+                     1000988L, 1000991L, 1001049L, 1001050L, 1001051L,
+                     1001052L, 1001053L, 1001054L, 1001215L), table = "pharma",
+             sub_var = "pharmaid", grp_var = "infusionid", target = "ts_tbl",
+             interval = "00:01:00", callback = "combine_callbacks(
+               hirid_dur,
+               transform_fun(binary_op(`+`, mins(720L))),
+               ts_to_win_tbl(NA),
+               transform_fun(set_val(TRUE))
+             )")
+      ),
+      aumc = list(
+        list(ids = c( 6883L, 6962L, 7014L, 7165L,  7170L,  7194L,  7219L,
+                      7480L, 9048L, 9146L, 9620L, 12402L, 12750L, 12940L,
+                     19163L, 21242L), table = "drugitems", sub_var = "itemid",
+             dur_var = "stop")
+      ),
+      miiv = list(
+        list(ids = c(221385L, 221623L, 221668L, 221744L, 221833L, 222168L,
+                     225154L, 225942L, 225972L, 227520L),
+             table = "inputevents", sub_var = "itemid", dur_var = "endtime")
+      )
+    )
   )
 )
 

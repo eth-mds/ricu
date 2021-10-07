@@ -1708,7 +1708,7 @@
           "table": "pharma",
           "sub_var": "pharmaid",
           "grp_var": "infusionid",
-          "callback": "hirid_duration"
+          "callback": "hirid_dur"
         }
       ],
       "miiv": [
@@ -2184,7 +2184,7 @@
           "table": "pharma",
           "sub_var": "pharmaid",
           "grp_var": "infusionid",
-          "callback": "hirid_duration"
+          "callback": "hirid_dur"
         }
       ],
       "miiv": [
@@ -4089,7 +4089,7 @@
           "table": "pharma",
           "sub_var": "pharmaid",
           "grp_var": "infusionid",
-          "callback": "hirid_duration"
+          "callback": "hirid_dur"
         }
       ],
       "miiv": [
@@ -5163,6 +5163,71 @@
           "ids": [51, 455, 6701, 220050, 220179],
           "table": "chartevents",
           "sub_var": "itemid"
+        }
+      ]
+    }
+  },
+  "sed_gcs": {
+    "description": "sedation (used for gcs)",
+    "category": "medications",
+    "target": "win_tbl",
+    "class": "lgl_cncpt",
+    "sources": {
+      "aumc": [
+        {
+          "ids": [6883, 6962, 7014, 7165, 7170, 7194, 7219, 7480, 9048, 9146, 9620, 12402, 12750, 12940, 19163, 21242],
+          "table": "drugitems",
+          "sub_var": "itemid",
+          "dur_var": "stop"
+        }
+      ],
+      "hirid": [
+        {
+          "ids": [202, 208, 245, 246, 251, 252, 442, 1000239, 1000418, 1000475, 1000491, 1000607, 1000691, 1000699, 1000700, 1000847, 1000902, 1000976, 1000977, 1000978, 1000988, 1000991, 1001049, 1001050, 1001051, 1001052, 1001053, 1001054, 1001215],
+          "table": "pharma",
+          "sub_var": "pharmaid",
+          "grp_var": "infusionid",
+          "target": "ts_tbl",
+          "interval": "00:01:00",
+          "callback": "combine_callbacks(\n               hirid_dur,\n               transform_fun(binary_op(`+`, mins(720L))),\n               ts_to_win_tbl(NA),\n               transform_fun(set_val(TRUE))\n             )"
+        }
+      ],
+      "miiv": [
+        {
+          "ids": [221385, 221623, 221668, 221744, 221833, 222168, 225154, 225942, 225972, 227520],
+          "table": "inputevents",
+          "sub_var": "itemid",
+          "dur_var": "endtime"
+        }
+      ],
+      "mimic": [
+        {
+          "ids": [30118, 30124, 30126, 30131, 30139, 30149, 30150, 30153, 30308, 41733, 43387, 44306, 45520, 45764, 46725],
+          "table": "inputevents_cv",
+          "sub_var": "itemid",
+          "target": "ts_tbl",
+          "callback": "combine_callbacks(\n               transform_fun(set_val(TRUE)),\n               ts_to_win_tbl(hours(12L))\n             )"
+        },
+        {
+          "ids": [221385, 221623, 221668, 221744, 221833, 222168, 225154, 225942, 225972, 227520],
+          "table": "inputevents_mv",
+          "sub_var": "itemid",
+          "dur_var": "endtime"
+        }
+      ],
+      "mimic_demo": [
+        {
+          "ids": [30118, 30124, 30126, 30131, 30139, 30149, 30150, 30153, 30308, 41733, 43387, 44306, 45520, 45764, 46725],
+          "table": "inputevents_cv",
+          "sub_var": "itemid",
+          "target": "ts_tbl",
+          "callback": "combine_callbacks(\n               transform_fun(set_val(TRUE)),\n               ts_to_win_tbl(hours(12L))\n             )"
+        },
+        {
+          "ids": [221385, 221623, 221668, 221744, 221833, 222168, 225154, 225942, 225972, 227520],
+          "table": "inputevents_mv",
+          "sub_var": "itemid",
+          "dur_var": "endtime"
         }
       ]
     }

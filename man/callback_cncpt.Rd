@@ -36,7 +36,7 @@ vent_ind(..., match_win = hours(6L), min_length = mins(30L), interval = NULL)
 gcs(
   ...,
   valid_win = hours(6L),
-  sed_impute = c("max", "prev", "none", "verb"),
+  sed_impute = c("prev", "max", "none", "verb"),
   set_na_max = TRUE,
   interval = NULL
 )
@@ -157,14 +157,6 @@ and at least \code{min_length}. Durations are represented by the \code{dur_var} 
 in the returned \code{win_tbl} and the \code{data_var} column simply indicates the
 ventilation status with \code{TRUE} values. Currently, no clear distinction
 between invasive an non-invasive ventilation is made.
-}
-
-\subsection{\code{sed_gcs}}{
-
-In order to construct an indicator for patient sedation (used within the
-context of \code{gcs}), information from the two concepts \code{ett_gcs} and \code{rass} is
-pooled: A patient is considered sedated if intubated or has less or equal to
--2 on the Richmond Agitation-Sedation Scale.
 }
 
 \subsection{\code{gcs}}{

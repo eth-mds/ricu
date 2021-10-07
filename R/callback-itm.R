@@ -623,7 +623,7 @@ eicu_duration <- function(gap_length) {
   }
 }
 
-hirid_duration <- function(x, val_var, grp_var, ...) {
+hirid_dur <- function(x, val_var, grp_var, ...) {
   calc_dur(x, val_var, index_var(x), index_var(x), grp_var)
 }
 
@@ -884,11 +884,19 @@ hirid_vent <- function(x, ...) {
 
 ts_to_win_tbl <- function(win_dur) {
 
-  assert_that(is_interval(win_dur), is.scalar(win_dur))
+  assert_that(is.scalar(win_dur))
 
-  function(x, ...) {
-    x <- x[, c("dur_var") := win_dur]
-    as_win_tbl(x, dur_var = "dur_var", by_ref = TRUE)
+  function(x, val_var, ...) {
+
+    drvr <- "dur_var"
+
+    if (is.na(win_dur)) {
+      x <- x[, c(drvr) := get(val_var)]
+    } else {
+      x <- x[, c(drvr) := win_dur]
+    }
+
+    as_win_tbl(x, dur_var = drvr, by_ref = TRUE)
   }
 }
 

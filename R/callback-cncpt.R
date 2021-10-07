@@ -150,12 +150,6 @@ rename_data_var <- function(new_name, old_name = NULL) {
 #' ventilation status with `TRUE` values. Currently, no clear distinction
 #' between invasive an non-invasive ventilation is made.
 #'
-#' ## `sed_gcs`
-#' In order to construct an indicator for patient sedation (used within the
-#' context of `gcs`), information from the two concepts `ett_gcs` and `rass` is
-#' pooled: A patient is considered sedated if intubated or has less or equal to
-#' -2 on the Richmond Agitation-Sedation Scale.
-#'
 #' ## `gcs`
 #' Aggregating components of the Glasgow Coma Scale into a total score
 #' (whenever the total score `tgcs` is not already available) requires
@@ -377,14 +371,14 @@ vent_ind <- function(..., match_win = hours(6L), min_length = mins(30L),
 #' @export
 #'
 gcs <- function(..., valid_win = hours(6L),
-                sed_impute = c("max", "prev", "none", "verb"),
+                sed_impute = c("prev", "max", "none", "verb"),
                 set_na_max = TRUE, interval = NULL) {
 
   zero_to_na <- function(x) replace(x, x == 0, NA_real_)
 
   sed_impute <- match.arg(sed_impute)
 
-  cnc <- c("egcs", "vgcs", "mgcs", "tgcs", "ett_gcs")
+  cnc <- c("egcs", "vgcs", "mgcs", "tgcs", "sed_gcs")
   res <- collect_dots(cnc, interval, ...)
 
   valid_win <- as_interval(valid_win)

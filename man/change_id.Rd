@@ -70,17 +70,17 @@ hospital admissions as destination IDs.\if{html}{\out{<div class="r">}}\preforma
 ## # Id var:      `icustay_id`
 ##     icustay_id hadm_id hadm_id_start hadm_id_end
 ##          <int>   <int> <drtn>        <drtn>
-##   1     201006  198503 ~17h          ~6d
-##   2     201204  114648 ~23h          ~4d
-##   3     203766  126949 ~1h           ~6d
-##   4     204132  157609 ~23h          ~7d
-##   5     204201  177678 ~17h          ~6d
+##   1     201006  198503  -3290 mins    9114 mins
+##   2     201204  114648     -2 mins    6949 mins
+##   3     203766  126949  -1336 mins    8818 mins
+##   4     204132  157609     -1 mins   10103 mins
+##   5     204201  177678   -368 mins    9445 mins
 ## ...
-## 132     295043  170883 ~18h          ~21d
-## 133     295741  176805 ~23h          ~2d
-## 134     296804  110244 ~2h           ~3d
-## 135     297782  167612 ~23h          ~3h
-## 136     298685  151323 ~23h          ~13d
+## 132     295043  170883 -10413 mins   31258 mins
+## 133     295741  176805     -1 mins    3153 mins
+## 134     296804  110244  -1294 mins    4599 mins
+## 135     297782  167612     -1 mins     207 mins
+## 136     298685  151323     -1 mins   19082 mins
 ## # ... with 126 more rows
 }
 
