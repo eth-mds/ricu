@@ -2935,7 +2935,7 @@ cfg <- list(
         list(ids = c(221385L, 221623L, 221668L, 221744L, 221833L, 222168L,
                      225154L, 225942L, 225972L, 227520L),
              table = "inputevents_mv", sub_var = "itemid",
-             dur_var = "endtime")
+             dur_var = "endtime", callback = "transform_fun(set_val(TRUE))")
       ),
       hirid = list(
         list(ids = c(    202L,     208L,     245L,     246L,     251L,
@@ -2961,7 +2961,8 @@ cfg <- list(
       miiv = list(
         list(ids = c(221385L, 221623L, 221668L, 221744L, 221833L, 222168L,
                      225154L, 225942L, 225972L, 227520L),
-             table = "inputevents", sub_var = "itemid", dur_var = "endtime")
+             table = "inputevents", sub_var = "itemid", dur_var = "endtime",
+             callback = "transform_fun(set_val(TRUE))")
       )
     )
   )

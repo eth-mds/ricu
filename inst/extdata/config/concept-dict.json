@@ -5197,7 +5197,8 @@
           "ids": [221385, 221623, 221668, 221744, 221833, 222168, 225154, 225942, 225972, 227520],
           "table": "inputevents",
           "sub_var": "itemid",
-          "dur_var": "endtime"
+          "dur_var": "endtime",
+          "callback": "transform_fun(set_val(TRUE))"
         }
       ],
       "mimic": [
@@ -5212,7 +5213,8 @@
           "ids": [221385, 221623, 221668, 221744, 221833, 222168, 225154, 225942, 225972, 227520],
           "table": "inputevents_mv",
           "sub_var": "itemid",
-          "dur_var": "endtime"
+          "dur_var": "endtime",
+          "callback": "transform_fun(set_val(TRUE))"
         }
       ],
       "mimic_demo": [
@@ -5227,7 +5229,8 @@
           "ids": [221385, 221623, 221668, 221744, 221833, 222168, 225154, 225942, 225972, 227520],
           "table": "inputevents_mv",
           "sub_var": "itemid",
-          "dur_var": "endtime"
+          "dur_var": "endtime",
+          "callback": "transform_fun(set_val(TRUE))"
         }
       ]
     }
