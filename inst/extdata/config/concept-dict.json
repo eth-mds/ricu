@@ -2634,7 +2634,7 @@
     }
   },
   "gcs": {
-    "concepts": ["egcs", "mgcs", "vgcs", "tgcs", "ett_gcs"],
+    "concepts": ["egcs", "mgcs", "vgcs", "tgcs", "sed_gcs"],
     "description": "Glasgow coma scale (non-sedated)",
     "category": "neurological",
     "aggregate": ["min", "min", "min", "min", "any"],
