@@ -1510,7 +1510,9 @@ explain_dictionary <- function(dict = NULL,
                                cols = c("name", "category", "description"),
                                ...) {
 
-  chr_ply_inv <- function(i, x) chr_ply(x, `[[`, i)
+  get_one <- function(x) coalesce(x[1L], NA)
+
+  sapply_inv <- function(i, x) sapply(lapply(x, `[[`, i), get_one)
 
   if (is.null(dict)) {
     dict <- load_dictionary(...)
@@ -1518,7 +1520,7 @@ explain_dictionary <- function(dict = NULL,
 
   assert_that(is_concept(dict), is.character(cols), has_length(cols))
 
-  res <- lapply(cols, chr_ply_inv, dict)
+  res <- lapply(cols, sapply_inv, dict)
   names(res) <- cols
 
   as.data.frame(res, stringsAsFactors = FALSE)

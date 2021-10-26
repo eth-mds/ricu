@@ -2555,6 +2555,51 @@ cfg <- list(
       )
     )
   ),
+  win_icu = list(
+    target = "win_tbl",
+    description = "ICU sty windows",
+    category = "outcome",
+    class = "lgl_cncpt",
+    sources = list(
+      mimic = list(
+        list(callback = "stay_callback", win_type = "icustay",
+             class = "fun_itm")
+      ),
+      eicu = list(
+        list(callback = "stay_callback", win_type = "icustay",
+             class = "fun_itm")
+      ),
+      hirid = list(
+        list(callback = "stay_callback", win_type = "icustay",
+             class = "fun_itm")
+      ),
+      aumc = list(
+        list(callback = "stay_callback", win_type = "icustay",
+             class = "fun_itm")
+      ),
+      miiv = list(
+        list(callback = "stay_callback", win_type = "icustay",
+             class = "fun_itm")
+      )
+    )
+  ),
+  win_hosp = list(
+    target = "win_tbl",
+    description = "hospital stay windows",
+    category = "outcome",
+    class = "lgl_cncpt",
+    sources = list(
+      mimic = list(
+        list(callback = "stay_callback", win_type = "hadm", class = "fun_itm")
+      ),
+      eicu = list(
+        list(callback = "stay_callback", win_type = "hadm", class = "fun_itm")
+      ),
+      miiv = list(
+        list(callback = "stay_callback", win_type = "hadm", class = "fun_itm")
+      )
+    )
+  ),
   pafi = list(
     concepts = c("po2", "fio2"),
     description = "Horowitz index",

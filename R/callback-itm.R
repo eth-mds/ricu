@@ -730,6 +730,23 @@ los_callback <- function(x, id_type, interval) {
   res
 }
 
+stay_callback <- function(x, id_type, interval) {
+
+  win <- x[["win_type"]]
+  cfg <- as_id_cfg(x)
+
+  res <- id_map(x, id_vars(cfg[id_type]), id_vars(cfg[win]), "start", "end")
+
+  res <- res[, c("dur_var", "end", "val_var") := list(
+    get("end") - get("start"), NULL, TRUE
+  )]
+
+  res <- change_interval(res, interval, cols = "start", by_ref = TRUE)
+
+  as_win_tbl(res, index_var = "start", interval = interval,
+             dur_var = "dur_var", by_ref = TRUE)
+}
+
 mimic_abx_presc <- function(x, val_var, ...) {
 
   idx <- index_var(x)

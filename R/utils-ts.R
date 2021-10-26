@@ -374,7 +374,7 @@ slide_index <- function(x, expr, index, before, after = hours(0L), ...) {
   res
 }
 
-#' @param windows An `icu_tbl` defining the windows to span
+#' @param windows An `id_tbl` defining the windows to span
 #' @param full_window Logical flag controlling how the situation is handled
 #' where the sliding window extends beyond available data
 #' @param lwr_col,upr_col Names of columns (in `windows`) of lower/upper

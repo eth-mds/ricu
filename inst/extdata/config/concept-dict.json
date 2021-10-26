@@ -6067,5 +6067,105 @@
         }
       ]
     }
+  },
+  "win_hosp": {
+    "target": "win_tbl",
+    "description": "hospital stay windows",
+    "category": "outcome",
+    "class": "lgl_cncpt",
+    "sources": {
+      "eicu": [
+        {
+          "callback": "stay_callback",
+          "win_type": "hadm",
+          "class": "fun_itm"
+        }
+      ],
+      "eicu_demo": [
+        {
+          "callback": "stay_callback",
+          "win_type": "hadm",
+          "class": "fun_itm"
+        }
+      ],
+      "miiv": [
+        {
+          "callback": "stay_callback",
+          "win_type": "hadm",
+          "class": "fun_itm"
+        }
+      ],
+      "mimic": [
+        {
+          "callback": "stay_callback",
+          "win_type": "hadm",
+          "class": "fun_itm"
+        }
+      ],
+      "mimic_demo": [
+        {
+          "callback": "stay_callback",
+          "win_type": "hadm",
+          "class": "fun_itm"
+        }
+      ]
+    }
+  },
+  "win_icu": {
+    "target": "win_tbl",
+    "description": "ICU sty windows",
+    "category": "outcome",
+    "class": "lgl_cncpt",
+    "sources": {
+      "aumc": [
+        {
+          "callback": "stay_callback",
+          "win_type": "icustay",
+          "class": "fun_itm"
+        }
+      ],
+      "eicu": [
+        {
+          "callback": "stay_callback",
+          "win_type": "icustay",
+          "class": "fun_itm"
+        }
+      ],
+      "eicu_demo": [
+        {
+          "callback": "stay_callback",
+          "win_type": "icustay",
+          "class": "fun_itm"
+        }
+      ],
+      "hirid": [
+        {
+          "callback": "stay_callback",
+          "win_type": "icustay",
+          "class": "fun_itm"
+        }
+      ],
+      "miiv": [
+        {
+          "callback": "stay_callback",
+          "win_type": "icustay",
+          "class": "fun_itm"
+        }
+      ],
+      "mimic": [
+        {
+          "callback": "stay_callback",
+          "win_type": "icustay",
+          "class": "fun_itm"
+        }
+      ],
+      "mimic_demo": [
+        {
+          "callback": "stay_callback",
+          "win_type": "icustay",
+          "class": "fun_itm"
+        }
+      ]
+    }
   }
 }
