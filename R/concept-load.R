@@ -308,17 +308,21 @@ filter_bounds <- function(x, col, min, max) {
 
     nna & op(vc, val)
   }
+  
+  # Remove missing values
+  n_total <- nrow(x)
+  x <- rm_na_val_var(x)
 
+  # Remove out of range 
+  n_nonmis <- nrow(x)
   keep  <- check_bound(x[[col]], min, `>=`) & check_bound(x[[col]], max, `<=`)
-  n_row <- nrow(x)
-
   x <- x[keep, ]
 
-  n_rm <- n_row - nrow(x)
+  n_rm <- n_nonmis - nrow(x)
 
   if (n_rm > 0L) {
-    msg_progress("removed {n_rm} ({prcnt(n_rm, n_row)}) of rows due to out
-                  of range (or `NA`) entries")
+    msg_progress("removed {n_rm} ({prcnt(n_rm, n_total)}) of rows due to out
+                  of range entries")
   }
 
   x
