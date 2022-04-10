@@ -266,10 +266,10 @@ load_one_concept_helper <- function(x, name, aggregate, ..., progress) {
   res
 }
 
-rm_na_val_var <- function(x) {
+rm_na_val_var <- function(x, col = "val_var") {
 
   n_row <- nrow(x)
-  x   <- rm_na(x, "val_var")
+  x <- rm_na(x, col)
   n_rm  <- n_row - nrow(x)
 
   if (n_rm > 0L) {
@@ -311,7 +311,7 @@ filter_bounds <- function(x, col, min, max) {
   
   # Remove missing values
   n_total <- nrow(x)
-  x <- rm_na_val_var(x)
+  x <- rm_na_val_var(x, col)
 
   # Remove out of range 
   n_nonmis <- nrow(x)
