@@ -54,7 +54,7 @@ increase in SOFA score.
 \details{
 The Sepsis-3 Consensus (Singer et. al.) defines sepsis as an acute
 increase in the SOFA score (see \code{\link[=sofa_score]{sofa_score()}}) of 2 points or more within
-the suspected infection (SI) window (see \code{\link[=susp_inf]{susp_inf()}}):\if{html}{\out{<div class="{tikz sofa-sep-3, echo = FALSE}">}}\preformatted{\\begin\{tikzpicture\}
+the suspected infection (SI) window (see \code{\link[=susp_inf]{susp_inf()}}):\if{html}{\out{<div class="sourceCode {tikz sofa-sep-3, echo = FALSE}">}}\preformatted{\\begin\{tikzpicture\}
   \\draw (-6,0) -- (3,0);
   \\draw (-6,-0.25) -- (-6,0.25);
   \\draw (3,-0.25) -- (3,0.25);

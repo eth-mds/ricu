@@ -63,7 +63,7 @@ pages.
 A dataset that has been successfully made available can interactively be
 explored by typing its name into the console and individual tables can be
 inspected using the \code{$} function. For example for the MIMIC-III demo
-dataset and the \code{icustays} table, this gives\if{html}{\out{<div class="r">}}\preformatted{mimic_demo
+dataset and the \code{icustays} table, this gives\if{html}{\out{<div class="sourceCode r">}}\preformatted{mimic_demo
 }\if{html}{\out{</div>}}\preformatted{## <mimic_demo_env[25]>
 ##         admissions            callout         caregivers        chartevents 
 ##         [129 x 19]          [77 x 24]        [7,567 x 4]     [758,355 x 15] 
@@ -79,7 +79,7 @@ dataset and the \code{icustays} table, this gives\if{html}{\out{<div class="r">}
 ##      [10,398 x 19]         [753 x 25]          [506 x 5]          [163 x 6] 
 ##          transfers 
 ##         [524 x 13]
-}\if{html}{\out{<div class="r">}}\preformatted{mimic_demo$icustays
+}\if{html}{\out{<div class="sourceCode r">}}\preformatted{mimic_demo$icustays
 }\if{html}{\out{</div>}}\preformatted{## # <mimic_tbl>: [136 x 12]
 ## # ID options:  subject_id (patient) < hadm_id (hadm) < icustay_id (icustay)
 ## # Defaults:    `intime` (index), `last_careunit` (val)
@@ -109,7 +109,7 @@ tables into memory an expensive operation. Table subsets loaded into
 memory are represented as \code{\link[data.table:data.table]{data.table}} objects.
 Extending the above example, if only ICU stays corresponding to the patient
 with \code{subject_id == 10124} are of interest, the respective data can be
-loaded as\if{html}{\out{<div class="r">}}\preformatted{subset(mimic_demo$icustays, subject_id == 10124)
+loaded as\if{html}{\out{<div class="sourceCode r">}}\preformatted{subset(mimic_demo$icustays, subject_id == 10124)
 }\if{html}{\out{</div>}}\preformatted{##    row_id subject_id hadm_id icustay_id dbsource first_careunit last_careunit
 ## 1:  12863      10124  182664     261764  carevue           MICU          MICU
 ## 2:  12864      10124  170883     222779  carevue           MICU          MICU

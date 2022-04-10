@@ -118,7 +118,7 @@ environment variable \code{RICU_AUMC_TOKEN} or passed as \code{token} argument t
 when granted access as by extracting the string followed by \verb{token=}:\preformatted{https://example.org/?s=download&token=0c27af59-72d1-0349-aa59-00000a8076d9
 }
 
-would translate to\if{html}{\out{<div class="r">}}\preformatted{Sys.setenv(RICU_AUMC_TOKEN = "0c27af59-72d1-0349-aa59-00000a8076d9")
+would translate to\if{html}{\out{<div class="sourceCode r">}}\preformatted{Sys.setenv(RICU_AUMC_TOKEN = "0c27af59-72d1-0349-aa59-00000a8076d9")
 }\if{html}{\out{</div>}}
 
 If the dependencies outlined above are not fulfilled, download and archive
