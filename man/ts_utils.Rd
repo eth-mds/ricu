@@ -83,7 +83,8 @@ expressions passes as \code{...}}
 \item{...}{Passed to \code{hop_quo()} and ultimately to
 \code{\link[=data.table]{data.table::[()}}}
 
-\item{limits}{A table with columns for lower and upper window bounds}
+\item{limits}{A table with columns for lower and upper window bounds or a
+length 2 difftime vector}
 
 \item{expr}{Expression (quoted for \verb{*_quo} and unquoted otherwise) to be
 evaluated over each window}

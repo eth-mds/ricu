@@ -8,18 +8,18 @@
 \alias{weeks}
 \title{Utilities for \code{difftime}}
 \usage{
-secs(x)
+secs(...)
 
-mins(x)
+mins(...)
 
-hours(x)
+hours(...)
 
-days(x)
+days(...)
 
-weeks(x)
+weeks(...)
 }
 \arguments{
-\item{x}{Numeric vector to coerce to \code{\link[base:difftime]{base::difftime()}}}
+\item{...}{Numeric vector to coerce to \code{\link[base:difftime]{base::difftime()}}}
 }
 \value{
 Vector valued time differences as \code{difftime} object.

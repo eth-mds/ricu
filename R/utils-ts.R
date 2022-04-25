@@ -258,7 +258,8 @@ is_regular <- function(x) {
   all(res[[setdiff(colnames(res), id_cols)]])
 }
 
-#' @param limits A table with columns for lower and upper window bounds
+#' @param limits A table with columns for lower and upper window bounds or a
+#' length 2 difftime vector
 #'
 #' @rdname ts_utils
 #' @export
@@ -267,6 +268,17 @@ fill_gaps <- function(x, limits = collapse(x), start_var = "start",
                       end_var = "end") {
 
   assert_that(is_unique(x))
+
+  if (is_difftime(limits)) {
+
+    assert_that(has_length(limits, 2L))
+
+    units(limits) <- time_unit(x)
+
+    limits <- unique(x[, id_vars(x), with = FALSE])[,
+      c(start_var, end_var) := as.list(limits)
+    ]
+  }
 
   if (is_id_tbl(limits)) {
     id_vars <- id_vars(limits)
@@ -474,7 +486,7 @@ hopper <- function(x, expr, windows, full_window = FALSE,
 #' functions are exported for convenience of instantiation [base::difftime()]
 #' vectors with given time units.
 #'
-#' @param x Numeric vector to coerce to [base::difftime()]
+#' @param ... Numeric vector to coerce to [base::difftime()]
 #'
 #' @return Vector valued time differences as `difftime` object.
 #'
@@ -487,27 +499,27 @@ hopper <- function(x, expr, windows, full_window = FALSE,
 #' @rdname difftime
 #' @export
 #'
-secs <- function(x) as.difftime(x, units = "secs")
+secs <- function(...) as.difftime(c(...), units = "secs")
 
 #' @rdname difftime
 #' @export
 #'
-mins <- function(x) as.difftime(x, units = "mins")
+mins <- function(...) as.difftime(c(...), units = "mins")
 
 #' @rdname difftime
 #' @export
 #'
-hours <- function(x) as.difftime(x, units = "hours")
+hours <- function(...) as.difftime(c(...), units = "hours")
 
 #' @rdname difftime
 #' @export
 #'
-days <- function(x) as.difftime(x, units = "days")
+days <- function(...) as.difftime(c(...), units = "days")
 
 #' @rdname difftime
 #' @export
 #'
-weeks <- function(x) as.difftime(x, units = "weeks")
+weeks <- function(...) as.difftime(c(...), units = "weeks")
 
 is_one_min <- function(x) all_equal(x, mins(1L))
 
