@@ -45,7 +45,7 @@ reference:
     - transform_fun
     - msg_progress
     - pafi
-    - sofa_score
+    - label
 - subtitle: Query loading
   desc: >
     Tables can be queried directly by creating an R expression that evaluates
