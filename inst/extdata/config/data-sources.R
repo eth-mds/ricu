@@ -1484,6 +1484,10 @@ cfg <- list(
       icustay = list(id = "admissionid", position = 2L, start = "admittedat",
                      end = "dischargedat", table = "admissions")
     ),
+    unit_mapping = list(
+      list(symbol = "uur", def = "1 hour"),
+      list(symbol = "dag", def = "1 day")
+    ),
     tables = aumc_tbl_cfg()
   )
 )

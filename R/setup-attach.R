@@ -138,19 +138,36 @@ attach_src.src_cfg <- function(x, assign_env = NULL,
     }
   })
 
-  invisible(NULL)
-}
+  extra_cfg <- x[["extra"]]
 
-#' @export
-attach_src.aumc_cfg <- function(x, assign_env = NULL,
-                                data_dir = src_data_dir(x), ...) {
+  if (has_name(extra_cfg, "unit_mapping")) {
 
-  if (requireNamespace("units", quietly = TRUE)) {
-    units::install_unit("uur", "1 hour")
-    units::install_unit("dag", "1 day")
+    if (requireNamespace("units", quietly = TRUE)) {
+
+      for (map in extra_cfg[["unit_mapping"]]) {
+
+        tryCatch({
+          units::install_unit(map[["symbol"]], map[["def"]])
+        }, error = function(err) {
+          warn_ricu(
+            "Failed to setup unit {map[['symbol']]} for source `{src}`.",
+            class = "src_attach_error"
+          )
+        })
+      }
+
+    } else {
+
+      warn_ricu(
+        "The `units` packages is required in order define units for source
+        `{src}`. Please install.",
+        class = "src_attach_error"
+      )
+    }
+
   }
 
-  NextMethod()
+  invisible(NULL)
 }
 
 #' @rdname attach_src

@@ -8891,6 +8891,16 @@
         "table": "admissions"
       }
     },
+    "unit_mapping": [
+      {
+        "symbol": "uur",
+        "def": "1 hour"
+      },
+      {
+        "symbol": "dag",
+        "def": "1 day"
+      }
+    ],
     "tables": {
       "admissions": {
         "files": "admissions.csv",
