@@ -138,33 +138,17 @@ attach_src.src_cfg <- function(x, assign_env = NULL,
     }
   })
 
-  extra_cfg <- x[["extra"]]
+  extra_cfg <- src_extra_cfg(x)
 
-  if (has_name(extra_cfg, "unit_mapping")) {
+  if (has_name(extra_cfg, "unit_mapping") &&
+      requireNamespace("units", quietly = TRUE)) {
 
-    if (requireNamespace("units", quietly = TRUE)) {
+    for (map in extra_cfg[["unit_mapping"]]) {
 
-      for (map in extra_cfg[["unit_mapping"]]) {
-
-        tryCatch({
-          units::install_unit(map[["symbol"]], map[["def"]])
-        }, error = function(err) {
-          warn_ricu(
-            "Failed to setup unit {map[['symbol']]} for source `{src}`.",
-            class = "src_attach_error"
-          )
-        })
-      }
-
-    } else {
-
-      warn_ricu(
-        "The `units` packages is required in order define units for source
-        `{src}`. Please install.",
-        class = "src_attach_error"
-      )
+      tryCatch({
+        units::install_unit(map[["symbol"]], map[["def"]])
+      }, error = function(err) NULL)
     }
-
   }
 
   invisible(NULL)
