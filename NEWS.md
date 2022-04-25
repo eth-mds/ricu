@@ -1,4 +1,6 @@
-# ricu (development version)
+# ricu 0.5.2
+
+* maintenance release due to issue with `units` (#301)
 
 # ricu 0.5.1
 
