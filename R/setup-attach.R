@@ -146,8 +146,8 @@ attach_src.aumc_cfg <- function(x, assign_env = NULL,
                                 data_dir = src_data_dir(x), ...) {
 
   if (requireNamespace("units", quietly = TRUE)) {
-    units::install_unit("uur", "h")
-    units::install_unit("dag", "d")
+    units::install_unit("uur", "1 hour")
+    units::install_unit("dag", "1 day")
   }
 
   NextMethod()
