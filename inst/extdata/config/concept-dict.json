@@ -5408,7 +5408,7 @@
           "sub_var": "itemid"
         },
         {
-          "ids": [223761, 224027],
+          "ids": 223761,
           "table": "chartevents",
           "sub_var": "itemid",
           "callback": "convert_unit(fahr_to_cels, 'C', 'f')"
