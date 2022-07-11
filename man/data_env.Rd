@@ -43,8 +43,10 @@ access is public but has to be granted by the data collectors.
 }
 \details{
 Setting up a dataset for use with \code{ricu} requires a configuration object.
-For the included datasets, configuration can be loaded from\preformatted{system.file("extdata", "config", "data-sources.json", package = "ricu")
-}
+For the included datasets, configuration can be loaded from
+
+\if{html}{\out{<div class="sourceCode">}}\preformatted{system.file("extdata", "config", "data-sources.json", package = "ricu")
+}\if{html}{\out{</div>}}
 
 by calling \code{\link[=load_src_cfg]{load_src_cfg()}} and for dataset that are external to \code{ricu},
 additional configuration can be made available by setting the environment
@@ -63,8 +65,12 @@ pages.
 A dataset that has been successfully made available can interactively be
 explored by typing its name into the console and individual tables can be
 inspected using the \code{$} function. For example for the MIMIC-III demo
-dataset and the \code{icustays} table, this gives\if{html}{\out{<div class="sourceCode r">}}\preformatted{mimic_demo
-}\if{html}{\out{</div>}}\preformatted{## <mimic_demo_env[25]>
+dataset and the \code{icustays} table, this gives
+
+\if{html}{\out{<div class="sourceCode r">}}\preformatted{mimic_demo
+}\if{html}{\out{</div>}}
+
+\if{html}{\out{<div class="sourceCode">}}\preformatted{## <mimic_demo_env[25]>
 ##         admissions            callout         caregivers        chartevents 
 ##         [129 x 19]          [77 x 24]        [7,567 x 4]     [758,355 x 15] 
 ##          cptevents              d_cpt    d_icd_diagnoses   d_icd_procedures 
@@ -79,8 +85,12 @@ dataset and the \code{icustays} table, this gives\if{html}{\out{<div class="sour
 ##      [10,398 x 19]         [753 x 25]          [506 x 5]          [163 x 6] 
 ##          transfers 
 ##         [524 x 13]
-}\if{html}{\out{<div class="sourceCode r">}}\preformatted{mimic_demo$icustays
-}\if{html}{\out{</div>}}\preformatted{## # <mimic_tbl>: [136 x 12]
+}\if{html}{\out{</div>}}
+
+\if{html}{\out{<div class="sourceCode r">}}\preformatted{mimic_demo$icustays
+}\if{html}{\out{</div>}}
+
+\if{html}{\out{<div class="sourceCode">}}\preformatted{## # <mimic_tbl>: [136 x 12]
 ## # ID options:  subject_id (patient) < hadm_id (hadm) < icustay_id (icustay)
 ## # Defaults:    `intime` (index), `last_careunit` (val)
 ## # Time vars:   `intime`, `outtime`
@@ -99,7 +109,7 @@ dataset and the \code{icustays} table, this gives\if{html}{\out{<div class="sour
 ## 136  42714      44228  103379     217992 metavis~ SICU           SICU
 ## # ... with 126 more rows, and 5 more variables: first_wardid <int>,
 ## #   last_wardid <int>, intime <dttm>, outtime <dttm>, los <dbl>
-}
+}\if{html}{\out{</div>}}
 
 Table subsets can be loaded into memory for example using the
 \code{\link[base:subset]{base::subset()}} function, which uses non-standard evaluation (NSE) to
@@ -109,8 +119,12 @@ tables into memory an expensive operation. Table subsets loaded into
 memory are represented as \code{\link[data.table:data.table]{data.table}} objects.
 Extending the above example, if only ICU stays corresponding to the patient
 with \code{subject_id == 10124} are of interest, the respective data can be
-loaded as\if{html}{\out{<div class="sourceCode r">}}\preformatted{subset(mimic_demo$icustays, subject_id == 10124)
-}\if{html}{\out{</div>}}\preformatted{##    row_id subject_id hadm_id icustay_id dbsource first_careunit last_careunit
+loaded as
+
+\if{html}{\out{<div class="sourceCode r">}}\preformatted{subset(mimic_demo$icustays, subject_id == 10124)
+}\if{html}{\out{</div>}}
+
+\if{html}{\out{<div class="sourceCode">}}\preformatted{##    row_id subject_id hadm_id icustay_id dbsource first_careunit last_careunit
 ## 1:  12863      10124  182664     261764  carevue           MICU          MICU
 ## 2:  12864      10124  170883     222779  carevue           MICU          MICU
 ## 3:  12865      10124  170883     295043  carevue            CCU           CCU
@@ -120,7 +134,7 @@ loaded as\if{html}{\out{<div class="sourceCode r">}}\preformatted{subset(mimic_d
 ## 2:           50          50 2192-04-16 20:58:32 2192-04-20 08:51:28  3.4951
 ## 3:            7           7 2192-04-24 02:29:49 2192-04-26 23:59:45  2.8958
 ## 4:           23          23 2192-04-30 14:50:44 2192-05-15 23:34:21 15.3636
-}
+}\if{html}{\out{</div>}}
 
 Much care has been taken to make \code{ricu} extensible to new datasets. For
 example the publicly available ICU database \href{https://www.amsterdammedicaldatascience.nl/#amsterdamumcdb}{AmsterdamUMCdb }

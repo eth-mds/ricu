@@ -54,11 +54,13 @@ concepts and/or data sources to the existing dictionary (see the Details
 section).
 }
 \details{
-A default dictionary is provided at\preformatted{system.file(
+A default dictionary is provided at
+
+\if{html}{\out{<div class="sourceCode">}}\preformatted{system.file(
   file.path("extdata", "config", "concept-dict.json"),
   package = "ricu"
 )
-}
+}\if{html}{\out{</div>}}
 
 and can be loaded in to an R session by calling
 \code{get_config("concept-dict")}. The default dictionary can be extended by
@@ -69,7 +71,9 @@ Alternatively, \code{load_dictionary()} can be called on non-default
 dictionaries using the \code{file} argument.
 
 In order to specify a concept as JSON object, for example the numeric
-concept for glucose, is given by\preformatted{\{
+concept for glucose, is given by
+
+\if{html}{\out{<div class="sourceCode">}}\preformatted{\{
   "glu": \{
     "unit": "mg/dL",
     "min": 0,
@@ -87,11 +91,13 @@ concept for glucose, is given by\preformatted{\{
     \}
   \}
 \}
-}
+}\if{html}{\out{</div>}}
 
 Using such a specification, constructors for \code{\link[=new_cncpt]{cncpt}} and
 \code{\link[=new_itm]{itm}} objects are called either using default arguments or as
-specified by the JSON object, with the above corresponding to a call like\preformatted{concept(
+specified by the JSON object, with the above corresponding to a call like
+
+\if{html}{\out{<div class="sourceCode">}}\preformatted{concept(
   name = "glu",
   items = item(
     src = "mimic_demo", table = "labevents", sub_var = "itemid",
@@ -100,7 +106,7 @@ specified by the JSON object, with the above corresponding to a call like\prefor
   description = "glucose", category = "chemistry",
   unit = "mg/dL", min = 0, max = 1000
 )
-}
+}\if{html}{\out{</div>}}
 
 The arguments \code{src} and \code{concepts} can be used to only load a subset of a
 dictionary by specifying a character vector of data sources and/or concept

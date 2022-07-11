@@ -9,10 +9,7 @@ col_renamer(x, new, old = colnames(x), skip_absent = FALSE, by_ref = FALSE)
 \arguments{
 \item{x}{Object to query}
 
-\item{new}{Replacement names and existing column names for renaming
-columns}
-
-\item{old}{Replacement names and existing column names for renaming
+\item{new, old}{Replacement names and existing column names for renaming
 columns}
 
 \item{skip_absent}{Logical flag for ignoring non-existent column names}

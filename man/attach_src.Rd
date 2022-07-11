@@ -63,8 +63,10 @@ If set up correctly, it is not necessary for the user to directly call
 \code{\link[=auto_attach_srcs]{auto_attach_srcs()}}) are attached automatically. This default can be
 controlled by setting as environment variable \code{RICU_SRC_LOAD} a comma
 separated list of data source names before loading the library. Setting
-this environment variable as\preformatted{Sys.setenv(RICU_SRC_LOAD = "mimic_demo,eicu_demo")
-}
+this environment variable as
+
+\if{html}{\out{<div class="sourceCode">}}\preformatted{Sys.setenv(RICU_SRC_LOAD = "mimic_demo,eicu_demo")
+}\if{html}{\out{</div>}}
 
 will change the default of loading both MIMIC-III and eICU, alongside the
 respective demo datasets, as well as HiRID and AUMC, to just the two demo

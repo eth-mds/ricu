@@ -89,11 +89,13 @@ verified using \code{\link[openssl:hash]{openssl::sha256()}}.
 Demo datasets
 \href{https://physionet.org/content/mimiciii-demo/1.4/}{MIMIC-III demo} and
 \href{https://physionet.org/content/eicu-crd-demo/2.0/}{eICU demo} can either be
-installed as R packages directly by running\preformatted{install.packages(
+installed as R packages directly by running
+
+\if{html}{\out{<div class="sourceCode">}}\preformatted{install.packages(
   c("mimic.demo", "eicu.demo"),
   repos = "https://eth-mds.github.io/physionet-demo"
 )
-}
+}\if{html}{\out{</div>}}
 
 or downloaded and imported using \code{\link[=download_src]{download_src()}} and \code{\link[=import_src]{import_src()}}.
 Furthermore, \code{ricu} specifies \code{mimic.demo} and \code{eicu.demo} as \code{Suggests}
@@ -115,10 +117,14 @@ Furthermore, data access has to be \href{https://amsterdammedicaldatascience.nl/
 non-interactive download the download token has to be made available as
 environment variable \code{RICU_AUMC_TOKEN} or passed as \code{token} argument to
 \code{download_src()}. The download token can be retrieved from the URL provided
-when granted access as by extracting the string followed by \verb{token=}:\preformatted{https://example.org/?s=download&token=0c27af59-72d1-0349-aa59-00000a8076d9
-}
+when granted access as by extracting the string followed by \verb{token=}:
 
-would translate to\if{html}{\out{<div class="sourceCode r">}}\preformatted{Sys.setenv(RICU_AUMC_TOKEN = "0c27af59-72d1-0349-aa59-00000a8076d9")
+\if{html}{\out{<div class="sourceCode">}}\preformatted{https://example.org/?s=download&token=0c27af59-72d1-0349-aa59-00000a8076d9
+}\if{html}{\out{</div>}}
+
+would translate to
+
+\if{html}{\out{<div class="sourceCode r">}}\preformatted{Sys.setenv(RICU_AUMC_TOKEN = "0c27af59-72d1-0349-aa59-00000a8076d9")
 }\if{html}{\out{</div>}}
 
 If the dependencies outlined above are not fulfilled, download and archive

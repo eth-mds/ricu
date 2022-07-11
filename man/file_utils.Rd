@@ -96,8 +96,10 @@ combined by reduction with the binary function passed as \code{combine_fun}.
 With default arguments, \code{get_config()} will simply concatenate lists
 corresponding to files found in the default config locations as returned by
 \code{config_paths()}: first the directory specified by the environment variable
-\code{RICU_CONFIG_PATH} (if set), followed by the directory at\preformatted{system.file("extdata", "config", package = "ricu")
-}
+\code{RICU_CONFIG_PATH} (if set), followed by the directory at
+
+\if{html}{\out{<div class="sourceCode">}}\preformatted{system.file("extdata", "config", package = "ricu")
+}\if{html}{\out{</div>}}
 
 Further arguments are passed to \code{\link[jsonlite:read_json]{jsonlite::read_json()}}, which is called
 with slightly modified defaults: \code{simplifyVector = TRUE},

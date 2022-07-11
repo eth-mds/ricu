@@ -51,15 +51,19 @@ and body-fluid sampling.
 Suspected infection can occur in one of the two following ways:
 \itemize{
 \item administration of antibiotics followed by a culture sampling within
-\code{samp_win} hours\preformatted{       abx_win
+\code{samp_win} hours
+
+\if{html}{\out{<div class="sourceCode">}}\preformatted{       abx_win
    |---------------|
   ABX           sampling (last possible)
-}
+}\if{html}{\out{</div>}}
 \item culture sampling followed by an antibiotic administration within
-\code{abx_win} hours\preformatted{                     samp_win
+\code{abx_win} hours
+
+\if{html}{\out{<div class="sourceCode">}}\preformatted{                     samp_win
    |---------------------------------------------|
 sampling                                        ABX (last possible)
-}
+}\if{html}{\out{</div>}}
 }
 
 The default values of \code{samp_win} and \code{abx_win} are 24 and 72 hours
@@ -70,10 +74,12 @@ as the time of suspected infection (SI time). The suspected infection
 window (SI window) is defined to start \code{si_lwr} hours before the SI time
 and end \code{si_upr} hours after the SI time. The default values of 48 and 24
 hours (respectively) are chosen as used by \href{https://jamanetwork.com/journals/jama/fullarticle/2492875}{Seymour et.al. } (see
-Supplemental Material).\preformatted{                48h                       24h
+Supplemental Material).
+
+\if{html}{\out{<div class="sourceCode">}}\preformatted{                48h                       24h
   |------------------------------(|)---------------|
                                 SI time
-}
+}\if{html}{\out{</div>}}
 
 For some datasets, however, information on body fluid sampling is not
 available for majority of the patients (eICU data). Therefore, an

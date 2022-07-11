@@ -65,8 +65,12 @@ function \code{\link[=id_map_helper]{id_map_helper()}}, which is expected to pro
 destination ID columns as well as start and end columns corresponding to
 the destination ID, relative to the source ID system. In the following
 example, we request for \code{mimic_demo}, with ICU stay IDs as source and
-hospital admissions as destination IDs.\if{html}{\out{<div class="sourceCode r">}}\preformatted{id_map_helper(mimic_demo, "icustay_id", "hadm_id")
-}\if{html}{\out{</div>}}\preformatted{## # An `id_tbl`: 136 x 4
+hospital admissions as destination IDs.
+
+\if{html}{\out{<div class="sourceCode r">}}\preformatted{id_map_helper(mimic_demo, "icustay_id", "hadm_id")
+}\if{html}{\out{</div>}}
+
+\if{html}{\out{<div class="sourceCode">}}\preformatted{## # An `id_tbl`: 136 x 4
 ## # Id var:      `icustay_id`
 ##     icustay_id hadm_id hadm_id_start hadm_id_end
 ##          <int>   <int> <drtn>        <drtn>
@@ -82,7 +86,7 @@ hospital admissions as destination IDs.\if{html}{\out{<div class="sourceCode r">
 ## 135     297782  167612     -1 mins     207 mins
 ## 136     298685  151323     -1 mins   19082 mins
 ## # ... with 126 more rows
-}
+}\if{html}{\out{</div>}}
 
 Both start and end columns encode the hospital admission windows relative
 to each corresponding ICU stay start time. It therefore comes as no
@@ -103,7 +107,9 @@ While both up- and downgrades for \code{id_tbl} objects, as well as downgrades
 for \code{ts_tbl} objects are simple merge operations based on the ID mapping
 provided by \code{\link[=id_map]{id_map()}}, ID upgrades for \code{ts_tbl} objects are slightly more
 involved. As an example, consider the following setting: we have \code{data}
-associated with \code{hadm_id} IDs and times relative to hospital admission:\preformatted{               1      2       3        4       5       6        7      8
+associated with \code{hadm_id} IDs and times relative to hospital admission:
+
+\if{html}{\out{<div class="sourceCode">}}\preformatted{               1      2       3        4       5       6        7      8
 data        ---*------*-------*--------*-------*-------*--------*------*---
                3h    10h     18h      27h     35h     43h      52h    59h
 
@@ -113,7 +119,7 @@ hadm_id     |-------------------------------------------------------------|
 icustay_id         |------------------|          |---------------|
                    0h                19h         0h             16h
                            ICU_1                       ICU_2
-}
+}\if{html}{\out{</div>}}
 
 The mapping of data points from \code{hadm_id} to \code{icustay_id} is created as
 follows: ICU stay end times mark boundaries and all data that is recorded

@@ -69,7 +69,7 @@ Suggests:
     units,
     pdftools,
     magick
-RoxygenNote: 7.1.2
+RoxygenNote: 7.2.0
 Additional_repositories: https://eth-mds.github.io/physionet-demo
 VignetteBuilder: knitr
 Config/testthat/edition: 3

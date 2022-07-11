@@ -68,7 +68,9 @@ The most forward setting is where a function is simply referred to by its
 name. For example in eICU, age is available as character vector due to
 ages 90 and above being represented by the string "> 89". A function such
 as the following turns this into a numeric vector, replacing occurrences of
-"> 89" by the number 90.\preformatted{eicu_age <- function(x, val_var, ...) \{
+"> 89" by the number 90.
+
+\if{html}{\out{<div class="sourceCode">}}\preformatted{eicu_age <- function(x, val_var, ...) \{
   data.table::set(
     data.table::set(x, which(x[[val_var]] == "> 89"), j = val_var,
                     value = 90),
@@ -76,12 +78,14 @@ as the following turns this into a numeric vector, replacing occurrences of
     value = as.numeric(x[[val_var]])
   )
 \}
-}
+}\if{html}{\out{</div>}}
 
 This function then is specified as item callback function for items
-corresponding to eICU data sources of the \code{age} concept as\preformatted{item(src = "eicu_demo", table = "patient", val_var = "age",
+corresponding to eICU data sources of the \code{age} concept as
+
+\if{html}{\out{<div class="sourceCode">}}\preformatted{item(src = "eicu_demo", table = "patient", val_var = "age",
      callback = "eicu_age", class = "col_itm")
-}
+}\if{html}{\out{</div>}}
 
 The string passed as \code{callback} argument is evaluated, meaning that an
 expression can be passed which evaluates to a function that in turn can be
