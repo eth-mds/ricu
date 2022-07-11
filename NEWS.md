@@ -1,3 +1,7 @@
+# ricu 0.5.3
+
+* maintenance release for compatibility with an update to `prt`
+
 # ricu 0.5.2
 
 * maintenance release due to issue with `units` (#301)
