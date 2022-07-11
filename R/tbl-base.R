@@ -49,14 +49,14 @@ row.names.id_tbl <- function(x) NULL
 }
 
 #' @export
-print.id_tbl <- function(x, ..., n = NULL, width = NULL, n_extra = NULL) {
-  cat_line(format(x, ..., n = n, width = width, n_extra = n_extra))
+print.id_tbl <- function(x, ..., n = NULL, width = NULL) {
+  cat_line(format(x, ..., n = n, width = width))
   invisible(x)
 }
 
 #' @export
-format.id_tbl <- function(x, ..., n = NULL, width = NULL, n_extra = NULL) {
-  format(prt::trunc_dt(x, n = n, width = width, n_extra = n_extra))
+format.id_tbl <- function(x, ..., n = NULL, width = NULL) {
+  format(prt::trunc_dt(x, n = n, width = width))
 }
 
 #' @importFrom tibble tbl_sum
