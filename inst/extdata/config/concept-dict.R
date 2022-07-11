@@ -2676,6 +2676,7 @@ cfg <- list(
     description = "sepsis-3 criterion",
     category = "outcome",
     callback = "sep3",
+    keep_components = c(FALSE, TRUE),
     class = "rec_cncpt"
   ),
   bnd = list(

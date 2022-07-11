@@ -18,7 +18,7 @@ Useful links:
 
 }
 \author{
-\strong{Maintainer}: Nicolas Bennett \email{nicolas.bennett@stat.math.ethz.ch}
+\strong{Maintainer}: Nicolas Bennett \email{r@nbenn.ch}
 
 Authors:
 \itemize{

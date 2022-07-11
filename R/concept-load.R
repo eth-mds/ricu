@@ -497,7 +497,6 @@ load_concepts.rec_cncpt <- function(x, aggregate = NULL, patient_ids = NULL,
               interval = coalesce(x[["interval"]], interval),
               progress = progress)
 
-
   sub <- x[["items"]]
   agg <- x[["aggregate"]]
 

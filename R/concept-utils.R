@@ -1056,21 +1056,9 @@ init_cncpt.rec_cncpt <- function(x,
 
   x[["aggregate"]] <- agg
 
-  todo <- c("callback", "interval")
-  x[todo] <- mget(todo)
-
   if (...length() > 0L) {
-
-    extra <- list(...)
-
-    if (length(x[["items"]]) == 1L) {
-      extra <- list(extra)
-    }
-
-    extra <- rep_arg(extra, names(x[["items"]]))
-
+    extra <- lst_inv(lapply(list(...), rep_arg, names(x[["items"]])))
   } else {
-
     extra <- list(NULL)
   }
 

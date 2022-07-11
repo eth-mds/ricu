@@ -5172,6 +5172,10 @@
     "description": "sepsis-3 criterion",
     "category": "outcome",
     "callback": "sep3",
+    "keep_components": [
+      false,
+      true
+    ],
     "class": "rec_cncpt"
   },
   "sex": {
@@ -5408,7 +5412,7 @@
           "sub_var": "itemid"
         },
         {
-          "ids": 223761,
+          "ids": [223761, 224027],
           "table": "chartevents",
           "sub_var": "itemid",
           "callback": "convert_unit(fahr_to_cels, 'C', 'f')"

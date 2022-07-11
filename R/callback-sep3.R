@@ -130,10 +130,10 @@ sep3 <- function(..., si_window = c("first", "last", "any"),
   cols_rm <- c("join_time1", "join_time2")
 
   if (!keep_components) {
-    cols_rm <- c(cols_rm, "delta_sofa")
+    cols_rm <- c(cols_rm, "delta_sofa", "samp_time", "abx_time")
   }
 
-  res <- rm_cols(res, cols_rm, by_ref = TRUE)
+  res <- rm_cols(res, cols_rm, skip_absent = TRUE, by_ref = TRUE)
   res <- res[, head(.SD, n = 1L), by = c(id_vars(res))]
   res <- res[, c("sep3") := TRUE]
 
