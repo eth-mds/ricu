@@ -12,7 +12,7 @@
     Code
       print(co)
     Output
-      <col_cfg<mimic_demo[id_var, index_var, time_vars, unit_var, val_var]>[25]>
+      <col_cfg<mimic_demo[id, index, time, unit, val]>[25]>
               admissions            callout         caregivers        chartevents 
          [0, 0, 5, 0, 1]    [0, 1, 6, 0, 1]    [1, 0, 0, 0, 1]    [0, 1, 2, 1, 1] 
                cptevents              d_cpt    d_icd_diagnoses   d_icd_procedures 
