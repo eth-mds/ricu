@@ -30,6 +30,7 @@ collapse(
   start_var = "start",
   end_var = "end",
   env = NULL,
+  as_win_tbl = TRUE,
   ...
 )
 
@@ -79,6 +80,9 @@ windows bounds}
 
 \item{env}{Environment used as parent to the environment used to evaluate
 expressions passes as \code{...}}
+
+\item{as_win_tbl}{Logical flag indicating whether to return a \code{win_tbl} or
+an \code{id_tbl}}
 
 \item{...}{Passed to \code{hop_quo()} and ultimately to
 \code{\link[=data.table]{data.table::[()}}}

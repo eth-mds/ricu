@@ -171,12 +171,14 @@ expand <- function(x, start_var = index_var(x), end_var = NULL,
 #' @param id_vars,index_var ID and index variables
 #' @param env Environment used as parent to the environment used to evaluate
 #' expressions passes as `...`
+#' @param as_win_tbl Logical flag indicating whether to return a `win_tbl` or
+#' an `id_tbl`
 #'
 #' @rdname ts_utils
 #' @export
 #'
 collapse <- function(x, id_vars = NULL, index_var = NULL, start_var = "start",
-                     end_var = "end", env = NULL, ...) {
+                     end_var = "end", env = NULL, as_win_tbl = TRUE, ...) {
 
   id_vars   <- coalesce(id_vars,   id_vars(x))
   index_var <- coalesce(index_var, index_var(x))
@@ -193,11 +195,19 @@ collapse <- function(x, id_vars = NULL, index_var = NULL, start_var = "start",
 
   names(expr)[c(2L, 3L)] <- c(start_var, end_var)
 
-  do.call(`[`,
+  res <- do.call(`[`,
     list(x, substitute(), do.call(substitute, list(substitute(expr))),
          by = id_vars),
     envir = env
   )
+
+  if (isTRUE(as_win_tbl)) {
+    res <- res[, c(end_var) := get(end_var) - get(start_var)]
+    res <- as_win_tbl(res, index_var = start_var, dur_var = end_var,
+                      by_ref = TRUE)
+  }
+
+  res
 }
 
 #' @rdname ts_utils

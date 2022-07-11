@@ -11,7 +11,8 @@ test_that("collapse/expand", {
   expect_identical(meta_vars(tbl), meta_vars(exp))
   expect_identical(nrow(exp), sum(as.integer(tbl$z - tbl$x)) + nrow(tbl))
 
-  col <- collapse(exp, start_var = "y", end_var = "z", val = unique(val))
+  col <- collapse(exp, start_var = "y", end_var = "z", val = unique(val),
+                  as_win_tbl = FALSE)
 
   expect_s3_class(col, "ts_tbl")
   expect_equal(tbl, col, ignore_attr = TRUE)
