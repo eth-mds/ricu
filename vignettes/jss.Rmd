@@ -276,12 +276,12 @@ miiv
 ```{r src-overview, echo = FALSE, results = "asis", cache = TRUE}
 as_quant <- function(x) {
 
-  if (identical(length(x), 0L) || is.na(x)) {
-    return("-")
-  }
-
   if (is_id_tbl(x)) {
     x <- data_col(x)
+  }
+
+  if (identical(length(x), 0L) || isTRUE(is.na(x))) {
+    return("-")
   }
 
   res <- format_2(quantile(x, probs = seq(0.25, 0.75, 0.25), na.rm = TRUE))
@@ -291,7 +291,7 @@ as_quant <- function(x) {
 
 big_mark <- function(x) {
 
-  if (identical(length(x), 0L) || is.na(x)) {
+  if (identical(length(x), 0L) || isTRUE(is.na(x))) {
     return("-")
   }
 
