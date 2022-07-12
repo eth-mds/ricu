@@ -1,12 +1,13 @@
 ## Test environments
 
-* local R installation, Apple M1, macOS 12.3, R 4.2.1
-* GitHub Actions (ubuntu-20.04): 3.4, 3.5, 3.6, oldrel, release, devel
-* GitHub Actions (windows): oldrel, release
-* Github Actions (macOS): release
+* local R installation, macOS 12.4, aarch64, R 4.2.1
+* GitHub Actions (ubuntu-latest): devel, release, oldrel-1
+* GitHub Actions (windows-latest): release
+* Github Actions (macOS-latest): release
+* win-builder (devel)
 
 ## R CMD check results
 
 0 errors | 0 warnings | 0 notes
 
-* Maintenance release
+* Maintenance release (compatibility with prt v0.1.5)
