@@ -43,7 +43,7 @@ test_that("suspicion of infection", {
   expect_equal(interval(si_ei), hours(1L))
 })
 
-sep3 <- sep3(so_mi, si_mi)
+sep3 <- sep3(sofa = so_mi, susp_inf = si_mi)
 
 test_that("sepsis 3", {
 
