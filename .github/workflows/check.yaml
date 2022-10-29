@@ -49,7 +49,7 @@ jobs:
             any::rcmdcheck
             eth-mds/mimic-demo
             eth-mds/eicu-demo
-          needs: check
+            nbenn/mockthat
 
       - uses: r-lib/actions/check-r-package@v2
         env:
