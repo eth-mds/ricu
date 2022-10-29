@@ -60,6 +60,8 @@ test_that("attach srcs", {
                cfg_dirs = system.file("testdata", package = "ricu"))
   )
 
+  skip_if_not_installed("mockthat")
+
   expect_error(
     expect_message(
       mockthat::with_mock(

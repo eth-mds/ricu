@@ -1,6 +1,8 @@
 
 test_that("cli progress", {
 
+  skip_if_not_installed("mockthat")
+
   do_stuff <- function(pb = NULL) {
 
     for (ntk in split(seq_len(10), (rep(1:7, times = c(rep(1:2, 3), 1))))) {

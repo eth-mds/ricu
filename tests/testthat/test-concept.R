@@ -1,6 +1,8 @@
 
 test_that("load hirid items", {
 
+  skip_if_not_installed("mockthat")
+
   gluc <- mockthat::with_mock(
     get_hirid_ids = id_tbl(id = c(20005110L, 24000523L, 24000585L),
                            unit = rep("mmol/l", 3L)),

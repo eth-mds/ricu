@@ -1,3 +1,7 @@
+# ricu 0.5.4
+
+* maintenance release: tests using `mockthat` are only run when available
+
 # ricu 0.5.3
 
 * maintenance release for compatibility with an update to `prt`

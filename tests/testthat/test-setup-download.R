@@ -32,7 +32,9 @@ mock_fetch_stream <- function(url, fun, handle, ...) {
   dat
 }
 
-wrong_fun <- mockthat::mock(stop("called wrong fun"))
+if (requireNamespace("mockthat", quietly = TRUE)) {
+  wrong_fun <- mockthat::mock(stop("called wrong fun"))
+}
 
 test_that("credentials", {
 
@@ -46,6 +48,8 @@ test_that("credentials", {
 
   withr::local_envvar(FOO_VAR = NA)
 
+  skip_if_not_installed("mockthat")
+
   res <- mockthat::with_mock(
     is_interactive = function() TRUE,
     read_line = function(...) "baz_val",
@@ -56,6 +60,8 @@ test_that("credentials", {
 })
 
 test_that("file size", {
+
+  skip_if_not_installed("mockthat")
 
   pat_siz <- mockthat::with_mock(
     `curl::curl_fetch_memory` = mock_fetch_memory,
@@ -69,6 +75,8 @@ test_that("file size", {
 })
 
 test_that("hash checking", {
+
+  skip_if_not_installed("mockthat")
 
   sha <- mockthat::with_mock(
     `curl::curl_fetch_memory` = mock_fetch_memory,
@@ -104,6 +112,8 @@ test_that("hash checking", {
 })
 
 test_that("file download", {
+
+  skip_if_not_installed("mockthat")
 
   tmp <- withr::local_tempdir()
 
@@ -169,6 +179,8 @@ test_that("file download", {
 })
 
 test_that("src download", {
+
+  skip_if_not_installed("mockthat")
 
   mock_dl_check <- function(dest_folder, files, url, user, pass, src) {
 

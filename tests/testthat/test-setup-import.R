@@ -133,6 +133,8 @@ test_that("import src", {
     class = "are_in_assert"
   )
 
+  skip_if_not_installed("mockthat")
+
   mocks <- mockthat::local_mock(
     src_file_exist = quote({
       if (identical(type, "raw")) rep(TRUE, length(x))

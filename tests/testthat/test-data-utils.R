@@ -10,6 +10,8 @@ test_that("stay windows", {
   expect_true("source" %in% id_vars(wins))
   expect_setequal(data_vars(wins), c("start", "end"))
 
+  skip_if_not_installed("mockthat")
+
   hrd <- mockthat::with_mock(
     load_src = function(x, src, ...) {
       if (identical(x, "observations")) {
