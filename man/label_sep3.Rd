@@ -55,7 +55,7 @@ increase in SOFA score.
 The Sepsis-3 Consensus (Singer et. al.) defines sepsis as an acute
 increase in the SOFA score (see \code{\link[=sofa_score]{sofa_score()}}) of 2 points or more within
 the suspected infection (SI) window (see \code{\link[=susp_inf]{susp_inf()}}):
-\figure{man/figures/sofa-sep-3-1.png}
+\figure{sofa-sep-3-1.png}
 
 A patient can potentially have multiple SI windows. The argument
 \code{si_window} is used to control which SI window we focus on (options are
