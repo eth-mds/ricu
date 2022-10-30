@@ -209,9 +209,14 @@ test_that("src download", {
 
   expect_true(all(lgl_ply(dirs, dir.create)))
 
-  mk_dl <- mockthat::local_mock(download_check_data = NULL)
+  mk_dl <- mockthat::mock(NULL)
 
-  expect_invisible(res <- download_src(srcs, dirs))
+  expect_invisible(
+    res <- mockthat::with_mock(
+      download_check_data = mk_dl,
+      download_src(srcs, dirs)
+    )
+  )
 
   expect_null(res)
   expect_true(dir.exists(mockthat::mock_arg(mk_dl, "dest_folder")))
