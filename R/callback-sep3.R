@@ -20,12 +20,14 @@
 #' the suspected infection (SI) window (see [susp_inf()]):
 #'
 #' ```{tikz}
-#' #| sofa-sep-3, echo = FALSE,
+#' #| sofa-sep-3,
+#' #| echo = FALSE,
 #' #| engine.opts = list(
 #' #|   extra.preamble = c(
 #' #|     "\\usepackage{pgfplots}", "\\pgfplotsset{compat=newest}"
 #' #|   )
 #' #| )
+#'
 #' \begin{tikzpicture}
 #'
 #'   \draw (-5.5, 0) -- (3.5, 0);
