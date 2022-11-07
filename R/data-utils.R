@@ -680,7 +680,7 @@ upgrade_id.ts_tbl <- function(x, target_id, src, cols = time_vars(x), ...) {
 
   map <- id_map(src, id_vars(x), target_id, sft, idx)
 
-  res <- map[x, on = meta_vars(x), roll = -Inf, rollends = TRUE]
+  res <- map[x, on = c(id_vars(x), index_var(x)), roll = -Inf, rollends = TRUE]
   res <- res[, c(cols) := lapply(.SD, `-`, get(sft)), .SDcols = cols]
 
   res <- as_ts_tbl(res, target_id, idx, mins(1L), by_ref = TRUE)
