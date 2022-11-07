@@ -501,9 +501,7 @@ change_interval <- function(x, new_interval, cols = time_vars(x),
   assert_that(is_scalar(new_interval), is_interval(new_interval),
               is.flag(by_ref))
 
-  if (!length(cols) ||
-      (is_ts_tbl(x) && all_equal(interval(x), new_interval))) {
-
+  if (!length(cols)) {
     return(x)
   }
 

@@ -561,9 +561,8 @@ load_concepts.itm <- function(x, patient_ids = NULL, id_type = "icustay",
   res <- do_callback(x, res)
 
   if (is_win_tbl(res)) {
-    res <- change_interval(res, interval, dur_var(res), by_ref = TRUE)
-  }
-  if (is_ts_tbl(res)) {
+    res <- change_interval(res, interval, c(index_var(res), dur_var(res)), by_ref = TRUE)
+  } else if (is_ts_tbl(res)) {
     res <- change_interval(res, interval, index_var(res), by_ref = TRUE)
   } 
 
