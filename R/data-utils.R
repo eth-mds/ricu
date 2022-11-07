@@ -680,7 +680,7 @@ upgrade_id.ts_tbl <- function(x, target_id, src, cols = time_vars(x), ...) {
 
   map <- id_map(src, id_vars(x), target_id, sft, idx)
 
-  res <- map[x, on = c(id_vars(x), index_var(x)), roll = -Inf, rollends = TRUE]
+  res <- map[x, on = meta_vars(x), roll = -Inf, rollends = TRUE]
   res <- res[, c(cols) := lapply(.SD, `-`, get(sft)), .SDcols = cols]
 
   res <- as_ts_tbl(res, target_id, idx, mins(1L), by_ref = TRUE)
@@ -688,6 +688,34 @@ upgrade_id.ts_tbl <- function(x, target_id, src, cols = time_vars(x), ...) {
 
   res
 }
+
+#' @rdname change_id
+#' @export
+#'
+upgrade_id.win_tbl <- function(x, target_id, src, cols = time_vars(x), ...) {
+  
+  assert_that(index_var(x) %in% cols)
+  
+  if (!is_one_min(interval(x))) {
+    warn_ricu("Changing the ID of non-minute resolution data will change the
+               interval to 1 minute", class = "non_min_id_change")
+  }
+  
+  sft <- new_names(x)
+  idx <- index_var(x)
+  dur <- dur_var(x)
+  
+  map <- id_map(src, id_vars(x), target_id, sft, idx)
+  
+  res <- map[x, on = c(id_vars(x), index_var(x)), roll = -Inf, rollends = TRUE]
+  res <- res[, c(cols) := lapply(.SD, `-`, get(sft)), .SDcols = cols]
+  
+  res <- as_win_tbl(res, target_id, idx, mins(1L), dur, by_ref = TRUE)
+  res <- rm_cols(res, sft, by_ref = TRUE)
+  
+  res
+}
+
 
 #' @rdname change_id
 #' @export
