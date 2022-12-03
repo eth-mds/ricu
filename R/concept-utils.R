@@ -938,7 +938,7 @@ is_target <- function(x, dat) is_type(get_target(x))(dat)
 #'
 #' @export
 #'
-new_cncpt <- function(name, items, description = name,
+new_cncpt <- function(name, items, description = name, SCTID = NULL,
                       category = NA_character_, aggregate = NULL, ...,
                       target = "ts_tbl", class = "num_cncpt") {
 
