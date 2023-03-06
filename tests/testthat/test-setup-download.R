@@ -259,6 +259,7 @@ test_that("src download", {
   expect_invisible(
     res <- mockthat::with_mock(
       download_file = dl_file,
+      get_cred = "foo",
       download_src(src, dir, verbose = FALSE)
     )
   )
