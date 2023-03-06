@@ -952,8 +952,8 @@ new_cncpt <- function(name, items, description = name, omopid = NA_integer_,
   }
 
   res <- list(name = name, items = items, description = description,
-              omopid = omopid, category = category, aggregate = aggregate,
-              target = target)
+              omopid = as.integer(omopid), category = category,
+              aggregate = aggregate, target = target)
 
   init_cncpt(structure(res, class = c(class, "cncpt")), ...)
 }

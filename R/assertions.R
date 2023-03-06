@@ -62,7 +62,15 @@ is_intish <- function(x) {
 }
 
 on_failure(is_intish) <- function(call, env) {
-  format_assert("{as_label(call$x)} integer-values", "is_intish_assert")
+  format_assert("{as_label(call$x)} contains non integer values",
+                "is_intish_assert")
+}
+
+no_na <- function(x) !anyNA(x)
+
+on_failure(no_na) <- function(call, env) {
+  format_assert("{as_label(call$x)} contains NA values",
+                "no_na_assert")
 }
 
 has_length <- function(x, length = NA) {

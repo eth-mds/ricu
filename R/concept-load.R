@@ -190,6 +190,60 @@ load_concepts.character <- function(x, src = NULL, concepts = NULL, ...,
   }
 }
 
+#' @rdname load_concepts
+#' @export
+load_concepts.integer <- function(x, src = NULL, concepts = NULL, ...,
+                                  dict_name = "concept-dict",
+                                  dict_dirs = NULL) {
+
+  assert_that(no_na(x))
+
+  if (is.null(concepts)) {
+
+    assert_that(not_null(src))
+
+    concepts <- load_dictionary(src, name = dict_name, cfg_dirs = dict_dirs)
+
+  } else if (not_null(src)) {
+
+    concepts <- subset_src(concepts, src)
+  }
+
+  mapping <- set_names(
+    int_ply(concepts, `[[`, "omopid"),
+    chr_ply(concepts, `[[`, "name")
+  )
+
+  hits <- match(x, mapping)
+
+  if (any(is.na(hits))) {
+
+    warn_ricu("
+      The following {qty(sum(is.na(hits)))} concept{?s} could not be matched:
+      {concat(x[is.na(hits)])}",
+      "omop_miss_id"
+    )
+
+    hits <- hits[!is.na(hits)]
+  }
+
+  res <- load_concepts(concepts[hits], src = NULL, ...)
+
+  res <- rename_cols(res, paste0("omop_", mapping[data_vars(res)]),
+                     data_vars(res), by_ref = TRUE)
+
+  res
+}
+
+#' @rdname load_concepts
+#' @export
+load_concepts.numeric <- function(x, ...) {
+
+  assert_that(all_fun(x, is_intish))
+
+  load_concepts(as.integer(x), ...)
+}
+
 #' @param aggregate Controls how data within concepts is aggregated
 #' @param merge_data Logical flag, specifying whether to merge concepts into
 #' wide format or return a list, each entry corresponding to a concept

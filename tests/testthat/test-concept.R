@@ -145,6 +145,36 @@ test_that("load concepts", {
   expect_snapshot(print(gcs_raw))
 })
 
+test_that("load concepts", {
+
+  dat1 <- load_concepts(4144235L, "mimic_demo", verbose = FALSE)
+
+  expect_s3_class(dat1, "ts_tbl")
+  expect_true(is_ts_tbl(dat1))
+  expect_identical(colnames(dat1),
+                   c("icustay_id", "charttime", "omop_4144235"))
+  expect_equal(interval(dat1), hours(1L))
+
+  expect_snapshot(print(dat1))
+
+  dat2 <- load_concepts(c(4144235, 4017497), "mimic_demo", verbose = FALSE)
+
+  expect_s3_class(dat2, "ts_tbl")
+  expect_true(is_ts_tbl(dat2))
+  expect_identical(
+    colnames(dat2),
+    c("icustay_id", "charttime", "omop_4144235", "omop_4017497")
+  )
+  expect_equal(interval(dat2), hours(1L))
+
+  expect_snapshot(print(dat2))
+
+  expect_warning(
+    load_concepts(c(4144235, 123), "mimic_demo", verbose = FALSE),
+    class = "omop_miss_id"
+  )
+})
+
 skip_if_srcs_missing("eicu_demo")
 
 test_that("load concepts multi src", {
