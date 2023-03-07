@@ -158,8 +158,9 @@ vector holding onto the \code{id_vars} specification are available
 \item for \code{ts_tbl} that the string-valued \code{index_var} column is available and
 does not intersect with \code{id_vars} and that the index column obeys the
 specified interval.
-\item for \code{win_tbl} that the string-valued \code{dur_var} corresponds to a \code{difftime}
-vector and is not among the columns marked as index or ID variables
+\item for \code{win_tbl} that the string-valued \code{dur_var} corresponds to a
+\code{difftime} vector and is not among the columns marked as index or ID
+variables
 }
 
 Finally, inheritance can be checked by calling \code{is_id_tbl()} and
