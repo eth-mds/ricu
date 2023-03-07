@@ -38,40 +38,26 @@
 #' | **SOFA score**              |     1     |     2     |     3    |    4   |
 #' | --------------------------- | --------- | --------- | -------- | ------ |
 #' | **Respiration**             |           |           |          |        |
-#' | PaO\ifelse{latex}{\out{\textsubscript{2}}}{\ifelse{html
-#'   }{\out{<sub>2</sub>}}{2}}/FiO\ifelse{latex
-#'   }{\out{\textsubscript{2}}}{\ifelse{html
-#'   }{\out{<sub>2</sub>}}{2}} \[mmHg\] | < 400 | < 300  |   < 200  |  < 100 |
+#' | PaO\subs{2}/FiO\subs{2} \[mmHg\] | < 400 | < 300    |   < 200  |  < 100 |
 #' | and mechanical ventilation  |           |           |    yes   |   yes  |
 #' | **Coagulation**             |           |           |          |        |
-#' | Platelets \[\ifelse{latex}{\out{$\times$}}{\ifelse{html
-#'   }{\out{&times;}}{x}}10\ifelse{latex}{\out{\textsuperscript{3}}}{\ifelse{
-#'   html}{\out{<sup>3</sup>}}{3}}/mm\ifelse{latex
-#'   }{\out{\textsuperscript{3}}}{\ifelse{html
-#'   }{\out{<sup>3</sup>}}{3}}\] | < 150     |   < 100   |   < 50   |  < 20  |
+#' | Platelets \[\tims{}10\sups{3}/mm\sups{3}\] | < 150 | < 100 | < 50 | < 20 |
 #' | **Liver**                   |           |           |          |        |
 #' | Bilirubin \[mg/dl\]         |  1.2-1.9  |  2.0-5.9  | 6.0-11.9 | > 12.0 |
-#' | **Cardiovascular**\ifelse{latex}{\out{\textsuperscript{a}}}{\ifelse{html
-#'   }{\out{<sup>a</sup>}}{a}}   |           |           |          |        |
+#' | **Cardiovascular**\sups{a}  |           |           |          |        |
 #' | MAP                         | < 70 mmHg |           |          |        |
-#' | or dopamine                 |           | \ifelse{latex}{\out{$\le$}}{\ifelse{html
-#'   }{\out{&leq;}}{<=}}                           5     |    > 5   |   > 15 |
+#' | or dopamine                 |           | \leq{}5   |    > 5   |   > 15 |
 #' | or dobutamine               |           |  any dose |          |        |
-#' | or epinephrine              |           |           | \ifelse{latex}{\out{$\le$}}{\ifelse{html
-#'   }{\out{&leq;}}{<=}}                                      0.1   |  > 0.1 |
-#' | or norepinephrine           |           |           | \ifelse{latex}{\out{$\le$}}{\ifelse{html
-#'   }{\out{&leq;}}{<=}}                                      0.1   |  > 0.1 |
+#' | or epinephrine              |           |          | \leq{}0.1 |  > 0.1 |
+#' | or norepinephrine           |           |          | \leq{}0.1 |  > 0.1 |
 #' | **Central nervous system**  |           |           |          |        |
 #' | Glasgow Coma Score          | 13-14     |   10-12   |    6-9   |   < 6  |
 #' | **Renal**                   |           |           |          |        |
 #' | Creatinine \[mg/dl\]        |  1.2-1.9  |  2.0-3.4  |  3.5-4.9 |  > 5.0 |
 #' | or urine output \[ml/day\]  |           |           |   < 500  |  < 200 |
 #'
-#' \ifelse{latex}{\out{\textsuperscript{a}}}{\ifelse{html
-#' }{\out{<sup>a</sup>}}{a}}Adrenergic agents administered for at least 1h
-#' (doses given are in \[\ifelse{latex}{\out{$\mu$}}{\ifelse{html
-#' }{\out{&mu;}}{u}}g/kg \ifelse{latex}{\out{$\cdot$}}{\ifelse{html
-#' }{\out{&middot;}}{.}} min\]
+#' Adrenergic\sups{a} agents administered for at least 1h
+#' (doses given are in \[\smu{}g/kg \dotm{} min\]
 #'
 #' At default, for each patient, a score is calculated for every time step,
 #' from the first available measurement to the last. In instead of a regularly
