@@ -19,6 +19,7 @@ pkg_env <- function() asNamespace(pkg_name())
 
 release_questions <- function() {
   c(
-    "Was `release()` called with `args = \"--compact-vignettes=gs+qpdf\"`?"
+    "Was `release()` called with `args = \"--compact-vignettes=gs+qpdf\"`?",
+    "Did you unset `RICU_VIGNETTE_QUICK_BUILD`?"
   )
 }

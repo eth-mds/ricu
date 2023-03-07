@@ -370,7 +370,7 @@ summarize <- function(src, avail) {
   )
 }
 
-if (srcs_avail(demo) && (!srcs_avail(srcs) || )) {
+if (srcs_avail(demo) && (!srcs_avail(srcs) || quick_build())) {
   srcs <- demo
 }
 

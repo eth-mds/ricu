@@ -1,6 +1,10 @@
 
 srcs_avail <- function(x) all(ricu::is_data_avail(x))
 
+quick_build <- function() {
+  identical(Sys.getenv("RICU_VIGNETTE_QUICK_BUILD"), "true")
+}
+
 paste1 <- function(x) {
 
   x <- paste0("`", x, "`")
