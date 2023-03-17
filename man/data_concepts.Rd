@@ -19,6 +19,7 @@ new_cncpt(
   name,
   items,
   description = name,
+  omopid = NA_integer_,
   category = NA_character_,
   aggregate = NULL,
   ...,
@@ -59,6 +60,8 @@ as_concept(x)
 \item{items}{Zero or more \code{itm} objects}
 
 \item{description}{String-valued concept description}
+
+\item{omopid}{OMOP identifier}
 
 \item{category}{String-valued category}
 

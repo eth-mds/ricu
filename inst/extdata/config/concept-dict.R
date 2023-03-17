@@ -8,7 +8,6 @@ cfg <- list(
     max = 300,
     description = "heart rate",
     omopid = 4239408L,
-    sctid = 364075005,
     category = "vitals",
     sources = list(
       mimic = list(
@@ -36,7 +35,6 @@ cfg <- list(
     max = 300,
     description = "systolic blood pressure",
     omopid = 4152194L,
-    sctid = 271649006,
     category = "vitals",
     sources = list(
       mimic = list(
@@ -66,7 +64,6 @@ cfg <- list(
     max = 200,
     description = "diastolic blood pressure",
     omopid = 4154790L,
-    sctid = 271650006,
     category = "vitals",
     sources = list(
       mimic = list(
@@ -96,7 +93,6 @@ cfg <- list(
     max = 250,
     description = "mean arterial pressure",
     omopid = 4239021L,
-    sctid = 6797001,
     category = "vitals",
     sources = list(
       mimic = list(
@@ -128,7 +124,6 @@ cfg <- list(
     max = 120,
     description = "respiratory rate",
     omopid = 4313591L,
-    sctid = 86290005,
     category = "respiratory",
     sources = list(
       mimic = list(
@@ -159,7 +154,6 @@ cfg <- list(
     max = 100,
     description = "oxygen saturation",
     omopid = 40483579L,
-    sctid = 442476006,
     category = "respiratory",
     sources = list(
       mimic = list(
@@ -193,7 +187,6 @@ cfg <- list(
     max = 100,
     description = "fraction of inspired oxygen",
     omopid = 4353936L,
-    sctid = 250774007,
     category = "blood gas",
     sources = list(
       mimic = list(
@@ -227,7 +220,6 @@ cfg <- list(
     max = 60,
     description = "totcal CO2",
     omopid = 4193415L,
-    sctid = 391396001,
     category = "blood gas",
     sources = list(
       mimic = list(
@@ -247,7 +239,6 @@ cfg <- list(
     min = 0,
     description = "alanine aminotransferase",
     omopid = 4146380L,
-    sctid = 34608000,
     category = "chemistry",
     sources = list(
       mimic = list(
@@ -274,7 +265,6 @@ cfg <- list(
     min = 0,
     description = "aspartate aminotransferase",
     omopid = 4263457L,
-    sctid = 45896001,
     category = "chemistry",
     sources = list(
       mimic = list(
@@ -302,7 +292,6 @@ cfg <- list(
     max = 40,
     description = "phosphate",
     omopid = 4017907L,
-    sctid = 104866001,
     category = "chemistry",
     sources = list(
       mimic = list(
@@ -332,7 +321,6 @@ cfg <- list(
     max = 200,
     description = "blood urea nitrogen",
     omopid = 4017361L,
-    sctid = 105011006,
     category = "chemistry",
     sources = list(
       mimic = list(
@@ -361,7 +349,6 @@ cfg <- list(
     max = 8,
     description = "pH of blood",
     omopid = 4097822L,
-    sctid = 27051004,
     category = "blood gas",
     sources = list(
       mimic = list(
@@ -389,7 +376,6 @@ cfg <- list(
     max = 100,
     description = "total bilirubin",
     omopid = 4118986L,
-    sctid = 302787001,
     category = "chemistry",
     sources = list(
       mimic = list(
@@ -416,7 +402,6 @@ cfg <- list(
   inr_pt = list(
     description = "prothrombin time/international normalized ratio",
     omopid = 4306239L,
-    sctid = 165581004,
     category = "hematology",
     sources = list(
       mimic = list(
@@ -443,7 +428,6 @@ cfg <- list(
     max = 1200,
     description = "platelet count",
     omopid = 4267147L,
-    sctid = 61928009,
     category = "hematology",
     sources = list(
       mimic = list(
@@ -471,7 +455,6 @@ cfg <- list(
     max = 50,
     description = "lactate",
     omopid = 4191725L,
-    sctid = 394960005,
     category = "blood gas",
     sources = list(
       mimic = list(
@@ -499,7 +482,6 @@ cfg <- list(
     max = 100,
     description = "lymphocytes",
     omopid = 4254663L,
-    sctid = 74765001,
     category = "hematology",
     sources = list(
       mimic = list(
@@ -528,7 +510,6 @@ cfg <- list(
     max = 50,
     description = "bicarbonate",
     omopid = 4194291L,
-    sctid = 312471006,
     category = "chemistry",
     sources = list(
       mimic = list(
@@ -556,7 +537,6 @@ cfg <- list(
     max = 15,
     description = "creatinine",
     omopid = 4013964L,
-    sctid = 113075003,
     category = "chemistry",
     sources = list(
       mimic = list(
@@ -585,7 +565,6 @@ cfg <- list(
     min = 0,
     description = "prothrombine time",
     omopid = 4245261L,
-    sctid = 396451008,
     category = "hematology",
     sources = list(
       mimic = list(
@@ -608,7 +587,6 @@ cfg <- list(
     max = 100,
     description = "erythrocyte distribution width",
     omopid = 4281085L,
-    sctid = 66842004,
     category = "hematology",
     sources = list(
       mimic = list(
@@ -630,7 +608,6 @@ cfg <- list(
     min = 0,
     description = "alkaline phosphatase",
     omopid = 4275206L,
-    sctid = 365771003,
     category = "chemistry",
     sources = list(
       mimic = list(
@@ -657,7 +634,6 @@ cfg <- list(
     min = 0,
     description = "white blood cell count",
     omopid = 4298431L,
-    sctid = 767002,
     category = "hematology",
     sources = list(
       mimic = list(
@@ -685,7 +661,6 @@ cfg <- list(
     max = 18,
     description = "hemoglobin",
     omopid = 4118981L,
-    sctid = 302763003,
     category = "hematology",
     sources = list(
       mimic = list(
@@ -716,7 +691,6 @@ cfg <- list(
     max = 60,
     description = "hematocrit",
     omopid = 4151358L,
-    sctid = 28317006,
     category = "hematology",
     sources = list(
       mimic = list(
@@ -741,7 +715,6 @@ cfg <- list(
     max = 150,
     description = "CO2 partial pressure",
     omopid = 4097882L,
-    sctid = 250564007,
     category = "blood gas",
     sources = list(
       mimic = list(
@@ -769,7 +742,6 @@ cfg <- list(
     max = 600,
     description = "O2 partial pressure",
     omopid = 4094581L,
-    sctid = 250546000,
     category = "blood gas",
     sources = list(
       mimic = list(
@@ -796,7 +768,6 @@ cfg <- list(
     min = 0,
     description = "mean corpuscular hemoglobin",
     omopid = 4182871L,
-    sctid = 54706004,
     category = "hematology",
     sources = list(
       mimic = list(
@@ -824,7 +795,6 @@ cfg <- list(
     max = 50,
     description = "mean corpuscular hemoglobin concentration",
     omopid = 4290193L,
-    sctid = 37254006,
     category = "hematology",
     sources = list(
       mimic = list(
@@ -853,7 +823,6 @@ cfg <- list(
     max = 150,
     description = "mean corpuscular volume",
     omopid = 4016239L,
-    sctid = 104133003,
     category = "hematology",
     sources = list(
       mimic = list(
@@ -879,7 +848,6 @@ cfg <- list(
     min = 0,
     description = "partial thromboplastin time",
     omopid = 4175016L,
-    sctid = 42525009,
     category = "hematology",
     sources = list(
       mimic = list(
@@ -906,7 +874,6 @@ cfg <- list(
     max = 20,
     description = "calcium",
     omopid = 4216722L,
-    sctid = 71878006,
     category = "chemistry",
     sources = list(
       mimic = list(
@@ -936,7 +903,6 @@ cfg <- list(
     max = 130,
     description = "chloride",
     omopid = 4188066L,
-    sctid = 46511006,
     category = "chemistry",
     sources = list(
       mimic = list(
@@ -963,7 +929,6 @@ cfg <- list(
     max = 5,
     description = "magnesium",
     omopid = 4243005L,
-    sctid = 38151008,
     category = "chemistry",
     sources = list(
       mimic = list(
@@ -994,7 +959,6 @@ cfg <- list(
     max = 10,
     description = "potassium",
     omopid = 4207483L,
-    sctid = 312468003,
     category = "chemistry",
     sources = list(
       mimic = list(
@@ -1022,7 +986,6 @@ cfg <- list(
     max = 165,
     description = "sodium",
     omopid = 4208938L,
-    sctid = 312469006,
     category = "chemistry",
     sources = list(
       mimic = list(
@@ -1050,7 +1013,6 @@ cfg <- list(
     max = 50,
     description = "basophils",
     omopid = 4172647L,
-    sctid = 42351005,
     category = "hematology",
     sources = list(
       mimic = list(
@@ -1075,7 +1037,6 @@ cfg <- list(
     max = 50,
     description = "eosinophils",
     omopid = 4216098L,
-    sctid = 71960002,
     category = "hematology",
     sources = list(
       mimic = list(
@@ -1100,7 +1061,6 @@ cfg <- list(
     max = 100,
     description = "neutrophils",
     omopid = 4148615L,
-    sctid = 30630007,
     category = "hematology",
     sources = list(
       mimic = list(
@@ -1130,7 +1090,6 @@ cfg <- list(
     max = 1000,
     description = "glucose",
     omopid = 4144235L,
-    sctid = 33747003,
     category = "chemistry",
     sources = list(
       mimic = list(
@@ -1162,7 +1121,6 @@ cfg <- list(
     max = 2,
     description = "calcium ionized",
     omopid = 46272910L,
-    sctid = 711359007,
     category = "blood gas",
     sources = list(
       mimic = list(
@@ -1189,7 +1147,6 @@ cfg <- list(
     min = 0,
     description = "C-reactive protein",
     omopid = 4208414L,
-    sctid = 55235003,
     category = "chemistry",
     sources = list(
       mimic = list(
@@ -1220,7 +1177,6 @@ cfg <- list(
     max = 200,
     description = "erythrocyte sedimentation rate",
     omopid = 4212065L,
-    sctid = 416838001,
     category = "hematology",
     sources = list(
       mimic = list(
@@ -1242,7 +1198,6 @@ cfg <- list(
   hbco = list(
     description = "carboxyhemoglobin",
     omopid = 4056787L,
-    sctid = 19821003,
     category = "blood gas",
     sources = list(
       eicu = list(
@@ -1263,7 +1218,6 @@ cfg <- list(
     max = 100,
     description = "methemoglobin",
     omopid = 4204561L,
-    sctid = 54937007,
     category = "blood gas",
     sources = list(
       mimic = list(
@@ -1289,7 +1243,6 @@ cfg <- list(
     min = 0,
     description = "troponin t",
     omopid = 4005525L,
-    sctid = 121871002,
     category = "chemistry",
     sources = list(
       mimic = list(
@@ -1317,7 +1270,6 @@ cfg <- list(
     max = 6,
     description = "albumin",
     omopid = 4017497L,
-    sctid = 104485008,
     category = "chemistry",
     sources = list(
       mimic = list(
@@ -1347,7 +1299,6 @@ cfg <- list(
     max = 1500,
     description = "fibrinogen",
     omopid = 4094436L,
-    sctid = 250346004,
     category = "hematology",
     sources = list(
       mimic = list(
@@ -1377,7 +1328,6 @@ cfg <- list(
     max = 25,
     description = "base excess",
     omopid = 4284393L,
-    sctid = 67487000,
     category = "blood gas",
     sources = list(
       mimic = list(
@@ -1405,7 +1355,6 @@ cfg <- list(
     max = 20,
     description = "red blood cell count",
     omopid = 4030871L,
-    sctid = 14089001,
     category = "hematology",
     sources = list(
       mimic = list(
@@ -1427,7 +1376,6 @@ cfg <- list(
     min = 0,
     description = "creatine kinase",
     omopid = 4265595L,
-    sctid = 397798009,
     category = "chemistry",
     sources = list(
       mimic = list(
@@ -1454,7 +1402,6 @@ cfg <- list(
     min = 0,
     description = "creatine kinase MB",
     omopid = 4017058L,
-    sctid = 104613001,
     category = "chemistry",
     sources = list(
       mimic = list(
@@ -1480,7 +1427,6 @@ cfg <- list(
     max = 4,
     description = "GCS eye",
     omopid = 4084277L,
-    sctid = 281395000,
     category = "neurological",
     sources = list(
       mimic = list(
@@ -1520,7 +1466,6 @@ cfg <- list(
     max = 5,
     description = "GCS verbal",
     omopid = 4084912L,
-    sctid = 281397008,
     category = "neurological",
     sources = list(
       mimic = list(
@@ -1563,7 +1508,6 @@ cfg <- list(
     max = 6,
     description = "GCS motor",
     omopid = 4083352L,
-    sctid = 281396004,
     category = "neurological",
     sources = list(
       mimic = list(
@@ -1607,7 +1551,6 @@ cfg <- list(
     max = 15,
     description = "GCS total",
     omopid = 4093836L,
-    sctid = 248241002,
     category = "neurological",
     sources = list(
       mimic = list(
@@ -1626,7 +1569,6 @@ cfg <- list(
     aggregate = "sum",
     description = "urine output",
     omopid = 4264378L,
-    sctid = 364202003,
     category = "output",
     sources = list(
       mimic = list(
@@ -1663,7 +1605,6 @@ cfg <- list(
     max = 50,
     description = "dobutamine rate",
     omopid = 1337720L,
-    sctid = 387145002,
     category = "medications",
     sources = list(
       mimic = list(
@@ -1740,7 +1681,6 @@ cfg <- list(
     max = 50,
     description = "dopamine rate",
     omopid = 1337860L,
-    sctid = 412383006,
     category = "medications",
     sources = list(
       mimic = list(
@@ -1809,7 +1749,6 @@ cfg <- list(
     max = 3,
     description = "norepinephrine rate",
     omopid = 1321341,
-    sctid = 50060141000188106,
     category = "medications",
     sources = list(
       mimic = list(
@@ -1888,7 +1827,6 @@ cfg <- list(
     max = 1.5,
     description = "epinephrine rate",
     omopid = 1343916L,
-    sctid = 387362001,
     category = "medications",
     sources = list(
       mimic = list(
@@ -2022,7 +1960,6 @@ cfg <- list(
     levels = c("invasive", "noninvasive"),
     description = "mechanical ventilation windows",
     omopid = 4230167L,
-    sctid = 40617009,
     category = "respiratory",
     sources = list(
       aumc = list(
@@ -2057,7 +1994,6 @@ cfg <- list(
     class = "lgl_cncpt",
     description = "tracheostomy",
     omopid = 4097216L,
-    sctid = 26412008,
     category = "respiratory",
     target = "win_tbl",
     sources = list(
@@ -2129,7 +2065,6 @@ cfg <- list(
     class = "lgl_cncpt",
     description = "antibiotics",
     omopid = 4085730L,
-    sctid = 281789004,
     category = "medications",
     sources = list(
       mimic = list(
@@ -2237,7 +2172,6 @@ cfg <- list(
     category = "microbiology",
     description = "body fluid sampling",
     omopid = 4133843L,
-    sctid = 127801007,
     sources = list(
       mimic = list(
         list(table = "microbiologyevents", val_var = "org_itemid",
@@ -2268,7 +2202,6 @@ cfg <- list(
     min = 0,
     description = "troponin I",
     omopid = 4007805L,
-    sctid = 121870001,
     category = "chemistry",
     sources = list(
       mimic = list(
@@ -2288,7 +2221,6 @@ cfg <- list(
     max = 50,
     description = "bilirubin direct",
     omopid = 4216632L,
-    sctid = 39748002,
     category = "chemistry",
     sources = list(
       mimic = list(
@@ -2317,7 +2249,6 @@ cfg <- list(
     max = 42,
     description = "temperature",
     omopid = 4302666L,
-    sctid = 386725007,
     category = "vitals",
     sources = list(
       mimic = list(
@@ -2353,7 +2284,6 @@ cfg <- list(
     max = 60,
     description = "endtidal CO2",
     omopid = 4353940L,
-    sctid = 250790007,
     category = "vitals",
     sources = list(
       mimic = list(
@@ -2381,7 +2311,6 @@ cfg <- list(
     min = 0,
     description = "insulin",
     omopid = 42537007L,
-    sctid = 736101003,
     category = "medications",
     sources = list(
       mimic = list(
@@ -2416,7 +2345,6 @@ cfg <- list(
     class = "fct_cncpt",
     description = "patient sex",
     omopid = 37116947L,
-    sctid = 734000001,
     category = "demographics",
     sources = list(
       mimic = list(
@@ -2452,7 +2380,6 @@ cfg <- list(
     target = "id_tbl",
     description = "patient age",
     omopid = 4314456L,
-    sctid = 424144002,
     category = "demographics",
     sources = list(
       mimic = list(
@@ -2488,7 +2415,6 @@ cfg <- list(
     target = "id_tbl",
     description = "patient weight",
     omopid = 4099154L,
-    sctid = 27113001,
     category = "demographics",
     sources = list(
       mimic = list(
@@ -2526,7 +2452,6 @@ cfg <- list(
     target = "id_tbl",
     description = "patient height",
     omopid = 607590L,
-    sctid = 1153637007,
     category = "demographics",
     sources = list(
       mimic = list(
@@ -2561,7 +2486,6 @@ cfg <- list(
     class = "lgl_cncpt",
     description = "in hospital mortality",
     omopid = 4306655L,
-    sctid = 419620001,
     category = "outcome",
     sources = list(
       mimic = list(
@@ -2713,7 +2637,6 @@ cfg <- list(
     concepts = c("po2", "fio2"),
     description = "Horowitz index",
     omopid = 4233883L,
-    sctid = 438173002,
     category = "respiratory",
     aggregate = c("min", "max"),
     callback = "pafi",
@@ -2731,7 +2654,6 @@ cfg <- list(
     concepts = c("vent_start", "vent_end", "mech_vent"),
     description = "ventilation durations",
     omopid = 4230167L,
-    sctid = 40617009,
     category = "respiratory",
     interval = "00:01:00",
     callback = "vent_ind",
@@ -2742,7 +2664,6 @@ cfg <- list(
     concepts = c("dopa_dur", "norepi_dur", "dobu_dur", "epi_dur"),
     description = "vasopressor indicator",
     omopid = 3655896L,
-    sctid = 870386000,
     category = "medications",
     callback = "vaso_ind",
     class = "rec_cncpt"
@@ -2751,7 +2672,6 @@ cfg <- list(
     concepts = c("egcs", "mgcs", "vgcs", "tgcs", "ett_gcs"),
     description = "Glasgow coma scale (non-sedated)",
     omopid = 4093836L,
-    sctid = 248241002,
     category = "neurological",
     aggregate = c("min", "min", "min", "min", "any"),
     callback = "gcs",
@@ -2761,7 +2681,6 @@ cfg <- list(
     concepts = "urine",
     description = "urine output per 24h",
     omopid = 4191836L,
-    sctid = 395060000,
     category = "output",
     callback = "urine24",
     class = "rec_cncpt"
@@ -2823,7 +2742,6 @@ cfg <- list(
                  "sofa_cns", "sofa_renal"),
     description = "sequential organ failure assessment score",
     omopid = 1616852L,
-    sctid = 1187491009,
     category = "outcome",
     callback = "sofa_score",
     class = "rec_cncpt"
@@ -2840,7 +2758,6 @@ cfg <- list(
     concepts = c("abx", "samp"),
     description = "suspected infection",
     omopid = 43021378L,
-    sctid = 473130003,
     category = "outcome",
     aggregate = lapply(list("sum", FALSE), list),
     callback = "susp_inf",
@@ -2850,7 +2767,6 @@ cfg <- list(
     concepts = c("sofa", "susp_inf"),
     description = "sepsis-3 criterion",
     omopid = 132797L,
-    sctid = 91302008,
     category = "outcome",
     callback = "sep3",
     keep_components = c(FALSE, TRUE),
@@ -2860,7 +2776,6 @@ cfg <- list(
     unit = "%",
     description = "band form neutrophils",
     omopid = 4100147L,
-    sctid = 25340006,
     category = "hematology",
     sources = list(
       mimic = list(
@@ -2886,7 +2801,6 @@ cfg <- list(
     concepts = c("temp", "hr", "resp", "pco2", "wbc", "bnd"),
     description = "systemic inflammatory response syndrome score",
     omopid = 4140444L,
-    sctid = 426929000,
     category = "outcome",
     callback = "sirs_score",
     class = "rec_cncpt"
@@ -2903,7 +2817,6 @@ cfg <- list(
     concepts = "gcs",
     description = "AVPU scale",
     omopid = 40493498L,
-    sctid = 449159002,
     category = "neurological",
     callback = "avpu",
     class = "rec_cncpt"
@@ -2920,7 +2833,6 @@ cfg <- list(
     concepts = c("sbp", "hr", "resp", "temp","avpu"),
     description = "modified early warning score",
     omopid = 40484211L,
-    sctid = 445551004,
     category = "outcome",
     callback = "mews_score",
     class = "rec_cncpt"
@@ -2929,7 +2841,6 @@ cfg <- list(
     unit = "%",
     description = "Hemoglobin A1C",
     omopid = 4184637L,
-    sctid = 43396009,
     category = "hematology",
     sources = list(
       mimic = list(
@@ -2948,7 +2859,6 @@ cfg <- list(
     concepts = c("weight", "height"),
     description = "patient body mass index",
     omopid = 4245997L,
-    sctid = 60621009,
     category = "demographics",
     callback = "bmi",
     target = "id_tbl",
@@ -2958,7 +2868,6 @@ cfg <- list(
     unit = c("units/min", "U/min"),
     description = "vasopressin rate",
     omopid = 1507835L,
-    sctid = 77671006,
     category = "medications",
     sources = list(
       mimic = list(
@@ -3001,7 +2910,6 @@ cfg <- list(
     unit = "mcg/kg/min",
     description = "phenylephrine rate",
     omopid = 1135766L,
-    sctid = 372771005,
     category = "medications",
     sources = list(
       mimic = list(
@@ -3037,7 +2945,6 @@ cfg <- list(
     class = "lgl_cncpt",
     description = "corticosteroids",
     omopid = 304275008L,
-    sctid = 304275008,
     category = "medications",
     sources = list(
       hirid = list(
@@ -3059,7 +2966,6 @@ cfg <- list(
     unit = "ml/hr",
     description = "dextrose (as D10)",
     omopid = 4197597L,
-    sctid = 313419007,
     category = "medications",
     target = "win_tbl",
     sources = list(

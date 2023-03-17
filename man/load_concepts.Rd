@@ -3,6 +3,8 @@
 \name{load_concepts}
 \alias{load_concepts}
 \alias{load_concepts.character}
+\alias{load_concepts.integer}
+\alias{load_concepts.numeric}
 \alias{load_concepts.concept}
 \alias{load_concepts.cncpt}
 \alias{load_concepts.num_cncpt}
@@ -24,6 +26,17 @@ load_concepts(x, ...)
   dict_name = "concept-dict",
   dict_dirs = NULL
 )
+
+\method{load_concepts}{integer}(
+  x,
+  src = NULL,
+  concepts = NULL,
+  ...,
+  dict_name = "concept-dict",
+  dict_dirs = NULL
+)
+
+\method{load_concepts}{numeric}(x, ...)
 
 \method{load_concepts}{concept}(
   x,

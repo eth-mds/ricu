@@ -256,3 +256,8 @@ sys_name <- function() Sys.info()[["sysname"]]
 sys_env <- function(...) Sys.getenv(...)
 
 set_units <- function(x, value) units::set_units(x, value, mode = "standard")
+
+set_names <- function(object = nm, nm) {
+  names(object) <- nm
+  object
+}

@@ -17,8 +17,8 @@ as_src_cfg.src_cfg <- function(x) x
 as_src_cfg.src_env <- function(x) {
 
   args <- list(name = src_name(x), id_cfg = as_id_cfg(x),
-    col_cfg = vec_unchop(lapply(x, as_col_cfg), name_spec = "{inner}"),
-    tbl_cfg = vec_unchop(lapply(x, as_tbl_cfg), name_spec = "{inner}")
+    col_cfg = list_unchop(lapply(x, as_col_cfg), name_spec = "{inner}"),
+    tbl_cfg = list_unchop(lapply(x, as_tbl_cfg), name_spec = "{inner}")
   )
 
   do.call(new_src_cfg,

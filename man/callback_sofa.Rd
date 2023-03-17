@@ -77,29 +77,18 @@ Building on separate concepts, measurements for each component are
 converted to a component score using the definition by Vincent et. al.:\tabular{lllll}{
    \strong{SOFA score} \tab 1 \tab 2 \tab 3 \tab 4 \cr
    \strong{Respiration} \tab  \tab  \tab  \tab  \cr
-   PaO\ifelse{latex}{\out{\textsubscript{2}}}{\ifelse{html
-  }{\out{<sub>2</sub>}}{2}}/FiO\ifelse{latex
-  }{\out{\textsubscript{2}}}{\ifelse{html
-  }{\out{<sub>2</sub>}}{2}} [mmHg] \tab < 400 \tab < 300 \tab < 200 \tab < 100 \cr
+   PaO\subs{2}/FiO\subs{2} [mmHg] \tab < 400 \tab < 300 \tab < 200 \tab < 100 \cr
    and mechanical ventilation \tab  \tab  \tab yes \tab yes \cr
    \strong{Coagulation} \tab  \tab  \tab  \tab  \cr
-   Platelets [\ifelse{latex}{\out{$\times$}}{\ifelse{html
-  }{\out{&times;}}{x}}10\ifelse{latex}{\out{\textsuperscript{3}}}{\ifelse{
-  html}{\out{<sup>3</sup>}}{3}}/mm\ifelse{latex
-  }{\out{\textsuperscript{3}}}{\ifelse{html
-  }{\out{<sup>3</sup>}}{3}}] \tab < 150 \tab < 100 \tab < 50 \tab < 20 \cr
+   Platelets [\tims{}10\sups{3}/mm\sups{3}] \tab < 150 \tab < 100 \tab < 50 \tab < 20 \cr
    \strong{Liver} \tab  \tab  \tab  \tab  \cr
    Bilirubin [mg/dl] \tab 1.2-1.9 \tab 2.0-5.9 \tab 6.0-11.9 \tab > 12.0 \cr
-   \strong{Cardiovascular}\ifelse{latex}{\out{\textsuperscript{a}}}{\ifelse{html
-  }{\out{<sup>a</sup>}}{a}} \tab  \tab  \tab  \tab  \cr
+   \strong{Cardiovascular}\sups{a} \tab  \tab  \tab  \tab  \cr
    MAP \tab < 70 mmHg \tab  \tab  \tab  \cr
-   or dopamine \tab  \tab \ifelse{latex}{\out{$\le$}}{\ifelse{html
-  }{\out{&leq;}}{<=}}                           5 \tab > 5 \tab > 15 \cr
+   or dopamine \tab  \tab \leq{}5 \tab > 5 \tab > 15 \cr
    or dobutamine \tab  \tab any dose \tab  \tab  \cr
-   or epinephrine \tab  \tab  \tab \ifelse{latex}{\out{$\le$}}{\ifelse{html
-  }{\out{&leq;}}{<=}}                                      0.1 \tab > 0.1 \cr
-   or norepinephrine \tab  \tab  \tab \ifelse{latex}{\out{$\le$}}{\ifelse{html
-  }{\out{&leq;}}{<=}}                                      0.1 \tab > 0.1 \cr
+   or epinephrine \tab  \tab  \tab \leq{}0.1 \tab > 0.1 \cr
+   or norepinephrine \tab  \tab  \tab \leq{}0.1 \tab > 0.1 \cr
    \strong{Central nervous system} \tab  \tab  \tab  \tab  \cr
    Glasgow Coma Score \tab 13-14 \tab 10-12 \tab 6-9 \tab < 6 \cr
    \strong{Renal} \tab  \tab  \tab  \tab  \cr
@@ -108,11 +97,8 @@ converted to a component score using the definition by Vincent et. al.:\tabular{
 }
 
 
-\ifelse{latex}{\out{\textsuperscript{a}}}{\ifelse{html
-}{\out{<sup>a</sup>}}{a}}Adrenergic agents administered for at least 1h
-(doses given are in [\ifelse{latex}{\out{$\mu$}}{\ifelse{html
-}{\out{&mu;}}{u}}g/kg \ifelse{latex}{\out{$\cdot$}}{\ifelse{html
-}{\out{&middot;}}{.}} min]
+Adrenergic\sups{a} agents administered for at least 1h
+(doses given are in [\smu{}g/kg \dotm{} min]
 
 At default, for each patient, a score is calculated for every time step,
 from the first available measurement to the last. In instead of a regularly

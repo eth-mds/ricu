@@ -743,14 +743,16 @@ change_id_helper <- function(x, targ, src, cols, dir = c("down", "up"), ...) {
 
   if (identical(dir, "down")) {
     map <- id_map(src, targ, idx, sft, NULL)
+    fun <- `+`
   } else {
     map <- id_map(src, idx, targ, sft, NULL)
+    fun <- `-`
   }
 
   res <- merge(x, map, by = idx, ...)
 
   if (length(cols)) {
-    res <- res[, c(cols) := lapply(.SD, `-`, get(sft)), .SDcols = cols]
+    res <- res[, c(cols) := lapply(.SD, fun, get(sft)), .SDcols = cols]
   }
 
   res <- set_id_vars(res, targ)

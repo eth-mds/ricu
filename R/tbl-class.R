@@ -73,8 +73,9 @@
 #' 1. for `ts_tbl` that the string-valued `index_var` column is available and
 #'    does not intersect with `id_vars` and that the index column obeys the
 #'    specified interval.
-#' 1. for `win_tbl` that the string-valued `dur_var` corresponds to a `difftime`
-#'    vector and is not among the columns marked as index or ID variables
+#' 1. for `win_tbl` that the string-valued `dur_var` corresponds to a
+#'    `difftime` vector and is not among the columns marked as index or ID
+#'    variables
 #'
 #' Finally, inheritance can be checked by calling `is_id_tbl()` and
 #' `is_ts_tbl()`. Note that due to `ts_tbl` inheriting from `id_tbl`,
