@@ -7173,6 +7173,37 @@
           }
         }
       },
+      "omr" : {
+        "files": "core/omr.csv.gz",
+        "defaults": {
+          "timevars": ["chartdate"],
+          "val_var": "result_value"
+        },
+        "num_rows": 6439169,
+        "cols" : {
+          "subject_id": {
+            "name": "subject_id",
+            "spec": "col_integer"
+          },
+          "chartdate": {
+            "name": "chartdate",
+            "spec": "col_datetime",
+            "format": "%Y-%m-%d"
+          },
+          "seq_num": {
+            "name": "seq_num",
+            "spec": "col_integer"
+          },
+          "result_name": {
+            "name": "result_name",
+            "spec": "col_character"
+          },
+          "result_value": {
+            "name": "result_value",
+            "spec": "col_character"
+          }
+        }
+      },
       "transfers": {
         "files": "core/transfers.csv.gz",
         "defaults": {
