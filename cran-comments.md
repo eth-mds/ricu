@@ -10,4 +10,5 @@
 
 0 errors | 0 warnings | 0 notes
 
-* Maintenance release (move mockthat off CRAN)
+* Maintenance release (fixes an issue introduced by pillar 1.9.0 via an update
+  to 0.2.0 of prt)

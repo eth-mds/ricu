@@ -155,13 +155,15 @@ generic functions.
 }
 \section{Concept}{
 
-Top-level entry points are either a character vector, which is used to
-subset a \code{concept} object or an entire \link[=load_dictionary]{concept dictionary}, or a \code{concept} object. When passing a
-character vector as first argument, the most important further arguments at
-that level control from where the dictionary is taken (\code{dict_name} or
-\code{dict_dirs}). At \code{concept} level, the most important additional arguments
-control the result structure: data merging can be disabled using
-\code{merge_data} and data aggregation is governed by the \code{aggregate} argument.
+Top-level entry points are either a character vector of concept names or an
+integer vector of concept IDs (matched against \code{omopid} fields), which are
+used to subset a \code{concept} object or an entire \link[=load_dictionary]{concept dictionary}, or a \code{concept} object. When passing a
+character/integer vector as first argument, the most important further
+arguments at that level control from where the dictionary is taken
+(\code{dict_name} or \code{dict_dirs}). At \code{concept} level, the most important
+additional arguments control the result structure: data merging can be
+disabled using \code{merge_data} and data aggregation is governed by the
+\code{aggregate} argument.
 
 Data aggregation is important for merging several concepts into a
 wide-format table, as this requires data to be unique per observation (i.e.

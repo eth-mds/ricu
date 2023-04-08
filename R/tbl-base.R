@@ -56,7 +56,11 @@ print.id_tbl <- function(x, ..., n = NULL, width = NULL) {
 
 #' @export
 format.id_tbl <- function(x, ..., n = NULL, width = NULL) {
-  format(prt::trunc_dt(x, n = n, width = width))
+  if (packageVersion("prt") < "0.2.0") {
+    format(prt::trunc_dt(x, n = n, width = width))
+  } else {
+    prt::format_dt(x, n = n, width = width)
+  }
 }
 
 #' @importFrom tibble tbl_sum

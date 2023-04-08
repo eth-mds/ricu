@@ -33,14 +33,16 @@
 #' generic functions.
 #'
 #' @section Concept:
-#' Top-level entry points are either a character vector, which is used to
-#' subset a `concept` object or an entire [concept
+#' Top-level entry points are either a character vector of concept names or an
+#' integer vector of concept IDs (matched against `omopid` fields), which are
+#' used to subset a `concept` object or an entire [concept
 #' dictionary][load_dictionary()], or a `concept` object. When passing a
-#' character vector as first argument, the most important further arguments at
-#' that level control from where the dictionary is taken (`dict_name` or
-#' `dict_dirs`). At `concept` level, the most important additional arguments
-#' control the result structure: data merging can be disabled using
-#' `merge_data` and data aggregation is governed by the `aggregate` argument.
+#' character/integer vector as first argument, the most important further
+#' arguments at that level control from where the dictionary is taken
+#' (`dict_name` or `dict_dirs`). At `concept` level, the most important
+#' additional arguments control the result structure: data merging can be
+#' disabled using `merge_data` and data aggregation is governed by the
+#' `aggregate` argument.
 #'
 #' Data aggregation is important for merging several concepts into a
 #' wide-format table, as this requires data to be unique per observation (i.e.

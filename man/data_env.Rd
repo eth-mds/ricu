@@ -88,21 +88,22 @@ mimic_demo$icustays
 #> # ID options:  subject_id (patient) < hadm_id (hadm) < icustay_id (icustay)
 #> # Defaults:    `intime` (index), `last_careunit` (val)
 #> # Time vars:   `intime`, `outtime`
-#>     row_id subject_id hadm_id icustay_id dbsource first_careu~ last_careun~
-#>      <int>      <int>   <int>      <int> <chr>    <chr>        <chr>
-#>   1  12742      10006  142345     206504 carevue  MICU         MICU
-#>   2  12747      10011  105331     232110 carevue  MICU         MICU
-#>   3  12749      10013  165520     264446 carevue  MICU         MICU
-#>   4  12754      10017  199207     204881 carevue  CCU          CCU
-#>   5  12755      10019  177759     228977 carevue  MICU         MICU
+#>     row_id subject_id hadm_id icustay_id dbsource   first_careunit last_careunit
+#>      <int>      <int>   <int>      <int> <chr>      <chr>          <chr>
+#> 1    12742      10006  142345     206504 carevue    MICU           MICU
+#> 2    12747      10011  105331     232110 carevue    MICU           MICU
+#> 3    12749      10013  165520     264446 carevue    MICU           MICU
+#> 4    12754      10017  199207     204881 carevue    CCU            CCU
+#> 5    12755      10019  177759     228977 carevue    MICU           MICU
 #> ...
-#> 132  42676      44083  198330     286428 metavis~ CCU          CCU
-#> 133  42691      44154  174245     217724 metavis~ MICU         MICU
-#> 134  42709      44212  163189     239396 metavis~ MICU         MICU
-#> 135  42712      44222  192189     238186 metavis~ CCU          CCU
-#> 136  42714      44228  103379     217992 metavis~ SICU         SICU
-#> # ... with 126 more rows, and 5 more variables: first_wardid <int>,
-#> #   last_wardid <int>, intime <dttm>, outtime <dttm>, los <dbl>
+#> 132  42676      44083  198330     286428 metavision CCU            CCU
+#> 133  42691      44154  174245     217724 metavision MICU           MICU
+#> 134  42709      44212  163189     239396 metavision MICU           MICU
+#> 135  42712      44222  192189     238186 metavision CCU            CCU
+#> 136  42714      44228  103379     217992 metavision SICU           SICU
+#> # i 131 more rows
+#> # i 5 more variables: first_wardid <int>, last_wardid <int>, intime <dttm>,
+#> #   outtime <dttm>, los <dbl>
 }\if{html}{\out{</div>}}
 
 Table subsets can be loaded into memory for example using the
