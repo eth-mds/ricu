@@ -51,7 +51,8 @@ row.names.id_tbl <- function(x) NULL
 #' @export
 print.id_tbl <- function(x, ..., n = NULL, width = NULL) {
 
-  if (utils::packageVersion("pillar") < "1.9.0" ||
+  if ((is_pkg_installed("pillar") &&
+      utils::packageVersion("pillar") < "1.9.0") ||
       utils::packageVersion("prt") >= "0.2.0") {
     cat_line(format(x, ..., n = n, width = width))
   } else {

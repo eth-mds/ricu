@@ -56,7 +56,8 @@
     fix_base_fun(base::rbind.data.frame, rbind_fix)
   }
 
-  if (utils::packageVersion("pillar") >= "1.9.0" &&
+  if (is_pkg_installed("pillar") &&
+      utils::packageVersion("pillar") >= "1.9.0" &&
       utils::packageVersion("prt") < "0.2.0") {
     registerS3method("print", "prt", fix_print_fun)
   }
