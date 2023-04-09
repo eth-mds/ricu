@@ -47,7 +47,7 @@ demo_missing_msg <- function(demo, file) {
   )
 }
 
-if (is_pkg_installed("pillar") &&
+if (requireNamespace("pillar", quietly = TRUE) &&
     utils::packageVersion("pillar") >= "1.9.0" &&
     utils::packageVersion("prt") < "0.2.0") {
 
