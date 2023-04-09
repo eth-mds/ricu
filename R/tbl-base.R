@@ -50,17 +50,36 @@ row.names.id_tbl <- function(x) NULL
 
 #' @export
 print.id_tbl <- function(x, ..., n = NULL, width = NULL) {
-  cat_line(format(x, ..., n = n, width = width))
+
+  if (utils::packageVersion("pillar") < "1.9.0" ||
+      utils::packageVersion("prt") >= "0.2.0") {
+    cat_line(format(x, ..., n = n, width = width))
+  } else {
+    ptyp <- as_ptype(x)
+    print(unclass_tbl(x), topn = n)
+    x <- reclass_tbl(x, ptyp)
+  }
+
   invisible(x)
+}
+
+fix_print_fun <- function(x, n = 10, ...) {
+  print(head(x, n = n))
 }
 
 #' @export
 format.id_tbl <- function(x, ..., n = NULL, width = NULL) {
   if (utils::packageVersion("prt") < "0.2.0") {
-    format(prt::trunc_dt(x, n = n, width = width))
+    format(prt_fmt(x, n = n, width = width))
   } else {
-    prt::format_dt(x, n = n, width = width)
+    prt_fmt(x, n = n, width = width)
   }
+}
+
+if (utils::packageVersion("prt") < "0.2.0") {
+  prt_fmt <- prt::trunc_dt
+} else {
+  prt_fmt <- prt::format_dt
 }
 
 #' @importFrom tibble tbl_sum
