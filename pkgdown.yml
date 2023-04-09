@@ -1,11 +1,11 @@
-pandoc: 2.7.3
-pkgdown: 1.6.1
+pandoc: 2.19.2
+pkgdown: 2.0.7
 pkgdown_sha: ~
 articles:
-  jss: jss.pdf
-  ricu: ricu.html
+  ricu: ricu.pdf
+  start: start.html
   uom: uom.html
-last_built: 2021-10-06T15:58Z
+last_built: 2023-04-09T13:05Z
 urls:
   reference: https://eth-mds.github.io/ricu/reference
   article: https://eth-mds.github.io/ricu/articles

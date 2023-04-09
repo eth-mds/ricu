@@ -24,6 +24,8 @@
 <![endif]-->
 </head>
 <body data-spy="scroll" data-target="#toc">
+    
+
     <div class="container template-home">
       <header><div class="navbar navbar-default navbar-fixed-top" role="navigation">
   <div class="container">
@@ -36,33 +38,27 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="index.html">ICU data with R</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.5.1</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.5.5</span>
       </span>
     </div>
 
     <div id="navbar" class="navbar-collapse collapse">
       <ul class="nav navbar-nav">
 <li>
-  <a href="index.html">
-    <span class="fas fa-home fa-lg"></span>
-     
-  </a>
-</li>
-<li>
-  <a href="articles/ricu.html">Get started</a>
+  <a href="articles/ricu.pdf">Get started</a>
 </li>
 <li>
   <a href="reference/index.html">Reference</a>
 </li>
 <li class="dropdown">
-  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
     Articles
      
     <span class="caret"></span>
   </a>
   <ul class="dropdown-menu" role="menu">
 <li>
-      <a href="articles/jss.pdf">ricu: R's Interface to Intensive Care Data (PDF)</a>
+      <a href="articles/start.html">Quick start guide</a>
     </li>
     <li>
       <a href="articles/uom.html">Units of measurement</a>
@@ -75,7 +71,7 @@
       </ul>
 <ul class="nav navbar-nav navbar-right">
 <li>
-  <a href="https://github.com/eth-mds/ricu">
+  <a href="https://github.com/eth-mds/ricu" class="external-link">
     <span class="fab fa-github fa-lg"></span>
      
   </a>
@@ -92,94 +88,93 @@
 
       </header><div class="row">
   <div class="contents col-md-9">
-<div id="ricu" class="section level1">
-<div class="page-header"><h1 class="hasAnchor">
-<a href="#ricu" class="anchor"></a><a href="https://eth-mds.github.io/ricu/">ricu</a>
+<div class="section level1">
+<div class="page-header"><h1 id="ricu">
+<a href="https://eth-mds.github.io/ricu/">ricu</a><a class="anchor" aria-label="anchor" href="#ricu"></a>
 </h1></div>
 <!-- badges: start -->
 
-<p>Working with ICU datasets, especially with publicly available ones as provided by <a href="https://physionet.org">PhysioNet</a> in R is facilitated by <code>ricu</code>, which provides data access, a level of abstraction to encode clinical concepts in a data source agnostic way, as well as classes and utilities for working with the arising types of time series datasets.</p>
-<div id="installation" class="section level2">
-<h2 class="hasAnchor">
-<a href="#installation" class="anchor"></a>Installation</h2>
+<p>Working with ICU datasets, especially with publicly available ones as provided by <a href="https://physionet.org" class="external-link">PhysioNet</a> in R is facilitated by <code>ricu</code>, which provides data access, a level of abstraction to encode clinical concepts in a data source agnostic way, as well as classes and utilities for working with the arising types of time series datasets.</p>
+<div class="section level2">
+<h2 id="installation">Installation<a class="anchor" aria-label="anchor" href="#installation"></a>
+</h2>
 <p>Currently, installation is only possible from github directly, using the <code>remotes</code> if installed</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu">remotes</span><span class="fu">::</span><span class="fu"><a href="https://remotes.r-lib.org/reference/install_github.html">install_github</a></span><span class="op">(</span><span class="st">"eth-mds/ricu"</span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu">remotes</span><span class="fu">::</span><span class="fu">install_github</span><span class="op">(</span><span class="st">"eth-mds/ricu"</span><span class="op">)</span></span></code></pre></div>
 <p>or by sourcing the required code for installation from github by running</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">rem</span> <span class="op">&lt;-</span> <span class="kw"><a href="https://rdrr.io/r/base/source.html">source</a></span><span class="op">(</span>
-  <span class="fu"><a href="https://rdrr.io/r/base/paste.html">paste0</a></span><span class="op">(</span><span class="st">"https://raw.githubusercontent.com/r-lib/remotes/main/"</span>,
-         <span class="st">"install-github.R"</span><span class="op">)</span>
-<span class="op">)</span>
-<span class="va">rem</span><span class="op">$</span><span class="fu">value</span><span class="op">(</span><span class="st">"eth-mds/ricu"</span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span><span class="va">rem</span> <span class="op">&lt;-</span> <span class="kw"><a href="https://rdrr.io/r/base/source.html" class="external-link">source</a></span><span class="op">(</span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="st">"https://raw.githubusercontent.com/r-lib/remotes/main/"</span>,</span>
+<span>         <span class="st">"install-github.R"</span><span class="op">)</span></span>
+<span><span class="op">)</span></span>
+<span><span class="va">rem</span><span class="op">$</span><span class="fu">value</span><span class="op">(</span><span class="st">"eth-mds/ricu"</span><span class="op">)</span></span></code></pre></div>
 <p>In order to make sure that some useful utility packages are installed as well, consider installing the packages marked as <code>Suggests</code> as well by running</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu">remotes</span><span class="fu">::</span><span class="fu"><a href="https://remotes.r-lib.org/reference/install_github.html">install_github</a></span><span class="op">(</span><span class="st">"eth-mds/ricu"</span>, dependencies <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu">remotes</span><span class="fu">::</span><span class="fu">install_github</span><span class="op">(</span><span class="st">"eth-mds/ricu"</span>, dependencies <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
 <p>instead, or by installing some of the utility packages (relevant for downloading and preprocessing PhysioNet datasets)</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html">install.packages</a></span><span class="op">(</span><span class="st">"xml2"</span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages</a></span><span class="op">(</span><span class="st">"xml2"</span><span class="op">)</span></span></code></pre></div>
 <p>and demo dataset packages</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html">install.packages</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"mimic.demo"</span>, <span class="st">"eicu.demo"</span><span class="op">)</span>,
-                 repos <span class="op">=</span> <span class="st">"https://eth-mds.github.io/physionet-demo"</span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"mimic.demo"</span>, <span class="st">"eicu.demo"</span><span class="op">)</span>,</span>
+<span>                 repos <span class="op">=</span> <span class="st">"https://eth-mds.github.io/physionet-demo"</span><span class="op">)</span></span></code></pre></div>
 <p>explicitly.</p>
 </div>
-<div id="data-access" class="section level2">
-<h2 class="hasAnchor">
-<a href="#data-access" class="anchor"></a>Data access</h2>
+<div class="section level2">
+<h2 id="data-access">Data access<a class="anchor" aria-label="anchor" href="#data-access"></a>
+</h2>
 <p>Out of the box (provided the two data packages <code>mimic.demo</code> and <code>eicu.demo</code> are available), <code>ricu</code> provides access to the demo datasets corresponding to the PhysioNet Clinical Databases eICU and MIMIC-III. Tables are available as</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">mimic_demo</span><span class="op">$</span><span class="va">admissions</span></code></pre></div>
-<pre class="fansi fansi-output"><code>#&gt; <span style="color: #555555;"># &lt;mimic_tbl&gt;: [129 ✖ 19]</span><span>
-#&gt; </span><span style="color: #555555;"># ID options:  subject_id (patient) &lt; hadm_id (hadm) &lt; icustay_id (icustay)</span><span>
-#&gt; </span><span style="color: #555555;"># Defaults:    `admission_type` (val)</span><span>
-#&gt; </span><span style="color: #555555;"># Time vars:   `admittime`, `dischtime`, `deathtime`, `edregtime`, `edouttime`</span><span>
-#&gt;     row_id subject_id hadm_id admittime           dischtime
-#&gt;      </span><span style="color: #555555;font-style: italic;">&lt;int&gt;</span><span>      </span><span style="color: #555555;font-style: italic;">&lt;int&gt;</span><span>   </span><span style="color: #555555;font-style: italic;">&lt;int&gt;</span><span> </span><span style="color: #555555;font-style: italic;">&lt;dttm&gt;</span><span>              </span><span style="color: #555555;font-style: italic;">&lt;dttm&gt;</span><span>
-#&gt;   </span><span style="color: #555555;">1</span><span>  </span><span style="text-decoration: underline;">12</span><span>258      </span><span style="text-decoration: underline;">10</span><span>006  </span><span style="text-decoration: underline;">142</span><span>345 2164-10-23 </span><span style="color: #555555;">21:09:00</span><span> 2164-11-01 </span><span style="color: #555555;">17:15:00</span><span>
-#&gt;   </span><span style="color: #555555;">2</span><span>  </span><span style="text-decoration: underline;">12</span><span>263      </span><span style="text-decoration: underline;">10</span><span>011  </span><span style="text-decoration: underline;">105</span><span>331 2126-08-14 </span><span style="color: #555555;">22:32:00</span><span> 2126-08-28 </span><span style="color: #555555;">18:59:00</span><span>
-#&gt;   </span><span style="color: #555555;">3</span><span>  </span><span style="text-decoration: underline;">12</span><span>265      </span><span style="text-decoration: underline;">10</span><span>013  </span><span style="text-decoration: underline;">165</span><span>520 2125-10-04 </span><span style="color: #555555;">23:36:00</span><span> 2125-10-07 </span><span style="color: #555555;">15:13:00</span><span>
-#&gt;   </span><span style="color: #555555;">4</span><span>  </span><span style="text-decoration: underline;">12</span><span>269      </span><span style="text-decoration: underline;">10</span><span>017  </span><span style="text-decoration: underline;">199</span><span>207 2149-05-26 </span><span style="color: #555555;">17:19:00</span><span> 2149-06-03 </span><span style="color: #555555;">18:42:00</span><span>
-#&gt;   </span><span style="color: #555555;">5</span><span>  </span><span style="text-decoration: underline;">12</span><span>270      </span><span style="text-decoration: underline;">10</span><span>019  </span><span style="text-decoration: underline;">177</span><span>759 2163-05-14 </span><span style="color: #555555;">20:43:00</span><span> 2163-05-15 </span><span style="color: #555555;">12:00:00</span><span>
-#&gt;   </span><span style="color: #555555;">…</span><span>
-#&gt; </span><span style="color: #555555;">125</span><span>  </span><span style="text-decoration: underline;">41</span><span>055      </span><span style="text-decoration: underline;">44</span><span>083  </span><span style="text-decoration: underline;">198</span><span>330 2112-05-28 </span><span style="color: #555555;">15:45:00</span><span> 2112-06-07 </span><span style="color: #555555;">16:50:00</span><span>
-#&gt; </span><span style="color: #555555;">126</span><span>  </span><span style="text-decoration: underline;">41</span><span>070      </span><span style="text-decoration: underline;">44</span><span>154  </span><span style="text-decoration: underline;">174</span><span>245 2178-05-14 </span><span style="color: #555555;">20:29:00</span><span> 2178-05-15 </span><span style="color: #555555;">09:45:00</span><span>
-#&gt; </span><span style="color: #555555;">127</span><span>  </span><span style="text-decoration: underline;">41</span><span>087      </span><span style="text-decoration: underline;">44</span><span>212  </span><span style="text-decoration: underline;">163</span><span>189 2123-11-24 </span><span style="color: #555555;">14:14:00</span><span> 2123-12-30 </span><span style="color: #555555;">14:31:00</span><span>
-#&gt; </span><span style="color: #555555;">128</span><span>  </span><span style="text-decoration: underline;">41</span><span>090      </span><span style="text-decoration: underline;">44</span><span>222  </span><span style="text-decoration: underline;">192</span><span>189 2180-07-19 </span><span style="color: #555555;">06:55:00</span><span> 2180-07-20 </span><span style="color: #555555;">13:00:00</span><span>
-#&gt; </span><span style="color: #555555;">129</span><span>  </span><span style="text-decoration: underline;">41</span><span>092      </span><span style="text-decoration: underline;">44</span><span>228  </span><span style="text-decoration: underline;">103</span><span>379 2170-12-15 </span><span style="color: #555555;">03:14:00</span><span> 2170-12-24 </span><span style="color: #555555;">18:00:00</span><span>
-#&gt; </span><span style="color: #555555;"># … with 119 more rows, and 14 more variables: deathtime &lt;dttm&gt;,
-#&gt; #   admission_type &lt;chr&gt;, admission_location &lt;chr&gt;, discharge_location &lt;chr&gt;,
-#&gt; #   insurance &lt;chr&gt;, language &lt;chr&gt;, religion &lt;chr&gt;, marital_status &lt;chr&gt;,
-#&gt; #   ethnicity &lt;chr&gt;, edregtime &lt;dttm&gt;, edouttime &lt;dttm&gt;, diagnosis &lt;chr&gt;,
-#&gt; #   hospital_expire_flag &lt;int&gt;, has_chartevents_data &lt;int&gt;</span><span>
-</span></code></pre>
+<code class="sourceCode R"><span><span class="va">mimic_demo</span><span class="op">$</span><span class="va">admissions</span></span></code></pre></div>
+<pre class="fansi fansi-output"><code><span><span class="co">#&gt; # &lt;mimic_tbl&gt;: [129 ✖ 19]</span></span>
+<span><span class="co">#&gt; # ID options:  subject_id (patient) &lt; hadm_id (hadm) &lt; icustay_id (icustay)</span></span>
+<span><span class="co">#&gt; # Defaults:    `admission_type` (val)</span></span>
+<span><span class="co">#&gt; # Time vars:   `admittime`, `dischtime`, `deathtime`, `edregtime`, `edouttime`</span></span>
+<span><span class="co">#&gt;     row_id subject_id hadm_id admittime           dischtime</span></span>
+<span><span class="co">#&gt;      &lt;int&gt;      &lt;int&gt;   &lt;int&gt; &lt;dttm&gt;              &lt;dttm&gt;</span></span>
+<span><span class="co">#&gt; 1    12258      10006  142345 2164-10-23 21:09:00 2164-11-01 17:15:00</span></span>
+<span><span class="co">#&gt; 2    12263      10011  105331 2126-08-14 22:32:00 2126-08-28 18:59:00</span></span>
+<span><span class="co">#&gt; 3    12265      10013  165520 2125-10-04 23:36:00 2125-10-07 15:13:00</span></span>
+<span><span class="co">#&gt; 4    12269      10017  199207 2149-05-26 17:19:00 2149-06-03 18:42:00</span></span>
+<span><span class="co">#&gt; 5    12270      10019  177759 2163-05-14 20:43:00 2163-05-15 12:00:00</span></span>
+<span><span class="co">#&gt; …</span></span>
+<span><span class="co">#&gt; 125  41055      44083  198330 2112-05-28 15:45:00 2112-06-07 16:50:00</span></span>
+<span><span class="co">#&gt; 126  41070      44154  174245 2178-05-14 20:29:00 2178-05-15 09:45:00</span></span>
+<span><span class="co">#&gt; 127  41087      44212  163189 2123-11-24 14:14:00 2123-12-30 14:31:00</span></span>
+<span><span class="co">#&gt; 128  41090      44222  192189 2180-07-19 06:55:00 2180-07-20 13:00:00</span></span>
+<span><span class="co">#&gt; 129  41092      44228  103379 2170-12-15 03:14:00 2170-12-24 18:00:00</span></span>
+<span><span class="co">#&gt; # ℹ 124 more rows</span></span>
+<span><span class="co">#&gt; # ℹ 14 more variables: deathtime &lt;dttm&gt;, admission_type &lt;chr&gt;,</span></span>
+<span><span class="co">#&gt; #   admission_location &lt;chr&gt;, discharge_location &lt;chr&gt;, insurance &lt;chr&gt;,</span></span>
+<span><span class="co">#&gt; #   language &lt;chr&gt;, religion &lt;chr&gt;, marital_status &lt;chr&gt;, ethnicity &lt;chr&gt;,</span></span>
+<span><span class="co">#&gt; #   edregtime &lt;dttm&gt;, edouttime &lt;dttm&gt;, diagnosis &lt;chr&gt;,</span></span>
+<span><span class="co">#&gt; #   hospital_expire_flag &lt;int&gt;, has_chartevents_data &lt;int&gt;</span></span></code></pre>
 <p>and data can be loaded into an R session for example using</p>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="reference/load_id.html">load_ts</a></span><span class="op">(</span><span class="st">"labevents"</span>, <span class="st">"mimic_demo"</span>, <span class="va">itemid</span> <span class="op">==</span> <span class="fl">50862L</span>,
-        cols <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"valuenum"</span>, <span class="st">"valueuom"</span><span class="op">)</span><span class="op">)</span></code></pre></div>
-<pre class="fansi fansi-output"><code>#&gt; <span style="color: #555555;"># A `ts_tbl`: 299 ✖ 4</span><span>
-#&gt; </span><span style="color: #555555;"># Id var:     `icustay_id`</span><span>
-#&gt; </span><span style="color: #555555;"># Index var:  `charttime` (1 hours)</span><span>
-#&gt;     icustay_id charttime valuenum valueuom
-#&gt;          </span><span style="color: #555555;font-style: italic;">&lt;int&gt;</span><span> </span><span style="color: #555555;font-style: italic;">&lt;drtn&gt;</span><span>       </span><span style="color: #555555;font-style: italic;">&lt;dbl&gt;</span><span> </span><span style="color: #555555;font-style: italic;">&lt;chr&gt;</span><span>
-#&gt;   </span><span style="color: #555555;">1</span><span>     </span><span style="text-decoration: underline;">201</span><span>006   0 hours      2.4 g/dL
-#&gt;   </span><span style="color: #555555;">2</span><span>     </span><span style="text-decoration: underline;">203</span><span>766 -18 hours      2   g/dL
-#&gt;   </span><span style="color: #555555;">3</span><span>     </span><span style="text-decoration: underline;">203</span><span>766   4 hours      1.7 g/dL
-#&gt;   </span><span style="color: #555555;">4</span><span>     </span><span style="text-decoration: underline;">204</span><span>132   7 hours      3.6 g/dL
-#&gt;   </span><span style="color: #555555;">5</span><span>     </span><span style="text-decoration: underline;">204</span><span>201   9 hours      2.3 g/dL
-#&gt;   </span><span style="color: #555555;">…</span><span>
-#&gt; </span><span style="color: #555555;">295</span><span>     </span><span style="text-decoration: underline;">298</span><span>685 130 hours      1.9 g/dL
-#&gt; </span><span style="color: #555555;">296</span><span>     </span><span style="text-decoration: underline;">298</span><span>685 154 hours      2   g/dL
-#&gt; </span><span style="color: #555555;">297</span><span>     </span><span style="text-decoration: underline;">298</span><span>685 203 hours      2   g/dL
-#&gt; </span><span style="color: #555555;">298</span><span>     </span><span style="text-decoration: underline;">298</span><span>685 272 hours      2.2 g/dL
-#&gt; </span><span style="color: #555555;">299</span><span>     </span><span style="text-decoration: underline;">298</span><span>685 299 hours      2.5 g/dL
-#&gt; </span><span style="color: #555555;"># … with 289 more rows</span><span>
-</span></code></pre>
+<code class="sourceCode R"><span><span class="fu"><a href="reference/load_tbl.html">load_ts</a></span><span class="op">(</span><span class="st">"labevents"</span>, <span class="st">"mimic_demo"</span>, <span class="va">itemid</span> <span class="op">==</span> <span class="fl">50862L</span>,</span>
+<span>        cols <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"valuenum"</span>, <span class="st">"valueuom"</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
+<pre class="fansi fansi-output"><code><span><span class="co">#&gt; # A `ts_tbl`: 299 ✖ 4</span></span>
+<span><span class="co">#&gt; # Id var:     `icustay_id`</span></span>
+<span><span class="co">#&gt; # Index var:  `charttime` (1 hours)</span></span>
+<span><span class="co">#&gt;     icustay_id charttime valuenum valueuom</span></span>
+<span><span class="co">#&gt;          &lt;int&gt; &lt;drtn&gt;       &lt;dbl&gt; &lt;chr&gt;</span></span>
+<span><span class="co">#&gt; 1       201006   0 hours      2.4 g/dL</span></span>
+<span><span class="co">#&gt; 2       203766 -18 hours      2   g/dL</span></span>
+<span><span class="co">#&gt; 3       203766   4 hours      1.7 g/dL</span></span>
+<span><span class="co">#&gt; 4       204132   7 hours      3.6 g/dL</span></span>
+<span><span class="co">#&gt; 5       204201   9 hours      2.3 g/dL</span></span>
+<span><span class="co">#&gt; …</span></span>
+<span><span class="co">#&gt; 295     298685 130 hours      1.9 g/dL</span></span>
+<span><span class="co">#&gt; 296     298685 154 hours      2   g/dL</span></span>
+<span><span class="co">#&gt; 297     298685 203 hours      2   g/dL</span></span>
+<span><span class="co">#&gt; 298     298685 272 hours      2.2 g/dL</span></span>
+<span><span class="co">#&gt; 299     298685 299 hours      2.5 g/dL</span></span>
+<span><span class="co">#&gt; # ℹ 294 more rows</span></span></code></pre>
 <p>which returns time series data as <code>ts_tbl</code> object.</p>
 </div>
-<div id="acknowledgments" class="section level2">
-<h2 class="hasAnchor">
-<a href="#acknowledgments" class="anchor"></a>Acknowledgments</h2>
+<div class="section level2">
+<h2 id="acknowledgments">Acknowledgments<a class="anchor" aria-label="anchor" href="#acknowledgments"></a>
+</h2>
 <p>This work was supported by grant #2017-110 of the Strategic Focal Area “Personalized Health and Related Technologies (PHRT)” of the ETH Domain for the SPHN/PHRT Driver Project “Personalized Swiss Sepsis Study”.</p>
 </div>
 </div>
@@ -187,25 +182,32 @@
 
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <div class="links">
-<h2>Links</h2>
+<h2 data-toc-skip>Links</h2>
 <ul class="list-unstyled">
-<li>Download from CRAN at <br><a href="https://cloud.r-project.org/package=ricu">https://​cloud.r-project.org/​package=ricu</a>
-</li>
-<li>Browse source code at <br><a href="https://github.com/eth-mds/ricu">https://​github.com/​eth-mds/​ricu</a>
-</li>
-<li>Report a bug at <br><a href="https://github.com/eth-mds/ricu/issues">https://​github.com/​eth-mds/​ricu/​issues</a>
-</li>
+<li><a href="https://cloud.r-project.org/package=ricu" class="external-link">View on CRAN</a></li>
+<li><a href="https://github.com/eth-mds/ricu" class="external-link">Browse source code</a></li>
+<li><a href="https://github.com/eth-mds/ricu/issues" class="external-link">Report a bug</a></li>
 </ul>
 </div>
+
 <div class="license">
-<h2>License</h2>
+<h2 data-toc-skip>License</h2>
 <ul class="list-unstyled">
 <li><a href="LICENSE.html">Full license</a></li>
-<li><small><a href="https://www.r-project.org/Licenses/GPL-3">GPL-3</a></small></li>
+<li><small><a href="https://www.r-project.org/Licenses/GPL-3" class="external-link">GPL-3</a></small></li>
 </ul>
 </div>
+
+
+<div class="citation">
+<h2 data-toc-skip>Citation</h2>
+<ul class="list-unstyled">
+<li><a href="authors.html#citation">Citing ricu</a></li>
+</ul>
+</div>
+
 <div class="developers">
-<h2>Developers</h2>
+<h2 data-toc-skip>Developers</h2>
 <ul class="list-unstyled">
 <li>Nicolas Bennett <br><small class="roles"> Author, maintainer </small>  </li>
 <li>Drago Plecko <br><small class="roles"> Author </small>  </li>
@@ -213,28 +215,20 @@
 </ul>
 </div>
 
-  <div class="dev-status">
-<h2>Dev status</h2>
-<ul class="list-unstyled">
-<li><a href="https://lifecycle.r-lib.org/articles/stages.html#stable"><img src="https://img.shields.io/badge/lifecycle-stable-brightgreen.svg" alt="Lifecycle"></a></li>
-<li><a href="https://cran.r-project.org/package=ricu"><img src="https://www.r-pkg.org/badges/version/ricu" alt="CRAN"></a></li>
-<li><a href="https://github.com/eth-mds/ricu/actions?query=workflow%3Abuild"><img src="https://github.com/eth-mds/ricu/workflows/build/badge.svg" alt="R build status"></a></li>
-<li><a href="https://github.com/eth-mds/ricu/actions?query=workflow%3Acheck"><img src="https://github.com/eth-mds/ricu/workflows/check/badge.svg" alt="R check status"></a></li>
-<li><a href="https://github.com/eth-mds/ricu/actions?query=workflow%3Apkgdown"><img src="https://github.com/eth-mds/ricu/workflows/pkgdown/badge.svg" alt="pkgdown build status"></a></li>
-<li><a href="https://github.com/eth-mds/ricu/actions?query=workflow%3Acoverage"><img src="https://github.com/eth-mds/ricu/workflows/coverage/badge.svg" alt="covr status"></a></li>
-<li><a href="https://codecov.io/gh/eth-mds/ricu"><img src="https://codecov.io/gh/eth-mds/ricu/branch/main/graph/badge.svg?token=gQisoami9F" alt="Codecov test coverage"></a></li>
-</ul>
-</div>
-</div>
+
+
+  </div>
 </div>
 
 
       <footer><div class="copyright">
-  <p>Developed by Nicolas Bennett, Drago Plecko, Ida-Fong Ukor.</p>
+  <p></p>
+<p>Developed by Nicolas Bennett, Drago Plecko, Ida-Fong Ukor.</p>
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.1.</p>
+  <p></p>
+<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.7.</p>
 </div>
 
       </footer>
@@ -242,6 +236,8 @@
 
   
 
+
+  
 
   </body>
 </html>

@@ -1,7 +1,28 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
+    <loc>https://eth-mds.github.io/ricu/404.html</loc>
+  </url>
+  <url>
+    <loc>https://eth-mds.github.io/ricu/LICENSE.html</loc>
+  </url>
+  <url>
+    <loc>https://eth-mds.github.io/ricu/articles/index.html</loc>
+  </url>
+  <url>
+    <loc>https://eth-mds.github.io/ricu/articles/start.html</loc>
+  </url>
+  <url>
+    <loc>https://eth-mds.github.io/ricu/articles/uom.html</loc>
+  </url>
+  <url>
+    <loc>https://eth-mds.github.io/ricu/authors.html</loc>
+  </url>
+  <url>
     <loc>https://eth-mds.github.io/ricu/index.html</loc>
+  </url>
+  <url>
+    <loc>https://eth-mds.github.io/ricu/news/index.html</loc>
   </url>
   <url>
     <loc>https://eth-mds.github.io/ricu/reference/attach_src.html</loc>
@@ -61,6 +82,9 @@
     <loc>https://eth-mds.github.io/ricu/reference/import.html</loc>
   </url>
   <url>
+    <loc>https://eth-mds.github.io/ricu/reference/index.html</loc>
+  </url>
+  <url>
     <loc>https://eth-mds.github.io/ricu/reference/item_utils.html</loc>
   </url>
   <url>
@@ -116,14 +140,5 @@
   </url>
   <url>
     <loc>https://eth-mds.github.io/ricu/reference/utils.html</loc>
-  </url>
-  <url>
-    <loc>https://eth-mds.github.io/ricu/articles/jss.pdf</loc>
-  </url>
-  <url>
-    <loc>https://eth-mds.github.io/ricu/articles/ricu.html</loc>
-  </url>
-  <url>
-    <loc>https://eth-mds.github.io/ricu/articles/uom.html</loc>
   </url>
 </urlset>
