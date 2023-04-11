@@ -7176,7 +7176,7 @@
       "omr" : {
         "files": "core/omr.csv.gz",
         "defaults": {
-          "timevars": ["chartdate"],
+          "time_vars": ["chartdate"],
           "val_var": "result_value"
         },
         "num_rows": 6439169,
