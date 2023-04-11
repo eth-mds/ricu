@@ -43,54 +43,6 @@
                      gcs_raw 
       gcs_raw <rec_cncpt[1]> 
 
----
-
-    Code
-      print(dat1)
-    Output
-      # A `ts_tbl`: 1,914 x 3
-      # Id var:     `icustay_id`
-      # Units:      `omop_4144235` [mg/dL]
-      # Index var:  `charttime` (1 hours)
-            icustay_id charttime omop_4144235
-                 <int> <drtn>           <dbl>
-          1     201006 -58 hours          116
-          2     201006 -45 hours           83
-          3     201006 -21 hours           91
-          4     201006   0 hours          175
-          5     201006  11 hours          129
-        ...
-      1,910     298685 260 hours          159
-      1,911     298685 272 hours          153
-      1,912     298685 290 hours          182
-      1,913     298685 293 hours          122
-      1,914     298685 299 hours          121
-      # ... with 1,904 more rows
-
----
-
-    Code
-      print(dat2)
-    Output
-      # A `ts_tbl`: 1,920 x 4
-      # Id var:     `icustay_id`
-      # Units:      `omop_4144235` [mg/dL], `omop_4017497` [g/dL]
-      # Index var:  `charttime` (1 hours)
-            icustay_id charttime omop_4144235 omop_4017497
-                 <int> <drtn>           <dbl>        <dbl>
-          1     201006 -58 hours          116         NA
-          2     201006 -45 hours           83         NA
-          3     201006 -21 hours           91         NA
-          4     201006   0 hours          175          2.4
-          5     201006  11 hours          129         NA
-        ...
-      1,916     298685 260 hours          159         NA
-      1,917     298685 272 hours          153          2.2
-      1,918     298685 290 hours          182         NA
-      1,919     298685 293 hours          122         NA
-      1,920     298685 299 hours          121          2.5
-      # ... with 1,910 more rows
-
 # load external dictionary
 
     Code

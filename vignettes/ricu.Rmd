@@ -70,18 +70,20 @@ pkgdown:
 ---
 
 ```{r setup, include = FALSE}
-source(system.file("extdata", "vignettes", "helpers.R", package = "ricu"))
-
-options(width = 76)
+options(
+  width = 76,
+  kableExtra.latex.load_packages = FALSE,
+  crayon.enabled = FALSE
+)
 
 library(ricu)
 library(data.table)
 library(forestmodel)
 library(survival)
 library(ggplot2)
-
-options(kableExtra.latex.load_packages = FALSE)
 library(kableExtra)
+
+source(system.file("extdata", "vignettes", "helpers.R", package = "ricu"))
 
 srcs <- c("mimic", "eicu", "aumc", "hirid", "miiv")
 ```

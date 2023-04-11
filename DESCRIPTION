@@ -6,7 +6,7 @@ Description: Focused on (but not exclusive to) data sets hosted on PhysioNet
     functions for running arbitrary queries against available data sets, a
     system for defining clinical concepts and encoding their representations
     in tabular ICU data is presented.
-Version: 0.5.4
+Version: 0.5.5
 Authors@R: c(
     person(given = "Nicolas",
            family = "Bennett",
@@ -68,7 +68,8 @@ Suggests:
     kableExtra,
     units,
     pdftools,
-    magick
+    magick,
+    pillar
 RoxygenNote: 7.2.3
 Additional_repositories: https://eth-mds.github.io/physionet-demo
 VignetteBuilder: knitr
