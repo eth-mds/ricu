@@ -9385,5 +9385,397 @@
         }
       }
     }
+  },
+  {
+    "name": "sic",
+    "url": "https://physionet.org/content/sicdb/1.0.5/",
+    "id_cfg": {
+      "patient": {
+        "id": "patientid",
+        "position": 1,
+        "start": "firstadmission",
+        "end": "offsetofdeath",
+        "table": "cases"
+      },
+      "icustay": {
+        "id": "caseid",
+        "position": 2,
+        "start": "offsetafterfirstadmission",
+        "end": "timeofstay",
+        "table": "cases"
+      }
+    },
+    "tables": {
+      "cases": {
+        "files": "cases.csv.gz",
+        "defaults": {
+          "index_var": "offsetafterfirstadmission",
+          "time_vars": ["offsetafterfirstadmission"]
+        },
+        "cols": {
+          "caseid": {
+            "name": "CaseID",
+            "spec": "col_integer"
+          },
+          "patientid": {
+            "name": "PatientID",
+            "spec": "col_integer"
+          },
+          "admissionyear": {
+            "name": "AdmissionYear",
+            "spec": "col_integer"
+          },
+          "timeofstay": {
+            "name": "TimeOfStay",
+            "spec": "col_integer"
+          },
+          "saps3": {
+            "name": "saps3",
+            "spec": "col_double"
+          },
+          "hospitaldischargetype": {
+            "name": "HospitalDischargeType",
+            "spec": "col_integer"
+          },
+          "dischargestate": {
+            "name": "DischargeState",
+            "spec": "col_integer"
+          },
+          "dischargeunit": {
+            "name": "DischargeUnit",
+            "spec": "col_integer"
+          },
+          "offsetofdeath": {
+            "name": "OffsetOfDeath",
+            "spec": "col_integer"
+          },
+          "estimatedsurvivalobservationtime": {
+            "name": "EstimatedSurvivalObservationTime",
+            "spec": "col_integer"
+          },
+          "sex": {
+            "name": "Sex",
+            "spec": "col_integer"
+          },
+          "weightonadmission": {
+            "name": "WeightOnAdmission",
+            "spec": "col_double"
+          },
+          "heightonadmission": {
+            "name": "HeightOnAdmission",
+            "spec": "col_double"
+          },
+          "ageonadmission": {
+            "name": "AgeOnAdmission",
+            "spec": "col_integer"
+          },
+          "hospitalunit": {
+            "name": "HospitalUnit",
+            "spec": "col_integer"
+          },
+          "referringunit": {
+            "name": "ReferringUnit",
+            "spec": "col_integer"
+          },
+          "icd10main": {
+            "name": "ICD10Main",
+            "spec": "col_character"
+          },
+          "icd10maintext": {
+            "name": "ICD10MainText",
+            "spec": "col_character"
+          },
+          "diagnosist2": {
+            "name": "DiagnosisT2",
+            "spec": "col_character"
+          },
+          "surgicalsite": {
+            "name": "SurgicalSite",
+            "spec": "col_integer"
+          },
+          "hoursofcrrt": {
+            "name": "HoursOfCRRT",
+            "spec": "col_integer"
+          },
+          "admissionformhassepsis": {
+            "name": "AdmissionFormHasSepsis",
+            "spec": "col_integer"
+          },
+          "orbisdataavailable": {
+            "name": "OrbisDataAvailable",
+            "spec": "col_character"
+          },
+          "heartsurgeryadditionaldata": {
+            "name": "HeartSurgeryAdditionalData",
+            "spec": "col_integer"
+          },
+          "heartsurgerycrossclamptime": {
+            "name": "HeartSurgeryCrossClampTime",
+            "spec": "col_integer"
+          },
+          "heartsurgerybeginoffset": {
+            "name": "HeartSurgeryBeginOffset",
+            "spec": "col_integer"
+          },
+          "heartsurgeryendoffset": {
+            "name": "HeartSurgeryEndOffset",
+            "spec": "col_integer"
+          },
+          "offsetafterfirstadmission": {
+            "name": "OffsetAfterFirstAdmission",
+            "spec": "col_integer"
+          }
+        }
+      },
+      "d_references": {
+        "files": "d_references.csv.gz",
+        "cols": {
+          "referenceglobalid": {
+            "name": "ReferenceGlobalID",
+            "spec": "col_integer"
+          },
+          "referencevalue": {
+            "name": "ReferenceValue",
+            "spec": "col_character"
+          },
+          "referencename": {
+            "name": "ReferenceName",
+            "spec": "col_character"
+          },
+          "referencedescription": {
+            "name": "ReferenceDescription",
+            "spec": "col_character"
+          },
+          "referenceunit": {
+            "name": "ReferenceUnit",
+            "spec": "col_character"
+          },
+          "referenceorder": {
+            "name": "ReferenceOrder",
+            "spec": "col_integer"
+          },
+          "referencetype": {
+            "name": "ReferenceType",
+            "spec": "col_integer"
+          },
+          "data": {
+            "name": "Data",
+            "spec": "col_character"
+          }
+        }
+      },
+      "data_float_h": {
+        "files": "data_float_h.csv.gz",
+        "defaults": {
+          "index_var": "offset",
+          "time_vars": ["offset"]
+        },
+        "cols": {
+          "caseid": {
+            "name": "CaseID",
+            "spec": "col_integer"
+          },
+          "dataid": {
+            "name": "DataID",
+            "spec": "col_integer"
+          },
+          "offset": {
+            "name": "Offset",
+            "spec": "col_integer"
+          },
+          "val": {
+            "name": "Val",
+            "spec": "col_double"
+          },
+          "cnt": {
+            "name": "cnt",
+            "spec": "col_integer"
+          },
+          "rawdata": {
+            "name": "rawdata",
+            "spec": "col_character"
+          }
+        },
+        "partitioning": {
+          "col": "dataid",
+          "breaks": [702, 703, 705, 708, 709, 710, 715, 717, 719, 724, 725,
+                     731, 773, 2018, 2274, 2278, 2280, 2283, 2290, 3056, 3059, 3071]
+        }
+      },
+      "data_ref": {
+        "files": "data_ref.csv.gz",
+        "defaults": {
+          "index_var": "offsetafterfirstadmission",
+          "time_vars": ["offsetafterfirstadmission"]
+        },
+        "cols": {
+          "id": {
+            "name": "id",
+            "spec": "col_integer"
+          },
+          "caseid": {
+            "name": "CaseID",
+            "spec": "col_integer"
+          },
+          "refid": {
+            "name": "RefID",
+            "spec": "col_integer"
+          },
+          "customfieldid": {
+            "name": "CustomFieldID",
+            "spec": "col_integer"
+          }
+        }
+      },
+      "laboratory": {
+        "files": "laboratory.csv.gz",
+        "defaults": {
+          "index_var": "offset",
+          "val_var": "laboratoryvalue",
+          "time_vars": ["offset"]
+        },
+        "cols": {
+          "id": {
+            "name": "id",
+            "spec": "col_integer"
+          },
+          "caseid": {
+            "name": "CaseID",
+            "spec": "col_integer"
+          },
+          "laboratoryid": {
+            "name": "LaboratoryID",
+            "spec": "col_integer"
+          },
+          "offset": {
+            "name": "Offset",
+            "spec": "col_integer"
+          },
+          "laboratoryvalue": {
+            "name": "LaboratoryValue",
+            "spec": "col_double"
+          },
+          "laboratorytype": {
+            "name": "LaboratoryType",
+            "spec": "col_integer"
+          }
+        }
+      },
+      "medication": {
+        "files": "medication.csv.gz",
+        "defaults": {
+          "index_var": "offset",
+          "time_vars": ["offset", "offsetdrugend"]
+        },
+        "cols": {
+          "id": {
+            "name": "id",
+            "spec": "col_integer"
+          },
+          "caseid": {
+            "name": "CaseID",
+            "spec": "col_integer"
+          },
+          "patientid": {
+            "name": "PatientID",
+            "spec": "col_integer"
+          },
+          "drugid": {
+            "name": "DrugID",
+            "spec": "col_integer"
+          },
+          "offset": {
+            "name": "Offset",
+            "spec": "col_integer"
+          },
+          "offsetdrugend": {
+            "name": "OffsetDrugEnd",
+            "spec": "col_integer"
+          },
+          "issingledose": {
+            "name": "IsSingleDose",
+            "spec": "col_logical"
+          },
+          "amount": {
+            "name": "Amount",
+            "spec": "col_double"
+          },
+          "amountperminute": {
+            "name": "AmountPerMinute",
+            "spec": "col_double"
+          },
+          "givenstate": {
+            "name": "GivenState",
+            "spec": "col_integer"
+          }
+        }
+      },
+      "data_range": {
+        "files": "data_range.csv.gz",
+        "defaults": {
+          "index_var": "offset",
+          "time_vars": ["offset", "offsetend"]
+        },
+        "cols": {
+          "id": {
+            "name": "id",
+            "spec": "col_integer"
+          },
+          "caseid": {
+            "name": "CaseID",
+            "spec": "col_integer"
+          },
+          "dataid": {
+            "name": "DataID",
+            "spec": "col_integer"
+          },
+          "offset": {
+            "name": "Offset",
+            "spec": "col_integer"
+          },
+          "offsetend": {
+            "name": "OffsetEnd",
+            "spec": "col_integer"
+          },
+          "data": {
+            "name": "Data",
+            "spec": "col_character"
+          }
+        }
+      },
+      "unitlog": {
+        "files": "unitlog.csv.gz",
+        "defaults": {
+          "index_var": "offset",
+          "time_vars": ["offset", "offsetend"]
+        },
+        "cols": {
+          "id": {
+            "name": "id",
+            "spec": "col_integer"
+          },
+          "caseid": {
+            "name": "CaseID",
+            "spec": "col_integer"
+          },
+          "patientid": {
+            "name": "PatientID",
+            "spec": "col_integer"
+          },
+          "logstate": {
+            "name": "LogState",
+            "spec": "col_integer"
+          },
+          "offset": {
+            "name": "Offset",
+            "spec": "col_integer"
+          },
+          "hospitalunit": {
+            "name": "HospitalUnit",
+            "spec": "col_integer"
+          }
+        }
+      }
+    }
   }
 ]
