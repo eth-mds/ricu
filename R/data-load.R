@@ -170,6 +170,17 @@ load_difftime.miiv_tbl <- function(x, rows, cols = colnames(x),
 
 #' @rdname load_src
 #' @export
+load_difftime.sic_tbl <- function(x, rows, cols = colnames(x),
+                                   id_hint = id_vars(x),
+                                   time_vars = ricu::time_vars(x), ...) {
+  
+  warn_dots(...)
+  # TODO: consider renaming fun to reflect its use for SICdb
+  load_eiau(x, {{ rows }}, cols, id_hint, time_vars, s_as_mins)
+}
+
+#' @rdname load_src
+#' @export
 load_difftime.character <- function(x, src, ...) {
   load_difftime(as_src_tbl(x, src), ...)
 }

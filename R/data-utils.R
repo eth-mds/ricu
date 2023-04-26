@@ -129,6 +129,29 @@ id_orig_helper.miiv_env <- function(x, id) {
   as_id_tbl(res, id, by_ref = TRUE)
 }
 
+#' @rdname data_utils
+#' @export
+id_orig_helper.sic_env <- function(x, id) {
+  
+  if (!identical(id, "patientid")) {
+    return(NextMethod())
+  }
+  
+  cfg <- as_id_cfg(x)[id == id_var_opts(x)]
+  
+  assert_that(length(cfg) == 1L)
+  
+  sta <- field(cfg, "start")
+  age <- "admissionyear"
+  
+  res <- as_src_tbl(x, field(cfg, "table"))
+  res <- res[, c(id, sta, age)]
+  res <- res[, c(sta, age) := shift_year(get(sta), get(age))]
+  
+  as_id_tbl(res, id, by_ref = TRUE)
+}
+
+
 #' @export
 id_orig_helper.default <- function(x, ...) stop_generic(x, .Generic)
 
@@ -331,6 +354,35 @@ id_win_helper.miiv_env <- function(x) {
 
   order_rename(res, ids, sta, end)
 }
+
+#' @rdname data_utils
+#' @export
+id_win_helper.sic_env <- function(x) {
+  cfg <- sort(as_id_cfg(x), decreasing = TRUE)
+  
+  ids <- field(cfg, "id")
+  sta <- field(cfg, "start")
+  end <- field(cfg, "end")
+  
+  tbl <- as_src_tbl(x, unique(field(cfg, "table")))
+  
+  mis <- setdiff(sta, colnames(tbl))
+  
+  res <- load_src(tbl, cols = c(ids, intersect(sta, colnames(tbl)), end))
+  
+  assert_that(length(mis) == 1L)
+  res[, firstadmission := 0L]
+  
+  res <- res[, c(sta, end) := lapply(.SD, s_as_mins), .SDcols = c(sta, end)]
+  res[, timeofstay := offsetafterfirstadmission + timeofstay]
+  
+  res <- setcolorder(res, c(ids, sta, end))
+  res <- rename_cols(res, c(ids, paste0(ids, "_start"),
+                            paste0(ids, "_end")), by_ref = TRUE)
+  
+  as_id_tbl(res, ids[2L], by_ref = TRUE)
+}
+
 
 #' @export
 id_win_helper.default <- function(x) stop_generic(x, .Generic)
