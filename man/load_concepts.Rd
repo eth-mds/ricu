@@ -92,8 +92,9 @@ load_concepts(x, ...)
 \item{src}{A character vector, used to subset the \code{concepts}; \code{NULL}
 means no subsetting}
 
-\item{concepts}{The concepts to be used or \code{NULL} in which case
-\code{\link[=load_dictionary]{load_dictionary()}} is called}
+\item{concepts}{The concepts to be used, or \code{NULL}. In the latter case the
+standard ricu dictionary (obtained by calling \code{\link[=load_dictionary]{load_dictionary()}}) is used
+for loading the objects specified in \code{x}.}
 
 \item{dict_name, dict_dirs}{In case not concepts are passed as \code{concepts},
 these are forwarded to \code{\link[=load_dictionary]{load_dictionary()}} as \code{name} and \code{file} arguments}

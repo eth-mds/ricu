@@ -166,8 +166,9 @@ load_concepts <- function(x, ...) UseMethod("load_concepts", x)
 
 #' @param src A character vector, used to subset the `concepts`; `NULL`
 #' means no subsetting
-#' @param concepts The concepts to be used or `NULL` in which case
-#' [load_dictionary()] is called
+#' @param concepts The concepts to be used, or `NULL`. In the latter case the 
+#' standard ricu dictionary (obtained by calling [load_dictionary()]) is used
+#' for loading the objects specified in `x`.
 #' @param dict_name,dict_dirs In case not concepts are passed as `concepts`,
 #' these are forwarded to [load_dictionary()] as `name` and `file` arguments
 #'
@@ -178,8 +179,6 @@ load_concepts.character <- function(x, src = NULL, concepts = NULL, ...,
                                     dict_dirs = NULL) {
 
   if (is.null(concepts)) {
-
-    assert_that(not_null(src))
 
     load_concepts(
       load_dictionary(src, x, name = dict_name, cfg_dirs = dict_dirs),
