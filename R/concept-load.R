@@ -201,8 +201,6 @@ load_concepts.integer <- function(x, src = NULL, concepts = NULL, ...,
 
   if (is.null(concepts)) {
 
-    assert_that(not_null(src))
-
     concepts <- load_dictionary(src, name = dict_name, cfg_dirs = dict_dirs)
 
   } else if (not_null(src)) {
