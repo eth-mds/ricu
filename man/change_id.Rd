@@ -57,34 +57,19 @@ and \code{downgrade_id()} when the target ID system is of lower cardinality
 }
 \details{
 In order to provide ID system conversion for a data source, the (internal)
-function \code{\link[=id_map]{id_map()}} must be able to construct an ID mapping for that data
+function [id_map()] must be able to construct an ID mapping for that data
 source. Constructing such a mapping can be expensive w.r.t. the frequency
-it might be re-used and therefore, \code{\link[=id_map]{id_map()}} provides caching
+it might be re-used and therefore, [id_map()] provides caching
 infrastructure. The mapping itself is constructed by the (internal)
-function \code{\link[=id_map_helper]{id_map_helper()}}, which is expected to provide source and
+function [id_map_helper()], which is expected to provide source and
 destination ID columns as well as start and end columns corresponding to
 the destination ID, relative to the source ID system. In the following
-example, we request for \code{mimic_demo}, with ICU stay IDs as source and
+example, we request for `mimic_demo`, with ICU stay IDs as source and
 hospital admissions as destination IDs.
 
-\if{html}{\out{<div class="sourceCode r">}}\preformatted{id_map_helper(mimic_demo, "icustay_id", "hadm_id")
-#> # An `id_tbl`: 136 x 4
-#> # Id var:      `icustay_id`
-#>     icustay_id hadm_id hadm_id_start hadm_id_end
-#>          <int>   <int> <drtn>        <drtn>
-#> 1       201006  198503  -3290 mins    9114 mins
-#> 2       201204  114648     -2 mins    6949 mins
-#> 3       203766  126949  -1336 mins    8818 mins
-#> 4       204132  157609     -1 mins   10103 mins
-#> 5       204201  177678   -368 mins    9445 mins
-#> ...
-#> 132     295043  170883 -10413 mins   31258 mins
-#> 133     295741  176805     -1 mins    3153 mins
-#> 134     296804  110244  -1294 mins    4599 mins
-#> 135     297782  167612     -1 mins     207 mins
-#> 136     298685  151323     -1 mins   19082 mins
-#> # i 131 more rows
-}\if{html}{\out{</div>}}
+```{r, eval = is_data_avail("mimic_demo")}
+id_map_helper(mimic_demo, "icustay_id", "hadm_id")
+```
 
 Both start and end columns encode the hospital admission windows relative
 to each corresponding ICU stay start time. It therefore comes as no
@@ -93,21 +78,22 @@ occurs before ICU stay start time), while end times are often days in the
 future (as hospital discharge typically occurs several days after ICU
 admission).
 
-In order to use the ID conversion infrastructure offered by \code{ricu} for a
-new dataset, it typically suffices to provide an \code{id_cfg} entry in the
-source configuration (see \code{\link[=load_src_cfg]{load_src_cfg()}}), outlining the available ID
+In order to use the ID conversion infrastructure offered by `ricu` for a
+new dataset, it typically suffices to provide an `id_cfg` entry in the
+source configuration (see [load_src_cfg()]), outlining the available ID
 systems alongside an ordering, as well as potentially a class specific
-implementation of \code{\link[=id_map_helper]{id_map_helper()}} for the given source class, specifying
+implementation of [id_map_helper()] for the given source class, specifying
 the corresponding time windows in 1 minute resolution (for every possible
 pair of IDs).
 
-While both up- and downgrades for \code{id_tbl} objects, as well as downgrades
-for \code{ts_tbl} objects are simple merge operations based on the ID mapping
-provided by \code{\link[=id_map]{id_map()}}, ID upgrades for \code{ts_tbl} objects are slightly more
-involved. As an example, consider the following setting: we have \code{data}
-associated with \code{hadm_id} IDs and times relative to hospital admission:
+While both up- and downgrades for `id_tbl` objects, as well as downgrades
+for `ts_tbl` objects are simple merge operations based on the ID mapping
+provided by [id_map()], ID upgrades for `ts_tbl` objects are slightly more
+involved. As an example, consider the following setting: we have `data`
+associated with `hadm_id` IDs and times relative to hospital admission:
 
-\if{html}{\out{<div class="sourceCode">}}\preformatted{               1      2       3        4       5       6        7      8
+```
+               1      2       3        4       5       6        7      8
 data        ---*------*-------*--------*-------*-------*--------*------*---
                3h    10h     18h      27h     35h     43h      52h    59h
 
@@ -117,17 +103,17 @@ hadm_id     |-------------------------------------------------------------|
 icustay_id         |------------------|          |---------------|
                    0h                19h         0h             16h
                            ICU_1                       ICU_2
-}\if{html}{\out{</div>}}
+```
 
-The mapping of data points from \code{hadm_id} to \code{icustay_id} is created as
+The mapping of data points from `hadm_id` to `icustay_id` is created as
 follows: ICU stay end times mark boundaries and all data that is recorded
 after the last ICU stay ended is assigned to the last ICU stay. Therefore
-data points 1-3 are assigned to \code{ICU_1}, while 4-8 are assigned to \code{ICU_2}.
+data points 1-3 are assigned to `ICU_1`, while 4-8 are assigned to `ICU_2`.
 Times have to be shifted as well, as timestamps are expected to be relative
 to the current ID system. Data points 1-3 therefore are assigned to time
 stamps -4h, 3h and 11h, while data points 4-8 are assigned to -10h, -2h,
 6h, 15h and 22h. Implementation-wise, the mapping is computed using an
-efficient \code{data.table} rolling join.
+efficient `data.table` rolling join.
 }
 \examples{
 if (require(mimic.demo)) {
