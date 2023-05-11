@@ -387,6 +387,17 @@ partition_col <- function(x, orig_names = FALSE) {
   col
 }
 
+tbl_callback <- function(x){
+  x <- as_tbl_cfg(x)
+  assert_that(length(x) == 1L)
+  
+  if ("callback" %in% vctrs::fields(x)) {
+    str_to_fun(vctrs::field(x, "callback"))
+  } else {
+    identity_callback
+  }
+}
+
 #' @export
 n_tick.tbl_cfg <- function(x) {
 
