@@ -1375,6 +1375,14 @@
           "table": "labevents",
           "sub_var": "itemid"
         }
+      ],
+      "sic": [
+        {
+          "ids": 367,
+          "table": "laboratory",
+          "sub_var": "laboratoryid",
+          "class": "sic_itm"
+        }
       ]
     }
   },
@@ -3059,6 +3067,14 @@
           "ids": [211, 220045],
           "table": "chartevents",
           "sub_var": "itemid"
+        }
+      ],
+      "sic": [
+        {
+          "ids": 708,
+          "table": "data_float_h",
+          "sub_var": "dataid",
+          "class": "sic_itm"
         }
       ]
     }
