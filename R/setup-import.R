@@ -257,7 +257,8 @@ partition_table <- function(x, dir, progress = NULL, chunk_length = 10 ^ 7,
   rawf <- raw_file_name(x)
   file <- file.path(dir, rawf)
   name <- tbl_name(x)
-
+  callback <- tbl_callback(x)
+  
   exp_row <- n_row(x)
 
   if (is.na(exp_row)) {
@@ -268,17 +269,18 @@ partition_table <- function(x, dir, progress = NULL, chunk_length = 10 ^ 7,
 
   if (length(file) == 1L) {
 
-    callback <- function(x, pos, ...) {
-      report_problems(x, rawf)
-      split_write(x, pfun, tempdir, ((pos - 1L) / chunk_length) + 1L,
-                  progress, name, tick)
+    process_chunk <- function(x, pos, ...) {
+        report_problems(x, rawf)
+        split_write(callback(x), pfun, tempdir, ((pos - 1L) / chunk_length) + 1L,
+                    progress, name, tick)
     }
+    
 
     if (grepl("\\.gz$", file)) {
       file <- gunzip(file, tempdir)
     }
 
-    readr::read_csv_chunked(file, callback, chunk_length, col_types = spec,
+    readr::read_csv_chunked(file, process_chunk, chunk_length, col_types = spec,
                             progress = FALSE, ...)
 
     if (is.na(exp_row)) {
@@ -291,8 +293,7 @@ partition_table <- function(x, dir, progress = NULL, chunk_length = 10 ^ 7,
 
       dat <- readr::read_csv(file[i], col_types = spec, progress = FALSE, ...)
       report_problems(dat, rawf[i])
-
-      split_write(dat, pfun, tempdir, i, progress, name, tick)
+      split_write(callback(dat), pfun, tempdir, i, progress, name, tick)
     }
   }
 
@@ -356,6 +357,7 @@ csv_to_fst <- function(x, dir, progress = NULL, ...) {
   raw <- raw_file_name(x)
   src <- file.path(dir, raw)
   dst <- file.path(dir, fst_file_name(x))
+  callback <- tbl_callback(x)
 
   assert_that(length(x) == 1L, length(src) == 1L, length(dst) == 1L)
 
@@ -365,6 +367,7 @@ csv_to_fst <- function(x, dir, progress = NULL, ...) {
 
   report_problems(dat, raw)
 
+  dat <- callback(dat)
   dat <- rename_cols(setDT(dat), ricu_cols(x), orig_cols(x))
 
   fst::write_fst(dat, dst, compress = 100L)
