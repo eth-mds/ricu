@@ -9568,6 +9568,7 @@
         "files": "data_float_h.csv.gz",
         "defaults": {
           "index_var": "offset",
+          "val_var": "rawdata",
           "time_vars": ["offset"]
         },
         "cols": {
@@ -9600,7 +9601,8 @@
           "col": "dataid",
           "breaks": [702, 703, 705, 708, 709, 710, 715, 717, 719, 724, 725,
                      731, 773, 2018, 2274, 2278, 2280, 2283, 2290, 3056, 3059, 3071]
-        }
+        },
+        "callback": "sic_data_float_h"
       },
       "data_ref": {
         "files": "data_ref.csv.gz",
