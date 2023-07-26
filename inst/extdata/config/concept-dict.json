@@ -307,6 +307,13 @@
           "callback": "transform_fun(mimic_age)",
           "class": "col_itm"
         }
+      ],
+      "sic": [
+        {
+          "table": "cases",
+          "val_var": "ageonadmission",
+          "class": "col_itm"
+        }
       ]
     }
   },
@@ -3683,6 +3690,14 @@
           "callback": "los_callback",
           "win_type": "icustay",
           "class": "fun_itm"
+        }
+      ],
+      "sic": [
+        {
+          "table": "cases",
+          "val_var": "timeofstay",
+          "callback": "transform_fun(binary_op(`/`, 60 * 60 * 24))",
+          "class": "col_itm"
         }
       ]
     }
