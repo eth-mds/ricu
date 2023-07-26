@@ -369,6 +369,14 @@
           "table": "labevents",
           "sub_var": "itemid"
         }
+      ],
+      "sic": [
+        {
+          "ids": 171,
+          "table": "laboratory",
+          "sub_var": "laboratoryid",
+          "class": "sic_itm"
+        }
       ]
     }
   },
@@ -427,6 +435,14 @@
           "ids": 50863,
           "table": "labevents",
           "sub_var": "itemid"
+        }
+      ],
+      "sic": [
+        {
+          "ids": 609,
+          "table": "laboratory",
+          "sub_var": "laboratoryid",
+          "class": "sic_itm"
         }
       ]
     }
@@ -487,6 +503,14 @@
           "table": "labevents",
           "sub_var": "itemid"
         }
+      ],
+      "sic": [
+        {
+          "ids": 617,
+          "table": "laboratory",
+          "sub_var": "laboratoryid",
+          "class": "sic_itm"
+        }
       ]
     }
   },
@@ -545,6 +569,14 @@
           "ids": 50878,
           "table": "labevents",
           "sub_var": "itemid"
+        }
+      ],
+      "sic": [
+        {
+          "ids": 616,
+          "table": "laboratory",
+          "sub_var": "laboratoryid",
+          "class": "sic_itm"
         }
       ]
     }
@@ -612,6 +644,21 @@
           "table": "labevents",
           "sub_var": "itemid"
         }
+      ],
+      "sic": [
+        {
+          "ids": 174,
+          "table": "laboratory",
+          "sub_var": "laboratoryid",
+          "class": "sic_itm"
+        },
+        {
+          "ids": 295,
+          "table": "laboratory",
+          "sub_var": "laboratoryid",
+          "callback": "blood_cell_ratio",
+          "class": "sic_itm"
+        }
       ]
     }
   },
@@ -674,6 +721,14 @@
           "table": "labevents",
           "sub_var": "itemid"
         }
+      ],
+      "sic": [
+        {
+          "ids": 449,
+          "table": "laboratory",
+          "sub_var": "laboratoryid",
+          "class": "sic_itm"
+        }
       ]
     }
   },
@@ -733,6 +788,14 @@
           "ids": 50882,
           "table": "labevents",
           "sub_var": "itemid"
+        }
+      ],
+      "sic": [
+        {
+          "ids": 456,
+          "table": "laboratory",
+          "sub_var": "laboratoryid",
+          "class": "sic_itm"
         }
       ]
     }
@@ -796,6 +859,14 @@
           "table": "labevents",
           "sub_var": "itemid"
         }
+      ],
+      "sic": [
+        {
+          "ids": 333,
+          "table": "laboratory",
+          "sub_var": "laboratoryid",
+          "class": "sic_itm"
+        }
       ]
     }
   },
@@ -857,6 +928,14 @@
           "ids": 50883,
           "table": "labevents",
           "sub_var": "itemid"
+        }
+      ],
+      "sic": [
+        {
+          "ids": 332,
+          "table": "laboratory",
+          "sub_var": "laboratoryid",
+          "class": "sic_itm"
         }
       ]
     }
@@ -1051,6 +1130,15 @@
           "table": "labevents",
           "sub_var": "itemid"
         }
+      ],
+      "sic": [
+        {
+          "ids": 457,
+          "table": "laboratory",
+          "sub_var": "laboratoryid",
+          "callback": "convert_unit(binary_op(`*`, 4), 'mg/dL', 'mmol/l')",
+          "class": "sic_itm"
+        }
       ]
     }
   },
@@ -1111,6 +1199,14 @@
           "table": "labevents",
           "sub_var": "itemid"
         }
+      ],
+      "sic": [
+        {
+          "ids": 452,
+          "table": "laboratory",
+          "sub_var": "laboratoryid",
+          "class": "sic_itm"
+        }
       ]
     }
   },
@@ -1169,6 +1265,14 @@
           "ids": 50910,
           "table": "labevents",
           "sub_var": "itemid"
+        }
+      ],
+      "sic": [
+        {
+          "ids": 611,
+          "table": "laboratory",
+          "sub_var": "laboratoryid",
+          "class": "sic_itm"
         }
       ]
     }
@@ -1229,6 +1333,14 @@
           "table": "labevents",
           "sub_var": "itemid"
         }
+      ],
+      "sic": [
+        {
+          "ids": 253,
+          "table": "laboratory",
+          "sub_var": "laboratoryid",
+          "class": "sic_itm"
+        }
       ]
     }
   },
@@ -1288,6 +1400,14 @@
           "ids": 50902,
           "table": "labevents",
           "sub_var": "itemid"
+        }
+      ],
+      "sic": [
+        {
+          "ids": 450,
+          "table": "laboratory",
+          "sub_var": "laboratoryid",
+          "class": "sic_itm"
         }
       ]
     }
@@ -1447,6 +1567,14 @@
           "sub_var": "itemid",
           "callback": "convert_unit(binary_op(`*`, 10), 'mg/L', 'mg/dl')"
         }
+      ],
+      "sic": [
+        {
+          "ids": 341,
+          "table": "laboratory",
+          "sub_var": "laboratoryid",
+          "class": "sic_itm"
+        }
       ]
     }
   },
@@ -1506,6 +1634,14 @@
           "ids": [8368, 8441, 8555, 220051, 220180],
           "table": "chartevents",
           "sub_var": "itemid"
+        }
+      ],
+      "sic": [
+        {
+          "ids": [702, 705],
+          "table": "data_float_h",
+          "sub_var": "dataid",
+          "class": "sic_itm"
         }
       ]
     }
@@ -2191,6 +2327,21 @@
           "table": "labevents",
           "sub_var": "itemid"
         }
+      ],
+      "sic": [
+        {
+          "ids": 197,
+          "table": "laboratory",
+          "sub_var": "laboratoryid",
+          "class": "sic_itm"
+        },
+        {
+          "ids": 299,
+          "table": "laboratory",
+          "sub_var": "laboratoryid",
+          "callback": "blood_cell_ratio",
+          "class": "sic_itm"
+        }
       ]
     }
   },
@@ -2471,6 +2622,14 @@
           "table": "chartevents",
           "sub_var": "itemid"
         }
+      ],
+      "sic": [
+        {
+          "ids": 716,
+          "table": "laboratory",
+          "sub_var": "laboratoryid",
+          "class": "sic_itm"
+        }
       ]
     }
   },
@@ -2596,6 +2755,14 @@
           "table": "labevents",
           "sub_var": "itemid"
         }
+      ],
+      "sic": [
+        {
+          "ids": 344,
+          "table": "laboratory",
+          "sub_var": "laboratoryid",
+          "class": "sic_itm"
+        }
       ]
     }
   },
@@ -2685,6 +2852,14 @@
           "table": "labevents",
           "sub_var": "itemid"
         }
+      ],
+      "sic": [
+        {
+          "ids": 684,
+          "table": "laboratory",
+          "sub_var": "laboratoryid",
+          "class": "sic_itm"
+        }
       ]
     }
   },
@@ -2766,6 +2941,14 @@
           "table": "labevents",
           "sub_var": "itemid"
         }
+      ],
+      "sic": [
+        {
+          "ids": [348, 656],
+          "table": "laboratory",
+          "sub_var": "laboratoryid",
+          "class": "sic_itm"
+        }
       ]
     }
   },
@@ -2802,6 +2985,14 @@
           "table": "labevents",
           "sub_var": "itemid"
         }
+      ],
+      "sic": [
+        {
+          "ids": 214,
+          "table": "laboratory",
+          "sub_var": "laboratoryid",
+          "class": "sic_itm"
+        }
       ]
     }
   },
@@ -2837,6 +3028,14 @@
           "table": "observations",
           "sub_var": "variableid",
           "class": "hrd_itm"
+        }
+      ],
+      "sic": [
+        {
+          "ids": [196, 660],
+          "table": "laboratory",
+          "sub_var": "laboratoryid",
+          "class": "sic_itm"
         }
       ]
     }
@@ -2890,6 +3089,14 @@
           "ids": 51221,
           "table": "labevents",
           "sub_var": "itemid"
+        }
+      ],
+      "sic": [
+        {
+          "ids": [217, 682],
+          "table": "laboratory",
+          "sub_var": "laboratoryid",
+          "class": "sic_itm"
         }
       ]
     }
@@ -2956,6 +3163,13 @@
           "sub_var": "itemid",
           "callback": "convert_unit(binary_op(`*`, 2.54), 'cm', '^in')"
         }
+      ],
+      "sic": [
+        {
+          "table": "cases",
+          "val_var": "heightonadmission",
+          "class": "col_itm"
+        }
       ]
     }
   },
@@ -3017,6 +3231,14 @@
           "ids": 51222,
           "table": "labevents",
           "sub_var": "itemid"
+        }
+      ],
+      "sic": [
+        {
+          "ids": [289, 658],
+          "table": "laboratory",
+          "sub_var": "laboratoryid",
+          "class": "sic_itm"
         }
       ]
     }
@@ -3081,7 +3303,7 @@
       ],
       "sic": [
         {
-          "ids": 708,
+          "ids": [708, 724],
           "table": "data_float_h",
           "sub_var": "dataid",
           "class": "sic_itm"
@@ -3283,6 +3505,14 @@
           "table": "labevents",
           "sub_var": "itemid"
         }
+      ],
+      "sic": [
+        {
+          "ids": [463, 685],
+          "table": "laboratory",
+          "sub_var": "laboratoryid",
+          "class": "sic_itm"
+        }
       ]
     }
   },
@@ -3342,6 +3572,14 @@
           "ids": 50813,
           "table": "labevents",
           "sub_var": "itemid"
+        }
+      ],
+      "sic": [
+        {
+          "ids": [465, 657],
+          "table": "laboratory",
+          "sub_var": "laboratoryid",
+          "class": "sic_itm"
         }
       ]
     }
@@ -3513,6 +3751,21 @@
           "table": "labevents",
           "sub_var": "itemid"
         }
+      ],
+      "sic": [
+        {
+          "ids": 223,
+          "table": "laboratory",
+          "sub_var": "laboratoryid",
+          "class": "sic_itm"
+        },
+        {
+          "ids": 302,
+          "table": "laboratory",
+          "sub_var": "laboratoryid",
+          "callback": "blood_cell_ratio",
+          "class": "sic_itm"
+        }
       ]
     }
   },
@@ -3583,6 +3836,14 @@
           "table": "chartevents",
           "sub_var": "itemid"
         }
+      ],
+      "sic": [
+        {
+          "ids": [702, 705],
+          "table": "data_float_h",
+          "sub_var": "dataid",
+          "class": "sic_itm"
+        }
       ]
     }
   },
@@ -3642,6 +3903,14 @@
           "ids": 51248,
           "table": "labevents",
           "sub_var": "itemid"
+        }
+      ],
+      "sic": [
+        {
+          "ids": 566,
+          "table": "laboratory",
+          "sub_var": "laboratoryid",
+          "class": "sic_itm"
         }
       ]
     }
@@ -3705,6 +3974,15 @@
           "table": "labevents",
           "sub_var": "itemid"
         }
+      ],
+      "sic": [
+        {
+          "ids": 290,
+          "table": "laboratory",
+          "sub_var": "laboratoryid",
+          "callback": "convert_unit(binary_op(`*`, 0.16114), '%')",
+          "class": "sic_itm"
+        }
       ]
     }
   },
@@ -3764,6 +4042,14 @@
           "ids": 51250,
           "table": "labevents",
           "sub_var": "itemid"
+        }
+      ],
+      "sic": [
+        {
+          "ids": 286,
+          "table": "laboratory",
+          "sub_var": "laboratoryid",
+          "class": "sic_itm"
         }
       ]
     }
@@ -3864,6 +4150,14 @@
           "table": "labevents",
           "sub_var": "itemid"
         }
+      ],
+      "sic": [
+        {
+          "ids": 661,
+          "table": "laboratory",
+          "sub_var": "laboratoryid",
+          "class": "sic_itm"
+        }
       ]
     }
   },
@@ -3935,6 +4229,15 @@
           "ids": 50960,
           "table": "labevents",
           "sub_var": "itemid"
+        }
+      ],
+      "sic": [
+        {
+          "ids": 468,
+          "table": "laboratory",
+          "sub_var": "laboratoryid",
+          "callback": "convert_unit(binary_op(`*`, 2.431), 'mg/dL')",
+          "class": "sic_itm"
         }
       ]
     }
@@ -4062,6 +4365,14 @@
           "table": "labevents",
           "sub_var": "itemid"
         }
+      ],
+      "sic": [
+        {
+          "ids": 469,
+          "table": "laboratory",
+          "sub_var": "laboratoryid",
+          "class": "sic_itm"
+        }
       ]
     }
   },
@@ -4127,6 +4438,21 @@
           "ids": 51256,
           "table": "labevents",
           "sub_var": "itemid"
+        }
+      ],
+      "sic": [
+        {
+          "ids": 230,
+          "table": "laboratory",
+          "sub_var": "laboratoryid",
+          "class": "sic_itm"
+        }, 
+        {
+          "ids": 308,
+          "table": "laboratory",
+          "sub_var": "laboratoryid",
+          "callback": "blood_cell_ratio",
+          "class": "sic_itm"
         }
       ]
     }
@@ -4408,6 +4734,14 @@
           "table": "chartevents",
           "sub_var": "itemid"
         }
+      ],
+      "sic": [
+        {
+          "ids": 710,
+          "table": "data_float_h",
+          "sub_var": "dataid",
+          "class": "sic_itm"
+        }
       ]
     }
   },
@@ -4477,6 +4811,14 @@
           "table": "labevents",
           "sub_var": "itemid"
         }
+      ],
+      "sic": [
+        {
+          "ids": 687,
+          "table": "laboratory",
+          "sub_var": "laboratoryid",
+          "class": "sic_itm"
+        }
       ]
     }
   },
@@ -4535,6 +4877,14 @@
           "ids": 50820,
           "table": "labevents",
           "sub_var": "itemid"
+        }
+      ],
+      "sic": [
+        {
+          "ids": 688,
+          "table": "laboratory",
+          "sub_var": "laboratoryid",
+          "class": "sic_itm"
         }
       ]
     }
@@ -4681,6 +5031,15 @@
           "table": "labevents",
           "sub_var": "itemid"
         }
+      ],
+      "sic": [
+        {
+          "ids": 471,
+          "table": "laboratory",
+          "sub_var": "laboratoryid",
+          "callback": "convert_unit(binary_op(`*`, 3.097521), 'mg/dL')",
+          "class": "sic_itm"
+        }
       ]
     }
   },
@@ -4740,6 +5099,14 @@
           "ids": 51265,
           "table": "labevents",
           "sub_var": "itemid"
+        }
+      ],
+      "sic": [
+        {
+          "ids": 314,
+          "table": "laboratory",
+          "sub_var": "laboratoryid",
+          "class": "sic_itm"
         }
       ]
     }
@@ -4801,6 +5168,14 @@
           "table": "labevents",
           "sub_var": "itemid"
         }
+      ],
+      "sic": [
+        {
+          "ids": 689,
+          "table": "laboratory",
+          "sub_var": "laboratoryid",
+          "class": "sic_itm"
+        }
       ]
     }
   },
@@ -4851,6 +5226,14 @@
           "ids": 51274,
           "table": "labevents",
           "sub_var": "itemid"
+        }
+      ],
+      "sic": [
+        {
+          "ids": 598,
+          "table": "laboratory",
+          "sub_var": "laboratoryid",
+          "class": "sic_itm"
         }
       ]
     }
@@ -4910,6 +5293,14 @@
           "ids": 51275,
           "table": "labevents",
           "sub_var": "itemid"
+        }
+      ],
+      "sic": [
+        {
+          "ids": 597,
+          "table": "laboratory",
+          "sub_var": "laboratoryid",
+          "class": "sic_itm"
         }
       ]
     }
@@ -5032,6 +5423,14 @@
           "table": "labevents",
           "sub_var": "itemid"
         }
+      ],
+      "sic": [
+        {
+          "ids": 599,
+          "table": "laboratory",
+          "sub_var": "laboratoryid",
+          "class": "sic_itm"
+        }
       ]
     }
   },
@@ -5143,6 +5542,14 @@
           "ids": [618, 619, 220210, 224688, 224689, 224690],
           "table": "chartevents",
           "sub_var": "itemid"
+        }
+      ],
+      "sic": [
+        {
+          "ids": 719,
+          "table": "data_float_h",
+          "sub_var": "dataid",
+          "class": "sic_itm"
         }
       ]
     }
@@ -5270,6 +5677,14 @@
           "ids": [51, 455, 6701, 220050, 220179],
           "table": "chartevents",
           "sub_var": "itemid"
+        }
+      ],
+      "sic": [
+        {
+          "ids": [701, 704],
+          "table": "data_float_h",
+          "sub_var": "dataid",
+          "class": "sic_itm"
         }
       ]
     }
@@ -5569,6 +5984,14 @@
           "sub_var": "itemid",
           "callback": "convert_unit(fahr_to_cels, 'C', 'f')"
         }
+      ],
+      "sic": [
+        {
+          "ids": 709,
+          "table": "data_float_h",
+          "sub_var": "dataid",
+          "class": "sic_itm"
+        }
       ]
     }
   },
@@ -5665,6 +6088,14 @@
           "ids": 51003,
           "table": "labevents",
           "sub_var": "itemid"
+        }
+      ],
+      "sic": [
+        {
+          "ids": 481,
+          "table": "laboratory",
+          "sub_var": "laboratoryid",
+          "class": "sic_itm"
         }
       ]
     }
@@ -5783,6 +6214,14 @@
           "ids": [40055, 40056, 40057, 40065, 40069, 40085, 40086, 40094, 40096, 40405, 40428, 40473, 40715, 43175, 226557, 226558, 226559, 226560, 226561, 226563, 226564, 226565, 226566, 226567, 226584, 227510],
           "table": "outputevents",
           "sub_var": "itemid"
+        }
+      ],
+      "sic": [
+        {
+          "ids": 725,
+          "table": "data_float_h",
+          "sub_var": "dataid",
+          "class": "sic_itm"
         }
       ]
     }
@@ -6075,6 +6514,14 @@
           "table": "labevents",
           "sub_var": "itemid"
         }
+      ],
+      "sic": [
+        {
+          "ids": 301,
+          "table": "laboratory",
+          "sub_var": "laboratoryid",
+          "class": "sic_itm"
+        }
       ]
     }
   },
@@ -6136,6 +6583,14 @@
           "ids": [762, 4183, 226512],
           "table": "chartevents",
           "sub_var": "itemid"
+        }
+      ],
+      "sic": [
+        {
+          "table": "cases",
+          "val_var": "weightonadmission",
+          "class": "col_itm",
+          "callback": "transform_fun(binary_op(`/`, 1000))"
         }
       ]
     }
