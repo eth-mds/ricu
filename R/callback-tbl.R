@@ -13,12 +13,17 @@ sic_data_float_h <- function(dat, ...) {
   setDT(dat)
   dat[, c("rawdata") := lapply(get("rawdata"), hexstring_to_float)] # TODO: remove hard coding of rawdata and derive from JSON config
   dat <- dat[, .(
-    Offset = Offset + 60 * (0:(sapply(rawdata, length)-1)),
-    Val = Val,
-    cnt = cnt,
-    rawdata = unlist(rawdata)
-  ),
-  by = .(id, CaseID, DataID)
+      Offset = Offset + 60 * (0:(sapply(rawdata, length)-1)),
+      Val = Val,
+      cnt = cnt,
+      rawdata = unlist(rawdata),
+      rawdata_present = !is.na(rawdata)
+    ),
+    by = .(id, CaseID, DataID)
   ]
+  dat[rawdata_present == FALSE, rawdata := Val] # Fix measurements that only have one 
+  dat[, rawdata_present := NULL]
   dat
 }
+
+
