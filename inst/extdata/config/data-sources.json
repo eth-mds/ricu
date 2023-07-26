@@ -9410,7 +9410,7 @@
         "files": "cases.csv.gz",
         "defaults": {
           "index_var": "offsetafterfirstadmission",
-          "time_vars": ["offsetafterfirstadmission"]
+          "time_vars": ["offsetafterfirstadmission", "offsetofdeath"]
         },
         "cols": {
           "caseid": {

@@ -195,6 +195,16 @@ mimic_age <- function(x) {
 
 eicu_age <- function(x) as.numeric(ifelse(x == "> 89", 90, x))
 
+sic_sex <- function(x) {
+  ifelse(
+    x == 735, 
+    "Male",
+    ifelse(x == 736, 
+            "Female",
+            NA_character_
+  ))
+}
+
 hirid_death <- function(x, val_var, sub_var, env, ...) {
 
   dis <- "discharge_status"
@@ -744,6 +754,13 @@ aumc_death <- function(x, val_var, ...) {
   idx <- index_var(x)
 
   x <- x[, c(val_var) := is_true(get(idx) - get(val_var) < hours(72L))]
+  x
+}
+
+sic_death <- function(x, val_var, adm_time, ...) {
+  idx <- index_var(x)
+  
+  x <- x[, c(val_var) := is_true(get(idx) - (get(adm_time) + secs(get(val_var))) < hours(72L))]
   x
 }
 

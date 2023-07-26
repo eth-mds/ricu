@@ -1578,6 +1578,16 @@
           "callback": "transform_fun(comp_na(`==`, 1L))",
           "class": "col_itm"
         }
+      ],
+      "sic": [
+        {
+          "table": "cases",
+          "index_var": "offsetofdeath",
+          "adm_time": "offsetafterfirstadmission",
+          "val_var": "timeofstay",
+          "callback": "sic_death",
+          "class": "col_itm"
+        }
       ]
     }
   },
@@ -5333,6 +5343,14 @@
           "val_var": "gender",
           "callback": "apply_map(c(M = 'Male', F = 'Female'))",
           "class": "col_itm"
+        }
+      ],
+      "sic": [
+        {
+          "table": "cases",
+          "val_var": "sex",
+          "class": "col_itm",
+          "callback": "transform_fun(sic_sex)"
         }
       ]
     }
