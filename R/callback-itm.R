@@ -620,6 +620,21 @@ aumc_rate_units <- function(mcg_to_units) {
   }
 }
 
+sic_rate_kg <- function(x, val_var, unit_var, stop_var, env, ...) {
+  
+  g_to_mcg <- convert_unit(binary_op(`*`, 1000000), "mcg", "g")
+
+  res <- g_to_mcg(x, val_var, unit_var)
+  res <- add_weight(res, env, "weight")
+  
+  res <- res[, c(val_var) := get(val_var) / get("weight")]
+  res <- res[, c(unit_var) := paste(get(unit_var), 'min', sep = "/kg/")]
+  
+  expand(res, index_var(x), stop_var,
+         keep_vars = c(id_vars(x), val_var, unit_var))
+}
+
+
 eicu_duration <- function(gap_length) {
 
   assert_that(is_interval(gap_length), is_scalar(gap_length))
@@ -640,6 +655,15 @@ hirid_duration <- function(x, val_var, grp_var, ...) {
 aumc_dur <- function(x, val_var, stop_var, grp_var, ...) {
   calc_dur(x, val_var, index_var(x), stop_var, grp_var)
 }
+
+default_duration <- function(x, val_var, stop_var, grp_var, ...) {
+  calc_dur(x, val_var, index_var(x), stop_var, grp_var)
+}
+
+no_duration <- function(x, val_var, grp_var, ...) {
+  calc_dur(x, val_var, index_var(x), index_var(x), grp_var)
+}
+
 
 #' Used for determining vasopressor durations, `calc_dur()` will calculate
 #' durations by taking either per ID or per combination of ID and `grp_var`

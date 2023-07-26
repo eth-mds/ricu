@@ -9667,6 +9667,7 @@
         "files": "medication.csv.gz",
         "defaults": {
           "index_var": "offset",
+          "val_var": "amount",
           "time_vars": ["offset", "offsetdrugend"]
         },
         "cols": {

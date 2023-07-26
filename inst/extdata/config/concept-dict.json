@@ -99,6 +99,13 @@
           "sub_var": "itemid",
           "callback": "transform_fun(set_val(TRUE))"
         }
+      ],
+      "sic": [
+        {
+          "ids": [1401, 1406, 1408, 1410, 1418, 1421, 1422, 1423, 1428, 1431, 1433, 1436, 1439, 1446, 1449, 1451, 1454, 1455, 1456, 1457, 1458, 1459, 1460, 1461, 1462, 1577, 1603, 1628, 1605, 1997, 1693, 1606, 1813, 1913, 1927, 1819],
+          "table": "medication",
+          "sub_var": "drugid"
+        }
       ]
     }
   },
@@ -1440,6 +1447,14 @@
           "sub_var": "pharmaid",
           "callback": "transform_fun(set_val(TRUE))"
         }
+      ],
+      "sic": [
+        {
+          "ids": [1397, 1506, 1524, 1525, 1751, 1977],
+          "table": "medication",
+          "sub_var": "drugid",
+          "callback": "transform_fun(set_val(TRUE))"
+        }
       ]
     }
   },
@@ -1942,6 +1957,16 @@
           "grp_var": "linkorderid",
           "callback": "mimic_dur_inmv"
         }
+      ],
+      "sic": [
+        {
+          "ids": 1559,
+          "table": "medication",
+          "sub_var": "drugid",
+          "stop_var": "offsetdrugend",
+          "grp_var": "id",
+          "callback": "default_duration"
+        }
       ]
     }
   },
@@ -2033,6 +2058,17 @@
           "stop_var": "endtime",
           "callback": "mimic_rate_mv"
         }
+      ], 
+      "sic": [
+        {
+          "ids": 1559,
+          "table": "medication",
+          "sub_var": "drugid",
+          "val_var": "amountperminute",
+          "stop_var": "offsetdrugend",
+          "class": "sic_itm",
+          "callback": "sic_rate_kg"
+        }
       ]
     }
   },
@@ -2120,6 +2156,16 @@
           "grp_var": "linkorderid",
           "callback": "mimic_dur_inmv"
         }
+      ],
+      "sic": [
+        {
+          "ids": 1618,
+          "table": "medication",
+          "sub_var": "drugid",
+          "stop_var": "offsetdrugend",
+          "grp_var": "id",
+          "callback": "default_duration"
+        }
       ]
     }
   },
@@ -2201,6 +2247,17 @@
           "sub_var": "itemid",
           "stop_var": "endtime",
           "callback": "mimic_rate_mv"
+        }
+      ], 
+      "sic": [
+        {
+          "ids": 1618,
+          "table": "medication",
+          "sub_var": "drugid",
+          "val_var": "amountperminute",
+          "stop_var": "offsetdrugend",
+          "class": "sic_itm",
+          "callback": "sic_rate_kg"
         }
       ]
     }
@@ -2437,6 +2494,16 @@
           "grp_var": "linkorderid",
           "callback": "mimic_dur_inmv"
         }
+      ],
+      "sic": [
+        {
+          "ids": 1502,
+          "table": "medication",
+          "sub_var": "drugid",
+          "stop_var": "offsetdrugend",
+          "grp_var": "id",
+          "callback": "default_duration"
+        }
       ]
     }
   },
@@ -2527,6 +2594,17 @@
           "sub_var": "itemid",
           "stop_var": "endtime",
           "callback": "mimic_rate_mv"
+        }
+      ],
+      "sic": [
+        {
+          "ids": 1502,
+          "table": "medication",
+          "sub_var": "drugid",
+          "val_var": "amountperminute",
+          "stop_var": "offsetdrugend",
+          "class": "sic_itm",
+          "callback": "sic_rate_kg"
         }
       ]
     }
@@ -4565,6 +4643,16 @@
           "grp_var": "linkorderid",
           "callback": "mimic_dur_inmv"
         }
+      ],
+      "sic": [
+        {
+          "ids": 1562,
+          "table": "medication",
+          "sub_var": "drugid",
+          "stop_var": "offsetdrugend",
+          "grp_var": "id",
+          "callback": "default_duration"
+        }
       ]
     }
   },
@@ -4662,6 +4750,17 @@
           "sub_var": "itemid",
           "stop_var": "endtime",
           "callback": "mimic_rate_mv"
+        }
+      ],
+      "sic": [
+        {
+          "ids": 1562,
+          "table": "medication",
+          "sub_var": "drugid",
+          "val_var": "amountperminute",
+          "stop_var": "offsetdrugend",
+          "class": "sic_itm",
+          "callback": "sic_rate_kg"
         }
       ]
     }
