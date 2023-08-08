@@ -491,6 +491,8 @@ load_concepts.fct_cncpt <- function(x, aggregate = NULL, ...,
     res  <- set(res, j = "val_var", value = character())
   } else if (is.character(lvl)) {
     keep <- res[["val_var"]] %chin% lvl
+  } else if (is.null(lvl)) {
+    keep <- TRUE
   } else {
     keep <- res[["val_var"]] %in% lvl
   }
