@@ -806,6 +806,7 @@ set_target.concept <- function(x, target) {
   new_concept(lapply(x, set_target, target))
 }
 
+#' @export
 set_target.default <- function(x, target) stop_generic(x, .Generic)
 
 #' @rdname item_utils
