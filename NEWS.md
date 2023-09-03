@@ -1,3 +1,7 @@
+# ricu 0.5.6
+
+* maintenance release: fixes non-character numeric version input issues
+
 # ricu 0.5.5
 
 * maintenance release: fixes an issue introduced by pillar 1.9.0 via an update
