@@ -1,4 +1,3 @@
-
 #' Read and write utilities
 #'
 #' Support for reading from and writing to pipe separated values (`.psv`)

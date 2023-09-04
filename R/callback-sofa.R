@@ -1,4 +1,3 @@
-
 #' SOFA score label
 #'
 #' The SOFA (Sequential Organ Failure Assessment) score is a commonly used

@@ -1,4 +1,3 @@
-
 #' @keywords internal
 #' @importFrom data.table setattr setcolorder set setnames setorderv
 #' @importFrom data.table setDT setDF fifelse rbindlist data.table

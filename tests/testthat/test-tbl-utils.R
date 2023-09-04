@@ -1,4 +1,3 @@
-
 test_that("rename_cols for id_tbl", {
 
   tbl <- id_tbl(a = 1:10, b = rnorm(10), c = rnorm(10))

@@ -1,4 +1,3 @@
-
 #' File system utilities
 #'
 #' Determine the location where to place data meant to persist between

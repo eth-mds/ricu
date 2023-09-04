@@ -1,4 +1,3 @@
-
 #' Time series utility functions
 #'
 #' ICU data as handled by `ricu` is mostly comprised of time series data and as

@@ -1,4 +1,3 @@
-
 #' Tabular ICU data classes
 #'
 #' In order to simplify handling or tabular ICU data, `ricu` provides

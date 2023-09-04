@@ -1,4 +1,3 @@
-
 vent_flag <- function(x, val_var, ...) {
   x <- x[as.logical(get(val_var)), ]
   set(x, j = c(index_var(x), val_var),

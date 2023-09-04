@@ -1,4 +1,3 @@
-
 test_that("expect_all_identical", {
 
   expect_success(expect_all_identical("foo", "foo"))

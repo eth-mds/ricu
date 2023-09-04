@@ -1,4 +1,3 @@
-
 #' @export
 `[.id_tbl` <- function(x, ...) wrap_ptype(as_ptype(x), NextMethod())
 

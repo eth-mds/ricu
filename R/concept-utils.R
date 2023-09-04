@@ -1,4 +1,3 @@
-
 #' Data items
 #'
 #' Item objects are used in `ricu` as a way to specify how individual data

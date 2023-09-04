@@ -1,4 +1,3 @@
-
 #' Sepsis 3 label
 #'
 #' The sepsis 3 label consists of a suspected infection combined with an acute

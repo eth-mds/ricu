@@ -1,4 +1,3 @@
-
 collect_dots <- function(concepts, interval, ..., merge_dat = FALSE) {
 
   assert_that(is.character(concepts))
