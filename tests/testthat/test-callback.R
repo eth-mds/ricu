@@ -1,3 +1,5 @@
+skip_on_cran()
+
 test_that("aumc callbacks", {
 
   skip_if_not_installed("mockthat")

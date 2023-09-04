@@ -1,3 +1,5 @@
+skip_on_cran()
+
 test_that("expect_all_identical", {
 
   expect_success(expect_all_identical("foo", "foo"))

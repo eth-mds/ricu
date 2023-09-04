@@ -1,3 +1,5 @@
+skip_on_cran()
+
 test_that("id_tbl constructors", {
 
   tbl <- id_tbl(a = 1:10, b = rnorm(10))

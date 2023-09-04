@@ -1,3 +1,5 @@
+skip_on_cran()
+
 test_that("cli progress", {
 
   skip_if_not_installed("mockthat")
