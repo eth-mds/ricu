@@ -8239,6 +8239,9 @@
       },
       "caregiver": {
         "files": "icu/caregiver.csv.gz",
+        "defaults": {
+          "val_var": "caregiver_id"
+        },
         "num_rows": 15468,
         "cols": {
           "caregiver_id": {
@@ -8458,8 +8461,8 @@
         "files": "icu/ingredientevents.csv.gz",
         "defaults": {
           "index_var": "starttime",
-          "val_var": "amount",
-          "unit_var": "amountuom",
+          "val_var": "rate",
+          "unit_var": "rateuom",
           "time_vars": ["starttime", "endtime", "storetime"]
         },
         "num_rows": 11627821,
