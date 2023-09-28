@@ -227,7 +227,7 @@ download_src.aumc_cfg <- function(x, data_dir = src_data_dir(x),
       fil <- file.path(tmp, name)
 
       if (isTRUE(verbose)) {
-        prg <- progress_init(size, msg = "Donwloading `aumc` data",
+        prg <- progress_init(size, msg = "Downloading `aumc` data",
                              what = FALSE)
       } else {
         prg <- FALSE
