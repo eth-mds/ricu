@@ -1,4 +1,3 @@
-
 .onLoad <- function(libname, pkgname) { # nocov start
 
   fix_base_fun <- function(fun, fix) {

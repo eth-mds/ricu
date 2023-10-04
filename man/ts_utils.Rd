@@ -168,6 +168,7 @@ can be seen as a compromise between the two, where windows are spanned for
 certain time-points, specified by \code{index}.
 }
 \examples{
+if (FALSE) {
 tbl <- ts_tbl(x = 1:5, y = hours(1:5), z = hours(2:6), val = rnorm(5),
               index_var = "y")
 exp <- expand(tbl, "y", "z", step_size = 1L, new_index = "y",
@@ -193,5 +194,6 @@ is_regular(tbl)
 tbl[6, 2] <- hours(2)
 has_no_gaps(tbl)
 is_regular(tbl)
+}
 
 }

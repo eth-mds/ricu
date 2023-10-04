@@ -1,4 +1,3 @@
-
 test_that("load hirid items", {
 
   skip_if_not_installed("mockthat")

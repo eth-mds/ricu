@@ -1,4 +1,3 @@
-
 #' Data loading utilities
 #'
 #' Two important tools for smoothing out differences among used datasets are

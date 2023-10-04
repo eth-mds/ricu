@@ -1,4 +1,3 @@
-
 skip_if_srcs_missing(c("mimic_demo", "eicu_demo"))
 
 test_that("config classes", {

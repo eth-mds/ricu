@@ -1,4 +1,3 @@
-
 mock_fetch_memory <- function(url, handle, ...) {
 
   file <- system.file("testdata", paste0(basename(url), ".rds"),

@@ -1,4 +1,3 @@
-
 #' Tabular ICU data classes
 #'
 #' In order to simplify handling or tabular ICU data, `ricu` provides
@@ -636,11 +635,11 @@ as_ptype.id_tbl <- function(x) {
   reclass_tbl(as.data.table(lapply(x, `[`, 0L)[meta_vars(x)]), x)
 }
 
-#' @method reclass_tbl data.table
+#' @method as_ptype data.table
 #' @export
 as_ptype.data.table <- function(x) data.table()
 
-#' @method reclass_tbl data.frame
+#' @method as_ptype data.frame
 #' @export
 as_ptype.data.frame <- function(x) data.frame()
 

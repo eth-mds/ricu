@@ -1,4 +1,3 @@
-
 #' @param x Object to coerce/query
 #'
 #' @rdname src_cfg

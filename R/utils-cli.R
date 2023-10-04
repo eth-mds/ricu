@@ -1,4 +1,3 @@
-
 is_interactive <- function() {
   !isTRUE(getOption('knitr.in.progress')) && interactive()
 }

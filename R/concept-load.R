@@ -1,4 +1,3 @@
-
 #' Load concept data
 #'
 #' Concept objects are used in `ricu` as a way to specify how a clinical
