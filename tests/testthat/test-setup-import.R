@@ -1,4 +1,3 @@
-
 skip_on_cran()
 
 tmp_cars <- withr::local_tempdir()
@@ -132,6 +131,8 @@ test_that("import src", {
     import_src("mimic_demo", tmp_srcs, tables = "foo", verbose = FALSE),
     class = "are_in_assert"
   )
+
+  skip_if_not_installed("mockthat")
 
   mocks <- mockthat::local_mock(
     src_file_exist = quote({

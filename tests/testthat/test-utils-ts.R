@@ -1,4 +1,3 @@
-
 test_that("collapse/expand", {
 
   tbl <- ts_tbl(x = 1:5, y = hours(1:5), z = hours(2:6), val = rnorm(5),

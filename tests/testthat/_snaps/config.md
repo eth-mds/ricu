@@ -3,7 +3,7 @@
     Code
       print(id)
     Output
-      <id_cfg<mimic_demo[patient < hadm < icustay]>[3]>
+      <mimic_demo_ids[3]>
            patient         hadm      icustay 
       `subject_id`    `hadm_id` `icustay_id` 
 
@@ -12,7 +12,7 @@
     Code
       print(co)
     Output
-      <col_cfg<mimic_demo[id, index, time, unit, val]>[25]>
+      <mimic_demo_cols[25]>
               admissions            callout         caregivers        chartevents 
          [0, 0, 5, 0, 1]    [0, 1, 6, 0, 1]    [1, 0, 0, 0, 1]    [0, 1, 2, 1, 1] 
                cptevents              d_cpt    d_icd_diagnoses   d_icd_procedures 
@@ -33,7 +33,7 @@
     Code
       print(tb)
     Output
-      <tbl_cfg<mimic_demo[rows x cols; partitions]>[25]>
+      <mimic_demo_tbls[25]>
               admissions            callout         caregivers        chartevents 
             [?? x 19; 1]       [?? x 24; 1]        [?? x 4; 1]       [?? x 15; 2] 
                cptevents              d_cpt    d_icd_diagnoses   d_icd_procedures 

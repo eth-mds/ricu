@@ -1,4 +1,3 @@
-
 test_that("icu_tbl subsetting", {
 
   col <- runif(10)

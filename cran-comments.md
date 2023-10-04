@@ -10,4 +10,4 @@
 
 0 errors | 0 warnings | 0 notes
 
-* Maintenance release (compatibility with prt v0.1.5)
+* Maintenance release (fixes non-character numeric version input issues)

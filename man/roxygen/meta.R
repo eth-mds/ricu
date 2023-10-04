@@ -1,4 +1,7 @@
 
-options(cli.unicode = FALSE)[["cli.unicode"]]
+options(
+  cli.unicode = FALSE,
+  knitr.package.upload.fun = basename
+)
 
 list(markdown = TRUE)

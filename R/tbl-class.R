@@ -1,4 +1,3 @@
-
 #' Tabular ICU data classes
 #'
 #' In order to simplify handling or tabular ICU data, `ricu` provides
@@ -73,8 +72,9 @@
 #' 1. for `ts_tbl` that the string-valued `index_var` column is available and
 #'    does not intersect with `id_vars` and that the index column obeys the
 #'    specified interval.
-#' 1. for `win_tbl` that the string-valued `dur_var` corresponds to a `difftime`
-#'    vector and is not among the columns marked as index or ID variables
+#' 1. for `win_tbl` that the string-valued `dur_var` corresponds to a
+#'    `difftime` vector and is not among the columns marked as index or ID
+#'    variables
 #'
 #' Finally, inheritance can be checked by calling `is_id_tbl()` and
 #' `is_ts_tbl()`. Note that due to `ts_tbl` inheriting from `id_tbl`,
@@ -635,11 +635,11 @@ as_ptype.id_tbl <- function(x) {
   reclass_tbl(as.data.table(lapply(x, `[`, 0L)[meta_vars(x)]), x)
 }
 
-#' @method reclass_tbl data.table
+#' @method as_ptype data.table
 #' @export
 as_ptype.data.table <- function(x) data.table()
 
-#' @method reclass_tbl data.frame
+#' @method as_ptype data.frame
 #' @export
 as_ptype.data.frame <- function(x) data.frame()
 

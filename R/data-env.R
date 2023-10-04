@@ -1,4 +1,3 @@
-
 #' ICU datasets
 #'
 #' The [Laboratory for Computational Physiology
@@ -67,7 +66,7 @@
 #'
 #' Much care has been taken to make `ricu` extensible to new datasets. For
 #' example the publicly available ICU database [AmsterdamUMCdb
-#' ](https://www.amsterdammedicaldatascience.nl/#amsterdamumcdb)
+#' ](https://amsterdammedicaldatascience.nl/amsterdamumcdb/)
 #' provided by the Amsterdam University Medical Center, currently is not part
 #' of the core datasets of `ricu`, but code for integrating this dataset is
 #' available on [github](https://github.com/eth-mds/aumc).

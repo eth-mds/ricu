@@ -1,4 +1,3 @@
-
 #' Load concept data
 #'
 #' Concept objects are used in `ricu` as a way to specify how a clinical
@@ -33,14 +32,16 @@
 #' generic functions.
 #'
 #' @section Concept:
-#' Top-level entry points are either a character vector, which is used to
-#' subset a `concept` object or an entire [concept
+#' Top-level entry points are either a character vector of concept names or an
+#' integer vector of concept IDs (matched against `omopid` fields), which are
+#' used to subset a `concept` object or an entire [concept
 #' dictionary][load_dictionary()], or a `concept` object. When passing a
-#' character vector as first argument, the most important further arguments at
-#' that level control from where the dictionary is taken (`dict_name` or
-#' `dict_dirs`). At `concept` level, the most important additional arguments
-#' control the result structure: data merging can be disabled using
-#' `merge_data` and data aggregation is governed by the `aggregate` argument.
+#' character/integer vector as first argument, the most important further
+#' arguments at that level control from where the dictionary is taken
+#' (`dict_name` or `dict_dirs`). At `concept` level, the most important
+#' additional arguments control the result structure: data merging can be
+#' disabled using `merge_data` and data aggregation is governed by the
+#' `aggregate` argument.
 #'
 #' Data aggregation is important for merging several concepts into a
 #' wide-format table, as this requires data to be unique per observation (i.e.
@@ -164,8 +165,9 @@ load_concepts <- function(x, ...) UseMethod("load_concepts", x)
 
 #' @param src A character vector, used to subset the `concepts`; `NULL`
 #' means no subsetting
-#' @param concepts The concepts to be used or `NULL` in which case
-#' [load_dictionary()] is called
+#' @param concepts The concepts to be used, or `NULL`. In the latter case the 
+#' standard ricu dictionary (obtained by calling [load_dictionary()]) is used
+#' for loading the objects specified in `x`.
 #' @param dict_name,dict_dirs In case not concepts are passed as `concepts`,
 #' these are forwarded to [load_dictionary()] as `name` and `file` arguments
 #'
@@ -177,8 +179,6 @@ load_concepts.character <- function(x, src = NULL, concepts = NULL, ...,
 
   if (is.null(concepts)) {
 
-    assert_that(not_null(src))
-
     load_concepts(
       load_dictionary(src, x, name = dict_name, cfg_dirs = dict_dirs),
       src = NULL, ...
@@ -188,6 +188,58 @@ load_concepts.character <- function(x, src = NULL, concepts = NULL, ...,
 
     load_concepts(concepts[x], src, ...)
   }
+}
+
+#' @rdname load_concepts
+#' @export
+load_concepts.integer <- function(x, src = NULL, concepts = NULL, ...,
+                                  dict_name = "concept-dict",
+                                  dict_dirs = NULL) {
+
+  assert_that(no_na(x))
+
+  if (is.null(concepts)) {
+
+    concepts <- load_dictionary(src, name = dict_name, cfg_dirs = dict_dirs)
+
+  } else if (not_null(src)) {
+
+    concepts <- subset_src(concepts, src)
+  }
+
+  mapping <- set_names(
+    int_ply(concepts, `[[`, "omopid"),
+    chr_ply(concepts, `[[`, "name")
+  )
+
+  hits <- match(x, mapping)
+
+  if (any(is.na(hits))) {
+
+    warn_ricu("
+      The following {qty(sum(is.na(hits)))} concept{?s} could not be matched:
+      {concat(x[is.na(hits)])}",
+      "omop_miss_id"
+    )
+
+    hits <- hits[!is.na(hits)]
+  }
+
+  res <- load_concepts(concepts[hits], src = NULL, ...)
+
+  res <- rename_cols(res, paste0("omop_", mapping[data_vars(res)]),
+                     data_vars(res), by_ref = TRUE)
+
+  res
+}
+
+#' @rdname load_concepts
+#' @export
+load_concepts.numeric <- function(x, ...) {
+
+  assert_that(all_fun(x, is_intish))
+
+  load_concepts(as.integer(x), ...)
 }
 
 #' @param aggregate Controls how data within concepts is aggregated

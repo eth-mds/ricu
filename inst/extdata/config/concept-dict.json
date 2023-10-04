@@ -2,6 +2,7 @@
   "abx": {
     "class": "lgl_cncpt",
     "description": "antibiotics",
+    "omopid": 4085730,
     "category": "medications",
     "sources": {
       "aumc": [
@@ -104,6 +105,7 @@
   "adh_rate": {
     "unit": ["units/min", "U/min"],
     "description": "vasopressin rate",
+    "omopid": 1507835,
     "category": "medications",
     "sources": {
       "aumc": [
@@ -249,6 +251,7 @@
     "max": 100,
     "target": "id_tbl",
     "description": "patient age",
+    "omopid": 4314456,
     "category": "demographics",
     "sources": {
       "aumc": [
@@ -312,6 +315,7 @@
     "min": 0,
     "max": 6,
     "description": "albumin",
+    "omopid": 4017497,
     "category": "chemistry",
     "sources": {
       "aumc": [
@@ -372,6 +376,7 @@
     "unit": ["IU/L", "U/l"],
     "min": 0,
     "description": "alkaline phosphatase",
+    "omopid": 4275206,
     "category": "chemistry",
     "sources": {
       "aumc": [
@@ -430,6 +435,7 @@
     "unit": ["IU/L", "U/l"],
     "min": 0,
     "description": "alanine aminotransferase",
+    "omopid": 4146380,
     "category": "chemistry",
     "sources": {
       "aumc": [
@@ -488,6 +494,7 @@
     "unit": ["IU/L", "U/l"],
     "min": 0,
     "description": "aspartate aminotransferase",
+    "omopid": 4263457,
     "category": "chemistry",
     "sources": {
       "aumc": [
@@ -545,6 +552,7 @@
   "avpu": {
     "concepts": "gcs",
     "description": "AVPU scale",
+    "omopid": 40493498,
     "category": "neurological",
     "callback": "avpu",
     "class": "rec_cncpt"
@@ -554,6 +562,7 @@
     "min": 0,
     "max": 50,
     "description": "basophils",
+    "omopid": 4172647,
     "category": "hematology",
     "sources": {
       "aumc": [
@@ -611,6 +620,7 @@
     "min": -25,
     "max": 25,
     "description": "base excess",
+    "omopid": 4284393,
     "category": "blood gas",
     "sources": {
       "aumc": [
@@ -672,6 +682,7 @@
     "min": 5,
     "max": 50,
     "description": "bicarbonate",
+    "omopid": 4194291,
     "category": "chemistry",
     "sources": {
       "aumc": [
@@ -731,6 +742,7 @@
     "min": 0,
     "max": 100,
     "description": "total bilirubin",
+    "omopid": 4118986,
     "category": "chemistry",
     "sources": {
       "aumc": [
@@ -792,6 +804,7 @@
     "min": 0,
     "max": 50,
     "description": "bilirubin direct",
+    "omopid": 4216632,
     "category": "chemistry",
     "sources": {
       "aumc": [
@@ -851,6 +864,7 @@
   "bmi": {
     "concepts": ["weight", "height"],
     "description": "patient body mass index",
+    "omopid": 4245997,
     "category": "demographics",
     "callback": "bmi",
     "target": "id_tbl",
@@ -859,6 +873,7 @@
   "bnd": {
     "unit": "%",
     "description": "band form neutrophils",
+    "omopid": 4100147,
     "category": "hematology",
     "sources": {
       "aumc": [
@@ -918,6 +933,7 @@
     "min": 0,
     "max": 200,
     "description": "blood urea nitrogen",
+    "omopid": 4017361,
     "category": "chemistry",
     "sources": {
       "aumc": [
@@ -979,6 +995,7 @@
     "min": 4,
     "max": 20,
     "description": "calcium",
+    "omopid": 4216722,
     "category": "chemistry",
     "sources": {
       "aumc": [
@@ -1042,6 +1059,7 @@
     "min": 0.5,
     "max": 2,
     "description": "calcium ionized",
+    "omopid": 46272910,
     "category": "blood gas",
     "sources": {
       "aumc": [
@@ -1100,6 +1118,7 @@
     "unit": ["IU/L", "U/l"],
     "min": 0,
     "description": "creatine kinase",
+    "omopid": 4265595,
     "category": "chemistry",
     "sources": {
       "aumc": [
@@ -1158,6 +1177,7 @@
     "unit": "ng/mL",
     "min": 0,
     "description": "creatine kinase MB",
+    "omopid": 4017058,
     "category": "chemistry",
     "sources": {
       "aumc": [
@@ -1217,6 +1237,7 @@
     "min": 80,
     "max": 130,
     "description": "chloride",
+    "omopid": 4188066,
     "category": "chemistry",
     "sources": {
       "aumc": [
@@ -1274,6 +1295,7 @@
   "cort": {
     "class": "lgl_cncpt",
     "description": "corticosteroids",
+    "omopid": 304275008,
     "category": "medications",
     "sources": {
       "aumc": [
@@ -1299,6 +1321,7 @@
     "min": 0,
     "max": 15,
     "description": "creatinine",
+    "omopid": 4013964,
     "category": "chemistry",
     "sources": {
       "aumc": [
@@ -1359,6 +1382,7 @@
     "unit": "mg/L",
     "min": 0,
     "description": "C-reactive protein",
+    "omopid": 4208414,
     "category": "chemistry",
     "sources": {
       "aumc": [
@@ -1423,6 +1447,7 @@
     "min": 0,
     "max": 200,
     "description": "diastolic blood pressure",
+    "omopid": 4154790,
     "category": "vitals",
     "sources": {
       "aumc": [
@@ -1480,6 +1505,7 @@
   "death": {
     "class": "lgl_cncpt",
     "description": "in hospital mortality",
+    "omopid": 4306655,
     "category": "outcome",
     "sources": {
       "aumc": [
@@ -1551,6 +1577,7 @@
     "min": 0,
     "unit": "ml/hr",
     "description": "dextrose (as D10)",
+    "omopid": 4197597,
     "category": "medications",
     "target": "win_tbl",
     "sources": {
@@ -1762,6 +1789,7 @@
     "min": 0,
     "max": 50,
     "description": "dobutamine rate",
+    "omopid": 1337720,
     "category": "medications",
     "sources": {
       "aumc": [
@@ -1939,6 +1967,7 @@
     "min": 0,
     "max": 50,
     "description": "dopamine rate",
+    "omopid": 1337860,
     "category": "medications",
     "sources": {
       "aumc": [
@@ -2027,6 +2056,7 @@
     "min": 1,
     "max": 4,
     "description": "GCS eye",
+    "omopid": 4084277,
     "category": "neurological",
     "sources": {
       "aumc": [
@@ -2093,6 +2123,7 @@
     "min": 0,
     "max": 50,
     "description": "eosinophils",
+    "omopid": 4216098,
     "category": "hematology",
     "sources": {
       "aumc": [
@@ -2238,6 +2269,7 @@
     "min": 0,
     "max": 1.5,
     "description": "epinephrine rate",
+    "omopid": 1343916,
     "category": "medications",
     "sources": {
       "aumc": [
@@ -2336,6 +2368,7 @@
     "min": 0,
     "max": 200,
     "description": "erythrocyte sedimentation rate",
+    "omopid": 4212065,
     "category": "hematology",
     "sources": {
       "aumc": [
@@ -2381,6 +2414,7 @@
     "min": 10,
     "max": 60,
     "description": "endtidal CO2",
+    "omopid": 4353940,
     "category": "vitals",
     "sources": {
       "aumc": [
@@ -2425,6 +2459,7 @@
   "ett_gcs": {
     "class": "lgl_cncpt",
     "description": "tracheostomy",
+    "omopid": 4097216,
     "category": "respiratory",
     "target": "win_tbl",
     "sources": {
@@ -2489,6 +2524,7 @@
     "min": 0,
     "max": 1500,
     "description": "fibrinogen",
+    "omopid": 4094436,
     "category": "hematology",
     "sources": {
       "aumc": [
@@ -2550,6 +2586,7 @@
     "min": 21,
     "max": 100,
     "description": "fraction of inspired oxygen",
+    "omopid": 4353936,
     "category": "blood gas",
     "sources": {
       "aumc": [
@@ -2636,6 +2673,7 @@
   "gcs": {
     "concepts": ["egcs", "mgcs", "vgcs", "tgcs", "ett_gcs"],
     "description": "Glasgow coma scale (non-sedated)",
+    "omopid": 4093836,
     "category": "neurological",
     "aggregate": ["min", "min", "min", "min", "any"],
     "callback": "gcs",
@@ -2646,6 +2684,7 @@
     "min": 0,
     "max": 1000,
     "description": "glucose",
+    "omopid": 4144235,
     "category": "chemistry",
     "sources": {
       "aumc": [
@@ -2715,6 +2754,7 @@
   "hba1c": {
     "unit": "%",
     "description": "Hemoglobin A1C",
+    "omopid": 4184637,
     "category": "hematology",
     "sources": {
       "aumc": [
@@ -2749,6 +2789,7 @@
   },
   "hbco": {
     "description": "carboxyhemoglobin",
+    "omopid": 4056787,
     "category": "blood gas",
     "sources": {
       "aumc": [
@@ -2787,6 +2828,7 @@
     "min": 15,
     "max": 60,
     "description": "hematocrit",
+    "omopid": 4151358,
     "category": "hematology",
     "sources": {
       "aumc": [
@@ -2840,6 +2882,7 @@
     "max": 230,
     "target": "id_tbl",
     "description": "patient height",
+    "omopid": 607590,
     "category": "demographics",
     "sources": {
       "aumc": [
@@ -2903,6 +2946,7 @@
     "min": 4,
     "max": 18,
     "description": "hemoglobin",
+    "omopid": 4118981,
     "category": "hematology",
     "sources": {
       "aumc": [
@@ -2964,6 +3008,7 @@
     "min": 0,
     "max": 300,
     "description": "heart rate",
+    "omopid": 4239408,
     "category": "vitals",
     "sources": {
       "aumc": [
@@ -3020,6 +3065,7 @@
   },
   "inr_pt": {
     "description": "prothrombin time/international normalized ratio",
+    "omopid": 4306239,
     "category": "hematology",
     "sources": {
       "aumc": [
@@ -3078,6 +3124,7 @@
     "unit": "units/hr",
     "min": 0,
     "description": "insulin",
+    "omopid": 42537007,
     "category": "medications",
     "sources": {
       "aumc": [
@@ -3158,6 +3205,7 @@
     "min": 0,
     "max": 10,
     "description": "potassium",
+    "omopid": 4207483,
     "category": "chemistry",
     "sources": {
       "aumc": [
@@ -3217,6 +3265,7 @@
     "min": 0,
     "max": 50,
     "description": "lactate",
+    "omopid": 4191725,
     "category": "blood gas",
     "sources": {
       "aumc": [
@@ -3276,6 +3325,7 @@
     "min": 0,
     "target": "id_tbl",
     "description": "hospital length of stay",
+    "omopid": 462369952,
     "category": "outcome",
     "sources": {
       "eicu": [
@@ -3378,6 +3428,7 @@
     "min": 0,
     "max": 100,
     "description": "lymphocytes",
+    "omopid": 4254663,
     "category": "hematology",
     "sources": {
       "aumc": [
@@ -3444,6 +3495,7 @@
     "min": 0,
     "max": 250,
     "description": "mean arterial pressure",
+    "omopid": 4239021,
     "category": "vitals",
     "sources": {
       "aumc": [
@@ -3511,7 +3563,8 @@
   "mch": {
     "unit": "pg",
     "min": 0,
-    "description": "mean cell hemoglobin",
+    "description": "mean corpuscular hemoglobin",
+    "omopid": 4182871,
     "category": "hematology",
     "sources": {
       "aumc": [
@@ -3572,6 +3625,7 @@
     "min": 20,
     "max": 50,
     "description": "mean corpuscular hemoglobin concentration",
+    "omopid": 4290193,
     "category": "hematology",
     "sources": {
       "aumc": [
@@ -3633,6 +3687,7 @@
     "min": 50,
     "max": 150,
     "description": "mean corpuscular volume",
+    "omopid": 4016239,
     "category": "hematology",
     "sources": {
       "aumc": [
@@ -3692,6 +3747,7 @@
     "target": "win_tbl",
     "levels": ["invasive", "noninvasive"],
     "description": "mechanical ventilation windows",
+    "omopid": 4230167,
     "category": "respiratory",
     "sources": {
       "aumc": [
@@ -3730,6 +3786,7 @@
     "min": 0,
     "max": 100,
     "description": "methemoglobin",
+    "omopid": 4204561,
     "category": "blood gas",
     "sources": {
       "aumc": [
@@ -3787,6 +3844,7 @@
   "mews": {
     "concepts": ["sbp", "hr", "resp", "temp", "avpu"],
     "description": "modified early warning score",
+    "omopid": 40484211,
     "category": "outcome",
     "callback": "mews_score",
     "class": "rec_cncpt"
@@ -3796,6 +3854,7 @@
     "min": 0.5,
     "max": 5,
     "description": "magnesium",
+    "omopid": 4243005,
     "category": "chemistry",
     "sources": {
       "aumc": [
@@ -3858,6 +3917,7 @@
     "min": 1,
     "max": 6,
     "description": "GCS motor",
+    "omopid": 4083352,
     "category": "neurological",
     "sources": {
       "aumc": [
@@ -3924,6 +3984,7 @@
     "min": 110,
     "max": 165,
     "description": "sodium",
+    "omopid": 4208938,
     "category": "chemistry",
     "sources": {
       "aumc": [
@@ -3983,6 +4044,7 @@
     "min": 0,
     "max": 100,
     "description": "neutrophils",
+    "omopid": 4148615,
     "category": "hematology",
     "sources": {
       "aumc": [
@@ -4046,6 +4108,7 @@
   "news": {
     "concepts": ["resp", "o2sat", "supp_o2", "temp", "sbp", "hr", "avpu"],
     "description": "national early warning score",
+    "omopid": 44808550,
     "category": "outcome",
     "callback": "news_score",
     "class": "rec_cncpt"
@@ -4150,6 +4213,7 @@
     "min": 0,
     "max": 3,
     "description": "norepinephrine rate",
+    "omopid": 1321341,
     "category": "medications",
     "sources": {
       "aumc": [
@@ -4248,6 +4312,7 @@
     "min": 50,
     "max": 100,
     "description": "oxygen saturation",
+    "omopid": 40483579,
     "category": "respiratory",
     "sources": {
       "aumc": [
@@ -4323,6 +4388,7 @@
   "pafi": {
     "concepts": ["po2", "fio2"],
     "description": "Horowitz index",
+    "omopid": 4233883,
     "category": "respiratory",
     "aggregate": ["min", "max"],
     "callback": "pafi",
@@ -4333,6 +4399,7 @@
     "min": 10,
     "max": 150,
     "description": "CO2 partial pressure",
+    "omopid": 4097882,
     "category": "blood gas",
     "sources": {
       "aumc": [
@@ -4391,6 +4458,7 @@
     "min": 6.8,
     "max": 8,
     "description": "pH of blood",
+    "omopid": 4097822,
     "category": "blood gas",
     "sources": {
       "aumc": [
@@ -4448,6 +4516,7 @@
   "phn_rate": {
     "unit": "mcg/kg/min",
     "description": "phenylephrine rate",
+    "omopid": 1135766,
     "category": "medications",
     "sources": {
       "eicu": [
@@ -4532,6 +4601,7 @@
     "min": 0,
     "max": 40,
     "description": "phosphate",
+    "omopid": 4017907,
     "category": "chemistry",
     "sources": {
       "aumc": [
@@ -4593,6 +4663,7 @@
     "min": 5,
     "max": 1200,
     "description": "platelet count",
+    "omopid": 4267147,
     "category": "hematology",
     "sources": {
       "aumc": [
@@ -4652,6 +4723,7 @@
     "min": 40,
     "max": 600,
     "description": "O2 partial pressure",
+    "omopid": 4094581,
     "category": "blood gas",
     "sources": {
       "aumc": [
@@ -4710,6 +4782,7 @@
     "unit": "sec",
     "min": 0,
     "description": "prothrombine time",
+    "omopid": 4245261,
     "category": "hematology",
     "sources": {
       "aumc": [
@@ -4760,6 +4833,7 @@
     "unit": "sec",
     "min": 0,
     "description": "partial thromboplastin time",
+    "omopid": 4175016,
     "category": "hematology",
     "sources": {
       "aumc": [
@@ -4817,6 +4891,7 @@
   "qsofa": {
     "concepts": ["gcs", "sbp", "resp"],
     "description": "quick SOFA score",
+    "omopid": 1616732,
     "category": "outcome",
     "callback": "qsofa_score",
     "class": "rec_cncpt"
@@ -4825,6 +4900,7 @@
     "min": -5,
     "max": 4,
     "description": "Richmond agitation sedation scale",
+    "omopid": 36684829,
     "category": "neurological",
     "sources": {
       "aumc": [
@@ -4886,6 +4962,7 @@
     "min": 0,
     "max": 20,
     "description": "red blood cell count",
+    "omopid": 4030871,
     "category": "hematology",
     "sources": {
       "aumc": [
@@ -4937,6 +5014,7 @@
     "min": 0,
     "max": 100,
     "description": "erythrocyte distribution width",
+    "omopid": 4281085,
     "category": "hematology",
     "sources": {
       "aumc": [
@@ -4988,6 +5066,7 @@
     "min": 0,
     "max": 120,
     "description": "respiratory rate",
+    "omopid": 4313591,
     "category": "respiratory",
     "sources": {
       "aumc": [
@@ -5053,7 +5132,8 @@
   "samp": {
     "class": "lgl_cncpt",
     "category": "microbiology",
-    "description": "fluid sampling",
+    "description": "body fluid sampling",
+    "omopid": 4133843,
     "sources": {
       "aumc": [
         {
@@ -5113,6 +5193,7 @@
     "min": 0,
     "max": 300,
     "description": "systolic blood pressure",
+    "omopid": 4152194,
     "category": "vitals",
     "sources": {
       "aumc": [
@@ -5170,8 +5251,10 @@
   "sep3": {
     "concepts": ["sofa", "susp_inf"],
     "description": "sepsis-3 criterion",
+    "omopid": 132797,
     "category": "outcome",
     "callback": "sep3",
+    "keep_components": [false, true],
     "class": "rec_cncpt"
   },
   "sex": {
@@ -5179,6 +5262,7 @@
     "levels": ["Female", "Male"],
     "class": "fct_cncpt",
     "description": "patient sex",
+    "omopid": 37116947,
     "category": "demographics",
     "sources": {
       "aumc": [
@@ -5240,6 +5324,7 @@
   "sirs": {
     "concepts": ["temp", "hr", "resp", "pco2", "wbc", "bnd"],
     "description": "systemic inflammatory response syndrome score",
+    "omopid": 4140444,
     "category": "outcome",
     "callback": "sirs_score",
     "class": "rec_cncpt"
@@ -5247,6 +5332,7 @@
   "sofa": {
     "concepts": ["sofa_resp", "sofa_coag", "sofa_liver", "sofa_cardio", "sofa_cns", "sofa_renal"],
     "description": "sequential organ failure assessment score",
+    "omopid": 1616852,
     "category": "outcome",
     "callback": "sofa_score",
     "class": "rec_cncpt"
@@ -5254,6 +5340,7 @@
   "sofa_cardio": {
     "concepts": ["map", "dopa60", "norepi60", "dobu60", "epi60"],
     "description": "SOFA cardiovascular component",
+    "omopid": 1617534,
     "category": "outcome",
     "aggregate": ["min", "max", "max", "max", "max"],
     "callback": "sofa_cardio",
@@ -5262,6 +5349,7 @@
   "sofa_cns": {
     "concepts": "gcs",
     "description": "SOFA central nervous system component",
+    "omopid": 1616439,
     "category": "outcome",
     "callback": "sofa_cns",
     "class": "rec_cncpt"
@@ -5269,6 +5357,7 @@
   "sofa_coag": {
     "concepts": "plt",
     "description": "SOFA coagulation component",
+    "omopid": 1616896,
     "category": "outcome",
     "aggregate": "min",
     "callback": "sofa_coag",
@@ -5277,6 +5366,7 @@
   "sofa_liver": {
     "concepts": "bili",
     "description": "SOFA liver component",
+    "omopid": 1617043,
     "category": "outcome",
     "aggregate": "max",
     "callback": "sofa_liver",
@@ -5285,6 +5375,7 @@
   "sofa_renal": {
     "concepts": ["crea", "urine24"],
     "description": "SOFA renal component",
+    "omopid": 1616355,
     "category": "outcome",
     "aggregate": ["max", null],
     "callback": "sofa_renal",
@@ -5293,6 +5384,7 @@
   "sofa_resp": {
     "concepts": ["pafi", "vent_ind"],
     "description": "SOFA respiratory component",
+    "omopid": 1616907,
     "category": "outcome",
     "callback": "sofa_resp",
     "class": "rec_cncpt"
@@ -5300,6 +5392,7 @@
   "supp_o2": {
     "concepts": ["vent_ind", "fio2"],
     "description": "supplemental oxygen",
+    "omopid": 36304401,
     "category": "respiratory",
     "callback": "supp_o2",
     "class": "rec_cncpt"
@@ -5307,6 +5400,7 @@
   "susp_inf": {
     "concepts": ["abx", "samp"],
     "description": "suspected infection",
+    "omopid": 43021378,
     "category": "outcome",
     "aggregate": [
       [
@@ -5324,6 +5418,7 @@
     "min": 5,
     "max": 60,
     "description": "totcal CO2",
+    "omopid": 4193415,
     "category": "blood gas",
     "sources": {
       "eicu": [
@@ -5370,6 +5465,7 @@
     "min": 32,
     "max": 42,
     "description": "temperature",
+    "omopid": 4302666,
     "category": "vitals",
     "sources": {
       "aumc": [
@@ -5446,6 +5542,7 @@
     "min": 3,
     "max": 15,
     "description": "GCS total",
+    "omopid": 4093836,
     "category": "neurological",
     "sources": {
       "eicu": [
@@ -5482,6 +5579,7 @@
     "unit": "ng/mL",
     "min": 0,
     "description": "troponin t",
+    "omopid": 4005525,
     "category": "chemistry",
     "sources": {
       "aumc": [
@@ -5541,6 +5639,7 @@
     "unit": "ng/mL",
     "min": 0,
     "description": "troponin I",
+    "omopid": 4007805,
     "category": "chemistry",
     "sources": {
       "eicu": [
@@ -5586,6 +5685,7 @@
     "max": 2000,
     "aggregate": "sum",
     "description": "urine output",
+    "omopid": 4264378,
     "category": "output",
     "sources": {
       "aumc": [
@@ -5656,6 +5756,7 @@
   "urine24": {
     "concepts": "urine",
     "description": "urine output per 24h",
+    "omopid": 4191836,
     "category": "output",
     "callback": "urine24",
     "class": "rec_cncpt"
@@ -5663,6 +5764,7 @@
   "vaso_ind": {
     "concepts": ["dopa_dur", "norepi_dur", "dobu_dur", "epi_dur"],
     "description": "vasopressor indicator",
+    "omopid": 3655896,
     "category": "medications",
     "callback": "vaso_ind",
     "class": "rec_cncpt"
@@ -5747,6 +5849,7 @@
   "vent_ind": {
     "concepts": ["vent_start", "vent_end", "mech_vent"],
     "description": "ventilation durations",
+    "omopid": 4230167,
     "category": "respiratory",
     "interval": "00:01:00",
     "callback": "vent_ind",
@@ -5820,6 +5923,7 @@
     "min": 1,
     "max": 5,
     "description": "GCS verbal",
+    "omopid": 4084912,
     "category": "neurological",
     "sources": {
       "aumc": [
@@ -5885,6 +5989,7 @@
     "unit": ["K/uL", "G/l"],
     "min": 0,
     "description": "white blood cell count",
+    "omopid": 4298431,
     "category": "hematology",
     "sources": {
       "aumc": [
@@ -5945,6 +6050,7 @@
     "max": 500,
     "target": "id_tbl",
     "description": "patient weight",
+    "omopid": 4099154,
     "category": "demographics",
     "sources": {
       "aumc": [

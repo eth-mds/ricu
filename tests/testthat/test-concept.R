@@ -1,5 +1,6 @@
-
 test_that("load hirid items", {
+
+  skip_if_not_installed("mockthat")
 
   gluc <- mockthat::with_mock(
     get_hirid_ids = id_tbl(id = c(20005110L, 24000523L, 24000585L),
@@ -141,6 +142,32 @@ test_that("load concepts", {
 
   expect_snapshot(print(gcs_con))
   expect_snapshot(print(gcs_raw))
+})
+
+test_that("load concepts", {
+
+  dat1 <- load_concepts(4144235L, "mimic_demo", verbose = FALSE)
+
+  expect_s3_class(dat1, "ts_tbl")
+  expect_true(is_ts_tbl(dat1))
+  expect_identical(colnames(dat1),
+                   c("icustay_id", "charttime", "omop_4144235"))
+  expect_equal(interval(dat1), hours(1L))
+
+  dat2 <- load_concepts(c(4144235, 4017497), "mimic_demo", verbose = FALSE)
+
+  expect_s3_class(dat2, "ts_tbl")
+  expect_true(is_ts_tbl(dat2))
+  expect_identical(
+    colnames(dat2),
+    c("icustay_id", "charttime", "omop_4144235", "omop_4017497")
+  )
+  expect_equal(interval(dat2), hours(1L))
+
+  expect_warning(
+    load_concepts(c(4144235, 123), "mimic_demo", verbose = FALSE),
+    class = "omop_miss_id"
+  )
 })
 
 skip_if_srcs_missing("eicu_demo")

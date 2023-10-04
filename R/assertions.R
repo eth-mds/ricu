@@ -1,4 +1,3 @@
-
 #' @importFrom assertthat see_if on_failure<- validate_that
 #' @importFrom assertthat is.string is.flag is.dir is.count is.scalar
 #' @importFrom assertthat has_name has_attr are_equal is.number
@@ -62,7 +61,15 @@ is_intish <- function(x) {
 }
 
 on_failure(is_intish) <- function(call, env) {
-  format_assert("{as_label(call$x)} integer-values", "is_intish_assert")
+  format_assert("{as_label(call$x)} contains non integer values",
+                "is_intish_assert")
+}
+
+no_na <- function(x) !anyNA(x)
+
+on_failure(no_na) <- function(call, env) {
+  format_assert("{as_label(call$x)} contains NA values",
+                "no_na_assert")
 }
 
 has_length <- function(x, length = NA) {

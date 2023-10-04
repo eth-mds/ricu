@@ -1,6 +1,10 @@
 
 srcs_avail <- function(x) all(ricu::is_data_avail(x))
 
+quick_build <- function() {
+  identical(Sys.getenv("RICU_VIGNETTE_QUICK_BUILD"), "true")
+}
+
 paste1 <- function(x) {
 
   x <- paste0("`", x, "`")
@@ -41,4 +45,15 @@ demo_missing_msg <- function(demo, file) {
     "from [CRAN](https://CRAN.R-project.org/package=ricu/vignettes/", file,
     ").", sep = ""
   )
+}
+
+if (requireNamespace("pillar", quietly = TRUE) &&
+    utils::packageVersion("pillar") >= "1.9.0" &&
+    utils::packageVersion("prt") < "0.2.0") {
+
+  fix_print_fun <- function(x, n = 10, ...) {
+    print(head(x, n = n))
+  }
+
+  registerS3method("print", "prt", fix_print_fun)
 }

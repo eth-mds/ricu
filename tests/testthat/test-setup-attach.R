@@ -1,4 +1,3 @@
-
 test_that("auto attach env var", {
 
   srcs <- c("mimic_demo", "eicu_demo")
@@ -59,6 +58,8 @@ test_that("attach srcs", {
     attach_src(test, data_dir = dir,
                cfg_dirs = system.file("testdata", package = "ricu"))
   )
+
+  skip_if_not_installed("mockthat")
 
   expect_error(
     expect_message(

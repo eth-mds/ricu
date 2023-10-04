@@ -1,5 +1,6 @@
-
 test_that("aumc callbacks", {
+
+  skip_if_not_installed("mockthat")
 
   set.seed(11)
 
@@ -119,6 +120,8 @@ test_that("aumc callbacks", {
 })
 
 test_that("hirid callbacks", {
+
+  skip_if_not_installed("mockthat")
 
   set.seed(11)
 

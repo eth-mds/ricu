@@ -1,4 +1,3 @@
-
 #' Time series utility functions
 #'
 #' ICU data as handled by `ricu` is mostly comprised of time series data and as
@@ -64,6 +63,7 @@
 #' `has_gaps()`/`has_no_gaps()`/`is_regular()`, which return logical flags.
 #'
 #' @examples
+#' if (FALSE) {
 #' tbl <- ts_tbl(x = 1:5, y = hours(1:5), z = hours(2:6), val = rnorm(5),
 #'               index_var = "y")
 #' exp <- expand(tbl, "y", "z", step_size = 1L, new_index = "y",
@@ -89,6 +89,7 @@
 #' tbl[6, 2] <- hours(2)
 #' has_no_gaps(tbl)
 #' is_regular(tbl)
+#' }
 #'
 #' @rdname ts_utils
 #' @export
@@ -573,8 +574,11 @@ merge_ranges <- function(x, lwr_var = index_var(x), upr_var = data_vars(x),
     x <- x[, c(upr_var) := get(upr_var) + max_gap]
   }
 
+  ptype <- as_ptype(x)
+
   x <- sort(x, by = c(id_vars(x), lwr_var, upr_var), by_ref = TRUE)
-  x <- reclass_tbl(data.table::foverlaps(x, x, mult = "first"), as_ptype(x))
+  x <- as.data.table(x, by_ref = TRUE)
+  x <- reclass_tbl(data.table::foverlaps(x, x, mult = "first"), ptype)
 
   expr <- quote(list(max(get(tmp_var))))
   names(expr) <- c("", upr_var)

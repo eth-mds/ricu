@@ -33,7 +33,7 @@ jobs:
             local::.
             eth-mds/mimic-demo
             eth-mds/eicu-demo
-          needs: website
+            nbenn/mockthat
 
       - name: Build site
         run: pkgdown::build_site_github_pages(new_process = FALSE, install = FALSE)

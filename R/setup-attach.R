@@ -1,4 +1,3 @@
-
 #' Data attach utilities
 #'
 #' Making a dataset available to `ricu` consists of 3 steps: downloading

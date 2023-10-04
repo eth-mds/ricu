@@ -1,4 +1,3 @@
-
 #' SIRS score label
 #'
 #' The SIRS (Systemic Inflammatory Response Syndrome) score is a commonly used

@@ -219,7 +219,7 @@ If no table is printed given the modified data loading above, every single ID th
 
 Next, we will investigate the number of measurements available per concept and stay day. For each stay ID and concept we calculate the number of measurements and note the stay duration. From this we can visualize how the number of measurements per day is distributed over the datasets alongside the percentage of patients that have at least one measurement available.
 
-```{r, full-miss, echo = FALSE, eval = srcs_avail(demo) && !srcs_avail(srcs), results = "asis"}
+```{r, full-miss, echo = FALSE, eval = srcs_avail(demo) && (!srcs_avail(srcs) || quick_build()), results = "asis"}
 demo_instead_full_msg(demo, srcs, "uom.html")
 ```
 
@@ -269,7 +269,7 @@ counts <- merge(counts, los[, list(total_pat = .N), by = "source"],
 head(counts)
 ```
 
-```{r, itm-load, cache = TRUE, ref.label = c("itm-funs", if (srcs_avail(srcs)) "assign-srcs" else "demo-srcs", "itm-counts")}
+```{r, itm-load, cache = TRUE, ref.label = c("itm-funs", if (srcs_avail(srcs) && !quick_build()) "assign-srcs" else "demo-srcs", "itm-counts")}
 ```
 
 ```{r, count-plot, echo = FALSE, fig.width = 6}

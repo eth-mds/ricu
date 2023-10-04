@@ -1,4 +1,3 @@
-
 collect_dots <- function(concepts, interval, ..., merge_dat = FALSE) {
 
   assert_that(is.character(concepts))
@@ -89,32 +88,21 @@ rename_data_var <- function(new_name, old_name = NULL) {
 #' values might not be ideal for some datasets and/or analysis tasks.
 #'
 #' ## `pafi`
-#' In order to calculate the PaO\ifelse{latex
-#' }{\out{\textsubscript{2}}}{\ifelse{html}{\out{<sub>2</sub>}}{2}}/FiO\ifelse{
-#' latex}{\out{\textsubscript{2}}}{\ifelse{html}{\out{<sub>2</sub>}}{2}} (or
-#' Horowitz index), for a given time point, both a PaO\ifelse{
-#' latex}{\out{\textsubscript{2}}}{\ifelse{html}{\out{<sub>2</sub>}}{2}} and a
-#' FiO\ifelse{latex}{\out{\textsubscript{2}}}{\ifelse{html
-#' }{\out{<sub>2</sub>}}{2}} measurement is required. As the two are often
-#' not measured at the same time, some form of imputation or matching
-#' procedure is required. Several options are available:
+#' In order to calculate the PaO\subs{2}/FiO\subs{2} (or Horowitz index), for
+#' a given time point, both a PaO\subs{2} and an FiO\subs{2} measurement is
+#' required. As the two are often not measured at the same time, some form of
+#' imputation or matching procedure is required. Several options are available:
 #'
 #' * `match_vals` allows for a time difference of maximally `match_win`
 #'   between two measurements for calculating their ratio
-#' * `extreme_vals` uses the worst PaO\ifelse{latex
-#'   }{\out{\textsubscript{2}}}{\ifelse{html}{\out{<sub>2</sub>}}{2}} and a
-#'   FiO\ifelse{latex}{\out{\textsubscript{2}}}{\ifelse{html
-#'   }{\out{<sub>2</sub>}}{2}} values within the time window spanned by
-#'   `match_win`
+#' * `extreme_vals` uses the worst PaO\subs{2} and FiO\subs{2} values within
+#'   the time window spanned by `match_win`
 #' * `fill_gaps` represents a variation of `extreme_vals`, where ratios are
 #'   evaluated at every time-point as specified by `interval`as opposed to
-#'   only the time points where either a PaO\ifelse{latex
-#'   }{\out{\textsubscript{2}}}{\ifelse{html}{\out{<sub>2</sub>}}{2}} or a
-#'   FiO\ifelse{latex}{\out{\textsubscript{2}}}{\ifelse{html
-#'   }{\out{<sub>2</sub>}}{2}} measurement is available
+#'   only the time points where either a PaO\subs{2} or an FiO\subs{2}
+#'   measurement is available
 #'
-#' Finally, `fix_na_fio2` imputes all remaining missing FiO\ifelse{latex
-#' }{\out{\textsubscript{2}}}{\ifelse{html}{\out{<sub>2</sub>}}{2}} with 21,
+#' Finally, `fix_na_fio2` imputes all remaining missing FiO\subs{2} with 21,
 #' the percentage (by volume) of oxygen in (tropospheric) air.
 #'
 #' ## `vent_ind`
@@ -165,13 +153,9 @@ rename_data_var <- function(new_name, old_name = NULL) {
 #'
 #' @param ... Data input used for concept calculation
 #' @param match_win Time-span during which matching of values is allowed
-#' @param mode Method for matching PaO\ifelse{latex
-#' }{\out{\textsubscript{2}}}{\ifelse{html}{\out{<sub>2</sub>}}{2}} and
-#' FiO\ifelse{latex}{\out{\textsubscript{2}}}{\ifelse{html
-#' }{\out{<sub>2</sub>}}{2}} values
+#' @param mode Method for matching PaO\subs{2} and FiO\subs{2} values
 #' @param fix_na_fio2 Logical flag indicating whether to impute missing
-#' FiO\ifelse{latex}{\out{\textsubscript{2}}}{\ifelse{html
-#' }{\out{<sub>2</sub>}}{2}} values with 21
+#' FiO\subs{2} values with 21
 #' @param interval Expected time series step size (determined from data if
 #' `NULL`)
 #'

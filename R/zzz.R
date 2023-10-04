@@ -1,4 +1,3 @@
-
 .onLoad <- function(libname, pkgname) { # nocov start
 
   fix_base_fun <- function(fun, fix) {
@@ -54,6 +53,12 @@
 
     fix_base_fun(base::cbind.data.frame, cbind_fix)
     fix_base_fun(base::rbind.data.frame, rbind_fix)
+  }
+
+  if (is_pkg_installed("pillar") &&
+      utils::packageVersion("pillar") >= "1.9.0" &&
+      utils::packageVersion("prt") < "0.2.0") {
+    registerS3method("print", "prt", fix_print_fun)
   }
 } # nocov end
 

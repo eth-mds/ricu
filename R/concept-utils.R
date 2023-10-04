@@ -1,4 +1,3 @@
-
 #' Data items
 #'
 #' Item objects are used in `ricu` as a way to specify how individual data
@@ -806,6 +805,7 @@ set_target.concept <- function(x, target) {
   new_concept(lapply(x, set_target, target))
 }
 
+#' @export
 set_target.default <- function(x, target) stop_generic(x, .Generic)
 
 #' @rdname item_utils
@@ -889,6 +889,7 @@ is_target <- function(x, dat) is_type(get_target(x))(dat)
 #' @param name The name of the concept
 #' @param items Zero or more `itm` objects
 #' @param description String-valued concept description
+#' @param omopid OMOP identifier
 #' @param category String-valued category
 #' @param aggregate NULL or a string denoting a function used to aggregate per
 #' id and if applicable per time step
@@ -938,19 +939,21 @@ is_target <- function(x, dat) is_type(get_target(x))(dat)
 #'
 #' @export
 #'
-new_cncpt <- function(name, items, description = name,
+new_cncpt <- function(name, items, description = name, omopid = NA_integer_,
                       category = NA_character_, aggregate = NULL, ...,
                       target = "ts_tbl", class = "num_cncpt") {
 
   assert_that(is.string(name), null_or(class, is.character), is.string(target),
-              is.string(description), is.string(category))
+              is.string(description), is.string(category), is_scalar(omopid),
+              is_intish(omopid))
 
   if (!is_concept(items)) {
     items <- set_target(as_item(items), target)
   }
 
   res <- list(name = name, items = items, description = description,
-              category = category, aggregate = aggregate, target = target)
+              omopid = as.integer(omopid), category = category,
+              aggregate = aggregate, target = target)
 
   init_cncpt(structure(res, class = c(class, "cncpt")), ...)
 }

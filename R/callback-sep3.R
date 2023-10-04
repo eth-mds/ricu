@@ -1,4 +1,3 @@
-
 #' Sepsis 3 label
 #'
 #' The sepsis 3 label consists of a suspected infection combined with an acute
@@ -19,38 +18,88 @@
 #' increase in the SOFA score (see [sofa_score()]) of 2 points or more within
 #' the suspected infection (SI) window (see [susp_inf()]):
 #'
-#' ```{tikz sofa-sep-3, echo = FALSE}
+#' ```{tikz}
+#' #| sofa-sep-3,
+#' #| echo = FALSE,
+#' #| engine.opts = list(
+#' #|   extra.preamble = c(
+#' #|     "\\usepackage{pgfplots}", "\\pgfplotsset{compat=newest}"
+#' #|   )
+#' #| )
+#'
 #' \begin{tikzpicture}
-#'   \draw (-6,0) -- (3,0);
-#'   \draw (-6,-0.25) -- (-6,0.25);
-#'   \draw (3,-0.25) -- (3,0.25);
-#'   \draw (0,-0.25) -- (0,0.25);
-#'   \node[align = center] at (0,-0.75) {SI time};
-#'   \node[align = center] at (3,-0.75) {SI window\\ end};
-#'   \node[align = center] at (-6,-0.75) {SI window\\ start};
-#'   \filldraw  (-6, 1) circle (2pt);
-#'   \draw (-6,1) -- (-5.5, 1);
-#'   \filldraw (-5.5, 1) circle (2pt);
-#'   \draw (-5.5,1) -- (-5, 1);
-#'   \node at (-4.25, 1) {$\dots$} ;
-#'   \filldraw (-5, 1) circle (2pt);
-#'   \filldraw (-3.5, 1) circle (2pt);
-#'   \filldraw (-3, 1.5) circle (2pt);
-#'   \filldraw (-2.5, 1.5) circle (2pt);
-#'   \filldraw (-2, 2.5) circle (2pt);
-#'   \draw (-3.5,1) -- (-3, 1.5);
-#'   \draw (-3,1.5) -- (-2.5, 1.5);
-#'   \draw (-2.5,1.5) -- (-2, 2.5);
-#'   \node [black] at (-0.25, 1.75) {$\Delta$SOFA $\geq 2$};
-#'   \draw (-6.5, 1) -- (-6.5, 2.5) ;
-#'   \node at (-6.5, 3) {SOFA} ;
-#'   \draw (-6.5,1)--(-6.6,1) node[left,font=\small]{$0$};
-#'   \draw (-6.5,1.5)--(-6.6,1.5) node[left,font=\small]{$1$};
-#'   \draw (-6.5,2)--(-6.6,2) node[left,font=\small]{$2$};
-#'   \draw (-6.5,2.5)--(-6.6, 2.5) node[left,font=\small]{$3$};
-#'   \draw[red] (-2,-0.25) -- (-2,0.25);
-#'   \draw[dashed,red] (-2, 2.35) -- (-2, 0) ;
-#'   \node[red] at (-2, -0.75) {Sepsis-3 time};
+#'
+#'   \draw (-5.5, 0) -- (3.5, 0);
+#'   \draw (-5.5, -0.2) -- (-5.5, 0.2);
+#'   \draw (3.5, -0.2) -- (3.5, 0.2);
+#'   \draw (0.5, -0.2) -- (0.5, 0.2);
+#'
+#'   \node[align = center] at (0.5, 0.5) {SI time};
+#'   \node[align = center] at (3.5, 0.5) {SI window end};
+#'   \node[align = center] at (-5.5, -0.5) {SI window start};
+#'
+#'   \draw (-1.5, -0.2) -- (-1.5, 0.2);
+#'   \draw[dashed] (-1.5, 2) -- (-1.5, 0);
+#'   \node[align = center] at (-1.5, -0.5) {Sepsis-3 time};
+#'
+#'   \node[align = center] at (-2.75, 0.5) {-48 hours};
+#'   \node[align = center] at (2, -0.5) {24 hours};
+#'
+#'   \draw[dashed] (0.5, 0) -- (0.5, -1);
+#'
+#'   \draw (0.5, -1) -- (3.5, -1);
+#'   \draw (3.5, -1.2) -- (3.5, -0.8);
+#'   \draw (0.5, -1.2) -- (0.5, -0.8);
+#'
+#'   \node at (5.25, -1) {within 24 hours};
+#'
+#'   \node[align = center] at (0.5, -1.5) {ABX};
+#'   \node[align = center] at (3.5, -1.5) {Sampling};
+#'
+#'   \draw (0.5, -2) -- (9.5, -2);
+#'   \draw (9.5, -2.2) -- (9.5, -1.8);
+#'   \draw (0.5, -2.2) -- (0.5, -1.8);
+#'
+#'   \node[align = center] at (5.25, -2.5) {within 72 hours};
+#'
+#'   \node[align = center] at (0.5, -2.5) {Sampling};
+#'   \node[align = center] at (9.5, -2.5) {ABX};
+#'
+#'   \draw [decorate, decoration = {brace, mirror, amplitude=5pt, raise=4pt},
+#'          yshift=0pt] (0, -0.9) -- (0, -2.1);
+#'   \node at (-3, -1.5) {Either option is permissible};
+#'
+#'   \filldraw  (-6, 1.5) circle (1pt);
+#'   \draw (-6, 1.5) -- (-5.5, 1.5);
+#'   \filldraw (-5.5, 1.5) circle (1pt);
+#'   \draw (-5.5, 1.5) -- (-5, 1);
+#'   \filldraw (-5, 1) circle (1pt);
+#'   \draw (-5, 1) -- (-4.5, 1);
+#'   \filldraw (-4.5, 1) circle (1pt);
+#'   \draw (-4.5, 1) -- (-4, 1);
+#'   \filldraw (-4, 1) circle (1pt);
+#'   \draw (-4, 1) -- (-3.5, 1);
+#'   \filldraw (-3.5, 1) circle (1pt);
+#'   \draw (-3.5, 1) -- (-3, 1.5);
+#'   \filldraw (-3, 1.5) circle (1pt);
+#'   \draw (-3, 1.5) -- (-2.5, 1.5);
+#'   \filldraw (-2.5, 1.5) circle (1pt);
+#'   \draw (-2.5, 1.5) -- (-2, 1.5);
+#'   \filldraw (-2, 1.5) circle (1pt);
+#'   \draw (-2, 1.5) -- (-1.5, 2.0);
+#'   \filldraw (-1.5, 2.0) circle (1pt);
+#'
+#'   \draw [decorate, decoration = {brace, amplitude=5pt, mirror, raise=4pt},
+#'          yshift=0pt] (-1.25, 1) -- (-1.25, 2);
+#'   \node [black] at (0.25, 1.5) {$\Delta$SOFA $\geq 2$};
+#'
+#'   \draw (-6.5, 1) -- (-6.5, 2.5);
+#'   \node at (-6.5, 3) {SOFA};
+#'   \draw (-6.5, 1) -- (-6.6, 1) node[left]{0};
+#'   \draw (-6.5, 1.5) -- (-6.6, 1.5) node[left]{1};
+#'   \draw (-6.5, 2) -- (-6.6, 2) node[left]{2};
+#'   \draw (-6.5, 2.5) -- (-6.6, 2.5) node[left]{3};
+#'
 #' \end{tikzpicture}
 #' ```
 #'

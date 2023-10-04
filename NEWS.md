@@ -1,3 +1,16 @@
+# ricu 0.5.6
+
+* maintenance release: fixes non-character numeric version input issues
+
+# ricu 0.5.5
+
+* maintenance release: fixes an issue introduced by pillar 1.9.0 via an update
+  to 0.2.0 of prt
+
+# ricu 0.5.4
+
+* maintenance release: tests using `mockthat` are only run when available
+
 # ricu 0.5.3
 
 * maintenance release for compatibility with an update to `prt`

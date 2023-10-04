@@ -1,4 +1,3 @@
-
 #' ICU class meta data utilities
 #'
 #' The two data classes `id_tbl` and `ts_tbl`, used by `ricu` to represent ICU

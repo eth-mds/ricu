@@ -3,6 +3,8 @@
 \name{load_concepts}
 \alias{load_concepts}
 \alias{load_concepts.character}
+\alias{load_concepts.integer}
+\alias{load_concepts.numeric}
 \alias{load_concepts.concept}
 \alias{load_concepts.cncpt}
 \alias{load_concepts.num_cncpt}
@@ -24,6 +26,17 @@ load_concepts(x, ...)
   dict_name = "concept-dict",
   dict_dirs = NULL
 )
+
+\method{load_concepts}{integer}(
+  x,
+  src = NULL,
+  concepts = NULL,
+  ...,
+  dict_name = "concept-dict",
+  dict_dirs = NULL
+)
+
+\method{load_concepts}{numeric}(x, ...)
 
 \method{load_concepts}{concept}(
   x,
@@ -79,8 +92,9 @@ load_concepts(x, ...)
 \item{src}{A character vector, used to subset the \code{concepts}; \code{NULL}
 means no subsetting}
 
-\item{concepts}{The concepts to be used or \code{NULL} in which case
-\code{\link[=load_dictionary]{load_dictionary()}} is called}
+\item{concepts}{The concepts to be used, or \code{NULL}. In the latter case the
+standard ricu dictionary (obtained by calling \code{\link[=load_dictionary]{load_dictionary()}}) is used
+for loading the objects specified in \code{x}.}
 
 \item{dict_name, dict_dirs}{In case not concepts are passed as \code{concepts},
 these are forwarded to \code{\link[=load_dictionary]{load_dictionary()}} as \code{name} and \code{file} arguments}
@@ -142,13 +156,15 @@ generic functions.
 }
 \section{Concept}{
 
-Top-level entry points are either a character vector, which is used to
-subset a \code{concept} object or an entire \link[=load_dictionary]{concept dictionary}, or a \code{concept} object. When passing a
-character vector as first argument, the most important further arguments at
-that level control from where the dictionary is taken (\code{dict_name} or
-\code{dict_dirs}). At \code{concept} level, the most important additional arguments
-control the result structure: data merging can be disabled using
-\code{merge_data} and data aggregation is governed by the \code{aggregate} argument.
+Top-level entry points are either a character vector of concept names or an
+integer vector of concept IDs (matched against \code{omopid} fields), which are
+used to subset a \code{concept} object or an entire \link[=load_dictionary]{concept dictionary}, or a \code{concept} object. When passing a
+character/integer vector as first argument, the most important further
+arguments at that level control from where the dictionary is taken
+(\code{dict_name} or \code{dict_dirs}). At \code{concept} level, the most important
+additional arguments control the result structure: data merging can be
+disabled using \code{merge_data} and data aggregation is governed by the
+\code{aggregate} argument.
 
 Data aggregation is important for merging several concepts into a
 wide-format table, as this requires data to be unique per observation (i.e.

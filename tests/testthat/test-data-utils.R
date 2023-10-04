@@ -1,4 +1,3 @@
-
 skip_if_srcs_missing(c("mimic_demo", "eicu_demo"))
 
 test_that("stay windows", {
@@ -9,6 +8,8 @@ test_that("stay windows", {
   expect_length(id_vars(wins), 2L)
   expect_true("source" %in% id_vars(wins))
   expect_setequal(data_vars(wins), c("start", "end"))
+
+  skip_if_not_installed("mockthat")
 
   hrd <- mockthat::with_mock(
     load_src = function(x, src, ...) {

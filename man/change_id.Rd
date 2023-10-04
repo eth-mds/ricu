@@ -68,24 +68,22 @@ example, we request for \code{mimic_demo}, with ICU stay IDs as source and
 hospital admissions as destination IDs.
 
 \if{html}{\out{<div class="sourceCode r">}}\preformatted{id_map_helper(mimic_demo, "icustay_id", "hadm_id")
-}\if{html}{\out{</div>}}
-
-\if{html}{\out{<div class="sourceCode">}}\preformatted{## # An `id_tbl`: 136 x 4
-## # Id var:      `icustay_id`
-##     icustay_id hadm_id hadm_id_start hadm_id_end
-##          <int>   <int> <drtn>        <drtn>
-##   1     201006  198503  -3290 mins    9114 mins
-##   2     201204  114648     -2 mins    6949 mins
-##   3     203766  126949  -1336 mins    8818 mins
-##   4     204132  157609     -1 mins   10103 mins
-##   5     204201  177678   -368 mins    9445 mins
-## ...
-## 132     295043  170883 -10413 mins   31258 mins
-## 133     295741  176805     -1 mins    3153 mins
-## 134     296804  110244  -1294 mins    4599 mins
-## 135     297782  167612     -1 mins     207 mins
-## 136     298685  151323     -1 mins   19082 mins
-## # ... with 126 more rows
+#> # An `id_tbl`: 136 x 4
+#> # Id var:      `icustay_id`
+#>     icustay_id hadm_id hadm_id_start hadm_id_end
+#>          <int>   <int> <drtn>        <drtn>
+#> 1       201006  198503  -3290 mins    9114 mins
+#> 2       201204  114648     -2 mins    6949 mins
+#> 3       203766  126949  -1336 mins    8818 mins
+#> 4       204132  157609     -1 mins   10103 mins
+#> 5       204201  177678   -368 mins    9445 mins
+#> ...
+#> 132     295043  170883 -10413 mins   31258 mins
+#> 133     295741  176805     -1 mins    3153 mins
+#> 134     296804  110244  -1294 mins    4599 mins
+#> 135     297782  167612     -1 mins     207 mins
+#> 136     298685  151323     -1 mins   19082 mins
+#> # i 131 more rows
 }\if{html}{\out{</div>}}
 
 Both start and end columns encode the hospital admission windows relative

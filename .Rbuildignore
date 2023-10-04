@@ -10,7 +10,7 @@
 ^Meta$
 ^cran-comments\.md$
 ^CRAN-RELEASE$
-^vignettes/jss\.(aux|bbl|blg|bst|cls|knit\.md|log|out|pdf|R|tex)$
-^vignettes/(jss|uom)_(cache|files)$
+^vignettes/ricu\.(aux|bbl|blg|bst|cls|knit\.md|log|out|pdf|R|tex)$
+^vignettes/(ricu|uom)_(cache|files)$
 ^inst/local_testdata
 ^CRAN-SUBMISSION$
