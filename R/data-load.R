@@ -119,8 +119,8 @@ load_difftime.mimic_tbl <- function(x, rows, cols = colnames(x),
                                     time_vars = ricu::time_vars(x), ...) {
 
   warn_dots(...)
-
-  load_mihi(x, {{ rows }}, cols, id_hint, time_vars)
+  dt_round_min <- function(x, y) round_to(difftime(x, y, units = "mins"))
+  do_load_difftime(x, {{ rows }}, cols, id_hint, time_vars, dt_round_min)
 }
 
 #' @rdname load_src
@@ -130,8 +130,8 @@ load_difftime.eicu_tbl <- function(x, rows, cols = colnames(x),
                                    time_vars = ricu::time_vars(x), ...) {
 
   warn_dots(...)
-
-  load_ei(x, {{ rows }}, cols, id_hint, time_vars, min_as_mins)
+  dt_round_min <- function(x, y) min_as_mins(x)
+  do_load_difftime(x, {{ rows }}, cols, id_hint, time_vars, dt_round_min)
 }
 
 #' @rdname load_src
@@ -141,8 +141,8 @@ load_difftime.hirid_tbl <- function(x, rows, cols = colnames(x),
                                     time_vars = ricu::time_vars(x), ...) {
 
   warn_dots(...)
-
-  load_mihi(x, {{ rows }}, cols, id_hint, time_vars)
+  dt_round_min <- function(x, y) round_to(difftime(x, y, units = "mins"))
+  do_load_difftime(x, {{ rows }}, cols, id_hint, time_vars, dt_round_min)
 }
 
 #' @rdname load_src
@@ -152,8 +152,8 @@ load_difftime.aumc_tbl <- function(x, rows, cols = colnames(x),
                                    time_vars = ricu::time_vars(x), ...) {
 
   warn_dots(...)
-
-  load_au(x, {{ rows }}, cols, id_hint, time_vars)
+  dt_round_min <- function(x, y) round_to(ms_as_mins(x - y))
+  do_load_difftime(x, {{ rows }}, cols, id_hint, time_vars, dt_round_min)
 }
 
 #' @rdname load_src
@@ -163,8 +163,8 @@ load_difftime.miiv_tbl <- function(x, rows, cols = colnames(x),
                                    time_vars = ricu::time_vars(x), ...) {
 
   warn_dots(...)
-
-  load_mihi(x, {{ rows }}, cols, id_hint, time_vars)
+  dt_round_min <- function(x, y) round_to(difftime(x, y, units = "mins"))
+  do_load_difftime(x, {{ rows }}, cols, id_hint, time_vars, dt_round_min)
 }
 
 #' @rdname load_src
@@ -195,41 +195,7 @@ resolve_id_hint <- function(tbl, hint) {
   id_vars(opts[hits])
 }
 
-load_mihi <- function(x, rows, cols, id_hint, time_vars) {
-
-  dt_round_min <- function(x, y) round_to(difftime(x, y, units = "mins"))
-
-  id_col <- resolve_id_hint(x, id_hint)
-
-  assert_that(is.string(id_col), id_col %in% colnames(x))
-
-  if (!id_col %in% cols) {
-    cols <- c(cols, id_col)
-  }
-
-  time_vars <- intersect(time_vars, cols)
-
-  dat <- load_src(x, {{ rows }}, cols)
-
-  if (length(time_vars)) {
-
-    dat <- merge(dat, id_origin(x, id_col, origin_name = "origin"),
-                 by = id_col)
-
-    dat <- dat[,
-      c(time_vars) := lapply(.SD, dt_round_min, get("origin")),
-      .SDcols = time_vars
-    ]
-    dat <- dat[, c("origin") := NULL]
-  }
-
-  as_id_tbl(dat, id_vars = id_col, by_ref = TRUE)
-}
-
-load_au <- function(x, rows, cols, id_hint, time_vars) {
-  # TODO: this is closely related to load_mihi, extract common functionality 
-  #       and remove code duplication
-  dt_round_min <- function(x, y) round_to(ms_as_mins(x - y))
+do_load_difftime <- function(x, rows, cols, id_hint, time_vars, time_fn) {
   
   id_col <- resolve_id_hint(x, id_hint)
   
@@ -247,35 +213,14 @@ load_au <- function(x, rows, cols, id_hint, time_vars) {
     
     dat <- merge(dat, id_origin(x, id_col, origin_name = "origin"),
                  by = id_col)
+    
     dat <- dat[,
-               c(time_vars) := lapply(.SD, dt_round_min, get("origin")),
+               c(time_vars) := lapply(.SD, time_fn, get("origin")),
                .SDcols = time_vars
     ]
     dat <- dat[, c("origin") := NULL]
   }
   
-  as_id_tbl(dat, id_vars = id_col, by_ref = TRUE)
-}  
-
-load_ei <- function(x, rows, cols, id_hint, time_vars, mins_fun) {
-
-  id_col <- resolve_id_hint(x, id_hint)
-
-  if (!id_col %in% cols) {
-    cols <- c(id_col, cols)
-  }
-
-  time_vars <- intersect(time_vars, cols)
-
-  dat <- load_src(x, {{ rows }}, cols)
-
-  if (length(time_vars)) {
-
-    assert_that(has_col(dat, id_col))
-
-    dat <- dat[, c(time_vars) := lapply(.SD, mins_fun), .SDcols = time_vars]
-  }
-
   as_id_tbl(dat, id_vars = id_col, by_ref = TRUE)
 }
 
