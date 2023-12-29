@@ -76,7 +76,7 @@ max_or_na <- agg_or_na(max)
 reduce <- function(f, x, ...) Reduce(function(x, y) f(x, y, ...), x)
 
 round_to <- function(x, to = 1) {
-  if (all_equal(to, 1)) trunc(x) else to * trunc(x / to)
+  if (all_equal(to, 1)) floor(x) else to * floor(x / to)
 }
 
 #' @rdname utils

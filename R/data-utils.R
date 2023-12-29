@@ -229,6 +229,36 @@ id_win_helper.eicu_env <- function(x) {
   order_rename(res, ids, sta, end)
 }
 
+#' @rdname data_utils
+#' @export
+id_win_helper.sic_env <- function(x) {
+  
+  sec_as_mins <- function(x) ricu:::min_as_mins(as.integer(x / 60))
+  
+  cfg <- sort(as_id_cfg(x), decreasing = TRUE)
+  
+  ids <- field(cfg, "id")
+  sta <- c(unique(field(cfg, "start")), "HospAdmTime")
+  end <- field(cfg, "end")
+  
+  tbl <- as_src_tbl(x, unique(field(cfg, "table")))
+  
+  mis <- setdiff(sta, colnames(tbl))
+  
+  res <- load_src(tbl, cols = c(ids, intersect(sta, colnames(tbl)), end))
+  
+  if (length(mis) > 0L) {
+    res[, c(mis) := 0L]
+  }
+  
+  res <- res[, c(sta, end) := lapply(.SD, sec_as_mins), .SDcols = c(sta, end)]
+  res <- setcolorder(res, c(ids, sta, end))
+  res <- rename_cols(res, c(ids, paste0(ids, "_start"),
+                            paste0(ids, "_end")), by_ref = TRUE)
+  
+  as_id_tbl(res, ids[2L], by_ref = TRUE)
+}
+
 #' @importFrom rlang .data .env
 #'
 #' @rdname data_utils
@@ -344,7 +374,7 @@ order_rename <- function(x, id_var, st_var, ed_var) {
   as_id_tbl(x, id_var[1L], by_ref = TRUE)
 }
 
-as_dt_min <- function(x, y) round(difftime(x, y, units = "mins"))
+as_dt_min <- function(x, y) floor(difftime(x, y, units = "mins"))
 
 #' @param id_var Type of ID all returned times are relative to
 #' @param win_var Type of ID for which the in/out times is returned
