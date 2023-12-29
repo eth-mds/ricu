@@ -1612,7 +1612,7 @@ sic_tbl_cfg <- function() {
   defaults <- Map(function(cl, df) {
     nme <- vapply(cl, `[[`, character(1L), "name")
     typ <- vapply(cl, `[[`, character(1L), "spec")
-    tim <- nme[typ == "col_datetime"]
+    tim <- nme[grep("offset", names(nme), ignore.case = TRUE)]
     if (length(tim)) c(df, list(time_vars = tim)) else df
   }, cols[tables], defaults[tables])
   

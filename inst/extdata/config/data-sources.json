@@ -7070,7 +7070,7 @@
           "val_var": "admission_type",
           "time_vars": ["admittime", "dischtime", "deathtime", "edregtime", "edouttime"]
         },
-        "num_rows": 523740,
+        "num_rows": 431231,
         "cols": {
           "subject_id": {
             "name": "subject_id",
@@ -7144,7 +7144,7 @@
         "defaults": {
           "time_vars": "dod"
         },
-        "num_rows": 382278,
+        "num_rows": 299712,
         "cols": {
           "subject_id": {
             "name": "subject_id",
@@ -7173,43 +7173,12 @@
           }
         }
       },
-      "omr" : {
-        "files": "hosp/omr.csv.gz",
-        "defaults": {
-          "time_vars": ["chartdate"],
-          "val_var": "result_value"
-        },
-        "num_rows": 6439169,
-        "cols" : {
-          "subject_id": {
-            "name": "subject_id",
-            "spec": "col_integer"
-          },
-          "chartdate": {
-            "name": "chartdate",
-            "spec": "col_datetime",
-            "format": "%Y-%m-%d"
-          },
-          "seq_num": {
-            "name": "seq_num",
-            "spec": "col_integer"
-          },
-          "result_name": {
-            "name": "result_name",
-            "spec": "col_character"
-          },
-          "result_value": {
-            "name": "result_value",
-            "spec": "col_character"
-          }
-        }
-      },
       "transfers": {
         "files": "hosp/transfers.csv.gz",
         "defaults": {
           "time_vars": ["intime", "outtime"]
         },
-        "num_rows": 2189535,
+        "num_rows": 1890972,
         "cols": {
           "subject_id": {
             "name": "subject_id",
@@ -7240,28 +7209,6 @@
             "name": "outtime",
             "spec": "col_datetime",
             "format": "%Y-%m-%d %H:%M:%S"
-          }
-        }
-      },
-      "provider": {
-        "files": "hosp/provider.csv.gz",
-        "defaults": {},
-        "num_rows": 40508,
-        "cols": {
-          "provider_id": {
-            "name": "provider_id",
-            "spec": "col_character"
-          }
-        }
-      },
-      "caregiver": {
-        "files": "icu/caregiver.csv.gz",
-        "defaults": {},
-        "num_rows": 15468,
-        "cols": {
-          "caregiver_id": {
-            "name": "caregiver_id",
-            "spec": "col_integer"
           }
         }
       },
@@ -7296,7 +7243,7 @@
         "defaults": {
           "val_var": "icd_code"
         },
-        "num_rows": 5280351,
+        "num_rows": 4756326,
         "cols": {
           "subject_id": {
             "name": "subject_id",
@@ -7370,7 +7317,7 @@
           "id_var": "itemid",
           "val_var": "label"
         },
-        "num_rows": 1630,
+        "num_rows": 1622,
         "cols": {
           "itemid": {
             "name": "itemid",
@@ -7399,7 +7346,7 @@
         "defaults": {
           "val_var": "drg_code"
         },
-        "num_rows": 769622,
+        "num_rows": 604377,
         "cols": {
           "subject_id": {
             "name": "subject_id",
@@ -7436,7 +7383,7 @@
         "defaults": {
           "id_var": "emar_id"
         },
-        "num_rows": 55947921,
+        "num_rows": 54744789,
         "cols": {
           "subject_id": {
             "name": "subject_id",
@@ -7578,7 +7525,7 @@
           "index_var": "charttime",
           "time_vars": ["charttime", "scheduletime", "storetime"]
         },
-        "num_rows": 27464367,
+        "num_rows": 26850359,
         "cols": {
           "subject_id": {
             "name": "subject_id",
@@ -7635,7 +7582,7 @@
           "index_var": "chartdate",
           "time_vars": "chartdate"
         },
-        "num_rows": 160727,
+        "num_rows": 150771,
         "cols": {
           "subject_id": {
             "name": "subject_id",
@@ -7672,7 +7619,7 @@
           "unit_var": "valueuom",
           "time_vars": ["charttime", "storetime"]
         },
-        "num_rows": 122103667,
+        "num_rows": 118171367,
         "cols": {
           "labevent_id": {
             "name": "labevent_id",
@@ -7749,7 +7696,7 @@
           "val_var": "isolate_num",
           "time_vars": ["chartdate", "charttime", "storedate", "storetime"]
         },
-        "num_rows": 3397914,
+        "num_rows": 3228713,
         "cols": {
           "microevent_id": {
             "name": "microevent_id",
@@ -7862,7 +7809,7 @@
           "unit_var": "duration_interval",
           "time_vars": ["starttime", "stoptime", "entertime", "verifiedtime", "expirationdate"]
         },
-        "num_rows": 14736386,
+        "num_rows": 13584514,
         "cols": {
           "subject_id": {
             "name": "subject_id",
@@ -7984,7 +7931,7 @@
         "defaults": {
           "id_var": "poe_id"
         },
-        "num_rows": 3256358,
+        "num_rows": 3879418,
         "cols": {
           "poe_id": {
             "name": "poe_id",
@@ -8014,7 +7961,7 @@
           "index_var": "ordertime",
           "time_vars": "ordertime"
         },
-        "num_rows": 42483962,
+        "num_rows": 39366291,
         "cols": {
           "poe_id": {
             "name": "poe_id",
@@ -8075,7 +8022,7 @@
           "unit_var": "dose_unit_rx",
           "time_vars": ["starttime", "stoptime"]
         },
-        "num_rows": 17008053,
+        "num_rows": 15416708,
         "cols": {
           "subject_id": {
             "name": "subject_id",
@@ -8156,7 +8103,7 @@
           "val_var": "icd_code",
           "time_vars": "chartdate"
         },
-        "num_rows": 779625,
+        "num_rows": 669186,
         "cols": {
           "subject_id": {
             "name": "subject_id",
@@ -8192,7 +8139,7 @@
           "val_var": "curr_service",
           "time_vars": "transfertime"
         },
-        "num_rows": 562892,
+        "num_rows": 468029,
         "cols": {
           "subject_id": {
             "name": "subject_id",
@@ -8225,7 +8172,7 @@
           "unit_var": "valueuom",
           "time_vars": ["charttime", "storetime"]
         },
-        "num_rows": 329499788,
+        "num_rows": 313645063,
         "cols": {
           "subject_id": {
             "name": "subject_id",
@@ -8282,7 +8229,7 @@
           "val_var": "itemid",
           "time_vars": ["charttime", "storetime", "value"]
         },
-        "num_rows": 7495712,
+        "num_rows": 7112999,
         "cols": {
           "subject_id": {
             "name": "subject_id",
@@ -8331,7 +8278,7 @@
           "id_var": "itemid",
           "val_var": "label"
         },
-        "num_rows": 3861,
+        "num_rows": 4014,
         "cols": {
           "itemid": {
             "name": "itemid",
@@ -8378,7 +8325,7 @@
           "val_var": "last_careunit",
           "time_vars": ["intime", "outtime"]
         },
-        "num_rows": 76540,
+        "num_rows": 73181,
         "cols": {
           "subject_id": {
             "name": "subject_id",
@@ -8424,7 +8371,7 @@
           "unit_var": "rateuom",
           "time_vars": ["starttime", "endtime", "storetime"]
         },
-        "num_rows": 9460658,
+        "num_rows": 8978893,
         "cols": {
           "subject_id": {
             "name": "subject_id",
@@ -8535,89 +8482,6 @@
           }
         }
       },
-      "ingredientevents": {
-        "files": "icu/ingredientevents.csv.gz",
-        "defaults": {
-          "index_var": "starttime",
-          "val_var": "rate",
-          "unit_var": "rateuom",
-          "time_vars": ["starttime", "endtime", "storetime"]
-        },
-        "num_rows": 9460658,
-        "cols": {
-          "subject_id": {
-            "name": "subject_id",
-            "spec": "col_integer"
-          },
-          "hadm_id": {
-            "name": "hadm_id",
-            "spec": "col_integer"
-          },
-          "stay_id": {
-            "name": "stay_id",
-            "spec": "col_integer"
-          },
-          "caregiver_id": {
-            "name": "caregiver_id",
-            "spec": "col_integer"
-          },
-          "starttime": {
-            "name": "starttime",
-            "spec": "col_datetime",
-            "format": "%Y-%m-%d %H:%M:%S"
-          },
-          "endtime": {
-            "name": "endtime",
-            "spec": "col_datetime",
-            "format": "%Y-%m-%d %H:%M:%S"
-          },
-          "storetime": {
-            "name": "storetime",
-            "spec": "col_datetime",
-            "format": "%Y-%m-%d %H:%M:%S"
-          },
-          "itemid": {
-            "name": "itemid",
-            "spec": "col_integer"
-          },
-          "amount": {
-            "name": "amount",
-            "spec": "col_double"
-          },
-          "amountuom": {
-            "name": "amountuom",
-            "spec": "col_character"
-          },
-          "rate": {
-            "name": "rate",
-            "spec": "col_double"
-          },
-          "rateuom": {
-            "name": "rateuom",
-            "spec": "col_character"
-          },
-          "orderid": {
-            "name": "orderid",
-            "spec": "col_integer"
-          },
-          "linkorderid": {
-            "name": "linkorderid",
-            "spec": "col_integer"
-          },
-          "statusdescription": {
-            "name": "statusdescription",
-            "spec": "col_character"
-          },
-          "originalamount": {
-            "name": "originalamount",
-            "spec": "col_double"
-          },
-          "originalrate": {
-            "name": "originalrate",
-            "spec": "col_double"
-          }
-        }
-      },
       "outputevents": {
         "files": "icu/outputevents.csv.gz",
         "defaults": {
@@ -8626,7 +8490,7 @@
           "unit_var": "valueuom",
           "time_vars": ["charttime", "storetime"]
         },
-        "num_rows": 4457381,
+        "num_rows": 4234967,
         "cols": {
           "subject_id": {
             "name": "subject_id",
@@ -8672,7 +8536,7 @@
           "unit_var": "valueuom",
           "time_vars": ["starttime", "endtime", "storetime", "comments_date"]
         },
-        "num_rows": 731247,
+        "num_rows": 696092,
         "cols": {
           "subject_id": {
             "name": "subject_id",
@@ -8773,6 +8637,139 @@
             "name": "comments_date",
             "spec": "col_datetime",
             "format": "%Y-%m-%d %H:%M:%S"
+          },
+          "originalamount": {
+            "name": "originalamount",
+            "spec": "col_double"
+          },
+          "originalrate": {
+            "name": "originalrate",
+            "spec": "col_double"
+          }
+        }
+      },
+      "omr": {
+        "files": "hosp/omr.csv.gz",
+        "defaults": {
+          "index_var": "chartdate",
+          "val_var": "result_value",
+          "time_vars": "chartdate"
+        },
+        "num_rows": 6439169,
+        "cols": {
+          "subject_id": {
+            "name": "subject_id",
+            "spec": "col_integer"
+          },
+          "chartdate": {
+            "name": "chartdate",
+            "spec": "col_datetime",
+            "format": "%Y-%m-%d"
+          },
+          "seq_num": {
+            "name": "seq_num",
+            "spec": "col_integer"
+          },
+          "result_name": {
+            "name": "result_name",
+            "spec": "col_character"
+          },
+          "result_value": {
+            "name": "result_value",
+            "spec": "col_character"
+          }
+        }
+      },
+      "caregiver": {
+        "files": "hosp/caregiver.csv.gz",
+        "defaults": [],
+        "num_rows": 15468,
+        "cols": {
+          "caregiver_id": {
+            "name": "caregiver_id",
+            "spec": "col_integer"
+          }
+        }
+      },
+      "provider": {
+        "files": "hosp/provider.csv.gz",
+        "defaults": [],
+        "num_rows": 40508,
+        "cols": {
+          "provider_id": {
+            "name": "provider_id",
+            "spec": "col_character"
+          }
+        }
+      },
+      "ingredientevents": {
+        "files": "icu/ingredientevents.csv.gz",
+        "defaults": {
+          "index_var": "starttime",
+          "val_var": "rate",
+          "unit_var": "rateuom",
+          "time_vars": ["starttime", "endtime", "storetime"]
+        },
+        "num_rows": 11627821,
+        "cols": {
+          "subject_id": {
+            "name": "subject_id",
+            "spec": "col_integer"
+          },
+          "hadm_id": {
+            "name": "hadm_id",
+            "spec": "col_integer"
+          },
+          "stay_id": {
+            "name": "stay_id",
+            "spec": "col_integer"
+          },
+          "starttime": {
+            "name": "starttime",
+            "spec": "col_datetime",
+            "format": "%Y-%m-%d %H:%M:%S"
+          },
+          "endtime": {
+            "name": "endtime",
+            "spec": "col_datetime",
+            "format": "%Y-%m-%d %H:%M:%S"
+          },
+          "storetime": {
+            "name": "storetime",
+            "spec": "col_datetime",
+            "format": "%Y-%m-%d %H:%M:%S"
+          },
+          "itemid": {
+            "name": "itemid",
+            "spec": "col_integer"
+          },
+          "amount": {
+            "name": "amount",
+            "spec": "col_double"
+          },
+          "amountuom": {
+            "name": "amountuom",
+            "spec": "col_character"
+          },
+          "rate": {
+            "name": "rate",
+            "spec": "col_double"
+          },
+          "rateuom": {
+            "name": "rateuom",
+            "spec": "col_character"
+          },
+          "orderid": {
+            "name": "orderid",
+            "spec": "col_integer"
+          },
+          "linkorderid": {
+            "name": "linkorderid",
+            "spec": "col_integer"
+          },
+          "statusdescription": {
+            "name": "statusdescription",
+            "spec": "col_character"
           },
           "originalamount": {
             "name": "originalamount",
@@ -9524,7 +9521,7 @@
   },
   {
     "name": "sic",
-    "url": "https://physionet.org/content/sicdb/1.0.6/",
+    "url": "https://physionet.org/files/sicdb/1.0.6",
     "id_cfg": {
       "patient": {
         "id": "PatientID",
@@ -9546,8 +9543,9 @@
         "files": "cases.csv.gz",
         "defaults": {
           "index_var": "ICUOffset",
-          "time_vars": ["OffsetAfterFirstAdmission", "OffsetOfDeath", "TimeOfStay", "ICUOffset"]
+          "time_vars": ["ICUOffset", "OffsetOfDeath", "HeartSurgeryBeginOffset", "HeartSurgeryEndOffset", "OffsetAfterFirstAdmission"]
         },
+        "num_rows": 27386,
         "cols": {
           "caseid": {
             "name": "CaseID",
@@ -9669,6 +9667,8 @@
       },
       "d_references": {
         "files": "d_references.csv.gz",
+        "defaults": [],
+        "num_rows": 1608,
         "cols": {
           "referenceglobalid": {
             "name": "ReferenceGlobalID",
@@ -9709,9 +9709,9 @@
         "defaults": {
           "index_var": "Offset",
           "val_var": "Val",
-          "time_vars": ["Offset"]
+          "time_vars": "Offset"
         },
-        "num_rows": 29825127,
+        "num_rows": 36785241,
         "cols": {
           "id": {
             "name": "id",
@@ -9750,9 +9750,9 @@
       "data_ref": {
         "files": "data_ref.csv.gz",
         "defaults": {
-          "index_var": "OffsetAfterFirstAdmission",
-          "time_vars": ["OffsetAfterFirstAdmission"]
+          "index_var": "OffsetAfterFirstAdmission"
         },
+        "num_rows": 354157,
         "cols": {
           "id": {
             "name": "id",
@@ -9777,8 +9777,9 @@
         "defaults": {
           "index_var": "Offset",
           "val_var": "LaboratoryValue",
-          "time_vars": ["Offset"]
+          "time_vars": "Offset"
         },
+        "num_rows": 17572279,
         "cols": {
           "id": {
             "name": "id",
@@ -9813,6 +9814,7 @@
           "val_var": "Amount",
           "time_vars": ["Offset", "OffsetDrugEnd"]
         },
+        "num_rows": 5141346,
         "cols": {
           "id": {
             "name": "id",
@@ -9862,6 +9864,7 @@
           "index_var": "Offset",
           "time_vars": ["Offset", "OffsetEnd"]
         },
+        "num_rows": 183339,
         "cols": {
           "id": {
             "name": "id",
@@ -9893,8 +9896,9 @@
         "files": "unitlog.csv.gz",
         "defaults": {
           "index_var": "Offset",
-          "time_vars": ["Offset", "OffsetEnd"]
+          "time_vars": "Offset"
         },
+        "num_rows": 139968,
         "cols": {
           "id": {
             "name": "id",
