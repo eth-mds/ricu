@@ -5,3 +5,5 @@ Meta
 inst/local_testdata
 /doc/
 /Meta/
+.DS_Store
+.Rhistory
