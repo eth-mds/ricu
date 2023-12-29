@@ -22,6 +22,20 @@ provided by [PhysioNet](https://physionet.org) in R is facilitated by
 clinical concepts in a data source agnostic way, as well as classes and
 utilities for working with the arising types of time series datasets.
 
+## Citation
+To cite `ricu`, please use the following:
+```
+@article{bennett2023ricu,
+  title={ricu: R’s interface to intensive care data},
+  author={Bennett, Nicolas and Ple{\v{c}}ko, Drago and Ukor, Ida-Fong and Meinshausen, Nicolai and B{\"u}hlmann, Peter},
+  journal={GigaScience},
+  volume={12},
+  pages={giad041},
+  year={2023},
+  publisher={Oxford University Press}
+}
+```
+
 ## Installation
 
 Currently, installation is only possible from github directly, using the
