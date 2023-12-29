@@ -9,6 +9,7 @@
 \alias{id_win_helper}
 \alias{id_win_helper.mimic_env}
 \alias{id_win_helper.eicu_env}
+\alias{id_win_helper.sic_env}
 \alias{id_win_helper.hirid_env}
 \alias{id_win_helper.aumc_env}
 \alias{id_win_helper.miiv_env}
@@ -32,6 +33,8 @@ id_win_helper(x)
 \method{id_win_helper}{mimic_env}(x)
 
 \method{id_win_helper}{eicu_env}(x)
+
+\method{id_win_helper}{sic_env}(x)
 
 \method{id_win_helper}{hirid_env}(x)
 
