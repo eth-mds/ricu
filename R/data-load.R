@@ -174,7 +174,7 @@ load_difftime.sic_tbl <- function(x, rows, cols = colnames(x),
                                   id_hint = id_vars(x),
                                   time_vars = ricu::time_vars(x), ...) {
   
-  sec_as_mins <- function(x) ricu:::min_as_mins(as.integer(x / 60))
+  sec_as_mins <- function(x) min_as_mins(as.integer(x / 60))
   warn_dots(...)
   load_eiau(x, {{ rows }}, cols, id_hint, time_vars, sec_as_mins)
 }

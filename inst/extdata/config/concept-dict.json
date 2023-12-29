@@ -6582,7 +6582,8 @@
         {
           "table": "cases",
           "val_var": "WeightOnAdmission",
-          "class": "col_itm"
+          "class": "col_itm",
+          "callback": "transform_fun(binary_op(`/`, 1000))"
         }
       ]
     }

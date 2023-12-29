@@ -1,3 +1,9 @@
+# ricu 0.6.0
+
+* Salzburg database (SICdb, `sic` in `ricu`) added as a data source with 64 concepts available
+* MIMIC-IV (`miiv` in `ricu`) version bumped to 2.2
+* fixed the usage of `round()` and `trunc()`; both replaced by `floor()` throughout
+
 # ricu 0.5.5
 
 * maintenance release: fixes an issue introduced by pillar 1.9.0 via an update

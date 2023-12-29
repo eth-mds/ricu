@@ -233,7 +233,7 @@ id_win_helper.eicu_env <- function(x) {
 #' @export
 id_win_helper.sic_env <- function(x) {
   
-  sec_as_mins <- function(x) ricu:::min_as_mins(as.integer(x / 60))
+  sec_as_mins <- function(x) min_as_mins(as.integer(x / 60))
   
   cfg <- sort(as_id_cfg(x), decreasing = TRUE)
   

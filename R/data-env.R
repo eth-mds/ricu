@@ -131,8 +131,8 @@
 #' is spread over 7 tables.
 #'
 #' @section MIMIC-IV:
-#' With the recent v1.0 release of MIMIC-IV, experimental support has been
-#' added in `ricu`. Building on the success of MIMIC-III, this next iteration
+#' The latest v2.2 release of MIMIC-IV is available in added in `ricu`. 
+#' Building on the success of MIMIC-III, this next iteration
 #' contains data on patients admitted to an ICU or the emergency department
 #' between 2008 - 2019 at BIDMC. Therefore, relative to MIMIC-III, patients
 #' admitted prior to 2008 (whose data is stored in a CareVue-based system) has
@@ -142,6 +142,12 @@
 #' of the initial v1.0 release and currently is not supported by `ricu`. For
 #' further information, please refer to the [MIMIC-III documentation
 #' ](https://mimic.mit.edu/docs/iii/).
+#' 
+#' @section SICdb:
+#' The Salzburg ICU database (SICdb) originates from the University Hospital of
+#' Salzburg. In `ricu`, version v1.0.6 is currently supported. For
+#' further information, please refer to the [SICdb documentation
+#' ](https://physionet.org/content/sicdb/1.0.6/).
 #'
 #' @format
 #' The exported `data` environment contains all datasets that have been made
@@ -227,6 +233,10 @@ NULL
 NULL
 
 #' @name miiv
+#' @rdname data_env
+NULL
+
+#' @name sic
 #' @rdname data_env
 NULL
 

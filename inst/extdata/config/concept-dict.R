@@ -2659,7 +2659,8 @@ cfg <- list(
         list(ids = 226512L, table = "chartevents", sub_var = "itemid")
       ),
       sic = list(
-        list(table = "cases", val_var = "WeightOnAdmission", class = "col_itm")
+        list(table = "cases", val_var = "WeightOnAdmission", class = "col_itm",
+             callback = "transform_fun(binary_op(`/`, 1000))")
       )
     )
   ),

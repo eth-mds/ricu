@@ -618,7 +618,8 @@ sic_dur <- function (x, val_var, stop_var, grp_var = NULL, ...) {
 sic_rate_kg <- function (x, val_var, stop_var, env, ...) {
   
   res <- add_weight(x, env, "weight")
-  res[, AmountPerMinute := AmountPerMinute * 10^6 / weight]
+  wgh_var <- "weight"
+  res[, c(val_var) := get(val_var) * 10^3 / get(wgh_var)]
   expand(res, index_var(x), stop_var, keep_vars = c(id_vars(x), val_var))
 }
 
