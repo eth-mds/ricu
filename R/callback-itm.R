@@ -610,6 +610,18 @@ aumc_rate_units <- function(mcg_to_units) {
   }
 }
 
+sic_dur <- function (x, val_var, stop_var, grp_var = NULL, ...) {
+  
+  calc_dur(x, val_var, index_var(x), stop_var, grp_var)
+}
+
+sic_rate_kg <- function (x, val_var, stop_var, env, ...) {
+  
+  res <- add_weight(x, env, "weight")
+  res[, AmountPerMinute := AmountPerMinute * 10^6 / weight]
+  expand(res, index_var(x), stop_var, keep_vars = c(id_vars(x), val_var))
+}
+
 eicu_duration <- function(gap_length) {
 
   assert_that(is_interval(gap_length), is_scalar(gap_length))
