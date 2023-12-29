@@ -99,6 +99,14 @@
           "sub_var": "itemid",
           "callback": "transform_fun(set_val(TRUE))"
         }
+      ],
+      "sic": [
+        {
+          "ids": [1406, 1408, 1410, 1418, 1421, 1422, 1423, 1428, 1431, 1433, 1436, 1449, 1454, 1457, 1458, 1459, 1460, 1461, 1603, 1795, 1913, 1927],
+          "table": "medication",
+          "sub_var": "DrugID",
+          "callback": "transform_fun(set_val(TRUE))"
+        }
       ]
     }
   },
@@ -307,6 +315,13 @@
           "callback": "transform_fun(mimic_age)",
           "class": "col_itm"
         }
+      ],
+      "sic": [
+        {
+          "table": "cases",
+          "val_var": "AgeOnAdmission",
+          "class": "col_itm"
+        }
       ]
     }
   },
@@ -369,6 +384,13 @@
           "table": "labevents",
           "sub_var": "itemid"
         }
+      ],
+      "sic": [
+        {
+          "ids": 287,
+          "table": "laboratory",
+          "sub_var": "LaboratoryID"
+        }
       ]
     }
   },
@@ -427,6 +449,13 @@
           "ids": 50863,
           "table": "labevents",
           "sub_var": "itemid"
+        }
+      ],
+      "sic": [
+        {
+          "ids": 609,
+          "table": "laboratory",
+          "sub_var": "LaboratoryID"
         }
       ]
     }
@@ -487,6 +516,13 @@
           "table": "labevents",
           "sub_var": "itemid"
         }
+      ],
+      "sic": [
+        {
+          "ids": 617,
+          "table": "laboratory",
+          "sub_var": "LaboratoryID"
+        }
       ]
     }
   },
@@ -545,6 +581,13 @@
           "ids": 50878,
           "table": "labevents",
           "sub_var": "itemid"
+        }
+      ],
+      "sic": [
+        {
+          "ids": 616,
+          "table": "laboratory",
+          "sub_var": "LaboratoryID"
         }
       ]
     }
@@ -612,6 +655,13 @@
           "table": "labevents",
           "sub_var": "itemid"
         }
+      ],
+      "sic": [
+        {
+          "ids": 174,
+          "table": "laboratory",
+          "sub_var": "LaboratoryID"
+        }
       ]
     }
   },
@@ -674,6 +724,13 @@
           "table": "labevents",
           "sub_var": "itemid"
         }
+      ],
+      "sic": [
+        {
+          "ids": 668,
+          "table": "laboratory",
+          "sub_var": "LaboratoryID"
+        }
       ]
     }
   },
@@ -733,6 +790,13 @@
           "ids": 50882,
           "table": "labevents",
           "sub_var": "itemid"
+        }
+      ],
+      "sic": [
+        {
+          "ids": 456,
+          "table": "laboratory",
+          "sub_var": "LaboratoryID"
         }
       ]
     }
@@ -796,6 +860,13 @@
           "table": "labevents",
           "sub_var": "itemid"
         }
+      ],
+      "sic": [
+        {
+          "ids": 333,
+          "table": "laboratory",
+          "sub_var": "LaboratoryID"
+        }
       ]
     }
   },
@@ -857,6 +928,13 @@
           "ids": 50883,
           "table": "labevents",
           "sub_var": "itemid"
+        }
+      ],
+      "sic": [
+        {
+          "ids": 332,
+          "table": "laboratory",
+          "sub_var": "LaboratoryID"
         }
       ]
     }
@@ -987,6 +1065,14 @@
           "table": "labevents",
           "sub_var": "itemid"
         }
+      ],
+      "sic": [
+        {
+          "ids": 355,
+          "table": "laboratory",
+          "sub_var": "LaboratoryID",
+          "callback": "transform_fun(binary_op(`*`, 2.14))"
+        }
       ]
     }
   },
@@ -1051,6 +1137,14 @@
           "table": "labevents",
           "sub_var": "itemid"
         }
+      ],
+      "sic": [
+        {
+          "ids": 457,
+          "table": "laboratory",
+          "sub_var": "LaboratoryID",
+          "callback": "transform_fun(binary_op(`*`, 4.008))"
+        }
       ]
     }
   },
@@ -1111,6 +1205,13 @@
           "table": "labevents",
           "sub_var": "itemid"
         }
+      ],
+      "sic": [
+        {
+          "ids": 655,
+          "table": "laboratory",
+          "sub_var": "LaboratoryID"
+        }
       ]
     }
   },
@@ -1169,6 +1270,13 @@
           "ids": 50910,
           "table": "labevents",
           "sub_var": "itemid"
+        }
+      ],
+      "sic": [
+        {
+          "ids": 611,
+          "table": "laboratory",
+          "sub_var": "LaboratoryID"
         }
       ]
     }
@@ -1229,6 +1337,13 @@
           "table": "labevents",
           "sub_var": "itemid"
         }
+      ],
+      "sic": [
+        {
+          "ids": 253,
+          "table": "laboratory",
+          "sub_var": "LaboratoryID"
+        }
       ]
     }
   },
@@ -1288,6 +1403,13 @@
           "ids": 50902,
           "table": "labevents",
           "sub_var": "itemid"
+        }
+      ],
+      "sic": [
+        {
+          "ids": [683, 450],
+          "table": "laboratory",
+          "sub_var": "LaboratoryID"
         }
       ]
     }
@@ -1374,6 +1496,13 @@
           "ids": 50912,
           "table": "labevents",
           "sub_var": "itemid"
+        }
+      ],
+      "sic": [
+        {
+          "ids": 367,
+          "table": "laboratory",
+          "sub_var": "LaboratoryID"
         }
       ]
     }
@@ -1498,6 +1627,13 @@
           "ids": [8368, 8441, 8555, 220051, 220180],
           "table": "chartevents",
           "sub_var": "itemid"
+        }
+      ],
+      "sic": [
+        {
+          "ids": [702, 705],
+          "table": "data_float_h",
+          "sub_var": "DataID"
         }
       ]
     }
@@ -1781,6 +1917,17 @@
           "grp_var": "linkorderid",
           "callback": "mimic_dur_inmv"
         }
+      ],
+      "sic": [
+        {
+          "ids": [
+            1559
+          ],
+          "table": "medication",
+          "sub_var": "DrugID",
+          "stop_var": "OffsetDrugEnd",
+          "callback": "sic_dur"
+        }
       ]
     }
   },
@@ -1872,6 +2019,16 @@
           "stop_var": "endtime",
           "callback": "mimic_rate_mv"
         }
+      ],
+      "sic": [
+        {
+          "ids": 1559,
+          "table": "medication",
+          "sub_var": "DrugID",
+          "val_var": "AmountPerMinute",
+          "stop_var": "OffsetDrugEnd",
+          "callback": "sic_rate_kg"
+        }
       ]
     }
   },
@@ -1959,6 +2116,15 @@
           "grp_var": "linkorderid",
           "callback": "mimic_dur_inmv"
         }
+      ],
+      "sic": [
+        {
+          "ids": 1618,
+          "table": "medication",
+          "sub_var": "DrugID",
+          "stop_var": "OffsetDrugEnd",
+          "callback": "sic_dur"
+        }
       ]
     }
   },
@@ -2040,6 +2206,16 @@
           "sub_var": "itemid",
           "stop_var": "endtime",
           "callback": "mimic_rate_mv"
+        }
+      ],
+      "sic": [
+        {
+          "ids": 1618,
+          "table": "medication",
+          "sub_var": "DrugID",
+          "val_var": "AmountPerMinute",
+          "stop_var": "OffsetDrugEnd",
+          "callback": "sic_rate_kg"
         }
       ]
     }
@@ -2173,6 +2349,13 @@
           "table": "labevents",
           "sub_var": "itemid"
         }
+      ],
+      "sic": [
+        {
+          "ids": 197,
+          "table": "laboratory",
+          "sub_var": "LaboratoryID"
+        }
       ]
     }
   },
@@ -2260,6 +2443,17 @@
           "stop_var": "endtime",
           "grp_var": "linkorderid",
           "callback": "mimic_dur_inmv"
+        }
+      ],
+      "sic": [
+        {
+          "ids": [
+            1502
+          ],
+          "table": "medication",
+          "sub_var": "DrugID",
+          "stop_var": "OffsetDrugEnd",
+          "callback": "sic_dur"
         }
       ]
     }
@@ -2351,6 +2545,16 @@
           "sub_var": "itemid",
           "stop_var": "endtime",
           "callback": "mimic_rate_mv"
+        }
+      ],
+      "sic": [
+        {
+          "ids": 1502,
+          "table": "medication",
+          "sub_var": "DrugID",
+          "val_var": "AmountPerMinute",
+          "stop_var": "OffsetDrugEnd",
+          "callback": "sic_rate_kg"
         }
       ]
     }
@@ -2532,7 +2736,7 @@
           "ids": [6776, 9989, 10175],
           "table": "numericitems",
           "sub_var": "itemid",
-          "callback": "convert_unit(binary_op(`*`, 0.058467), 'mg/dL')"
+          "callback": "convert_unit(binary_op(`*`, 100), 'mg/dL')"
         }
       ],
       "eicu": [
@@ -2577,6 +2781,13 @@
           "ids": 51214,
           "table": "labevents",
           "sub_var": "itemid"
+        }
+      ],
+      "sic": [
+        {
+          "ids": 344,
+          "table": "laboratory",
+          "sub_var": "LaboratoryID"
         }
       ]
     }
@@ -2667,6 +2878,13 @@
           "table": "labevents",
           "sub_var": "itemid"
         }
+      ],
+      "sic": [
+        {
+          "ids": 2283,
+          "table": "data_float_h",
+          "sub_var": "DataID"
+        }
       ]
     }
   },
@@ -2747,6 +2965,13 @@
           "ids": [50809, 50931],
           "table": "labevents",
           "sub_var": "itemid"
+        }
+      ],
+      "sic": [
+        {
+          "ids": [348, 656],
+          "table": "laboratory",
+          "sub_var": "LaboratoryID"
         }
       ]
     }
@@ -2873,6 +3098,13 @@
           "table": "labevents",
           "sub_var": "itemid"
         }
+      ],
+      "sic": [
+        {
+          "ids": [217, 682],
+          "table": "laboratory",
+          "sub_var": "LaboratoryID"
+        }
       ]
     }
   },
@@ -2938,6 +3170,13 @@
           "sub_var": "itemid",
           "callback": "convert_unit(binary_op(`*`, 2.54), 'cm', '^in')"
         }
+      ],
+      "sic": [
+        {
+          "table": "cases",
+          "val_var": "HeightOnAdmission",
+          "class": "col_itm"
+        }
       ]
     }
   },
@@ -3000,6 +3239,13 @@
           "table": "labevents",
           "sub_var": "itemid"
         }
+      ],
+      "sic": [
+        {
+          "ids": [658, 289],
+          "table": "laboratory",
+          "sub_var": "LaboratoryID"
+        }
       ]
     }
   },
@@ -3059,6 +3305,13 @@
           "ids": [211, 220045],
           "table": "chartevents",
           "sub_var": "itemid"
+        }
+      ],
+      "sic": [
+        {
+          "ids": 708,
+          "table": "data_float_h",
+          "sub_var": "DataID"
         }
       ]
     }
@@ -3257,6 +3510,13 @@
           "table": "labevents",
           "sub_var": "itemid"
         }
+      ],
+      "sic": [
+        {
+          "ids": [463, 685],
+          "table": "laboratory",
+          "sub_var": "LaboratoryID"
+        }
       ]
     }
   },
@@ -3316,6 +3576,13 @@
           "ids": 50813,
           "table": "labevents",
           "sub_var": "itemid"
+        }
+      ],
+      "sic": [
+        {
+          "ids": [657, 454],
+          "table": "laboratory",
+          "sub_var": "LaboratoryID"
         }
       ]
     }
@@ -3487,6 +3754,13 @@
           "table": "labevents",
           "sub_var": "itemid"
         }
+      ],
+      "sic": [
+        {
+          "ids": 223,
+          "table": "laboratory",
+          "sub_var": "LaboratoryID"
+        }
       ]
     }
   },
@@ -3557,6 +3831,13 @@
           "table": "chartevents",
           "sub_var": "itemid"
         }
+      ],
+      "sic": [
+        {
+          "ids": [703, 706],
+          "table": "data_float_h",
+          "sub_var": "DataID"
+        }
       ]
     }
   },
@@ -3616,6 +3897,13 @@
           "ids": 51248,
           "table": "labevents",
           "sub_var": "itemid"
+        }
+      ],
+      "sic": [
+        {
+          "ids": 566,
+          "table": "laboratory",
+          "sub_var": "LaboratoryID"
         }
       ]
     }
@@ -3679,6 +3967,13 @@
           "table": "labevents",
           "sub_var": "itemid"
         }
+      ],
+      "sic": [
+        {
+          "ids": 290,
+          "table": "laboratory",
+          "sub_var": "LaboratoryID"
+        }
       ]
     }
   },
@@ -3738,6 +4033,13 @@
           "ids": 51250,
           "table": "labevents",
           "sub_var": "itemid"
+        }
+      ],
+      "sic": [
+        {
+          "ids": 286,
+          "table": "laboratory",
+          "sub_var": "LaboratoryID"
         }
       ]
     }
@@ -3910,6 +4212,14 @@
           "table": "labevents",
           "sub_var": "itemid"
         }
+      ],
+      "sic": [
+        {
+          "ids": 468,
+          "table": "laboratory",
+          "sub_var": "LaboratoryID",
+          "callback": "transform_fun(binary_op(`*`, 2.431))"
+        }
       ]
     }
   },
@@ -4036,6 +4346,13 @@
           "table": "labevents",
           "sub_var": "itemid"
         }
+      ],
+      "sic": [
+        {
+          "ids": [469, 686],
+          "table": "laboratory",
+          "sub_var": "LaboratoryID"
+        }
       ]
     }
   },
@@ -4101,6 +4418,13 @@
           "ids": 51256,
           "table": "labevents",
           "sub_var": "itemid"
+        }
+      ],
+      "sic": [
+        {
+          "ids": 230,
+          "table": "laboratory",
+          "sub_var": "LaboratoryID"
         }
       ]
     }
@@ -4197,6 +4521,17 @@
           "stop_var": "endtime",
           "grp_var": "linkorderid",
           "callback": "mimic_dur_inmv"
+        }
+      ],
+      "sic": [
+        {
+          "ids": [
+            1562
+          ],
+          "table": "medication",
+          "sub_var": "DrugID",
+          "stop_var": "OffsetDrugEnd",
+          "callback": "sic_dur"
         }
       ]
     }
@@ -4296,6 +4631,16 @@
           "stop_var": "endtime",
           "callback": "mimic_rate_mv"
         }
+      ],
+      "sic": [
+        {
+          "ids": 1562,
+          "table": "medication",
+          "sub_var": "DrugID",
+          "val_var": "AmountPerMinute",
+          "stop_var": "OffsetDrugEnd",
+          "callback": "sic_rate_kg"
+        }
       ]
     }
   },
@@ -4382,6 +4727,13 @@
           "table": "chartevents",
           "sub_var": "itemid"
         }
+      ],
+      "sic": [
+        {
+          "ids": 710,
+          "table": "data_float_h",
+          "sub_var": "DataID"
+        }
       ]
     }
   },
@@ -4451,6 +4803,13 @@
           "table": "labevents",
           "sub_var": "itemid"
         }
+      ],
+      "sic": [
+        {
+          "ids": 687,
+          "table": "laboratory",
+          "sub_var": "LaboratoryID"
+        }
       ]
     }
   },
@@ -4509,6 +4868,13 @@
           "ids": 50820,
           "table": "labevents",
           "sub_var": "itemid"
+        }
+      ],
+      "sic": [
+        {
+          "ids": 688,
+          "table": "laboratory",
+          "sub_var": "LaboratoryID"
         }
       ]
     }
@@ -4655,6 +5021,14 @@
           "table": "labevents",
           "sub_var": "itemid"
         }
+      ],
+      "sic": [
+        {
+          "ids": 471,
+          "table": "laboratory",
+          "sub_var": "LaboratoryID",
+          "callback": "transform_fun(binary_op(`*`, 3.097521))"
+        }
       ]
     }
   },
@@ -4714,6 +5088,13 @@
           "ids": 51265,
           "table": "labevents",
           "sub_var": "itemid"
+        }
+      ],
+      "sic": [
+        {
+          "ids": 314,
+          "table": "laboratory",
+          "sub_var": "LaboratoryID"
         }
       ]
     }
@@ -4775,6 +5156,13 @@
           "table": "labevents",
           "sub_var": "itemid"
         }
+      ],
+      "sic": [
+        {
+          "ids": [664, 689],
+          "table": "laboratory",
+          "sub_var": "LaboratoryID"
+        }
       ]
     }
   },
@@ -4825,6 +5213,13 @@
           "ids": 51274,
           "table": "labevents",
           "sub_var": "itemid"
+        }
+      ],
+      "sic": [
+        {
+          "ids": 598,
+          "table": "laboratory",
+          "sub_var": "LaboratoryID"
         }
       ]
     }
@@ -4884,6 +5279,13 @@
           "ids": 51275,
           "table": "labevents",
           "sub_var": "itemid"
+        }
+      ],
+      "sic": [
+        {
+          "ids": 597,
+          "table": "laboratory",
+          "sub_var": "LaboratoryID"
         }
       ]
     }
@@ -5006,6 +5408,13 @@
           "table": "labevents",
           "sub_var": "itemid"
         }
+      ],
+      "sic": [
+        {
+          "ids": 599,
+          "table": "laboratory",
+          "sub_var": "LaboratoryID"
+        }
       ]
     }
   },
@@ -5057,6 +5466,13 @@
           "ids": 51277,
           "table": "labevents",
           "sub_var": "itemid"
+        }
+      ],
+      "sic": [
+        {
+          "ids": 3319,
+          "table": "laboratory",
+          "sub_var": "LaboratoryID"
         }
       ]
     }
@@ -5117,6 +5533,13 @@
           "ids": [618, 619, 220210, 224688, 224689, 224690],
           "table": "chartevents",
           "sub_var": "itemid"
+        }
+      ],
+      "sic": [
+        {
+          "ids": 719,
+          "table": "data_float_h",
+          "sub_var": "DataID"
         }
       ]
     }
@@ -5245,6 +5668,13 @@
           "table": "chartevents",
           "sub_var": "itemid"
         }
+      ],
+      "sic": [
+        {
+          "ids": [701, 704],
+          "table": "data_float_h",
+          "sub_var": "DataID"
+        }
       ]
     }
   },
@@ -5316,6 +5746,14 @@
           "table": "patients",
           "val_var": "gender",
           "callback": "apply_map(c(M = 'Male', F = 'Female'))",
+          "class": "col_itm"
+        }
+      ],
+      "sic": [
+        {
+          "table": "cases",
+          "val_var": "Sex",
+          "callback": "apply_map(c(`735` = 'Male', `736` = 'Female'))",
           "class": "col_itm"
         }
       ]
@@ -5535,6 +5973,13 @@
           "sub_var": "itemid",
           "callback": "convert_unit(fahr_to_cels, 'C', 'f')"
         }
+      ],
+      "sic": [
+        {
+          "ids": 709,
+          "table": "data_float_h",
+          "sub_var": "DataID"
+        }
       ]
     }
   },
@@ -5632,6 +6077,14 @@
           "table": "labevents",
           "sub_var": "itemid"
         }
+      ],
+      "sic": [
+        {
+          "ids": 481,
+          "table": "laboratory",
+          "sub_var": "LaboratoryID",
+          "callback": "transform_fun(binary_op(`/`, 1000))"
+        }
       ]
     }
   },
@@ -5675,6 +6128,13 @@
           "ids": 51002,
           "table": "labevents",
           "sub_var": "itemid"
+        }
+      ],
+      "sic": [
+        {
+          "ids": 270,
+          "table": "laboratory",
+          "sub_var": "LaboratoryID"
         }
       ]
     }
@@ -5749,6 +6209,13 @@
           "ids": [40055, 40056, 40057, 40065, 40069, 40085, 40086, 40094, 40096, 40405, 40428, 40473, 40715, 43175, 226557, 226558, 226559, 226560, 226561, 226563, 226564, 226565, 226566, 226567, 226584, 227510],
           "table": "outputevents",
           "sub_var": "itemid"
+        }
+      ],
+      "sic": [
+        {
+          "ids": 725,
+          "table": "data_float_h",
+          "sub_var": "DataID"
         }
       ]
     }
@@ -6041,6 +6508,13 @@
           "table": "labevents",
           "sub_var": "itemid"
         }
+      ],
+      "sic": [
+        {
+          "ids": 301,
+          "table": "laboratory",
+          "sub_var": "LaboratoryID"
+        }
       ]
     }
   },
@@ -6102,6 +6576,13 @@
           "ids": [762, 4183, 226512],
           "table": "chartevents",
           "sub_var": "itemid"
+        }
+      ],
+      "sic": [
+        {
+          "table": "cases",
+          "val_var": "WeightOnAdmission",
+          "class": "col_itm"
         }
       ]
     }

@@ -26,6 +26,9 @@ cfg <- list(
       ),
       miiv = list(
         list(ids = 220045L, table = "chartevents", sub_var = "itemid")
+      ),
+      sic = list(
+        list(ids = 708L, table = "data_float_h", sub_var = "DataID")
       )
     )
   ),
@@ -55,6 +58,9 @@ cfg <- list(
       miiv = list(
         list(ids = c(220050L, 220179L), table = "chartevents",
              sub_var = "itemid")
+      ),
+      sic = list(
+        list(ids = c(701L, 704L), table = "data_float_h", sub_var = "DataID")
       )
     )
   ),
@@ -84,6 +90,9 @@ cfg <- list(
       miiv = list(
         list(ids = c(220051L, 220180L), table = "chartevents",
              sub_var = "itemid")
+      ),
+      sic = list(
+        list(ids = c(702L, 705L), table = "data_float_h", sub_var = "DataID")
       )
     )
   ),
@@ -115,6 +124,9 @@ cfg <- list(
       miiv = list(
         list(ids = c(220052L, 220181L, 225312L), table = "chartevents",
              sub_var = "itemid")
+      ),
+      sic = list(
+        list(ids = c(703L, 706L), table = "data_float_h", sub_var = "DataID")
       )
     )
   ),
@@ -145,6 +157,9 @@ cfg <- list(
       miiv = list(
         list(ids = c(220210L, 224688L, 224689L, 224690L),
              table = "chartevents", sub_var = "itemid")
+      ),
+      sic = list(
+        list(ids = 719L, table = "data_float_h", sub_var = "DataID")
       )
     )
   ),
@@ -178,6 +193,9 @@ cfg <- list(
       miiv = list(
         list(ids = c(220277L, 226253L, 50817L), table = "chartevents",
              sub_var = "itemid")
+      ),
+      sic = list(
+        list(ids = 710L, table = "data_float_h", sub_var = "DataID")
       )
     )
   ),
@@ -211,6 +229,9 @@ cfg <- list(
       miiv = list(
         list(ids = 223835L, table = "chartevents", sub_var = "itemid"),
         list(ids = 50816L, table = "labevents", sub_var = "itemid")
+      ),
+      sic = list(
+        list(ids = 2283L, table = "data_float_h", sub_var = "DataID")
       )
     )
   ),
@@ -257,6 +278,9 @@ cfg <- list(
       ),
       miiv = list(
         list(ids = 50861L, table = "labevents", sub_var = "itemid")
+      ),
+      sic = list(
+        list(ids = 617L, table = "laboratory", sub_var = "LaboratoryID")
       )
     )
   ),
@@ -283,6 +307,9 @@ cfg <- list(
       ),
       miiv = list(
         list(ids = 50878L, table = "labevents", sub_var = "itemid")
+      ),
+      sic = list(
+        list(ids = 616L, table = "laboratory", sub_var = "LaboratoryID")
       )
     )
   ),
@@ -312,6 +339,10 @@ cfg <- list(
       ),
       miiv = list(
         list(ids = 50970L, table = "labevents", sub_var = "itemid")
+      ),
+      sic = list(
+        list(ids = 471L, table = "laboratory", sub_var = "LaboratoryID",
+             callback = "transform_fun(binary_op(`*`, 3.097521))")
       )
     )
   ),
@@ -341,6 +372,10 @@ cfg <- list(
       ),
       miiv = list(
         list(ids = 51006L, table = "labevents", sub_var = "itemid")
+      ),
+      sic = list(
+        list(ids = 355L, table = "laboratory", sub_var = "LaboratoryID",
+             callback = "transform_fun(binary_op(`*`, 2.14))")
       )
     )
   ),
@@ -367,6 +402,9 @@ cfg <- list(
       ),
       miiv = list(
         list(ids = 50820L, table = "labevents", sub_var = "itemid")
+      ),
+      sic = list(
+        list(ids = 688L, table = "laboratory", sub_var = "LaboratoryID")
       )
     )
   ),
@@ -396,6 +434,9 @@ cfg <- list(
       ),
       miiv = list(
         list(ids = 50885L, table = "labevents", sub_var = "itemid")
+      ),
+      sic = list(
+        list(ids = 333L, table = "laboratory", sub_var = "LaboratoryID")
       )
     )
   ),
@@ -446,6 +487,9 @@ cfg <- list(
       ),
       miiv = list(
         list(ids = 51265L, table = "labevents", sub_var = "itemid")
+      ),
+      sic = list(
+        list(ids = 314L, table = "laboratory", sub_var = "LaboratoryID")
       )
     )
   ),
@@ -473,6 +517,9 @@ cfg <- list(
       ),
       miiv = list(
         list(ids = 50813L, table = "labevents", sub_var = "itemid")
+      ),
+      sic = list(
+        list(ids = c(657L, 454L), table = "laboratory", sub_var = "LaboratoryID")
       )
     )
   ),
@@ -501,6 +548,9 @@ cfg <- list(
       ),
       miiv = list(
         list(ids = 51244L, table = "labevents", sub_var = "itemid")
+      ),
+      sic = list(
+        list(ids = 223L, table = "laboratory", sub_var = "LaboratoryID")
       )
     )
   ),
@@ -528,6 +578,9 @@ cfg <- list(
       ),
       miiv = list(
         list(ids = 50882L, table = "labevents", sub_var = "itemid")
+      ),
+      sic = list(
+        list(ids = 456L, table = "laboratory", sub_var = "LaboratoryID")
       )
     )
   ),
@@ -557,6 +610,9 @@ cfg <- list(
       ),
       miiv = list(
         list(ids = 50912L, table = "labevents", sub_var = "itemid")
+      ),
+      sic = list(
+        list(ids = 367L, table = "laboratory", sub_var = "LaboratoryID")
       )
     )
   ),
@@ -578,6 +634,9 @@ cfg <- list(
       ),
       miiv = list(
         list(ids = 51274L, table = "labevents", sub_var = "itemid")
+      ),
+      sic = list(
+        list(ids = 598L, table = "laboratory", sub_var = "LaboratoryID")
       )
     )
   ),
@@ -600,6 +659,9 @@ cfg <- list(
       ),
       miiv = list(
         list(ids = 51277L, table = "labevents", sub_var = "itemid")
+      ),
+      sic = list(
+        list(ids = 3319L, table = "laboratory", sub_var = "LaboratoryID")
       )
     )
   ),
@@ -626,6 +688,9 @@ cfg <- list(
       ),
       miiv = list(
         list(ids = 50863L, table = "labevents", sub_var = "itemid")
+      ),
+      sic = list(
+        list(ids = 609L, table = "laboratory", sub_var = "LaboratoryID")
       )
     )
   ),
@@ -652,6 +717,9 @@ cfg <- list(
       ),
       miiv = list(
         list(ids = 51301L, table = "labevents", sub_var = "itemid")
+      ),
+      sic = list(
+        list(ids = 301L, table = "laboratory", sub_var = "LaboratoryID")
       )
     )
   ),
@@ -682,6 +750,9 @@ cfg <- list(
       ),
       miiv = list(
         list(ids = 51222L, table = "labevents", sub_var = "itemid")
+      ),
+      sic = list(
+        list(ids = c(658L, 289L), table = "laboratory", sub_var = "LaboratoryID")
       )
     )
   ),
@@ -706,6 +777,9 @@ cfg <- list(
       ),
       miiv = list(
         list(ids = 51221L, table = "labevents", sub_var = "itemid")
+      ),
+      sic = list(
+        list(ids = c(217L, 682L), table = "laboratory", sub_var = "LaboratoryID")
       )
     )
   ),
@@ -733,6 +807,9 @@ cfg <- list(
       ),
       miiv = list(
         list(ids = 50818L, table = "labevents", sub_var = "itemid")
+      ),
+      sic = list(
+        list(ids = 687L, table = "laboratory", sub_var = "LaboratoryID")
       )
     )
   ),
@@ -760,6 +837,9 @@ cfg <- list(
       ),
       miiv = list(
         list(ids = 50821L, table = "labevents", sub_var = "itemid")
+      ),
+      sic = list(
+        list(ids = c(664L, 689L), table = "laboratory", sub_var = "LaboratoryID")
       )
     )
   ),
@@ -786,6 +866,9 @@ cfg <- list(
       ),
       miiv = list(
         list(ids = 51248L, table = "labevents", sub_var = "itemid")
+      ),
+      sic = list(
+        list(ids = 566L, table = "laboratory", sub_var = "LaboratoryID")
       )
     )
   ),
@@ -814,6 +897,9 @@ cfg <- list(
       ),
       miiv = list(
         list(ids = 51249L, table = "labevents", sub_var = "itemid")
+      ),
+      sic = list(
+        list(ids = 290L, table = "laboratory", sub_var = "LaboratoryID")
       )
     )
   ),
@@ -840,6 +926,9 @@ cfg <- list(
       ),
       miiv = list(
         list(ids = 51250L, table = "labevents", sub_var = "itemid")
+      ),
+      sic = list(
+        list(ids = 286L, table = "laboratory", sub_var = "LaboratoryID")
       )
     )
   ),
@@ -865,6 +954,9 @@ cfg <- list(
       ),
       miiv = list(
         list(ids = 51275L, table = "labevents", sub_var = "itemid")
+      ),
+      sic = list(
+        list(ids = 597L, table = "laboratory", sub_var = "LaboratoryID")
       )
     )
   ),
@@ -894,6 +986,10 @@ cfg <- list(
       ),
       miiv = list(
         list(ids = 50893L, table = "labevents", sub_var = "itemid")
+      ),
+      sic = list(
+        list(ids = 457L, table = "laboratory", sub_var = "LaboratoryID",
+             callback = "transform_fun(binary_op(`*`, 4.008))")
       )
     )
   ),
@@ -920,6 +1016,9 @@ cfg <- list(
       ),
       miiv = list(
         list(ids = 50902L, table = "labevents", sub_var = "itemid")
+      ),
+      sic = list(
+        list(ids = c(683L, 450L), table = "laboratory", sub_var = "LaboratoryID")
       )
     )
   ),
@@ -950,6 +1049,10 @@ cfg <- list(
       ),
       miiv = list(
         list(ids = 50960L, table = "labevents", sub_var = "itemid")
+      ),
+      sic = list(
+        list(ids = 468L, table = "laboratory", sub_var = "LaboratoryID",
+             callback = "transform_fun(binary_op(`*`, 2.431))")
       )
     )
   ),
@@ -977,6 +1080,9 @@ cfg <- list(
       ),
       miiv = list(
         list(ids = 50971L, table = "labevents", sub_var = "itemid")
+      ),
+      sic = list(
+        list(ids = c(463L, 685L), table = "laboratory", sub_var = "LaboratoryID")
       )
     )
   ),
@@ -1004,6 +1110,9 @@ cfg <- list(
       ),
       miiv = list(
         list(ids = 50983L, table = "labevents", sub_var = "itemid")
+      ),
+      sic = list(
+        list(ids = c(469L, 686L), table = "laboratory", sub_var = "LaboratoryID")
       )
     )
   ),
@@ -1028,6 +1137,9 @@ cfg <- list(
       ),
       miiv = list(
         list(ids = 51146L, table = "labevents", sub_var = "itemid")
+      ),
+      sic = list(
+        list(ids = 174L, table = "laboratory", sub_var = "LaboratoryID")
       )
     )
   ),
@@ -1052,6 +1164,9 @@ cfg <- list(
       ),
       miiv = list(
         list(ids = 51200L, table = "labevents", sub_var = "itemid")
+      ),
+      sic = list(
+        list(ids = 197L, table = "laboratory", sub_var = "LaboratoryID")
       )
     )
   ),
@@ -1081,6 +1196,9 @@ cfg <- list(
       ),
       miiv = list(
         list(ids = 51256L, table = "labevents", sub_var = "itemid")
+      ),
+      sic = list(
+        list(ids = 230L, table = "laboratory", sub_var = "LaboratoryID")
       )
     )
   ),
@@ -1112,6 +1230,9 @@ cfg <- list(
       ),
       miiv = list(
         list(ids = c(50809L, 50931L), table = "labevents", sub_var = "itemid")
+      ),
+      sic = list(
+        list(ids = c(348L, 656L), table = "laboratory", sub_var = "LaboratoryID")
       )
     )
   ),
@@ -1139,6 +1260,9 @@ cfg <- list(
       ),
       miiv = list(
         list(ids = 50808L, table = "labevents", sub_var = "itemid")
+      ),
+      sic = list(
+        list(ids = 655L, table = "laboratory", sub_var = "LaboratoryID")
       )
     )
   ),
@@ -1261,6 +1385,10 @@ cfg <- list(
       ),
       miiv = list(
         list(ids = 51003L, table = "labevents", sub_var = "itemid")
+      ),
+      sic = list(
+        list(ids = 481L, table = "laboratory", sub_var = "LaboratoryID", 
+             callback = "transform_fun(binary_op(`/`, 1000))")
       )
     )
   ),
@@ -1290,6 +1418,9 @@ cfg <- list(
       ),
       miiv = list(
         list(ids = 50862L, table = "labevents", sub_var = "itemid")
+      ),
+      sic = list(
+        list(ids = 287L, table = "laboratory", sub_var = "LaboratoryID")
       )
     )
   ),
@@ -1315,10 +1446,13 @@ cfg <- list(
       aumc = list(
         list(ids = c(6776L, 9989L, 10175L), table = "numericitems",
              sub_var = "itemid",
-             callback = "convert_unit(binary_op(`*`, 0.058467), 'mg/dL')")
+             callback = "convert_unit(binary_op(`*`, 100), 'mg/dL')")
       ),
       miiv = list(
         list(ids = 51214L, table = "labevents", sub_var = "itemid")
+      ),
+      sic = list(
+        list(ids = 344L, table = "laboratory", sub_var = "LaboratoryID")
       )
     )
   ),
@@ -1346,6 +1480,9 @@ cfg <- list(
       ),
       miiv = list(
         list(ids = 50802L, table = "labevents", sub_var = "itemid")
+      ),
+      sic = list(
+        list(ids = 668L, table = "laboratory", sub_var = "LaboratoryID")
       )
     )
   ),
@@ -1368,6 +1505,9 @@ cfg <- list(
       ),
       miiv = list(
         list(ids = 51279L, table = "labevents", sub_var = "itemid")
+      ),
+      sic = list(
+        list(ids = 599L, table = "laboratory", sub_var = "LaboratoryID")
       )
     )
   ),
@@ -1394,6 +1534,9 @@ cfg <- list(
       ),
       miiv = list(
         list(ids = 50910L, table = "labevents", sub_var = "itemid")
+      ),
+      sic = list(
+        list(ids = 611L, table = "laboratory", sub_var = "LaboratoryID")
       )
     )
   ),
@@ -1419,6 +1562,9 @@ cfg <- list(
       ),
       miiv = list(
         list(ids = 50911L, table = "labevents", sub_var = "itemid")
+      ),
+      sic = list(
+        list(ids = 253L, table = "laboratory", sub_var = "LaboratoryID")
       )
     )
   ),
@@ -1596,6 +1742,9 @@ cfg <- list(
         list(ids = c(226557L, 226558L, 226559L, 226560L, 226561L,  226563L,
                      226564L, 226565L, 226566L, 226567L, 226584L, 227510L),
              table = "outputevents", sub_var = "itemid")
+      ),
+      sic = list(
+        list(ids = 725L, table = "data_float_h", sub_var = "DataID")
       )
     )
   ),
@@ -1631,6 +1780,11 @@ cfg <- list(
       miiv = list(
         list(ids = 221653L, table = "inputevents", sub_var = "itemid",
              stop_var = "endtime", callback = "mimic_rate_mv")
+      ),
+      sic = list(
+        list(ids = 1559L, table = "medication", sub_var = "DrugID", 
+             val_var = "AmountPerMinute", stop_var = "OffsetDrugEnd", 
+             callback = "sic_rate_kg")
       )
     )
   ),
@@ -1664,6 +1818,11 @@ cfg <- list(
         list(ids = 221653L, table = "inputevents", sub_var = "itemid",
              stop_var = "endtime", grp_var = "linkorderid",
              callback = "mimic_dur_inmv")
+      ),
+      sic = list(
+        list(ids = list(1559L), table = "medication", 
+             sub_var = "DrugID", stop_var = "OffsetDrugEnd", 
+             callback = "sic_dur")
       )
     )
   ),
@@ -1703,6 +1862,11 @@ cfg <- list(
       miiv = list(
         list(ids = 221662L, table = "inputevents", sub_var = "itemid",
              stop_var = "endtime", callback = "mimic_rate_mv")
+      ),
+      sic = list(
+        list(ids = 1618L, table = "medication", sub_var = "DrugID", 
+             val_var = "AmountPerMinute", stop_var = "OffsetDrugEnd", 
+             callback = "sic_rate_kg")
       )
     )
   ),
@@ -1732,6 +1896,11 @@ cfg <- list(
         list(ids = 221662L, table = "inputevents", sub_var = "itemid",
              stop_var = "endtime", grp_var = "linkorderid",
              callback = "mimic_dur_inmv")
+      ),
+      sic = list(
+        list(ids = 1618L, table = "medication", 
+             sub_var = "DrugID", stop_var = "OffsetDrugEnd", 
+             callback = "sic_dur")
       )
     )
   ),
@@ -1776,6 +1945,11 @@ cfg <- list(
       miiv = list(
         list(ids = 221906L, table = "inputevents", sub_var = "itemid",
              stop_var = "endtime", callback = "mimic_rate_mv")
+      ),
+      sic = list(
+        list(ids = 1562L, table = "medication", sub_var = "DrugID", 
+             val_var = "AmountPerMinute", stop_var = "OffsetDrugEnd", 
+             callback = "sic_rate_kg")
       )
     )
   ),
@@ -1810,6 +1984,11 @@ cfg <- list(
         list(ids = 221906L, table = "inputevents", sub_var = "itemid",
              stop_var = "endtime", grp_var = "linkorderid",
              callback = "mimic_dur_inmv")
+      ),
+      sic = list(
+        list(ids = list(1562L), table = "medication", 
+             sub_var = "DrugID", stop_var = "OffsetDrugEnd", 
+             callback = "sic_dur")
       )
     )
   ),
@@ -1854,6 +2033,11 @@ cfg <- list(
       miiv = list(
         list(ids = 221289L, table = "inputevents", sub_var = "itemid",
              stop_var = "endtime", callback = "mimic_rate_mv")
+      ),
+      sic = list(
+        list(ids = 1502L, table = "medication", sub_var = "DrugID", 
+             val_var = "AmountPerMinute", stop_var = "OffsetDrugEnd", 
+             callback = "sic_rate_kg")
       )
     )
   ),
@@ -1888,6 +2072,11 @@ cfg <- list(
         list(ids = 221289L, table = "inputevents", sub_var = "itemid",
              stop_var = "endtime", grp_var = "linkorderid",
              callback = "mimic_dur_inmv")
+      ),
+      sic = list(
+        list(ids = list(1502L), table = "medication", 
+             sub_var = "DrugID", stop_var = "OffsetDrugEnd", 
+             callback = "sic_dur")
       )
     )
   ),
@@ -2164,6 +2353,15 @@ cfg <- list(
           227691L, 228003L), table = "inputevents", sub_var = "itemid",
           callback = "transform_fun(set_val(TRUE))"
         )
+      ),
+      sic = list(
+        list(ids = c(
+          1406L, 1408L, 1410L, 1418L, 1421L, 1422L, 
+          1423L, 1428L, 1431L, 1433L, 1436L, 1449L, 1454L, 
+          1457L, 1458L, 1459L, 1460L, 1461L, 1603L, 1795L, 
+          1913L, 1927L), table = "medication", sub_var = "DrugID", 
+        callback = "transform_fun(set_val(TRUE))"
+        )
       )
     )
   ),
@@ -2212,6 +2410,9 @@ cfg <- list(
       ),
       miiv = list(
         list(ids = 51002L, table = "labevents", sub_var = "itemid")
+      ),
+      sic = list(
+        list(ids = 270L, table = "laboratory", sub_var = "LaboratoryID")
       )
     )
   ),
@@ -2240,6 +2441,9 @@ cfg <- list(
       ),
       miiv = list(
         list(ids = 50883L, table = "labevents", sub_var = "itemid")
+      ),
+      sic = list(
+        list(ids = 332L, table = "laboratory", sub_var = "LaboratoryID")
       )
     )
   ),
@@ -2275,6 +2479,9 @@ cfg <- list(
         list(ids = c(223761L, 224027L), table = "chartevents",
              sub_var = "itemid",
              callback = "convert_unit(fahr_to_cels, 'C', 'f')")
+      ),
+      sic = list(
+        list(ids = 709L, table = "data_float_h", sub_var = "DataID")
       )
     )
   ),
@@ -2370,6 +2577,11 @@ cfg <- list(
         list(table = "patients", val_var = "gender",
              callback = "apply_map(c(M = 'Male', F = 'Female'))",
              class = "col_itm")
+      ),
+      sic = list(
+        list(table = "cases", val_var = "Sex", 
+             callback = "apply_map(c(`735` = 'Male', `736` = 'Female'))",
+             class = "col_itm")
       )
     )
   ),
@@ -2405,6 +2617,9 @@ cfg <- list(
       ),
       miiv = list(
         list(table = "patients", val_var = "anchor_age", class = "col_itm")
+      ),
+      sic = list(
+        list(table = "cases", val_var = "AgeOnAdmission", class = "col_itm")
       )
     )
   ),
@@ -2442,6 +2657,9 @@ cfg <- list(
       ),
       miiv = list(
         list(ids = 226512L, table = "chartevents", sub_var = "itemid")
+      ),
+      sic = list(
+        list(table = "cases", val_var = "WeightOnAdmission", class = "col_itm")
       )
     )
   ),
@@ -2479,6 +2697,9 @@ cfg <- list(
       miiv = list(
         list(ids = 226707L, table = "chartevents", sub_var = "itemid",
              callback = "convert_unit(binary_op(`*`, 2.54), 'cm', '^in')")
+      ),
+      sic = list(
+        list(table = "cases", val_var = "HeightOnAdmission", class = "col_itm")
       )
     )
   ),

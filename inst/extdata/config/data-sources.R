@@ -833,7 +833,7 @@ miiv_tbl_cfg <- function() {
       edouttime = list(spec = "col_datetime", format = "%Y-%m-%d %H:%M:%S"),
       hospital_expire_flag = list(spec = "col_integer")
     ),
-   patients = list(
+    patients = list(
       subject_id = list(spec = "col_integer"),
       gender = list(spec = "col_character"),
       anchor_age = list(spec = "col_integer"),
@@ -841,7 +841,7 @@ miiv_tbl_cfg <- function() {
       anchor_year_group = list(spec = "col_character"),
       dod = list(spec = "col_datetime", format = "%Y-%m-%d")
     ),
-   transfers = list(
+    transfers = list(
       subject_id = list(spec = "col_integer"),
       hadm_id = list(spec = "col_integer"),
       transfer_id = list(spec = "col_integer"),
@@ -1182,6 +1182,37 @@ miiv_tbl_cfg <- function() {
                            format = "%Y-%m-%d %H:%M:%S"),
       originalamount = list(spec = "col_double"),
       originalrate = list(spec = "col_double")
+    ),
+    omr = list(
+      subject_id = list(spec = "col_integer"),
+      chartdate = list(spec = "col_datetime", format = "%Y-%m-%d"),
+      seq_num = list(spec = "col_integer"),
+      result_name = list(spec = "col_character"),
+      result_value = list(spec = "col_character")
+    ),
+    caregiver = list(
+      caregiver_id = list(spec = "col_integer")
+    ),
+    provider = list(
+      provider_id = list(spec = "col_character")
+    ),
+    ingredientevents = list(
+      subject_id = list(spec = "col_integer"),
+      hadm_id = list(spec = "col_integer"),
+      stay_id = list(spec = "col_integer"),
+      starttime = list(spec = "col_datetime", format = "%Y-%m-%d %H:%M:%S"),
+      endtime = list(spec = "col_datetime", format = "%Y-%m-%d %H:%M:%S"),
+      storetime = list(spec = "col_datetime", format = "%Y-%m-%d %H:%M:%S"),
+      itemid = list(spec = "col_integer"),
+      amount = list(spec = "col_double"),
+      amountuom = list(spec = "col_character"),
+      rate = list(spec = "col_double"),
+      rateuom = list(spec = "col_character"),
+      orderid = list(spec = "col_integer"),
+      linkorderid = list(spec = "col_integer"),
+      statusdescription = list(spec = "col_character"),
+      originalamount = list(spec = "col_double"),
+      originalrate = list(spec = "col_double")
     )
   )
 
@@ -1291,6 +1322,17 @@ miiv_tbl_cfg <- function() {
       index_var = "starttime",
       val_var = "value",
       unit_var = "valueuom"
+    ),
+    omr = list(
+      index_var = "chartdate",
+      val_var = "result_value"
+    ),
+    caregiver = list(),
+    provider = list(),
+    ingredientevents = list(
+      index_var = "starttime",
+      val_var = "rate",
+      unit_var = "rateuom"
     )
   )
 
@@ -1302,39 +1344,43 @@ miiv_tbl_cfg <- function() {
   }, cols[tables], defaults[tables])
 
   n_row <- c(
-    admissions = 523740L,
-    patients = 382278L,
-    transfers = 2189535L,
+    admissions = 431231L,
+    patients = 299712L,
+    transfers = 1890972L,
     d_hcpcs = 89200L,
     d_icd_diagnoses = 109775L,
     d_icd_procedures = 85257L,
-    d_labitems = 1630L,
-    diagnoses_icd = 5280351L,
-    drgcodes = 769622L,
-    emar_detail = 55947921L,
-    emar = 27464367L,
-    hcpcsevents = 160727L,
-    labevents = 122103667L,
-    microbiologyevents = 3397914L,
-    pharmacy = 14736386L,
-    poe_detail = 3256358L,
-    poe = 42483962L,
-    prescriptions = 17008053L,
-    procedures_icd = 779625L,
-    services = 562892L,
-    chartevents = 329499788L,
-    d_items = 3861L,
-    datetimeevents = 7495712L,
-    icustays = 76540L,
-    inputevents = 9460658L,
-    outputevents = 4457381L,
-    procedureevents = 731247L
+    d_labitems = 1622L,
+    diagnoses_icd = 4756326L,
+    drgcodes = 604377L,
+    emar_detail = 54744789L,
+    emar = 26850359L,
+    hcpcsevents = 150771L,
+    labevents = 118171367L,
+    microbiologyevents = 3228713L,
+    pharmacy = 13584514L,
+    poe_detail = 3879418L,
+    poe = 39366291L,
+    prescriptions = 15416708L,
+    procedures_icd = 669186L,
+    services = 468029L,
+    chartevents = 313645063L,
+    d_items = 4014L,
+    datetimeevents = 7112999L,
+    icustays = 73181L,
+    inputevents = 8978893L,
+    outputevents = 4234967L,
+    procedureevents = 696092L,
+    omr = 6439169L,
+    caregiver = 15468L,
+    provider = 40508L,
+    ingredientevents = 11627821L
   )
 
   files <- c(
-    admissions = "core/admissions.csv.gz",
-    patients = "core/patients.csv.gz",
-    transfers = "core/transfers.csv.gz",
+    admissions = "hosp/admissions.csv.gz",
+    patients = "hosp/patients.csv.gz",
+    transfers = "hosp/transfers.csv.gz",
     d_hcpcs = "hosp/d_hcpcs.csv.gz",
     d_icd_diagnoses = "hosp/d_icd_diagnoses.csv.gz",
     d_icd_procedures = "hosp/d_icd_procedures.csv.gz",
@@ -1358,7 +1404,11 @@ miiv_tbl_cfg <- function() {
     icustays = "icu/icustays.csv.gz",
     inputevents = "icu/inputevents.csv.gz",
     outputevents = "icu/outputevents.csv.gz",
-    procedureevents = "icu/procedureevents.csv.gz"
+    procedureevents = "icu/procedureevents.csv.gz",
+    omr = "hosp/omr.csv.gz",
+    caregiver = "hosp/caregiver.csv.gz",
+    provider = "hosp/provider.csv.gz",
+    ingredientevents = "icu/ingredientevents.csv.gz"
   )
 
   part <- list(
@@ -1391,6 +1441,220 @@ miiv_tbl_cfg <- function() {
 
   tables[names(part)] <- Map(`[[<-`, tables[names(part)], "partitioning", part)
 
+  tables
+}
+
+sic_tbl_cfg <- function() {
+  
+  info <- list(
+    cases = list(
+      caseid = list(name = "CaseID", spec = "col_integer"),
+      patientid = list(name = "PatientID", spec = "col_integer"),
+      admissionyear = list(name = "AdmissionYear", spec = "col_integer"),
+      timeofstay = list(name = "TimeOfStay", spec = "col_integer"),
+      icuoffset = list(name = "ICUOffset", spec = "col_integer"),
+      saps3 = list(name = "saps3", spec = "col_double"),
+      hospitaldischargetype = list(name = "HospitalDischargeType",
+                                   spec = "col_integer"),
+      dischargestate = list(name = "DischargeState",
+                            spec = "col_integer"),
+      dischargeunit = list(name = "DischargeUnit",
+                           spec = "col_integer"),
+      offsetofdeath = list(name = "OffsetOfDeath",
+                           spec = "col_integer"),
+      estimatedsurvivalobservationtime = list(name = "EstimatedSurvivalObservationTime", 
+                                              spec = "col_integer"),
+      sex = list(name = "Sex", spec = "col_integer"),
+      weightonadmission = list(name = "WeightOnAdmission", spec = "col_double"),
+      heightonadmission = list(name = "HeightOnAdmission", spec = "col_double"),
+      ageonadmission = list(name = "AgeOnAdmission", spec = "col_integer"),
+      hospitalunit = list(name = "HospitalUnit", spec = "col_integer"),
+      referringunit = list(name = "ReferringUnit", spec = "col_integer"),
+      icd10main = list(name = "ICD10Main", spec = "col_character"),
+      icd10maintext = list(name = "ICD10MainText", spec = "col_character"),
+      diagnosist2 = list(name = "DiagnosisT2", spec = "col_character"),
+      surgicalsite = list(name = "SurgicalSite", spec = "col_integer"),
+      hoursofcrrt = list(name = "HoursOfCRRT", spec = "col_integer"),
+      admissionformhassepsis = list(name = "AdmissionFormHasSepsis", spec = "col_integer"),
+      orbisdataavailable = list(name = "OrbisDataAvailable", spec = "col_character"),
+      heartsurgeryadditionaldata = list(name = "HeartSurgeryAdditionalData",
+                                        spec = "col_integer"),
+      heartsurgerycrossclamptime = list(name = "HeartSurgeryCrossClampTime", 
+                                        spec = "col_integer"),
+      heartsurgerybeginoffset = list(name = "HeartSurgeryBeginOffset",
+                                     spec = "col_integer"),
+      heartsurgeryendoffset = list(name = "HeartSurgeryEndOffset",
+                                   spec = "col_integer"),
+      offsetafterfirstadmission = list(name = "OffsetAfterFirstAdmission", 
+                                       spec = "col_integer")
+    ),
+    d_references = list(
+      referenceglobalid = list(name = "ReferenceGlobalID",
+                               spec = "col_integer"),
+      referencevalue = list(name = "ReferenceValue",
+                            spec = "col_character"),
+      referencename = list(name = "ReferenceName",
+                           spec = "col_character"),
+      referencedescription = list(name = "ReferenceDescription", spec = "col_character"),
+      referenceunit = list(name = "ReferenceUnit", spec = "col_character"),
+      referenceorder = list(name = "ReferenceOrder", spec = "col_integer"),
+      referencetype = list(name = "ReferenceType", spec = "col_integer"),
+      data = list(name = "Data", spec = "col_character")
+    ),
+    data_float_h = list(
+      id = list(name = "id", spec = "col_integer"),
+      caseid = list(name = "CaseID",
+                    spec = "col_integer"),
+      dataid = list(name = "DataID",
+                    spec = "col_integer"),
+      offset = list(name = "Offset",
+                    spec = "col_integer"),
+      val = list(name = "Val", spec = "col_double"),
+      cnt = list(name = "cnt", spec = "col_integer"),
+      rawdata = list(name = "rawdata", spec = "col_double")
+    ),
+    data_ref = list(
+      id = list(name = "id", spec = "col_integer"),
+      caseid = list(name = "CaseID", spec = "col_integer"),
+      refid = list(name = "RefID", spec = "col_integer"),
+      customfieldid = list(name = "CustomFieldID", spec = "col_integer")
+    ),
+    laboratory = list(
+      id = list(name = "id", spec = "col_integer"),
+      caseid = list(name = "CaseID", spec = "col_integer"),
+      laboratoryid = list(name = "LaboratoryID", spec = "col_integer"),
+      offset = list(name = "Offset", spec = "col_integer"),
+      laboratoryvalue = list(name = "LaboratoryValue", spec = "col_double"),
+      laboratorytype = list(name = "LaboratoryType", spec = "col_integer")
+    ),
+    medication = list(
+      id = list(name = "id", spec = "col_integer"),
+      caseid = list(name = "CaseID",
+                    spec = "col_integer"),
+      patientid = list(name = "PatientID",
+                       spec = "col_integer"),
+      drugid = list(name = "DrugID",
+                    spec = "col_integer"),
+      offset = list(name = "Offset",
+                    spec = "col_integer"),
+      offsetdrugend = list(name = "OffsetDrugEnd",
+                           spec = "col_integer"),
+      issingledose = list(name = "IsSingleDose",
+                          spec = "col_logical"),
+      amount = list(name = "Amount",
+                    spec = "col_double"),
+      amountperminute = list(name = "AmountPerMinute",
+                             spec = "col_double"),
+      givenstate = list(name = "GivenState",
+                        spec = "col_integer")
+    ),
+    data_range = list(
+      id = list(name = "id",
+                spec = "col_integer"),
+      caseid = list(name = "CaseID",
+                    spec = "col_integer"),
+      dataid = list(name = "DataID",
+                    spec = "col_integer"),
+      offset = list(name = "Offset",
+                    spec = "col_integer"),
+      offsetend = list(name = "OffsetEnd",
+                       spec = "col_integer"),
+      data = list(name = "Data",
+                  spec = "col_character")
+    ),
+    unitlog = list(
+      id = list(name = "id",
+                spec = "col_integer"),
+      caseid = list(name = "CaseID",
+                    spec = "col_integer"),
+      patientid = list(name = "PatientID",
+                       spec = "col_integer"),
+      logstate = list(name = "LogState",
+                      spec = "col_integer"),
+      offset = list(name = "Offset",
+                    spec = "col_integer"),
+      hospitalunit = list(name = "HospitalUnit",
+                          spec = "col_integer")
+    )
+  )
+  
+  tables <- names(info)
+  cols <- info
+  
+  defaults <- list(
+    cases = list(
+      index_var = "ICUOffset"
+    ),
+    d_references = list(),
+    data_float_h = list(
+      index_var = "Offset",
+      val_var = "Val"
+    ),
+    data_ref = list(
+      index_var = "OffsetAfterFirstAdmission"
+    ),
+    laboratory = list(
+      index_var = "Offset",
+      val_var = "LaboratoryValue"
+    ),
+    medication = list(
+      index_var = "Offset",
+      val_var = "Amount"
+    ),
+    data_range = list(
+      index_var = "Offset"
+    ),
+    unitlog = list(
+      index_var = "Offset"
+    )
+  )
+  
+  defaults <- Map(function(cl, df) {
+    nme <- vapply(cl, `[[`, character(1L), "name")
+    typ <- vapply(cl, `[[`, character(1L), "spec")
+    tim <- nme[typ == "col_datetime"]
+    if (length(tim)) c(df, list(time_vars = tim)) else df
+  }, cols[tables], defaults[tables])
+  
+  n_row <- c(
+    cases = 27386L, 
+    d_references = 1608L, 
+    data_float_h = 36785241L, 
+    data_range = 183339L, 
+    data_ref = 354157L, 
+    laboratory = 17572279L, 
+    medication = 5141346L, 
+    unitlog = 139968L
+  )
+  
+  files <- c(
+    cases = "cases.csv.gz", 
+    d_references = "d_references.csv.gz", 
+    data_float_h = "data_float_h.csv.gz", 
+    data_range = "data_range.csv.gz", 
+    data_ref = "data_ref.csv.gz", 
+    laboratory = "laboratory.csv.gz", 
+    medication = "medication.csv.gz", 
+    unitlog = "unitlog.csv.gz"
+  )
+  
+  part <- list(
+    data_float_h = list(
+      col = "dataid",
+      breaks = c(
+        1L, 2L, 3L, 4L, 7L, 28L, 29L, 702L, 703L, 705L, 708L, 709L, 710L, 715L, 
+        717L, 719L, 724L, 725L, 731L, 773L, 2018L, 2274L, 2278L, 2280L, 2283L, 
+        2290L, 3056L, 3059L, 3071L
+      )
+    )
+  )
+  
+  tables <- Map(list, files = files[tables],
+                defaults = defaults[tables], num_rows = n_row[tables],
+                cols = cols[tables])
+  
+  tables[names(part)] <- Map(`[[<-`, tables[names(part)], "partitioning", part)
+  
   tables
 }
 
@@ -1455,7 +1719,7 @@ cfg <- list(
   ),
   list(
     name = "miiv",
-    url = "https://physionet.org/files/mimiciv/1.0",
+    url = "https://physionet.org/files/mimiciv/2.2",
     id_cfg = list(
       patient = list(id = "subject_id", position = 1L, start = "anchor_year",
                      end = "dod", table = "patients"),
@@ -1489,6 +1753,19 @@ cfg <- list(
       list(symbol = "dag", def = "1 day")
     ),
     tables = aumc_tbl_cfg()
+  ),
+  list(
+    name = "sic",
+    url = "https://physionet.org/files/sicdb/1.0.6",
+    id_cfg = list(
+      patient = list(id = "PatientID", position = 1L,
+                     start = "ICUOffset", end = "OffsetOfDeath",
+                     table = "cases"),
+      icustay = list(id = "CaseID", position = 2L, start = "ICUOffset",
+                     end = "TimeOfStay",
+                     table = "cases")
+    ),
+    tables = sic_tbl_cfg()
   )
 )
 
