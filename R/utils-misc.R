@@ -1,4 +1,3 @@
-
 agg_or_na <- function(agg_fun) {
   function(x) {
     if (all(is.na(x))) return(x[1L])

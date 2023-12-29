@@ -1,4 +1,3 @@
-
 #' Low level functions for loading data
 #'
 #' Data loading involves a cascade of S3 generic functions, which can

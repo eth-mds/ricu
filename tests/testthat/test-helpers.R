@@ -1,3 +1,4 @@
+skip_on_cran()
 
 test_that("expect_all_identical", {
 

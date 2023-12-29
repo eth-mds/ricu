@@ -1,4 +1,3 @@
-
 expect_all_identical <- function(object, expected = object[[1L]], ...,
                                  info = NULL, label = NULL,
                                  expected_label = NULL) {

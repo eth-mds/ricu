@@ -56,7 +56,7 @@ vignette: >
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 output: >
-  if (packageVersion("rticles") < 0.5 || rmarkdown::pandoc_version() >= 2)
+  if (packageVersion("rticles") < "0.5" || rmarkdown::pandoc_version() >= "2")
     rticles::jss_article else rmarkdown::html_vignette
 documentclass: jss
 classoption:

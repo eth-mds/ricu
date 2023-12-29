@@ -1,4 +1,3 @@
-
 test_that("assertions", {
 
   expect_true(is_dt(data.table::data.table(a = 1, b = 2)))

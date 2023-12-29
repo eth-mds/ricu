@@ -1,3 +1,4 @@
+skip_on_cran()
 
 test_that("load hirid items", {
 

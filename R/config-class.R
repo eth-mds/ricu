@@ -1,4 +1,3 @@
-
 #' Internal utilities for working with data source configurations
 #'
 #' Data source configuration objects store information on data sources used

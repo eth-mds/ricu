@@ -4,6 +4,11 @@
 * MIMIC-IV (`miiv` in `ricu`) version bumped to 2.2
 * fixed the usage of `round()` and `trunc()`; both replaced by `floor()` throughout
 
+# ricu 0.5.6
+
+* maintenance release: fixes non-character numeric version input issues
+>>>>>>> 3c72261c4f049b49e7040a588b28eeb974a2f177
+
 # ricu 0.5.5
 
 * maintenance release: fixes an issue introduced by pillar 1.9.0 via an update
