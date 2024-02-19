@@ -8681,7 +8681,7 @@
         }
       },
       "caregiver": {
-        "files": "hosp/caregiver.csv.gz",
+        "files": "icu/caregiver.csv.gz",
         "defaults": [],
         "num_rows": 15468,
         "cols": {
