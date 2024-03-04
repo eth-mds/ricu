@@ -1,1 +1,1943 @@
-[{"name": "eicu_demo", "class_prefix": ["eicu_demo", "eicu"], "url": "https://physionet.org/files/eicu-crd-demo/2.0.1", "id_cfg": {"hadm": {"id": "patienthealthsystemstayid", "position": 1, "start": "hospitaladmitoffset", "end": "hospitaldischargeoffset", "table": "patient"}, "icustay": {"id": "patientunitstayid", "position": 2, "start": "unitadmitoffset", "end": "unitdischargeoffset", "table": "patient"}}, "tables": {"admissiondrug": {"files": "admissiondrug.csv.gz", "defaults": {"index_var": "drugoffset", "val_var": "drugdosage", "unit_var": "drugunit", "time_vars": ["drugoffset", "drugenteredoffset"]}, "cols": {"admissiondrugid": {"name": "admissiondrugid", "spec": "col_integer"}, "patientunitstayid": {"name": "patientunitstayid", "spec": "col_integer"}, "drugoffset": {"name": "drugoffset", "spec": "col_integer"}, "drugenteredoffset": {"name": "drugenteredoffset", "spec": "col_integer"}, "drugnotetype": {"name": "drugnotetype", "spec": "col_character"}, "specialtytype": {"name": "specialtytype", "spec": "col_character"}, "usertype": {"name": "usertype", "spec": "col_character"}, "rxincluded": {"name": "rxincluded", "spec": "col_character"}, "writtenineicu": {"name": "writtenineicu", "spec": "col_character"}, "drugname": {"name": "drugname", "spec": "col_character"}, "drugdosage": {"name": "drugdosage", "spec": "col_double"}, "drugunit": {"name": "drugunit", "spec": "col_character"}, "drugadmitfrequency": {"name": "drugadmitfrequency", "spec": "col_character"}, "drughiclseqno": {"name": "drughiclseqno", "spec": "col_integer"}}}, "admissiondx": {"files": "admissionDx.csv.gz", "defaults": {"index_var": "admitdxenteredoffset", "val_var": "admitdxtext", "time_vars": "admitdxenteredoffset"}, "cols": {"admissiondxid": {"name": "admissiondxid", "spec": "col_integer"}, "patientunitstayid": {"name": "patientunitstayid", "spec": "col_integer"}, "admitdxenteredoffset": {"name": "admitdxenteredoffset", "spec": "col_integer"}, "admitdxpath": {"name": "admitdxpath", "spec": "col_character"}, "admitdxname": {"name": "admitdxname", "spec": "col_character"}, "admitdxtext": {"name": "admitdxtext", "spec": "col_character"}}}, "allergy": {"files": "allergy.csv.gz", "defaults": {"index_var": "allergyoffset", "val_var": "allergyname", "time_vars": ["allergyoffset", "allergyenteredoffset"]}, "cols": {"allergyid": {"name": "allergyid", "spec": "col_integer"}, "patientunitstayid": {"name": "patientunitstayid", "spec": "col_integer"}, "allergyoffset": {"name": "allergyoffset", "spec": "col_integer"}, "allergyenteredoffset": {"name": "allergyenteredoffset", "spec": "col_integer"}, "allergynotetype": {"name": "allergynotetype", "spec": "col_character"}, "specialtytype": {"name": "specialtytype", "spec": "col_character"}, "usertype": {"name": "usertype", "spec": "col_character"}, "rxincluded": {"name": "rxincluded", "spec": "col_character"}, "writtenineicu": {"name": "writtenineicu", "spec": "col_character"}, "drugname": {"name": "drugname", "spec": "col_character"}, "allergytype": {"name": "allergytype", "spec": "col_character"}, "allergyname": {"name": "allergyname", "spec": "col_character"}, "drughiclseqno": {"name": "drughiclseqno", "spec": "col_integer"}}}, "apacheapsvar": {"files": "apacheApsVar.csv.gz", "defaults": [], "cols": {"apacheapsvarid": {"name": "apacheapsvarid", "spec": "col_integer"}, "patientunitstayid": {"name": "patientunitstayid", "spec": "col_integer"}, "intubated": {"name": "intubated", "spec": "col_integer"}, "vent": {"name": "vent", "spec": "col_integer"}, "dialysis": {"name": "dialysis", "spec": "col_integer"}, "eyes": {"name": "eyes", "spec": "col_integer"}, "motor": {"name": "motor", "spec": "col_integer"}, "verbal": {"name": "verbal", "spec": "col_integer"}, "meds": {"name": "meds", "spec": "col_integer"}, "urine": {"name": "urine", "spec": "col_double"}, "wbc": {"name": "wbc", "spec": "col_double"}, "temperature": {"name": "temperature", "spec": "col_double"}, "respiratoryrate": {"name": "respiratoryrate", "spec": "col_double"}, "sodium": {"name": "sodium", "spec": "col_double"}, "heartrate": {"name": "heartrate", "spec": "col_double"}, "meanbp": {"name": "meanbp", "spec": "col_double"}, "ph": {"name": "ph", "spec": "col_double"}, "hematocrit": {"name": "hematocrit", "spec": "col_double"}, "creatinine": {"name": "creatinine", "spec": "col_double"}, "albumin": {"name": "albumin", "spec": "col_double"}, "pao2": {"name": "pao2", "spec": "col_double"}, "pco2": {"name": "pco2", "spec": "col_double"}, "bun": {"name": "bun", "spec": "col_double"}, "glucose": {"name": "glucose", "spec": "col_double"}, "bilirubin": {"name": "bilirubin", "spec": "col_double"}, "fio2": {"name": "fio2", "spec": "col_double"}}}, "apachepatientresult": {"files": "apachePatientResult.csv.gz", "defaults": {"val_var": "apachescore"}, "cols": {"apachepatientresultsid": {"name": "apachepatientresultsid", "spec": "col_integer"}, "patientunitstayid": {"name": "patientunitstayid", "spec": "col_integer"}, "physicianspeciality": {"name": "physicianspeciality", "spec": "col_character"}, "physicianinterventioncategory": {"name": "physicianinterventioncategory", "spec": "col_character"}, "acutephysiologyscore": {"name": "acutephysiologyscore", "spec": "col_integer"}, "apachescore": {"name": "apachescore", "spec": "col_integer"}, "apacheversion": {"name": "apacheversion", "spec": "col_character"}, "predictedicumortality": {"name": "predictedicumortality", "spec": "col_character"}, "actualicumortality": {"name": "actualicumortality", "spec": "col_character"}, "predictediculos": {"name": "predictediculos", "spec": "col_double"}, "actualiculos": {"name": "actualiculos", "spec": "col_double"}, "predictedhospitalmortality": {"name": "predictedhospitalmortality", "spec": "col_character"}, "actualhospitalmortality": {"name": "actualhospitalmortality", "spec": "col_character"}, "predictedhospitallos": {"name": "predictedhospitallos", "spec": "col_double"}, "actualhospitallos": {"name": "actualhospitallos", "spec": "col_double"}, "preopmi": {"name": "preopmi", "spec": "col_integer"}, "preopcardiaccath": {"name": "preopcardiaccath", "spec": "col_integer"}, "ptcawithin24h": {"name": "ptcawithin24h", "spec": "col_integer"}, "unabridgedunitlos": {"name": "unabridgedunitlos", "spec": "col_double"}, "unabridgedhosplos": {"name": "unabridgedhosplos", "spec": "col_double"}, "actualventdays": {"name": "actualventdays", "spec": "col_double"}, "predventdays": {"name": "predventdays", "spec": "col_double"}, "unabridgedactualventdays": {"name": "unabridgedactualventdays", "spec": "col_double"}}}, "apachepredvar": {"files": "apachePredVar.csv.gz", "defaults": [], "cols": {"apachepredvarid": {"name": "apachepredvarid", "spec": "col_integer"}, "patientunitstayid": {"name": "patientunitstayid", "spec": "col_integer"}, "sicuday": {"name": "sicuday", "spec": "col_integer"}, "saps3day1": {"name": "saps3day1", "spec": "col_integer"}, "saps3today": {"name": "saps3today", "spec": "col_integer"}, "saps3yesterday": {"name": "saps3yesterday", "spec": "col_integer"}, "gender": {"name": "gender", "spec": "col_integer"}, "teachtype": {"name": "teachtype", "spec": "col_integer"}, "region": {"name": "region", "spec": "col_integer"}, "bedcount": {"name": "bedcount", "spec": "col_integer"}, "admitsource": {"name": "admitsource", "spec": "col_integer"}, "graftcount": {"name": "graftcount", "spec": "col_integer"}, "meds": {"name": "meds", "spec": "col_integer"}, "verbal": {"name": "verbal", "spec": "col_integer"}, "motor": {"name": "motor", "spec": "col_integer"}, "eyes": {"name": "eyes", "spec": "col_integer"}, "age": {"name": "age", "spec": "col_integer"}, "admitdiagnosis": {"name": "admitdiagnosis", "spec": "col_character"}, "thrombolytics": {"name": "thrombolytics", "spec": "col_integer"}, "diedinhospital": {"name": "diedinhospital", "spec": "col_integer"}, "aids": {"name": "aids", "spec": "col_integer"}, "hepaticfailure": {"name": "hepaticfailure", "spec": "col_integer"}, "lymphoma": {"name": "lymphoma", "spec": "col_integer"}, "metastaticcancer": {"name": "metastaticcancer", "spec": "col_integer"}, "leukemia": {"name": "leukemia", "spec": "col_integer"}, "immunosuppression": {"name": "immunosuppression", "spec": "col_integer"}, "cirrhosis": {"name": "cirrhosis", "spec": "col_integer"}, "electivesurgery": {"name": "electivesurgery", "spec": "col_integer"}, "activetx": {"name": "activetx", "spec": "col_integer"}, "readmit": {"name": "readmit", "spec": "col_integer"}, "ima": {"name": "ima", "spec": "col_integer"}, "midur": {"name": "midur", "spec": "col_integer"}, "ventday1": {"name": "ventday1", "spec": "col_integer"}, "oobventday1": {"name": "oobventday1", "spec": "col_integer"}, "oobintubday1": {"name": "oobintubday1", "spec": "col_integer"}, "diabetes": {"name": "diabetes", "spec": "col_integer"}, "managementsystem": {"name": "managementsystem", "spec": "col_integer"}, "var03hspxlos": {"name": "var03hspxlos", "spec": "col_double"}, "pao2": {"name": "pao2", "spec": "col_double"}, "fio2": {"name": "fio2", "spec": "col_double"}, "ejectfx": {"name": "ejectfx", "spec": "col_double"}, "creatinine": {"name": "creatinine", "spec": "col_double"}, "dischargelocation": {"name": "dischargelocation", "spec": "col_integer"}, "visitnumber": {"name": "visitnumber", "spec": "col_integer"}, "amilocation": {"name": "amilocation", "spec": "col_integer"}, "day1meds": {"name": "day1meds", "spec": "col_integer"}, "day1verbal": {"name": "day1verbal", "spec": "col_integer"}, "day1motor": {"name": "day1motor", "spec": "col_integer"}, "day1eyes": {"name": "day1eyes", "spec": "col_integer"}, "day1pao2": {"name": "day1pao2", "spec": "col_double"}, "day1fio2": {"name": "day1fio2", "spec": "col_double"}}}, "careplancareprovider": {"files": "carePlanCareProvider.csv.gz", "defaults": {"index_var": "careprovidersaveoffset", "val_var": "specialty", "time_vars": "careprovidersaveoffset"}, "cols": {"cplcareprovderid": {"name": "cplcareprovderid", "spec": "col_integer"}, "patientunitstayid": {"name": "patientunitstayid", "spec": "col_integer"}, "careprovidersaveoffset": {"name": "careprovidersaveoffset", "spec": "col_integer"}, "providertype": {"name": "providertype", "spec": "col_character"}, "specialty": {"name": "specialty", "spec": "col_character"}, "interventioncategory": {"name": "interventioncategory", "spec": "col_character"}, "managingphysician": {"name": "managingphysician", "spec": "col_character"}, "activeupondischarge": {"name": "activeupondischarge", "spec": "col_character"}}}, "careplaneol": {"files": "carePlanEOL.csv.gz", "defaults": {"index_var": "cpleoldiscussionoffset", "time_vars": ["cpleolsaveoffset", "cpleoldiscussionoffset"]}, "cols": {"cpleolid": {"name": "cpleolid", "spec": "col_integer"}, "patientunitstayid": {"name": "patientunitstayid", "spec": "col_integer"}, "cpleolsaveoffset": {"name": "cpleolsaveoffset", "spec": "col_integer"}, "cpleoldiscussionoffset": {"name": "cpleoldiscussionoffset", "spec": "col_integer"}, "activeupondischarge": {"name": "activeupondischarge", "spec": "col_character"}}}, "careplangeneral": {"files": "carePlanGeneral.csv.gz", "defaults": {"index_var": "cplitemoffset", "val_var": "cplitemvalue", "time_vars": "cplitemoffset"}, "cols": {"cplgeneralid": {"name": "cplgeneralid", "spec": "col_integer"}, "patientunitstayid": {"name": "patientunitstayid", "spec": "col_integer"}, "activeupondischarge": {"name": "activeupondischarge", "spec": "col_character"}, "cplitemoffset": {"name": "cplitemoffset", "spec": "col_integer"}, "cplgroup": {"name": "cplgroup", "spec": "col_character"}, "cplitemvalue": {"name": "cplitemvalue", "spec": "col_character"}}}, "careplangoal": {"files": "carePlanGoal.csv.gz", "defaults": {"index_var": "cplgoaloffset", "val_var": "cplgoalvalue", "time_vars": "cplgoaloffset"}, "cols": {"cplgoalid": {"name": "cplgoalid", "spec": "col_integer"}, "patientunitstayid": {"name": "patientunitstayid", "spec": "col_integer"}, "cplgoaloffset": {"name": "cplgoaloffset", "spec": "col_integer"}, "cplgoalcategory": {"name": "cplgoalcategory", "spec": "col_character"}, "cplgoalvalue": {"name": "cplgoalvalue", "spec": "col_character"}, "cplgoalstatus": {"name": "cplgoalstatus", "spec": "col_character"}, "activeupondischarge": {"name": "activeupondischarge", "spec": "col_character"}}}, "careplaninfectiousdisease": {"files": "carePlanInfectiousDisease.csv.gz", "defaults": {"index_var": "cplinfectdiseaseoffset", "val_var": "infectdiseasesite", "time_vars": "cplinfectdiseaseoffset"}, "cols": {"cplinfectid": {"name": "cplinfectid", "spec": "col_integer"}, "patientunitstayid": {"name": "patientunitstayid", "spec": "col_integer"}, "activeupondischarge": {"name": "activeupondischarge", "spec": "col_character"}, "cplinfectdiseaseoffset": {"name": "cplinfectdiseaseoffset", "spec": "col_integer"}, "infectdiseasesite": {"name": "infectdiseasesite", "spec": "col_character"}, "infectdiseaseassessment": {"name": "infectdiseaseassessment", "spec": "col_character"}, "responsetotherapy": {"name": "responsetotherapy", "spec": "col_character"}, "treatment": {"name": "treatment", "spec": "col_character"}}}, "customlab": {"files": "customLab.csv.gz", "defaults": {"index_var": "labotheroffset", "val_var": "labotherresult", "time_vars": "labotheroffset"}, "cols": {"customlabid": {"name": "customlabid", "spec": "col_integer"}, "patientunitstayid": {"name": "patientunitstayid", "spec": "col_integer"}, "labotheroffset": {"name": "labotheroffset", "spec": "col_integer"}, "labothertypeid": {"name": "labothertypeid", "spec": "col_integer"}, "labothername": {"name": "labothername", "spec": "col_character"}, "labotherresult": {"name": "labotherresult", "spec": "col_character"}, "labothervaluetext": {"name": "labothervaluetext", "spec": "col_character"}}}, "diagnosis": {"files": "diagnosis.csv.gz", "defaults": {"index_var": "diagnosisoffset", "val_var": "icd9code", "time_vars": "diagnosisoffset"}, "cols": {"diagnosisid": {"name": "diagnosisid", "spec": "col_integer"}, "patientunitstayid": {"name": "patientunitstayid", "spec": "col_integer"}, "activeupondischarge": {"name": "activeupondischarge", "spec": "col_character"}, "diagnosisoffset": {"name": "diagnosisoffset", "spec": "col_integer"}, "diagnosisstring": {"name": "diagnosisstring", "spec": "col_character"}, "icd9code": {"name": "icd9code", "spec": "col_character"}, "diagnosispriority": {"name": "diagnosispriority", "spec": "col_character"}}}, "hospital": {"files": "hospital.csv.gz", "defaults": {"id_var": "hospitalid", "val_var": "numbedscategory"}, "cols": {"hospitalid": {"name": "hospitalid", "spec": "col_integer"}, "numbedscategory": {"name": "numbedscategory", "spec": "col_character"}, "teachingstatus": {"name": "teachingstatus", "spec": "col_logical"}, "region": {"name": "region", "spec": "col_character"}}}, "infusiondrug": {"files": "infusiondrug.csv.gz", "defaults": {"index_var": "infusionoffset", "val_var": "drugrate", "time_vars": "infusionoffset"}, "cols": {"infusiondrugid": {"name": "infusiondrugid", "spec": "col_integer"}, "patientunitstayid": {"name": "patientunitstayid", "spec": "col_integer"}, "infusionoffset": {"name": "infusionoffset", "spec": "col_integer"}, "drugname": {"name": "drugname", "spec": "col_character"}, "drugrate": {"name": "drugrate", "spec": "col_character"}, "infusionrate": {"name": "infusionrate", "spec": "col_character"}, "drugamount": {"name": "drugamount", "spec": "col_character"}, "volumeoffluid": {"name": "volumeoffluid", "spec": "col_character"}, "patientweight": {"name": "patientweight", "spec": "col_character"}}}, "intakeoutput": {"files": "intakeOutput.csv.gz", "defaults": {"index_var": "intakeoutputoffset", "val_var": "cellvaluenumeric", "time_vars": ["intakeoutputoffset", "intakeoutputentryoffset"]}, "cols": {"intakeoutputid": {"name": "intakeoutputid", "spec": "col_integer"}, "patientunitstayid": {"name": "patientunitstayid", "spec": "col_integer"}, "intakeoutputoffset": {"name": "intakeoutputoffset", "spec": "col_integer"}, "intaketotal": {"name": "intaketotal", "spec": "col_double"}, "outputtotal": {"name": "outputtotal", "spec": "col_double"}, "dialysistotal": {"name": "dialysistotal", "spec": "col_double"}, "nettotal": {"name": "nettotal", "spec": "col_double"}, "intakeoutputentryoffset": {"name": "intakeoutputentryoffset", "spec": "col_integer"}, "cellpath": {"name": "cellpath", "spec": "col_character"}, "celllabel": {"name": "celllabel", "spec": "col_character"}, "cellvaluenumeric": {"name": "cellvaluenumeric", "spec": "col_double"}, "cellvaluetext": {"name": "cellvaluetext", "spec": "col_character"}}}, "lab": {"files": "lab.csv.gz", "defaults": {"index_var": "labresultoffset", "val_var": "labresult", "unit_var": "labmeasurenameinterface", "time_vars": ["labresultoffset", "labresultrevisedoffset"]}, "cols": {"labid": {"name": "labid", "spec": "col_integer"}, "patientunitstayid": {"name": "patientunitstayid", "spec": "col_integer"}, "labresultoffset": {"name": "labresultoffset", "spec": "col_integer"}, "labtypeid": {"name": "labtypeid", "spec": "col_double"}, "labname": {"name": "labname", "spec": "col_character"}, "labresult": {"name": "labresult", "spec": "col_double"}, "labresulttext": {"name": "labresulttext", "spec": "col_character"}, "labmeasurenamesystem": {"name": "labmeasurenamesystem", "spec": "col_character"}, "labmeasurenameinterface": {"name": "labmeasurenameinterface", "spec": "col_character"}, "labresultrevisedoffset": {"name": "labresultrevisedoffset", "spec": "col_integer"}}}, "medication": {"files": "medication.csv.gz", "defaults": {"index_var": "drugstartoffset", "val_var": "dosage", "time_vars": ["drugorderoffset", "drugstartoffset", "drugstopoffset"]}, "cols": {"medicationid": {"name": "medicationid", "spec": "col_integer"}, "patientunitstayid": {"name": "patientunitstayid", "spec": "col_integer"}, "drugorderoffset": {"name": "drugorderoffset", "spec": "col_integer"}, "drugstartoffset": {"name": "drugstartoffset", "spec": "col_integer"}, "drugivadmixture": {"name": "drugivadmixture", "spec": "col_character"}, "drugordercancelled": {"name": "drugordercancelled", "spec": "col_character"}, "drugname": {"name": "drugname", "spec": "col_character"}, "drughiclseqno": {"name": "drughiclseqno", "spec": "col_integer"}, "dosage": {"name": "dosage", "spec": "col_character"}, "routeadmin": {"name": "routeadmin", "spec": "col_character"}, "frequency": {"name": "frequency", "spec": "col_character"}, "loadingdose": {"name": "loadingdose", "spec": "col_character"}, "prn": {"name": "prn", "spec": "col_character"}, "drugstopoffset": {"name": "drugstopoffset", "spec": "col_integer"}, "gtc": {"name": "gtc", "spec": "col_integer"}}}, "microlab": {"files": "microLab.csv.gz", "defaults": {"index_var": "culturetakenoffset", "val_var": "organism", "time_vars": "culturetakenoffset"}, "cols": {"microlabid": {"name": "microlabid", "spec": "col_integer"}, "patientunitstayid": {"name": "patientunitstayid", "spec": "col_integer"}, "culturetakenoffset": {"name": "culturetakenoffset", "spec": "col_integer"}, "culturesite": {"name": "culturesite", "spec": "col_character"}, "organism": {"name": "organism", "spec": "col_character"}, "antibiotic": {"name": "antibiotic", "spec": "col_character"}, "sensitivitylevel": {"name": "sensitivitylevel", "spec": "col_character"}}}, "note": {"files": "note.csv.gz", "defaults": {"index_var": "noteoffset", "val_var": "notetext", "time_vars": ["noteoffset", "noteenteredoffset"]}, "cols": {"noteid": {"name": "noteid", "spec": "col_integer"}, "patientunitstayid": {"name": "patientunitstayid", "spec": "col_integer"}, "noteoffset": {"name": "noteoffset", "spec": "col_integer"}, "noteenteredoffset": {"name": "noteenteredoffset", "spec": "col_integer"}, "notetype": {"name": "notetype", "spec": "col_character"}, "notepath": {"name": "notepath", "spec": "col_character"}, "notevalue": {"name": "notevalue", "spec": "col_character"}, "notetext": {"name": "notetext", "spec": "col_character"}}}, "nurseassessment": {"files": "nurseAssessment.csv.gz", "defaults": {"index_var": "nurseassessoffset", "val_var": "cellattributevalue", "time_vars": ["nurseassessoffset", "nurseassessentryoffset"]}, "cols": {"nurseassessid": {"name": "nurseassessid", "spec": "col_integer"}, "patientunitstayid": {"name": "patientunitstayid", "spec": "col_integer"}, "nurseassessoffset": {"name": "nurseassessoffset", "spec": "col_integer"}, "nurseassessentryoffset": {"name": "nurseassessentryoffset", "spec": "col_integer"}, "cellattributepath": {"name": "cellattributepath", "spec": "col_character"}, "celllabel": {"name": "celllabel", "spec": "col_character"}, "cellattribute": {"name": "cellattribute", "spec": "col_character"}, "cellattributevalue": {"name": "cellattributevalue", "spec": "col_character"}}}, "nursecare": {"files": "nurseCare.csv.gz", "defaults": {"index_var": "nursecareoffset", "val_var": "cellattributevalue", "time_vars": ["nursecareoffset", "nursecareentryoffset"]}, "cols": {"nursecareid": {"name": "nursecareid", "spec": "col_integer"}, "patientunitstayid": {"name": "patientunitstayid", "spec": "col_integer"}, "celllabel": {"name": "celllabel", "spec": "col_character"}, "nursecareoffset": {"name": "nursecareoffset", "spec": "col_integer"}, "nursecareentryoffset": {"name": "nursecareentryoffset", "spec": "col_integer"}, "cellattributepath": {"name": "cellattributepath", "spec": "col_character"}, "cellattribute": {"name": "cellattribute", "spec": "col_character"}, "cellattributevalue": {"name": "cellattributevalue", "spec": "col_character"}}}, "nursecharting": {"files": "nurseCharting.csv.gz", "defaults": {"index_var": "nursingchartoffset", "val_var": "nursingchartvalue", "time_vars": ["nursingchartoffset", "nursingchartentryoffset"]}, "cols": {"nursingchartid": {"name": "nursingchartid", "spec": "col_double"}, "patientunitstayid": {"name": "patientunitstayid", "spec": "col_integer"}, "nursingchartoffset": {"name": "nursingchartoffset", "spec": "col_integer"}, "nursingchartentryoffset": {"name": "nursingchartentryoffset", "spec": "col_integer"}, "nursingchartcelltypecat": {"name": "nursingchartcelltypecat", "spec": "col_character"}, "nursingchartcelltypevallabel": {"name": "nursingchartcelltypevallabel", "spec": "col_character"}, "nursingchartcelltypevalname": {"name": "nursingchartcelltypevalname", "spec": "col_character"}, "nursingchartvalue": {"name": "nursingchartvalue", "spec": "col_character"}}, "partitioning": {"col": "patientunitstayid", "breaks": 1775421}}, "pasthistory": {"files": "pastHistory.csv.gz", "defaults": {"index_var": "pasthistoryoffset", "val_var": "pasthistoryvalue", "time_vars": ["pasthistoryoffset", "pasthistoryenteredoffset"]}, "cols": {"pasthistoryid": {"name": "pasthistoryid", "spec": "col_integer"}, "patientunitstayid": {"name": "patientunitstayid", "spec": "col_integer"}, "pasthistoryoffset": {"name": "pasthistoryoffset", "spec": "col_integer"}, "pasthistoryenteredoffset": {"name": "pasthistoryenteredoffset", "spec": "col_integer"}, "pasthistorynotetype": {"name": "pasthistorynotetype", "spec": "col_character"}, "pasthistorypath": {"name": "pasthistorypath", "spec": "col_character"}, "pasthistoryvalue": {"name": "pasthistoryvalue", "spec": "col_character"}, "pasthistoryvaluetext": {"name": "pasthistoryvaluetext", "spec": "col_character"}}}, "patient": {"files": "patient.csv.gz", "defaults": {"val_var": "unitdischargestatus", "time_vars": ["hospitaladmitoffset", "hospitaldischargeoffset", "unitdischargeoffset"]}, "cols": {"patientunitstayid": {"name": "patientunitstayid", "spec": "col_integer"}, "patienthealthsystemstayid": {"name": "patienthealthsystemstayid", "spec": "col_integer"}, "gender": {"name": "gender", "spec": "col_character"}, "age": {"name": "age", "spec": "col_character"}, "ethnicity": {"name": "ethnicity", "spec": "col_character"}, "hospitalid": {"name": "hospitalid", "spec": "col_integer"}, "wardid": {"name": "wardid", "spec": "col_integer"}, "apacheadmissiondx": {"name": "apacheadmissiondx", "spec": "col_character"}, "admissionheight": {"name": "admissionheight", "spec": "col_double"}, "hospitaladmittime24": {"name": "hospitaladmittime24", "spec": "col_character"}, "hospitaladmitoffset": {"name": "hospitaladmitoffset", "spec": "col_integer"}, "hospitaladmitsource": {"name": "hospitaladmitsource", "spec": "col_character"}, "hospitaldischargeyear": {"name": "hospitaldischargeyear", "spec": "col_integer"}, "hospitaldischargetime24": {"name": "hospitaldischargetime24", "spec": "col_character"}, "hospitaldischargeoffset": {"name": "hospitaldischargeoffset", "spec": "col_integer"}, "hospitaldischargelocation": {"name": "hospitaldischargelocation", "spec": "col_character"}, "hospitaldischargestatus": {"name": "hospitaldischargestatus", "spec": "col_character"}, "unittype": {"name": "unittype", "spec": "col_character"}, "unitadmittime24": {"name": "unitadmittime24", "spec": "col_character"}, "unitadmitsource": {"name": "unitadmitsource", "spec": "col_character"}, "unitvisitnumber": {"name": "unitvisitnumber", "spec": "col_integer"}, "unitstaytype": {"name": "unitstaytype", "spec": "col_character"}, "admissionweight": {"name": "admissionweight", "spec": "col_double"}, "dischargeweight": {"name": "dischargeweight", "spec": "col_double"}, "unitdischargetime24": {"name": "unitdischargetime24", "spec": "col_character"}, "unitdischargeoffset": {"name": "unitdischargeoffset", "spec": "col_integer"}, "unitdischargelocation": {"name": "unitdischargelocation", "spec": "col_character"}, "unitdischargestatus": {"name": "unitdischargestatus", "spec": "col_character"}, "uniquepid": {"name": "uniquepid", "spec": "col_character"}}}, "physicalexam": {"files": "physicalExam.csv.gz", "defaults": {"index_var": "physicalexamoffset", "val_var": "physicalexamvalue", "time_vars": "physicalexamoffset"}, "cols": {"physicalexamid": {"name": "physicalexamid", "spec": "col_integer"}, "patientunitstayid": {"name": "patientunitstayid", "spec": "col_integer"}, "physicalexamoffset": {"name": "physicalexamoffset", "spec": "col_integer"}, "physicalexampath": {"name": "physicalexampath", "spec": "col_character"}, "physicalexamvalue": {"name": "physicalexamvalue", "spec": "col_character"}, "physicalexamtext": {"name": "physicalexamtext", "spec": "col_character"}}}, "respiratorycare": {"files": "respiratoryCare.csv.gz", "defaults": {"index_var": "respcarestatusoffset", "time_vars": ["respcarestatusoffset", "ventstartoffset", "ventendoffset", "priorventstartoffset", "priorventendoffset"]}, "cols": {"respcareid": {"name": "respcareid", "spec": "col_integer"}, "patientunitstayid": {"name": "patientunitstayid", "spec": "col_integer"}, "respcarestatusoffset": {"name": "respcarestatusoffset", "spec": "col_integer"}, "currenthistoryseqnum": {"name": "currenthistoryseqnum", "spec": "col_integer"}, "airwaytype": {"name": "airwaytype", "spec": "col_character"}, "airwaysize": {"name": "airwaysize", "spec": "col_character"}, "airwayposition": {"name": "airwayposition", "spec": "col_character"}, "cuffpressure": {"name": "cuffpressure", "spec": "col_double"}, "ventstartoffset": {"name": "ventstartoffset", "spec": "col_integer"}, "ventendoffset": {"name": "ventendoffset", "spec": "col_integer"}, "priorventstartoffset": {"name": "priorventstartoffset", "spec": "col_integer"}, "priorventendoffset": {"name": "priorventendoffset", "spec": "col_integer"}, "apneaparams": {"name": "apneaparams", "spec": "col_character"}, "lowexhmvlimit": {"name": "lowexhmvlimit", "spec": "col_double"}, "hiexhmvlimit": {"name": "hiexhmvlimit", "spec": "col_double"}, "lowexhtvlimit": {"name": "lowexhtvlimit", "spec": "col_double"}, "hipeakpreslimit": {"name": "hipeakpreslimit", "spec": "col_double"}, "lowpeakpreslimit": {"name": "lowpeakpreslimit", "spec": "col_double"}, "hirespratelimit": {"name": "hirespratelimit", "spec": "col_double"}, "lowrespratelimit": {"name": "lowrespratelimit", "spec": "col_double"}, "sighpreslimit": {"name": "sighpreslimit", "spec": "col_double"}, "lowironoxlimit": {"name": "lowironoxlimit", "spec": "col_double"}, "highironoxlimit": {"name": "highironoxlimit", "spec": "col_double"}, "meanairwaypreslimit": {"name": "meanairwaypreslimit", "spec": "col_double"}, "peeplimit": {"name": "peeplimit", "spec": "col_double"}, "cpaplimit": {"name": "cpaplimit", "spec": "col_double"}, "setapneainterval": {"name": "setapneainterval", "spec": "col_character"}, "setapneatv": {"name": "setapneatv", "spec": "col_character"}, "setapneaippeephigh": {"name": "setapneaippeephigh", "spec": "col_character"}, "setapnearr": {"name": "setapnearr", "spec": "col_character"}, "setapneapeakflow": {"name": "setapneapeakflow", "spec": "col_character"}, "setapneainsptime": {"name": "setapneainsptime", "spec": "col_character"}, "setapneaie": {"name": "setapneaie", "spec": "col_character"}, "setapneafio2": {"name": "setapneafio2", "spec": "col_character"}}}, "respiratorycharting": {"files": "respiratoryCharting.csv.gz", "defaults": {"index_var": "respchartoffset", "val_var": "respchartvalue", "time_vars": ["respchartoffset", "respchartentryoffset"]}, "cols": {"respchartid": {"name": "respchartid", "spec": "col_integer"}, "patientunitstayid": {"name": "patientunitstayid", "spec": "col_integer"}, "respchartoffset": {"name": "respchartoffset", "spec": "col_integer"}, "respchartentryoffset": {"name": "respchartentryoffset", "spec": "col_integer"}, "respcharttypecat": {"name": "respcharttypecat", "spec": "col_character"}, "respchartvaluelabel": {"name": "respchartvaluelabel", "spec": "col_character"}, "respchartvalue": {"name": "respchartvalue", "spec": "col_character"}}}, "treatment": {"files": "treatment.csv.gz", "defaults": {"index_var": "treatmentoffset", "val_var": "treatmentstring", "time_vars": "treatmentoffset"}, "cols": {"treatmentid": {"name": "treatmentid", "spec": "col_integer"}, "patientunitstayid": {"name": "patientunitstayid", "spec": "col_integer"}, "treatmentoffset": {"name": "treatmentoffset", "spec": "col_integer"}, "treatmentstring": {"name": "treatmentstring", "spec": "col_character"}, "activeupondischarge": {"name": "activeupondischarge", "spec": "col_character"}}}, "vitalaperiodic": {"files": "vitalAperiodic.csv.gz", "defaults": {"index_var": "observationoffset", "time_vars": "observationoffset"}, "cols": {"vitalaperiodicid": {"name": "vitalaperiodicid", "spec": "col_integer"}, "patientunitstayid": {"name": "patientunitstayid", "spec": "col_integer"}, "observationoffset": {"name": "observationoffset", "spec": "col_integer"}, "noninvasivesystolic": {"name": "noninvasivesystolic", "spec": "col_double"}, "noninvasivediastolic": {"name": "noninvasivediastolic", "spec": "col_double"}, "noninvasivemean": {"name": "noninvasivemean", "spec": "col_double"}, "paop": {"name": "paop", "spec": "col_double"}, "cardiacoutput": {"name": "cardiacoutput", "spec": "col_double"}, "cardiacinput": {"name": "cardiacinput", "spec": "col_double"}, "svr": {"name": "svr", "spec": "col_double"}, "svri": {"name": "svri", "spec": "col_double"}, "pvr": {"name": "pvr", "spec": "col_double"}, "pvri": {"name": "pvri", "spec": "col_double"}}}, "vitalperiodic": {"files": "vitalPeriodic.csv.gz", "defaults": {"index_var": "observationoffset", "time_vars": "observationoffset"}, "cols": {"vitalperiodicid": {"name": "vitalperiodicid", "spec": "col_double"}, "patientunitstayid": {"name": "patientunitstayid", "spec": "col_integer"}, "observationoffset": {"name": "observationoffset", "spec": "col_integer"}, "temperature": {"name": "temperature", "spec": "col_double"}, "sao2": {"name": "sao2", "spec": "col_integer"}, "heartrate": {"name": "heartrate", "spec": "col_integer"}, "respiration": {"name": "respiration", "spec": "col_integer"}, "cvp": {"name": "cvp", "spec": "col_integer"}, "etco2": {"name": "etco2", "spec": "col_integer"}, "systemicsystolic": {"name": "systemicsystolic", "spec": "col_integer"}, "systemicdiastolic": {"name": "systemicdiastolic", "spec": "col_integer"}, "systemicmean": {"name": "systemicmean", "spec": "col_integer"}, "pasystolic": {"name": "pasystolic", "spec": "col_integer"}, "padiastolic": {"name": "padiastolic", "spec": "col_integer"}, "pamean": {"name": "pamean", "spec": "col_integer"}, "st1": {"name": "st1", "spec": "col_double"}, "st2": {"name": "st2", "spec": "col_double"}, "st3": {"name": "st3", "spec": "col_double"}, "icp": {"name": "icp", "spec": "col_integer"}}, "partitioning": {"col": "patientunitstayid", "breaks": 1775421}}}}]
+[
+    {
+        "name": "eicu_demo",
+        "class_prefix": [
+            "eicu_demo",
+            "eicu"
+        ],
+        "url": "https://physionet.org/files/eicu-crd-demo/2.0.1",
+        "id_cfg": {
+            "hadm": {
+                "id": "patienthealthsystemstayid",
+                "position": 1,
+                "start": "hospitaladmitoffset",
+                "end": "hospitaldischargeoffset",
+                "table": "patient"
+            },
+            "icustay": {
+                "id": "patientunitstayid",
+                "position": 2,
+                "start": "unitadmitoffset",
+                "end": "unitdischargeoffset",
+                "table": "patient"
+            }
+        },
+        "tables": {
+            "admissiondrug": {
+                "files": "admissiondrug.csv.gz",
+                "defaults": {
+                    "index_var": "drugoffset",
+                    "val_var": "drugdosage",
+                    "unit_var": "drugunit",
+                    "time_vars": [
+                        "drugoffset",
+                        "drugenteredoffset"
+                    ]
+                },
+                "cols": {
+                    "admissiondrugid": {
+                        "name": "admissiondrugid",
+                        "spec": "col_integer"
+                    },
+                    "patientunitstayid": {
+                        "name": "patientunitstayid",
+                        "spec": "col_integer"
+                    },
+                    "drugoffset": {
+                        "name": "drugoffset",
+                        "spec": "col_integer"
+                    },
+                    "drugenteredoffset": {
+                        "name": "drugenteredoffset",
+                        "spec": "col_integer"
+                    },
+                    "drugnotetype": {
+                        "name": "drugnotetype",
+                        "spec": "col_character"
+                    },
+                    "specialtytype": {
+                        "name": "specialtytype",
+                        "spec": "col_character"
+                    },
+                    "usertype": {
+                        "name": "usertype",
+                        "spec": "col_character"
+                    },
+                    "rxincluded": {
+                        "name": "rxincluded",
+                        "spec": "col_character"
+                    },
+                    "writtenineicu": {
+                        "name": "writtenineicu",
+                        "spec": "col_character"
+                    },
+                    "drugname": {
+                        "name": "drugname",
+                        "spec": "col_character"
+                    },
+                    "drugdosage": {
+                        "name": "drugdosage",
+                        "spec": "col_double"
+                    },
+                    "drugunit": {
+                        "name": "drugunit",
+                        "spec": "col_character"
+                    },
+                    "drugadmitfrequency": {
+                        "name": "drugadmitfrequency",
+                        "spec": "col_character"
+                    },
+                    "drughiclseqno": {
+                        "name": "drughiclseqno",
+                        "spec": "col_integer"
+                    }
+                }
+            },
+            "admissiondx": {
+                "files": "admissionDx.csv.gz",
+                "defaults": {
+                    "index_var": "admitdxenteredoffset",
+                    "val_var": "admitdxtext",
+                    "time_vars": "admitdxenteredoffset"
+                },
+                "cols": {
+                    "admissiondxid": {
+                        "name": "admissiondxid",
+                        "spec": "col_integer"
+                    },
+                    "patientunitstayid": {
+                        "name": "patientunitstayid",
+                        "spec": "col_integer"
+                    },
+                    "admitdxenteredoffset": {
+                        "name": "admitdxenteredoffset",
+                        "spec": "col_integer"
+                    },
+                    "admitdxpath": {
+                        "name": "admitdxpath",
+                        "spec": "col_character"
+                    },
+                    "admitdxname": {
+                        "name": "admitdxname",
+                        "spec": "col_character"
+                    },
+                    "admitdxtext": {
+                        "name": "admitdxtext",
+                        "spec": "col_character"
+                    }
+                }
+            },
+            "allergy": {
+                "files": "allergy.csv.gz",
+                "defaults": {
+                    "index_var": "allergyoffset",
+                    "val_var": "allergyname",
+                    "time_vars": [
+                        "allergyoffset",
+                        "allergyenteredoffset"
+                    ]
+                },
+                "cols": {
+                    "allergyid": {
+                        "name": "allergyid",
+                        "spec": "col_integer"
+                    },
+                    "patientunitstayid": {
+                        "name": "patientunitstayid",
+                        "spec": "col_integer"
+                    },
+                    "allergyoffset": {
+                        "name": "allergyoffset",
+                        "spec": "col_integer"
+                    },
+                    "allergyenteredoffset": {
+                        "name": "allergyenteredoffset",
+                        "spec": "col_integer"
+                    },
+                    "allergynotetype": {
+                        "name": "allergynotetype",
+                        "spec": "col_character"
+                    },
+                    "specialtytype": {
+                        "name": "specialtytype",
+                        "spec": "col_character"
+                    },
+                    "usertype": {
+                        "name": "usertype",
+                        "spec": "col_character"
+                    },
+                    "rxincluded": {
+                        "name": "rxincluded",
+                        "spec": "col_character"
+                    },
+                    "writtenineicu": {
+                        "name": "writtenineicu",
+                        "spec": "col_character"
+                    },
+                    "drugname": {
+                        "name": "drugname",
+                        "spec": "col_character"
+                    },
+                    "allergytype": {
+                        "name": "allergytype",
+                        "spec": "col_character"
+                    },
+                    "allergyname": {
+                        "name": "allergyname",
+                        "spec": "col_character"
+                    },
+                    "drughiclseqno": {
+                        "name": "drughiclseqno",
+                        "spec": "col_integer"
+                    }
+                }
+            },
+            "apacheapsvar": {
+                "files": "apacheApsVar.csv.gz",
+                "defaults": [],
+                "cols": {
+                    "apacheapsvarid": {
+                        "name": "apacheapsvarid",
+                        "spec": "col_integer"
+                    },
+                    "patientunitstayid": {
+                        "name": "patientunitstayid",
+                        "spec": "col_integer"
+                    },
+                    "intubated": {
+                        "name": "intubated",
+                        "spec": "col_integer"
+                    },
+                    "vent": {
+                        "name": "vent",
+                        "spec": "col_integer"
+                    },
+                    "dialysis": {
+                        "name": "dialysis",
+                        "spec": "col_integer"
+                    },
+                    "eyes": {
+                        "name": "eyes",
+                        "spec": "col_integer"
+                    },
+                    "motor": {
+                        "name": "motor",
+                        "spec": "col_integer"
+                    },
+                    "verbal": {
+                        "name": "verbal",
+                        "spec": "col_integer"
+                    },
+                    "meds": {
+                        "name": "meds",
+                        "spec": "col_integer"
+                    },
+                    "urine": {
+                        "name": "urine",
+                        "spec": "col_double"
+                    },
+                    "wbc": {
+                        "name": "wbc",
+                        "spec": "col_double"
+                    },
+                    "temperature": {
+                        "name": "temperature",
+                        "spec": "col_double"
+                    },
+                    "respiratoryrate": {
+                        "name": "respiratoryrate",
+                        "spec": "col_double"
+                    },
+                    "sodium": {
+                        "name": "sodium",
+                        "spec": "col_double"
+                    },
+                    "heartrate": {
+                        "name": "heartrate",
+                        "spec": "col_double"
+                    },
+                    "meanbp": {
+                        "name": "meanbp",
+                        "spec": "col_double"
+                    },
+                    "ph": {
+                        "name": "ph",
+                        "spec": "col_double"
+                    },
+                    "hematocrit": {
+                        "name": "hematocrit",
+                        "spec": "col_double"
+                    },
+                    "creatinine": {
+                        "name": "creatinine",
+                        "spec": "col_double"
+                    },
+                    "albumin": {
+                        "name": "albumin",
+                        "spec": "col_double"
+                    },
+                    "pao2": {
+                        "name": "pao2",
+                        "spec": "col_double"
+                    },
+                    "pco2": {
+                        "name": "pco2",
+                        "spec": "col_double"
+                    },
+                    "bun": {
+                        "name": "bun",
+                        "spec": "col_double"
+                    },
+                    "glucose": {
+                        "name": "glucose",
+                        "spec": "col_double"
+                    },
+                    "bilirubin": {
+                        "name": "bilirubin",
+                        "spec": "col_double"
+                    },
+                    "fio2": {
+                        "name": "fio2",
+                        "spec": "col_double"
+                    }
+                }
+            },
+            "apachepatientresult": {
+                "files": "apachePatientResult.csv.gz",
+                "defaults": {
+                    "val_var": "apachescore"
+                },
+                "cols": {
+                    "apachepatientresultsid": {
+                        "name": "apachepatientresultsid",
+                        "spec": "col_integer"
+                    },
+                    "patientunitstayid": {
+                        "name": "patientunitstayid",
+                        "spec": "col_integer"
+                    },
+                    "physicianspeciality": {
+                        "name": "physicianspeciality",
+                        "spec": "col_character"
+                    },
+                    "physicianinterventioncategory": {
+                        "name": "physicianinterventioncategory",
+                        "spec": "col_character"
+                    },
+                    "acutephysiologyscore": {
+                        "name": "acutephysiologyscore",
+                        "spec": "col_integer"
+                    },
+                    "apachescore": {
+                        "name": "apachescore",
+                        "spec": "col_integer"
+                    },
+                    "apacheversion": {
+                        "name": "apacheversion",
+                        "spec": "col_character"
+                    },
+                    "predictedicumortality": {
+                        "name": "predictedicumortality",
+                        "spec": "col_character"
+                    },
+                    "actualicumortality": {
+                        "name": "actualicumortality",
+                        "spec": "col_character"
+                    },
+                    "predictediculos": {
+                        "name": "predictediculos",
+                        "spec": "col_double"
+                    },
+                    "actualiculos": {
+                        "name": "actualiculos",
+                        "spec": "col_double"
+                    },
+                    "predictedhospitalmortality": {
+                        "name": "predictedhospitalmortality",
+                        "spec": "col_character"
+                    },
+                    "actualhospitalmortality": {
+                        "name": "actualhospitalmortality",
+                        "spec": "col_character"
+                    },
+                    "predictedhospitallos": {
+                        "name": "predictedhospitallos",
+                        "spec": "col_double"
+                    },
+                    "actualhospitallos": {
+                        "name": "actualhospitallos",
+                        "spec": "col_double"
+                    },
+                    "preopmi": {
+                        "name": "preopmi",
+                        "spec": "col_integer"
+                    },
+                    "preopcardiaccath": {
+                        "name": "preopcardiaccath",
+                        "spec": "col_integer"
+                    },
+                    "ptcawithin24h": {
+                        "name": "ptcawithin24h",
+                        "spec": "col_integer"
+                    },
+                    "unabridgedunitlos": {
+                        "name": "unabridgedunitlos",
+                        "spec": "col_double"
+                    },
+                    "unabridgedhosplos": {
+                        "name": "unabridgedhosplos",
+                        "spec": "col_double"
+                    },
+                    "actualventdays": {
+                        "name": "actualventdays",
+                        "spec": "col_double"
+                    },
+                    "predventdays": {
+                        "name": "predventdays",
+                        "spec": "col_double"
+                    },
+                    "unabridgedactualventdays": {
+                        "name": "unabridgedactualventdays",
+                        "spec": "col_double"
+                    }
+                }
+            },
+            "apachepredvar": {
+                "files": "apachePredVar.csv.gz",
+                "defaults": [],
+                "cols": {
+                    "apachepredvarid": {
+                        "name": "apachepredvarid",
+                        "spec": "col_integer"
+                    },
+                    "patientunitstayid": {
+                        "name": "patientunitstayid",
+                        "spec": "col_integer"
+                    },
+                    "sicuday": {
+                        "name": "sicuday",
+                        "spec": "col_integer"
+                    },
+                    "saps3day1": {
+                        "name": "saps3day1",
+                        "spec": "col_integer"
+                    },
+                    "saps3today": {
+                        "name": "saps3today",
+                        "spec": "col_integer"
+                    },
+                    "saps3yesterday": {
+                        "name": "saps3yesterday",
+                        "spec": "col_integer"
+                    },
+                    "gender": {
+                        "name": "gender",
+                        "spec": "col_integer"
+                    },
+                    "teachtype": {
+                        "name": "teachtype",
+                        "spec": "col_integer"
+                    },
+                    "region": {
+                        "name": "region",
+                        "spec": "col_integer"
+                    },
+                    "bedcount": {
+                        "name": "bedcount",
+                        "spec": "col_integer"
+                    },
+                    "admitsource": {
+                        "name": "admitsource",
+                        "spec": "col_integer"
+                    },
+                    "graftcount": {
+                        "name": "graftcount",
+                        "spec": "col_integer"
+                    },
+                    "meds": {
+                        "name": "meds",
+                        "spec": "col_integer"
+                    },
+                    "verbal": {
+                        "name": "verbal",
+                        "spec": "col_integer"
+                    },
+                    "motor": {
+                        "name": "motor",
+                        "spec": "col_integer"
+                    },
+                    "eyes": {
+                        "name": "eyes",
+                        "spec": "col_integer"
+                    },
+                    "age": {
+                        "name": "age",
+                        "spec": "col_integer"
+                    },
+                    "admitdiagnosis": {
+                        "name": "admitdiagnosis",
+                        "spec": "col_character"
+                    },
+                    "thrombolytics": {
+                        "name": "thrombolytics",
+                        "spec": "col_integer"
+                    },
+                    "diedinhospital": {
+                        "name": "diedinhospital",
+                        "spec": "col_integer"
+                    },
+                    "aids": {
+                        "name": "aids",
+                        "spec": "col_integer"
+                    },
+                    "hepaticfailure": {
+                        "name": "hepaticfailure",
+                        "spec": "col_integer"
+                    },
+                    "lymphoma": {
+                        "name": "lymphoma",
+                        "spec": "col_integer"
+                    },
+                    "metastaticcancer": {
+                        "name": "metastaticcancer",
+                        "spec": "col_integer"
+                    },
+                    "leukemia": {
+                        "name": "leukemia",
+                        "spec": "col_integer"
+                    },
+                    "immunosuppression": {
+                        "name": "immunosuppression",
+                        "spec": "col_integer"
+                    },
+                    "cirrhosis": {
+                        "name": "cirrhosis",
+                        "spec": "col_integer"
+                    },
+                    "electivesurgery": {
+                        "name": "electivesurgery",
+                        "spec": "col_integer"
+                    },
+                    "activetx": {
+                        "name": "activetx",
+                        "spec": "col_integer"
+                    },
+                    "readmit": {
+                        "name": "readmit",
+                        "spec": "col_integer"
+                    },
+                    "ima": {
+                        "name": "ima",
+                        "spec": "col_integer"
+                    },
+                    "midur": {
+                        "name": "midur",
+                        "spec": "col_integer"
+                    },
+                    "ventday1": {
+                        "name": "ventday1",
+                        "spec": "col_integer"
+                    },
+                    "oobventday1": {
+                        "name": "oobventday1",
+                        "spec": "col_integer"
+                    },
+                    "oobintubday1": {
+                        "name": "oobintubday1",
+                        "spec": "col_integer"
+                    },
+                    "diabetes": {
+                        "name": "diabetes",
+                        "spec": "col_integer"
+                    },
+                    "managementsystem": {
+                        "name": "managementsystem",
+                        "spec": "col_integer"
+                    },
+                    "var03hspxlos": {
+                        "name": "var03hspxlos",
+                        "spec": "col_double"
+                    },
+                    "pao2": {
+                        "name": "pao2",
+                        "spec": "col_double"
+                    },
+                    "fio2": {
+                        "name": "fio2",
+                        "spec": "col_double"
+                    },
+                    "ejectfx": {
+                        "name": "ejectfx",
+                        "spec": "col_double"
+                    },
+                    "creatinine": {
+                        "name": "creatinine",
+                        "spec": "col_double"
+                    },
+                    "dischargelocation": {
+                        "name": "dischargelocation",
+                        "spec": "col_integer"
+                    },
+                    "visitnumber": {
+                        "name": "visitnumber",
+                        "spec": "col_integer"
+                    },
+                    "amilocation": {
+                        "name": "amilocation",
+                        "spec": "col_integer"
+                    },
+                    "day1meds": {
+                        "name": "day1meds",
+                        "spec": "col_integer"
+                    },
+                    "day1verbal": {
+                        "name": "day1verbal",
+                        "spec": "col_integer"
+                    },
+                    "day1motor": {
+                        "name": "day1motor",
+                        "spec": "col_integer"
+                    },
+                    "day1eyes": {
+                        "name": "day1eyes",
+                        "spec": "col_integer"
+                    },
+                    "day1pao2": {
+                        "name": "day1pao2",
+                        "spec": "col_double"
+                    },
+                    "day1fio2": {
+                        "name": "day1fio2",
+                        "spec": "col_double"
+                    }
+                }
+            },
+            "careplancareprovider": {
+                "files": "carePlanCareProvider.csv.gz",
+                "defaults": {
+                    "index_var": "careprovidersaveoffset",
+                    "val_var": "specialty",
+                    "time_vars": "careprovidersaveoffset"
+                },
+                "cols": {
+                    "cplcareprovderid": {
+                        "name": "cplcareprovderid",
+                        "spec": "col_integer"
+                    },
+                    "patientunitstayid": {
+                        "name": "patientunitstayid",
+                        "spec": "col_integer"
+                    },
+                    "careprovidersaveoffset": {
+                        "name": "careprovidersaveoffset",
+                        "spec": "col_integer"
+                    },
+                    "providertype": {
+                        "name": "providertype",
+                        "spec": "col_character"
+                    },
+                    "specialty": {
+                        "name": "specialty",
+                        "spec": "col_character"
+                    },
+                    "interventioncategory": {
+                        "name": "interventioncategory",
+                        "spec": "col_character"
+                    },
+                    "managingphysician": {
+                        "name": "managingphysician",
+                        "spec": "col_character"
+                    },
+                    "activeupondischarge": {
+                        "name": "activeupondischarge",
+                        "spec": "col_character"
+                    }
+                }
+            },
+            "careplaneol": {
+                "files": "carePlanEOL.csv.gz",
+                "defaults": {
+                    "index_var": "cpleoldiscussionoffset",
+                    "time_vars": [
+                        "cpleolsaveoffset",
+                        "cpleoldiscussionoffset"
+                    ]
+                },
+                "cols": {
+                    "cpleolid": {
+                        "name": "cpleolid",
+                        "spec": "col_integer"
+                    },
+                    "patientunitstayid": {
+                        "name": "patientunitstayid",
+                        "spec": "col_integer"
+                    },
+                    "cpleolsaveoffset": {
+                        "name": "cpleolsaveoffset",
+                        "spec": "col_integer"
+                    },
+                    "cpleoldiscussionoffset": {
+                        "name": "cpleoldiscussionoffset",
+                        "spec": "col_integer"
+                    },
+                    "activeupondischarge": {
+                        "name": "activeupondischarge",
+                        "spec": "col_character"
+                    }
+                }
+            },
+            "careplangeneral": {
+                "files": "carePlanGeneral.csv.gz",
+                "defaults": {
+                    "index_var": "cplitemoffset",
+                    "val_var": "cplitemvalue",
+                    "time_vars": "cplitemoffset"
+                },
+                "cols": {
+                    "cplgeneralid": {
+                        "name": "cplgeneralid",
+                        "spec": "col_integer"
+                    },
+                    "patientunitstayid": {
+                        "name": "patientunitstayid",
+                        "spec": "col_integer"
+                    },
+                    "activeupondischarge": {
+                        "name": "activeupondischarge",
+                        "spec": "col_character"
+                    },
+                    "cplitemoffset": {
+                        "name": "cplitemoffset",
+                        "spec": "col_integer"
+                    },
+                    "cplgroup": {
+                        "name": "cplgroup",
+                        "spec": "col_character"
+                    },
+                    "cplitemvalue": {
+                        "name": "cplitemvalue",
+                        "spec": "col_character"
+                    }
+                }
+            },
+            "careplangoal": {
+                "files": "carePlanGoal.csv.gz",
+                "defaults": {
+                    "index_var": "cplgoaloffset",
+                    "val_var": "cplgoalvalue",
+                    "time_vars": "cplgoaloffset"
+                },
+                "cols": {
+                    "cplgoalid": {
+                        "name": "cplgoalid",
+                        "spec": "col_integer"
+                    },
+                    "patientunitstayid": {
+                        "name": "patientunitstayid",
+                        "spec": "col_integer"
+                    },
+                    "cplgoaloffset": {
+                        "name": "cplgoaloffset",
+                        "spec": "col_integer"
+                    },
+                    "cplgoalcategory": {
+                        "name": "cplgoalcategory",
+                        "spec": "col_character"
+                    },
+                    "cplgoalvalue": {
+                        "name": "cplgoalvalue",
+                        "spec": "col_character"
+                    },
+                    "cplgoalstatus": {
+                        "name": "cplgoalstatus",
+                        "spec": "col_character"
+                    },
+                    "activeupondischarge": {
+                        "name": "activeupondischarge",
+                        "spec": "col_character"
+                    }
+                }
+            },
+            "careplaninfectiousdisease": {
+                "files": "carePlanInfectiousDisease.csv.gz",
+                "defaults": {
+                    "index_var": "cplinfectdiseaseoffset",
+                    "val_var": "infectdiseasesite",
+                    "time_vars": "cplinfectdiseaseoffset"
+                },
+                "cols": {
+                    "cplinfectid": {
+                        "name": "cplinfectid",
+                        "spec": "col_integer"
+                    },
+                    "patientunitstayid": {
+                        "name": "patientunitstayid",
+                        "spec": "col_integer"
+                    },
+                    "activeupondischarge": {
+                        "name": "activeupondischarge",
+                        "spec": "col_character"
+                    },
+                    "cplinfectdiseaseoffset": {
+                        "name": "cplinfectdiseaseoffset",
+                        "spec": "col_integer"
+                    },
+                    "infectdiseasesite": {
+                        "name": "infectdiseasesite",
+                        "spec": "col_character"
+                    },
+                    "infectdiseaseassessment": {
+                        "name": "infectdiseaseassessment",
+                        "spec": "col_character"
+                    },
+                    "responsetotherapy": {
+                        "name": "responsetotherapy",
+                        "spec": "col_character"
+                    },
+                    "treatment": {
+                        "name": "treatment",
+                        "spec": "col_character"
+                    }
+                }
+            },
+            "customlab": {
+                "files": "customLab.csv.gz",
+                "defaults": {
+                    "index_var": "labotheroffset",
+                    "val_var": "labotherresult",
+                    "time_vars": "labotheroffset"
+                },
+                "cols": {
+                    "customlabid": {
+                        "name": "customlabid",
+                        "spec": "col_integer"
+                    },
+                    "patientunitstayid": {
+                        "name": "patientunitstayid",
+                        "spec": "col_integer"
+                    },
+                    "labotheroffset": {
+                        "name": "labotheroffset",
+                        "spec": "col_integer"
+                    },
+                    "labothertypeid": {
+                        "name": "labothertypeid",
+                        "spec": "col_integer"
+                    },
+                    "labothername": {
+                        "name": "labothername",
+                        "spec": "col_character"
+                    },
+                    "labotherresult": {
+                        "name": "labotherresult",
+                        "spec": "col_character"
+                    },
+                    "labothervaluetext": {
+                        "name": "labothervaluetext",
+                        "spec": "col_character"
+                    }
+                }
+            },
+            "diagnosis": {
+                "files": "diagnosis.csv.gz",
+                "defaults": {
+                    "index_var": "diagnosisoffset",
+                    "val_var": "icd9code",
+                    "time_vars": "diagnosisoffset"
+                },
+                "cols": {
+                    "diagnosisid": {
+                        "name": "diagnosisid",
+                        "spec": "col_integer"
+                    },
+                    "patientunitstayid": {
+                        "name": "patientunitstayid",
+                        "spec": "col_integer"
+                    },
+                    "activeupondischarge": {
+                        "name": "activeupondischarge",
+                        "spec": "col_character"
+                    },
+                    "diagnosisoffset": {
+                        "name": "diagnosisoffset",
+                        "spec": "col_integer"
+                    },
+                    "diagnosisstring": {
+                        "name": "diagnosisstring",
+                        "spec": "col_character"
+                    },
+                    "icd9code": {
+                        "name": "icd9code",
+                        "spec": "col_character"
+                    },
+                    "diagnosispriority": {
+                        "name": "diagnosispriority",
+                        "spec": "col_character"
+                    }
+                }
+            },
+            "hospital": {
+                "files": "hospital.csv.gz",
+                "defaults": {
+                    "id_var": "hospitalid",
+                    "val_var": "numbedscategory"
+                },
+                "cols": {
+                    "hospitalid": {
+                        "name": "hospitalid",
+                        "spec": "col_integer"
+                    },
+                    "numbedscategory": {
+                        "name": "numbedscategory",
+                        "spec": "col_character"
+                    },
+                    "teachingstatus": {
+                        "name": "teachingstatus",
+                        "spec": "col_logical"
+                    },
+                    "region": {
+                        "name": "region",
+                        "spec": "col_character"
+                    }
+                }
+            },
+            "infusiondrug": {
+                "files": "infusiondrug.csv.gz",
+                "defaults": {
+                    "index_var": "infusionoffset",
+                    "val_var": "drugrate",
+                    "time_vars": "infusionoffset"
+                },
+                "cols": {
+                    "infusiondrugid": {
+                        "name": "infusiondrugid",
+                        "spec": "col_integer"
+                    },
+                    "patientunitstayid": {
+                        "name": "patientunitstayid",
+                        "spec": "col_integer"
+                    },
+                    "infusionoffset": {
+                        "name": "infusionoffset",
+                        "spec": "col_integer"
+                    },
+                    "drugname": {
+                        "name": "drugname",
+                        "spec": "col_character"
+                    },
+                    "drugrate": {
+                        "name": "drugrate",
+                        "spec": "col_character"
+                    },
+                    "infusionrate": {
+                        "name": "infusionrate",
+                        "spec": "col_character"
+                    },
+                    "drugamount": {
+                        "name": "drugamount",
+                        "spec": "col_character"
+                    },
+                    "volumeoffluid": {
+                        "name": "volumeoffluid",
+                        "spec": "col_character"
+                    },
+                    "patientweight": {
+                        "name": "patientweight",
+                        "spec": "col_character"
+                    }
+                }
+            },
+            "intakeoutput": {
+                "files": "intakeOutput.csv.gz",
+                "defaults": {
+                    "index_var": "intakeoutputoffset",
+                    "val_var": "cellvaluenumeric",
+                    "time_vars": [
+                        "intakeoutputoffset",
+                        "intakeoutputentryoffset"
+                    ]
+                },
+                "cols": {
+                    "intakeoutputid": {
+                        "name": "intakeoutputid",
+                        "spec": "col_integer"
+                    },
+                    "patientunitstayid": {
+                        "name": "patientunitstayid",
+                        "spec": "col_integer"
+                    },
+                    "intakeoutputoffset": {
+                        "name": "intakeoutputoffset",
+                        "spec": "col_integer"
+                    },
+                    "intaketotal": {
+                        "name": "intaketotal",
+                        "spec": "col_double"
+                    },
+                    "outputtotal": {
+                        "name": "outputtotal",
+                        "spec": "col_double"
+                    },
+                    "dialysistotal": {
+                        "name": "dialysistotal",
+                        "spec": "col_double"
+                    },
+                    "nettotal": {
+                        "name": "nettotal",
+                        "spec": "col_double"
+                    },
+                    "intakeoutputentryoffset": {
+                        "name": "intakeoutputentryoffset",
+                        "spec": "col_integer"
+                    },
+                    "cellpath": {
+                        "name": "cellpath",
+                        "spec": "col_character"
+                    },
+                    "celllabel": {
+                        "name": "celllabel",
+                        "spec": "col_character"
+                    },
+                    "cellvaluenumeric": {
+                        "name": "cellvaluenumeric",
+                        "spec": "col_double"
+                    },
+                    "cellvaluetext": {
+                        "name": "cellvaluetext",
+                        "spec": "col_character"
+                    }
+                }
+            },
+            "lab": {
+                "files": "lab.csv.gz",
+                "defaults": {
+                    "index_var": "labresultoffset",
+                    "val_var": "labresult",
+                    "unit_var": "labmeasurenameinterface",
+                    "time_vars": [
+                        "labresultoffset",
+                        "labresultrevisedoffset"
+                    ]
+                },
+                "cols": {
+                    "labid": {
+                        "name": "labid",
+                        "spec": "col_integer"
+                    },
+                    "patientunitstayid": {
+                        "name": "patientunitstayid",
+                        "spec": "col_integer"
+                    },
+                    "labresultoffset": {
+                        "name": "labresultoffset",
+                        "spec": "col_integer"
+                    },
+                    "labtypeid": {
+                        "name": "labtypeid",
+                        "spec": "col_double"
+                    },
+                    "labname": {
+                        "name": "labname",
+                        "spec": "col_character"
+                    },
+                    "labresult": {
+                        "name": "labresult",
+                        "spec": "col_double"
+                    },
+                    "labresulttext": {
+                        "name": "labresulttext",
+                        "spec": "col_character"
+                    },
+                    "labmeasurenamesystem": {
+                        "name": "labmeasurenamesystem",
+                        "spec": "col_character"
+                    },
+                    "labmeasurenameinterface": {
+                        "name": "labmeasurenameinterface",
+                        "spec": "col_character"
+                    },
+                    "labresultrevisedoffset": {
+                        "name": "labresultrevisedoffset",
+                        "spec": "col_integer"
+                    }
+                }
+            },
+            "medication": {
+                "files": "medication.csv.gz",
+                "defaults": {
+                    "index_var": "drugstartoffset",
+                    "val_var": "dosage",
+                    "time_vars": [
+                        "drugorderoffset",
+                        "drugstartoffset",
+                        "drugstopoffset"
+                    ]
+                },
+                "cols": {
+                    "medicationid": {
+                        "name": "medicationid",
+                        "spec": "col_integer"
+                    },
+                    "patientunitstayid": {
+                        "name": "patientunitstayid",
+                        "spec": "col_integer"
+                    },
+                    "drugorderoffset": {
+                        "name": "drugorderoffset",
+                        "spec": "col_integer"
+                    },
+                    "drugstartoffset": {
+                        "name": "drugstartoffset",
+                        "spec": "col_integer"
+                    },
+                    "drugivadmixture": {
+                        "name": "drugivadmixture",
+                        "spec": "col_character"
+                    },
+                    "drugordercancelled": {
+                        "name": "drugordercancelled",
+                        "spec": "col_character"
+                    },
+                    "drugname": {
+                        "name": "drugname",
+                        "spec": "col_character"
+                    },
+                    "drughiclseqno": {
+                        "name": "drughiclseqno",
+                        "spec": "col_integer"
+                    },
+                    "dosage": {
+                        "name": "dosage",
+                        "spec": "col_character"
+                    },
+                    "routeadmin": {
+                        "name": "routeadmin",
+                        "spec": "col_character"
+                    },
+                    "frequency": {
+                        "name": "frequency",
+                        "spec": "col_character"
+                    },
+                    "loadingdose": {
+                        "name": "loadingdose",
+                        "spec": "col_character"
+                    },
+                    "prn": {
+                        "name": "prn",
+                        "spec": "col_character"
+                    },
+                    "drugstopoffset": {
+                        "name": "drugstopoffset",
+                        "spec": "col_integer"
+                    },
+                    "gtc": {
+                        "name": "gtc",
+                        "spec": "col_integer"
+                    }
+                }
+            },
+            "microlab": {
+                "files": "microLab.csv.gz",
+                "defaults": {
+                    "index_var": "culturetakenoffset",
+                    "val_var": "organism",
+                    "time_vars": "culturetakenoffset"
+                },
+                "cols": {
+                    "microlabid": {
+                        "name": "microlabid",
+                        "spec": "col_integer"
+                    },
+                    "patientunitstayid": {
+                        "name": "patientunitstayid",
+                        "spec": "col_integer"
+                    },
+                    "culturetakenoffset": {
+                        "name": "culturetakenoffset",
+                        "spec": "col_integer"
+                    },
+                    "culturesite": {
+                        "name": "culturesite",
+                        "spec": "col_character"
+                    },
+                    "organism": {
+                        "name": "organism",
+                        "spec": "col_character"
+                    },
+                    "antibiotic": {
+                        "name": "antibiotic",
+                        "spec": "col_character"
+                    },
+                    "sensitivitylevel": {
+                        "name": "sensitivitylevel",
+                        "spec": "col_character"
+                    }
+                }
+            },
+            "note": {
+                "files": "note.csv.gz",
+                "defaults": {
+                    "index_var": "noteoffset",
+                    "val_var": "notetext",
+                    "time_vars": [
+                        "noteoffset",
+                        "noteenteredoffset"
+                    ]
+                },
+                "cols": {
+                    "noteid": {
+                        "name": "noteid",
+                        "spec": "col_integer"
+                    },
+                    "patientunitstayid": {
+                        "name": "patientunitstayid",
+                        "spec": "col_integer"
+                    },
+                    "noteoffset": {
+                        "name": "noteoffset",
+                        "spec": "col_integer"
+                    },
+                    "noteenteredoffset": {
+                        "name": "noteenteredoffset",
+                        "spec": "col_integer"
+                    },
+                    "notetype": {
+                        "name": "notetype",
+                        "spec": "col_character"
+                    },
+                    "notepath": {
+                        "name": "notepath",
+                        "spec": "col_character"
+                    },
+                    "notevalue": {
+                        "name": "notevalue",
+                        "spec": "col_character"
+                    },
+                    "notetext": {
+                        "name": "notetext",
+                        "spec": "col_character"
+                    }
+                }
+            },
+            "nurseassessment": {
+                "files": "nurseAssessment.csv.gz",
+                "defaults": {
+                    "index_var": "nurseassessoffset",
+                    "val_var": "cellattributevalue",
+                    "time_vars": [
+                        "nurseassessoffset",
+                        "nurseassessentryoffset"
+                    ]
+                },
+                "cols": {
+                    "nurseassessid": {
+                        "name": "nurseassessid",
+                        "spec": "col_integer"
+                    },
+                    "patientunitstayid": {
+                        "name": "patientunitstayid",
+                        "spec": "col_integer"
+                    },
+                    "nurseassessoffset": {
+                        "name": "nurseassessoffset",
+                        "spec": "col_integer"
+                    },
+                    "nurseassessentryoffset": {
+                        "name": "nurseassessentryoffset",
+                        "spec": "col_integer"
+                    },
+                    "cellattributepath": {
+                        "name": "cellattributepath",
+                        "spec": "col_character"
+                    },
+                    "celllabel": {
+                        "name": "celllabel",
+                        "spec": "col_character"
+                    },
+                    "cellattribute": {
+                        "name": "cellattribute",
+                        "spec": "col_character"
+                    },
+                    "cellattributevalue": {
+                        "name": "cellattributevalue",
+                        "spec": "col_character"
+                    }
+                }
+            },
+            "nursecare": {
+                "files": "nurseCare.csv.gz",
+                "defaults": {
+                    "index_var": "nursecareoffset",
+                    "val_var": "cellattributevalue",
+                    "time_vars": [
+                        "nursecareoffset",
+                        "nursecareentryoffset"
+                    ]
+                },
+                "cols": {
+                    "nursecareid": {
+                        "name": "nursecareid",
+                        "spec": "col_integer"
+                    },
+                    "patientunitstayid": {
+                        "name": "patientunitstayid",
+                        "spec": "col_integer"
+                    },
+                    "celllabel": {
+                        "name": "celllabel",
+                        "spec": "col_character"
+                    },
+                    "nursecareoffset": {
+                        "name": "nursecareoffset",
+                        "spec": "col_integer"
+                    },
+                    "nursecareentryoffset": {
+                        "name": "nursecareentryoffset",
+                        "spec": "col_integer"
+                    },
+                    "cellattributepath": {
+                        "name": "cellattributepath",
+                        "spec": "col_character"
+                    },
+                    "cellattribute": {
+                        "name": "cellattribute",
+                        "spec": "col_character"
+                    },
+                    "cellattributevalue": {
+                        "name": "cellattributevalue",
+                        "spec": "col_character"
+                    }
+                }
+            },
+            "nursecharting": {
+                "files": "nurseCharting.csv.gz",
+                "defaults": {
+                    "index_var": "nursingchartoffset",
+                    "val_var": "nursingchartvalue",
+                    "time_vars": [
+                        "nursingchartoffset",
+                        "nursingchartentryoffset"
+                    ]
+                },
+                "cols": {
+                    "nursingchartid": {
+                        "name": "nursingchartid",
+                        "spec": "col_double"
+                    },
+                    "patientunitstayid": {
+                        "name": "patientunitstayid",
+                        "spec": "col_integer"
+                    },
+                    "nursingchartoffset": {
+                        "name": "nursingchartoffset",
+                        "spec": "col_integer"
+                    },
+                    "nursingchartentryoffset": {
+                        "name": "nursingchartentryoffset",
+                        "spec": "col_integer"
+                    },
+                    "nursingchartcelltypecat": {
+                        "name": "nursingchartcelltypecat",
+                        "spec": "col_character"
+                    },
+                    "nursingchartcelltypevallabel": {
+                        "name": "nursingchartcelltypevallabel",
+                        "spec": "col_character"
+                    },
+                    "nursingchartcelltypevalname": {
+                        "name": "nursingchartcelltypevalname",
+                        "spec": "col_character"
+                    },
+                    "nursingchartvalue": {
+                        "name": "nursingchartvalue",
+                        "spec": "col_character"
+                    }
+                },
+                "partitioning": {
+                    "col": "patientunitstayid",
+                    "breaks": 1775421
+                }
+            },
+            "pasthistory": {
+                "files": "pastHistory.csv.gz",
+                "defaults": {
+                    "index_var": "pasthistoryoffset",
+                    "val_var": "pasthistoryvalue",
+                    "time_vars": [
+                        "pasthistoryoffset",
+                        "pasthistoryenteredoffset"
+                    ]
+                },
+                "cols": {
+                    "pasthistoryid": {
+                        "name": "pasthistoryid",
+                        "spec": "col_integer"
+                    },
+                    "patientunitstayid": {
+                        "name": "patientunitstayid",
+                        "spec": "col_integer"
+                    },
+                    "pasthistoryoffset": {
+                        "name": "pasthistoryoffset",
+                        "spec": "col_integer"
+                    },
+                    "pasthistoryenteredoffset": {
+                        "name": "pasthistoryenteredoffset",
+                        "spec": "col_integer"
+                    },
+                    "pasthistorynotetype": {
+                        "name": "pasthistorynotetype",
+                        "spec": "col_character"
+                    },
+                    "pasthistorypath": {
+                        "name": "pasthistorypath",
+                        "spec": "col_character"
+                    },
+                    "pasthistoryvalue": {
+                        "name": "pasthistoryvalue",
+                        "spec": "col_character"
+                    },
+                    "pasthistoryvaluetext": {
+                        "name": "pasthistoryvaluetext",
+                        "spec": "col_character"
+                    }
+                }
+            },
+            "patient": {
+                "files": "patient.csv.gz",
+                "defaults": {
+                    "val_var": "unitdischargestatus",
+                    "time_vars": [
+                        "hospitaladmitoffset",
+                        "hospitaldischargeoffset",
+                        "unitdischargeoffset"
+                    ]
+                },
+                "cols": {
+                    "patientunitstayid": {
+                        "name": "patientunitstayid",
+                        "spec": "col_integer"
+                    },
+                    "patienthealthsystemstayid": {
+                        "name": "patienthealthsystemstayid",
+                        "spec": "col_integer"
+                    },
+                    "gender": {
+                        "name": "gender",
+                        "spec": "col_character"
+                    },
+                    "age": {
+                        "name": "age",
+                        "spec": "col_character"
+                    },
+                    "ethnicity": {
+                        "name": "ethnicity",
+                        "spec": "col_character"
+                    },
+                    "hospitalid": {
+                        "name": "hospitalid",
+                        "spec": "col_integer"
+                    },
+                    "wardid": {
+                        "name": "wardid",
+                        "spec": "col_integer"
+                    },
+                    "apacheadmissiondx": {
+                        "name": "apacheadmissiondx",
+                        "spec": "col_character"
+                    },
+                    "admissionheight": {
+                        "name": "admissionheight",
+                        "spec": "col_double"
+                    },
+                    "hospitaladmittime24": {
+                        "name": "hospitaladmittime24",
+                        "spec": "col_character"
+                    },
+                    "hospitaladmitoffset": {
+                        "name": "hospitaladmitoffset",
+                        "spec": "col_integer"
+                    },
+                    "hospitaladmitsource": {
+                        "name": "hospitaladmitsource",
+                        "spec": "col_character"
+                    },
+                    "hospitaldischargeyear": {
+                        "name": "hospitaldischargeyear",
+                        "spec": "col_integer"
+                    },
+                    "hospitaldischargetime24": {
+                        "name": "hospitaldischargetime24",
+                        "spec": "col_character"
+                    },
+                    "hospitaldischargeoffset": {
+                        "name": "hospitaldischargeoffset",
+                        "spec": "col_integer"
+                    },
+                    "hospitaldischargelocation": {
+                        "name": "hospitaldischargelocation",
+                        "spec": "col_character"
+                    },
+                    "hospitaldischargestatus": {
+                        "name": "hospitaldischargestatus",
+                        "spec": "col_character"
+                    },
+                    "unittype": {
+                        "name": "unittype",
+                        "spec": "col_character"
+                    },
+                    "unitadmittime24": {
+                        "name": "unitadmittime24",
+                        "spec": "col_character"
+                    },
+                    "unitadmitsource": {
+                        "name": "unitadmitsource",
+                        "spec": "col_character"
+                    },
+                    "unitvisitnumber": {
+                        "name": "unitvisitnumber",
+                        "spec": "col_integer"
+                    },
+                    "unitstaytype": {
+                        "name": "unitstaytype",
+                        "spec": "col_character"
+                    },
+                    "admissionweight": {
+                        "name": "admissionweight",
+                        "spec": "col_double"
+                    },
+                    "dischargeweight": {
+                        "name": "dischargeweight",
+                        "spec": "col_double"
+                    },
+                    "unitdischargetime24": {
+                        "name": "unitdischargetime24",
+                        "spec": "col_character"
+                    },
+                    "unitdischargeoffset": {
+                        "name": "unitdischargeoffset",
+                        "spec": "col_integer"
+                    },
+                    "unitdischargelocation": {
+                        "name": "unitdischargelocation",
+                        "spec": "col_character"
+                    },
+                    "unitdischargestatus": {
+                        "name": "unitdischargestatus",
+                        "spec": "col_character"
+                    },
+                    "uniquepid": {
+                        "name": "uniquepid",
+                        "spec": "col_character"
+                    }
+                }
+            },
+            "physicalexam": {
+                "files": "physicalExam.csv.gz",
+                "defaults": {
+                    "index_var": "physicalexamoffset",
+                    "val_var": "physicalexamvalue",
+                    "time_vars": "physicalexamoffset"
+                },
+                "cols": {
+                    "physicalexamid": {
+                        "name": "physicalexamid",
+                        "spec": "col_integer"
+                    },
+                    "patientunitstayid": {
+                        "name": "patientunitstayid",
+                        "spec": "col_integer"
+                    },
+                    "physicalexamoffset": {
+                        "name": "physicalexamoffset",
+                        "spec": "col_integer"
+                    },
+                    "physicalexampath": {
+                        "name": "physicalexampath",
+                        "spec": "col_character"
+                    },
+                    "physicalexamvalue": {
+                        "name": "physicalexamvalue",
+                        "spec": "col_character"
+                    },
+                    "physicalexamtext": {
+                        "name": "physicalexamtext",
+                        "spec": "col_character"
+                    }
+                }
+            },
+            "respiratorycare": {
+                "files": "respiratoryCare.csv.gz",
+                "defaults": {
+                    "index_var": "respcarestatusoffset",
+                    "time_vars": [
+                        "respcarestatusoffset",
+                        "ventstartoffset",
+                        "ventendoffset",
+                        "priorventstartoffset",
+                        "priorventendoffset"
+                    ]
+                },
+                "cols": {
+                    "respcareid": {
+                        "name": "respcareid",
+                        "spec": "col_integer"
+                    },
+                    "patientunitstayid": {
+                        "name": "patientunitstayid",
+                        "spec": "col_integer"
+                    },
+                    "respcarestatusoffset": {
+                        "name": "respcarestatusoffset",
+                        "spec": "col_integer"
+                    },
+                    "currenthistoryseqnum": {
+                        "name": "currenthistoryseqnum",
+                        "spec": "col_integer"
+                    },
+                    "airwaytype": {
+                        "name": "airwaytype",
+                        "spec": "col_character"
+                    },
+                    "airwaysize": {
+                        "name": "airwaysize",
+                        "spec": "col_character"
+                    },
+                    "airwayposition": {
+                        "name": "airwayposition",
+                        "spec": "col_character"
+                    },
+                    "cuffpressure": {
+                        "name": "cuffpressure",
+                        "spec": "col_double"
+                    },
+                    "ventstartoffset": {
+                        "name": "ventstartoffset",
+                        "spec": "col_integer"
+                    },
+                    "ventendoffset": {
+                        "name": "ventendoffset",
+                        "spec": "col_integer"
+                    },
+                    "priorventstartoffset": {
+                        "name": "priorventstartoffset",
+                        "spec": "col_integer"
+                    },
+                    "priorventendoffset": {
+                        "name": "priorventendoffset",
+                        "spec": "col_integer"
+                    },
+                    "apneaparams": {
+                        "name": "apneaparams",
+                        "spec": "col_character"
+                    },
+                    "lowexhmvlimit": {
+                        "name": "lowexhmvlimit",
+                        "spec": "col_double"
+                    },
+                    "hiexhmvlimit": {
+                        "name": "hiexhmvlimit",
+                        "spec": "col_double"
+                    },
+                    "lowexhtvlimit": {
+                        "name": "lowexhtvlimit",
+                        "spec": "col_double"
+                    },
+                    "hipeakpreslimit": {
+                        "name": "hipeakpreslimit",
+                        "spec": "col_double"
+                    },
+                    "lowpeakpreslimit": {
+                        "name": "lowpeakpreslimit",
+                        "spec": "col_double"
+                    },
+                    "hirespratelimit": {
+                        "name": "hirespratelimit",
+                        "spec": "col_double"
+                    },
+                    "lowrespratelimit": {
+                        "name": "lowrespratelimit",
+                        "spec": "col_double"
+                    },
+                    "sighpreslimit": {
+                        "name": "sighpreslimit",
+                        "spec": "col_double"
+                    },
+                    "lowironoxlimit": {
+                        "name": "lowironoxlimit",
+                        "spec": "col_double"
+                    },
+                    "highironoxlimit": {
+                        "name": "highironoxlimit",
+                        "spec": "col_double"
+                    },
+                    "meanairwaypreslimit": {
+                        "name": "meanairwaypreslimit",
+                        "spec": "col_double"
+                    },
+                    "peeplimit": {
+                        "name": "peeplimit",
+                        "spec": "col_double"
+                    },
+                    "cpaplimit": {
+                        "name": "cpaplimit",
+                        "spec": "col_double"
+                    },
+                    "setapneainterval": {
+                        "name": "setapneainterval",
+                        "spec": "col_character"
+                    },
+                    "setapneatv": {
+                        "name": "setapneatv",
+                        "spec": "col_character"
+                    },
+                    "setapneaippeephigh": {
+                        "name": "setapneaippeephigh",
+                        "spec": "col_character"
+                    },
+                    "setapnearr": {
+                        "name": "setapnearr",
+                        "spec": "col_character"
+                    },
+                    "setapneapeakflow": {
+                        "name": "setapneapeakflow",
+                        "spec": "col_character"
+                    },
+                    "setapneainsptime": {
+                        "name": "setapneainsptime",
+                        "spec": "col_character"
+                    },
+                    "setapneaie": {
+                        "name": "setapneaie",
+                        "spec": "col_character"
+                    },
+                    "setapneafio2": {
+                        "name": "setapneafio2",
+                        "spec": "col_character"
+                    }
+                }
+            },
+            "respiratorycharting": {
+                "files": "respiratoryCharting.csv.gz",
+                "defaults": {
+                    "index_var": "respchartoffset",
+                    "val_var": "respchartvalue",
+                    "time_vars": [
+                        "respchartoffset",
+                        "respchartentryoffset"
+                    ]
+                },
+                "cols": {
+                    "respchartid": {
+                        "name": "respchartid",
+                        "spec": "col_integer"
+                    },
+                    "patientunitstayid": {
+                        "name": "patientunitstayid",
+                        "spec": "col_integer"
+                    },
+                    "respchartoffset": {
+                        "name": "respchartoffset",
+                        "spec": "col_integer"
+                    },
+                    "respchartentryoffset": {
+                        "name": "respchartentryoffset",
+                        "spec": "col_integer"
+                    },
+                    "respcharttypecat": {
+                        "name": "respcharttypecat",
+                        "spec": "col_character"
+                    },
+                    "respchartvaluelabel": {
+                        "name": "respchartvaluelabel",
+                        "spec": "col_character"
+                    },
+                    "respchartvalue": {
+                        "name": "respchartvalue",
+                        "spec": "col_character"
+                    }
+                }
+            },
+            "treatment": {
+                "files": "treatment.csv.gz",
+                "defaults": {
+                    "index_var": "treatmentoffset",
+                    "val_var": "treatmentstring",
+                    "time_vars": "treatmentoffset"
+                },
+                "cols": {
+                    "treatmentid": {
+                        "name": "treatmentid",
+                        "spec": "col_integer"
+                    },
+                    "patientunitstayid": {
+                        "name": "patientunitstayid",
+                        "spec": "col_integer"
+                    },
+                    "treatmentoffset": {
+                        "name": "treatmentoffset",
+                        "spec": "col_integer"
+                    },
+                    "treatmentstring": {
+                        "name": "treatmentstring",
+                        "spec": "col_character"
+                    },
+                    "activeupondischarge": {
+                        "name": "activeupondischarge",
+                        "spec": "col_character"
+                    }
+                }
+            },
+            "vitalaperiodic": {
+                "files": "vitalAperiodic.csv.gz",
+                "defaults": {
+                    "index_var": "observationoffset",
+                    "time_vars": "observationoffset"
+                },
+                "cols": {
+                    "vitalaperiodicid": {
+                        "name": "vitalaperiodicid",
+                        "spec": "col_integer"
+                    },
+                    "patientunitstayid": {
+                        "name": "patientunitstayid",
+                        "spec": "col_integer"
+                    },
+                    "observationoffset": {
+                        "name": "observationoffset",
+                        "spec": "col_integer"
+                    },
+                    "noninvasivesystolic": {
+                        "name": "noninvasivesystolic",
+                        "spec": "col_double"
+                    },
+                    "noninvasivediastolic": {
+                        "name": "noninvasivediastolic",
+                        "spec": "col_double"
+                    },
+                    "noninvasivemean": {
+                        "name": "noninvasivemean",
+                        "spec": "col_double"
+                    },
+                    "paop": {
+                        "name": "paop",
+                        "spec": "col_double"
+                    },
+                    "cardiacoutput": {
+                        "name": "cardiacoutput",
+                        "spec": "col_double"
+                    },
+                    "cardiacinput": {
+                        "name": "cardiacinput",
+                        "spec": "col_double"
+                    },
+                    "svr": {
+                        "name": "svr",
+                        "spec": "col_double"
+                    },
+                    "svri": {
+                        "name": "svri",
+                        "spec": "col_double"
+                    },
+                    "pvr": {
+                        "name": "pvr",
+                        "spec": "col_double"
+                    },
+                    "pvri": {
+                        "name": "pvri",
+                        "spec": "col_double"
+                    }
+                }
+            },
+            "vitalperiodic": {
+                "files": "vitalPeriodic.csv.gz",
+                "defaults": {
+                    "index_var": "observationoffset",
+                    "time_vars": "observationoffset"
+                },
+                "cols": {
+                    "vitalperiodicid": {
+                        "name": "vitalperiodicid",
+                        "spec": "col_double"
+                    },
+                    "patientunitstayid": {
+                        "name": "patientunitstayid",
+                        "spec": "col_integer"
+                    },
+                    "observationoffset": {
+                        "name": "observationoffset",
+                        "spec": "col_integer"
+                    },
+                    "temperature": {
+                        "name": "temperature",
+                        "spec": "col_double"
+                    },
+                    "sao2": {
+                        "name": "sao2",
+                        "spec": "col_integer"
+                    },
+                    "heartrate": {
+                        "name": "heartrate",
+                        "spec": "col_integer"
+                    },
+                    "respiration": {
+                        "name": "respiration",
+                        "spec": "col_integer"
+                    },
+                    "cvp": {
+                        "name": "cvp",
+                        "spec": "col_integer"
+                    },
+                    "etco2": {
+                        "name": "etco2",
+                        "spec": "col_integer"
+                    },
+                    "systemicsystolic": {
+                        "name": "systemicsystolic",
+                        "spec": "col_integer"
+                    },
+                    "systemicdiastolic": {
+                        "name": "systemicdiastolic",
+                        "spec": "col_integer"
+                    },
+                    "systemicmean": {
+                        "name": "systemicmean",
+                        "spec": "col_integer"
+                    },
+                    "pasystolic": {
+                        "name": "pasystolic",
+                        "spec": "col_integer"
+                    },
+                    "padiastolic": {
+                        "name": "padiastolic",
+                        "spec": "col_integer"
+                    },
+                    "pamean": {
+                        "name": "pamean",
+                        "spec": "col_integer"
+                    },
+                    "st1": {
+                        "name": "st1",
+                        "spec": "col_double"
+                    },
+                    "st2": {
+                        "name": "st2",
+                        "spec": "col_double"
+                    },
+                    "st3": {
+                        "name": "st3",
+                        "spec": "col_double"
+                    },
+                    "icp": {
+                        "name": "icp",
+                        "spec": "col_integer"
+                    }
+                },
+                "partitioning": {
+                    "col": "patientunitstayid",
+                    "breaks": 1775421
+                }
+            }
+        }
+    }
+]
