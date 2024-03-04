@@ -265,6 +265,7 @@ config_paths <- function() c(user_config_path(), default_config_path())
 get_config <- function(name, cfg_dirs = config_paths(), combine_fun = c, ...) {
 
   read_if_exists <- function(x, ...) {
+
     if (isTRUE(file.exists(x))) {
       read_json(x, ...)
     } else {
