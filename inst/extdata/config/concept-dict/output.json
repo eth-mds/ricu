@@ -1,0 +1,164 @@
+{
+    "urine": {
+        "unit": "mL",
+        "min": 0,
+        "max": 2000,
+        "aggregate": "sum",
+        "description": "urine output",
+        "omopid": 4264378,
+        "category": "output",
+        "sources": {
+            "aumc": [
+                {
+                    "ids": 8794,
+                    "table": "numericitems",
+                    "sub_var": "itemid"
+                }
+            ],
+            "eicu": [
+                {
+                    "ids": [
+                        "Urine",
+                        "URINE CATHETER"
+                    ],
+                    "table": "intakeoutput",
+                    "sub_var": "celllabel"
+                },
+                {
+                    "regex": "catheter.+output|output.+catheter",
+                    "table": "intakeoutput",
+                    "sub_var": "celllabel",
+                    "class": "rgx_itm"
+                }
+            ],
+            "eicu_demo": [
+                {
+                    "ids": [
+                        "Urine",
+                        "URINE CATHETER"
+                    ],
+                    "table": "intakeoutput",
+                    "sub_var": "celllabel"
+                },
+                {
+                    "regex": "catheter.+output|output.+catheter",
+                    "table": "intakeoutput",
+                    "sub_var": "celllabel",
+                    "class": "rgx_itm"
+                }
+            ],
+            "hirid": [
+                {
+                    "ids": 30005110,
+                    "table": "observations",
+                    "sub_var": "variableid",
+                    "callback": "hirid_urine",
+                    "class": "hrd_itm"
+                }
+            ],
+            "miiv": [
+                {
+                    "ids": [
+                        226557,
+                        226558,
+                        226559,
+                        226560,
+                        226561,
+                        226563,
+                        226564,
+                        226565,
+                        226566,
+                        226567,
+                        226584,
+                        227510
+                    ],
+                    "table": "outputevents",
+                    "sub_var": "itemid"
+                }
+            ],
+            "mimic": [
+                {
+                    "ids": [
+                        40055,
+                        40056,
+                        40057,
+                        40065,
+                        40069,
+                        40085,
+                        40086,
+                        40094,
+                        40096,
+                        40405,
+                        40428,
+                        40473,
+                        40715,
+                        43175,
+                        226557,
+                        226558,
+                        226559,
+                        226560,
+                        226561,
+                        226563,
+                        226564,
+                        226565,
+                        226566,
+                        226567,
+                        226584,
+                        227510
+                    ],
+                    "table": "outputevents",
+                    "sub_var": "itemid"
+                }
+            ],
+            "mimic_demo": [
+                {
+                    "ids": [
+                        40055,
+                        40056,
+                        40057,
+                        40065,
+                        40069,
+                        40085,
+                        40086,
+                        40094,
+                        40096,
+                        40405,
+                        40428,
+                        40473,
+                        40715,
+                        43175,
+                        226557,
+                        226558,
+                        226559,
+                        226560,
+                        226561,
+                        226563,
+                        226564,
+                        226565,
+                        226566,
+                        226567,
+                        226584,
+                        227510
+                    ],
+                    "table": "outputevents",
+                    "sub_var": "itemid"
+                }
+            ],
+            "sic": [
+                {
+                    "ids": 725,
+                    "table": "data_float_h",
+                    "sub_var": "DataID"
+                }
+            ]
+        }
+    },
+    "urine24": {
+        "concepts": "urine",
+        "description": "urine output per 24h",
+        "omopid": 4191836,
+        "category": "output",
+        "callback": "urine24",
+        "class": "rec_cncpt"
+    }
+}
