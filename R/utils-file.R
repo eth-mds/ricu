@@ -264,7 +264,6 @@ config_paths <- function() c(user_config_path(), default_config_path())
 get_config <- function(name, cfg_dirs = config_paths(), combine_fun = c, ...) {
 
   read_if_exists <- function(x, ...) {
-
     if (isTRUE(file.exists(x))) {
       read_json(x, ...)
     } else {
@@ -275,8 +274,21 @@ get_config <- function(name, cfg_dirs = config_paths(), combine_fun = c, ...) {
   assert_that(is.string(name), has_length(cfg_dirs), all_fun(cfg_dirs, is.dir),
               null_or(combine_fun, is.function))
 
-  res <- lapply(file.path(cfg_dirs, paste0(name, ".json")),
-                read_if_exists, ...)
+  res <- c()
+
+  for (dir in cfg_dirs) {
+    dir_json <- file.path(dir, paste0(name, ".json"))
+    if (isTRUE(file.exists(dir_json))) {
+      res <- append(res, list(read_if_exists(dir_json, ...)))
+    }
+
+    if (isTRUE(dir.exists(dir))) {
+      for (dir_json in list.files(path = dir, pattern = "\\.json$",
+                                  full.names = TRUE)) {
+        res <- append(res, list(read_if_exists(dir_json, ...)))
+      }
+    }
+  }
 
   if (is.null(combine_fun)) {
     res
