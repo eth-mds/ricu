@@ -1,0 +1,561 @@
+[
+    {
+        "name": "aumc",
+        "id_cfg": {
+            "patient": {
+                "id": "patientid",
+                "position": 1,
+                "start": "firstadmittedat",
+                "end": "dateofdeath",
+                "table": "admissions"
+            },
+            "icustay": {
+                "id": "admissionid",
+                "position": 2,
+                "start": "admittedat",
+                "end": "dischargedat",
+                "table": "admissions"
+            }
+        },
+        "unit_mapping": [
+            {
+                "symbol": "uur",
+                "def": "1 hour"
+            },
+            {
+                "symbol": "dag",
+                "def": "1 day"
+            }
+        ],
+        "tables": {
+            "admissions": {
+                "files": "admissions.csv",
+                "defaults": {
+                    "index_var": "admittedat",
+                    "time_vars": [
+                        "admittedat",
+                        "dischargedat",
+                        "dateofdeath"
+                    ]
+                },
+                "num_rows": 23106,
+                "cols": {
+                    "patientid": {
+                        "name": "patientid",
+                        "spec": "col_integer"
+                    },
+                    "admissionid": {
+                        "name": "admissionid",
+                        "spec": "col_integer"
+                    },
+                    "admissioncount": {
+                        "name": "admissioncount",
+                        "spec": "col_integer"
+                    },
+                    "location": {
+                        "name": "location",
+                        "spec": "col_character"
+                    },
+                    "urgency": {
+                        "name": "urgency",
+                        "spec": "col_logical"
+                    },
+                    "origin": {
+                        "name": "origin",
+                        "spec": "col_character"
+                    },
+                    "admittedat": {
+                        "name": "admittedat",
+                        "spec": "col_double"
+                    },
+                    "admissionyeargroup": {
+                        "name": "admissionyeargroup",
+                        "spec": "col_character"
+                    },
+                    "dischargedat": {
+                        "name": "dischargedat",
+                        "spec": "col_double"
+                    },
+                    "lengthofstay": {
+                        "name": "lengthofstay",
+                        "spec": "col_integer"
+                    },
+                    "destination": {
+                        "name": "destination",
+                        "spec": "col_character"
+                    },
+                    "gender": {
+                        "name": "gender",
+                        "spec": "col_character"
+                    },
+                    "agegroup": {
+                        "name": "agegroup",
+                        "spec": "col_character"
+                    },
+                    "dateofdeath": {
+                        "name": "dateofdeath",
+                        "spec": "col_double"
+                    },
+                    "weightgroup": {
+                        "name": "weightgroup",
+                        "spec": "col_character"
+                    },
+                    "weightsource": {
+                        "name": "weightsource",
+                        "spec": "col_character"
+                    },
+                    "specialty": {
+                        "name": "specialty",
+                        "spec": "col_character"
+                    }
+                }
+            },
+            "drugitems": {
+                "files": "drugitems.csv",
+                "defaults": {
+                    "index_var": "start",
+                    "val_var": "dose",
+                    "unit_var": "doseunit",
+                    "time_vars": [
+                        "start",
+                        "stop"
+                    ]
+                },
+                "num_rows": 4907269,
+                "cols": {
+                    "admissionid": {
+                        "name": "admissionid",
+                        "spec": "col_integer"
+                    },
+                    "orderid": {
+                        "name": "orderid",
+                        "spec": "col_integer"
+                    },
+                    "ordercategoryid": {
+                        "name": "ordercategoryid",
+                        "spec": "col_integer"
+                    },
+                    "ordercategory": {
+                        "name": "ordercategory",
+                        "spec": "col_character"
+                    },
+                    "itemid": {
+                        "name": "itemid",
+                        "spec": "col_integer"
+                    },
+                    "item": {
+                        "name": "item",
+                        "spec": "col_character"
+                    },
+                    "isadditive": {
+                        "name": "isadditive",
+                        "spec": "col_logical"
+                    },
+                    "isconditional": {
+                        "name": "isconditional",
+                        "spec": "col_logical"
+                    },
+                    "rate": {
+                        "name": "rate",
+                        "spec": "col_double"
+                    },
+                    "rateunit": {
+                        "name": "rateunit",
+                        "spec": "col_character"
+                    },
+                    "rateunitid": {
+                        "name": "rateunitid",
+                        "spec": "col_integer"
+                    },
+                    "ratetimeunitid": {
+                        "name": "ratetimeunitid",
+                        "spec": "col_integer"
+                    },
+                    "doserateperkg": {
+                        "name": "doserateperkg",
+                        "spec": "col_logical"
+                    },
+                    "dose": {
+                        "name": "dose",
+                        "spec": "col_double"
+                    },
+                    "doseunit": {
+                        "name": "doseunit",
+                        "spec": "col_character"
+                    },
+                    "doserateunit": {
+                        "name": "doserateunit",
+                        "spec": "col_character"
+                    },
+                    "doseunitid": {
+                        "name": "doseunitid",
+                        "spec": "col_integer"
+                    },
+                    "doserateunitid": {
+                        "name": "doserateunitid",
+                        "spec": "col_integer"
+                    },
+                    "administered": {
+                        "name": "administered",
+                        "spec": "col_double"
+                    },
+                    "administeredunit": {
+                        "name": "administeredunit",
+                        "spec": "col_character"
+                    },
+                    "administeredunitid": {
+                        "name": "administeredunitid",
+                        "spec": "col_integer"
+                    },
+                    "action": {
+                        "name": "action",
+                        "spec": "col_character"
+                    },
+                    "start": {
+                        "name": "start",
+                        "spec": "col_double"
+                    },
+                    "stop": {
+                        "name": "stop",
+                        "spec": "col_double"
+                    },
+                    "duration": {
+                        "name": "duration",
+                        "spec": "col_integer"
+                    },
+                    "solutionitemid": {
+                        "name": "solutionitemid",
+                        "spec": "col_integer"
+                    },
+                    "solutionitem": {
+                        "name": "solutionitem",
+                        "spec": "col_character"
+                    },
+                    "solutionadministered": {
+                        "name": "solutionadministered",
+                        "spec": "col_double"
+                    },
+                    "solutionadministeredunit": {
+                        "name": "solutionadministeredunit",
+                        "spec": "col_character"
+                    },
+                    "fluidin": {
+                        "name": "fluidin",
+                        "spec": "col_double"
+                    },
+                    "iscontinuous": {
+                        "name": "iscontinuous",
+                        "spec": "col_logical"
+                    }
+                }
+            },
+            "freetextitems": {
+                "files": "freetextitems.csv",
+                "defaults": {
+                    "index_var": "measuredat",
+                    "id_var": "value",
+                    "time_vars": [
+                        "measuredat",
+                        "registeredat",
+                        "updatedat"
+                    ]
+                },
+                "num_rows": 651248,
+                "cols": {
+                    "admissionid": {
+                        "name": "admissionid",
+                        "spec": "col_integer"
+                    },
+                    "itemid": {
+                        "name": "itemid",
+                        "spec": "col_integer"
+                    },
+                    "item": {
+                        "name": "item",
+                        "spec": "col_character"
+                    },
+                    "value": {
+                        "name": "value",
+                        "spec": "col_character"
+                    },
+                    "comment": {
+                        "name": "comment",
+                        "spec": "col_character"
+                    },
+                    "measuredat": {
+                        "name": "measuredat",
+                        "spec": "col_double"
+                    },
+                    "registeredat": {
+                        "name": "registeredat",
+                        "spec": "col_double"
+                    },
+                    "registeredby": {
+                        "name": "registeredby",
+                        "spec": "col_character"
+                    },
+                    "updatedat": {
+                        "name": "updatedat",
+                        "spec": "col_double"
+                    },
+                    "updatedby": {
+                        "name": "updatedby",
+                        "spec": "col_character"
+                    },
+                    "islabresult": {
+                        "name": "islabresult",
+                        "spec": "col_logical"
+                    }
+                }
+            },
+            "listitems": {
+                "files": "listitems.csv",
+                "defaults": {
+                    "index_var": "measuredat",
+                    "val_var": "value",
+                    "time_vars": [
+                        "measuredat",
+                        "registeredat",
+                        "updatedat"
+                    ]
+                },
+                "num_rows": 30744065,
+                "cols": {
+                    "admissionid": {
+                        "name": "admissionid",
+                        "spec": "col_integer"
+                    },
+                    "itemid": {
+                        "name": "itemid",
+                        "spec": "col_integer"
+                    },
+                    "item": {
+                        "name": "item",
+                        "spec": "col_character"
+                    },
+                    "valueid": {
+                        "name": "valueid",
+                        "spec": "col_integer"
+                    },
+                    "value": {
+                        "name": "value",
+                        "spec": "col_character"
+                    },
+                    "measuredat": {
+                        "name": "measuredat",
+                        "spec": "col_double"
+                    },
+                    "registeredat": {
+                        "name": "registeredat",
+                        "spec": "col_double"
+                    },
+                    "registeredby": {
+                        "name": "registeredby",
+                        "spec": "col_character"
+                    },
+                    "updatedat": {
+                        "name": "updatedat",
+                        "spec": "col_double"
+                    },
+                    "updatedby": {
+                        "name": "updatedby",
+                        "spec": "col_character"
+                    },
+                    "islabresult": {
+                        "name": "islabresult",
+                        "spec": "col_logical"
+                    }
+                },
+                "partitioning": {
+                    "col": "itemid",
+                    "breaks": 12290
+                }
+            },
+            "numericitems": {
+                "files": "numericitems.csv",
+                "defaults": {
+                    "index_var": "measuredat",
+                    "val_var": "value",
+                    "unit_var": "unit",
+                    "time_vars": [
+                        "measuredat",
+                        "registeredat",
+                        "updatedat"
+                    ]
+                },
+                "num_rows": 977625612,
+                "cols": {
+                    "admissionid": {
+                        "name": "admissionid",
+                        "spec": "col_integer"
+                    },
+                    "itemid": {
+                        "name": "itemid",
+                        "spec": "col_integer"
+                    },
+                    "item": {
+                        "name": "item",
+                        "spec": "col_character"
+                    },
+                    "tag": {
+                        "name": "tag",
+                        "spec": "col_character"
+                    },
+                    "value": {
+                        "name": "value",
+                        "spec": "col_double"
+                    },
+                    "unitid": {
+                        "name": "unitid",
+                        "spec": "col_integer"
+                    },
+                    "unit": {
+                        "name": "unit",
+                        "spec": "col_character"
+                    },
+                    "comment": {
+                        "name": "comment",
+                        "spec": "col_character"
+                    },
+                    "measuredat": {
+                        "name": "measuredat",
+                        "spec": "col_double"
+                    },
+                    "registeredat": {
+                        "name": "registeredat",
+                        "spec": "col_double"
+                    },
+                    "registeredby": {
+                        "name": "registeredby",
+                        "spec": "col_character"
+                    },
+                    "updatedat": {
+                        "name": "updatedat",
+                        "spec": "col_double"
+                    },
+                    "updatedby": {
+                        "name": "updatedby",
+                        "spec": "col_character"
+                    },
+                    "islabresult": {
+                        "name": "islabresult",
+                        "spec": "col_logical"
+                    },
+                    "fluidout": {
+                        "name": "fluidout",
+                        "spec": "col_double"
+                    }
+                },
+                "partitioning": {
+                    "col": "itemid",
+                    "breaks": [
+                        6641,
+                        6642,
+                        6643,
+                        6664,
+                        6666,
+                        6667,
+                        6669,
+                        6672,
+                        6673,
+                        6675,
+                        6707,
+                        6709,
+                        8874,
+                        12270,
+                        12275,
+                        12278,
+                        12281,
+                        12286,
+                        12303,
+                        12561,
+                        12576,
+                        12804,
+                        14841
+                    ]
+                }
+            },
+            "procedureorderitems": {
+                "files": "procedureorderitems.csv",
+                "defaults": {
+                    "index_var": "registeredat",
+                    "val_var": "item",
+                    "time_vars": "registeredat"
+                },
+                "num_rows": 2188626,
+                "cols": {
+                    "admissionid": {
+                        "name": "admissionid",
+                        "spec": "col_integer"
+                    },
+                    "orderid": {
+                        "name": "orderid",
+                        "spec": "col_integer"
+                    },
+                    "ordercategoryid": {
+                        "name": "ordercategoryid",
+                        "spec": "col_integer"
+                    },
+                    "ordercategoryname": {
+                        "name": "ordercategoryname",
+                        "spec": "col_character"
+                    },
+                    "itemid": {
+                        "name": "itemid",
+                        "spec": "col_integer"
+                    },
+                    "item": {
+                        "name": "item",
+                        "spec": "col_character"
+                    },
+                    "registeredat": {
+                        "name": "registeredat",
+                        "spec": "col_double"
+                    },
+                    "registeredby": {
+                        "name": "registeredby",
+                        "spec": "col_character"
+                    }
+                }
+            },
+            "processitems": {
+                "files": "processitems.csv",
+                "defaults": {
+                    "index_var": "start",
+                    "val_var": "item",
+                    "time_vars": [
+                        "start",
+                        "stop"
+                    ]
+                },
+                "num_rows": 256715,
+                "cols": {
+                    "admissionid": {
+                        "name": "admissionid",
+                        "spec": "col_integer"
+                    },
+                    "itemid": {
+                        "name": "itemid",
+                        "spec": "col_integer"
+                    },
+                    "item": {
+                        "name": "item",
+                        "spec": "col_character"
+                    },
+                    "start": {
+                        "name": "start",
+                        "spec": "col_double"
+                    },
+                    "stop": {
+                        "name": "stop",
+                        "spec": "col_double"
+                    },
+                    "duration": {
+                        "name": "duration",
+                        "spec": "col_integer"
+                    }
+                }
+            }
+        }
+    }
+]
