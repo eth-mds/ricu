@@ -286,7 +286,8 @@ get_config <- function(name, cfg_dirs = config_paths(), combine_fun = c, ...) {
     if (isTRUE(dir.exists(file.path(dir, name)))) {
       for (dir_json in list.files(path = file.path(dir, name),
                                   pattern = "\\.json$",
-                                  full.names = TRUE)) {
+                                  full.names = TRUE,
+                                  recursive = TRUE)) {
         res <- append(res, list(read_if_exists(dir_json, ...)))
       }
     }
