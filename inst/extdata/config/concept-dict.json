@@ -5684,7 +5684,6 @@
     "omopid": 132797,
     "category": "outcome",
     "callback": "sep3",
-    "keep_components": [false, true],
     "class": "rec_cncpt"
   },
   "sex": {
