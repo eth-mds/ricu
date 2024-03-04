@@ -252,6 +252,7 @@ user_config_path <- function() {
 config_paths <- function() c(user_config_path(), default_config_path())
 
 #' @param name File name of the configuration file (`.json` will be appended)
+#' or name of a folder containing multiple configuration files.
 #' @param cfg_dirs Character vector of directories searched for config files
 #' @param combine_fun If multiple files are found, a function for combining
 #' returned lists
