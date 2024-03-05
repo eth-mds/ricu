@@ -1,0 +1,689 @@
+{
+    "be": {
+        "unit": [
+            "mEq/L",
+            "mmol/l"
+        ],
+        "min": -25,
+        "max": 25,
+        "description": "base excess",
+        "omopid": 4284393,
+        "category": "blood gas",
+        "sources": {
+            "aumc": [
+                {
+                    "ids": [
+                        6807,
+                        9994
+                    ],
+                    "table": "numericitems",
+                    "sub_var": "itemid",
+                    "dir_var": "tag",
+                    "callback": "aumc_bxs"
+                }
+            ],
+            "eicu": [
+                {
+                    "ids": "Base Excess",
+                    "table": "lab",
+                    "sub_var": "labname"
+                }
+            ],
+            "eicu_demo": [
+                {
+                    "ids": "Base Excess",
+                    "table": "lab",
+                    "sub_var": "labname"
+                }
+            ],
+            "hirid": [
+                {
+                    "ids": 20001300,
+                    "table": "observations",
+                    "sub_var": "variableid",
+                    "class": "hrd_itm"
+                }
+            ],
+            "miiv": [
+                {
+                    "ids": 50802,
+                    "table": "labevents",
+                    "sub_var": "itemid"
+                }
+            ],
+            "mimic": [
+                {
+                    "ids": 50802,
+                    "table": "labevents",
+                    "sub_var": "itemid"
+                }
+            ],
+            "mimic_demo": [
+                {
+                    "ids": 50802,
+                    "table": "labevents",
+                    "sub_var": "itemid"
+                }
+            ],
+            "sic": [
+                {
+                    "ids": 668,
+                    "table": "laboratory",
+                    "sub_var": "LaboratoryID"
+                }
+            ]
+        }
+    },
+    "cai": {
+        "unit": "mmol/L",
+        "min": 0.5,
+        "max": 2,
+        "description": "calcium ionized",
+        "omopid": 46272910,
+        "category": "blood gas",
+        "sources": {
+            "aumc": [
+                {
+                    "ids": [
+                        6815,
+                        8915,
+                        9560,
+                        9561,
+                        10267
+                    ],
+                    "table": "numericitems",
+                    "sub_var": "itemid"
+                }
+            ],
+            "eicu": [
+                {
+                    "ids": "ionized calcium",
+                    "table": "lab",
+                    "sub_var": "labname"
+                }
+            ],
+            "eicu_demo": [
+                {
+                    "ids": "ionized calcium",
+                    "table": "lab",
+                    "sub_var": "labname"
+                }
+            ],
+            "hirid": [
+                {
+                    "ids": 24000522,
+                    "table": "observations",
+                    "sub_var": "variableid",
+                    "class": "hrd_itm"
+                }
+            ],
+            "miiv": [
+                {
+                    "ids": 50808,
+                    "table": "labevents",
+                    "sub_var": "itemid"
+                }
+            ],
+            "mimic": [
+                {
+                    "ids": 50808,
+                    "table": "labevents",
+                    "sub_var": "itemid"
+                }
+            ],
+            "mimic_demo": [
+                {
+                    "ids": 50808,
+                    "table": "labevents",
+                    "sub_var": "itemid"
+                }
+            ],
+            "sic": [
+                {
+                    "ids": 655,
+                    "table": "laboratory",
+                    "sub_var": "LaboratoryID"
+                }
+            ]
+        }
+    },
+    "fio2": {
+        "unit": "%",
+        "min": 21,
+        "max": 100,
+        "description": "fraction of inspired oxygen",
+        "omopid": 4353936,
+        "category": "blood gas",
+        "sources": {
+            "aumc": [
+                {
+                    "ids": 12279,
+                    "table": "numericitems",
+                    "sub_var": "itemid"
+                }
+            ],
+            "eicu": [
+                {
+                    "ids": "FiO2",
+                    "table": "respiratorycharting",
+                    "sub_var": "respchartvaluelabel",
+                    "callback": "transform_fun(percent_as_numeric)"
+                },
+                {
+                    "ids": "FiO2",
+                    "table": "lab",
+                    "sub_var": "labname",
+                    "callback": "convert_unit(set_val(NA), '%', 'mm\\\\(hg\\\\)')"
+                }
+            ],
+            "eicu_demo": [
+                {
+                    "ids": "FiO2",
+                    "table": "respiratorycharting",
+                    "sub_var": "respchartvaluelabel",
+                    "callback": "transform_fun(percent_as_numeric)"
+                },
+                {
+                    "ids": "FiO2",
+                    "table": "lab",
+                    "sub_var": "labname",
+                    "callback": "convert_unit(set_val(NA), '%', 'mm\\\\(hg\\\\)')"
+                }
+            ],
+            "hirid": [
+                {
+                    "ids": 2010,
+                    "table": "observations",
+                    "sub_var": "variableid",
+                    "class": "hrd_itm"
+                }
+            ],
+            "miiv": [
+                {
+                    "ids": 223835,
+                    "table": "chartevents",
+                    "sub_var": "itemid"
+                },
+                {
+                    "ids": 50816,
+                    "table": "labevents",
+                    "sub_var": "itemid"
+                }
+            ],
+            "mimic": [
+                {
+                    "ids": [
+                        3420,
+                        223835
+                    ],
+                    "table": "chartevents",
+                    "sub_var": "itemid"
+                },
+                {
+                    "ids": 50816,
+                    "table": "labevents",
+                    "sub_var": "itemid"
+                }
+            ],
+            "mimic_demo": [
+                {
+                    "ids": [
+                        3420,
+                        223835
+                    ],
+                    "table": "chartevents",
+                    "sub_var": "itemid"
+                },
+                {
+                    "ids": 50816,
+                    "table": "labevents",
+                    "sub_var": "itemid"
+                }
+            ],
+            "sic": [
+                {
+                    "ids": 2283,
+                    "table": "data_float_h",
+                    "sub_var": "DataID"
+                }
+            ]
+        }
+    },
+    "hbco": {
+        "description": "carboxyhemoglobin",
+        "omopid": 4056787,
+        "category": "blood gas",
+        "sources": {
+            "aumc": [
+                {
+                    "ids": 11690,
+                    "table": "numericitems",
+                    "sub_var": "itemid"
+                }
+            ],
+            "eicu": [
+                {
+                    "ids": "Carboxyhemoglobin",
+                    "table": "lab",
+                    "sub_var": "labname"
+                }
+            ],
+            "eicu_demo": [
+                {
+                    "ids": "Carboxyhemoglobin",
+                    "table": "lab",
+                    "sub_var": "labname"
+                }
+            ],
+            "hirid": [
+                {
+                    "ids": 24000526,
+                    "table": "observations",
+                    "sub_var": "variableid",
+                    "class": "hrd_itm"
+                }
+            ]
+        }
+    },
+    "lact": {
+        "unit": "mmol/L",
+        "min": 0,
+        "max": 50,
+        "description": "lactate",
+        "omopid": 4191725,
+        "category": "blood gas",
+        "sources": {
+            "aumc": [
+                {
+                    "ids": [
+                        6837,
+                        9580,
+                        10053
+                    ],
+                    "table": "numericitems",
+                    "sub_var": "itemid"
+                }
+            ],
+            "eicu": [
+                {
+                    "ids": "lactate",
+                    "table": "lab",
+                    "sub_var": "labname"
+                }
+            ],
+            "eicu_demo": [
+                {
+                    "ids": "lactate",
+                    "table": "lab",
+                    "sub_var": "labname"
+                }
+            ],
+            "hirid": [
+                {
+                    "ids": 24000524,
+                    "table": "observations",
+                    "sub_var": "variableid",
+                    "class": "hrd_itm"
+                }
+            ],
+            "miiv": [
+                {
+                    "ids": 50813,
+                    "table": "labevents",
+                    "sub_var": "itemid"
+                }
+            ],
+            "mimic": [
+                {
+                    "ids": 50813,
+                    "table": "labevents",
+                    "sub_var": "itemid"
+                }
+            ],
+            "mimic_demo": [
+                {
+                    "ids": 50813,
+                    "table": "labevents",
+                    "sub_var": "itemid"
+                }
+            ],
+            "sic": [
+                {
+                    "ids": [
+                        657,
+                        454
+                    ],
+                    "table": "laboratory",
+                    "sub_var": "LaboratoryID"
+                }
+            ]
+        }
+    },
+    "methb": {
+        "unit": "%",
+        "min": 0,
+        "max": 100,
+        "description": "methemoglobin",
+        "omopid": 4204561,
+        "category": "blood gas",
+        "sources": {
+            "aumc": [
+                {
+                    "ids": 11692,
+                    "table": "numericitems",
+                    "sub_var": "itemid"
+                }
+            ],
+            "eicu": [
+                {
+                    "ids": "Methemoglobin",
+                    "table": "lab",
+                    "sub_var": "labname"
+                }
+            ],
+            "eicu_demo": [
+                {
+                    "ids": "Methemoglobin",
+                    "table": "lab",
+                    "sub_var": "labname"
+                }
+            ],
+            "hirid": [
+                {
+                    "ids": 24000549,
+                    "table": "observations",
+                    "sub_var": "variableid",
+                    "class": "hrd_itm"
+                }
+            ],
+            "miiv": [
+                {
+                    "ids": 50814,
+                    "table": "labevents",
+                    "sub_var": "itemid"
+                }
+            ],
+            "mimic": [
+                {
+                    "ids": 50814,
+                    "table": "labevents",
+                    "sub_var": "itemid"
+                }
+            ],
+            "mimic_demo": [
+                {
+                    "ids": 50814,
+                    "table": "labevents",
+                    "sub_var": "itemid"
+                }
+            ]
+        }
+    },
+    "pco2": {
+        "unit": [
+            "mmHg",
+            "mm Hg"
+        ],
+        "min": 10,
+        "max": 150,
+        "description": "CO2 partial pressure",
+        "omopid": 4097882,
+        "category": "blood gas",
+        "sources": {
+            "aumc": [
+                {
+                    "ids": [
+                        6846,
+                        9990,
+                        21213
+                    ],
+                    "table": "numericitems",
+                    "sub_var": "itemid"
+                }
+            ],
+            "eicu": [
+                {
+                    "ids": "paCO2",
+                    "table": "lab",
+                    "sub_var": "labname"
+                }
+            ],
+            "eicu_demo": [
+                {
+                    "ids": "paCO2",
+                    "table": "lab",
+                    "sub_var": "labname"
+                }
+            ],
+            "hirid": [
+                {
+                    "ids": 20001200,
+                    "table": "observations",
+                    "sub_var": "variableid",
+                    "class": "hrd_itm"
+                }
+            ],
+            "miiv": [
+                {
+                    "ids": 50818,
+                    "table": "labevents",
+                    "sub_var": "itemid"
+                }
+            ],
+            "mimic": [
+                {
+                    "ids": 50818,
+                    "table": "labevents",
+                    "sub_var": "itemid"
+                }
+            ],
+            "mimic_demo": [
+                {
+                    "ids": 50818,
+                    "table": "labevents",
+                    "sub_var": "itemid"
+                }
+            ],
+            "sic": [
+                {
+                    "ids": 687,
+                    "table": "laboratory",
+                    "sub_var": "LaboratoryID"
+                }
+            ]
+        }
+    },
+    "ph": {
+        "min": 6.8,
+        "max": 8,
+        "description": "pH of blood",
+        "omopid": 4097822,
+        "category": "blood gas",
+        "sources": {
+            "aumc": [
+                {
+                    "ids": [
+                        6848,
+                        12310
+                    ],
+                    "table": "numericitems",
+                    "sub_var": "itemid"
+                }
+            ],
+            "eicu": [
+                {
+                    "ids": "pH",
+                    "table": "lab",
+                    "sub_var": "labname"
+                }
+            ],
+            "eicu_demo": [
+                {
+                    "ids": "pH",
+                    "table": "lab",
+                    "sub_var": "labname"
+                }
+            ],
+            "hirid": [
+                {
+                    "ids": 20000300,
+                    "table": "observations",
+                    "sub_var": "variableid",
+                    "class": "hrd_itm"
+                }
+            ],
+            "miiv": [
+                {
+                    "ids": 50820,
+                    "table": "labevents",
+                    "sub_var": "itemid"
+                }
+            ],
+            "mimic": [
+                {
+                    "ids": 50820,
+                    "table": "labevents",
+                    "sub_var": "itemid"
+                }
+            ],
+            "mimic_demo": [
+                {
+                    "ids": 50820,
+                    "table": "labevents",
+                    "sub_var": "itemid"
+                }
+            ],
+            "sic": [
+                {
+                    "ids": 688,
+                    "table": "laboratory",
+                    "sub_var": "LaboratoryID"
+                }
+            ]
+        }
+    },
+    "po2": {
+        "unit": [
+            "mmHg",
+            "mm Hg"
+        ],
+        "min": 40,
+        "max": 600,
+        "description": "O2 partial pressure",
+        "omopid": 4094581,
+        "category": "blood gas",
+        "sources": {
+            "aumc": [
+                {
+                    "ids": [
+                        7433,
+                        9996,
+                        21214
+                    ],
+                    "table": "numericitems",
+                    "sub_var": "itemid"
+                }
+            ],
+            "eicu": [
+                {
+                    "ids": "paO2",
+                    "table": "lab",
+                    "sub_var": "labname"
+                }
+            ],
+            "eicu_demo": [
+                {
+                    "ids": "paO2",
+                    "table": "lab",
+                    "sub_var": "labname"
+                }
+            ],
+            "hirid": [
+                {
+                    "ids": 20000200,
+                    "table": "observations",
+                    "sub_var": "variableid",
+                    "class": "hrd_itm"
+                }
+            ],
+            "miiv": [
+                {
+                    "ids": 50821,
+                    "table": "labevents",
+                    "sub_var": "itemid"
+                }
+            ],
+            "mimic": [
+                {
+                    "ids": 50821,
+                    "table": "labevents",
+                    "sub_var": "itemid"
+                }
+            ],
+            "mimic_demo": [
+                {
+                    "ids": 50821,
+                    "table": "labevents",
+                    "sub_var": "itemid"
+                }
+            ],
+            "sic": [
+                {
+                    "ids": [
+                        664,
+                        689
+                    ],
+                    "table": "laboratory",
+                    "sub_var": "LaboratoryID"
+                }
+            ]
+        }
+    },
+    "tco2": {
+        "unit": "mEq/L",
+        "min": 5,
+        "max": 60,
+        "description": "totcal CO2",
+        "omopid": 4193415,
+        "category": "blood gas",
+        "sources": {
+            "eicu": [
+                {
+                    "ids": "Total CO2",
+                    "table": "lab",
+                    "sub_var": "labname",
+                    "callback": "convert_unit(set_val(NA), 'mEq/L', 'lpm')"
+                }
+            ],
+            "eicu_demo": [
+                {
+                    "ids": "Total CO2",
+                    "table": "lab",
+                    "sub_var": "labname",
+                    "callback": "convert_unit(set_val(NA), 'mEq/L', 'lpm')"
+                }
+            ],
+            "miiv": [
+                {
+                    "ids": 50804,
+                    "table": "labevents",
+                    "sub_var": "itemid"
+                }
+            ],
+            "mimic": [
+                {
+                    "ids": 50804,
+                    "table": "labevents",
+                    "sub_var": "itemid"
+                }
+            ],
+            "mimic_demo": [
+                {
+                    "ids": 50804,
+                    "table": "labevents",
+                    "sub_var": "itemid"
+                }
+            ]
+        }
+    }
+}

@@ -1,0 +1,688 @@
+{
+    "ett_gcs": {
+        "class": "lgl_cncpt",
+        "description": "tracheostomy",
+        "omopid": 4097216,
+        "category": "respiratory",
+        "target": "win_tbl",
+        "sources": {
+            "aumc": [
+                {
+                    "ids": 6735,
+                    "table": "listitems",
+                    "sub_var": "itemid",
+                    "target": "ts_tbl",
+                    "callback": "combine_callbacks(\n               transform_fun(comp_na(`==`, 'Ge\u00efntubeerd')),\n               ts_to_win_tbl(mins(1L))\n             )"
+                }
+            ],
+            "eicu": [
+                {
+                    "class": "fun_itm",
+                    "callback": "combine_callbacks(\n               fwd_concept('rass'),\n               transform_fun(comp_na(`<=`, -3)),\n               ts_to_win_tbl(mins(360L))\n             )"
+                }
+            ],
+            "eicu_demo": [
+                {
+                    "class": "fun_itm",
+                    "callback": "combine_callbacks(\n               fwd_concept('rass'),\n               transform_fun(comp_na(`<=`, -3)),\n               ts_to_win_tbl(mins(360L))\n             )"
+                }
+            ],
+            "hirid": [
+                {
+                    "class": "fun_itm",
+                    "callback": "combine_callbacks(\n               fwd_concept('mech_vent'),\n               transform_fun(comp_na(`==`, 'invasive'))\n             )"
+                }
+            ],
+            "miiv": [
+                {
+                    "ids": "No Response-ETT",
+                    "table": "chartevents",
+                    "sub_var": "value",
+                    "target": "ts_tbl",
+                    "callback": "combine_callbacks(\n               transform_fun(set_val(TRUE)),\n               ts_to_win_tbl(mins(1L))\n             )"
+                }
+            ],
+            "mimic": [
+                {
+                    "ids": [
+                        "1.0 ET/Trach",
+                        "No Response-ETT"
+                    ],
+                    "table": "chartevents",
+                    "sub_var": "value",
+                    "target": "ts_tbl",
+                    "callback": "combine_callbacks(\n               transform_fun(set_val(TRUE)),\n               ts_to_win_tbl(mins(1L))\n             )"
+                }
+            ],
+            "mimic_demo": [
+                {
+                    "ids": [
+                        "1.0 ET/Trach",
+                        "No Response-ETT"
+                    ],
+                    "table": "chartevents",
+                    "sub_var": "value",
+                    "target": "ts_tbl",
+                    "callback": "combine_callbacks(\n               transform_fun(set_val(TRUE)),\n               ts_to_win_tbl(mins(1L))\n             )"
+                }
+            ]
+        }
+    },
+    "mech_vent": {
+        "class": "fct_cncpt",
+        "target": "win_tbl",
+        "levels": [
+            "invasive",
+            "noninvasive"
+        ],
+        "description": "mechanical ventilation windows",
+        "omopid": 4230167,
+        "category": "respiratory",
+        "sources": {
+            "aumc": [
+                {
+                    "ids": [
+                        9328,
+                        10740,
+                        12635
+                    ],
+                    "table": "processitems",
+                    "sub_var": "itemid",
+                    "dur_var": "stop",
+                    "callback": "apply_map(c(`Beademen`              = 'invasive',\n                                     `Beademen non-invasief` = 'noninvasive',\n                                     `Tracheostoma`          = 'invasive'))"
+                }
+            ],
+            "hirid": [
+                {
+                    "ids": 15001552,
+                    "table": "observations",
+                    "sub_var": "variableid",
+                    "target": "ts_tbl",
+                    "interval": "00:01:00",
+                    "class": "hrd_itm",
+                    "callback": "combine_callbacks(hirid_vent,\n                                           apply_map(c(`1` = 'invasive',\n                                                       `2` = 'invasive',\n                                                       `3` = 'noninvasive',\n                                                       `4` = 'noninvasive',\n                                                       `5` = 'noninvasive',\n                                                       `6` = 'noninvasive')))"
+                }
+            ],
+            "miiv": [
+                {
+                    "ids": [
+                        225792,
+                        225794
+                    ],
+                    "table": "procedureevents",
+                    "sub_var": "itemid",
+                    "dur_var": "endtime",
+                    "callback": "apply_map(c(`225792` = 'invasive',\n                                     `225794` = 'noninvasive'),\n                                   var = 'sub_var')"
+                }
+            ]
+        }
+    },
+    "o2sat": {
+        "unit": [
+            "%",
+            "% Sat."
+        ],
+        "min": 50,
+        "max": 100,
+        "description": "oxygen saturation",
+        "omopid": 40483579,
+        "category": "respiratory",
+        "sources": {
+            "aumc": [
+                {
+                    "ids": [
+                        6709,
+                        8903
+                    ],
+                    "table": "numericitems",
+                    "sub_var": "itemid"
+                },
+                {
+                    "ids": 12311,
+                    "table": "numericitems",
+                    "sub_var": "itemid",
+                    "callback": "transform_fun(binary_op(`*`, 100))"
+                }
+            ],
+            "eicu": [
+                {
+                    "table": "vitalperiodic",
+                    "val_var": "sao2",
+                    "unit_val": "%",
+                    "class": "col_itm"
+                },
+                {
+                    "ids": "O2 Sat (%)",
+                    "table": "lab",
+                    "sub_var": "labname"
+                }
+            ],
+            "eicu_demo": [
+                {
+                    "table": "vitalperiodic",
+                    "val_var": "sao2",
+                    "unit_val": "%",
+                    "class": "col_itm"
+                },
+                {
+                    "ids": "O2 Sat (%)",
+                    "table": "lab",
+                    "sub_var": "labname"
+                }
+            ],
+            "hirid": [
+                {
+                    "ids": [
+                        4000,
+                        8280,
+                        20000800
+                    ],
+                    "table": "observations",
+                    "sub_var": "variableid",
+                    "class": "hrd_itm"
+                }
+            ],
+            "miiv": [
+                {
+                    "ids": [
+                        220277,
+                        226253,
+                        50817
+                    ],
+                    "table": "chartevents",
+                    "sub_var": "itemid"
+                }
+            ],
+            "mimic": [
+                {
+                    "ids": [
+                        646,
+                        220277,
+                        226253,
+                        50817
+                    ],
+                    "table": "chartevents",
+                    "sub_var": "itemid"
+                }
+            ],
+            "mimic_demo": [
+                {
+                    "ids": [
+                        646,
+                        220277,
+                        226253,
+                        50817
+                    ],
+                    "table": "chartevents",
+                    "sub_var": "itemid"
+                }
+            ],
+            "sic": [
+                {
+                    "ids": 710,
+                    "table": "data_float_h",
+                    "sub_var": "DataID"
+                }
+            ]
+        }
+    },
+    "pafi": {
+        "concepts": [
+            "po2",
+            "fio2"
+        ],
+        "description": "Horowitz index",
+        "omopid": 4233883,
+        "category": "respiratory",
+        "aggregate": [
+            "min",
+            "max"
+        ],
+        "callback": "pafi",
+        "class": "rec_cncpt"
+    },
+    "resp": {
+        "unit": [
+            "insp/min",
+            "/min"
+        ],
+        "min": 0,
+        "max": 120,
+        "description": "respiratory rate",
+        "omopid": 4313591,
+        "category": "respiratory",
+        "sources": {
+            "aumc": [
+                {
+                    "ids": [
+                        8874,
+                        12266
+                    ],
+                    "table": "numericitems",
+                    "sub_var": "itemid"
+                }
+            ],
+            "eicu": [
+                {
+                    "table": "vitalperiodic",
+                    "val_var": "respiration",
+                    "class": "col_itm"
+                }
+            ],
+            "eicu_demo": [
+                {
+                    "table": "vitalperiodic",
+                    "val_var": "respiration",
+                    "class": "col_itm"
+                }
+            ],
+            "hirid": [
+                {
+                    "ids": [
+                        300,
+                        310
+                    ],
+                    "table": "observations",
+                    "sub_var": "variableid",
+                    "class": "hrd_itm"
+                }
+            ],
+            "miiv": [
+                {
+                    "ids": [
+                        220210,
+                        224688,
+                        224689,
+                        224690
+                    ],
+                    "table": "chartevents",
+                    "sub_var": "itemid"
+                }
+            ],
+            "mimic": [
+                {
+                    "ids": [
+                        618,
+                        619,
+                        220210,
+                        224688,
+                        224689,
+                        224690
+                    ],
+                    "table": "chartevents",
+                    "sub_var": "itemid"
+                }
+            ],
+            "mimic_demo": [
+                {
+                    "ids": [
+                        618,
+                        619,
+                        220210,
+                        224688,
+                        224689,
+                        224690
+                    ],
+                    "table": "chartevents",
+                    "sub_var": "itemid"
+                }
+            ],
+            "sic": [
+                {
+                    "ids": 719,
+                    "table": "data_float_h",
+                    "sub_var": "DataID"
+                }
+            ]
+        }
+    },
+    "safi": {
+        "concepts": [
+            "o2sat",
+            "fio2"
+        ],
+        "description": "SaO2/FiO2",
+        "category": "respiratory",
+        "aggregate": [
+            "min",
+            "max"
+        ],
+        "callback": "safi",
+        "class": "rec_cncpt"
+    },
+    "supp_o2": {
+        "concepts": [
+            "vent_ind",
+            "fio2"
+        ],
+        "description": "supplemental oxygen",
+        "omopid": 36304401,
+        "category": "respiratory",
+        "callback": "supp_o2",
+        "class": "rec_cncpt"
+    },
+    "vent_end": {
+        "class": "lgl_cncpt",
+        "description": "ventilation end",
+        "category": "respiratory",
+        "sources": {
+            "eicu": [
+                {
+                    "table": "respiratorycare",
+                    "val_var": "ventendoffset",
+                    "callback": "vent_flag",
+                    "class": "col_itm"
+                },
+                {
+                    "table": "respiratorycare",
+                    "val_var": "priorventendoffset",
+                    "callback": "vent_flag",
+                    "class": "col_itm"
+                },
+                {
+                    "ids": [
+                        "off",
+                        "Off",
+                        "Suspended"
+                    ],
+                    "table": "respiratorycharting",
+                    "sub_var": "respchartvalue",
+                    "val_var": "respchartvaluelabel",
+                    "callback": "transform_fun(set_val(TRUE))"
+                }
+            ],
+            "eicu_demo": [
+                {
+                    "table": "respiratorycare",
+                    "val_var": "ventendoffset",
+                    "callback": "vent_flag",
+                    "class": "col_itm"
+                },
+                {
+                    "table": "respiratorycare",
+                    "val_var": "priorventendoffset",
+                    "callback": "vent_flag",
+                    "class": "col_itm"
+                },
+                {
+                    "ids": [
+                        "off",
+                        "Off",
+                        "Suspended"
+                    ],
+                    "table": "respiratorycharting",
+                    "sub_var": "respchartvalue",
+                    "val_var": "respchartvaluelabel",
+                    "callback": "transform_fun(set_val(TRUE))"
+                }
+            ],
+            "mimic": [
+                {
+                    "ids": [
+                        225468,
+                        225477,
+                        227194
+                    ],
+                    "table": "procedureevents_mv",
+                    "sub_var": "itemid",
+                    "callback": "transform_fun(set_val(TRUE))"
+                },
+                {
+                    "ids": [
+                        467,
+                        469,
+                        226732
+                    ],
+                    "table": "chartevents",
+                    "sub_var": "itemid",
+                    "callback": "transform_fun(set_val(TRUE))"
+                }
+            ],
+            "mimic_demo": [
+                {
+                    "ids": [
+                        225468,
+                        225477,
+                        227194
+                    ],
+                    "table": "procedureevents_mv",
+                    "sub_var": "itemid",
+                    "callback": "transform_fun(set_val(TRUE))"
+                },
+                {
+                    "ids": [
+                        467,
+                        469,
+                        226732
+                    ],
+                    "table": "chartevents",
+                    "sub_var": "itemid",
+                    "callback": "transform_fun(set_val(TRUE))"
+                }
+            ]
+        }
+    },
+    "vent_ind": {
+        "concepts": [
+            "vent_start",
+            "vent_end",
+            "mech_vent"
+        ],
+        "description": "ventilation durations",
+        "omopid": 4230167,
+        "category": "respiratory",
+        "interval": "00:01:00",
+        "callback": "vent_ind",
+        "target": "win_tbl",
+        "class": "rec_cncpt"
+    },
+    "vent_start": {
+        "class": "lgl_cncpt",
+        "description": "ventilation start",
+        "category": "respiratory",
+        "sources": {
+            "eicu": [
+                {
+                    "table": "respiratorycare",
+                    "val_var": "ventstartoffset",
+                    "callback": "vent_flag",
+                    "class": "col_itm"
+                },
+                {
+                    "table": "respiratorycare",
+                    "val_var": "priorventstartoffset",
+                    "callback": "vent_flag",
+                    "class": "col_itm"
+                },
+                {
+                    "ids": [
+                        "Start",
+                        "Continued",
+                        "respFlowPtVentData"
+                    ],
+                    "table": "respiratorycharting",
+                    "sub_var": "respcharttypecat",
+                    "callback": "transform_fun(set_val(TRUE))"
+                }
+            ],
+            "eicu_demo": [
+                {
+                    "table": "respiratorycare",
+                    "val_var": "ventstartoffset",
+                    "callback": "vent_flag",
+                    "class": "col_itm"
+                },
+                {
+                    "table": "respiratorycare",
+                    "val_var": "priorventstartoffset",
+                    "callback": "vent_flag",
+                    "class": "col_itm"
+                },
+                {
+                    "ids": [
+                        "Start",
+                        "Continued",
+                        "respFlowPtVentData"
+                    ],
+                    "table": "respiratorycharting",
+                    "sub_var": "respcharttypecat",
+                    "callback": "transform_fun(set_val(TRUE))"
+                }
+            ],
+            "mimic": [
+                {
+                    "ids": [
+                        1,
+                        60,
+                        218,
+                        221,
+                        223,
+                        436,
+                        437,
+                        444,
+                        445,
+                        448,
+                        449,
+                        450,
+                        459,
+                        501,
+                        502,
+                        503,
+                        505,
+                        506,
+                        535,
+                        543,
+                        639,
+                        654,
+                        667,
+                        668,
+                        669,
+                        670,
+                        671,
+                        672,
+                        681,
+                        682,
+                        683,
+                        684,
+                        686,
+                        1211,
+                        1340,
+                        1486,
+                        1600,
+                        1655,
+                        2000,
+                        3459,
+                        5865,
+                        5866,
+                        220339,
+                        223848,
+                        223849,
+                        224419,
+                        224684,
+                        224685,
+                        224686,
+                        224687,
+                        224695,
+                        224696,
+                        224697,
+                        224700,
+                        224701,
+                        224702,
+                        224703,
+                        224704,
+                        224705,
+                        224706,
+                        224707,
+                        224709,
+                        224738,
+                        224746,
+                        224747,
+                        224750,
+                        226873,
+                        227187
+                    ],
+                    "table": "chartevents",
+                    "sub_var": "itemid",
+                    "callback": "transform_fun(set_val(TRUE))"
+                }
+            ],
+            "mimic_demo": [
+                {
+                    "ids": [
+                        1,
+                        60,
+                        218,
+                        221,
+                        223,
+                        436,
+                        437,
+                        444,
+                        445,
+                        448,
+                        449,
+                        450,
+                        459,
+                        501,
+                        502,
+                        503,
+                        505,
+                        506,
+                        535,
+                        543,
+                        639,
+                        654,
+                        667,
+                        668,
+                        669,
+                        670,
+                        671,
+                        672,
+                        681,
+                        682,
+                        683,
+                        684,
+                        686,
+                        1211,
+                        1340,
+                        1486,
+                        1600,
+                        1655,
+                        2000,
+                        3459,
+                        5865,
+                        5866,
+                        220339,
+                        223848,
+                        223849,
+                        224419,
+                        224684,
+                        224685,
+                        224686,
+                        224687,
+                        224695,
+                        224696,
+                        224697,
+                        224700,
+                        224701,
+                        224702,
+                        224703,
+                        224704,
+                        224705,
+                        224706,
+                        224707,
+                        224709,
+                        224738,
+                        224746,
+                        224747,
+                        224750,
+                        226873,
+                        227187
+                    ],
+                    "table": "chartevents",
+                    "sub_var": "itemid",
+                    "callback": "transform_fun(set_val(TRUE))"
+                }
+            ]
+        }
+    }
+}

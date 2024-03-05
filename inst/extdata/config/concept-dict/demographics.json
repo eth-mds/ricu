@@ -1,0 +1,388 @@
+{
+    "adm": {
+        "target": "id_tbl",
+        "levels": [
+            "med",
+            "surg",
+            "other"
+        ],
+        "class": "fct_cncpt",
+        "description": "patient admission type",
+        "category": "demographics",
+        "sources": {
+            "aumc": [
+                {
+                    "val_var": "specialty",
+                    "table": "admissions",
+                    "callback": "apply_map( c(Cardiochirurgie = 'surg', Cardiologie = 'med', ders = 'other', Gynaecologie = 'other', `Heelkunde Gastro-enterologie` = 'surg', `Heelkunde Longen/Oncologie` = 'surg', `Heelkunde Oncologie` = 'surg', Hematologie = 'med', `Intensive Care Volwassenen` = 'other', Inwendig = 'med', `Keel, Neus & Oorarts` = 'surg', Longziekte = 'med', `Maag-,Darm-,Leverziekten` = 'med', Mondheelkunde = 'surg', Nefrologie = 'med', Neurochirurgie = 'surg', Neurologie = 'med', Obstetrie = 'other', `Oncologie Inwendig` = 'med', Oogheelkunde = 'surg', Orthopedie = 'surg', `Plastische chirurgie` = 'surg', Reumatologie = 'med', Traumatologie = 'surg', Urologie = 'surg', Vaatchirurgie = 'surg', Verloskunde = 'other'))",
+                    "class": "col_itm"
+                }
+            ],
+            "eicu": [
+                {
+                    "table": "admissiondx",
+                    "val_var": "admitdxpath",
+                    "callback": "eicu_adx",
+                    "class": "col_itm"
+                }
+            ],
+            "eicu_demo": [
+                {
+                    "table": "admissiondx",
+                    "val_var": "admitdxpath",
+                    "callback": "eicu_adx",
+                    "class": "col_itm"
+                }
+            ],
+            "miiv": [
+                {
+                    "table": "services",
+                    "val_var": "curr_service",
+                    "callback": "apply_map(\n            c(MED   = 'med',   SURG  = 'surg', CMED = 'med',  CSURG  = 'surg',\n              VSURG = 'surg',  NSURG = 'surg', NB   = 'other', NMED  = 'med',\n              ORTHO = 'surg',  TRAUM = 'surg', OMED = 'med',   GU    = 'other',\n              NBB   = 'other', TSURG = 'surg', GYN  = 'other', PSURG = 'surg',\n              OBS   = 'other', ENT   = 'surg', DENT = 'surg',  PSYCH = 'other')\n          )",
+                    "class": "col_itm"
+                }
+            ],
+            "mimic": [
+                {
+                    "table": "services",
+                    "val_var": "curr_service",
+                    "callback": "apply_map(\n            c(MED   = 'med',   SURG  = 'surg', CMED = 'med',  CSURG  = 'surg',\n              VSURG = 'surg',  NSURG = 'surg', NB   = 'other', NMED  = 'med',\n              ORTHO = 'surg',  TRAUM = 'surg', OMED = 'med',   GU    = 'other',\n              NBB   = 'other', TSURG = 'surg', GYN  = 'other', PSURG = 'surg',\n              OBS   = 'other', ENT   = 'surg', DENT = 'surg',  PSYCH = 'other')\n          )",
+                    "class": "col_itm"
+                }
+            ],
+            "mimic_demo": [
+                {
+                    "table": "services",
+                    "val_var": "curr_service",
+                    "callback": "apply_map(\n            c(MED   = 'med',   SURG  = 'surg', CMED = 'med',  CSURG  = 'surg',\n              VSURG = 'surg',  NSURG = 'surg', NB   = 'other', NMED  = 'med',\n              ORTHO = 'surg',  TRAUM = 'surg', OMED = 'med',   GU    = 'other',\n              NBB   = 'other', TSURG = 'surg', GYN  = 'other', PSURG = 'surg',\n              OBS   = 'other', ENT   = 'surg', DENT = 'surg',  PSYCH = 'other')\n          )",
+                    "class": "col_itm"
+                }
+            ]
+        }
+    },
+    "age": {
+        "unit": "years",
+        "min": 0,
+        "max": 100,
+        "target": "id_tbl",
+        "description": "patient age",
+        "omopid": 4314456,
+        "category": "demographics",
+        "sources": {
+            "aumc": [
+                {
+                    "val_var": "agegroup",
+                    "table": "admissions",
+                    "callback": "apply_map(c(`18-39` = 30, `40-49` = 45, `50-59` = 55, `60-69` = 65, `70-79` = 75, `80+` = 90))",
+                    "class": "col_itm"
+                }
+            ],
+            "eicu": [
+                {
+                    "table": "patient",
+                    "val_var": "age",
+                    "callback": "transform_fun(eicu_age)",
+                    "class": "col_itm"
+                }
+            ],
+            "eicu_demo": [
+                {
+                    "table": "patient",
+                    "val_var": "age",
+                    "callback": "transform_fun(eicu_age)",
+                    "class": "col_itm"
+                }
+            ],
+            "hirid": [
+                {
+                    "table": "general",
+                    "val_var": "age",
+                    "class": "col_itm"
+                }
+            ],
+            "miiv": [
+                {
+                    "table": "patients",
+                    "val_var": "anchor_age",
+                    "class": "col_itm"
+                }
+            ],
+            "mimic": [
+                {
+                    "table": "patients",
+                    "val_var": "dob",
+                    "callback": "transform_fun(mimic_age)",
+                    "class": "col_itm"
+                }
+            ],
+            "mimic_demo": [
+                {
+                    "table": "patients",
+                    "val_var": "dob",
+                    "callback": "transform_fun(mimic_age)",
+                    "class": "col_itm"
+                }
+            ],
+            "sic": [
+                {
+                    "table": "cases",
+                    "val_var": "AgeOnAdmission",
+                    "class": "col_itm"
+                }
+            ]
+        }
+    },
+    "bmi": {
+        "concepts": [
+            "weight",
+            "height"
+        ],
+        "description": "patient body mass index",
+        "omopid": 4245997,
+        "category": "demographics",
+        "callback": "bmi",
+        "target": "id_tbl",
+        "class": "rec_cncpt"
+    },
+    "height": {
+        "unit": "cm",
+        "min": 10,
+        "max": 230,
+        "target": "id_tbl",
+        "description": "patient height",
+        "omopid": 607590,
+        "category": "demographics",
+        "sources": {
+            "aumc": [
+                {
+                    "val_var": "heightgroup",
+                    "table": "admissions",
+                    "callback": "apply_map(c(`159-` = 150, `160-169` = 165, `170-179` = 175, `180-189` = 185, `190+` = 200))",
+                    "class": "col_itm"
+                }
+            ],
+            "eicu": [
+                {
+                    "table": "patient",
+                    "val_var": "admissionheight",
+                    "class": "col_itm"
+                }
+            ],
+            "eicu_demo": [
+                {
+                    "table": "patient",
+                    "val_var": "admissionheight",
+                    "class": "col_itm"
+                }
+            ],
+            "hirid": [
+                {
+                    "ids": 10000450,
+                    "table": "observations",
+                    "sub_var": "variableid",
+                    "class": "hrd_itm"
+                }
+            ],
+            "miiv": [
+                {
+                    "ids": 226707,
+                    "table": "chartevents",
+                    "sub_var": "itemid",
+                    "callback": "convert_unit(binary_op(`*`, 2.54), 'cm', '^in')"
+                }
+            ],
+            "mimic": [
+                {
+                    "ids": [
+                        920,
+                        1394,
+                        3485,
+                        4187,
+                        4188,
+                        3486,
+                        226707
+                    ],
+                    "table": "chartevents",
+                    "sub_var": "itemid",
+                    "callback": "convert_unit(binary_op(`*`, 2.54), 'cm', '^in')"
+                }
+            ],
+            "mimic_demo": [
+                {
+                    "ids": [
+                        920,
+                        1394,
+                        3485,
+                        4187,
+                        4188,
+                        3486,
+                        226707
+                    ],
+                    "table": "chartevents",
+                    "sub_var": "itemid",
+                    "callback": "convert_unit(binary_op(`*`, 2.54), 'cm', '^in')"
+                }
+            ],
+            "sic": [
+                {
+                    "table": "cases",
+                    "val_var": "HeightOnAdmission",
+                    "class": "col_itm"
+                }
+            ]
+        }
+    },
+    "sex": {
+        "target": "id_tbl",
+        "levels": [
+            "Female",
+            "Male"
+        ],
+        "class": "fct_cncpt",
+        "description": "patient sex",
+        "omopid": 37116947,
+        "category": "demographics",
+        "sources": {
+            "aumc": [
+                {
+                    "val_var": "gender",
+                    "table": "admissions",
+                    "callback": "apply_map(c(Vrouw = 'Female', Man = 'Male'))",
+                    "class": "col_itm"
+                }
+            ],
+            "eicu": [
+                {
+                    "table": "patient",
+                    "val_var": "gender",
+                    "class": "col_itm"
+                }
+            ],
+            "eicu_demo": [
+                {
+                    "table": "patient",
+                    "val_var": "gender",
+                    "class": "col_itm"
+                }
+            ],
+            "hirid": [
+                {
+                    "table": "general",
+                    "val_var": "sex",
+                    "callback": "apply_map(c(M = 'Male', F = 'Female'))",
+                    "class": "col_itm"
+                }
+            ],
+            "miiv": [
+                {
+                    "table": "patients",
+                    "val_var": "gender",
+                    "callback": "apply_map(c(M = 'Male', F = 'Female'))",
+                    "class": "col_itm"
+                }
+            ],
+            "mimic": [
+                {
+                    "table": "patients",
+                    "val_var": "gender",
+                    "callback": "apply_map(c(M = 'Male', F = 'Female'))",
+                    "class": "col_itm"
+                }
+            ],
+            "mimic_demo": [
+                {
+                    "table": "patients",
+                    "val_var": "gender",
+                    "callback": "apply_map(c(M = 'Male', F = 'Female'))",
+                    "class": "col_itm"
+                }
+            ],
+            "sic": [
+                {
+                    "table": "cases",
+                    "val_var": "Sex",
+                    "callback": "apply_map(c(`735` = 'Male', `736` = 'Female'))",
+                    "class": "col_itm"
+                }
+            ]
+        }
+    },
+    "weight": {
+        "unit": "kg",
+        "min": 1,
+        "max": 500,
+        "target": "id_tbl",
+        "description": "patient weight",
+        "omopid": 4099154,
+        "category": "demographics",
+        "sources": {
+            "aumc": [
+                {
+                    "val_var": "weightgroup",
+                    "table": "admissions",
+                    "callback": "apply_map(c(`59-` = 50, `60-69` = 65, `70-79` = 75, `80-89` = 85, `90-99` = 95, `100-109` = 105, `110+` = 120))",
+                    "class": "col_itm"
+                }
+            ],
+            "eicu": [
+                {
+                    "table": "patient",
+                    "val_var": "admissionweight",
+                    "class": "col_itm"
+                }
+            ],
+            "eicu_demo": [
+                {
+                    "table": "patient",
+                    "val_var": "admissionweight",
+                    "class": "col_itm"
+                }
+            ],
+            "hirid": [
+                {
+                    "ids": 10000400,
+                    "table": "observations",
+                    "sub_var": "variableid",
+                    "class": "hrd_itm"
+                }
+            ],
+            "miiv": [
+                {
+                    "ids": 226512,
+                    "table": "chartevents",
+                    "sub_var": "itemid"
+                }
+            ],
+            "mimic": [
+                {
+                    "ids": [
+                        762,
+                        4183,
+                        226512
+                    ],
+                    "table": "chartevents",
+                    "sub_var": "itemid"
+                }
+            ],
+            "mimic_demo": [
+                {
+                    "ids": [
+                        762,
+                        4183,
+                        226512
+                    ],
+                    "table": "chartevents",
+                    "sub_var": "itemid"
+                }
+            ],
+            "sic": [
+                {
+                    "table": "cases",
+                    "val_var": "WeightOnAdmission",
+                    "class": "col_itm",
+                    "callback": "transform_fun(binary_op(`/`, 1000))"
+                }
+            ]
+        }
+    }
+}

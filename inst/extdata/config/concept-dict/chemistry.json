@@ -1,0 +1,1539 @@
+{
+    "alb": {
+        "unit": "g/dL",
+        "min": 0,
+        "max": 6,
+        "description": "albumin",
+        "omopid": 4017497,
+        "category": "chemistry",
+        "sources": {
+            "aumc": [
+                {
+                    "ids": [
+                        6801,
+                        9937
+                    ],
+                    "table": "numericitems",
+                    "sub_var": "itemid",
+                    "callback": "convert_unit(binary_op(`*`, 0.1), 'g/dL')"
+                }
+            ],
+            "eicu": [
+                {
+                    "ids": "albumin",
+                    "table": "lab",
+                    "sub_var": "labname"
+                }
+            ],
+            "eicu_demo": [
+                {
+                    "ids": "albumin",
+                    "table": "lab",
+                    "sub_var": "labname"
+                }
+            ],
+            "hirid": [
+                {
+                    "ids": 24000605,
+                    "table": "observations",
+                    "sub_var": "variableid",
+                    "callback": "convert_unit(binary_op(`*`, 0.1), 'g/dL')",
+                    "class": "hrd_itm"
+                }
+            ],
+            "miiv": [
+                {
+                    "ids": 50862,
+                    "table": "labevents",
+                    "sub_var": "itemid"
+                }
+            ],
+            "mimic": [
+                {
+                    "ids": 50862,
+                    "table": "labevents",
+                    "sub_var": "itemid"
+                }
+            ],
+            "mimic_demo": [
+                {
+                    "ids": 50862,
+                    "table": "labevents",
+                    "sub_var": "itemid"
+                }
+            ],
+            "sic": [
+                {
+                    "ids": 287,
+                    "table": "laboratory",
+                    "sub_var": "LaboratoryID"
+                }
+            ]
+        }
+    },
+    "alp": {
+        "unit": [
+            "IU/L",
+            "U/l"
+        ],
+        "min": 0,
+        "description": "alkaline phosphatase",
+        "omopid": 4275206,
+        "category": "chemistry",
+        "sources": {
+            "aumc": [
+                {
+                    "ids": [
+                        6803,
+                        11984
+                    ],
+                    "table": "numericitems",
+                    "sub_var": "itemid"
+                }
+            ],
+            "eicu": [
+                {
+                    "ids": "alkaline phos.",
+                    "table": "lab",
+                    "sub_var": "labname"
+                }
+            ],
+            "eicu_demo": [
+                {
+                    "ids": "alkaline phos.",
+                    "table": "lab",
+                    "sub_var": "labname"
+                }
+            ],
+            "hirid": [
+                {
+                    "ids": 20002700,
+                    "table": "observations",
+                    "sub_var": "variableid",
+                    "class": "hrd_itm"
+                }
+            ],
+            "miiv": [
+                {
+                    "ids": 50863,
+                    "table": "labevents",
+                    "sub_var": "itemid"
+                }
+            ],
+            "mimic": [
+                {
+                    "ids": 50863,
+                    "table": "labevents",
+                    "sub_var": "itemid"
+                }
+            ],
+            "mimic_demo": [
+                {
+                    "ids": 50863,
+                    "table": "labevents",
+                    "sub_var": "itemid"
+                }
+            ],
+            "sic": [
+                {
+                    "ids": 609,
+                    "table": "laboratory",
+                    "sub_var": "LaboratoryID"
+                }
+            ]
+        }
+    },
+    "alt": {
+        "unit": [
+            "IU/L",
+            "U/l"
+        ],
+        "min": 0,
+        "description": "alanine aminotransferase",
+        "omopid": 4146380,
+        "category": "chemistry",
+        "sources": {
+            "aumc": [
+                {
+                    "ids": [
+                        6800,
+                        11978
+                    ],
+                    "table": "numericitems",
+                    "sub_var": "itemid"
+                }
+            ],
+            "eicu": [
+                {
+                    "ids": "ALT (SGPT)",
+                    "table": "lab",
+                    "sub_var": "labname"
+                }
+            ],
+            "eicu_demo": [
+                {
+                    "ids": "ALT (SGPT)",
+                    "table": "lab",
+                    "sub_var": "labname"
+                }
+            ],
+            "hirid": [
+                {
+                    "ids": 20002600,
+                    "table": "observations",
+                    "sub_var": "variableid",
+                    "class": "hrd_itm"
+                }
+            ],
+            "miiv": [
+                {
+                    "ids": 50861,
+                    "table": "labevents",
+                    "sub_var": "itemid"
+                }
+            ],
+            "mimic": [
+                {
+                    "ids": 50861,
+                    "table": "labevents",
+                    "sub_var": "itemid"
+                }
+            ],
+            "mimic_demo": [
+                {
+                    "ids": 50861,
+                    "table": "labevents",
+                    "sub_var": "itemid"
+                }
+            ],
+            "sic": [
+                {
+                    "ids": 617,
+                    "table": "laboratory",
+                    "sub_var": "LaboratoryID"
+                }
+            ]
+        }
+    },
+    "ast": {
+        "unit": [
+            "IU/L",
+            "U/l"
+        ],
+        "min": 0,
+        "description": "aspartate aminotransferase",
+        "omopid": 4263457,
+        "category": "chemistry",
+        "sources": {
+            "aumc": [
+                {
+                    "ids": [
+                        6806,
+                        11990
+                    ],
+                    "table": "numericitems",
+                    "sub_var": "itemid"
+                }
+            ],
+            "eicu": [
+                {
+                    "ids": "AST (SGOT)",
+                    "table": "lab",
+                    "sub_var": "labname"
+                }
+            ],
+            "eicu_demo": [
+                {
+                    "ids": "AST (SGOT)",
+                    "table": "lab",
+                    "sub_var": "labname"
+                }
+            ],
+            "hirid": [
+                {
+                    "ids": 24000330,
+                    "table": "observations",
+                    "sub_var": "variableid",
+                    "class": "hrd_itm"
+                }
+            ],
+            "miiv": [
+                {
+                    "ids": 50878,
+                    "table": "labevents",
+                    "sub_var": "itemid"
+                }
+            ],
+            "mimic": [
+                {
+                    "ids": 50878,
+                    "table": "labevents",
+                    "sub_var": "itemid"
+                }
+            ],
+            "mimic_demo": [
+                {
+                    "ids": 50878,
+                    "table": "labevents",
+                    "sub_var": "itemid"
+                }
+            ],
+            "sic": [
+                {
+                    "ids": 616,
+                    "table": "laboratory",
+                    "sub_var": "LaboratoryID"
+                }
+            ]
+        }
+    },
+    "bicar": {
+        "unit": [
+            "mEq/L",
+            "mmol/l"
+        ],
+        "min": 5,
+        "max": 50,
+        "description": "bicarbonate",
+        "omopid": 4194291,
+        "category": "chemistry",
+        "sources": {
+            "aumc": [
+                {
+                    "ids": [
+                        6810,
+                        9992
+                    ],
+                    "table": "numericitems",
+                    "sub_var": "itemid"
+                }
+            ],
+            "eicu": [
+                {
+                    "ids": "bicarbonate",
+                    "table": "lab",
+                    "sub_var": "labname"
+                }
+            ],
+            "eicu_demo": [
+                {
+                    "ids": "bicarbonate",
+                    "table": "lab",
+                    "sub_var": "labname"
+                }
+            ],
+            "hirid": [
+                {
+                    "ids": 20004200,
+                    "table": "observations",
+                    "sub_var": "variableid",
+                    "class": "hrd_itm"
+                }
+            ],
+            "miiv": [
+                {
+                    "ids": 50882,
+                    "table": "labevents",
+                    "sub_var": "itemid"
+                }
+            ],
+            "mimic": [
+                {
+                    "ids": 50882,
+                    "table": "labevents",
+                    "sub_var": "itemid"
+                }
+            ],
+            "mimic_demo": [
+                {
+                    "ids": 50882,
+                    "table": "labevents",
+                    "sub_var": "itemid"
+                }
+            ],
+            "sic": [
+                {
+                    "ids": 456,
+                    "table": "laboratory",
+                    "sub_var": "LaboratoryID"
+                }
+            ]
+        }
+    },
+    "bili": {
+        "unit": "mg/dL",
+        "min": 0,
+        "max": 100,
+        "description": "total bilirubin",
+        "omopid": 4118986,
+        "category": "chemistry",
+        "sources": {
+            "aumc": [
+                {
+                    "ids": [
+                        6813,
+                        9945
+                    ],
+                    "table": "numericitems",
+                    "sub_var": "itemid",
+                    "callback": "convert_unit(binary_op(`*`, 0.058467), 'mg/dL')"
+                }
+            ],
+            "eicu": [
+                {
+                    "ids": "total bilirubin",
+                    "table": "lab",
+                    "sub_var": "labname"
+                }
+            ],
+            "eicu_demo": [
+                {
+                    "ids": "total bilirubin",
+                    "table": "lab",
+                    "sub_var": "labname"
+                }
+            ],
+            "hirid": [
+                {
+                    "ids": 20004300,
+                    "table": "observations",
+                    "sub_var": "variableid",
+                    "callback": "convert_unit(binary_op(`*`, 0.058467), 'mg/dL')",
+                    "class": "hrd_itm"
+                }
+            ],
+            "miiv": [
+                {
+                    "ids": 50885,
+                    "table": "labevents",
+                    "sub_var": "itemid"
+                }
+            ],
+            "mimic": [
+                {
+                    "ids": 50885,
+                    "table": "labevents",
+                    "sub_var": "itemid"
+                }
+            ],
+            "mimic_demo": [
+                {
+                    "ids": 50885,
+                    "table": "labevents",
+                    "sub_var": "itemid"
+                }
+            ],
+            "sic": [
+                {
+                    "ids": 333,
+                    "table": "laboratory",
+                    "sub_var": "LaboratoryID"
+                }
+            ]
+        }
+    },
+    "bili_dir": {
+        "unit": "mg/dL",
+        "min": 0,
+        "max": 50,
+        "description": "bilirubin direct",
+        "omopid": 4216632,
+        "category": "chemistry",
+        "sources": {
+            "aumc": [
+                {
+                    "ids": 6812,
+                    "table": "numericitems",
+                    "sub_var": "itemid",
+                    "callback": "convert_unit(binary_op(`*`, 0.058467), 'mg/dL')"
+                }
+            ],
+            "eicu": [
+                {
+                    "ids": "direct bilirubin",
+                    "table": "lab",
+                    "sub_var": "labname"
+                }
+            ],
+            "eicu_demo": [
+                {
+                    "ids": "direct bilirubin",
+                    "table": "lab",
+                    "sub_var": "labname"
+                }
+            ],
+            "hirid": [
+                {
+                    "ids": 24000560,
+                    "table": "observations",
+                    "sub_var": "variableid",
+                    "callback": "convert_unit(binary_op(`*`, 0.058467), 'mg/dL')",
+                    "class": "hrd_itm"
+                }
+            ],
+            "miiv": [
+                {
+                    "ids": 50883,
+                    "table": "labevents",
+                    "sub_var": "itemid"
+                }
+            ],
+            "mimic": [
+                {
+                    "ids": 50883,
+                    "table": "labevents",
+                    "sub_var": "itemid"
+                }
+            ],
+            "mimic_demo": [
+                {
+                    "ids": 50883,
+                    "table": "labevents",
+                    "sub_var": "itemid"
+                }
+            ],
+            "sic": [
+                {
+                    "ids": 332,
+                    "table": "laboratory",
+                    "sub_var": "LaboratoryID"
+                }
+            ]
+        }
+    },
+    "bun": {
+        "unit": "mg/dL",
+        "min": 0,
+        "max": 200,
+        "description": "blood urea nitrogen",
+        "omopid": 4017361,
+        "category": "chemistry",
+        "sources": {
+            "aumc": [
+                {
+                    "ids": [
+                        6850,
+                        9943
+                    ],
+                    "table": "numericitems",
+                    "sub_var": "itemid",
+                    "callback": "convert_unit(binary_op(`*`, 2.8), 'mg/dL')"
+                }
+            ],
+            "eicu": [
+                {
+                    "ids": "BUN",
+                    "table": "lab",
+                    "sub_var": "labname"
+                }
+            ],
+            "eicu_demo": [
+                {
+                    "ids": "BUN",
+                    "table": "lab",
+                    "sub_var": "labname"
+                }
+            ],
+            "hirid": [
+                {
+                    "ids": 20004100,
+                    "table": "observations",
+                    "sub_var": "variableid",
+                    "callback": "convert_unit(binary_op(`*`, 2.8), 'mg/dL')",
+                    "class": "hrd_itm"
+                }
+            ],
+            "miiv": [
+                {
+                    "ids": 51006,
+                    "table": "labevents",
+                    "sub_var": "itemid"
+                }
+            ],
+            "mimic": [
+                {
+                    "ids": 51006,
+                    "table": "labevents",
+                    "sub_var": "itemid"
+                }
+            ],
+            "mimic_demo": [
+                {
+                    "ids": 51006,
+                    "table": "labevents",
+                    "sub_var": "itemid"
+                }
+            ],
+            "sic": [
+                {
+                    "ids": 355,
+                    "table": "laboratory",
+                    "sub_var": "LaboratoryID",
+                    "callback": "transform_fun(binary_op(`*`, 2.14))"
+                }
+            ]
+        }
+    },
+    "ca": {
+        "unit": "mg/dL",
+        "min": 4,
+        "max": 20,
+        "description": "calcium",
+        "omopid": 4216722,
+        "category": "chemistry",
+        "sources": {
+            "aumc": [
+                {
+                    "ids": [
+                        6817,
+                        9933
+                    ],
+                    "table": "numericitems",
+                    "sub_var": "itemid",
+                    "callback": "convert_unit(binary_op(`*`, 4.008), 'mg/dL')"
+                }
+            ],
+            "eicu": [
+                {
+                    "ids": "calcium",
+                    "table": "lab",
+                    "sub_var": "labname",
+                    "callback": "convert_unit(binary_op(`*`, 4), 'mg/dL', 'mmol/l')"
+                }
+            ],
+            "eicu_demo": [
+                {
+                    "ids": "calcium",
+                    "table": "lab",
+                    "sub_var": "labname",
+                    "callback": "convert_unit(binary_op(`*`, 4), 'mg/dL', 'mmol/l')"
+                }
+            ],
+            "hirid": [
+                {
+                    "ids": 20005100,
+                    "table": "observations",
+                    "sub_var": "variableid",
+                    "callback": "convert_unit(binary_op(`*`, 4.008), 'mg/dL')",
+                    "class": "hrd_itm"
+                }
+            ],
+            "miiv": [
+                {
+                    "ids": 50893,
+                    "table": "labevents",
+                    "sub_var": "itemid"
+                }
+            ],
+            "mimic": [
+                {
+                    "ids": 50893,
+                    "table": "labevents",
+                    "sub_var": "itemid"
+                }
+            ],
+            "mimic_demo": [
+                {
+                    "ids": 50893,
+                    "table": "labevents",
+                    "sub_var": "itemid"
+                }
+            ],
+            "sic": [
+                {
+                    "ids": 457,
+                    "table": "laboratory",
+                    "sub_var": "LaboratoryID",
+                    "callback": "transform_fun(binary_op(`*`, 4.008))"
+                }
+            ]
+        }
+    },
+    "ck": {
+        "unit": [
+            "IU/L",
+            "U/l"
+        ],
+        "min": 0,
+        "description": "creatine kinase",
+        "omopid": 4265595,
+        "category": "chemistry",
+        "sources": {
+            "aumc": [
+                {
+                    "ids": [
+                        6822,
+                        11998
+                    ],
+                    "table": "numericitems",
+                    "sub_var": "itemid"
+                }
+            ],
+            "eicu": [
+                {
+                    "ids": "CPK",
+                    "table": "lab",
+                    "sub_var": "labname"
+                }
+            ],
+            "eicu_demo": [
+                {
+                    "ids": "CPK",
+                    "table": "lab",
+                    "sub_var": "labname"
+                }
+            ],
+            "hirid": [
+                {
+                    "ids": 24000210,
+                    "table": "observations",
+                    "sub_var": "variableid",
+                    "class": "hrd_itm"
+                }
+            ],
+            "miiv": [
+                {
+                    "ids": 50910,
+                    "table": "labevents",
+                    "sub_var": "itemid"
+                }
+            ],
+            "mimic": [
+                {
+                    "ids": 50910,
+                    "table": "labevents",
+                    "sub_var": "itemid"
+                }
+            ],
+            "mimic_demo": [
+                {
+                    "ids": 50910,
+                    "table": "labevents",
+                    "sub_var": "itemid"
+                }
+            ],
+            "sic": [
+                {
+                    "ids": 611,
+                    "table": "laboratory",
+                    "sub_var": "LaboratoryID"
+                }
+            ]
+        }
+    },
+    "ckmb": {
+        "unit": "ng/mL",
+        "min": 0,
+        "description": "creatine kinase MB",
+        "omopid": 4017058,
+        "category": "chemistry",
+        "sources": {
+            "aumc": [
+                {
+                    "ids": 6824,
+                    "table": "numericitems",
+                    "sub_var": "itemid"
+                }
+            ],
+            "eicu": [
+                {
+                    "ids": "CPK-MB",
+                    "table": "lab",
+                    "sub_var": "labname"
+                }
+            ],
+            "eicu_demo": [
+                {
+                    "ids": "CPK-MB",
+                    "table": "lab",
+                    "sub_var": "labname"
+                }
+            ],
+            "hirid": [
+                {
+                    "ids": 24000220,
+                    "table": "observations",
+                    "sub_var": "variableid",
+                    "class": "hrd_itm"
+                }
+            ],
+            "miiv": [
+                {
+                    "ids": 50911,
+                    "table": "labevents",
+                    "sub_var": "itemid"
+                }
+            ],
+            "mimic": [
+                {
+                    "ids": 50911,
+                    "table": "labevents",
+                    "sub_var": "itemid"
+                }
+            ],
+            "mimic_demo": [
+                {
+                    "ids": 50911,
+                    "table": "labevents",
+                    "sub_var": "itemid"
+                }
+            ],
+            "sic": [
+                {
+                    "ids": 253,
+                    "table": "laboratory",
+                    "sub_var": "LaboratoryID"
+                }
+            ]
+        }
+    },
+    "cl": {
+        "unit": [
+            "mEq/L",
+            "mmol/l"
+        ],
+        "min": 80,
+        "max": 130,
+        "description": "chloride",
+        "omopid": 4188066,
+        "category": "chemistry",
+        "sources": {
+            "aumc": [
+                {
+                    "ids": 9930,
+                    "table": "numericitems",
+                    "sub_var": "itemid"
+                }
+            ],
+            "eicu": [
+                {
+                    "ids": "chloride",
+                    "table": "lab",
+                    "sub_var": "labname"
+                }
+            ],
+            "eicu_demo": [
+                {
+                    "ids": "chloride",
+                    "table": "lab",
+                    "sub_var": "labname"
+                }
+            ],
+            "hirid": [
+                {
+                    "ids": [
+                        24000439,
+                        24000521
+                    ],
+                    "table": "observations",
+                    "sub_var": "variableid",
+                    "class": "hrd_itm"
+                }
+            ],
+            "miiv": [
+                {
+                    "ids": 50902,
+                    "table": "labevents",
+                    "sub_var": "itemid"
+                }
+            ],
+            "mimic": [
+                {
+                    "ids": 50902,
+                    "table": "labevents",
+                    "sub_var": "itemid"
+                }
+            ],
+            "mimic_demo": [
+                {
+                    "ids": 50902,
+                    "table": "labevents",
+                    "sub_var": "itemid"
+                }
+            ],
+            "sic": [
+                {
+                    "ids": [
+                        683,
+                        450
+                    ],
+                    "table": "laboratory",
+                    "sub_var": "LaboratoryID"
+                }
+            ]
+        }
+    },
+    "crea": {
+        "unit": "mg/dL",
+        "min": 0,
+        "max": 15,
+        "description": "creatinine",
+        "omopid": 4013964,
+        "category": "chemistry",
+        "sources": {
+            "aumc": [
+                {
+                    "ids": [
+                        6836,
+                        9941,
+                        14216
+                    ],
+                    "table": "numericitems",
+                    "sub_var": "itemid",
+                    "callback": "convert_unit(binary_op(`*`, 0.011309), 'mg/dL')"
+                }
+            ],
+            "eicu": [
+                {
+                    "ids": "creatinine",
+                    "table": "lab",
+                    "sub_var": "labname"
+                }
+            ],
+            "eicu_demo": [
+                {
+                    "ids": "creatinine",
+                    "table": "lab",
+                    "sub_var": "labname"
+                }
+            ],
+            "hirid": [
+                {
+                    "ids": 20000600,
+                    "table": "observations",
+                    "sub_var": "variableid",
+                    "callback": "convert_unit(binary_op(`*`, 0.011312), 'mg/dL')",
+                    "class": "hrd_itm"
+                }
+            ],
+            "miiv": [
+                {
+                    "ids": 50912,
+                    "table": "labevents",
+                    "sub_var": "itemid"
+                }
+            ],
+            "mimic": [
+                {
+                    "ids": 50912,
+                    "table": "labevents",
+                    "sub_var": "itemid"
+                }
+            ],
+            "mimic_demo": [
+                {
+                    "ids": 50912,
+                    "table": "labevents",
+                    "sub_var": "itemid"
+                }
+            ],
+            "sic": [
+                {
+                    "ids": 367,
+                    "table": "laboratory",
+                    "sub_var": "LaboratoryID"
+                }
+            ]
+        }
+    },
+    "crp": {
+        "unit": "mg/L",
+        "min": 0,
+        "description": "C-reactive protein",
+        "omopid": 4208414,
+        "category": "chemistry",
+        "sources": {
+            "aumc": [
+                {
+                    "ids": [
+                        6825,
+                        10079
+                    ],
+                    "table": "numericitems",
+                    "sub_var": "itemid"
+                }
+            ],
+            "eicu": [
+                {
+                    "ids": "CRP",
+                    "table": "lab",
+                    "sub_var": "labname",
+                    "callback": "convert_unit(binary_op(`*`, 10), 'mg/L', 'mg/dl')"
+                }
+            ],
+            "eicu_demo": [
+                {
+                    "ids": "CRP",
+                    "table": "lab",
+                    "sub_var": "labname",
+                    "callback": "convert_unit(binary_op(`*`, 10), 'mg/L', 'mg/dl')"
+                }
+            ],
+            "hirid": [
+                {
+                    "ids": 20002200,
+                    "table": "observations",
+                    "sub_var": "variableid",
+                    "class": "hrd_itm"
+                }
+            ],
+            "miiv": [
+                {
+                    "ids": 50889,
+                    "table": "labevents",
+                    "sub_var": "itemid",
+                    "callback": "convert_unit(binary_op(`*`, 10), 'mg/L', 'mg/dl')"
+                }
+            ],
+            "mimic": [
+                {
+                    "ids": 50889,
+                    "table": "labevents",
+                    "sub_var": "itemid",
+                    "callback": "convert_unit(binary_op(`*`, 10), 'mg/L', 'mg/dl')"
+                }
+            ],
+            "mimic_demo": [
+                {
+                    "ids": 50889,
+                    "table": "labevents",
+                    "sub_var": "itemid",
+                    "callback": "convert_unit(binary_op(`*`, 10), 'mg/L', 'mg/dl')"
+                }
+            ]
+        }
+    },
+    "glu": {
+        "unit": "mg/dL",
+        "min": 0,
+        "max": 1000,
+        "description": "glucose",
+        "omopid": 4144235,
+        "category": "chemistry",
+        "sources": {
+            "aumc": [
+                {
+                    "ids": [
+                        6833,
+                        9557,
+                        9947
+                    ],
+                    "table": "numericitems",
+                    "sub_var": "itemid",
+                    "callback": "convert_unit(binary_op(`*`, 18.016), 'mg/dL')"
+                }
+            ],
+            "eicu": [
+                {
+                    "ids": "glucose",
+                    "table": "lab",
+                    "sub_var": "labname"
+                },
+                {
+                    "ids": "bedside glucose",
+                    "table": "lab",
+                    "sub_var": "labname"
+                }
+            ],
+            "eicu_demo": [
+                {
+                    "ids": "glucose",
+                    "table": "lab",
+                    "sub_var": "labname"
+                },
+                {
+                    "ids": "bedside glucose",
+                    "table": "lab",
+                    "sub_var": "labname"
+                }
+            ],
+            "hirid": [
+                {
+                    "ids": [
+                        20005110,
+                        24000523,
+                        24000585
+                    ],
+                    "table": "observations",
+                    "sub_var": "variableid",
+                    "callback": "convert_unit(binary_op(`*`, 18.016), 'mg/dL')",
+                    "class": "hrd_itm"
+                }
+            ],
+            "miiv": [
+                {
+                    "ids": [
+                        50809,
+                        50931
+                    ],
+                    "table": "labevents",
+                    "sub_var": "itemid"
+                }
+            ],
+            "mimic": [
+                {
+                    "ids": [
+                        50809,
+                        50931
+                    ],
+                    "table": "labevents",
+                    "sub_var": "itemid"
+                }
+            ],
+            "mimic_demo": [
+                {
+                    "ids": [
+                        50809,
+                        50931
+                    ],
+                    "table": "labevents",
+                    "sub_var": "itemid"
+                }
+            ],
+            "sic": [
+                {
+                    "ids": [
+                        348,
+                        656
+                    ],
+                    "table": "laboratory",
+                    "sub_var": "LaboratoryID"
+                }
+            ]
+        }
+    },
+    "k": {
+        "unit": [
+            "mEq/L",
+            "mmol/l"
+        ],
+        "min": 0,
+        "max": 10,
+        "description": "potassium",
+        "omopid": 4207483,
+        "category": "chemistry",
+        "sources": {
+            "aumc": [
+                {
+                    "ids": [
+                        6835,
+                        9556,
+                        9927,
+                        10285
+                    ],
+                    "table": "numericitems",
+                    "sub_var": "itemid"
+                }
+            ],
+            "eicu": [
+                {
+                    "ids": "potassium",
+                    "table": "lab",
+                    "sub_var": "labname"
+                }
+            ],
+            "eicu_demo": [
+                {
+                    "ids": "potassium",
+                    "table": "lab",
+                    "sub_var": "labname"
+                }
+            ],
+            "hirid": [
+                {
+                    "ids": [
+                        20000500,
+                        24000520,
+                        24000833,
+                        24000867
+                    ],
+                    "table": "observations",
+                    "sub_var": "variableid",
+                    "class": "hrd_itm"
+                }
+            ],
+            "miiv": [
+                {
+                    "ids": 50971,
+                    "table": "labevents",
+                    "sub_var": "itemid"
+                }
+            ],
+            "mimic": [
+                {
+                    "ids": 50971,
+                    "table": "labevents",
+                    "sub_var": "itemid"
+                }
+            ],
+            "mimic_demo": [
+                {
+                    "ids": 50971,
+                    "table": "labevents",
+                    "sub_var": "itemid"
+                }
+            ],
+            "sic": [
+                {
+                    "ids": [
+                        463,
+                        685
+                    ],
+                    "table": "laboratory",
+                    "sub_var": "LaboratoryID"
+                }
+            ]
+        }
+    },
+    "mg": {
+        "unit": "mg/dL",
+        "min": 0.5,
+        "max": 5,
+        "description": "magnesium",
+        "omopid": 4243005,
+        "category": "chemistry",
+        "sources": {
+            "aumc": [
+                {
+                    "ids": [
+                        6839,
+                        9952
+                    ],
+                    "table": "numericitems",
+                    "sub_var": "itemid",
+                    "callback": "convert_unit(binary_op(`*`, 2.431), 'mg/dL')"
+                }
+            ],
+            "eicu": [
+                {
+                    "ids": "magnesium",
+                    "table": "lab",
+                    "sub_var": "labname",
+                    "callback": "convert_unit(binary_op(`/`, 1.215), 'mg/dL', 'mEq/L')"
+                }
+            ],
+            "eicu_demo": [
+                {
+                    "ids": "magnesium",
+                    "table": "lab",
+                    "sub_var": "labname",
+                    "callback": "convert_unit(binary_op(`/`, 1.215), 'mg/dL', 'mEq/L')"
+                }
+            ],
+            "hirid": [
+                {
+                    "ids": 24000230,
+                    "table": "observations",
+                    "sub_var": "variableid",
+                    "callback": "convert_unit(binary_op(`*`, 2.431), 'mg/dL')",
+                    "class": "hrd_itm"
+                }
+            ],
+            "miiv": [
+                {
+                    "ids": 50960,
+                    "table": "labevents",
+                    "sub_var": "itemid"
+                }
+            ],
+            "mimic": [
+                {
+                    "ids": 50960,
+                    "table": "labevents",
+                    "sub_var": "itemid"
+                }
+            ],
+            "mimic_demo": [
+                {
+                    "ids": 50960,
+                    "table": "labevents",
+                    "sub_var": "itemid"
+                }
+            ],
+            "sic": [
+                {
+                    "ids": 468,
+                    "table": "laboratory",
+                    "sub_var": "LaboratoryID",
+                    "callback": "transform_fun(binary_op(`*`, 2.431))"
+                }
+            ]
+        }
+    },
+    "na": {
+        "unit": [
+            "mEq/L",
+            "mmol/l"
+        ],
+        "min": 110,
+        "max": 165,
+        "description": "sodium",
+        "omopid": 4208938,
+        "category": "chemistry",
+        "sources": {
+            "aumc": [
+                {
+                    "ids": [
+                        6840,
+                        9555,
+                        9924,
+                        10284
+                    ],
+                    "table": "numericitems",
+                    "sub_var": "itemid"
+                }
+            ],
+            "eicu": [
+                {
+                    "ids": "sodium",
+                    "table": "lab",
+                    "sub_var": "labname"
+                }
+            ],
+            "eicu_demo": [
+                {
+                    "ids": "sodium",
+                    "table": "lab",
+                    "sub_var": "labname"
+                }
+            ],
+            "hirid": [
+                {
+                    "ids": [
+                        20000400,
+                        24000519,
+                        24000658,
+                        24000835,
+                        24000866
+                    ],
+                    "table": "observations",
+                    "sub_var": "variableid",
+                    "class": "hrd_itm"
+                }
+            ],
+            "miiv": [
+                {
+                    "ids": 50983,
+                    "table": "labevents",
+                    "sub_var": "itemid"
+                }
+            ],
+            "mimic": [
+                {
+                    "ids": 50983,
+                    "table": "labevents",
+                    "sub_var": "itemid"
+                }
+            ],
+            "mimic_demo": [
+                {
+                    "ids": 50983,
+                    "table": "labevents",
+                    "sub_var": "itemid"
+                }
+            ],
+            "sic": [
+                {
+                    "ids": [
+                        469,
+                        686
+                    ],
+                    "table": "laboratory",
+                    "sub_var": "LaboratoryID"
+                }
+            ]
+        }
+    },
+    "phos": {
+        "unit": "mg/dL",
+        "min": 0,
+        "max": 40,
+        "description": "phosphate",
+        "omopid": 4017907,
+        "category": "chemistry",
+        "sources": {
+            "aumc": [
+                {
+                    "ids": [
+                        6828,
+                        9935
+                    ],
+                    "table": "numericitems",
+                    "sub_var": "itemid",
+                    "callback": "convert_unit(binary_op(`*`, 3.097521), 'mg/dL')"
+                }
+            ],
+            "eicu": [
+                {
+                    "ids": "phosphate",
+                    "table": "lab",
+                    "sub_var": "labname"
+                }
+            ],
+            "eicu_demo": [
+                {
+                    "ids": "phosphate",
+                    "table": "lab",
+                    "sub_var": "labname"
+                }
+            ],
+            "hirid": [
+                {
+                    "ids": 20002500,
+                    "table": "observations",
+                    "sub_var": "variableid",
+                    "callback": "convert_unit(binary_op(`*`, 3.097521), 'mg/dL')",
+                    "class": "hrd_itm"
+                }
+            ],
+            "miiv": [
+                {
+                    "ids": 50970,
+                    "table": "labevents",
+                    "sub_var": "itemid"
+                }
+            ],
+            "mimic": [
+                {
+                    "ids": 50970,
+                    "table": "labevents",
+                    "sub_var": "itemid"
+                }
+            ],
+            "mimic_demo": [
+                {
+                    "ids": 50970,
+                    "table": "labevents",
+                    "sub_var": "itemid"
+                }
+            ],
+            "sic": [
+                {
+                    "ids": 471,
+                    "table": "laboratory",
+                    "sub_var": "LaboratoryID",
+                    "callback": "transform_fun(binary_op(`*`, 3.097521))"
+                }
+            ]
+        }
+    },
+    "tnt": {
+        "unit": "ng/mL",
+        "min": 0,
+        "description": "troponin t",
+        "omopid": 4005525,
+        "category": "chemistry",
+        "sources": {
+            "aumc": [
+                {
+                    "ids": 10407,
+                    "table": "numericitems",
+                    "sub_var": "itemid"
+                }
+            ],
+            "eicu": [
+                {
+                    "ids": "troponin - T",
+                    "table": "lab",
+                    "sub_var": "labname"
+                }
+            ],
+            "eicu_demo": [
+                {
+                    "ids": "troponin - T",
+                    "table": "lab",
+                    "sub_var": "labname"
+                }
+            ],
+            "hirid": [
+                {
+                    "ids": 24000806,
+                    "table": "observations",
+                    "sub_var": "variableid",
+                    "callback": "convert_unit(binary_op(`/`, 1000), 'ng/mL')",
+                    "class": "hrd_itm"
+                }
+            ],
+            "miiv": [
+                {
+                    "ids": 51003,
+                    "table": "labevents",
+                    "sub_var": "itemid"
+                }
+            ],
+            "mimic": [
+                {
+                    "ids": 51003,
+                    "table": "labevents",
+                    "sub_var": "itemid"
+                }
+            ],
+            "mimic_demo": [
+                {
+                    "ids": 51003,
+                    "table": "labevents",
+                    "sub_var": "itemid"
+                }
+            ],
+            "sic": [
+                {
+                    "ids": 481,
+                    "table": "laboratory",
+                    "sub_var": "LaboratoryID",
+                    "callback": "transform_fun(binary_op(`/`, 1000))"
+                }
+            ]
+        }
+    },
+    "tri": {
+        "unit": "ng/mL",
+        "min": 0,
+        "description": "troponin I",
+        "omopid": 4007805,
+        "category": "chemistry",
+        "sources": {
+            "eicu": [
+                {
+                    "ids": "troponin - I",
+                    "table": "lab",
+                    "sub_var": "labname"
+                }
+            ],
+            "eicu_demo": [
+                {
+                    "ids": "troponin - I",
+                    "table": "lab",
+                    "sub_var": "labname"
+                }
+            ],
+            "miiv": [
+                {
+                    "ids": 51002,
+                    "table": "labevents",
+                    "sub_var": "itemid"
+                }
+            ],
+            "mimic": [
+                {
+                    "ids": 51002,
+                    "table": "labevents",
+                    "sub_var": "itemid"
+                }
+            ],
+            "mimic_demo": [
+                {
+                    "ids": 51002,
+                    "table": "labevents",
+                    "sub_var": "itemid"
+                }
+            ],
+            "sic": [
+                {
+                    "ids": 270,
+                    "table": "laboratory",
+                    "sub_var": "LaboratoryID"
+                }
+            ]
+        }
+    }
+}
