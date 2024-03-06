@@ -1,0 +1,32 @@
+name: ricu-test
+channels:
+  - nodefaults
+  - conda-forge
+dependencies:
+  - r-base
+  - r-data.table
+  - r-curl
+  - r-assertthat
+  - r-fst
+  - r-readr
+  - r-jsonlite
+  - r-prt>=0.1.2
+  - r-tibble
+  - r-backports
+  - r-rlang
+  - r-vctrs
+  - r-cli>=2.1.0
+  - r-fansi
+  - r-openssl
+  - r-units
+  # optional
+  - r-rticles
+  - r-forestmodel
+  - r-ggplot2
+  - r-survival
+  - r-kableExtra
+  - r-magick
+  - r-cowplot
+  - r-knitr
+  - r-pdftools
+  - r-covr
