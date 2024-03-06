@@ -76,7 +76,8 @@
                     "aux_time": "charttime",
                     "class": "col_itm"
                 }
-            ]
+            ],
+            "picdb": []
         }
     }
 }

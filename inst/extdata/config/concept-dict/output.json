@@ -150,6 +150,15 @@
                     "table": "data_float_h",
                     "sub_var": "DataID"
                 }
+            ],
+            "picdb": [
+                {
+                    "table": "chartevents",
+                    "ids": [
+                        "1008"
+                    ],
+                    "sub_var": "itemid"
+                }
             ]
         }
     },

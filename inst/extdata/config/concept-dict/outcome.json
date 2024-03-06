@@ -70,7 +70,8 @@
                     "callback": "transform_fun(comp_na(`==`, 1L))",
                     "class": "col_itm"
                 }
-            ]
+            ],
+            "picdb": []
         }
     },
     "dopa60": {
@@ -137,7 +138,8 @@
                     "win_type": "hadm",
                     "class": "fun_itm"
                 }
-            ]
+            ],
+            "picdb": []
         }
     },
     "los_icu": {
@@ -195,7 +197,8 @@
                     "win_type": "icustay",
                     "class": "fun_itm"
                 }
-            ]
+            ],
+            "picdb": []
         }
     },
     "mews": {

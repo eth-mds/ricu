@@ -84,6 +84,8 @@
                     "table": "data_float_h",
                     "sub_var": "DataID"
                 }
+            ],
+            "picdb": [
             ]
         }
     },
@@ -151,6 +153,8 @@
                     "table": "chartevents",
                     "sub_var": "itemid"
                 }
+            ],
+            "picdb": [
             ]
         }
     },
@@ -226,6 +230,15 @@
                     "ids": 708,
                     "table": "data_float_h",
                     "sub_var": "DataID"
+                }
+            ],
+            "picdb": [
+                {
+                    "table": "chartevents",
+                    "ids": [
+                        "1003"
+                    ],
+                    "sub_var": "itemid"
                 }
             ]
         }
@@ -333,6 +346,8 @@
                     "table": "data_float_h",
                     "sub_var": "DataID"
                 }
+            ],
+            "picdb": [
             ]
         }
     },
@@ -421,6 +436,8 @@
                     "table": "data_float_h",
                     "sub_var": "DataID"
                 }
+            ],
+            "picdb": [
             ]
         }
     },
@@ -537,6 +554,22 @@
                     "ids": 709,
                     "table": "data_float_h",
                     "sub_var": "DataID"
+                }
+            ],
+            "picdb": [
+                {
+                    "table": "chartevents",
+                    "ids": [
+                        "1001"
+                    ],
+                    "sub_var": "itemid"
+                },
+                {
+                    "table": "labevents",
+                    "ids": [
+                        5253
+                    ],
+                    "sub_var": "itemid"
                 }
             ]
         }

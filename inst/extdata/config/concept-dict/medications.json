@@ -437,7 +437,8 @@
                     "sub_var": "DrugID",
                     "callback": "transform_fun(set_val(TRUE))"
                 }
-            ]
+            ],
+            "picdb": []
         }
     },
     "adh_rate": {
@@ -529,7 +530,8 @@
                     "stop_var": "endtime",
                     "callback": "combine_callbacks(\n               convert_unit(binary_op(`/`, 60), 'units/min', 'units/hour'),\n               mimic_rate_mv\n             )"
                 }
-            ]
+            ],
+            "picdb": []
         }
     },
     "cort": {
@@ -577,7 +579,8 @@
                     "sub_var": "pharmaid",
                     "callback": "transform_fun(set_val(TRUE))"
                 }
-            ]
+            ],
+            "picdb": []
         }
     },
     "dex": {
@@ -733,7 +736,8 @@
                     "interval": "00:01:00",
                     "callback": "combine_callbacks(\n               grp_mount_to_rate(mins(1L), hours(1L)),\n               dex_to_10(30017L, 2)\n             )"
                 }
-            ]
+            ],
+            "picdb": []
         },
         "class": [
             "unt_cncpt",
@@ -842,7 +846,8 @@
                     "stop_var": "OffsetDrugEnd",
                     "callback": "sic_dur"
                 }
-            ]
+            ],
+            "picdb": []
         }
     },
     "dobu_rate": {
@@ -952,7 +957,8 @@
                     "stop_var": "OffsetDrugEnd",
                     "callback": "sic_rate_kg"
                 }
-            ]
+            ],
+            "picdb": []
         }
     },
     "dobu60": {
@@ -1059,7 +1065,8 @@
                     "stop_var": "OffsetDrugEnd",
                     "callback": "sic_dur"
                 }
-            ]
+            ],
+            "picdb": []
         }
     },
     "dopa_rate": {
@@ -1162,7 +1169,8 @@
                     "stop_var": "OffsetDrugEnd",
                     "callback": "sic_rate_kg"
                 }
-            ]
+            ],
+            "picdb": []
         }
     },
     "epi_dur": {
@@ -1275,7 +1283,8 @@
                     "stop_var": "OffsetDrugEnd",
                     "callback": "sic_dur"
                 }
-            ]
+            ],
+            "picdb": []
         }
     },
     "epi_rate": {
@@ -1393,7 +1402,8 @@
                     "stop_var": "OffsetDrugEnd",
                     "callback": "sic_rate_kg"
                 }
-            ]
+            ],
+            "picdb": []
         }
     },
     "ins": {
@@ -1494,6 +1504,15 @@
                     "val_var": "amount",
                     "end_var": "endtime",
                     "callback": "distribute_amount"
+                }
+            ],
+            "picdb": [
+                {
+                    "table": "labevents",
+                    "ids": [
+                        6172
+                    ],
+                    "sub_var": "itemid"
                 }
             ]
         }
@@ -1605,7 +1624,8 @@
                     "stop_var": "OffsetDrugEnd",
                     "callback": "sic_dur"
                 }
-            ]
+            ],
+            "picdb": []
         }
     },
     "norepi_equiv": {
@@ -1733,7 +1753,8 @@
                     "stop_var": "OffsetDrugEnd",
                     "callback": "sic_rate_kg"
                 }
-            ]
+            ],
+            "picdb": []
         }
     },
     "phn_rate": {
@@ -1816,7 +1837,8 @@
                     "stop_var": "endtime",
                     "callback": "mimic_rate_mv"
                 }
-            ]
+            ],
+            "picdb": []
         }
     },
     "vaso_ind": {

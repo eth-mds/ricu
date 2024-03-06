@@ -57,7 +57,8 @@
                     "callback": "apply_map(\n            c(MED   = 'med',   SURG  = 'surg', CMED = 'med',  CSURG  = 'surg',\n              VSURG = 'surg',  NSURG = 'surg', NB   = 'other', NMED  = 'med',\n              ORTHO = 'surg',  TRAUM = 'surg', OMED = 'med',   GU    = 'other',\n              NBB   = 'other', TSURG = 'surg', GYN  = 'other', PSURG = 'surg',\n              OBS   = 'other', ENT   = 'surg', DENT = 'surg',  PSYCH = 'other')\n          )",
                     "class": "col_itm"
                 }
-            ]
+            ],
+            "picdb": []
         }
     },
     "age": {
@@ -129,7 +130,8 @@
                     "val_var": "AgeOnAdmission",
                     "class": "col_itm"
                 }
-            ]
+            ],
+            "picdb": []
         }
     },
     "bmi": {
@@ -229,6 +231,22 @@
                     "val_var": "HeightOnAdmission",
                     "class": "col_itm"
                 }
+            ],
+            "picdb": [
+                {
+                    "table": "chartevents",
+                    "ids": [
+                        "1013"
+                    ],
+                    "sub_var": "itemid"
+                },
+                {
+                    "table": "labevents",
+                    "ids": [
+                        6322
+                    ],
+                    "sub_var": "itemid"
+                }
             ]
         }
     },
@@ -304,7 +322,8 @@
                     "callback": "apply_map(c(`735` = 'Male', `736` = 'Female'))",
                     "class": "col_itm"
                 }
-            ]
+            ],
+            "picdb": []
         }
     },
     "weight": {
@@ -381,6 +400,22 @@
                     "val_var": "WeightOnAdmission",
                     "class": "col_itm",
                     "callback": "transform_fun(binary_op(`/`, 1000))"
+                }
+            ],
+            "picdb": [
+                {
+                    "table": "chartevents",
+                    "ids": [
+                        "1014"
+                    ],
+                    "sub_var": "itemid"
+                },
+                {
+                    "table": "labevents",
+                    "ids": [
+                        6323
+                    ],
+                    "sub_var": "itemid"
                 }
             ]
         }

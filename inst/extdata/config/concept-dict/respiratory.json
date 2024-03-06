@@ -65,7 +65,8 @@
                     "target": "ts_tbl",
                     "callback": "combine_callbacks(\n               transform_fun(set_val(TRUE)),\n               ts_to_win_tbl(mins(1L))\n             )"
                 }
-            ]
+            ],
+            "picdb": []
         }
     },
     "mech_vent": {
@@ -114,7 +115,8 @@
                     "dur_var": "endtime",
                     "callback": "apply_map(c(`225792` = 'invasive',\n                                     `225794` = 'noninvasive'),\n                                   var = 'sub_var')"
                 }
-            ]
+            ],
+            "picdb": []
         }
     },
     "o2sat": {
@@ -222,6 +224,22 @@
                     "ids": 710,
                     "table": "data_float_h",
                     "sub_var": "DataID"
+                }
+            ],
+            "picdb": [
+                {
+                    "table": "chartevents",
+                    "ids": [
+                        "1006"
+                    ],
+                    "sub_var": "itemid"
+                },
+                {
+                    "table": "labevents",
+                    "ids": [
+                        5252
+                    ],
+                    "sub_var": "itemid"
                 }
             ]
         }
@@ -332,6 +350,15 @@
                     "ids": 719,
                     "table": "data_float_h",
                     "sub_var": "DataID"
+                }
+            ],
+            "picdb": [
+                {
+                    "table": "chartevents",
+                    "ids": [
+                        "1004"
+                    ],
+                    "sub_var": "itemid"
                 }
             ]
         }
@@ -459,7 +486,8 @@
                     "sub_var": "itemid",
                     "callback": "transform_fun(set_val(TRUE))"
                 }
-            ]
+            ],
+            "picdb": []
         }
     },
     "vent_ind": {
@@ -682,7 +710,8 @@
                     "sub_var": "itemid",
                     "callback": "transform_fun(set_val(TRUE))"
                 }
-            ]
+            ],
+            "picdb": []
         }
     }
 }
