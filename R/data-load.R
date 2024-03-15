@@ -131,7 +131,7 @@ load_difftime.eicu_tbl <- function(x, rows, cols = colnames(x),
 
   warn_dots(...)
 
-  load_eiau(x, {{ rows }}, cols, id_hint, time_vars, min_as_mins)
+  load_eisi(x, {{ rows }}, cols, id_hint, time_vars, min_as_mins)
 }
 
 #' @rdname load_src
@@ -153,7 +153,7 @@ load_difftime.aumc_tbl <- function(x, rows, cols = colnames(x),
 
   warn_dots(...)
 
-  load_eiau(x, {{ rows }}, cols, id_hint, time_vars, ms_as_mins)
+  load_au(x, {{ rows }}, cols, id_hint, time_vars)
 }
 
 #' @rdname load_src
@@ -175,7 +175,7 @@ load_difftime.sic_tbl <- function(x, rows, cols = colnames(x),
   
   sec_as_mins <- function(x) min_as_mins(as.integer(x / 60))
   warn_dots(...)
-  load_eiau(x, {{ rows }}, cols, id_hint, time_vars, sec_as_mins)
+  load_eisi(x, {{ rows }}, cols, id_hint, time_vars, sec_as_mins)
 }
 
 #' @rdname load_src
@@ -237,7 +237,7 @@ load_mihi <- function(x, rows, cols, id_hint, time_vars) {
   as_id_tbl(dat, id_vars = id_col, by_ref = TRUE)
 }
 
-load_eiau <- function(x, rows, cols, id_hint, time_vars, mins_fun) {
+load_eisi <- function(x, rows, cols, id_hint, time_vars, mins_fun) {
 
   id_col <- resolve_id_hint(x, id_hint)
 
@@ -258,6 +258,35 @@ load_eiau <- function(x, rows, cols, id_hint, time_vars, mins_fun) {
 
   as_id_tbl(dat, id_vars = id_col, by_ref = TRUE)
 }
+
+load_au <- function(x, rows, cols, id_hint, time_vars) {
+  dt_round_min <- function(x, y) round_to(ms_as_mins(x - y))
+  
+  id_col <- resolve_id_hint(x, id_hint)
+  
+  assert_that(is.string(id_col), id_col %in% colnames(x))
+  
+  if (!id_col %in% cols) {
+    cols <- c(cols, id_col)
+  }
+  
+  time_vars <- intersect(time_vars, cols)
+  
+  dat <- load_src(x, {{ rows }}, cols)
+  
+  if (length(time_vars)) {
+    
+    dat <- merge(dat, id_origin(x, id_col, origin_name = "origin"),
+                 by = id_col)
+    dat <- dat[,
+               c(time_vars) := lapply(.SD, dt_round_min, get("origin")),
+               .SDcols = time_vars
+    ]
+    dat <- dat[, c("origin") := NULL]
+  }
+  
+  as_id_tbl(dat, id_vars = id_col, by_ref = TRUE)
+}  
 
 #' Load data as `id_tbl` or `ts_tbl` objects
 #'
