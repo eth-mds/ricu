@@ -643,11 +643,11 @@ padded_capped_diff <- function(x, final, max) {
 trunc_time <- function(x, min, max) {
 
   if (not_null(min)) {
-    replace(x, x < min, min)
+    x <- replace(x, x < min, min)
   }
 
   if (not_null(max)) {
-    replace(x, x > max, max)
+    x <- replace(x, x > max, max)
   }
 
   x
