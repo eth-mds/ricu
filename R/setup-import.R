@@ -184,6 +184,9 @@ import_tbl.tbl_cfg <- function(x, data_dir = src_data_dir(x), progress = NULL,
 
   assert_that(is.dir(data_dir), is.flag(cleanup))
 
+  # Print number of parts
+  print(paste("[import_tbl] Import table ", tbl_name(x)))
+  print(paste("[import_tbl] Number of parts: ", n_part(x)))
   if (n_part(x) > 1L) {
     partition_table(x, data_dir, progress, ...)
   } else {
@@ -257,6 +260,8 @@ partition_table <- function(x, dir, progress = NULL, chunk_length = 10 ^ 7,
   file <- file.path(dir, rawf)
   name <- tbl_name(x)
 
+  callback <- tbl_callback(x)
+
   exp_row <- n_row(x)
 
   if (is.na(exp_row)) {
@@ -267,17 +272,19 @@ partition_table <- function(x, dir, progress = NULL, chunk_length = 10 ^ 7,
 
   if (length(file) == 1L) {
 
-    callback <- function(x, pos, ...) {
-      report_problems(x, rawf)
-      split_write(x, pfun, tempdir, ((pos - 1L) / chunk_length) + 1L,
-                  progress, name, tick)
-    }
+    process_chunk <- function(x, pos, ...) {
+         report_problems(x, rawf)
+         split_write(callback(x), pfun, tempdir, ((pos - 1L) / chunk_length) + 1L,
+                     progress, name, tick)
+     }
 
     if (grepl("\\.gz$", file)) {
+      print("[partition_table] gunzipping")
       file <- gunzip(file, tempdir)
     }
 
-    readr::read_csv_chunked(file, callback, chunk_length, col_types = spec,
+    print(paste("[partition_table] reading csv chunked with chunk_length: ", chunk_length))
+    readr::read_csv_chunked(file, process_chunk, chunk_length, col_types = spec,
                             progress = FALSE, ...)
 
     if (is.na(exp_row)) {
@@ -291,7 +298,7 @@ partition_table <- function(x, dir, progress = NULL, chunk_length = 10 ^ 7,
       dat <- readr::read_csv(file[i], col_types = spec, progress = FALSE, ...)
       report_problems(dat, rawf[i])
 
-      split_write(dat, pfun, tempdir, i, progress, name, tick)
+      split_write(callback(data), pfun, tempdir, i, progress, name, tick)
     }
   }
 
@@ -355,6 +362,7 @@ csv_to_fst <- function(x, dir, progress = NULL, ...) {
   raw <- raw_file_name(x)
   src <- file.path(dir, raw)
   dst <- file.path(dir, fst_file_name(x))
+  callback <- tbl_callback(x)
 
   assert_that(length(x) == 1L, length(src) == 1L, length(dst) == 1L)
 
@@ -364,6 +372,7 @@ csv_to_fst <- function(x, dir, progress = NULL, ...) {
 
   report_problems(dat, raw)
 
+  dat <- callback(dat)
   dat <- rename_cols(setDT(dat), ricu_cols(x), orig_cols(x))
 
   fst::write_fst(dat, dst, compress = 100L)
@@ -422,24 +431,24 @@ report_problems <- function(x, file) {
   invisible(NULL)
 }
 
-report_problems <- function(x, file) {
+# report_problems <- function(x, file) {
 
-  prob_to_str <- function(x) {
-    paste0("[", x[1L], ", ", x[2L], "]: got '", x[4L], "' instead of ", x[3L])
-  }
+#   prob_to_str <- function(x) {
+#     paste0("[", x[1L], ", ", x[2L], "]: got '", x[4L], "' instead of ", x[3L])
+#   }
 
-  probs <- readr::problems(x)
+#   probs <- readr::problems(x)
 
-  if (nrow(probs)) {
+#   if (nrow(probs)) {
 
-    probs <- bullet(apply(probs, 1L, prob_to_str))
+#     probs <- bullet(apply(probs, 1L, prob_to_str))
 
-    warn_ricu(
-      c("Encountered parsing problems for file {basename(file)}:", probs),
-      class = "csv_parsing_error", indent = c(0L, rep_along(2L, probs)),
-      exdent = c(0L, rep_along(2L, probs))
-    )
-  }
+#     warn_ricu(
+#       c("Encountered parsing problems for file {basename(file)}:", probs),
+#       class = "csv_parsing_error", indent = c(0L, rep_along(2L, probs)),
+#       exdent = c(0L, rep_along(2L, probs))
+#     )
+#   }
 
-  invisible(NULL)
-}
+#   invisible(NULL)
+# }
