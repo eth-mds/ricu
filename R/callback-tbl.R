@@ -23,6 +23,6 @@ sic_data_float_h <- function(dat, ...) {
    ]
    dat[rawdata_present == FALSE, rawdata := Val] # Fix measurements that only have one 
    dat[, rawdata_present := NULL]
-   print(dat)
-   dat
+
+   return(dat)
 }
