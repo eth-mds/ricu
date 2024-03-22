@@ -131,7 +131,14 @@
                     "class": "col_itm"
                 }
             ],
-            "picdb": []
+            "picdb": [
+                {
+                    "table": "patients",
+                    "val_var": "dob",
+                    "callback": "transform_fun(mimic_age)",
+                    "class": "col_itm"
+                }
+            ]
         }
     },
     "bmi": {
@@ -236,14 +243,7 @@
                 {
                     "table": "chartevents",
                     "ids": [
-                        "1013"
-                    ],
-                    "sub_var": "itemid"
-                },
-                {
-                    "table": "labevents",
-                    "ids": [
-                        6322
+                        1013
                     ],
                     "sub_var": "itemid"
                 }
@@ -323,7 +323,14 @@
                     "class": "col_itm"
                 }
             ],
-            "picdb": []
+            "picdb": [
+                {
+                    "table": "patients",
+                    "val_var": "gender",
+                    "class": "col_itm",
+                    "callback": "apply_map(c(M = 'Male', F = 'Female'))"
+                }
+            ]
         }
     },
     "weight": {
@@ -406,14 +413,7 @@
                 {
                     "table": "chartevents",
                     "ids": [
-                        "1014"
-                    ],
-                    "sub_var": "itemid"
-                },
-                {
-                    "table": "labevents",
-                    "ids": [
-                        6323
+                        1014
                     ],
                     "sub_var": "itemid"
                 }

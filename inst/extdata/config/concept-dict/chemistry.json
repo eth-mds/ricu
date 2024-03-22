@@ -73,9 +73,11 @@
                 {
                     "table": "labevents",
                     "ids": [
-                        5024
+                        5024,
+                        6465
                     ],
-                    "sub_var": "itemid"
+                    "sub_var": "itemid",
+                    "callback": "convert_unit(binary_op(`*`, 0.1), 'g/dL')"
                 }
             ]
         }
@@ -231,7 +233,13 @@
                     "sub_var": "LaboratoryID"
                 }
             ],
-            "picdb": []
+            "picdb": [
+                {
+                    "ids": [5026, 5195],
+                    "table": "labevents",
+                    "sub_var": "itemid"
+                }
+            ]
         }
     },
     "ast": {
@@ -304,7 +312,15 @@
                     "sub_var": "LaboratoryID"
                 }
             ],
-            "picdb": []
+            "picdb": [
+                {
+                    "table": "labevents",
+                    "ids": [
+                        5031
+                    ],
+                    "sub_var": "itemid"
+                }
+            ]
         }
     },
     "bicar": {
@@ -459,7 +475,16 @@
                     "sub_var": "LaboratoryID"
                 }
             ],
-            "picdb": []
+            "picdb": [
+                {
+                    "table": "labevents",
+                    "ids": [
+                        5075
+                    ],
+                    "sub_var": "itemid",
+                    "callback": "convert_unit(binary_op(`*`, 0.058467), 'mg/dL')"
+                }
+            ]
         }
     },
     "bili_dir": {
@@ -529,7 +554,16 @@
                     "sub_var": "LaboratoryID"
                 }
             ],
-            "picdb": []
+            "picdb": [
+                {
+                    "table": "labevents",
+                    "ids": [
+                        5042
+                    ],
+                    "sub_var": "itemid",
+                    "callback": "convert_unit(binary_op(`*`, 0.058467), 'mg/dL')"
+                }
+            ]
         }
     },
     "bun": {
@@ -603,7 +637,16 @@
                     "callback": "transform_fun(binary_op(`*`, 2.14))"
                 }
             ],
-            "picdb": []
+            "picdb": [
+                {
+                    "table": "labevents",
+                    "ids": [
+                        5224
+                    ],
+                    "sub_var": "itemid",
+                    "callback": "convert_unit(binary_op(`*`, 2.8), 'mg/dL')"
+                }
+            ]
         }
     },
     "ca": {
@@ -679,7 +722,14 @@
                     "callback": "transform_fun(binary_op(`*`, 4.008))"
                 }
             ],
-            "picdb": []
+            "picdb": [
+                {
+                    "ids": 5034,
+                    "table": "labevents",
+                    "sub_var": "itemid",
+                    "callback": "convert_unit(binary_op(`*`, 4), 'mg/dL', 'mmol/L')"
+                }
+            ]
         }
     },
     "ck": {
@@ -752,7 +802,15 @@
                     "sub_var": "LaboratoryID"
                 }
             ],
-            "picdb": []
+            "picdb": [
+                {
+                    "table": "labevents",
+                    "ids": [
+                        5038
+                    ],
+                    "sub_var": "itemid"
+                }
+            ]
         }
     },
     "ckmb": {
@@ -819,7 +877,16 @@
                     "sub_var": "LaboratoryID"
                 }
             ],
-            "picdb": []
+            "picdb": [
+                {
+                    "table": "labevents",
+                    "ids": [
+                        5039
+                    ],
+                    "sub_var": "itemid",
+                    "callback": "convert_unit(binary_op(`*`, 0.1893), 'ng/mL', 'U/L')"
+                }
+            ]
         }
     },
     "cl": {
@@ -896,7 +963,15 @@
                     "sub_var": "LaboratoryID"
                 }
             ],
-            "picdb": []
+            "picdb": [
+                {
+                    "table": "labevents",
+                    "ids": [
+                        5218
+                    ],
+                    "sub_var": "itemid"
+                }
+            ]
         }
     },
     "crea": {
@@ -978,7 +1053,8 @@
                         5041,
                         6954
                     ],
-                    "sub_var": "itemid"
+                    "sub_var": "itemid",
+                    "callback": "convert_unit(binary_op(`*`, 0.011312), 'mg/dL')"
                 }
             ]
         }
@@ -1164,7 +1240,8 @@
                         5047,
                         5223
                     ],
-                    "sub_var": "itemid"
+                    "sub_var": "itemid",
+                    "callback": "convert_unit(binary_op(`*`, 18.016), 'mg/dL')"
                 }
             ]
         }
@@ -1340,7 +1417,8 @@
                     "ids": [
                         5059
                     ],
-                    "sub_var": "itemid"
+                    "sub_var": "itemid",
+                    "callback": "convert_unit(binary_op(`*`, 2.431), 'mg/dL')"
                 }
             ]
         }
@@ -1431,7 +1509,7 @@
                 {
                     "table": "labevents",
                     "ids": [
-                        5062
+                        5230
                     ],
                     "sub_var": "itemid"
                 }
@@ -1515,7 +1593,8 @@
                     "ids": [
                         5072
                     ],
-                    "sub_var": "itemid"
+                    "sub_var": "itemid",
+                    "callback": "convert_unit(binary_op(`*`, 3.097521), 'mg/dL')"
                 }
             ]
         }
@@ -1592,7 +1671,17 @@
                     "ids": [
                         6525
                     ],
-                    "sub_var": "itemid"
+                    "sub_var": "itemid",
+                    "callback": "convert_unit(binary_op(`/`, 1000), 'ng/mL', 'pg/m')"
+                },
+                {
+                    "table": "labevents",
+                    "ids": [
+                        6525
+                    ],
+                    "sub_var": "itemid",
+                    "val_var": "value",
+                    "callback": "apply_map(c(`<0.003` = 0.003))"
                 }
             ]
         }

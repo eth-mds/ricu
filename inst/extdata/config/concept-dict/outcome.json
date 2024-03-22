@@ -71,7 +71,15 @@
                     "class": "col_itm"
                 }
             ],
-            "picdb": []
+            "picdb": [
+                {
+                    "table": "admissions",
+                    "index_var": "deathtime",
+                    "val_var": "hospital_expire_flag",
+                    "callback": "transform_fun(comp_na(`==`, 1L))",
+                    "class": "col_itm"
+                }
+            ]
         }
     },
     "dopa60": {
