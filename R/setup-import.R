@@ -221,15 +221,20 @@ merge_fst_chunks <- function(src, targ, new, old, sort_col, prog, nme, tick) {
 
   fst::write_fst(dat, new_file, compress = 100L)
 
-  progress_tick(paste(nme, "part", part_no), prog,
-                coalesce(tick, floor(nrow(dat) / 2)))
+  # progress_tick(paste(nme, "part", part_no), prog,
+  #               coalesce(tick, floor(nrow(dat) / 2)))
 
   invisible(NULL)
 }
 
-split_write <- function(x, part_fun, dir, chunk_no, prog, nme, tick) {
+split_write <- function(x, part_fun, dir, chunk_no, prog, nme, tick, callback = NULL) {
 
   n_row <- nrow(x)
+
+  if (!is.null(callback)) {
+    print("[split_write] apply callback")
+    x <- callback(x)
+  }
 
   x <- split(x, part_fun(x))
 
@@ -241,16 +246,21 @@ split_write <- function(x, part_fun, dir, chunk_no, prog, nme, tick) {
 
   Map(fst::write_fst, x, tmp_nme)
 
-  progress_tick(paste(nme, "chunk", chunk_no), prog,
-                coalesce(tick, floor(n_row / 2)))
+  # progress_tick(paste(nme, "chunk", chunk_no), prog,
+  #               coalesce(tick, floor(n_row / 2)))
 
   invisible(NULL)
 }
 
-partition_table <- function(x, dir, progress = NULL, chunk_length = 10 ^ 7,
+partition_table <- function(x, dir, progress = NULL, chunk_length = 10 ^ 7, tempdir = NULL,
                             ...) {
 
-  tempdir <- ensure_dirs(tempfile())
+  # tempdir <- ensure_dirs(tempfile())
+  if (is.null(tempdir)) {
+    # tempdir <- ensure_dirs(file.path(dir, "tempdir"))
+    tempdir <- ensure_dirs(tempfile())
+  }
+  print(paste("[partition_table] tempdir: ", tempdir))
   on.exit(unlink(tempdir, recursive = TRUE))
 
   spec <- col_spec(x)
@@ -274,8 +284,8 @@ partition_table <- function(x, dir, progress = NULL, chunk_length = 10 ^ 7,
 
     process_chunk <- function(x, pos, ...) {
          report_problems(x, rawf)
-         split_write(callback(x), pfun, tempdir, ((pos - 1L) / chunk_length) + 1L,
-                     progress, name, tick)
+         split_write(x, pfun, tempdir, ((pos - 1L) / chunk_length) + 1L,
+                     progress, name, tick, callback)
      }
 
     if (grepl("\\.gz$", file)) {
@@ -310,6 +320,7 @@ partition_table <- function(x, dir, progress = NULL, chunk_length = 10 ^ 7,
     tick <- 1L
   }
 
+  print(paste("[partition_table] merge_fst_chunks"))
   for (src_dir in file.path(tempdir, paste0("part_", seq_len(n_part(x))))) {
     merge_fst_chunks(src_dir, targ, newc, oldc, pcol, progress, name, tick)
   }
@@ -357,7 +368,7 @@ gunzip <- function(file, exdir) {
   return(dest)
 }
 
-csv_to_fst <- function(x, dir, progress = NULL, ...) {
+csv_to_fst <- function(x, dir, progress = NULL, tempdir = NULL, ...) {
 
   raw <- raw_file_name(x)
   src <- file.path(dir, raw)
