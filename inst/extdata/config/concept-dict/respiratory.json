@@ -223,7 +223,8 @@
                 {
                     "ids": 710,
                     "table": "data_float_h",
-                    "sub_var": "DataID"
+                    "sub_var": "dataid",
+                    "class": "sic_itm"
                 }
             ],
             "picdb": [
@@ -349,7 +350,8 @@
                 {
                     "ids": 719,
                     "table": "data_float_h",
-                    "sub_var": "DataID"
+                    "sub_var": "dataid",
+                    "class": "sic_itm"
                 }
             ],
             "picdb": [

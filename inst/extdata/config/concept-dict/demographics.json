@@ -127,11 +127,18 @@
             "sic": [
                 {
                     "table": "cases",
-                    "val_var": "AgeOnAdmission",
+                    "val_var": "ageonadmission",
                     "class": "col_itm"
                 }
             ],
-            "picdb": []
+            "picdb": [
+                {
+                    "table": "patients",
+                    "val_var": "dob",
+                    "callback": "transform_fun(mimic_age)",
+                    "class": "col_itm"
+                }
+            ]
         }
     },
     "bmi": {
@@ -228,7 +235,7 @@
             "sic": [
                 {
                     "table": "cases",
-                    "val_var": "HeightOnAdmission",
+                    "val_var": "heightonadmission",
                     "class": "col_itm"
                 }
             ],
@@ -236,14 +243,7 @@
                 {
                     "table": "chartevents",
                     "ids": [
-                        "1013"
-                    ],
-                    "sub_var": "itemid"
-                },
-                {
-                    "table": "labevents",
-                    "ids": [
-                        6322
+                        1013
                     ],
                     "sub_var": "itemid"
                 }
@@ -317,13 +317,20 @@
             ],
             "sic": [
                 {
-                    "table": "cases",
-                    "val_var": "Sex",
-                    "callback": "apply_map(c(`735` = 'Male', `736` = 'Female'))",
-                    "class": "col_itm"
+                  "table": "cases",
+                  "val_var": "sex",
+                  "class": "col_itm",
+                  "callback": "transform_fun(sic_sex)"
                 }
             ],
-            "picdb": []
+            "picdb": [
+                {
+                    "table": "patients",
+                    "val_var": "gender",
+                    "class": "col_itm",
+                    "callback": "apply_map(c(M = 'Male', F = 'Female'))"
+                }
+            ]
         }
     },
     "weight": {
@@ -396,24 +403,17 @@
             ],
             "sic": [
                 {
-                    "table": "cases",
-                    "val_var": "WeightOnAdmission",
-                    "class": "col_itm",
-                    "callback": "transform_fun(binary_op(`/`, 1000))"
+                  "table": "cases",
+                  "val_var": "weightonadmission",
+                  "class": "col_itm",
+                  "callback": "transform_fun(binary_op(`/`, 1000))"
                 }
             ],
             "picdb": [
                 {
                     "table": "chartevents",
                     "ids": [
-                        "1014"
-                    ],
-                    "sub_var": "itemid"
-                },
-                {
-                    "table": "labevents",
-                    "ids": [
-                        6323
+                        1014
                     ],
                     "sub_var": "itemid"
                 }

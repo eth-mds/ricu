@@ -43,6 +43,25 @@ mimic_sampling <- function(x, val_var, aux_time, ...) {
   set(x, j = val_var, value = !is.na(x[[val_var]]))
 }
 
+picdb_sampling <- function(x, val_var, aux_time, ...) {
+  x <- combine_date_time(x, aux_time, hours(12L))
+
+  # These identifiers indicate that the culture showed no growth
+  # of the respective organism
+  no_growth_identifiers <- c('MIC1008', 'MIC2123', 'MIC2287', 'MIC2291', 'MIC2293',
+    'MIC2370', 'MIC2408', 'MIC2421', 'MIC575',
+    'MIC585', 'MIC593', 'MIC629', 'MIC631',
+    'MIC635', 'MIC637', 'MIC645', 'MIC648',
+    'MIC874', 'MIC941', 'MIC979'
+  )
+
+  # Assign:
+  # - 0 if NA or in no_growth_identifiers
+  # - 1 otherwise, indicating growth
+  bool_value <- !is.na(x[[val_var]]) & !(x[[val_var]] %in% no_growth_identifiers)
+  set(x, j = val_var, value = bool_value)
+}
+
 #' Item callback utilities
 #'
 #' For concept loading, item callback functions are used in order to handle
@@ -193,6 +212,16 @@ mimic_age <- function(x) {
 }
 
 eicu_age <- function(x) as.numeric(ifelse(x == "> 89", 90, x))
+
+sic_sex <- function(x) {
+  ifelse(
+    x == 735, 
+    "Male",
+    ifelse(x == 736, 
+            "Female",
+            NA_character_
+  ))
+}
 
 hirid_death <- function(x, val_var, sub_var, env, ...) {
 
@@ -610,17 +639,23 @@ aumc_rate_units <- function(mcg_to_units) {
 }
 
 sic_dur <- function (x, val_var, stop_var, grp_var = NULL, ...) {
-  
   calc_dur(x, val_var, index_var(x), stop_var, grp_var)
 }
 
-sic_rate_kg <- function (x, val_var, stop_var, env, ...) {
-  
-  res <- add_weight(x, env, "weight")
-  wgh_var <- "weight"
-  res[, c(val_var) := get(val_var) * 10^3 / get(wgh_var)]
-  expand(res, index_var(x), stop_var, keep_vars = c(id_vars(x), val_var))
+sic_rate_kg <- function(x, val_var, unit_var, stop_var, env, ...) {
+
+  g_to_mcg <- convert_unit(binary_op(`*`, 1000000), "mcg", "g")
+
+  res <- g_to_mcg(x, val_var, unit_var)
+  res <- add_weight(res, env, "weight")
+
+  res <- res[, c(val_var) := get(val_var) / get("weight")]
+  res <- res[, c(unit_var) := paste(get(unit_var), "min", sep = "/kg/")]
+
+  expand(res, index_var(x), stop_var,
+         keep_vars = c(id_vars(x), val_var, unit_var))
 }
+
 
 eicu_duration <- function(gap_length) {
 
@@ -642,6 +677,15 @@ hirid_duration <- function(x, val_var, grp_var, ...) {
 aumc_dur <- function(x, val_var, stop_var, grp_var, ...) {
   calc_dur(x, val_var, index_var(x), stop_var, grp_var)
 }
+
+default_duration <- function(x, val_var, stop_var, grp_var, ...) {
+  calc_dur(x, val_var, index_var(x), stop_var, grp_var)
+}
+
+no_duration <- function(x, val_var, grp_var, ...) {
+  calc_dur(x, val_var, index_var(x), index_var(x), grp_var)
+}
+
 
 #' Used for determining vasopressor durations, `calc_dur()` will calculate
 #' durations by taking either per ID or per combination of ID and `grp_var`
@@ -756,6 +800,13 @@ aumc_death <- function(x, val_var, ...) {
   idx <- index_var(x)
 
   x <- x[, c(val_var) := is_true(get(idx) - get(val_var) < hours(72L))]
+  x
+}
+
+sic_death <- function(x, val_var, adm_time, ...) {
+  idx <- index_var(x)
+  
+  x <- x[, c(val_var) := is_true(get(idx) - (get(adm_time) + secs(get(val_var))) < hours(72L))]
   x
 }
 

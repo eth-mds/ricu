@@ -67,9 +67,10 @@
             ],
             "sic": [
                 {
-                    "ids": 668,
+                    "ids": [668, 449],
                     "table": "laboratory",
-                    "sub_var": "LaboratoryID"
+                    "sub_var": "laboratoryid",
+                    "class": "sic_itm"
                 }
             ],
             "picdb": [
@@ -150,12 +151,19 @@
             ],
             "sic": [
                 {
-                    "ids": 655,
+                    "ids": [655, 452],
                     "table": "laboratory",
-                    "sub_var": "LaboratoryID"
-                }
+                    "sub_var": "laboratoryid",
+                    "class": "sic_itm"
+                },
             ],
-            "picdb": []
+            "picdb": [
+                {
+                    "ids": 5215,
+                    "table": "labevents",
+                    "sub_var": "itemid"
+                }
+            ]
         }
     },
     "fio2": {
@@ -255,10 +263,24 @@
                 {
                     "ids": 2283,
                     "table": "data_float_h",
-                    "sub_var": "DataID"
+                    "sub_var": "dataid",
+                    "class": "sic_itm"
+                },
+                {
+                    "ids": 684,
+                    "table": "laboratory",
+                    "sub_var": "laboratoryid",
+                    "class": "sic_itm"
                 }
             ],
-            "picdb": []
+            "picdb": [
+                {
+                    "ids": 5222,
+                    "table": "labevents",
+                    "sub_var": "itemid"
+                }
+
+            ]
         }
     },
     "hbco": {
@@ -294,6 +316,14 @@
                     "sub_var": "variableid",
                     "class": "hrd_itm"
                 }
+            ],
+            "sic": [
+              {
+                "ids": [196, 660],
+                "table": "laboratory",
+                "sub_var": "laboratoryid",
+                "class": "sic_itm"
+              }
             ],
             "picdb": [
                 {
@@ -372,10 +402,12 @@
                 {
                     "ids": [
                         657,
+                        465,
                         454
                     ],
                     "table": "laboratory",
-                    "sub_var": "LaboratoryID"
+                    "sub_var": "laboratoryid",
+                    "class": "sic_itm"
                 }
             ],
             "picdb": [
@@ -446,6 +478,14 @@
                     "table": "labevents",
                     "sub_var": "itemid"
                 }
+            ],
+            "sic": [
+              {
+                "ids": 661,
+                "table": "laboratory",
+                "sub_var": "laboratoryid",
+                "class": "sic_itm"
+              }
             ],
             "picdb": [
                 {
@@ -525,9 +565,10 @@
             ],
             "sic": [
                 {
-                    "ids": 687,
-                    "table": "laboratory",
-                    "sub_var": "LaboratoryID"
+                  "ids": 687,
+                  "table": "laboratory",
+                  "sub_var": "laboratoryid",
+                  "class": "sic_itm"
                 }
             ],
             "picdb": [
@@ -606,7 +647,8 @@
                 {
                     "ids": 688,
                     "table": "laboratory",
-                    "sub_var": "LaboratoryID"
+                    "sub_var": "laboratoryid",
+                    "class": "sic_itm"
                 }
             ],
             "picdb": [
@@ -614,10 +656,7 @@
                     "table": "labevents",
                     "ids": [
                         5237,
-                        5238,
-                        5373,
-                        5374,
-                        5386
+                        5238
                     ],
                     "sub_var": "itemid"
                 }
@@ -696,7 +735,8 @@
                         689
                     ],
                     "table": "laboratory",
-                    "sub_var": "LaboratoryID"
+                    "sub_var": "laboratoryid",
+                    "class": "sic_itm"
                 }
             ],
             "picdb": [
@@ -704,7 +744,8 @@
                     "table": "labevents",
                     "ids": [
                         5239,
-                        5244
+                        5244,
+                        5242
                     ],
                     "sub_var": "itemid"
                 }
@@ -756,7 +797,13 @@
                     "sub_var": "itemid"
                 }
             ],
-            "picdb": []
+            "picdb": [
+                {
+                    "ids": 5256,
+                    "table": "labevents",
+                    "sub_var": "itemid"
+                }
+            ]
         }
     }
 }

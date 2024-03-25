@@ -184,9 +184,8 @@ import_tbl.tbl_cfg <- function(x, data_dir = src_data_dir(x), progress = NULL,
 
   assert_that(is.dir(data_dir), is.flag(cleanup))
 
-  # Print number of parts
-  print(paste("[import_tbl] Import table ", tbl_name(x)))
-  print(paste("[import_tbl] Number of parts: ", n_part(x)))
+  msg_ricu(paste("[import_tbl] Import table ", tbl_name(x)))
+  msg_ricu(paste("[import_tbl] Number of parts: ", n_part(x)))
   if (n_part(x) > 1L) {
     partition_table(x, data_dir, progress, ...)
   } else {
@@ -289,11 +288,10 @@ partition_table <- function(x, dir, progress = NULL, chunk_length = 10 ^ 7, temp
      }
 
     if (grepl("\\.gz$", file)) {
-      print("[partition_table] gunzipping")
+      msg_ricu(paste("[partition_table] gunzip: ", file))
       file <- gunzip(file, tempdir)
     }
 
-    print(paste("[partition_table] reading csv chunked with chunk_length: ", chunk_length))
     readr::read_csv_chunked(file, process_chunk, chunk_length, col_types = spec,
                             progress = FALSE, ...)
 
@@ -304,10 +302,8 @@ partition_table <- function(x, dir, progress = NULL, chunk_length = 10 ^ 7, temp
   } else {
 
     for (i in seq_along(file)) {
-
       dat <- readr::read_csv(file[i], col_types = spec, progress = FALSE, ...)
       report_problems(dat, rawf[i])
-
       split_write(callback(data), pfun, tempdir, i, progress, name, tick)
     }
   }
@@ -441,25 +437,3 @@ report_problems <- function(x, file) {
 
   invisible(NULL)
 }
-
-# report_problems <- function(x, file) {
-
-#   prob_to_str <- function(x) {
-#     paste0("[", x[1L], ", ", x[2L], "]: got '", x[4L], "' instead of ", x[3L])
-#   }
-
-#   probs <- readr::problems(x)
-
-#   if (nrow(probs)) {
-
-#     probs <- bullet(apply(probs, 1L, prob_to_str))
-
-#     warn_ricu(
-#       c("Encountered parsing problems for file {basename(file)}:", probs),
-#       class = "csv_parsing_error", indent = c(0L, rep_along(2L, probs)),
-#       exdent = c(0L, rep_along(2L, probs))
-#     )
-#   }
-
-#   invisible(NULL)
-# }

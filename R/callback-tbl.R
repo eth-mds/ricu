@@ -1,5 +1,6 @@
 
 sic_data_float_h <- function(dat, ...) {
+
    hexstring_to_float <- function(x) {
      if (is.na(x)) {
        return(NA_real_)
@@ -11,7 +12,9 @@ sic_data_float_h <- function(dat, ...) {
    }
 
    setDT(dat)
-   dat[, c("rawdata") := lapply(get("rawdata"), hexstring_to_float)] # TODO: remove hard coding of rawdata and derive from JSON config
+   
+   # TODO: remove hard coding of rawdata and derive from JSON config
+   dat[, c("rawdata") := lapply(get("rawdata"), hexstring_to_float)]
    dat <- dat[, .(
        Offset = Offset + 60 * (0:(sapply(rawdata, length)-1)),
        Val = Val,
@@ -21,8 +24,13 @@ sic_data_float_h <- function(dat, ...) {
      ),
      by = .(id, CaseID, DataID)
    ]
-   dat[rawdata_present == FALSE, rawdata := Val] # Fix measurements that only have one 
+
+    # Fix measurements that only have one value
+   dat[rawdata_present == FALSE, rawdata := Val]
    dat[, rawdata_present := NULL]
 
    return(dat)
+
 }
+
+

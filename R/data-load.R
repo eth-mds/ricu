@@ -186,7 +186,6 @@ load_difftime.picdb_tbl <- function(x, rows, cols = colnames(x),
                                    time_vars = ricu::time_vars(x), ...) {
 
   warn_dots(...)
-
   load_mihi(x, {{ rows }}, cols, id_hint, time_vars)
 }
 
