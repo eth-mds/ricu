@@ -426,25 +426,3 @@ report_problems <- function(x, file) {
 
   invisible(NULL)
 }
-
-# report_problems <- function(x, file) {
-
-#   prob_to_str <- function(x) {
-#     paste0("[", x[1L], ", ", x[2L], "]: got '", x[4L], "' instead of ", x[3L])
-#   }
-
-#   probs <- readr::problems(x)
-
-#   if (nrow(probs)) {
-
-#     probs <- bullet(apply(probs, 1L, prob_to_str))
-
-#     warn_ricu(
-#       c("Encountered parsing problems for file {basename(file)}:", probs),
-#       class = "csv_parsing_error", indent = c(0L, rep_along(2L, probs)),
-#       exdent = c(0L, rep_along(2L, probs))
-#     )
-#   }
-
-#   invisible(NULL)
-# }
