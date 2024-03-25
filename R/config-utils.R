@@ -396,6 +396,7 @@ tbl_callback <- function(x){
     
     callback_field <- vctrs::field(x, "callback")
     if (is.character(callback_field)) {
+      msg_ricu(paste("[tbl_callback] Using callback function: ", callback_field))
       return(str_to_fun(callback_field))
     }
 
@@ -405,7 +406,8 @@ tbl_callback <- function(x){
 
     callback_value <- callback_field[[1]]
     if (is.character(callback_value)) {
-      return(str_to_fun(callback_field[1]))
+      msg_ricu(paste("[tbl_callback] Using callback function: ", callback_value))
+      return(str_to_fun(callback_value))
     }
     
     return(identity_callback)
