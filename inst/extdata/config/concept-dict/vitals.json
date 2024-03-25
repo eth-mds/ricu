@@ -82,6 +82,7 @@
                         705
                     ],
                     "table": "data_float_h",
+                    "val_var": "rawdata",
                     "sub_var": "dataid",
                     "class": "sic_itm"
                 }
@@ -245,6 +246,7 @@
                 {
                   "ids": [708, 724],
                   "table": "data_float_h",
+                  "val_var": "rawdata",
                   "sub_var": "dataid",
                   "class": "sic_itm"
                 }
@@ -361,6 +363,7 @@
                         706
                     ],
                     "table": "data_float_h",
+                    "val_var": "rawdata",
                     "sub_var": "dataid",
                     "class": "sic_itm"
                 }
@@ -452,6 +455,7 @@
                         704
                     ],
                     "table": "data_float_h",
+                    "val_var": "rawdata",
                     "sub_var": "dataid",
                     "class": "sic_itm"
                 }
@@ -579,6 +583,7 @@
                 {
                     "ids": 709,
                     "table": "data_float_h",
+                    "val_var": "rawdata",
                     "sub_var": "dataid",
                     "class": "sic_itm"
                 }

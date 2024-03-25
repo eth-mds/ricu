@@ -223,6 +223,7 @@
                 {
                     "ids": 710,
                     "table": "data_float_h",
+                    "val_var": "rawdata",
                     "sub_var": "dataid",
                     "class": "sic_itm"
                 }
@@ -350,6 +351,7 @@
                 {
                     "ids": 719,
                     "table": "data_float_h",
+                    "val_var": "rawdata",
                     "sub_var": "dataid",
                     "class": "sic_itm"
                 }
