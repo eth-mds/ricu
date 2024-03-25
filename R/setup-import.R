@@ -226,12 +226,10 @@ merge_fst_chunks <- function(src, targ, new, old, sort_col, prog, nme, tick) {
   invisible(NULL)
 }
 
-split_write <- function(x, part_fun, dir, chunk_no, prog, nme, tick, callback = NULL) {
+split_write <- function(x, part_fun, dir, chunk_no, prog, nme, tick) {
 
   n_row <- nrow(x)
-  if (!is.null(callback)) {
-    x <- callback(x)
-  }
+  
   x <- split(x, part_fun(x))
 
   tmp_nme <- file.path(dir, paste0("part_", names(x)),
@@ -280,8 +278,8 @@ partition_table <- function(x, dir, progress = NULL, chunk_length = 10 ^ 7, temp
 
     process_chunk <- function(x, pos, ...) {
          report_problems(x, rawf)
-         split_write(x, pfun, tempdir, ((pos - 1L) / chunk_length) + 1L,
-                     progress, name, tick, callback)
+         split_write(callback(x), pfun, tempdir, ((pos - 1L) / chunk_length) + 1L,
+                     progress, name, tick)
      }
 
     if (grepl("\\.gz$", file)) {
