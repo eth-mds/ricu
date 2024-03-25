@@ -229,7 +229,9 @@ merge_fst_chunks <- function(src, targ, new, old, sort_col, prog, nme, tick) {
 split_write <- function(x, part_fun, dir, chunk_no, prog, nme, tick, callback = NULL) {
 
   n_row <- nrow(x)
-
+  if (!is.null(callback)) {
+    x <- callback(x)
+  }
   x <- split(x, part_fun(x))
 
   tmp_nme <- file.path(dir, paste0("part_", names(x)),
