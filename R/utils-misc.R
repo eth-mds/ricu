@@ -244,6 +244,8 @@ cat_line <- function(...) {
 
 ms_as_mins <- function(x) min_as_mins(as.integer(x / 6e4))
 
+s_as_mins <- function(x) min_as_mins(as.integer(x / 60))
+
 min_as_mins <- function(x) as.difftime(x, units = "mins")
 
 digest_lst <- function(x) as.character(openssl::md5(serialize(x, NULL)))

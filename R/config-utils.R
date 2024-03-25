@@ -386,11 +386,9 @@ partition_col <- function(x, orig_names = FALSE) {
   col
 }
 
-
 tbl_callback <- function(x){
    x <- as_tbl_cfg(x)
    assert_that(length(x) == 1L)
-
 
     if (!("callback" %in% vctrs::fields(x))) {
       return(identity_callback)

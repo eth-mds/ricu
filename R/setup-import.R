@@ -294,10 +294,8 @@ partition_table <- function(x, dir, progress = NULL, chunk_length = 10 ^ 7,
   } else {
 
     for (i in seq_along(file)) {
-
       dat <- readr::read_csv(file[i], col_types = spec, progress = FALSE, ...)
       report_problems(dat, rawf[i])
-
       split_write(callback(data), pfun, tempdir, i, progress, name, tick)
     }
   }

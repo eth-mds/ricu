@@ -200,27 +200,28 @@ get_hirid_ids <- function(x, ids) {
 }
 
 #' @rdname data_items
- #' @export
- init_itm.sic_itm <- function(x, table, sub_var, ids,
-                              callback = "identity_callback", ...) {
+#' @export
+init_itm.sic_itm <- function(x, table, sub_var, ids,
+                             callback = "identity_callback", ...) {
+  
+  assert_that(is.string(table), has_length(ids),
+              is.character(ids) || is_intish(ids))
+  
+  x[["table"]] <- table
+  
+  units <- get_sic_ids(x, ids)
+  units <- rename_cols(rm_na(units), sub_var, "referenceglobalid")
+  
+  todo <- c("ids", "units")
+  x[todo] <- mget(todo)
+  
+  complete_tbl_itm(x, callback, sub_var, ...)
+}
 
-   assert_that(is.string(table), has_length(ids),
-               is.character(ids) || is_intish(ids))
+get_sic_ids <- function(x, ids) {
+  load_id("d_references", x, .data$referenceglobalid %in% .env$ids, cols = "referenceunit", id_var = "referenceglobalid")
+}
 
-   x[["table"]] <- table
-
-   units <- get_sic_ids(x, ids)
-   units <- rename_cols(rm_na(units), sub_var, "referenceglobalid")
-
-   todo <- c("ids", "units")
-   x[todo] <- mget(todo)
-
-   complete_tbl_itm(x, callback, sub_var, ...)
- }
-
- get_sic_ids <- function(x, ids) {
-   load_id("d_references", x, .data$referenceglobalid %in% .env$ids, cols = "referenceunit", id_var = "referenceglobalid")
- }
 
 #' @param unit_val String valued unit to be used in case no `unit_var` is
 #' available for the given table
@@ -586,6 +587,17 @@ do_callback.hrd_itm <- function(x, ...) {
 
 #' @keywords internal
 #' @export
+do_callback.sic_itm <- function(x, ...) {
+  # TODO: generalise and combine with do_callback.hrd_itm
+  if (is.null(get_itm_var(x, "unit_var"))) {
+    x <- try_add_vars(x, unit_var = "referenceunit")
+  }
+  
+  NextMethod()
+}
+
+#' @keywords internal
+#' @export
 do_callback.col_itm <- function(x, ...) {
 
   if (is.null(get_itm_var(x, "unit_var")) && not_null(x[["unit_val"]])) {
@@ -643,15 +655,15 @@ do_itm_load.hrd_itm <- function(x, id_type = "icustay", interval = hours(1L)) {
 }
 
 #' @export
- do_itm_load.sic_itm <- function(x, id_type = "icustay", interval = hours(1L)) {
-
+do_itm_load.sic_itm <- function(x, id_type = "icustay", interval = hours(1L)) {
+  
   res <- NextMethod()
-
+  
   if (is.null(get_itm_var(x, "unit_var"))) {
     unt <- x[["units"]]
     res <- merge(res, unt, by = get_itm_var(x, "sub_var"), all.x = TRUE)
   }
-
+  
   res
 }
 
