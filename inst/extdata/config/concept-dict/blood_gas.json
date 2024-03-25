@@ -155,7 +155,7 @@
                     "table": "laboratory",
                     "sub_var": "laboratoryid",
                     "class": "sic_itm"
-                },
+                }
             ],
             "picdb": [
                 {
