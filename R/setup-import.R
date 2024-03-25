@@ -184,9 +184,8 @@ import_tbl.tbl_cfg <- function(x, data_dir = src_data_dir(x), progress = NULL,
 
   assert_that(is.dir(data_dir), is.flag(cleanup))
 
-  # Print number of parts
-  print(paste("[import_tbl] Import table ", tbl_name(x)))
-  print(paste("[import_tbl] Number of parts: ", n_part(x)))
+  msg_ricu(paste("[import_tbl] Import table ", tbl_name(x)))
+  msg_ricu(paste("[import_tbl] Number of parts: ", n_part(x)))
   if (n_part(x) > 1L) {
     partition_table(x, data_dir, progress, ...)
   } else {
@@ -279,11 +278,10 @@ partition_table <- function(x, dir, progress = NULL, chunk_length = 10 ^ 7,
      }
 
     if (grepl("\\.gz$", file)) {
-      print("[partition_table] gunzipping")
+      msg_ricu(paste("[partition_table] gunzip: ", file))
       file <- gunzip(file, tempdir)
     }
 
-    print(paste("[partition_table] reading csv chunked with chunk_length: ", chunk_length))
     readr::read_csv_chunked(file, process_chunk, chunk_length, col_types = spec,
                             progress = FALSE, ...)
 
