@@ -230,11 +230,6 @@ split_write <- function(x, part_fun, dir, chunk_no, prog, nme, tick, callback = 
 
   n_row <- nrow(x)
 
-  if (!is.null(callback)) {
-    print("[split_write] apply callback")
-    x <- callback(x)
-  }
-
   x <- split(x, part_fun(x))
 
   tmp_nme <- file.path(dir, paste0("part_", names(x)),
@@ -259,7 +254,7 @@ partition_table <- function(x, dir, progress = NULL, chunk_length = 10 ^ 7, temp
     # tempdir <- ensure_dirs(file.path(dir, "tempdir"))
     tempdir <- ensure_dirs(tempfile())
   }
-  print(paste("[partition_table] tempdir: ", tempdir))
+  msg_ricu(paste("[partition_table] tempdir: ", tempdir))
   on.exit(unlink(tempdir, recursive = TRUE))
 
   spec <- col_spec(x)
@@ -316,7 +311,6 @@ partition_table <- function(x, dir, progress = NULL, chunk_length = 10 ^ 7, temp
     tick <- 1L
   }
 
-  print(paste("[partition_table] merge_fst_chunks"))
   for (src_dir in file.path(tempdir, paste0("part_", seq_len(n_part(x))))) {
     merge_fst_chunks(src_dir, targ, newc, oldc, pcol, progress, name, tick)
   }
