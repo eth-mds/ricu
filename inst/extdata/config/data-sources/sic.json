@@ -6,14 +6,14 @@
             "patient": {
                 "id": "patientid",
                 "position": 1,
-                "start": "icuoffset",
+                "start": "firstadmission",
                 "end": "offsetofdeath",
                 "table": "cases"
             },
             "icustay": {
                 "id": "caseid",
                 "position": 2,
-                "start": "icuoffset",
+                "start": "offsetafterfirstadmission",
                 "end": "timeofstay",
                 "table": "cases"
             }
@@ -25,10 +25,10 @@
                     "index_var": "icuoffset",
                     "time_vars": [
                         "icuoffset",
-                        "offsetofdeath",
                         "heartsurgerybeginoffset",
                         "heartsurgeryendoffset",
-                        "offsetafterfirstadmission"
+                        "offsetafterfirstadmission",
+                        "offsetofdeath"
                     ]
                 },
                 "num_rows": 27386,
@@ -235,7 +235,8 @@
             "data_ref": {
                 "files": "data_ref.csv.gz",
                 "defaults": {
-                    "index_var": "offsetafterfirstadmission"
+                    "index_var": "offsetafterfirstadmission",
+                    "time_vars": ["offsetafterfirstadmission"]
                 },
                 "num_rows": 354157,
                 "cols": {
