@@ -59,7 +59,15 @@
                 {
                     "ids": 174,
                     "table": "laboratory",
-                    "sub_var": "LaboratoryID"
+                    "sub_var": "laboratoryid",
+                    "class": "sic_itm"
+                },
+                {
+                  "ids": 295,
+                  "table": "laboratory",
+                  "sub_var": "laboratoryid",
+                  "callback": "blood_cell_ratio",
+                  "class": "sic_itm"
                 }
             ],
             "picdb": [

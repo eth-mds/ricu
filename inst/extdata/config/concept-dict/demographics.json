@@ -127,7 +127,7 @@
             "sic": [
                 {
                     "table": "cases",
-                    "val_var": "AgeOnAdmission",
+                    "val_var": "ageonadmission",
                     "class": "col_itm"
                 }
             ],

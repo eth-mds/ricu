@@ -82,7 +82,8 @@
                         705
                     ],
                     "table": "data_float_h",
-                    "sub_var": "DataID"
+                    "sub_var": "dataid",
+                    "class": "sic_itm"
                 }
             ],
             "picdb": [
@@ -560,7 +561,7 @@
                 {
                     "table": "chartevents",
                     "ids": [
-                        "1001"
+                        1001
                     ],
                     "sub_var": "itemid"
                 },

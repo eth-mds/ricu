@@ -67,9 +67,10 @@
             ],
             "sic": [
                 {
-                    "ids": 668,
+                    "ids": [668, 449],
                     "table": "laboratory",
-                    "sub_var": "LaboratoryID"
+                    "sub_var": "laboratoryid",
+                    "class": "sic_itm"
                 }
             ],
             "picdb": [
@@ -150,10 +151,11 @@
             ],
             "sic": [
                 {
-                    "ids": 655,
+                    "ids": [655, 452],
                     "table": "laboratory",
-                    "sub_var": "LaboratoryID"
-                }
+                    "sub_var": "laboratoryid",
+                    "class": "sic_itm"
+                },
             ],
             "picdb": []
         }
