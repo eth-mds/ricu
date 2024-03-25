@@ -43,6 +43,25 @@ mimic_sampling <- function(x, val_var, aux_time, ...) {
   set(x, j = val_var, value = !is.na(x[[val_var]]))
 }
 
+picdb_sampling <- function(x, val_var, aux_time, ...) {
+  x <- combine_date_time(x, aux_time, hours(12L))
+
+  # These identifiers indicate that the culture showed no growth
+  # of the respective organism
+  no_growth_identifiers <- c('MIC1008', 'MIC2123', 'MIC2287', 'MIC2291', 'MIC2293',
+    'MIC2370', 'MIC2408', 'MIC2421', 'MIC575',
+    'MIC585', 'MIC593', 'MIC629', 'MIC631',
+    'MIC635', 'MIC637', 'MIC645', 'MIC648',
+    'MIC874', 'MIC941', 'MIC979'
+  )
+
+  # Assign:
+  # - 0 if NA or in no_growth_identifiers
+  # - 1 otherwise, indicating growth
+  bool_value <- !is.na(x[[val_var]]) & !(x[[val_var]] %in% no_growth_identifiers)
+  set(x, j = val_var, value = bool_value)
+}
+
 #' Item callback utilities
 #'
 #' For concept loading, item callback functions are used in order to handle

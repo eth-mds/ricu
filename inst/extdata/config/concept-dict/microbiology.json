@@ -77,7 +77,15 @@
                     "class": "col_itm"
                 }
             ],
-            "picdb": []
+            "picdb": [
+                {
+                    "table": "microbiologyevents",
+                    "val_var": "org_itemid",
+                    "callback": "picdb_sampling",
+                    "aux_time": "charttime",
+                    "class": "col_itm"
+                }
+            ]
         }
     }
 }

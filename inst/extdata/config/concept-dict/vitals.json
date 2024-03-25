@@ -87,6 +87,13 @@
                 }
             ],
             "picdb": [
+                {
+                    "table": "chartevents",
+                    "ids": [
+                        1015
+                    ],
+                    "sub_var": "itemid"
+                }
             ]
         }
     },
@@ -237,7 +244,7 @@
                 {
                     "table": "chartevents",
                     "ids": [
-                        "1003"
+                        1003, 1002
                     ],
                     "sub_var": "itemid"
                 }
@@ -439,6 +446,13 @@
                 }
             ],
             "picdb": [
+                {
+                    "table": "chartevents",
+                    "ids": [
+                        1016
+                    ],
+                    "sub_var": "itemid"
+                }
             ]
         }
     },
