@@ -79,6 +79,16 @@
                     "callback": "transform_fun(comp_na(`==`, 1L))",
                     "class": "col_itm"
                 }
+            ],
+            "sic": [
+              {
+                "table": "cases",
+                "index_var": "offsetofdeath",
+                "adm_time": "offsetafterfirstadmission",
+                "val_var": "timeofstay",
+                "callback": "sic_death",
+                "class": "col_itm"
+              }
             ]
         }
     },
@@ -205,6 +215,14 @@
                     "win_type": "icustay",
                     "class": "fun_itm"
                 }
+            ],
+            "sic": [
+              {
+                "table": "cases",
+                "val_var": "timeofstay",
+                "callback": "transform_fun(binary_op(`/`, 60 * 60 * 24))",
+                "class": "col_itm"
+              }
             ],
             "picdb": []
         }

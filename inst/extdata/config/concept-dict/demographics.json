@@ -235,7 +235,7 @@
             "sic": [
                 {
                     "table": "cases",
-                    "val_var": "HeightOnAdmission",
+                    "val_var": "heightonadmission",
                     "class": "col_itm"
                 }
             ],
@@ -317,10 +317,10 @@
             ],
             "sic": [
                 {
-                    "table": "cases",
-                    "val_var": "Sex",
-                    "callback": "apply_map(c(`735` = 'Male', `736` = 'Female'))",
-                    "class": "col_itm"
+                  "table": "cases",
+                  "val_var": "sex",
+                  "class": "col_itm",
+                  "callback": "transform_fun(sic_sex)"
                 }
             ],
             "picdb": [
@@ -403,10 +403,10 @@
             ],
             "sic": [
                 {
-                    "table": "cases",
-                    "val_var": "WeightOnAdmission",
-                    "class": "col_itm",
-                    "callback": "transform_fun(binary_op(`/`, 1000))"
+                  "table": "cases",
+                  "val_var": "weightonadmission",
+                  "class": "col_itm",
+                  "callback": "transform_fun(binary_op(`/`, 1000))"
                 }
             ],
             "picdb": [

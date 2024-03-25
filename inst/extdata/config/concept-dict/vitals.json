@@ -162,6 +162,14 @@
                     "sub_var": "itemid"
                 }
             ],
+            "sic": [
+              {
+                "ids": 716,
+                "table": "laboratory",
+                "sub_var": "laboratoryid",
+                "class": "sic_itm"
+              }
+            ],
             "picdb": [
             ]
         }
@@ -235,9 +243,10 @@
             ],
             "sic": [
                 {
-                    "ids": 708,
-                    "table": "data_float_h",
-                    "sub_var": "DataID"
+                  "ids": [708, 724],
+                  "table": "data_float_h",
+                  "sub_var": "dataid",
+                  "class": "sic_itm"
                 }
             ],
             "picdb": [
@@ -352,7 +361,8 @@
                         706
                     ],
                     "table": "data_float_h",
-                    "sub_var": "DataID"
+                    "sub_var": "dataid",
+                    "class": "sic_itm"
                 }
             ],
             "picdb": [
@@ -442,7 +452,8 @@
                         704
                     ],
                     "table": "data_float_h",
-                    "sub_var": "DataID"
+                    "sub_var": "dataid",
+                    "class": "sic_itm"
                 }
             ],
             "picdb": [
@@ -568,7 +579,8 @@
                 {
                     "ids": 709,
                     "table": "data_float_h",
-                    "sub_var": "DataID"
+                    "sub_var": "dataid",
+                    "class": "sic_itm"
                 }
             ],
             "picdb": [

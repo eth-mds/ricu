@@ -200,11 +200,19 @@
                 }
             ],
             "sic": [
-                {
-                    "ids": 197,
-                    "table": "laboratory",
-                    "sub_var": "LaboratoryID"
-                }
+              {
+                "ids": 197,
+                "table": "laboratory",
+                "sub_var": "laboratoryid",
+                "class": "sic_itm"
+              },
+              {
+                "ids": 299,
+                "table": "laboratory",
+                "sub_var": "laboratoryid",
+                "callback": "blood_cell_ratio",
+                "class": "sic_itm"
+              }
             ],
             "picdb": [
                 {
@@ -335,11 +343,12 @@
                 }
             ],
             "sic": [
-                {
-                    "ids": 344,
-                    "table": "laboratory",
-                    "sub_var": "LaboratoryID"
-                }
+              {
+                "ids": 344,
+                "table": "laboratory",
+                "sub_var": "laboratoryid",
+                "class": "sic_itm"
+              }
             ],
             "picdb": []
         }
@@ -380,6 +389,14 @@
                     "table": "labevents",
                     "sub_var": "itemid"
                 }
+            ],
+            "sic": [
+              {
+                "ids": 214,
+                "table": "laboratory",
+                "sub_var": "laboratoryid",
+                "class": "sic_itm"
+              }
             ],
             "picdb": []
         }
@@ -446,7 +463,8 @@
                         682
                     ],
                     "table": "laboratory",
-                    "sub_var": "LaboratoryID"
+                    "sub_var": "laboratoryid",
+                    "class": "sic_itm"
                 }
             ],
             "picdb": [
@@ -538,7 +556,8 @@
                         289
                     ],
                     "table": "laboratory",
-                    "sub_var": "LaboratoryID"
+                    "sub_var": "laboratoryid",
+                    "class": "sic_itm"
                 }
             ],
             "picdb": [
@@ -681,6 +700,13 @@
                     "ids": 223,
                     "table": "laboratory",
                     "sub_var": "LaboratoryID"
+                },
+                {
+                  "ids": 302,
+                  "table": "laboratory",
+                  "sub_var": "laboratoryid",
+                  "callback": "blood_cell_ratio",
+                  "class": "sic_itm"
                 }
             ],
             "picdb": []
@@ -748,7 +774,8 @@
                 {
                     "ids": 566,
                     "table": "laboratory",
-                    "sub_var": "LaboratoryID"
+                    "sub_var": "laboratoryid",
+                    "class": "sic_itm"
                 }
             ],
             "picdb": [
@@ -824,9 +851,11 @@
             ],
             "sic": [
                 {
-                    "ids": 290,
-                    "table": "laboratory",
-                    "sub_var": "LaboratoryID"
+                  "ids": 290,
+                  "table": "laboratory",
+                  "sub_var": "laboratoryid",
+                  "callback": "convert_unit(binary_op(`*`, 0.16114), '%')",
+                  "class": "sic_itm"
                 }
             ],
             "picdb": [
@@ -902,7 +931,8 @@
                 {
                     "ids": 286,
                     "table": "laboratory",
-                    "sub_var": "LaboratoryID"
+                    "sub_var": "laboratoryid",
+                    "class": "sic_itm"
                 }
             ],
             "picdb": [
@@ -985,9 +1015,17 @@
             ],
             "sic": [
                 {
-                    "ids": 230,
-                    "table": "laboratory",
-                    "sub_var": "LaboratoryID"
+                  "ids": 230,
+                  "table": "laboratory",
+                  "sub_var": "laboratoryid",
+                  "class": "sic_itm"
+                }, 
+                {
+                  "ids": 308,
+                  "table": "laboratory",
+                  "sub_var": "laboratoryid",
+                  "callback": "blood_cell_ratio",
+                  "class": "sic_itm"
                 }
             ],
             "picdb": [
@@ -1069,9 +1107,10 @@
             ],
             "sic": [
                 {
-                    "ids": 314,
-                    "table": "laboratory",
-                    "sub_var": "LaboratoryID"
+                  "ids": 314,
+                  "table": "laboratory",
+                  "sub_var": "laboratoryid",
+                  "class": "sic_itm"
                 }
             ],
             "picdb": [
@@ -1138,7 +1177,8 @@
                 {
                     "ids": 598,
                     "table": "laboratory",
-                    "sub_var": "LaboratoryID"
+                    "sub_var": "laboratoryid",
+                    "class": "sic_itm"
                 }
             ],
             "picdb": [
@@ -1214,7 +1254,8 @@
                 {
                     "ids": 597,
                     "table": "laboratory",
-                    "sub_var": "LaboratoryID"
+                    "sub_var": "laboratoryid",
+                    "class": "sic_itm"
                 }
             ],
             "picdb": [
@@ -1283,9 +1324,10 @@
             ],
             "sic": [
                 {
-                    "ids": 599,
-                    "table": "laboratory",
-                    "sub_var": "LaboratoryID"
+                  "ids": 599,
+                  "table": "laboratory",
+                  "sub_var": "laboratoryid",
+                  "class": "sic_itm"
                 }
             ],
             "picdb": [
@@ -1349,13 +1391,6 @@
                     "ids": 51277,
                     "table": "labevents",
                     "sub_var": "itemid"
-                }
-            ],
-            "sic": [
-                {
-                    "ids": 3319,
-                    "table": "laboratory",
-                    "sub_var": "LaboratoryID"
                 }
             ],
             "picdb": [
@@ -1436,7 +1471,8 @@
                 {
                     "ids": 301,
                     "table": "laboratory",
-                    "sub_var": "LaboratoryID"
+                    "sub_var": "laboratoryid",
+                    "class": "sic_itm"
                 }
             ],
             "picdb": [

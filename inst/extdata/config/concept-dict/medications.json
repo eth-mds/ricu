@@ -826,9 +826,10 @@
                         1559
                     ],
                     "table": "medication",
-                    "sub_var": "DrugID",
-                    "stop_var": "OffsetDrugEnd",
-                    "callback": "sic_dur"
+                    "sub_var": "drugid",
+                    "stop_var": "offsetdrugend",
+                    "grp_var": "id",
+                    "callback": "default_duration"
                 }
             ],
             "picdb": []
@@ -931,16 +932,17 @@
                     "stop_var": "endtime",
                     "callback": "mimic_rate_mv"
                 }
-            ],
+            ], 
             "sic": [
-                {
-                    "ids": 1559,
-                    "table": "medication",
-                    "sub_var": "DrugID",
-                    "val_var": "AmountPerMinute",
-                    "stop_var": "OffsetDrugEnd",
-                    "callback": "sic_rate_kg"
-                }
+              {
+                "ids": 1559,
+                "table": "medication",
+                "sub_var": "drugid",
+                "val_var": "amountperminute",
+                "stop_var": "offsetdrugend",
+                "class": "sic_itm",
+                "callback": "sic_rate_kg"
+              }
             ],
             "picdb": []
         }
@@ -1042,13 +1044,14 @@
                 }
             ],
             "sic": [
-                {
-                    "ids": 1618,
-                    "table": "medication",
-                    "sub_var": "DrugID",
-                    "stop_var": "OffsetDrugEnd",
-                    "callback": "sic_dur"
-                }
+              {
+                "ids": 1618,
+                "table": "medication",
+                "sub_var": "drugid",
+                "stop_var": "offsetdrugend",
+                "grp_var": "id",
+                "callback": "default_duration"
+              }
             ],
             "picdb": []
         }
@@ -1143,16 +1146,17 @@
                     "stop_var": "endtime",
                     "callback": "mimic_rate_mv"
                 }
-            ],
+            ], 
             "sic": [
-                {
-                    "ids": 1618,
-                    "table": "medication",
-                    "sub_var": "DrugID",
-                    "val_var": "AmountPerMinute",
-                    "stop_var": "OffsetDrugEnd",
-                    "callback": "sic_rate_kg"
-                }
+              {
+                "ids": 1618,
+                "table": "medication",
+                "sub_var": "drugid",
+                "val_var": "amountperminute",
+                "stop_var": "offsetdrugend",
+                "class": "sic_itm",
+                "callback": "sic_rate_kg"
+              }
             ],
             "picdb": []
         }
@@ -1258,15 +1262,14 @@
                 }
             ],
             "sic": [
-                {
-                    "ids": [
-                        1502
-                    ],
-                    "table": "medication",
-                    "sub_var": "DrugID",
-                    "stop_var": "OffsetDrugEnd",
-                    "callback": "sic_dur"
-                }
+              {
+                "ids": 1502,
+                "table": "medication",
+                "sub_var": "drugid",
+                "stop_var": "offsetdrugend",
+                "grp_var": "id",
+                "callback": "default_duration"
+              }
             ],
             "picdb": []
         }
@@ -1378,14 +1381,15 @@
                 }
             ],
             "sic": [
-                {
-                    "ids": 1502,
-                    "table": "medication",
-                    "sub_var": "DrugID",
-                    "val_var": "AmountPerMinute",
-                    "stop_var": "OffsetDrugEnd",
-                    "callback": "sic_rate_kg"
-                }
+              {
+                "ids": 1502,
+                "table": "medication",
+                "sub_var": "drugid",
+                "val_var": "amountperminute",
+                "stop_var": "offsetdrugend",
+                "class": "sic_itm",
+                "callback": "sic_rate_kg"
+              }
             ],
             "picdb": []
         }
@@ -1600,13 +1604,12 @@
             ],
             "sic": [
                 {
-                    "ids": [
-                        1562
-                    ],
-                    "table": "medication",
-                    "sub_var": "DrugID",
-                    "stop_var": "OffsetDrugEnd",
-                    "callback": "sic_dur"
+                  "ids": 1562,
+                  "table": "medication",
+                  "sub_var": "drugid",
+                  "stop_var": "offsetdrugend",
+                  "grp_var": "id",
+                  "callback": "default_duration"
                 }
             ],
             "picdb": []
@@ -1730,12 +1733,13 @@
             ],
             "sic": [
                 {
-                    "ids": 1562,
-                    "table": "medication",
-                    "sub_var": "DrugID",
-                    "val_var": "AmountPerMinute",
-                    "stop_var": "OffsetDrugEnd",
-                    "callback": "sic_rate_kg"
+                  "ids": 1562,
+                  "table": "medication",
+                  "sub_var": "drugid",
+                  "val_var": "amountperminute",
+                  "stop_var": "offsetdrugend",
+                  "class": "sic_itm",
+                  "callback": "sic_rate_kg"
                 }
             ],
             "picdb": []
