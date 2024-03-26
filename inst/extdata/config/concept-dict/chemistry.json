@@ -1678,7 +1678,7 @@
                     "ids": 481,
                     "table": "laboratory",
                     "sub_var": "laboratoryid",
-                    "callback": "transform_fun(binary_op(`/`, 1000), 'ng/mL', 'ng/L')",
+                    "callback": "convert_unit(binary_op(`/`, 1000), 'ng/mL', 'ng/L')",
                     "class": "sic_itm"
                 }
             ],
