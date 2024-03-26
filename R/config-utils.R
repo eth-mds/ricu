@@ -386,6 +386,34 @@ partition_col <- function(x, orig_names = FALSE) {
   col
 }
 
+tbl_callback <- function(x){
+   x <- as_tbl_cfg(x)
+   assert_that(length(x) == 1L)
+
+    if (!("callback" %in% vctrs::fields(x))) {
+      return(identity_callback)
+    }
+    
+    callback_field <- vctrs::field(x, "callback")
+    if (is.character(callback_field)) {
+      msg_ricu(paste("[tbl_callback] Using callback function: ", callback_field))
+      return(str_to_fun(callback_field))
+    }
+
+    if (!is.null(callback_field) && !is.list(callback_field)) {
+      return(identity_callback)
+    }
+
+    callback_value <- callback_field[[1]]
+    if (is.character(callback_value)) {
+      msg_ricu(paste("[tbl_callback] Using callback function: ", callback_value))
+      return(str_to_fun(callback_value))
+    }
+    
+    return(identity_callback)
+ }
+
+
 #' @export
 n_tick.tbl_cfg <- function(x) {
 

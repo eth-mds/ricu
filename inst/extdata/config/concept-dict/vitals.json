@@ -82,7 +82,9 @@
                         705
                     ],
                     "table": "data_float_h",
-                    "sub_var": "DataID"
+                    "val_var": "rawdata",
+                    "sub_var": "dataid",
+                    "class": "sic_itm"
                 }
             ],
             "picdb": [
@@ -161,6 +163,14 @@
                     "sub_var": "itemid"
                 }
             ],
+            "sic": [
+              {
+                "ids": 716,
+                "table": "laboratory",
+                "sub_var": "laboratoryid",
+                "class": "sic_itm"
+              }
+            ],
             "picdb": [
             ]
         }
@@ -234,9 +244,11 @@
             ],
             "sic": [
                 {
-                    "ids": 708,
-                    "table": "data_float_h",
-                    "sub_var": "DataID"
+                  "ids": [708, 724],
+                  "table": "data_float_h",
+                  "val_var": "rawdata",
+                  "sub_var": "dataid",
+                  "class": "sic_itm"
                 }
             ],
             "picdb": [
@@ -351,7 +363,9 @@
                         706
                     ],
                     "table": "data_float_h",
-                    "sub_var": "DataID"
+                    "val_var": "rawdata",
+                    "sub_var": "dataid",
+                    "class": "sic_itm"
                 }
             ],
             "picdb": [
@@ -441,7 +455,9 @@
                         704
                     ],
                     "table": "data_float_h",
-                    "sub_var": "DataID"
+                    "val_var": "rawdata",
+                    "sub_var": "dataid",
+                    "class": "sic_itm"
                 }
             ],
             "picdb": [
@@ -460,8 +476,8 @@
             "C",
             "\u00b0C"
         ],
-        "min": 32,
-        "max": 42,
+        "min": 30,
+        "max": 44,
         "description": "temperature",
         "omopid": 4302666,
         "category": "vitals",
@@ -567,14 +583,16 @@
                 {
                     "ids": 709,
                     "table": "data_float_h",
-                    "sub_var": "DataID"
+                    "val_var": "rawdata",
+                    "sub_var": "dataid",
+                    "class": "sic_itm"
                 }
             ],
             "picdb": [
                 {
                     "table": "chartevents",
                     "ids": [
-                        "1001"
+                        1001
                     ],
                     "sub_var": "itemid"
                 },

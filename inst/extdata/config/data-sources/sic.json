@@ -4,17 +4,17 @@
         "url": "https://physionet.org/files/sicdb/1.0.6",
         "id_cfg": {
             "patient": {
-                "id": "PatientID",
+                "id": "patientid",
                 "position": 1,
-                "start": "ICUOffset",
-                "end": "OffsetOfDeath",
+                "start": "firstadmission",
+                "end": "offsetofdeath",
                 "table": "cases"
             },
             "icustay": {
-                "id": "CaseID",
+                "id": "caseid",
                 "position": 2,
-                "start": "ICUOffset",
-                "end": "TimeOfStay",
+                "start": "offsetafterfirstadmission",
+                "end": "timeofstay",
                 "table": "cases"
             }
         },
@@ -22,13 +22,13 @@
             "cases": {
                 "files": "cases.csv.gz",
                 "defaults": {
-                    "index_var": "ICUOffset",
+                    "index_var": "icuoffset",
                     "time_vars": [
-                        "ICUOffset",
-                        "OffsetOfDeath",
-                        "HeartSurgeryBeginOffset",
-                        "HeartSurgeryEndOffset",
-                        "OffsetAfterFirstAdmission"
+                        "icuoffset",
+                        "heartsurgerybeginoffset",
+                        "heartsurgeryendoffset",
+                        "offsetafterfirstadmission",
+                        "offsetofdeath"
                     ]
                 },
                 "num_rows": 27386,
@@ -193,16 +193,12 @@
             "data_float_h": {
                 "files": "data_float_h.csv.gz",
                 "defaults": {
-                    "index_var": "Offset",
-                    "val_var": "Val",
-                    "time_vars": "Offset"
+                    "index_var": "offset",
+                    "val_var": "val",
+                    "time_vars": "offset"
                 },
                 "num_rows": 36785241,
                 "cols": {
-                    "id": {
-                        "name": "id",
-                        "spec": "col_integer"
-                    },
                     "caseid": {
                         "name": "CaseID",
                         "spec": "col_integer"
@@ -225,48 +221,22 @@
                     },
                     "rawdata": {
                         "name": "rawdata",
-                        "spec": "col_double"
+                        "spec": "col_character"
                     }
                 },
                 "partitioning": {
                     "col": "dataid",
                     "breaks": [
-                        1,
-                        2,
-                        3,
-                        4,
-                        7,
-                        28,
-                        29,
-                        702,
-                        703,
-                        705,
-                        708,
-                        709,
-                        710,
-                        715,
-                        717,
-                        719,
-                        724,
-                        725,
-                        731,
-                        773,
-                        2018,
-                        2274,
-                        2278,
-                        2280,
-                        2283,
-                        2290,
-                        3056,
-                        3059,
-                        3071
-                    ]
-                }
+                        702, 703, 705, 708, 709, 710, 715, 717, 719, 724, 725,
+                        731, 773, 2018, 2274, 2278, 2280, 2283, 2290, 3056, 3059, 3071]
+                },
+                "callback": "sic_data_float_h"
             },
             "data_ref": {
                 "files": "data_ref.csv.gz",
                 "defaults": {
-                    "index_var": "OffsetAfterFirstAdmission"
+                    "index_var": "offsetafterfirstadmission",
+                    "time_vars": ["offsetafterfirstadmission"]
                 },
                 "num_rows": 354157,
                 "cols": {
@@ -282,8 +252,8 @@
                         "name": "RefID",
                         "spec": "col_integer"
                     },
-                    "customfieldid": {
-                        "name": "CustomFieldID",
+                    "fieldid": {
+                        "name": "FieldID",
                         "spec": "col_integer"
                     }
                 }
@@ -291,9 +261,9 @@
             "laboratory": {
                 "files": "laboratory.csv.gz",
                 "defaults": {
-                    "index_var": "Offset",
-                    "val_var": "LaboratoryValue",
-                    "time_vars": "Offset"
+                    "index_var": "offset",
+                    "val_var": "laboratoryvalue",
+                    "time_vars": "offset"
                 },
                 "num_rows": 17572279,
                 "cols": {
@@ -326,11 +296,11 @@
             "medication": {
                 "files": "medication.csv.gz",
                 "defaults": {
-                    "index_var": "Offset",
+                    "index_var": "offset",
                     "val_var": "Amount",
                     "time_vars": [
-                        "Offset",
-                        "OffsetDrugEnd"
+                        "offset",
+                        "offsetdrugend"
                     ]
                 },
                 "num_rows": 5141346,
@@ -380,10 +350,10 @@
             "data_range": {
                 "files": "data_range.csv.gz",
                 "defaults": {
-                    "index_var": "Offset",
+                    "index_var": "offset",
                     "time_vars": [
-                        "Offset",
-                        "OffsetEnd"
+                        "offset",
+                        "offsetend"
                     ]
                 },
                 "num_rows": 183339,
@@ -417,8 +387,8 @@
             "unitlog": {
                 "files": "unitlog.csv.gz",
                 "defaults": {
-                    "index_var": "Offset",
-                    "time_vars": "Offset"
+                    "index_var": "offset",
+                    "time_vars": "offset"
                 },
                 "num_rows": 139968,
                 "cols": {
