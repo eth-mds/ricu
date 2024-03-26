@@ -43,7 +43,7 @@
             ],
             "miiv": [
                 {
-                    "ids": 50862,
+                    "ids": [50862, 53085],
                     "table": "labevents",
                     "sub_var": "itemid"
                 }
@@ -127,7 +127,7 @@
             ],
             "miiv": [
                 {
-                    "ids": 50863,
+                    "ids": [50863, 53086],
                     "table": "labevents",
                     "sub_var": "itemid"
                 }
@@ -454,7 +454,7 @@
             ],
             "miiv": [
                 {
-                    "ids": 50885,
+                    "ids": [50885, 53089],
                     "table": "labevents",
                     "sub_var": "itemid"
                 }
@@ -506,7 +506,7 @@
                     "ids": 6812,
                     "table": "numericitems",
                     "sub_var": "itemid",
-                    "callback": "convert_unit(binary_op(`*`, 0.058467), 'mg/dL')"
+                    "callback": "convert_unit(binary_op(`*`, 1.), 'mg/dL')"
                 }
             ],
             "eicu": [
@@ -825,7 +825,8 @@
                 {
                     "ids": 6824,
                     "table": "numericitems",
-                    "sub_var": "itemid"
+                    "sub_var": "itemid",
+                    "callback": "convert_unit(binary_op(`*`, 0.2), 'ng/mL')"
                 }
             ],
             "eicu": [

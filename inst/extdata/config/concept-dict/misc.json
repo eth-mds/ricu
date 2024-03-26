@@ -1,0 +1,90 @@
+{
+    "hospital_id": {
+      "description": "source hospital identifier",
+      "min": 1,
+      "max": 1000,
+      "target": "id_tbl",
+      "sources": {
+        "eicu": [
+          {
+            "table": "patient",
+            "class": "col_itm",
+            "val_var": "hospitalid"
+          }
+        ],
+        "eicu_demo": [
+          {
+            "table": "patient",
+            "class": "col_itm",
+            "val_var": "hospitalid"
+          }
+        ],
+        "hirid": [
+          {
+            "table": "general",
+            "class": "col_itm",
+            "val_var": "sex",
+            "callback": "transform_fun(set_val(1))"
+          }
+        ],
+        "mimic": [
+          {
+            "table": "icustays",
+            "class": "col_itm",
+            "val_var": "hadm_id",
+            "callback": "transform_fun(set_val(1))"
+          }
+        ],
+        "mimic_demo": [
+          {
+            "table": "icustays",
+            "class": "col_itm",
+            "val_var": "hadm_id",
+            "callback": "transform_fun(set_val(1))"
+          }
+        ],
+        "miiv": [
+          {
+            "table": "icustays",
+            "class": "col_itm",
+            "val_var": "hadm_id",
+            "callback": "transform_fun(set_val(1))"
+          }
+        ]
+      }
+    },
+    "patient_id": {
+        "description": "Patient Identifier",
+        "target": "id_tbl",
+        "sources": {
+          "mimic": [
+            {
+              "table": "admissions",
+              "val_var": "subject_id",
+              "class": "col_itm"
+            }
+          ],
+          "miiv": [
+            {
+              "table": "admissions",
+              "val_var": "subject_id",
+              "class": "col_itm"
+            }
+          ],
+          "hirid": [
+            {
+              "table": "general",
+              "val_var": "patientid",
+              "class": "col_itm"
+            }
+          ],
+          "eicu": [
+            {
+              "table": "patient",
+              "val_var": "patientunitstayid",
+              "class": "col_itm"
+            }
+          ]
+        }
+    }
+}

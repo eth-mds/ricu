@@ -92,6 +92,129 @@
             ]
         }
     },
+    "death_hosp": {
+        "class": "lgl_cncpt",
+        "description": "ICU mortality",
+        "category": "outcome",
+        "sources": {
+          "eicu": [
+            {
+              "table": "patient",
+              "index_var": "hospitaldischargeoffset",
+              "val_var": "hospitaldischargestatus",
+              "callback": "transform_fun(comp_na(`==`, 'Expired'))",
+              "class": "col_itm"
+            }
+          ],
+          "eicu_demo": [
+            {
+              "table": "patient",
+              "index_var": "hospitaldischargeoffset",
+              "val_var": "hospitaldischargestatus",
+              "callback": "transform_fun(comp_na(`==`, 'Expired'))",
+              "class": "col_itm"
+            }
+          ],
+          "miiv": [
+            {
+              "table": "admissions",
+              "index_var": "deathtime",
+              "val_var": "hospital_expire_flag",
+              "callback": "transform_fun(comp_na(`==`, 1L))",
+              "class": "col_itm"
+            }
+          ],
+          "mimic": [
+            {
+              "table": "admissions",
+              "index_var": "deathtime",
+              "val_var": "hospital_expire_flag",
+              "callback": "transform_fun(comp_na(`==`, 1L))",
+              "class": "col_itm"
+            }
+          ],
+          "mimic_demo": [
+            {
+              "table": "admissions",
+              "index_var": "deathtime",
+              "val_var": "hospital_expire_flag",
+              "callback": "transform_fun(comp_na(`==`, 1L))",
+              "class": "col_itm"
+            }
+          ]
+        }
+    },
+    "death_icu": {
+        "class": "lgl_cncpt",
+        "description": "ICU mortality",
+        "category": "outcome",
+        "sources": {
+          "aumc": [
+            {
+              "table": "admissions",
+              "index_var": "dischargedat",
+              "val_var": "destination",
+              "death_date": "dateofdeath",
+              "callback": "aumc_death_icu",
+              "class": "col_itm"
+            }
+          ],
+          "eicu": [
+            {
+              "table": "patient",
+              "index_var": "unitdischargeoffset",
+              "val_var": "unitdischargestatus",
+              "callback": "transform_fun(comp_na(`==`, 'Expired'))",
+              "class": "col_itm"
+            }
+          ],
+          "eicu_demo": [
+            {
+              "table": "patient",
+              "index_var": "unitdischargeoffset",
+              "val_var": "unitdischargestatus",
+              "callback": "transform_fun(comp_na(`==`, 'Expired'))",
+              "class": "col_itm"
+            }
+          ],
+          "hirid": [
+            {
+              "ids": [110, 200],
+              "table": "observations",
+              "sub_var": "variableid",
+              "callback": "hirid_death_icu",
+              "class": "hrd_itm"
+            }
+          ],
+          "miiv": [
+            {
+              "table": "admissions",
+              "index_var": "deathtime",
+              "val_var": "hospital_expire_flag",
+              "callback": "miiv_death_icu",
+              "class": "col_itm"
+            }
+          ],
+          "mimic": [
+            {
+              "table": "admissions",
+              "index_var": "deathtime",
+              "val_var": "hospital_expire_flag",
+              "callback": "mimic_death_icu",
+              "class": "col_itm"
+            }
+          ],
+          "mimic_demo": [
+            {
+              "table": "admissions",
+              "index_var": "deathtime",
+              "val_var": "hospital_expire_flag",
+              "callback": "mimic_death_icu",
+              "class": "col_itm"
+            }
+          ]
+        }
+    },
     "dopa60": {
         "concepts": [
             "dopa_rate",

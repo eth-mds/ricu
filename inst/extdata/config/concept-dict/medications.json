@@ -417,6 +417,102 @@
             "picdb": []
         }
     },
+    "abx_cont": {
+        "description": "continuous antibiotic administration",
+        "concepts": ["abx_duration", "death_icu"],
+        "category": "medications",
+        "callback": "abx_cont",
+        "class": "rec_cncpt"
+    },
+    "abx_duration": {
+        "description": "duration of administered antibiotics",
+        "category": "medications",
+        "target": "win_tbl",
+        "class": "lgl_cncpt",
+        "sources": {
+          "aumc": [
+            {
+              "ids": [2, 13, 19, 24, 28, 29, 57, 59, 82, 103, 240, 247, 333, 1133, 1199, 1300, 1371, 1795, 2284, 2834, 3237, 3741, 5576, 6834, 6847, 6871, 6919, 6948, 6953, 6958, 7044, 7064, 7185, 7187, 7208, 7227, 7235, 8064, 8394, 8942, 9029, 9030, 9052, 9070, 9117, 9128, 9133, 9142, 9151, 9152, 12262, 12389, 12398, 12956, 12997, 13057, 13094, 13102, 15591, 18860, 19137, 19773, 20563, 23166, 24241, 25776, 27617, 29321],
+              "table": "drugitems",
+              "sub_var": "itemid",
+              "dur_var": "stop",
+              "callback": "transform_fun(set_val(TRUE))"
+            }
+          ],
+          "eicu": [
+            {
+              "regex": "bactrim|cipro|flagyl|metronidazole|zithromax|zosyn|(((amika|cleo|ofloxa)|(azithro|clinda|tobra|vanco)my)c|(ampi|oxa|peni|pipera)cill|cefazol|levaqu|rifamp)in",
+              "table": "infusiondrug",
+              "sub_var": "drugname",
+              "target": "ts_tbl",
+              "callback": "combine_callbacks(transform_fun(set_val(TRUE)), ricu:::ts_to_win_tbl(mins(1L)))",
+              "class": "rgx_itm"
+            },
+            {
+              "regex": "cipro|flagyl|maxipime|metronidazole|tazobactam|zosyn|cef(azolin|epime)|(((azithro|clinda|vanco)my|ofloxa|vanco)c|levaqu|piperacill|roceph)in",
+              "table": "medication",
+              "sub_var": "drugname",
+              "dur_var": "drugstopoffset",
+              "class": "rgx_itm",
+              "callback": "transform_fun(set_val(TRUE))"
+            }
+          ],
+          "eicu_demo": [
+            {
+              "regex": "bactrim|cipro|flagyl|metronidazole|zithromax|zosyn|(((amika|cleo|ofloxa)|(azithro|clinda|tobra|vanco)my)c|(ampi|oxa|peni|pipera)cill|cefazol|levaqu|rifamp)in",
+              "table": "infusiondrug",
+              "sub_var": "drugname",
+              "target": "ts_tbl",
+              "callback": "combine_callbacks(transform_fun(set_val(TRUE)), ricu:::ts_to_win_tbl(mins(1L)))",
+              "class": "rgx_itm"
+            },
+            {
+              "regex": "cipro|flagyl|maxipime|metronidazole|tazobactam|zosyn|cef(azolin|epime)|(((azithro|clinda|vanco)my|ofloxa|vanco)c|levaqu|piperacill|roceph)in",
+              "table": "medication",
+              "sub_var": "drugname",
+              "dur_var": "drugstopoffset",
+              "class": "rgx_itm",
+              "callback": "transform_fun(set_val(TRUE))"
+            }
+          ],
+          "hirid": [
+            {
+              "ids": [163, 176, 181, 186, 189, 300, 326, 331, 351, 405, 1000234, 1000272, 1000273, 1000274, 1000284, 1000299, 1000300, 1000302, 1000304, 1000305, 1000306, 1000315, 1000317, 1000318, 1000320, 1000321, 1000322, 1000335, 1000348, 1000352, 1000363, 1000365, 1000390, 1000407, 1000408, 1000424, 1000425, 1000426, 1000437, 1000483, 1000507, 1000508, 1000518, 1000519, 1000549, 1000601, 1000648, 1000666, 1000670, 1000671, 1000760, 1000781, 1000791, 1000797, 1000812, 1000825, 1000829, 1000830, 1000837, 1000838, 1000854, 1000855, 1000893, 1000894, 1001005, 1001068, 1001075, 1001079, 1001084, 1001086, 1001095, 1001096, 1001097, 1001098, 1001168, 1001169, 1001170, 1001171, 1001173, 1001193, 1001198],
+              "table": "pharma",
+              "sub_var": "pharmaid",
+              "target": "ts_tbl",
+              "callback": "combine_callbacks(transform_fun(set_val(TRUE)), ricu:::ts_to_win_tbl(mins(1L)))"
+            }
+          ],
+          "miiv": [
+            {
+              "ids": [225798, 225837, 225838, 225840, 225842, 225843, 225844, 225845, 225847, 225848, 225850, 225851, 225853, 225855, 225857, 225859, 225860, 225862, 225863, 225865, 225866, 225868, 225869, 225871, 225873, 225875, 225876, 225877, 225879, 225881, 225882, 225883, 225884, 225885, 225886, 225888, 225889, 225890, 225892, 225893, 225895, 225896, 225897, 225898, 225899, 225900, 225902, 225903, 225905, 227691, 228003],
+              "table": "inputevents",
+              "sub_var": "itemid",
+              "dur_var": "endtime",
+              "callback": "transform_fun(set_val(TRUE))"
+            }
+          ],
+          "mimic": [
+            {
+              "ids": [225798, 225837, 225838, 225840, 225842, 225843, 225844, 225845, 225847, 225848, 225850, 225851, 225853, 225855, 225857, 225859, 225860, 225862, 225863, 225865, 225866, 225868, 225869, 225871, 225873, 225875, 225876, 225877, 225879, 225881, 225882, 225883, 225884, 225885, 225886, 225888, 225889, 225890, 225892, 225893, 225895, 225896, 225897, 225898, 225899, 225900, 225902, 225903, 225905, 227691, 228003],
+              "table": "inputevents_mv",
+              "sub_var": "itemid",
+              "dur_var": "endtime",
+              "callback": "transform_fun(set_val(TRUE))"
+            }
+          ],
+          "mimic_demo": [
+            {
+              "ids": [225798, 225837, 225838, 225840, 225842, 225843, 225844, 225845, 225847, 225848, 225850, 225851, 225853, 225855, 225857, 225859, 225860, 225862, 225863, 225865, 225866, 225868, 225869, 225871, 225873, 225875, 225876, 225877, 225879, 225881, 225882, 225883, 225884, 225885, 225886, 225888, 225889, 225890, 225892, 225893, 225895, 225896, 225897, 225898, 225899, 225900, 225902, 225903, 225905, 227691, 228003],
+              "table": "inputevents_mv",
+              "sub_var": "itemid",
+              "dur_var": "endtime",
+              "callback": "transform_fun(set_val(TRUE))"
+            }
+          ]
+        }
+    },
     "adh_rate": {
         "unit": [
             "units/min",
@@ -508,6 +604,22 @@
                 }
             ],
             "picdb": []
+        }
+    },
+    "adh_dur": {
+        "description": "vasopressin duration",
+        "category": "medications",
+        "aggregate": "max",
+        "sources": {
+          "hirid": [
+            {
+              "ids": [112, 113],
+              "table": "pharma",
+              "sub_var": "pharmaid",
+              "grp_var": "infusionid",
+              "callback": "hirid_duration"
+            }
+          ]
         }
     },
     "cort": {
@@ -1745,6 +1857,54 @@
             "picdb": []
         }
     },
+    "levo_dur": {
+        "description": "levosimendan duration",
+        "category": "medications",
+        "aggregate": "max",
+        "sources": {
+          "hirid": [
+            {
+              "ids": 1000606,
+              "table": "pharma",
+              "sub_var": "pharmaid",
+              "grp_var": "infusionid",
+              "callback": "hirid_duration"
+            }
+          ]
+        }
+    },
+    "milrin_dur": {
+        "description": "milrinone duration",
+        "category": "medications",
+        "aggregate": "max",
+        "sources": {
+          "hirid": [
+            {
+              "ids": 1000441,
+              "table": "pharma",
+              "sub_var": "pharmaid",
+              "grp_var": "infusionid",
+              "callback": "hirid_duration"
+            }
+          ]
+        }
+    },
+    "teophyllin_dur": {
+        "description": "theophyllin duration",
+        "category": "medications",
+        "aggregate": "max",
+        "sources": {
+          "hirid": [
+            {
+              "ids": [1000706, 1000707, 1000698, 1000267],
+              "table": "pharma",
+              "sub_var": "pharmaid",
+              "grp_var": "infusionid",
+              "callback": "hirid_duration"
+            }
+          ]
+        }
+      },
     "phn_rate": {
         "unit": "mcg/kg/min",
         "description": "phenylephrine rate",
@@ -1840,6 +2000,14 @@
         "omopid": 3655896,
         "category": "medications",
         "callback": "vaso_ind",
+        "class": "rec_cncpt"
+    },
+    "cf_treat": {
+        "description": "treatment for circulatory failure (vasopressors/inotropes)",
+        "category": "medications",
+        "concepts": ["epi_dur", "norepi_dur", "dopa_dur", "dobu_dur", "adh_dur",
+                        "phn_dur", "levo_dur", "milrin_dur", "teophyllin_dur"],
+        "callback": "cf_treat",
         "class": "rec_cncpt"
     }
 }
