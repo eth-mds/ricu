@@ -876,7 +876,8 @@
                     "ids": 253,
                     "table": "laboratory",
                     "sub_var": "laboratoryid",
-                    "class": "sic_itm"
+                    "class": "sic_itm",
+                    "callback": "convert_unit(identity_callback, 'ng/mL', 'µg/l')"
                 }
             ],
             "picdb": [
@@ -1133,7 +1134,8 @@
                 "ids": 341,
                 "table": "laboratory",
                 "sub_var": "laboratoryid",
-                "class": "sic_itm"
+                "class": "sic_itm",
+                "callback": "convert_unit(binary_op(`*`, 10), 'mg/L', 'mg/dl')"
               }
             ],
             "picdb": [

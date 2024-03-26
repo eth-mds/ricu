@@ -476,8 +476,8 @@
             "C",
             "\u00b0C"
         ],
-        "min": 32,
-        "max": 42,
+        "min": 30,
+        "max": 44,
         "description": "temperature",
         "omopid": 4302666,
         "category": "vitals",
