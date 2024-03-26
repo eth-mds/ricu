@@ -855,7 +855,7 @@
                   "ids": 290,
                   "table": "laboratory",
                   "sub_var": "laboratoryid",
-                  "callback": "convert_unit(binary_op(`*`, 1.6114), '%', 'g/dl')",
+                  "callback": "convert_unit(identity_callback, '%', 'g/dl')",
                   "class": "sic_itm"
                 }
             ],
