@@ -1,4 +1,4 @@
-name: ricu-test
+name: ricu
 channels:
   - nodefaults
   - conda-forge
@@ -18,7 +18,6 @@ dependencies:
   - r-cli>=2.1.0
   - r-fansi
   - r-openssl
-  - r-units
   # optional
   - r-rticles
   - r-forestmodel
@@ -30,3 +29,12 @@ dependencies:
   - r-knitr
   - r-pdftools
   - r-covr
+  - r-units
+  - r-tinytex
+  - r-testthat
+  - r-mockthat
+  - r-pkgload
+  - r-codetools
+  - r-qpdf
+  - qpdf
+  - r-mimic.demo

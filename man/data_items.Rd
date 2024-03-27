@@ -6,6 +6,7 @@
 \alias{init_itm}
 \alias{init_itm.sel_itm}
 \alias{init_itm.hrd_itm}
+\alias{init_itm.sic_itm}
 \alias{init_itm.col_itm}
 \alias{init_itm.rgx_itm}
 \alias{init_itm.fun_itm}
@@ -25,6 +26,8 @@ init_itm(x, ...)
 \method{init_itm}{sel_itm}(x, table, sub_var, ids, callback = "identity_callback", ...)
 
 \method{init_itm}{hrd_itm}(x, table, sub_var, ids, callback = "identity_callback", ...)
+
+\method{init_itm}{sic_itm}(x, table, sub_var, ids, callback = "identity_callback", ...)
 
 \method{init_itm}{col_itm}(x, table, unit_val = NULL, callback = "identity_callback", ...)
 

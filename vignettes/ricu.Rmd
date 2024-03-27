@@ -73,7 +73,9 @@ pkgdown:
 options(
   width = 76,
   kableExtra.latex.load_packages = FALSE,
-  crayon.enabled = FALSE
+  crayon.enabled = FALSE,
+  message = FALSE,
+  warning = FALSE
 )
 
 library(ricu)
@@ -653,7 +655,7 @@ subset(mimic_demo$admissions, subject_id > 44000, language:ethnicity)
 
 This syntax makes it possible to read row-subsets of *long* tables into memory with little memory overhead. While terseness of such an API does introduce potential ambiguity, this is mostly overcome by using the tidy eval framework provided by \pkg{rlang} \citep{wickham2020}:
 
-```{r mimic-tidy, eval = srcs_avail("mimic_demo")}
+```{r mimic-tidy, eval = srcs_avail("mimic_demo"), message = FALSE}
 subject_id <- 44000:45000
 subset(mimic_demo$admissions, .data$subject_id %in% .env$subject_id,
        subject_id:dischtime)

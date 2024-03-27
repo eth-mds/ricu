@@ -31,7 +31,8 @@ directory}
 \item{srcs}{Character vector of data source names, an object for which an
 \code{src_name()} method is defined or an arbitrary-length list thereof.}
 
-\item{name}{File name of the configuration file (\code{.json} will be appended)}
+\item{name}{File name of the configuration file (\code{.json} will be appended)
+or name of a folder containing multiple configuration files.}
 
 \item{cfg_dirs}{Character vector of directories searched for config files}
 

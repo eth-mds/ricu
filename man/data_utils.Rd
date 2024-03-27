@@ -5,6 +5,7 @@
 \alias{id_orig_helper}
 \alias{id_orig_helper.src_env}
 \alias{id_orig_helper.miiv_env}
+\alias{id_orig_helper.sic_env}
 \alias{id_windows}
 \alias{id_win_helper}
 \alias{id_win_helper.mimic_env}
@@ -13,6 +14,7 @@
 \alias{id_win_helper.hirid_env}
 \alias{id_win_helper.aumc_env}
 \alias{id_win_helper.miiv_env}
+\alias{id_win_helper.picdb_env}
 \alias{id_map}
 \alias{id_map_helper}
 \alias{id_map_helper.src_env}
@@ -25,6 +27,8 @@ id_orig_helper(x, id)
 \method{id_orig_helper}{src_env}(x, id)
 
 \method{id_orig_helper}{miiv_env}(x, id)
+
+\method{id_orig_helper}{sic_env}(x, id)
 
 id_windows(x, copy = TRUE)
 
@@ -41,6 +45,8 @@ id_win_helper(x)
 \method{id_win_helper}{aumc_env}(x)
 
 \method{id_win_helper}{miiv_env}(x)
+
+\method{id_win_helper}{picdb_env}(x)
 
 id_map(x, id_var, win_var, in_time = NULL, out_time = NULL)
 
