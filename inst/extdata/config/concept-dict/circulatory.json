@@ -1,0 +1,19 @@
+{
+    "mech_circ": {
+      "description": "mechanical circulatory support",
+      "class": "lgl_cncpt",
+      "target": "id_tbl",
+      "category": "circulatory",
+      "sources": {
+        "mimic": [
+          {
+            "ids": ["3752", "3760", "3765", "3766", "3768"],
+            "table": "procedures_icd",
+            "sub_var": "icd9_code",
+            "val_var": "seq_num",
+            "callback": "transform_fun(set_val(TRUE))"
+          }
+        ]
+      }
+    }
+}

@@ -119,15 +119,11 @@
             "picdb": []
         }
     },
-    "o2sat": {
-        "unit": [
-            "%",
-            "% Sat."
-        ],
+    "spo2": {
+        "unit": ["%", "% Sat."],
         "min": 50,
         "max": 100,
-        "description": "oxygen saturation",
-        "omopid": 40483579,
+        "description": "oxygen saturation (pulse oximetry)",
         "category": "respiratory",
         "sources": {
             "aumc": [
@@ -138,46 +134,29 @@
                     ],
                     "table": "numericitems",
                     "sub_var": "itemid"
-                },
-                {
-                    "ids": 12311,
-                    "table": "numericitems",
-                    "sub_var": "itemid",
-                    "callback": "transform_fun(binary_op(`*`, 100))"
                 }
             ],
             "eicu": [
                 {
-                    "table": "vitalperiodic",
-                    "val_var": "sao2",
-                    "unit_val": "%",
-                    "class": "col_itm"
-                },
-                {
-                    "ids": "O2 Sat (%)",
-                    "table": "lab",
-                    "sub_var": "labname"
+                "table": "vitalperiodic",
+                "val_var": "sao2",
+                "unit_val": "%",
+                "class": "col_itm"
                 }
             ],
             "eicu_demo": [
                 {
-                    "table": "vitalperiodic",
-                    "val_var": "sao2",
-                    "unit_val": "%",
-                    "class": "col_itm"
-                },
-                {
-                    "ids": "O2 Sat (%)",
-                    "table": "lab",
-                    "sub_var": "labname"
+                "table": "vitalperiodic",
+                "val_var": "sao2",
+                "unit_val": "%",
+                "class": "col_itm"
                 }
             ],
             "hirid": [
                 {
                     "ids": [
                         4000,
-                        8280,
-                        20000800
+                        8280
                     ],
                     "table": "observations",
                     "sub_var": "variableid",
@@ -187,9 +166,7 @@
             "miiv": [
                 {
                     "ids": [
-                        220277,
-                        226253,
-                        50817
+                        220277
                     ],
                     "table": "chartevents",
                     "sub_var": "itemid"
@@ -197,26 +174,16 @@
             ],
             "mimic": [
                 {
-                    "ids": [
-                        646,
-                        220277,
-                        226253,
-                        50817
-                    ],
-                    "table": "chartevents",
-                    "sub_var": "itemid"
+                "ids": [646, 220277],
+                "table": "chartevents",
+                "sub_var": "itemid"
                 }
             ],
             "mimic_demo": [
                 {
-                    "ids": [
-                        646,
-                        220277,
-                        226253,
-                        50817
-                    ],
-                    "table": "chartevents",
-                    "sub_var": "itemid"
+                "ids": [646, 220277],
+                "table": "chartevents",
+                "sub_var": "itemid"
                 }
             ],
             "sic": [
@@ -235,16 +202,107 @@
                         "1006"
                     ],
                     "sub_var": "itemid"
-                },
-                {
-                    "table": "labevents",
-                    "ids": [
-                        5252
-                    ],
-                    "sub_var": "itemid"
                 }
             ]
         }
+      },
+      "sao2": {
+        "unit": ["%", "% Sat."],
+        "min": 50,
+        "max": 100,
+        "description": "oxygen saturation (arterial blood)",
+        "category": "respiratory",
+        "sources": {
+           "aumc": [
+                {
+                    "ids": 12311,
+                    "table": "numericitems",
+                    "sub_var": "itemid",
+                    "callback": "transform_fun(binary_op(`*`, 100))"
+                }
+          ],
+          "eicu": [
+            {
+              "ids": "O2 Sat (%)",
+              "table": "lab",
+              "sub_var": "labname"
+            }
+          ],
+          "eicu_demo": [
+            {
+              "ids": "O2 Sat (%)",
+              "table": "lab",
+              "sub_var": "labname"
+            }
+          ],
+          "hirid": [
+              {
+                  "ids": [
+                      20000800
+                  ],
+                  "table": "observations",
+                  "sub_var": "variableid",
+                  "class": "hrd_itm"
+              }
+          ],
+          "miiv": [
+              {
+                  "ids": [
+                      50817
+                  ],
+                  "table": "chartevents",
+                  "sub_var": "itemid"
+              }
+          ],
+          "mimic": [
+            {
+              "ids": [834, 220227],
+              "table": "chartevents",
+              "sub_var": "itemid"
+            }
+          ],
+          "mimic_demo": [
+            {
+              "ids": [834, 220227],
+              "table": "chartevents",
+              "sub_var": "itemid"
+            }
+          ],
+          "sic": [
+              {
+                  "ids": 673,
+                  "table": "laboratory",
+                  "sub_var": "laboratoryid",
+                  "class": "sic_itm"
+              }
+          ],
+          "picdb": [
+              {
+                  "table": "labevents",
+                  "ids": [
+                      5252
+                  ],
+                  "sub_var": "itemid"
+              }
+          ]
+        }
+    },
+    "o2sat": {
+        "concepts": [
+            "sao2",
+            "spo2"
+        ],
+        "unit": [
+            "%",
+            "% Sat."
+        ],
+        "min": 50,
+        "max": 100,
+        "description": "oxygen saturation (pulse oximetry and arterial blood)",
+        "omopid": 40483579,
+        "category": "respiratory",
+        "callback": "o2sat_lab_first",
+        "class": "rec_cncpt"
     },
     "pafi": {
         "concepts": [
@@ -274,10 +332,7 @@
         "sources": {
             "aumc": [
                 {
-                    "ids": [
-                        8874,
-                        12266
-                    ],
+                    "ids": [8873, 8874, 12266],
                     "table": "numericitems",
                     "sub_var": "itemid"
                 }
@@ -287,6 +342,11 @@
                     "table": "vitalperiodic",
                     "val_var": "respiration",
                     "class": "col_itm"
+                },
+                {
+                  "table": "nursecharting",
+                  "ids": "Respiratory Rate",
+                  "sub_var": "nursingchartcelltypevalname"
                 }
             ],
             "eicu_demo": [

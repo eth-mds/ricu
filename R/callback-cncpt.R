@@ -617,6 +617,30 @@ bmi <- function(..., interval = NULL) {
 
 #' @rdname callback_cncpt
 #' @export
+o2sat_lab_first <- function(..., interval = NULL) {
+
+  # Pulse Oxymetry: `spo2`
+  # Arterial Blood Gas: `sao2`
+  cnc <- c("sao2", "spo2")
+  res <- collect_dots(cnc, interval, ..., merge_dat = TRUE)
+
+ # default to sao2 (arterial blood gas)
+  res <- res[, o2sat := sao2]
+
+  # if sao2 is missing, use spo2 (pulse oxymetry)
+  res <- res[is.na(sao2), o2sat := spo2]
+
+  # Filter out values below 50 and above 100
+  res <- filter_bounds(res, "o2sat", 50, 100)
+
+  # remove sao2 and spo2 columns
+  res <- rm_cols(res, cnc, by_ref = TRUE)
+
+  res
+}
+
+#' @rdname callback_cncpt
+#' @export
 norepi_equiv <- function(..., interval = NULL) {
 
   multiply_rename <- function(x, fact, col) {

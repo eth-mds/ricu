@@ -12,7 +12,7 @@
         "sources": {
             "aumc": [
                 {
-                    "ids": 6643,
+                    "ids": [6643, 6680, 8842],
                     "table": "numericitems",
                     "sub_var": "itemid"
                 }
@@ -22,6 +22,11 @@
                     "table": "vitalperiodic",
                     "val_var": "systemicdiastolic",
                     "class": "col_itm"
+                },
+                {
+                  "table": "vitalaperiodic",
+                  "val_var": "noninvasivediastolic",
+                  "class": "col_itm"
                 }
             ],
             "eicu_demo": [
@@ -29,6 +34,11 @@
                     "table": "vitalperiodic",
                     "val_var": "systemicdiastolic",
                     "class": "col_itm"
+                },
+                {
+                  "table": "vitalaperiodic",
+                  "val_var": "noninvasivediastolic",
+                  "class": "col_itm"
                 }
             ],
             "hirid": [
@@ -275,7 +285,7 @@
         "sources": {
             "aumc": [
                 {
-                    "ids": 6642,
+                    "ids": [6642, 6679, 8843],
                     "table": "numericitems",
                     "sub_var": "itemid"
                 }
@@ -385,7 +395,7 @@
         "sources": {
             "aumc": [
                 {
-                    "ids": 6641,
+                    "ids": [6641, 6678, 8841],
                     "table": "numericitems",
                     "sub_var": "itemid"
                 }
@@ -395,6 +405,11 @@
                     "table": "vitalperiodic",
                     "val_var": "systemicsystolic",
                     "class": "col_itm"
+                },
+                {
+                  "table": "vitalaperiodic",
+                  "val_var": "noninvasivesystolic",
+                  "class": "col_itm"
                 }
             ],
             "eicu_demo": [
@@ -402,6 +417,11 @@
                     "table": "vitalperiodic",
                     "val_var": "systemicsystolic",
                     "class": "col_itm"
+                },
+                {
+                  "table": "vitalaperiodic",
+                  "val_var": "noninvasivesystolic",
+                  "class": "col_itm"
                 }
             ],
             "hirid": [
@@ -484,11 +504,7 @@
         "sources": {
             "aumc": [
                 {
-                    "ids": [
-                        8658,
-                        13952,
-                        16110
-                    ],
+                    "ids": [8658, 8659, 8662, 11889, 13058, 13059, 13060, 13061, 13062, 13063, 13952, 16110],
                     "table": "numericitems",
                     "sub_var": "itemid"
                 }
@@ -497,14 +513,38 @@
                 {
                     "table": "vitalperiodic",
                     "val_var": "temperature",
+                    "unit_val": "C",
                     "class": "col_itm"
+                },
+                {
+                  "table": "nursecharting",
+                  "ids": "Temperature (C)",
+                  "sub_var": "nursingchartcelltypevalname"
+                },
+                {
+                  "table": "nursecharting",
+                  "ids": "Temperature (F)",
+                  "sub_var": "nursingchartcelltypevalname",
+                  "callback": "combine_callbacks(transform_fun(as.numeric), transform_fun(fahr_to_cels))"
                 }
             ],
             "eicu_demo": [
                 {
                     "table": "vitalperiodic",
                     "val_var": "temperature",
+                    "unit_val": "C",
                     "class": "col_itm"
+                },
+                {
+                  "table": "nursecharting",
+                  "ids": "Temperature (C)",
+                  "sub_var": "nursingchartcelltypevalname"
+                },
+                {
+                  "table": "nursecharting",
+                  "ids": "Temperature (F)",
+                  "sub_var": "nursingchartcelltypevalname",
+                  "callback": "combine_callbacks(transform_fun(as.numeric), transform_fun(fahr_to_cels))"
                 }
             ],
             "hirid": [

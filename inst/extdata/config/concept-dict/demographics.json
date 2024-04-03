@@ -419,5 +419,86 @@
                 }
             ]
         }
-    }
+    },
+    "ethnic": {
+        "target": "id_tbl",
+        "levels": ["asian", "black", "white", "other"],
+        "class": "fct_cncpt",
+        "description": "ethnicity",
+        "category": "demographics",
+        "sources": {
+          "eicu": [
+            {
+              "table": "patient",
+              "val_var": "ethnicity",
+              "callback": "apply_map(c(`African American` = 'black', Asian = 'asian', Caucasian = 'white', Hispanic = 'other', `Native American` = 'other', `Other/Unknown` = 'other'))",
+              "class": "col_itm"
+            }
+          ],
+          "eicu_demo": [
+            {
+              "table": "patient",
+              "val_var": "ethnicity",
+              "callback": "apply_map(c(`African American` = 'black', Asian = 'asian', Caucasian = 'white', Hispanic = 'other', `Native American` = 'other', `Other/Unknown` = 'other'))",
+              "class": "col_itm"
+            }
+          ],
+          "miiv": [
+            {
+              "table": "admissions",
+              "val_var": "race",
+              "callback": "apply_map(c(`AMERICAN INDIAN/ALASKA NATIVE` = 'other', ASIAN = 'asian', `ASIAN - ASIAN INDIAN` = 'asian', `ASIAN - CHINESE` = 'asian', `ASIAN - KOREAN` = 'asian', `ASIAN - SOUTH EAST ASIAN` = 'asian', `BLACK/AFRICAN` = 'black', `BLACK/AFRICAN AMERICAN` = 'black', `BLACK/CAPE VERDEAN` = 'black', `BLACK/CARIBBEAN ISLAND` = 'black', `HISPANIC OR LATINO` = 'other', `HISPANIC/LATINO - CENTRAL AMERICAN` = 'other', `HISPANIC/LATINO - COLUMBIAN` = 'other', `HISPANIC/LATINO - CUBAN` = 'other', `HISPANIC/LATINO - DOMINICAN` = 'other', `HISPANIC/LATINO - GUATEMALAN` = 'other', `HISPANIC/LATINO - HONDURAN` = 'other', `HISPANIC/LATINO - MEXICAN` = 'other', `HISPANIC/LATINO - PUERTO RICAN` = 'other', `HISPANIC/LATINO - SALVADORAN` = 'other', `MULTIPLE RACE/ETHNICITY NATIVE HAWAIIAN OR OTHER PACIFIC ISLANDER` = 'other', `OTHER` = 'other', `PATIENT DECLINED TO ANSWER` = NA, `PORTUGUESE` = 'white', `SOUTH AMERICAN` = 'other', `UNABLE TO OBTAIN` = NA, `UNKNOWN` = NA, `WHITE` = 'white', `WHITE - BRAZILIAN` = 'white', `WHITE - EASTERN EUROPEAN` = 'white', `WHITE - OTHER EUROPEAN` = 'white', `WHITE - RUSSIAN` = 'white'))",
+              "class": "col_itm"
+            }
+          ],
+          "mimic": [
+            {
+              "table": "admissions",
+              "val_var": "ethnicity",
+              "callback": "apply_map(c(`AMERICAN INDIAN/ALASKA NATIVE` = 'other', `AMERICAN INDIAN/ALASKA NATIVE FEDERALLY RECOGNIZED TRIBE` = 'other', ASIAN = 'asian', `ASIAN - ASIAN INDIAN` = 'asian', `ASIAN - CAMBODIAN` = 'asian', `ASIAN - CHINESE` = 'asian', `ASIAN - FILIPINO` = 'asian', `ASIAN - JAPANESE` = 'asian', `ASIAN - KOREAN` = 'asian', `ASIAN - OTHER` = 'asian', `ASIAN - THAI` = 'asian', `ASIAN - VIETNAMESE` = 'asian',`BLACK/AFRICAN` = 'black', `BLACK/AFRICAN AMERICAN` = 'black', `BLACK/CAPE VERDEAN` = 'black', `BLACK/HAITIAN` = 'black', `CARIBBEAN ISLAND` = 'black', `HISPANIC OR LATINO` = 'other', `HISPANIC/LATINO - CENTRAL AMERICAN (OTHER)` = 'other', `HISPANIC/LATINO - COLOMBIAN` = 'other', `HISPANIC/LATINO - CUBAN` = 'other', `HISPANIC/LATINO - DOMINICAN` = 'other', `HISPANIC/LATINO - GUATEMALAN` = 'other', `HISPANIC/LATINO - HONDURAN` = 'other', `HISPANIC/LATINO - MEXICAN` = 'other', `HISPANIC/LATINO - PUERTO RICAN` = 'other', `HISPANIC/LATINO - SALVADORAN` = 'other', `MIDDLE EASTERN` = 'other', `MULTI RACE ETHNICITY` = 'other', `NATIVE HAWAIIAN OR OTHER PACIFIC ISLANDER` = 'other', `OTHER` = 'other', `PATIENT DECLINED TO ANSWER` = NA, `PORTUGUESE` = 'white', `SOUTH AMERICAN` = 'other', `UNABLE TO OBTAIN` = NA, `UNKNOWN/NOT SPECIFIED` = NA, `WHITE` = 'white', `WHITE - BRAZILIAN` = 'white', `WHITE - EASTERN EUROPEAN` = 'white', `WHITE - OTHER EUROPEAN` = 'white', `WHITE - RUSSIAN` = 'white'))",
+              "class": "col_itm"
+            }
+          ],
+          "mimic_demo": [
+            {
+              "table": "admissions",
+              "val_var": "ethnicity",
+              "callback": "apply_map(c(`AMERICAN INDIAN/ALASKA NATIVE` = 'other', `AMERICAN INDIAN/ALASKA NATIVE FEDERALLY RECOGNIZED TRIBE` = 'other', ASIAN = 'asian', `ASIAN - ASIAN INDIAN` = 'asian', `ASIAN - CAMBODIAN` = 'asian', `ASIAN - CHINESE` = 'asian', `ASIAN - FILIPINO` = 'asian', `ASIAN - JAPANESE` = 'asian', `ASIAN - KOREAN` = 'asian', `ASIAN - OTHER` = 'asian', `ASIAN - THAI` = 'asian', `ASIAN - VIETNAMESE` = 'asian',`BLACK/AFRICAN` = 'black', `BLACK/AFRICAN AMERICAN` = 'black', `BLACK/CAPE VERDEAN` = 'black', `BLACK/HAITIAN` = 'black', `CARIBBEAN ISLAND` = 'black', `HISPANIC OR LATINO` = 'other', `HISPANIC/LATINO - CENTRAL AMERICAN (OTHER)` = 'other', `HISPANIC/LATINO - COLOMBIAN` = 'other', `HISPANIC/LATINO - CUBAN` = 'other', `HISPANIC/LATINO - DOMINICAN` = 'other', `HISPANIC/LATINO - GUATEMALAN` = 'other', `HISPANIC/LATINO - HONDURAN` = 'other', `HISPANIC/LATINO - MEXICAN` = 'other', `HISPANIC/LATINO - PUERTO RICAN` = 'other', `HISPANIC/LATINO - SALVADORAN` = 'other', `MIDDLE EASTERN` = 'other', `MULTI RACE ETHNICITY` = 'other', `NATIVE HAWAIIAN OR OTHER PACIFIC ISLANDER` = 'other', `OTHER` = 'other', `PATIENT DECLINED TO ANSWER` = NA, `PORTUGUESE` = 'white', `SOUTH AMERICAN` = 'other', `UNABLE TO OBTAIN` = NA, `UNKNOWN/NOT SPECIFIED` = NA, `WHITE` = 'white', `WHITE - BRAZILIAN` = 'white', `WHITE - EASTERN EUROPEAN` = 'white', `WHITE - OTHER EUROPEAN` = 'white', `WHITE - RUSSIAN` = 'white'))",
+              "class": "col_itm"
+            }
+          ],
+          "picdb": [
+            {
+              "table": "admissions",
+              "val_var": "ethnicity",
+              "callback": "apply_map(c(`Hui ethnic` = 'asian', `Buyei ethnic` = 'asian', `Han ethnic` = 'asian', `Yi ethnic` = 'asian', `Miao ethnic` = 'asian', `Others` = 'other', `Tujia ethnic` = 'asian'))",
+              "class": "col_itm"
+            }
+          ]
+        }
+      },
+      "insurance": {
+        "target": "id_tbl",
+        "levels": ["Government", "Medicaid", "Medicare", "Private", "Self Pay"],
+        "class": "fct_cncpt",
+        "description": "insurance",
+        "category": "demographics",
+        "sources": {
+          "mimic": [{
+            "table": "admissions",
+            "val_var": "insurance",
+            "class": "col_itm"
+          }],
+          "mimic_demo": [{
+            "table": "admissions",
+            "val_var": "insurance",
+            "class": "col_itm"
+          }],
+          "miiv": [{
+            "table": "admissions",
+            "val_var": "insurance",
+            "class": "col_itm"
+          }]
+        }
+      }
 }

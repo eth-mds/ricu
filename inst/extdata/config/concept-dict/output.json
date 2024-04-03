@@ -2,7 +2,7 @@
     "urine": {
         "unit": "mL",
         "min": 0,
-        "max": 2000,
+        "max": 7000,
         "aggregate": "sum",
         "description": "urine output",
         "omopid": 4264378,
@@ -10,7 +10,7 @@
         "sources": {
             "aumc": [
                 {
-                    "ids": 8794,
+                    "ids": [8794, 8796, 8798, 8800, 8803],
                     "table": "numericitems",
                     "sub_var": "itemid"
                 }
@@ -162,6 +162,66 @@
                     "sub_var": "itemid"
                 }
             ]
+        }
+    },
+    "urine_rate": {
+        "unit": "mL/h",
+        "min": 0,
+        "max": 3000,
+        "aggregate": "max",
+        "description": "urine rate per hour",
+        "category": "output",
+        "sources": {
+          "aumc": [
+            {
+              "class": "fun_itm",
+              "callback": "combine_callbacks(fwd_concept('urine'), urine_rate)"
+            }
+          ],
+          "eicu": [
+            {
+              "class": "fun_itm",
+              "callback": "combine_callbacks(fwd_concept('urine'), urine_rate)"
+            }
+          ],
+          "eicu_demo": [
+            {
+              "class": "fun_itm",
+              "callback": "combine_callbacks(fwd_concept('urine'), urine_rate)"
+            }
+          ],
+          "hirid": [
+            {
+              "ids": 10020000,
+              "table": "observations",
+              "sub_var": "variableid",
+              "class": "hrd_itm"
+            }
+          ],
+          "miiv": [
+            {
+              "class": "fun_itm",
+              "callback": "combine_callbacks(fwd_concept('urine'), urine_rate)"
+            }
+          ],
+          "mimic": [
+            {
+              "class": "fun_itm",
+              "callback": "combine_callbacks(fwd_concept('urine'), urine_rate)"
+            }
+          ],
+          "mimic_demo": [
+            {
+              "class": "fun_itm",
+              "callback": "combine_callbacks(fwd_concept('urine'), urine_rate)"
+            }
+          ],
+          "sic": [
+            {
+              "class": "fun_itm",
+              "callback": "combine_callbacks(fwd_concept('urine'), urine_rate)"
+            }
+          ]
         }
     },
     "urine24": {

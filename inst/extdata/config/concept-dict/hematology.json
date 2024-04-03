@@ -825,9 +825,9 @@
                     "ids": 24000170,
                     "table": "observations",
                     "sub_var": "variableid",
-                    "callback": "convert_unit(binary_op(`*`, 0.16114), '%')",
+                    "callback": "convert_unit(binary_op(`*`, 0.1), '%')",
                     "class": "hrd_itm"
-                }
+                  }
             ],
             "miiv": [
                 {
@@ -990,8 +990,9 @@
                     "ids": 24000550,
                     "table": "observations",
                     "sub_var": "variableid",
-                    "class": "hrd_itm"
-                }
+                    "class": "hrd_itm",
+                    "callback": "blood_cell_ratio"
+                  }
             ],
             "miiv": [
                 {
