@@ -193,12 +193,13 @@ sofa_liver <- sofa_single(
 sofa_cardio <- function(..., interval = NULL) {
 
   score_calc <- function(map, dopa, norepi, dobu, epi) {
+    eps <- .Machine$double.eps ^ 0.5
     fifelse(
-      is_true(dopa > 15 | epi > 0.1 | norepi > 0.1), 4L, fifelse(
-        is_true(dopa > 5 | (epi > 0 &    epi <= 0.1) |
-                        (norepi > 0 & norepi <= 0.1)), 3L, fifelse(
-          is_true((dopa > 0 & dopa <= 5) | dobu > 0), 2L, fifelse(
-            is_true(map < 70), 1L, 0L
+      is_true(dopa > 15 + eps | epi > 0.1 + eps | norepi > 0.1 + eps), 4L, fifelse(
+        is_true(dopa > 5 + eps | (epi > 0 + eps &    epi <= 0.1 + eps) |
+                  (norepi > 0 + eps & norepi <= 0.1 + eps)), 3L, fifelse(
+                    is_true((dopa > 0 + eps & dopa <= 5 + eps) | dobu > 0 + eps), 2L, fifelse(
+                      is_true(map < 70), 1L, 0L
           )
         )
       )
