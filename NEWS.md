@@ -1,3 +1,7 @@
+# ricu 0.6.1
+
+* fixing the data-sources specification for MIMIC-IV (`miiv`)
+
 # ricu 0.6.0
 
 * Salzburg database (SICdb, `sic` in `ricu`) added as a data source with 64 concepts available
@@ -7,7 +11,6 @@
 # ricu 0.5.6
 
 * maintenance release: fixes non-character numeric version input issues
->>>>>>> 3c72261c4f049b49e7040a588b28eeb974a2f177
 
 # ricu 0.5.5
 

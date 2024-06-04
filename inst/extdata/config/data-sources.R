@@ -831,7 +831,8 @@ miiv_tbl_cfg <- function() {
       ethnicity = list(spec = "col_character"),
       edregtime = list(spec = "col_datetime", format = "%Y-%m-%d %H:%M:%S"),
       edouttime = list(spec = "col_datetime", format = "%Y-%m-%d %H:%M:%S"),
-      hospital_expire_flag = list(spec = "col_integer")
+      hospital_expire_flag = list(spec = "col_integer"),
+      admit_provider_id = list(spec = "col_character")
     ),
     patients = list(
       subject_id = list(spec = "col_integer"),
@@ -935,7 +936,8 @@ miiv_tbl_cfg <- function() {
       medication = list(spec = "col_character"),
       event_txt = list(spec = "col_character"),
       scheduletime = list(spec = "col_datetime", format = "%Y-%m-%d %H:%M:%S"),
-      storetime = list(spec = "col_datetime", format = "%Y-%m-%d %H:%M:%S")
+      storetime = list(spec = "col_datetime", format = "%Y-%m-%d %H:%M:%S"),
+      enter_provider_id = list(spec = "col_character")
     ),
     hcpcsevents = list(
       subject_id = list(spec = "col_integer"),
@@ -960,7 +962,8 @@ miiv_tbl_cfg <- function() {
       ref_range_upper = list(spec = "col_double"),
       flag = list(spec = "col_character"),
       priority = list(spec = "col_character"),
-      comments = list(spec = "col_character")
+      comments = list(spec = "col_character"),
+      order_provider_id = list(spec = "col_character")
     ),
     microbiologyevents = list(
       microevent_id = list(spec = "col_integer"),
@@ -986,7 +989,8 @@ miiv_tbl_cfg <- function() {
       dilution_comparison = list(spec = "col_character"),
       dilution_value = list(spec = "col_double"),
       interpretation = list(spec = "col_character"),
-      comments = list(spec = "col_character")
+      comments = list(spec = "col_character"),
+      order_provider_id = list(spec = "col_character")
     ),
     pharmacy = list(
       subject_id = list(spec = "col_integer"),
@@ -1036,7 +1040,8 @@ miiv_tbl_cfg <- function() {
       transaction_type = list(spec = "col_character"),
       discontinue_of_poe_id = list(spec = "col_character"),
       discontinued_by_poe_id = list(spec = "col_character"),
-      order_status = list(spec = "col_character")
+      order_status = list(spec = "col_character"),
+      order_provider_id = list(spec = "col_character")
     ),
     prescriptions = list(
       subject_id = list(spec = "col_integer"),
@@ -1055,7 +1060,9 @@ miiv_tbl_cfg <- function() {
       form_val_disp = list(spec = "col_character"),
       form_unit_disp = list(spec = "col_character"),
       doses_per_24_hrs = list(spec = "col_double"),
-      route = list(spec = "col_character")
+      route = list(spec = "col_character"),
+      order_provider_id = list(spec = "col_character"),
+      formulary_drug_cd = list(spec = "col_character")
     ),
     procedures_icd = list(
       subject_id = list(spec = "col_integer"),
@@ -1082,7 +1089,8 @@ miiv_tbl_cfg <- function() {
       value = list(spec = "col_character"),
       valuenum = list(spec = "col_double"),
       valueuom = list(spec = "col_character"),
-      warning = list(spec = "col_integer")
+      warning = list(spec = "col_integer"),
+      caregiver_id = list(spec = "col_integer")
     ),
     datetimeevents = list(
       subject_id = list(spec = "col_integer"),
@@ -1093,7 +1101,8 @@ miiv_tbl_cfg <- function() {
       itemid = list(spec = "col_integer"),
       value = list(spec = "col_datetime", format = "%Y-%m-%d %H:%M:%S"),
       valueuom = list(spec = "col_character"),
-      warning = list(spec = "col_integer")
+      warning = list(spec = "col_integer"),
+      caregiver_id = list(spec = "col_integer")
     ),
     d_items = list(
       itemid = list(spec = "col_integer"),
@@ -1120,6 +1129,7 @@ miiv_tbl_cfg <- function() {
       subject_id = list(spec = "col_integer"),
       hadm_id = list(spec = "col_integer"),
       stay_id = list(spec = "col_integer"),
+      caregiver_id = list(spec = "col_integer"),
       starttime = list(spec = "col_datetime", format = "%Y-%m-%d %H:%M:%S"),
       endtime = list(spec = "col_datetime", format = "%Y-%m-%d %H:%M:%S"),
       storetime = list(spec = "col_datetime", format = "%Y-%m-%d %H:%M:%S"),
@@ -1152,7 +1162,8 @@ miiv_tbl_cfg <- function() {
       storetime = list(spec = "col_datetime", format = "%Y-%m-%d %H:%M:%S"),
       itemid = list(spec = "col_integer"),
       value = list(spec = "col_double"),
-      valueuom = list(spec = "col_character")
+      valueuom = list(spec = "col_character"),
+      caregiver_id = list(spec = "col_integer")
     ),
     procedureevents = list(
       subject_id = list(spec = "col_integer"),
@@ -1181,7 +1192,8 @@ miiv_tbl_cfg <- function() {
       comments_date = list(spec = "col_datetime",
                            format = "%Y-%m-%d %H:%M:%S"),
       originalamount = list(spec = "col_double"),
-      originalrate = list(spec = "col_double")
+      originalrate = list(spec = "col_double"),
+      caregiver_id = list(spec = "col_integer")
     ),
     omr = list(
       subject_id = list(spec = "col_integer"),
@@ -1200,6 +1212,7 @@ miiv_tbl_cfg <- function() {
       subject_id = list(spec = "col_integer"),
       hadm_id = list(spec = "col_integer"),
       stay_id = list(spec = "col_integer"),
+      caregiver_id = list(spec = "col_integer"),
       starttime = list(spec = "col_datetime", format = "%Y-%m-%d %H:%M:%S"),
       endtime = list(spec = "col_datetime", format = "%Y-%m-%d %H:%M:%S"),
       storetime = list(spec = "col_datetime", format = "%Y-%m-%d %H:%M:%S"),
@@ -1406,7 +1419,7 @@ miiv_tbl_cfg <- function() {
     outputevents = "icu/outputevents.csv.gz",
     procedureevents = "icu/procedureevents.csv.gz",
     omr = "hosp/omr.csv.gz",
-    caregiver = "hosp/caregiver.csv.gz",
+    caregiver = "icu/caregiver.csv.gz",
     provider = "hosp/provider.csv.gz",
     ingredientevents = "icu/ingredientevents.csv.gz"
   )

@@ -7136,6 +7136,10 @@
           "hospital_expire_flag": {
             "name": "hospital_expire_flag",
             "spec": "col_integer"
+          },
+          "admit_provider_id": {
+            "name": "admit_provider_id",
+            "spec": "col_character"
           }
         }
       },
@@ -7573,6 +7577,10 @@
             "name": "storetime",
             "spec": "col_datetime",
             "format": "%Y-%m-%d %H:%M:%S"
+          },
+          "enter_provider_id": {
+            "name": "enter_provider_id",
+            "spec": "col_character"
           }
         }
       },
@@ -7681,6 +7689,10 @@
           },
           "comments": {
             "name": "comments",
+            "spec": "col_character"
+          },
+          "order_provider_id": {
+            "name": "order_provider_id",
             "spec": "col_character"
           }
         },
@@ -7796,6 +7808,10 @@
           },
           "comments": {
             "name": "comments",
+            "spec": "col_character"
+          },
+          "order_provider_id": {
+            "name": "order_provider_id",
             "spec": "col_character"
           }
         }
@@ -8007,6 +8023,10 @@
           "order_status": {
             "name": "order_status",
             "spec": "col_character"
+          },
+          "order_provider_id": {
+            "name": "order_provider_id",
+            "spec": "col_character"
           }
         },
         "partitioning": {
@@ -8092,6 +8112,14 @@
           },
           "route": {
             "name": "route",
+            "spec": "col_character"
+          },
+          "order_provider_id": {
+            "name": "order_provider_id",
+            "spec": "col_character"
+          },
+          "formulary_drug_cd": {
+            "name": "formulary_drug_cd",
             "spec": "col_character"
           }
         }
@@ -8215,6 +8243,10 @@
           "warning": {
             "name": "warning",
             "spec": "col_integer"
+          },
+          "caregiver_id": {
+            "name": "caregiver_id",
+            "spec": "col_integer"
           }
         },
         "partitioning": {
@@ -8268,6 +8300,10 @@
           },
           "warning": {
             "name": "warning",
+            "spec": "col_integer"
+          },
+          "caregiver_id": {
+            "name": "caregiver_id",
             "spec": "col_integer"
           }
         }
@@ -8383,6 +8419,10 @@
           },
           "stay_id": {
             "name": "stay_id",
+            "spec": "col_integer"
+          },
+          "caregiver_id": {
+            "name": "caregiver_id",
             "spec": "col_integer"
           },
           "starttime": {
@@ -8525,6 +8565,10 @@
           "valueuom": {
             "name": "valueuom",
             "spec": "col_character"
+          },
+          "caregiver_id": {
+            "name": "caregiver_id",
+            "spec": "col_integer"
           }
         }
       },
@@ -8645,6 +8689,10 @@
           "originalrate": {
             "name": "originalrate",
             "spec": "col_double"
+          },
+          "caregiver_id": {
+            "name": "caregiver_id",
+            "spec": "col_integer"
           }
         }
       },
@@ -8681,7 +8729,7 @@
         }
       },
       "caregiver": {
-        "files": "hosp/caregiver.csv.gz",
+        "files": "icu/caregiver.csv.gz",
         "defaults": [],
         "num_rows": 15468,
         "cols": {
@@ -8722,6 +8770,10 @@
           },
           "stay_id": {
             "name": "stay_id",
+            "spec": "col_integer"
+          },
+          "caregiver_id": {
+            "name": "caregiver_id",
             "spec": "col_integer"
           },
           "starttime": {
