@@ -1588,6 +1588,25 @@ sic_tbl_cfg <- function() {
                     spec = "col_integer"),
       hospitalunit = list(name = "HospitalUnit",
                           spec = "col_integer")
+    ),
+    microbiology = list(
+      caseid = list(name = "CaseID", spec = "col_integer"),
+      offset = list(name = "Offset", spec = "col_integer"),
+      timeofstay = list(name = "TimeOfStay", spec = "col_integer")
+    ),
+    gcs = list(
+      caseid = list(name = "CaseID", spec = "col_integer"),
+      admissionformgcs = list(name = "AdmissionFormGCS", spec = "col_integer"),
+      offset = list(name = "Offset", spec = "col_integer")
+    ),
+    rass = list(
+      caseid = list(name = "CaseID", spec = "col_integer"),
+      dataid = list(name = "DataID", spec = "col_integer"),
+      offset = list(name = "Offset", spec = "col_integer"),
+      offseth = list(name = "OffsetH", spec = "col_integer"),
+      val = list(name = "Val", spec = "col_double"),
+      cnt = list(name = "cnt", spec = "col_integer"),
+      rawdata = list(name = "rawdata", spec = "col_double")
     )
   )
   
@@ -1619,6 +1638,16 @@ sic_tbl_cfg <- function() {
     ),
     unitlog = list(
       index_var = "Offset"
+    ),
+    microbiology = list(
+      index_var = "Offset"
+    ),
+    gcs = list(
+      index_var = "Offset"
+    ),
+    rass = list(
+      index_var = "Offset",
+      val_var = "Val"
     )
   )
   
@@ -1637,7 +1666,10 @@ sic_tbl_cfg <- function() {
     data_ref = 354157L, 
     laboratory = 17572279L, 
     medication = 5141346L, 
-    unitlog = 139968L
+    unitlog = 139968L, 
+    microbiology = 28935L, 
+    gcs = 17766L, 
+    rass = 539398L
   )
   
   files <- c(
@@ -1648,7 +1680,10 @@ sic_tbl_cfg <- function() {
     data_ref = "data_ref.csv.gz", 
     laboratory = "laboratory.csv.gz", 
     medication = "medication.csv.gz", 
-    unitlog = "unitlog.csv.gz"
+    unitlog = "unitlog.csv.gz", 
+    microbiology = "microbiology.csv.gz", 
+    gcs = "gcs.csv.gz", 
+    rass = "rass.csv.gz"
   )
   
   part <- list(

@@ -3248,6 +3248,11 @@ cfg <- list(
   )
 )
 
+#' * adding external concepts *
+pkg_dir <- rprojroot::find_root(rprojroot::is_r_package)
+cfg_dir <- file.path(pkg_dir, "inst", "extdata", "config")
+source(file.path(cfg_dir, "concept-dict-ext.R"))
+
 cfg <- lapply(cfg, function(x) {
 
   if ("sources" %in% names(x)) {
@@ -3266,10 +3271,5 @@ cfg <- lapply(cfg, function(x) {
   x
 })
 
-
-pkg_dir <- rprojroot::find_root(rprojroot::is_r_package)
-cfg_dir <- file.path(pkg_dir, "inst", "extdata", "config")
-
 ricu::set_config(cfg[order(names(cfg))], "concept-dict", cfg_dir)
-
 devtools::install(pkg_dir)

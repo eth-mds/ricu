@@ -250,6 +250,44 @@
           "callback": "apply_map(\n            c(MED   = 'med',   SURG  = 'surg', CMED = 'med',  CSURG  = 'surg',\n              VSURG = 'surg',  NSURG = 'surg', NB   = 'other', NMED  = 'med',\n              ORTHO = 'surg',  TRAUM = 'surg', OMED = 'med',   GU    = 'other',\n              NBB   = 'other', TSURG = 'surg', GYN  = 'other', PSURG = 'surg',\n              OBS   = 'other', ENT   = 'surg', DENT = 'surg',  PSYCH = 'other')\n          )",
           "class": "col_itm"
         }
+      ],
+      "sic": [
+        {
+          "table": "cases",
+          "class": "col_itm",
+          "val_var": "SurgicalSite",
+          "callback": "sic_adm_cb"
+        }
+      ]
+    }
+  },
+  "adm_episode": {
+    "target": "id_tbl",
+    "sources": {
+      "aumc": [
+        {
+          "table": "admissions",
+          "val_var": "admissioncount",
+          "class": "col_itm"
+        }
+      ],
+      "miiv": [
+        {
+          "table": "icustays",
+          "val_var": "subject_id",
+          "class": "col_itm",
+          "callback": "miiv_adm_epi_cb"
+        }
+      ],
+      "sic": [
+        {
+          "table": "cases",
+          "val_var": "AdmissionYear",
+          "grp_var": "PatientID",
+          "off_var": "OffsetAfterFirstAdmission",
+          "class": "col_itm",
+          "callback": "sic_adm_epi_cb"
+        }
       ]
     }
   },
@@ -525,6 +563,26 @@
         }
       ]
     }
+  },
+  "antimycotic": {
+    "sources": {
+      "sic": [
+        {
+          "table": "medication",
+          "ids": [1464, 1466, 1856],
+          "sub_var": "DrugID",
+          "callback": "transform_fun(set_val(TRUE))"
+        }
+      ]
+    }
+  },
+  "aptt_inr": {
+    "concepts": ["ptt", "inr_pt"],
+    "description": "Bellomo index (APTT x INR)",
+    "category": "respiratory",
+    "aggregate": ["min", "max"],
+    "callback": "aptt_inr_cb",
+    "class": "rec_cncpt"
   },
   "ast": {
     "unit": ["IU/L", "U/l"],
@@ -1704,6 +1762,17 @@
           "index_var": "deathtime",
           "val_var": "hospital_expire_flag",
           "callback": "transform_fun(comp_na(`==`, 1L))",
+          "class": "col_itm"
+        }
+      ],
+      "sic": [
+        {
+          "table": "cases",
+          "index_var": "OffsetAfterFirstAdmission",
+          "val_var": "HospitalDischargeType",
+          "callback": "sic_death_cb",
+          "add_var": "OffsetOfDeath",
+          "add_var2": "TimeOfStay",
           "class": "col_itm"
         }
       ]
@@ -2897,6 +2966,36 @@
     "callback": "gcs",
     "class": "rec_cncpt"
   },
+  "gcs_med": {
+    "concepts": ["egcs", "mgcs", "vgcs", "tgcs", "sed_med"],
+    "description": "GCS (with sedation)",
+    "category": "neurological",
+    "aggregate": ["min", "min", "min", "min", "any"],
+    "callback": "gcs_cb_generator('gcs_med', 'sed_med')",
+    "class": "rec_cncpt"
+  },
+  "gcs_rass": {
+    "concepts": ["egcs", "mgcs", "vgcs", "tgcs", "sed_rass"],
+    "description": "GCS (with rass)",
+    "category": "neurological",
+    "aggregate": [
+      "min",
+      "min",
+      "min",
+      "min",
+      null
+    ],
+    "callback": "gcs_cb_generator('gcs_rass', 'sed_rass')",
+    "class": "rec_cncpt"
+  },
+  "gcs_raw": {
+    "concepts": ["egcs", "mgcs", "vgcs", "tgcs"],
+    "description": "GCS (w/o sedation)",
+    "category": "neurological",
+    "aggregate": ["min", "min", "min", "min"],
+    "callback": "gcs_cb_generator('gcs_raw', NA_character_)",
+    "class": "rec_cncpt"
+  },
   "glu": {
     "unit": "mg/dL",
     "min": 0,
@@ -3370,6 +3469,14 @@
           "table": "labevents",
           "sub_var": "itemid"
         }
+      ],
+      "sic": [
+        {
+          "table": "laboratory",
+          "sub_var": "LaboratoryID",
+          "ids": 237,
+          "callback": "sic_inr_pt_cb"
+        }
       ]
     }
   },
@@ -3687,6 +3794,14 @@
           "win_type": "icustay",
           "class": "fun_itm"
         }
+      ],
+      "sic": [
+        {
+          "table": "cases",
+          "class": "col_itm",
+          "val_var": "TimeOfStay",
+          "callback": "sic_los_icu_cb"
+        }
       ]
     }
   },
@@ -3840,6 +3955,24 @@
         }
       ]
     }
+  },
+  "map_beta100": {
+    "concepts": ["map", "norepi_equiv"],
+    "description": "MAP - 100 x NeEq",
+    "callback": "map_beta_100",
+    "class": "rec_cncpt"
+  },
+  "map_beta200": {
+    "concepts": ["map", "norepi_equiv"],
+    "description": "MAP - 200 x NeEq",
+    "callback": "map_beta_200",
+    "class": "rec_cncpt"
+  },
+  "map_beta50": {
+    "concepts": ["map", "norepi_equiv"],
+    "description": "MAP - 50 x NeEq",
+    "callback": "map_beta_50",
+    "class": "rec_cncpt"
   },
   "mch": {
     "unit": "pg",
@@ -4080,6 +4213,16 @@
           "dur_var": "endtime",
           "callback": "apply_map(c(`225792` = 'invasive',\n                                     `225794` = 'noninvasive'),\n                                   var = 'sub_var')"
         }
+      ],
+      "sic": [
+        {
+          "ids": 2281,
+          "table": "data_float_h",
+          "sub_var": "DataID",
+          "dur_var": "rawdata",
+          "add_var": "cnt",
+          "callback": "sic_mv_cb"
+        }
       ]
     }
   },
@@ -4289,6 +4432,17 @@
       ]
     }
   },
+  "min_vol": {
+    "sources": {
+      "sic": [
+        {
+          "table": "data_float_h",
+          "ids": 2019,
+          "sub_var": "DataID"
+        }
+      ]
+    }
+  },
   "na": {
     "unit": ["mEq/L", "mmol/l"],
     "min": 110,
@@ -4428,6 +4582,13 @@
         }
       ]
     }
+  },
+  "neut_div_lymph": {
+    "concepts": ["neut", "lymph"],
+    "description": "Neutrophils / Lymphocytes",
+    "category": "bone_marrow",
+    "callback": "neut_lymph_cb",
+    "class": "rec_cncpt"
   },
   "news": {
     "concepts": ["resp", "o2sat", "supp_o2", "temp", "sbp", "hr", "avpu"],
@@ -5099,6 +5260,13 @@
       ]
     }
   },
+  "plt_div_inr": {
+    "concepts": ["plt", "inr_pt"],
+    "description": "Platelets / Inter.Norm.Rat. Prothrobin Time",
+    "category": "coag",
+    "callback": "plt_inr_cb",
+    "class": "rec_cncpt"
+  },
   "po2": {
     "unit": ["mmHg", "mm Hg"],
     "min": 40,
@@ -5356,6 +5524,14 @@
           "table": "chartevents",
           "sub_var": "itemid"
         }
+      ],
+      "sic": [
+        {
+          "table": "rass",
+          "sub_var": "DataID",
+          "ids": 3123,
+          "val_var": "Val"
+        }
       ]
     }
   },
@@ -5608,6 +5784,37 @@
           "aux_time": "charttime",
           "class": "col_itm"
         }
+      ],
+      "sic": [
+        {
+          "table": "microbiology",
+          "class": "col_itm",
+          "val_var": "TimeOfStay",
+          "callback": "sic_samp_cb"
+        }
+      ]
+    }
+  },
+  "samp_raw": {
+    "sources": {
+      "sic": [
+        {
+          "table": "microbiology",
+          "class": "col_itm",
+          "val_var": "TimeOfStay"
+        }
+      ]
+    }
+  },
+  "saps3": {
+    "target": "id_tbl",
+    "sources": {
+      "sic": [
+        {
+          "table": "cases",
+          "val_var": "saps3",
+          "class": "col_itm"
+        }
       ]
     }
   },
@@ -5677,6 +5884,89 @@
         }
       ]
     }
+  },
+  "sed_med": {
+    "target": "win_tbl",
+    "description": "Sedation",
+    "class": "lgl_cncpt",
+    "sources": {
+      "aumc": [
+        {
+          "table": "drugitems",
+          "sub_var": "itemid",
+          "ids": [7194, 7219, 7480, 6883, 12940, 7165, 6962, 9620, 12750, 7170, 19163, 12402, 21242, 7014, 9146, 9048],
+          "dur_var": "stop"
+        }
+      ],
+      "hirid": [
+        {
+          "table": "pharma",
+          "sub_var": "pharmaid",
+          "ids": [442, 1001215, 1000977, 1000978, 245, 246, 1000988, 1000239, 1000418, 1000700, 1001051, 1001054, 1000902, 251, 252, 1000976, 1000991, 1001049, 1000847, 1000475, 1000607, 202, 1000491, 1001050, 1001052, 1001053, 208, 1000691, 1000699],
+          "dur_var": "enteredentryat",
+          "group_var": "infusionid",
+          "target": "ts_tbl",
+          "callback": "hirid_pharma_win12"
+        }
+      ],
+      "miiv": [
+        {
+          "table": "inputevents",
+          "sub_var": "itemid",
+          "ids": [222168, 221744, 221668, 225942, 225154, 221833, 221385, 221623, 227520, 225972],
+          "dur_var": "endtime"
+        }
+      ],
+      "mimic": [
+        {
+          "table": "inputevents_mv",
+          "sub_var": "itemid",
+          "ids": [222168, 221744, 221668, 225942, 225154, 221833, 221385, 221623, 227520, 225972],
+          "dur_var": "endtime"
+        },
+        {
+          "table": "inputevents_cv",
+          "sub_var": "itemid",
+          "ids": [30131, 30118, 30124, 30126, 30308, 30149, 30150, 44306, 45520, 46725, 45764, 30139, 30153, 41733, 43387],
+          "dur_var": "storetime",
+          "target": "ts_tbl",
+          "callback": "ts_to_win_12hours"
+        }
+      ],
+      "mimic_demo": [
+        {
+          "table": "inputevents_mv",
+          "sub_var": "itemid",
+          "ids": [222168, 221744, 221668, 225942, 225154, 221833, 221385, 221623, 227520, 225972],
+          "dur_var": "endtime"
+        },
+        {
+          "table": "inputevents_cv",
+          "sub_var": "itemid",
+          "ids": [30131, 30118, 30124, 30126, 30308, 30149, 30150, 44306, 45520, 46725, 45764, 30139, 30153, 41733, 43387],
+          "dur_var": "storetime",
+          "target": "ts_tbl",
+          "callback": "ts_to_win_12hours"
+        }
+      ],
+      "sic": [
+        {
+          "ids": [1400, 1430, 1445, 1480, 1495, 1499, 1501, 1549, 1696, 1723, 1747, 1914, 2142],
+          "table": "medication",
+          "sub_var": "DrugID",
+          "val_var": "AmountPerMinute",
+          "dur_var": "OffsetDrugEnd"
+        }
+      ]
+    }
+  },
+  "sed_rass": {
+    "concepts": "rass",
+    "description": "RASS as 6h windows",
+    "category": "neurological",
+    "aggregate": "min",
+    "callback": "sed_rass",
+    "class": "rec_cncpt"
   },
   "sep3": {
     "concepts": ["sofa", "susp_inf"],
@@ -6016,6 +6306,14 @@
           "ids": 198,
           "table": "chartevents",
           "sub_var": "itemid"
+        }
+      ],
+      "sic": [
+        {
+          "table": "gcs",
+          "class": "col_itm",
+          "val_var": "AdmissionFormGCS",
+          "callback": "sic_gcs_cb"
         }
       ]
     }

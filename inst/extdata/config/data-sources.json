@@ -9977,6 +9977,89 @@
             "spec": "col_integer"
           }
         }
+      },
+      "microbiology": {
+        "files": "microbiology.csv.gz",
+        "defaults": {
+          "index_var": "Offset",
+          "time_vars": "Offset"
+        },
+        "num_rows": 28935,
+        "cols": {
+          "caseid": {
+            "name": "CaseID",
+            "spec": "col_integer"
+          },
+          "offset": {
+            "name": "Offset",
+            "spec": "col_integer"
+          },
+          "timeofstay": {
+            "name": "TimeOfStay",
+            "spec": "col_integer"
+          }
+        }
+      },
+      "gcs": {
+        "files": "gcs.csv.gz",
+        "defaults": {
+          "index_var": "Offset",
+          "time_vars": "Offset"
+        },
+        "num_rows": 17766,
+        "cols": {
+          "caseid": {
+            "name": "CaseID",
+            "spec": "col_integer"
+          },
+          "admissionformgcs": {
+            "name": "AdmissionFormGCS",
+            "spec": "col_integer"
+          },
+          "offset": {
+            "name": "Offset",
+            "spec": "col_integer"
+          }
+        }
+      },
+      "rass": {
+        "files": "rass.csv.gz",
+        "defaults": {
+          "index_var": "Offset",
+          "val_var": "Val",
+          "time_vars": ["Offset", "OffsetH"]
+        },
+        "num_rows": 539398,
+        "cols": {
+          "caseid": {
+            "name": "CaseID",
+            "spec": "col_integer"
+          },
+          "dataid": {
+            "name": "DataID",
+            "spec": "col_integer"
+          },
+          "offset": {
+            "name": "Offset",
+            "spec": "col_integer"
+          },
+          "offseth": {
+            "name": "OffsetH",
+            "spec": "col_integer"
+          },
+          "val": {
+            "name": "Val",
+            "spec": "col_double"
+          },
+          "cnt": {
+            "name": "cnt",
+            "spec": "col_integer"
+          },
+          "rawdata": {
+            "name": "rawdata",
+            "spec": "col_double"
+          }
+        }
       }
     }
   }
