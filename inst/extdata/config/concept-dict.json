@@ -4216,7 +4216,7 @@
       ],
       "sic": [
         {
-          "ids": 2281,
+          "ids": 2019,
           "table": "data_float_h",
           "sub_var": "DataID",
           "dur_var": "rawdata",

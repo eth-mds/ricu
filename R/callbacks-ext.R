@@ -18,7 +18,7 @@ sic_adm_cb <- function(x, val_var, ...) {
 
 sic_los_icu_cb <- function(x, ...) {
   
-  x[, TimeOfStay := as.numeric(TimeOfStay / 60)]
+  x[, TimeOfStay := as.numeric(TimeOfStay / (60 * 60 * 24))]
 }
 
 sic_gcs_cb <- function(x, ...) {
