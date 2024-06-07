@@ -1071,7 +1071,7 @@
           "ids": 355,
           "table": "laboratory",
           "sub_var": "LaboratoryID",
-          "callback": "transform_fun(binary_op(`*`, 2.14))"
+          "callback": "transform_fun(binary_op(`*`, 0.467))"
         }
       ]
     }

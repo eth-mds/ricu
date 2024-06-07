@@ -375,7 +375,7 @@ cfg <- list(
       ),
       sic = list(
         list(ids = 355L, table = "laboratory", sub_var = "LaboratoryID",
-             callback = "transform_fun(binary_op(`*`, 2.14))")
+             callback = "transform_fun(binary_op(`*`, 0.467))")
       )
     )
   ),
