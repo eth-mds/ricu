@@ -269,6 +269,12 @@ ext <- list(
       list(table = "laboratory", sub_var = "LaboratoryID", ids = c(237),
            callback = "sic_inr_pt_cb")
     )
+  ),
+  sex = list(
+    anzics = list(
+      table = "main", val_var = "SEX", callback = "anzics_sex", 
+      class = "col_itm"
+    )
   )
 )
 

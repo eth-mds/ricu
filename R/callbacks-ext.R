@@ -1,4 +1,13 @@
 
+# ANZICS APD callbacks
+anzics_sex <- function(x, ...) {
+  
+  x[, SEX := ifelse(SEX == "M", "Male", "Female")]
+  x
+}
+
+
+# SICdb callbacks
 sic_death_cb <- function(x, ...) {
   
   x[, HospitalDischargeType := HospitalDischargeType == 2028]

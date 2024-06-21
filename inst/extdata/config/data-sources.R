@@ -1706,6 +1706,63 @@ sic_tbl_cfg <- function() {
   tables
 }
 
+anzics_tbl_cfg <- function() {
+  
+  info <- list(
+    main = list(
+      icustayid = list(name = "ICUStayID", spec = "col_integer"),
+      icu_ad_dtm = list(name = "ICU_AD_DTM", spec = "col_datetime", 
+                        format = "%Y-%m-%d %H:%M:%S"),
+      icu_ds_dtm = list(name = "ICU_DS_DTM", spec = "col_datetime", 
+                        format = "%Y-%m-%d %H:%M:%S"),
+      hosp_ad_dtm = list(name = "HOSP_AD_DTM", spec = "col_datetime", 
+                        format = "%Y-%m-%d %H:%M:%S"),
+      hosp_ds_dtm = list(name = "HOSP_DS_DTM", spec = "col_datetime", 
+                        format = "%Y-%m-%d %H:%M:%S")
+    )
+  )
+  
+  tables <- names(info)
+  cols <- info
+  
+  defaults <- list(
+    main = list(
+      index_var = "ICU_AD_DTM",
+      time_vars = c("ICU_DS_DTM", "HOSP_AD_DTM", "HOSP_DS_DTM")
+    )
+  )
+  
+  defaults <- Map(function(cl, df) {
+    nme <- vapply(cl, `[[`, character(1L), "name")
+    typ <- vapply(cl, `[[`, character(1L), "spec")
+    tim <- nme[grep("offset", names(nme), ignore.case = TRUE)]
+    if (length(tim)) c(df, list(time_vars = tim)) else df
+  }, cols[tables], defaults[tables])
+  
+  n_row <- c(
+    main = 27386L
+  )
+  
+  files <- c(
+    main = "2112.csv"
+  )
+  
+  tables <- names(info)
+  
+  tables <- Map(list, files = files[tables],
+                defaults = defaults[tables], num_rows = n_row[tables],
+                cols = cols[tables])
+  
+  tables
+}
+
+anzics_id_cfg <- list(
+  patient = list(id = "PatientID", position = 2L, start = "HOSP_AD_DTM",
+                 end = "HOSP_DS_DTM", table = "main"),
+  icustay = list(id = "ICUStayID", position = 1L, start = "ICU_AD_DTM",
+                 end = "ICU_DS_DTM", table = "main")
+)
+
 pkg_dir <- rprojroot::find_root(rprojroot::is_r_package)
 cfg_dir <- file.path(pkg_dir, "inst", "extdata", "config")
 
@@ -1814,6 +1871,12 @@ cfg <- list(
                      table = "cases")
     ),
     tables = sic_tbl_cfg()
+  ),
+  list(
+    name = "anzics",
+    url = "https://www.anzics.org/adult-patient-database-apd/",
+    id_cfg = anzics_id_cfg,
+    tables = anzics_tbl_cfg()
   )
 )
 

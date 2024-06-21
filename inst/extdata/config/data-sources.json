@@ -10062,5 +10062,61 @@
         }
       }
     }
+  },
+  {
+    "name": "anzics",
+    "url": "https://www.anzics.org/adult-patient-database-apd/",
+    "id_cfg": {
+      "patient": {
+        "id": "PatientID",
+        "position": 1,
+        "start": "HOSP_AD_DTM",
+        "end": "HOSP_DS_DTM",
+        "table": "main"
+      },
+      "icustay": {
+        "id": "ICUStayID",
+        "position": 2,
+        "start": "ICU_AD_DTM",
+        "end": "ICU_DS_DTM",
+        "table": "main"
+      }
+    },
+    "tables": {
+      "main": {
+        "files": "2112.csv",
+        "defaults": {
+          "index_var": "ICU_AD_DTM",
+          "time_vars": ["ICU_DS_DTM", "HOSP_AD_DTM", "HOSP_DS_DTM"]
+        },
+        "num_rows": 27386,
+        "cols": {
+          "icustayid": {
+            "name": "ICUStayID",
+            "spec": "col_integer"
+          },
+          "icu_ad_dtm": {
+            "name": "ICU_AD_DTM",
+            "spec": "col_datetime",
+            "format": "%Y-%m-%d %H:%M:%S"
+          },
+          "icu_ds_dtm": {
+            "name": "ICU_DS_DTM",
+            "spec": "col_datetime",
+            "format": "%Y-%m-%d %H:%M:%S"
+          },
+          "hosp_ad_dtm": {
+            "name": "HOSP_AD_DTM",
+            "spec": "col_datetime",
+            "format": "%Y-%m-%d %H:%M:%S"
+          },
+          "hosp_ds_dtm": {
+            "name": "HOSP_DS_DTM",
+            "spec": "col_datetime",
+            "format": "%Y-%m-%d %H:%M:%S"
+          }
+        }
+      }
+    }
   }
 ]
