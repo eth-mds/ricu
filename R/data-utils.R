@@ -152,7 +152,9 @@ id_windows <- function(x, copy = TRUE) {
     assert_that(
       is_id_tbl(res), has_name(res, ids),
       all_fun(sec, col_obeys_interval, res, mins(1L)),
-      all_equal(range(res[[paste0(id_var(res), "_start")]]), mins(c(0, 0)))
+      # all_equal(range(res[[paste0(id_var(res), "_start")]]), mins(c(0, 0))),
+      max_or_na(res[[paste0(id_var(res), "_start")]]) == mins(0L),
+      min_or_na(res[[paste0(id_var(res), "_start")]]) == mins(0L)
     )
 
     assign(key, res, id_win_env)
@@ -271,7 +273,7 @@ id_win_helper.anzics_env <- function(x) {
   }
   
   cfg <- sort(as_id_cfg(x), decreasing = TRUE)
-  browser()
+
   ids  <- field(cfg, "id")
   sta <- field(cfg, "start")
   end  <- field(cfg, "end")

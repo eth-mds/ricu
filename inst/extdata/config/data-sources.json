@@ -10069,14 +10069,14 @@
     "id_cfg": {
       "patient": {
         "id": "PatientID",
-        "position": 1,
+        "position": 2,
         "start": "HOSP_AD_DTM",
         "end": "HOSP_DS_DTM",
         "table": "main"
       },
       "icustay": {
         "id": "ICUStayID",
-        "position": 2,
+        "position": 1,
         "start": "ICU_AD_DTM",
         "end": "ICU_DS_DTM",
         "table": "main"

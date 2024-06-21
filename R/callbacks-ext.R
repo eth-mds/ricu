@@ -1,7 +1,7 @@
 
 # ANZICS APD callbacks
 anzics_sex <- function(x, ...) {
-  
+
   x[, SEX := ifelse(SEX == "M", "Male", "Female")]
   x
 }

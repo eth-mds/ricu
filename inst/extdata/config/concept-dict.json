@@ -5985,6 +5985,14 @@
     "omopid": 37116947,
     "category": "demographics",
     "sources": {
+      "anzics": [
+        {
+          "table": "main",
+          "val_var": "SEX",
+          "callback": "anzics_sex",
+          "class": "col_itm"
+        }
+      ],
       "aumc": [
         {
           "val_var": "gender",
