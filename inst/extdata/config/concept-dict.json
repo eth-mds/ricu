@@ -110,6 +110,13 @@
       ]
     }
   },
+  "acu_24": {
+    "concepts": "sofa",
+    "description": "SOFA at 24 hours",
+    "callback": "acute_dayone",
+    "class": "rec_cncpt",
+    "target": "id_tbl"
+  },
   "adh_rate": {
     "unit": ["units/min", "U/min"],
     "description": "vasopressin rate",
@@ -203,6 +210,14 @@
     "description": "patient admission type",
     "category": "demographics",
     "sources": {
+      "anzics": [
+        {
+          "table": "main",
+          "class": "col_itm",
+          "val_var": "AP3DIAG",
+          "callback": "anzics_adm"
+        }
+      ],
       "aumc": [
         {
           "val_var": "specialty",
@@ -261,9 +276,72 @@
       ]
     }
   },
+  "adm_diag": {
+    "target": "id_tbl",
+    "levels": ["CMED", "CSURG", "DENT", "ENT", "GU", "GYN", "MED", "NB", "NBB", "NMED", "NSURG", "OBS", "ORTHO", "OMED", "PSURG", "PSYCH", "SURG", "TRAUM", "TSURG", "VSURG"],
+    "class": "fct_cncpt",
+    "description": "patient admission type",
+    "category": "demographics",
+    "sources": {
+      "anzics": [
+        {
+          "table": "main",
+          "val_var": "AP3DIAG",
+          "callback": "anzics_adm_diag",
+          "class": "col_itm"
+        }
+      ],
+      "aumc": [
+        {
+          "val_var": "specialty",
+          "table": "admissions",
+          "callback": "apply_map(c(Cardiochirurgie = 'CSURG', Cardiologie = 'CMED', \n          ders = 'MED', Gynaecologie = 'GYN', \n          `Heelkunde Gastro-enterologie` = 'SURG', \n          `Heelkunde Longen/Oncologie` = 'TSURG', `Heelkunde Oncologie` = 'SURG', \n          Hematologie = 'MED', `Intensive Care Volwassenen` = 'MED', \n          Inwendig = 'MED', `Keel, Neus & Oorarts` = 'ENT', \n          Longziekte = 'MED', `Maag-,Darm-,Leverziekten` = 'MED', \n          Mondheelkunde = 'DENT', Nefrologie = 'GU', \n          Neurochirurgie = 'NSURG', Neurologie = 'NMED', \n          Obstetrie = 'OBS', `Oncologie Inwendig` = 'MED', \n          Oogheelkunde = 'MED', Orthopedie = 'ORTHO', \n          `Plastische chirurgie` = 'PSURG', \n          Reumatologie = 'OMED', Traumatologie = 'TRAUM', Urologie = 'GU', \n          Vaatchirurgie = 'VSURG', Verloskunde = 'OBS'))",
+          "class": "col_itm"
+        }
+      ],
+      "miiv": [
+        {
+          "table": "services",
+          "val_var": "curr_service",
+          "class": "col_itm"
+        }
+      ],
+      "mimic": [
+        {
+          "table": "services",
+          "val_var": "curr_service",
+          "callback": "mimic_adm_diag",
+          "class": "col_itm"
+        }
+      ],
+      "mimic_demo": [
+        {
+          "table": "services",
+          "val_var": "curr_service",
+          "callback": "mimic_adm_diag",
+          "class": "col_itm"
+        }
+      ],
+      "mimic_demo.1": [
+        {
+          "table": "services",
+          "val_var": "curr_service",
+          "callback": "mimic_adm_diag",
+          "class": "col_itm"
+        }
+      ]
+    }
+  },
   "adm_episode": {
     "target": "id_tbl",
     "sources": {
+      "anzics": [
+        {
+          "table": "main",
+          "val_var": "AdmEpisode",
+          "class": "col_itm"
+        }
+      ],
       "aumc": [
         {
           "table": "admissions",
@@ -300,6 +378,13 @@
     "omopid": 4314456,
     "category": "demographics",
     "sources": {
+      "anzics": [
+        {
+          "table": "main",
+          "val_var": "AGE",
+          "class": "col_itm"
+        }
+      ],
       "aumc": [
         {
           "val_var": "agegroup",
@@ -572,6 +657,42 @@
           "ids": [1464, 1466, 1856],
           "sub_var": "DrugID",
           "callback": "transform_fun(set_val(TRUE))"
+        }
+      ]
+    }
+  },
+  "apache_iii": {
+    "target": "id_tbl",
+    "sources": {
+      "anzics": [
+        {
+          "table": "main",
+          "val_var": "Apache3Score",
+          "class": "col_itm"
+        }
+      ]
+    }
+  },
+  "apache_iii_diag": {
+    "target": "id_tbl",
+    "sources": {
+      "anzics": [
+        {
+          "table": "main",
+          "val_var": "AP3DIAG",
+          "class": "col_itm"
+        }
+      ]
+    }
+  },
+  "apache_iii_rod": {
+    "target": "id_tbl",
+    "sources": {
+      "anzics": [
+        {
+          "table": "main",
+          "val_var": "Apache3RiskOfDeath",
+          "class": "col_itm"
         }
       ]
     }
@@ -1273,6 +1394,21 @@
       ]
     }
   },
+  "charlson": {
+    "target": "id_tbl",
+    "description": "Charlson Comorbidity Index",
+    "sources": {
+      "miiv": [
+        {
+          "ids": [9, 10],
+          "table": "diagnoses_icd",
+          "val_var": "icd_code",
+          "sub_var": "icd_version",
+          "callback": "miiv_charlson_dir"
+        }
+      ]
+    }
+  },
   "ck": {
     "unit": ["IU/L", "U/l"],
     "min": 0,
@@ -1496,6 +1632,18 @@
       ]
     }
   },
+  "country": {
+    "target": "id_tbl",
+    "sources": {
+      "anzics": [
+        {
+          "table": "main",
+          "val_var": "CountryCode",
+          "class": "col_itm"
+        }
+      ]
+    }
+  },
   "crea": {
     "unit": "mg/dL",
     "min": 0,
@@ -1702,6 +1850,15 @@
     "omopid": 4306655,
     "category": "outcome",
     "sources": {
+      "anzics": [
+        {
+          "table": "main",
+          "val_var": "DIED",
+          "callback": "anzics_binary",
+          "index_var": "HOSP_DS_DTM",
+          "class": "col_itm"
+        }
+      ],
       "aumc": [
         {
           "table": "admissions",
@@ -2359,6 +2516,19 @@
           "ids": [184, 220739],
           "table": "chartevents",
           "sub_var": "itemid"
+        }
+      ]
+    }
+  },
+  "elective": {
+    "target": "id_tbl",
+    "sources": {
+      "anzics": [
+        {
+          "table": "main",
+          "val_var": "ELECT",
+          "class": "col_itm",
+          "callback": "anzics_binary"
         }
       ]
     }
@@ -3415,6 +3585,20 @@
       ]
     }
   },
+  "indig": {
+    "target": "id_tbl",
+    "description": "Indigenous population indicator",
+    "sources": {
+      "anzics": [
+        {
+          "table": "main",
+          "val_var": "INDIGENOUS",
+          "class": "col_itm",
+          "callback": "anzics_binary"
+        }
+      ]
+    }
+  },
   "inr_pt": {
     "description": "prothrombin time/international normalized ratio",
     "omopid": 4306239,
@@ -3559,6 +3743,107 @@
         }
       ]
     }
+  },
+  "is_ecmo": {
+    "target": "id_tbl",
+    "sources": {
+      "anzics": [
+        {
+          "table": "main",
+          "val_var": "ECMO_IND",
+          "class": "col_itm",
+          "callback": "anzics_binary"
+        }
+      ]
+    }
+  },
+  "is_inotrop": {
+    "target": "id_tbl",
+    "sources": {
+      "anzics": [
+        {
+          "table": "main",
+          "val_var": "INOTROP_IND",
+          "class": "col_itm",
+          "callback": "anzics_binary"
+        }
+      ]
+    }
+  },
+  "is_invasive": {
+    "target": "id_tbl",
+    "sources": {
+      "anzics": [
+        {
+          "table": "main",
+          "val_var": "INV_IND",
+          "class": "col_itm",
+          "callback": "anzics_binary"
+        }
+      ]
+    }
+  },
+  "is_invasive2": {
+    "target": "id_tbl",
+    "sources": {
+      "anzics": [
+        {
+          "table": "main",
+          "val_var": "VENTILATED",
+          "class": "col_itm",
+          "callback": "anzics_binary"
+        }
+      ]
+    }
+  },
+  "is_noninvasive": {
+    "target": "id_tbl",
+    "sources": {
+      "anzics": [
+        {
+          "table": "main",
+          "val_var": "NIV_IND",
+          "class": "col_itm",
+          "callback": "anzics_binary"
+        }
+      ]
+    }
+  },
+  "is_rrt": {
+    "target": "id_tbl",
+    "sources": {
+      "anzics": [
+        {
+          "table": "main",
+          "val_var": "RENAL_IND",
+          "class": "col_itm",
+          "callback": "anzics_binary"
+        }
+      ]
+    }
+  },
+  "is_trache": {
+    "target": "id_tbl",
+    "sources": {
+      "anzics": [
+        {
+          "table": "main",
+          "val_var": "TRACHE_IND",
+          "class": "col_itm",
+          "callback": "anzics_binary"
+        }
+      ]
+    }
+  },
+  "is_vent": {
+    "concepts": [
+      "is_invasive",
+      "is_invasive2",
+      "is_noninvasive"
+    ],
+    "callback": "anzics_is_vent_cb",
+    "class": "rec_cncpt",
+    "target": "id_tbl"
   },
   "k": {
     "unit": ["mEq/L", "mmol/l"],
@@ -3887,6 +4172,14 @@
     "omopid": 4239021,
     "category": "vitals",
     "sources": {
+      "anzics": [
+        {
+          "table": "main",
+          "val_var": "MAP_ANZ",
+          "class": "col_itm",
+          "index_var": "ICU_DS_DTM"
+        }
+      ],
       "aumc": [
         {
           "ids": 6642,
@@ -4915,6 +5208,14 @@
     "omopid": 4097882,
     "category": "blood gas",
     "sources": {
+      "anzics": [
+        {
+          "table": "main",
+          "val_var": "PACO2_ANZ",
+          "class": "col_itm",
+          "index_var": "ICU_DS_DTM"
+        }
+      ],
       "aumc": [
         {
           "ids": [6846, 9990, 21213],
@@ -5275,6 +5576,14 @@
     "omopid": 4094581,
     "category": "blood gas",
     "sources": {
+      "anzics": [
+        {
+          "table": "main",
+          "val_var": "PAO2_ANZ",
+          "class": "col_itm",
+          "index_var": "ICU_DS_DTM"
+        }
+      ],
       "aumc": [
         {
           "ids": [7433, 9996, 21214],
@@ -5465,6 +5774,71 @@
     "category": "outcome",
     "callback": "qsofa_score",
     "class": "rec_cncpt"
+  },
+  "race": {
+    "description": "Race",
+    "category": "Misc.",
+    "levels": ["Caucasian", "Asian", "African American", "Hispanic", "Other"],
+    "class": "fct_cncpt",
+    "target": "id_tbl",
+    "sources": {
+      "eicu": [
+        {
+          "table": "patient",
+          "val_var": "ethnicity",
+          "class": "col_itm",
+          "callback": "race_eicu_cb"
+        }
+      ],
+      "eicu_demo": [
+        {
+          "table": "patient",
+          "val_var": "ethnicity",
+          "class": "col_itm",
+          "callback": "race_eicu_cb"
+        }
+      ],
+      "eicu_demo.1": [
+        {
+          "table": "patient",
+          "val_var": "ethnicity",
+          "class": "col_itm",
+          "callback": "race_eicu_cb"
+        }
+      ],
+      "miiv": [
+        {
+          "table": "admissions",
+          "val_var": "race",
+          "class": "col_itm",
+          "callback": "race_miiv_cb"
+        }
+      ],
+      "mimic": [
+        {
+          "table": "admissions",
+          "val_var": "ethnicity",
+          "class": "col_itm",
+          "callback": "race_mimic_cb"
+        }
+      ],
+      "mimic_demo": [
+        {
+          "table": "admissions",
+          "val_var": "ethnicity",
+          "class": "col_itm",
+          "callback": "race_mimic_cb"
+        }
+      ],
+      "mimic_demo.1": [
+        {
+          "table": "admissions",
+          "val_var": "ethnicity",
+          "class": "col_itm",
+          "callback": "race_mimic_cb"
+        }
+      ]
+    }
   },
   "rass": {
     "min": -5,
@@ -5661,6 +6035,14 @@
     "omopid": 4313591,
     "category": "respiratory",
     "sources": {
+      "anzics": [
+        {
+          "table": "main",
+          "val_var": "RR_ANZ",
+          "class": "col_itm",
+          "index_var": "ICU_DS_DTM"
+        }
+      ],
       "aumc": [
         {
           "ids": [8874, 12266],

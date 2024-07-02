@@ -1,9 +1,199 @@
 
+race_mimic_cb <- function(x, val_var, env) {
+  
+  groups <- list(
+    Caucasian = c("WHITE", "WHITE - BRAZILIAN", "WHITE - EASTERN EUROPEAN",
+                  "WHITE - OTHER EUROPEAN", "WHITE - RUSSIAN"),
+    Asian = c("ASIAN", "ASIAN - ASIAN INDIAN", "ASIAN - CAMBODIAN",
+              "ASIAN - CHINESE", "ASIAN - FILIPINO", "ASIAN - JAPANESE",
+              "ASIAN - KOREAN", "ASIAN - OTHER", "ASIAN - THAI",
+              "ASIAN - VIETNAMESE"),
+    Hispanic = c("HISPANIC/LATINO - CENTRAL AMERICAN (OTHER)",
+                 "HISPANIC/LATINO - COLOMBIAN",
+                 "HISPANIC/LATINO - CUBAN", "HISPANIC/LATINO - DOMINICAN",
+                 "HISPANIC/LATINO - GUATEMALAN",
+                 "HISPANIC/LATINO - HONDURAN", "HISPANIC/LATINO - MEXICAN",
+                 "HISPANIC/LATINO - PUERTO RICAN",
+                 "HISPANIC/LATINO - SALVADORAN", "HISPANIC OR LATINO"),
+    `African American` = c("BLACK/AFRICAN AMERICAN"),
+    Other = c("AMERICAN INDIAN/ALASKA NATIVE FEDERALLY RECOGNIZED TRIBE",
+              "UNABLE TO OBTAIN", "UNKNOWN/NOT SPECIFIED", "MIDDLE EASTERN",
+              "MULTI RACE ETHNICITY",
+              "NATIVE HAWAIIAN OR OTHER PACIFIC ISLANDER", "OTHER",
+              "PATIENT DECLINED TO ANSWER",
+              "PORTUGUESE", "SOUTH AMERICAN",
+              "AMERICAN INDIAN/ALASKA NATIVE",
+              "AMERICAN INDIAN/ALASKA NATIVE FEDERALLY RECOGNIZED TRIBE",
+              "CARIBBEAN ISLAND", "BLACK/AFRICAN", "BLACK/CAPE VERDEAN",
+              "BLACK/HAITIAN")
+  )
+  map <- unlist(groups)
+  names(map) <- rep(names(groups), times = lapply(groups, length))
+  
+  x[, ethnicity := names(map)[match(ethnicity, map)]]
+}
+
+race_miiv_cb <- function(x, val_var, env) {
+  
+  groups <- list(
+    Caucasian = c("WHITE", "WHITE - BRAZILIAN", "WHITE - EASTERN EUROPEAN",
+                  "WHITE - OTHER EUROPEAN", "WHITE - RUSSIAN"),
+    Asian = c("ASIAN", "ASIAN - ASIAN INDIAN", "ASIAN - CHINESE",
+              "ASIAN - KOREAN", "ASIAN - SOUTH EAST ASIAN"),
+    Hispanic = c("HISPANIC OR LATINO", "HISPANIC/LATINO",
+                 "HISPANIC/LATINO - CENTRAL AMERICAN",
+                 "HISPANIC/LATINO - COLUMBIAN", "HISPANIC/LATINO - CUBAN",
+                 "HISPANIC/LATINO - DOMINICAN", "HISPANIC/LATINO - GUATEMALAN",
+                 "HISPANIC/LATINO - HONDURAN", "HISPANIC/LATINO - MEXICAN",
+                 "HISPANIC/LATINO - PUERTO RICAN",
+                 "HISPANIC/LATINO - SALVADORAN", "SOUTH AMERICAN"),
+    `African American` = c("BLACK/AFRICAN", "BLACK/AFRICAN AMERICAN",
+                           "BLACK/CAPE VERDEAN", "BLACK/CARIBBEAN ISLAND"),
+    Other = c("OTHER", "UNKNOWN", "UNABLE TO OBTAIN", "MULTIPLE RACE/ETHNICITY",
+              "NATIVE HAWAIIAN OR OTHER PACIFIC ISLANDER",
+              "PATIENT DECLINED TO ANSWER", "PORTUGUESE")
+  )
+  
+  map <- unlist(groups)
+  names(map) <- rep(names(groups), times = lapply(groups, length))
+  
+  x[, race := names(map)[match(race, map)]]
+}
+
+race_eicu_cb <- function(x, val_var, env) {
+  
+  x[ethnicity %in% c("Native American", "Other/Unknown"), ethnicity := "Other"]
+}
+
+acute_dayone <- function(sofa, ...) {
+  
+  ind_var <- index_var(sofa)
+  sofa <- sofa[get(ind_var) == hours(24L)]
+  sofa[, acu_24 := sofa]
+  sofa[, c(ind_var, "sofa") := NULL]
+  sofa
+}
+
+miiv_charlson_dir <- function(x, ...) {
+  
+  ch9 <- icd::icd9_comorbid_charlson(x[icd_version == 9])
+  ch10 <- icd::icd10_comorbid_charlson(x[icd_version == 10])
+  
+  make_long <- function(x, id_name) {
+    
+    res <- id_tbl(id = as.integer(rownames(x)))
+    res <- cbind(res, x)
+    res <- rename_cols(res, id_name, "id")
+    res <- melt.data.table(res, id.vars = id_name)
+    as_id_tbl(res)
+  }
+  
+  ch <- rbind(
+    make_long(ch9, id_vars(x)),
+    make_long(ch10, id_vars(x))
+  )
+  
+  ch <- ch[, list(cmb = max(value, na.rm = TRUE)), by = c(id_vars(ch), "variable")]
+  ch[, list(icd_code = sum(cmb, na.rm = TRUE)), by = c(id_vars(ch))]
+}
+
+anzics_adm_diag <- function(x, val_var, ...) {
+  
+  diag_map <- list(
+    CMED = c(101, 102, 103, 104, 106, 107, 108, 109, 110, 111),
+    CSURG = c(1202, 1203, 1204, 1205, 1206, 1207, 1208, 1209, 1210, 1211, 1212, 
+              1213),
+    # DENT = c(),
+    # ENT = c(),
+    # EYE = c(),
+    GU = c(1701, 1702, 1703, 1704, 1705, 902, 903),
+    GYN = c(902, 903, 1101, 1102),
+    MED = c(201, 202, 203, 204, 206, 207, 208, 209, 210, 211, 212, 213, 301, 
+            302, 303, 304, 305, 306, 307, 308, 309, 310, 311, 312, 313, 501, 
+            502, 503, 504, 701, 702, 703, 704, 801, 802, 901, 1101, 1102),
+    # NB = c(),
+    # NBB = c(),
+    NMED = c(401, 402, 403, 404, 405, 406, 407, 408, 409, 410),
+    NSURG = c(1501, 1502, 1503, 1504, 1505, 1506),
+    OBS = c(902, 903),
+    ORTHO = c(1902, 1903, 1904),
+    # OMED = c(),
+    # PSURG = c(),
+    # PSYCH = c(),
+    # TSURG = c(),
+    # VSURG = c(),
+    SURG = c(1301, 1302, 1303, 1304, 1401, 1403, 1404, 1405, 1406, 1407, 1408, 
+             1409, 1410, 1411, 1412, 1413),
+    TRAUM = c(601, 602, 603, 604, 605, 1601, 1602, 1603, 1604, 1605),
+    OTH = c(0)
+  )
+  
+  diag_dt <- data.table::data.table()
+  for (i in seq_along(diag_map)) {
+    diag_dt <- rbind(
+      diag_dt,
+      data.table(target = names(diag_map)[i], AP3DIAG = diag_map[[i]])
+    )
+  }
+
+  x <- merge(x, diag_dt, by = val_var)
+  x[, AP3DIAG := NULL]
+  rename_cols(x, "AP3DIAG", "target")
+}
+
+mimic_adm_diag <- function(x, val_var, ...) {
+  
+  mapp <- list(
+    OTH = c("DENT", "PSYCH", "NBB", "NB", "ENT", "GU", "PSURG"),
+    GYN = c("GYN", "OBS")
+  )
+  for (i in seq_along(mapp)) {
+    x[get(val_var) %in% mapp[[i]], c(val_var) := names(mapp)[i]]
+  }
+  x
+}
+
 # ANZICS APD callbacks
+init_proj <- function(file = ".gitignore") {
+  
+  root <- rprojroot::find_root(rprojroot::has_file(file))
+  invisible(lapply(list.files(file.path(root, "r"), full.names = TRUE), source))
+}
+
 anzics_sex <- function(x, ...) {
 
   x[, SEX := ifelse(SEX == "M", "Male", "Female")]
   x
+}
+
+anzics_diagnosis_decode <- function(x) {
+  
+  df <- anzics$d_diagnoses
+  df$diagnosis_name[match(x, df$diagnosis_code)]
+}
+
+anzics_binary <- function(x, val_var, ...) {
+  
+  x[, c(val_var) := as.logical(ifelse(get(val_var) == 1, 1, 0))]
+  x
+}
+
+anzics_adm <- function(x, val_var, ...) {
+  
+  diag_to_adm <- function(x) ifelse(x < 1200, "med", "surg")
+  
+  x[, adm := diag_to_adm(get(val_var))]
+  x[, c(val_var) := NULL]
+  x <- setnames(x, "adm", val_var)
+  x
+}
+
+anzics_is_vent_cb <- function(...) {
+  
+  res <- Reduce(function(x, y) merge(x, y, all = TRUE), list(...)[1:3])
+  res[, is_vent := is_invasive > 0 | is_invasive2 > 0 | is_noninvasive > 0]
+  res[is.na(is_vent), is_vent := FALSE]
+  res[, c(id_vars(res), "is_vent"), with=FALSE]
 }
 
 

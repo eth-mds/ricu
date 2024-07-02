@@ -10089,7 +10089,7 @@
           "index_var": "ICU_AD_DTM",
           "time_vars": ["ICU_DS_DTM", "HOSP_AD_DTM", "HOSP_DS_DTM"]
         },
-        "num_rows": 27386,
+        "num_rows": 2046866,
         "cols": {
           "icustayid": {
             "name": "ICUStayID",
@@ -10114,6 +10114,25 @@
             "name": "HOSP_DS_DTM",
             "spec": "col_datetime",
             "format": "%Y-%m-%d %H:%M:%S"
+          }
+        }
+      },
+      "d_diagnoses": {
+        "files": "d_diagnoses.csv",
+        "defaults": [],
+        "num_rows": 117,
+        "cols": {
+          "diagnosis_code": {
+            "name": "diagnosis_code",
+            "spec": "col_integer"
+          },
+          "diagnosis_name": {
+            "name": "diagnosis_name",
+            "spec": "col_character"
+          },
+          "diagnosis_group": {
+            "name": "diagnosis_group",
+            "spec": "col_character"
           }
         }
       }

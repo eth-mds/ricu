@@ -1719,6 +1719,11 @@ anzics_tbl_cfg <- function() {
                         format = "%Y-%m-%d %H:%M:%S"),
       hosp_ds_dtm = list(name = "HOSP_DS_DTM", spec = "col_datetime", 
                         format = "%Y-%m-%d %H:%M:%S")
+    ),
+    d_diagnoses = list(
+      diagnosis_code = list(name = "diagnosis_code", spec = "col_integer"),
+      diagnosis_name = list(name = "diagnosis_name", spec = "col_character"),
+      diagnosis_group = list(name = "diagnosis_group", spec = "col_character")
     )
   )
   
@@ -1729,7 +1734,8 @@ anzics_tbl_cfg <- function() {
     main = list(
       index_var = "ICU_AD_DTM",
       time_vars = c("ICU_DS_DTM", "HOSP_AD_DTM", "HOSP_DS_DTM")
-    )
+    ),
+    d_diagnoses = list()
   )
   
   defaults <- Map(function(cl, df) {
@@ -1740,11 +1746,13 @@ anzics_tbl_cfg <- function() {
   }, cols[tables], defaults[tables])
   
   n_row <- c(
-    main = 27386L
+    main = 2046866L,
+    d_diagnoses = 117L
   )
   
   files <- c(
-    main = "2112.csv"
+    main = "2112.csv",
+    d_diagnoses = "d_diagnoses.csv"
   )
   
   tables <- names(info)
