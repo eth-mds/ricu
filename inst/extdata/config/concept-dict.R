@@ -163,16 +163,88 @@ cfg <- list(
       )
     )
   ),
+  sao2 = list(
+    unit = c("%", "% Sat."),
+    min = 50,
+    max = 100,
+    description = "arterial oxygen saturation",
+    omopid = 40483579L,
+    category = "respiratory",
+    sources = list(
+      mimic = list(
+        list(ids = c(834L, 220227L), table = "chartevents",
+             sub_var = "itemid"),
+        list(ids = c(50817L), table = "labevents",
+             sub_var = "itemid")
+      ),
+      eicu = list(
+        list(ids = "O2 Sat (%)", table = "lab", sub_var = "labname")
+      ),
+      hirid = list(
+        list(ids = c(20000800L), table = "observations",
+             sub_var = "variableid", class = "hrd_itm")
+      ),
+      aumc = list(
+        list(ids = 12311L, table = "numericitems", sub_var = "itemid",
+             callback = "transform_fun(binary_op(`*`, 100))")
+      ),
+      miiv = list(
+        list(ids = c(220227L), table = "chartevents",
+             sub_var = "itemid"),
+        list(ids = c(50817L), table = "labevents",
+             sub_var = "itemid")
+      ),
+      sic = list(
+        list(ids = c(184L, 673L, 690L), table = "laboratory", 
+             sub_var = "LaboratoryID")
+      )
+    )
+  ),
+  spo2 = list(
+    unit = c("%", "% Sat."),
+    min = 50,
+    max = 100,
+    description = "oxygen saturation",
+    omopid = 4196147L,
+    category = "respiratory",
+    sources = list(
+      mimic = list(
+        list(ids = c(646L, 220277L, 226253L), table = "chartevents",
+             sub_var = "itemid")
+      ),
+      eicu = list(
+        list(table = "vitalperiodic", val_var = "sao2", unit_val = "%",
+             class = "col_itm")
+      ),
+      hirid = list(
+        list(ids = c(4000L, 8280L), table = "observations",
+             sub_var = "variableid", class = "hrd_itm")
+      ),
+      aumc = list(
+        list(ids = c(6709L, 8903L), table = "numericitems",
+             sub_var = "itemid")
+      ),
+      miiv = list(
+        list(ids = c(220277L, 226253L), table = "chartevents",
+             sub_var = "itemid")
+      ),
+      sic = list(
+        list(ids = 710L, table = "data_float_h", sub_var = "DataID")
+      )
+    )
+  ),
   o2sat = list(
     unit = c("%", "% Sat."),
     min = 50,
     max = 100,
     description = "oxygen saturation",
-    omopid = 40483579L,
+    omopid = 4011919L,
     category = "respiratory",
     sources = list(
       mimic = list(
-        list(ids = c(646L, 220277L, 226253L, 50817L), table = "chartevents",
+        list(ids = c(646L, 834L, 220277L, 226253L, 50817L),
+             table = "chartevents", sub_var = "itemid"),
+        list(ids = c(50817L), table = "labevents",
              sub_var = "itemid")
       ),
       eicu = list(
@@ -191,11 +263,15 @@ cfg <- list(
              callback = "transform_fun(binary_op(`*`, 100))")
       ),
       miiv = list(
-        list(ids = c(220277L, 226253L, 50817L), table = "chartevents",
+        list(ids = c(220277L, 226253L, 220227L), table = "chartevents",
+             sub_var = "itemid"),
+        list(ids = c(50817L), table = "labevents",
              sub_var = "itemid")
       ),
       sic = list(
-        list(ids = 710L, table = "data_float_h", sub_var = "DataID")
+        list(ids = 710L, table = "data_float_h", sub_var = "DataID"),
+        list(ids = c(184L, 673L, 690L), table = "laboratory", 
+             sub_var = "LaboratoryID")
       )
     )
   ),
