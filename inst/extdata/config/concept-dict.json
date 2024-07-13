@@ -369,6 +369,18 @@
       ]
     }
   },
+  "adm_year": {
+    "target": "id_tbl",
+    "sources": {
+      "anzics": [
+        {
+          "table": "main",
+          "val_var": "IcuAdmitYYYY",
+          "class": "col_itm"
+        }
+      ]
+    }
+  },
   "age": {
     "unit": "years",
     "min": 0,
@@ -692,6 +704,18 @@
         {
           "table": "main",
           "val_var": "Apache3RiskOfDeath",
+          "class": "col_itm"
+        }
+      ]
+    }
+  },
+  "apache_iii_subcode": {
+    "target": "id_tbl",
+    "sources": {
+      "anzics": [
+        {
+          "table": "main",
+          "val_var": "AP3_SUBCODE",
           "class": "col_itm"
         }
       ]
@@ -6446,6 +6470,18 @@
     "category": "outcome",
     "callback": "sirs_score",
     "class": "rec_cncpt"
+  },
+  "site": {
+    "target": "id_tbl",
+    "sources": {
+      "anzics": [
+        {
+          "table": "main",
+          "val_var": "SiteID",
+          "class": "col_itm"
+        }
+      ]
+    }
   },
   "sofa": {
     "concepts": ["sofa_resp", "sofa_coag", "sofa_liver", "sofa_cardio", "sofa_cns", "sofa_renal"],

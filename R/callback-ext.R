@@ -97,7 +97,29 @@ miiv_charlson_dir <- function(x, ...) {
   ch[, list(icd_code = sum(cmb, na.rm = TRUE)), by = c(id_vars(ch))]
 }
 
-anzics_adm_diag <- function(x, val_var, ...) {
+anzics_adm_diag <- function(x, val_var, env, ...) {
+  
+  vsurg <- c(1203.01, 1203.02, 1204.01, 1204.02, 1205.01, 1205.02, 
+             1206.01, 1206.05, 1206.06, 1206.07, 1206.08, 1206.09, 
+             1207.01, 1207.02, 1207.03, 1208.03, 1208.04, 1208.10, 
+             1208.11, 1208.12, 1208.13, 1208.14, 1208.17, 1208.18, 
+             1209.01, 1209.02, 1210.01, 1210.02, 1211.01, 1211.02, 
+             1212.01, 1212.02, 1212.04, 1212.05, 1212.06, 1212.07, 
+             1213.01, 1213.02)
+  
+  tsurg <- c(1302.01, 1302.02, 1302.03, 1303.01, 1303.02, 1304.02, 
+             1304.03, 1304.04, 1304.06, 1304.07, 1304.08, 1304.09, 
+             1304.11)
+  
+  omed <- c(202.02, 202.03, 202.04, 202.05, 312.01, 312.02, 312.03, 312.04, 
+            312.05, 405.01, 802.03, 802.04, 802.05, 802.06, 802.07, 802.08, 
+            802.1, 901.05)
+  
+  
+  x <- merge(
+    x, load_concepts("apache_iii_subcode", "anzics", verbose = FALSE),
+    all.x = TRUE
+  )
   
   diag_map <- list(
     CMED = c(101, 102, 103, 104, 106, 107, 108, 109, 110, 111),
@@ -137,6 +159,9 @@ anzics_adm_diag <- function(x, val_var, ...) {
   }
 
   x <- merge(x, diag_dt, by = val_var)
+  x[apache_iii_subcode %in% vsurg, target := "VSURG"]
+  x[apache_iii_subcode %in% tsurg, target := "TSURG"]
+  x[apache_iii_subcode %in% omed, target := "OMED"]
   x[, AP3DIAG := NULL]
   rename_cols(x, "AP3DIAG", "target")
 }

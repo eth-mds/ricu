@@ -470,6 +470,42 @@ add <- list(
         )
       )
     )
+  ),
+  adm_year = list(
+    target = "id_tbl",
+    sources = list(
+      anzics = list(
+        list(
+          table = "main",
+          val_var = "IcuAdmitYYYY",
+          class = "col_itm"
+        )
+      )
+    )
+  ),
+  apache_iii_subcode = list(
+    target = "id_tbl",
+    sources = list(
+      anzics = list(
+        list(
+          table = "main",
+          val_var = "AP3_SUBCODE",
+          class = "col_itm"
+        )
+      )
+    )
+  ),
+  site = list(
+    target = "id_tbl",
+    sources = list(
+      anzics = list(
+        list(
+          table = "main",
+          val_var = "SiteID",
+          class = "col_itm"
+        )
+      )
+    )
   )
 )
 
