@@ -1,4 +1,123 @@
 
+is_vent_callback <- function(vent_ind, interval, ...) {
+  
+  vent_ind <- expand(vent_ind)
+  vent_ind[, c(index_var(vent_ind)) := NULL]
+  vent_ind <- unique(vent_ind)
+  
+  vent_ind[, is_vent := vent_ind]
+  vent_ind[, vent_ind := NULL]
+  
+  vent_ind
+  
+}
+
+is_vaso_callback <- function(..., interval) {
+  
+  x <- list(...)[["norepi_equiv"]]
+  x[, c(index_var(x)) := NULL]
+  
+  x[, is_vaso := (max(norepi_equiv) > 0), by = get(id_var(x))]
+  x[, norepi_equiv := NULL]
+  
+  unique(x)
+  
+}
+
+sic_surg_site_cb <- function(x, ...) {
+  
+  category_list <- list(
+    Abdomen = c(
+      2211, # Abdomen: Unterer GI-Trakt
+      2219, # Abdomen: Oberer GI-Trakt (inkl. Jejunum)
+      2225, # Abdomen: Leber-Chriurgie
+      2242, # Abdomen: Pankreas
+      2253, # Abdomen: Biliärtrakt
+      2259  # Abdomen: endokrine Chirurgie
+    ),
+    Vascular = c(
+      2214, # Gefäß: Aortenchirurgie
+      2234, # Gefäß: Karotischirurgie
+      2243, # Gefäß: große Gefäße (Thorax und Bauch)
+      2258, # Gefäß: Andere
+      2229  # Gefäß: periphere Gefäße
+    ),
+    Heart = c(
+      2227, # Herz: CABG
+      2237, # Herz: Klappe mit CABG
+      2240, # Herz: Klappe
+      2241  # Herz: Andere
+    ),
+    Trauma_Orthopedics = c(
+      2231, # Trauma: SHT
+      2246, # Trauma: Extremitäten
+      2269, # Trauma: Abdomen (Assuming Abdominal trauma)
+      2254, # Trauma: Thorax (Assuming Thoracic trauma)
+      2239, # Trauma: Polytrauma
+      2207  # Extremitäten-Chirurgie
+    ),
+    Neuro = c(
+      2245, # Neurochirurgie: zerebrovaskulär
+      2250, # Neurochirurgie: Wirbelsäule
+      2264, # Neurochirurgie: Andere
+      2273  # Neurochirurgie: intrakranieller Tumor
+    ),
+    Transplant = c(
+      2268, # Transplantation: Leber
+      2270, # Transplantation: Herz/Lunge
+      2271, # Transplantation: Andere
+      2272  # Transplantation: Herz
+    ),
+    Gynecological = c(2260), # Gynäkologischer Eingriff
+    Birth = c(2261),         # Geburtshilfe
+    Other = c(
+      2205, # Unknown
+      2221, # .
+      2217, # HNO
+      2210, # Kieferchirurgie (Oral / Maxilofacial)
+      2232  # Andere Eingriffe
+    ),
+    Thorax = c(
+      2262, # Thorax: Lobektomie
+      2263, # Thorax: Pneumonektomie
+      2267, # Thorax: Pleura
+      2226  # Thorax: Andere
+    )
+  )
+  
+  site_map <- do.call(
+    rbind,
+    Map(
+      function(site, nums) {
+        data.table(site = site, SurgicalSite = nums)
+      }, names(category_list), category_list
+    )
+  )
+  
+  x <- merge(x, site_map, by = "SurgicalSite")
+  x[, SurgicalSite := NULL]
+  rename_cols(x, "SurgicalSite", "site")
+}
+
+spfi <- function(..., match_win = hours(2L),
+                 mode = c("match_vals", "extreme_vals", "fill_gaps"),
+                 fix_na_fio2 = TRUE, interval = NULL) {
+  
+  mode <- match.arg(mode)
+  
+  assert_that(is.flag(fix_na_fio2))
+  
+  cnc <- c("spo2", "fio2")
+  res <- collect_dots(cnc, interval, ...)
+  res <- match_fio2(res, match_win, mode, if (fix_na_fio2) cnc[2L] else NULL)
+  
+  res <- res[!is.na(get(cnc[1L])) & !is.na(get(cnc[2L])) & get(cnc[2L]) != 0, ]
+  res <- res[, c("spfi") := 100 * get(cnc[1L]) / get(cnc[2L])]
+  res <- rm_cols(res, cnc)
+  
+  res
+}
+
 race_mimic_cb <- function(x, val_var, env) {
   
   groups <- list(
@@ -72,6 +191,36 @@ acute_dayone <- function(sofa, ...) {
   sofa[, acu_24 := sofa]
   sofa[, c(ind_var, "sofa") := NULL]
   sofa
+}
+
+mimic_adm_epi_cb <- function(x, ...) {
+
+  x <- merge(x, list(...)$env$icustays[, c("icustay_id", "intime")], 
+             by = "icustay_id")
+  x <- setorderv(x, cols = c("subject_id", "intime"))
+  x[, adm_episode := seq_len(.N), by = "subject_id"]
+  
+  x <- x[, c(id_vars(x), "adm_episode"), with=FALSE]
+  rename_cols(x, "subject_id", "adm_episode")
+}
+
+mimic_charlson_dir <- function(x, ...) {
+
+  ch9 <- icd::icd9_comorbid_charlson(x)
+  
+  make_long <- function(x, id_name) {
+    
+    res <- id_tbl(id = as.integer(rownames(x)))
+    res <- cbind(res, x)
+    res <- rename_cols(res, id_name, "id")
+    res <- data.table::melt.data.table(res, id.vars = id_name)
+    as_id_tbl(res)
+  }
+  
+  ch <- make_long(ch9, id_vars(x))
+  ch <- ch[, list(cmb = max(value, na.rm = TRUE)), 
+           by = c(id_vars(ch), "variable")]
+  ch[, list(icd9_code = sum(cmb, na.rm = TRUE)), by = c(id_vars(ch))]
 }
 
 miiv_charlson_dir <- function(x, ...) {

@@ -11,6 +11,22 @@ add <- list(
           class = "col_itm"
         )
       ),
+      mimic = list(
+        list(
+          table = "icustays",
+          val_var = "subject_id",
+          class = "col_itm",
+          callback = "mimic_adm_epi_cb"
+        )
+      ),
+      mimic_demo = list(
+        list(
+          table = "icustays",
+          val_var = "subject_id",
+          class = "col_itm",
+          callback = "mimic_adm_epi_cb"
+        )
+      ),
       miiv = list(
         list(
           table = "icustays",
@@ -300,11 +316,27 @@ add <- list(
       )
     )
   ),
-  is_vent = list(
+  is_vent2 = list(
     concepts = list("is_invasive", "is_invasive2", "is_noninvasive"),
     callback = "anzics_is_vent_cb",
     class = "rec_cncpt",
     target = "id_tbl"
+  ),
+  is_vent = list(
+    concepts = c("vent_ind"),
+    description = "Ventilation during ICU stay",
+    category = "respiratory",
+    target = "id_tbl",
+    callback = "is_vent_callback",
+    class = "rec_cncpt"
+  ),
+  is_vaso = list(
+    concepts = c("norepi_equiv"),
+    description = "Vasopressor administration during ICU stay",
+    category = "cardio",
+    target = "id_tbl",
+    callback = "is_vaso_callback",
+    class = "rec_cncpt"
   ),
   is_inotrop = list(
     target = "id_tbl",
@@ -409,6 +441,14 @@ add <- list(
     target = "id_tbl",
     description = "Charlson Comorbidity Index",
     sources = list(
+      mimic_demo = list(
+        list(table = "diagnoses_icd", val_var = "icd9_code",
+             callback = "mimic_charlson_dir", class = "col_itm")
+      ),
+      mimic = list(
+        list(table = "diagnoses_icd", val_var = "icd9_code",
+             callback = "mimic_charlson_dir", class = "col_itm")
+      ),
       miiv = list(
         list(ids = c(9, 10), table = "diagnoses_icd", val_var = "icd_code",
              sub_var = "icd_version", callback = "miiv_charlson_dir")
@@ -503,6 +543,57 @@ add <- list(
           table = "main",
           val_var = "SiteID",
           class = "col_itm"
+        )
+      )
+    )
+  ),
+  spfi = list(
+    concepts = c("spo2", "fio2"),
+    description = "SpO2/FiO2",
+    category = "respiratory",
+    aggregate = c("min", "max"),
+    callback = "spfi",
+    class = "rec_cncpt"
+  ),
+  frailty = list(
+    target = "id_tbl",
+    sources = list(
+      anzics = list(
+        list(
+          table = "main",
+          val_var = "FRAILTY",
+          class = "col_itm"
+        )
+      )
+    )
+  ),
+  notes = list(
+    sources = list(
+      mimic = list(
+        list(
+          table = "noteevents",
+          val_var = "text",
+          class = "col_itm"
+        )
+      ),
+      mimic_demo = list(
+        list(
+          table = "noteevents",
+          val_var = "text",
+          class = "col_itm"
+        )
+      )
+    )
+  ),
+  surg_site = list(
+    target = "id_tbl",
+    sources = list(
+      sic = list(
+        list(
+          table = "cases",
+          val_var = "SurgicalSite",
+          class = "col_itm",
+          callback = "sic_surg_site_cb"
         )
       )
     )
