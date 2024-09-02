@@ -1,4 +1,76 @@
 
+mimic_notes_cb <- function(x, grp1_var, grp2_var, index2_var, val_var, ...) {
+  
+  # for Echo, ECG, charttime inherits chartdate + hours(24L)
+  x <- x[category %in% c("ECG", "Echo", "Discharge summary"),
+         c(index2_var) := get(index_var(x)) + hours(24L)]
+
+  # chartdate gets charttime
+  x[, c(index_var(x)) := get(index2_var)]
+  
+  x <- x[category != "Discharge summary"] # remove all discharge summaries
+  
+  # collapse notes to avoid losing information
+  x[, list(text = paste(text, collapse = "\n")), 
+    by = c(meta_vars(x))]
+}
+
+weight_anzics_cb <- function(x, ...) {
+  
+  height <- x$HEIGHT
+  weight <- x$WEIGHT
+  age <- x$AGE
+  
+  height2 <- height
+  weight2 <- weight
+  weight[which(height2 < 100)] <- height2[which(height2 < 100)]
+  height[which(height2 < 100)] <- weight2[which(height2 < 100)]
+  weight2[which(weight2 == 0)] <- NA
+  height2[which(weight2 == 0)] <- NA
+  height[which(height == 0)] <- NA
+  height[which(height > 250)] <- NA
+  height[which(height < 30)] <- NA
+  height[which(height < 50 & age > 5)] <- NA
+  height[which(height < 100 & age > 10)] <- NA
+  weight[which(weight == 0)] <- NA
+  weight[which(weight > 350)] <- NA
+  weight[which(weight > 200 & height < 120)] <- NA
+  weight[which(weight < 20 & age > 10)] <- NA
+  weight[which(weight < 10 & age > 5)] <- NA
+  
+  x[, WEIGHT := weight]
+  
+  x[, c(id_vars(x), "WEIGHT"), with=FALSE]
+}
+
+height_anzics_cb <- function(x, ...) {
+  
+  height <- x$HEIGHT
+  weight <- x$WEIGHT
+  age <- x$AGE
+  
+  height2 <- height
+  weight2 <- weight
+  weight[which(height2 < 100)] <- height2[which(height2 < 100)]
+  height[which(height2 < 100)] <- weight2[which(height2 < 100)]
+  weight2[which(weight2 == 0)] <- NA
+  height2[which(weight2 == 0)] <- NA
+  height[which(height == 0)] <- NA
+  height[which(height > 250)] <- NA
+  height[which(height < 30)] <- NA
+  height[which(height < 50 & age > 5)] <- NA
+  height[which(height < 100 & age > 10)] <- NA
+  weight[which(weight == 0)] <- NA
+  weight[which(weight > 350)] <- NA
+  weight[which(weight > 200 & height < 120)] <- NA
+  weight[which(weight < 20 & age > 10)] <- NA
+  weight[which(weight < 10 & age > 5)] <- NA
+  
+  x[, HEIGHT := height]
+  
+  x[, c(id_vars(x), "HEIGHT"), with=FALSE]
+}
+
 is_vent_callback <- function(vent_ind, interval, ...) {
   
   vent_ind <- expand(vent_ind)
@@ -568,6 +640,26 @@ plt_inr_cb <- function (..., match_win = hours(6L), interval = NULL) {
   res <- res[is.na(get(cnc[2L])), c(cnc[2L]) := 1]
   res <- res[!is.na(get(cnc[1L])) & !is.na(get(cnc[2L])), ]
   res <- res[, `:=`(c("plt_div_inr"), get(cnc[1L])/get(cnc[2L]))]
+  res <- rm_cols(res, cnc)
+  res
+}
+
+bun_crea_cb <- function (..., match_win = hours(6L), interval = NULL) {
+  
+  cnc <- c("bun", "crea")
+  res <- ricu:::collect_dots(cnc, interval, ...)
+  assert_that(is_interval(match_win), match_win > ricu:::check_interval(res))
+  
+  on12 <- paste(meta_vars(res[[1L]]), "==", meta_vars(res[[2L]]))
+  on21 <- paste(meta_vars(res[[2L]]), "==", meta_vars(res[[1L]]))
+  
+  res <- rbind(res[[1L]][res[[2L]], on = on12, roll = match_win],
+               res[[2L]][res[[1L]], on = on21, roll = match_win])
+  res <- unique(res)
+  
+  res <- res[is.na(get(cnc[2L])), c(cnc[2L]) := 1]
+  res <- res[!is.na(get(cnc[1L])) & !is.na(get(cnc[2L])), ]
+  res <- res[, `:=`(c("bun_div_crea"), get(cnc[1L])/get(cnc[2L]))]
   res <- rm_cols(res, cnc)
   res
 }

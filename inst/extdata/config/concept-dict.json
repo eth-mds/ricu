@@ -1303,6 +1303,13 @@
       ]
     }
   },
+  "bun_div_crea": {
+    "concepts": ["bun", "crea"],
+    "description": "Urea / Creatinine",
+    "category": "coag",
+    "callback": "bun_crea_cb",
+    "class": "rec_cncpt"
+  },
   "ca": {
     "unit": "mg/dL",
     "min": 4,
@@ -3470,6 +3477,16 @@
     "omopid": 607590,
     "category": "demographics",
     "sources": {
+      "anzics": [
+        {
+          "table": "main",
+          "val_var": "HEIGHT",
+          "add1_var": "WEIGHT",
+          "add2_var": "AGE",
+          "class": "col_itm",
+          "callback": "height_anzics_cb"
+        }
+      ],
       "aumc": [
         {
           "val_var": "heightgroup",
@@ -5212,6 +5229,10 @@
         {
           "table": "noteevents",
           "val_var": "text",
+          "index2_var": "charttime",
+          "grp1_var": "category",
+          "grp2_var": "row_id",
+          "callback": "mimic_notes_cb",
           "class": "col_itm"
         }
       ],
@@ -5219,13 +5240,10 @@
         {
           "table": "noteevents",
           "val_var": "text",
-          "class": "col_itm"
-        }
-      ],
-      "mimic_demo.1": [
-        {
-          "table": "noteevents",
-          "val_var": "text",
+          "index2_var": "charttime",
+          "grp1_var": "category",
+          "grp2_var": "row_id",
+          "callback": "mimic_notes_cb",
           "class": "col_itm"
         }
       ]
@@ -7545,6 +7563,16 @@
     "omopid": 4099154,
     "category": "demographics",
     "sources": {
+      "anzics": [
+        {
+          "table": "main",
+          "val_var": "WEIGHT",
+          "add1_var": "HEIGHT",
+          "add2_var": "AGE",
+          "callback": "weight_anzics_cb",
+          "class": "col_itm"
+        }
+      ],
       "aumc": [
         {
           "val_var": "weightgroup",

@@ -140,6 +140,13 @@ add <- list(
     callback = "plt_inr_cb",
     class = "rec_cncpt"
   ),
+  bun_div_crea = list(
+    concepts = c("bun", "crea"),
+    description = "Urea / Creatinine",
+    category = "coag",
+    callback = "bun_crea_cb",
+    class = "rec_cncpt"
+  ),
   sed_med = list(
     target = "win_tbl",
     description = "Sedation",
@@ -573,13 +580,10 @@ add <- list(
         list(
           table = "noteevents",
           val_var = "text",
-          class = "col_itm"
-        )
-      ),
-      mimic_demo = list(
-        list(
-          table = "noteevents",
-          val_var = "text",
+          index2_var = "charttime",
+          grp1_var = "category",
+          grp2_var = "row_id",
+          callback = "mimic_notes_cb",
           class = "col_itm"
         )
       )
@@ -602,6 +606,30 @@ add <- list(
 
 # extended existing concepts
 ext <- list(
+  weight = list(
+    anzics = list(
+      list(
+        table = "main",
+        val_var = "WEIGHT",
+        add1_var = "HEIGHT",
+        add2_var = "AGE",
+        callback = "weight_anzics_cb",
+        class = "col_itm"
+      )
+    )
+  ),
+  height = list(
+    anzics = list(
+      list(
+        table = "main",
+        val_var = "HEIGHT",
+        add1_var = "WEIGHT",
+        add2_var = "AGE",
+        class = "col_itm",
+        callback = "height_anzics_cb"
+      )
+    )
+  ),
   death = list(
     sic = list(
       list(table = "cases", index_var = "OffsetAfterFirstAdmission",
