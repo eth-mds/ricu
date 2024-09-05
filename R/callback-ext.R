@@ -1,4 +1,16 @@
 
+los_hosp_anzics_cb <- function(x, ...) {
+  
+  x[, HOSP_HRS := HOSP_HRS / 24]
+  x
+}
+
+los_icu_anzics_cb <- function(x, ...) {
+  
+  x[, ICU_HRS := ICU_HRS / 24]
+  x
+}
+
 mimic_notes_cb <- function(x, grp1_var, grp2_var, index2_var, val_var, ...) {
   
   # for Echo, ECG, charttime inherits chartdate + hours(24L)

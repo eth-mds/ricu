@@ -649,9 +649,19 @@ ext <- list(
     )
   ),
   los_icu = list(
+    anzics = list(
+      list(table = "main", class = "col_itm", val_var = "ICU_HRS",
+           callback = "los_icu_anzics_cb")
+    ),
     sic = list(
       list(table = "cases", class = "col_itm", val_var = "TimeOfStay",
            callback = "sic_los_icu_cb")
+    )
+  ),
+  los_hosp = list(
+    anzics = list(
+      list(table = "main", class = "col_itm", val_var = "HOSP_HRS",
+           callback = "los_hosp_anzics_cb")
     )
   ),
   tgcs = list(

@@ -4104,6 +4104,14 @@
     "omopid": 462369952,
     "category": "outcome",
     "sources": {
+      "anzics": [
+        {
+          "table": "main",
+          "class": "col_itm",
+          "val_var": "HOSP_HRS",
+          "callback": "los_hosp_anzics_cb"
+        }
+      ],
       "eicu": [
         {
           "callback": "los_callback",
@@ -4148,6 +4156,14 @@
     "description": "ICU length of stay",
     "category": "outcome",
     "sources": {
+      "anzics": [
+        {
+          "table": "main",
+          "class": "col_itm",
+          "val_var": "ICU_HRS",
+          "callback": "los_icu_anzics_cb"
+        }
+      ],
       "aumc": [
         {
           "callback": "los_callback",
