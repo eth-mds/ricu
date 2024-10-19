@@ -1724,6 +1724,23 @@ anzics_tbl_cfg <- function() {
       diagnosis_code = list(name = "diagnosis_code", spec = "col_integer"),
       diagnosis_name = list(name = "diagnosis_name", spec = "col_character"),
       diagnosis_group = list(name = "diagnosis_group", spec = "col_character")
+    ),
+    poa_seifa = list(
+      POA = list(name = "POA", spec = "col_character"),
+      irsd = list(name = "irsd", spec = "col_double"),
+      irsd_decile = list(name = "irsd_decile", spec = "col_double"),
+      irsad = list(name = "irsad", spec = "col_double"),
+      irsad_decile = list(name = "irsad_decile", spec = "col_double"),
+      ier = list(name = "ier", spec = "col_double"),
+      ier_decile = list(name = "ier_decile", spec = "col_double"),
+      ieo = list(name = "ieo", spec = "col_double"),
+      ieo_decile = list(name = "ieo_decile", spec = "col_double"),
+      resident_population = list(name = "resident_population", 
+                                 spec = "col_double"),
+      caution_indicator = list(name = "caution_indicator", 
+                               spec = "col_character"),
+      POA_crosses_state = list(name = "POA_crosses_state", 
+                                 spec = "col_character")
     )
   )
   
@@ -1735,7 +1752,8 @@ anzics_tbl_cfg <- function() {
       index_var = "ICU_AD_DTM",
       time_vars = c("ICU_DS_DTM", "HOSP_AD_DTM", "HOSP_DS_DTM")
     ),
-    d_diagnoses = list()
+    d_diagnoses = list(),
+    poa_seifa = list()
   )
   
   defaults <- Map(function(cl, df) {
@@ -1747,12 +1765,14 @@ anzics_tbl_cfg <- function() {
   
   n_row <- c(
     main = 2046866L,
-    d_diagnoses = 117L
+    d_diagnoses = 117L,
+    poa_seifa = 2627L
   )
   
   files <- c(
     main = "2112.csv",
-    d_diagnoses = "d_diagnoses.csv"
+    d_diagnoses = "d_diagnoses.csv",
+    poa_seifa = "poa_seifa.csv"
   )
   
   tables <- names(info)

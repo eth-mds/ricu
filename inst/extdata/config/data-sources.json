@@ -10135,6 +10135,61 @@
             "spec": "col_character"
           }
         }
+      },
+      "poa_seifa": {
+        "files": "poa_seifa.csv",
+        "defaults": [],
+        "num_rows": 2627,
+        "cols": {
+          "POA": {
+            "name": "POA",
+            "spec": "col_character"
+          },
+          "irsd": {
+            "name": "irsd",
+            "spec": "col_double"
+          },
+          "irsd_decile": {
+            "name": "irsd_decile",
+            "spec": "col_double"
+          },
+          "irsad": {
+            "name": "irsad",
+            "spec": "col_double"
+          },
+          "irsad_decile": {
+            "name": "irsad_decile",
+            "spec": "col_double"
+          },
+          "ier": {
+            "name": "ier",
+            "spec": "col_double"
+          },
+          "ier_decile": {
+            "name": "ier_decile",
+            "spec": "col_double"
+          },
+          "ieo": {
+            "name": "ieo",
+            "spec": "col_double"
+          },
+          "ieo_decile": {
+            "name": "ieo_decile",
+            "spec": "col_double"
+          },
+          "resident_population": {
+            "name": "resident_population",
+            "spec": "col_double"
+          },
+          "caution_indicator": {
+            "name": "caution_indicator",
+            "spec": "col_character"
+          },
+          "POA_crosses_state": {
+            "name": "POA_crosses_state",
+            "spec": "col_character"
+          }
+        }
       }
     }
   }

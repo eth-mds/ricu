@@ -449,9 +449,9 @@ anzics_adm <- function(x, val_var, ...) {
 anzics_is_vent_cb <- function(...) {
   
   res <- Reduce(function(x, y) merge(x, y, all = TRUE), list(...)[1:3])
-  res[, is_vent := is_invasive > 0 | is_invasive2 > 0 | is_noninvasive > 0]
-  res[is.na(is_vent), is_vent := FALSE]
-  res[, c(id_vars(res), "is_vent"), with=FALSE]
+  res[, is_vent2 := is_invasive > 0 | is_invasive2 > 0]
+  res[is.na(is_vent2), is_vent2 := FALSE]
+  res[, c(id_vars(res), "is_vent2"), with=FALSE]
 }
 
 
