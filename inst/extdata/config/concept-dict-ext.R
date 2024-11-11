@@ -284,7 +284,7 @@ add <- list(
     target = "id_tbl",
     sources = list(
       anzics = list(
-        list(table = "main", val_var = "CountryCode", class = "col_itm")
+        list(table = "main", val_var = "Country", class = "col_itm")
       )
     )
   ),
@@ -294,6 +294,11 @@ add <- list(
       anzics = list(
         list(table = "main", val_var = "ELECT", class = "col_itm", 
              callback = "anzics_binary")
+      ),
+      miiv = list(
+        list(table = "admissions", val_var = "admission_type",
+             loc_var = "admission_location",
+             class = "col_itm", callback = "miiv_elective")
       )
     )
   ),
@@ -548,7 +553,7 @@ add <- list(
       anzics = list(
         list(
           table = "main",
-          val_var = "SiteID",
+          val_var = "DSITEID",
           class = "col_itm"
         )
       )
@@ -712,7 +717,7 @@ ext <- list(
   death = list(
     anzics = list(
       list(
-        table = "main", val_var = "DIED", callback = "anzics_binary", 
+        table = "main", val_var = "DIED_HOSP", callback = "anzics_binary", 
         index_var = "HOSP_DS_DTM", class = "col_itm"
       )
     )

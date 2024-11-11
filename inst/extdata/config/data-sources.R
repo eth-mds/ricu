@@ -1726,7 +1726,7 @@ anzics_tbl_cfg <- function() {
       diagnosis_group = list(name = "diagnosis_group", spec = "col_character")
     ),
     poa_seifa = list(
-      POA = list(name = "POA", spec = "col_character"),
+      postcode = list(name = "postcode", spec = "col_character"),
       irsd = list(name = "irsd", spec = "col_double"),
       irsd_decile = list(name = "irsd_decile", spec = "col_double"),
       irsad = list(name = "irsad", spec = "col_double"),
@@ -1739,8 +1739,8 @@ anzics_tbl_cfg <- function() {
                                  spec = "col_double"),
       caution_indicator = list(name = "caution_indicator", 
                                spec = "col_character"),
-      POA_crosses_state = list(name = "POA_crosses_state", 
-                                 spec = "col_character")
+      postcode_crosses_state = list(name = "POA_crosses_state", 
+                                    spec = "col_character")
     )
   )
   

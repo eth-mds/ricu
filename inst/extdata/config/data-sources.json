@@ -10141,8 +10141,8 @@
         "defaults": [],
         "num_rows": 2627,
         "cols": {
-          "POA": {
-            "name": "POA",
+          "postcode": {
+            "name": "postcode",
             "spec": "col_character"
           },
           "irsd": {
@@ -10185,7 +10185,7 @@
             "name": "caution_indicator",
             "spec": "col_character"
           },
-          "POA_crosses_state": {
+          "postcode_crosses_state": {
             "name": "POA_crosses_state",
             "spec": "col_character"
           }
