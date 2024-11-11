@@ -1,4 +1,18 @@
 
+miiv_elective <- function(x, ...) {
+  
+  x[, elective := fifelse(
+    admission_type %in% c("AMBULATORY OBSERVATION", "ELECTIVE") |
+      (admission_type == "DIRECT OBSERVATION" & admission_location %in% c("PROCEDURE SITE", "PACU", "AMBULATORY SURGERY TRANSFER")) |
+      (admission_type == "OBSERVATION ADMIT" & admission_location %in% c("PROCEDURE_SITE", "PACU")) |
+      (admission_type == "SURGICAL SAME DAY ADMISSION" & admission_location %in% c("PROCEDURE_SITE", "PACU", "PHYSICIAN REFERRAL")) ,
+    1, # Elective (coded as 1)
+    0  # Non-elective (coded as 0)
+  )]
+  
+  x[, admission_type := elective]
+}
+
 los_hosp_anzics_cb <- function(x, ...) {
   
   x[, HOSP_HRS := HOSP_HRS / 24]
