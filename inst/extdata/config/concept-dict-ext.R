@@ -295,6 +295,14 @@ add <- list(
         list(table = "main", val_var = "ELECT", class = "col_itm", 
              callback = "anzics_binary")
       ),
+      mimic_demo = list(
+        list(table = "admissions", val_var = "admission_type",
+             class = "col_itm", callback = "mimic_elective")
+      ),
+      mimic = list(
+        list(table = "admissions", val_var = "admission_type",
+             class = "col_itm", callback = "mimic_elective")
+      ),
       miiv = list(
         list(table = "admissions", val_var = "admission_type",
              loc_var = "admission_location",

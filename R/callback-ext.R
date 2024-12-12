@@ -13,6 +13,12 @@ miiv_elective <- function(x, ...) {
   x[, admission_type := elective]
 }
 
+mimic_elective <- function(x, ...) {
+  
+  x[, elective := admission_type == "ELECTIVE"]
+  x[, admission_type := elective]
+}
+
 los_hosp_anzics_cb <- function(x, ...) {
   
   x[, HOSP_HRS := HOSP_HRS / 24]

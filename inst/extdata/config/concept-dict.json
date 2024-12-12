@@ -2618,6 +2618,30 @@
           "class": "col_itm",
           "callback": "miiv_elective"
         }
+      ],
+      "mimic": [
+        {
+          "table": "admissions",
+          "val_var": "admission_type",
+          "class": "col_itm",
+          "callback": "mimic_elective"
+        }
+      ],
+      "mimic_demo": [
+        {
+          "table": "admissions",
+          "val_var": "admission_type",
+          "class": "col_itm",
+          "callback": "mimic_elective"
+        }
+      ],
+      "mimic_demo.1": [
+        {
+          "table": "admissions",
+          "val_var": "admission_type",
+          "class": "col_itm",
+          "callback": "mimic_elective"
+        }
       ]
     }
   },
