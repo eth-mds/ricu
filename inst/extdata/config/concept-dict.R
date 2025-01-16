@@ -656,7 +656,8 @@ cfg <- list(
         list(ids = 50882L, table = "labevents", sub_var = "itemid")
       ),
       sic = list(
-        list(ids = 456L, table = "laboratory", sub_var = "LaboratoryID")
+        list(ids = c(451L, 456L, 666L, 667L), table = "laboratory", 
+             sub_var = "LaboratoryID")
       )
     )
   ),

@@ -794,7 +794,7 @@
       ],
       "sic": [
         {
-          "ids": 456,
+          "ids": [451, 456, 666, 667],
           "table": "laboratory",
           "sub_var": "LaboratoryID"
         }
