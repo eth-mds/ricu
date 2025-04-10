@@ -170,8 +170,10 @@ cbind_id_tbl <- function(..., keep.rownames = FALSE, check.names = FALSE,
 #'
 #' @rdname tbl_reshape
 #' @export
-rbind_id_tbl <- function(..., use.names = TRUE, fill = FALSE, idcol = NULL) {
-  rbind_lst(list(...), use.names = use.names, fill = fill, idcol = idcol)
+rbind_id_tbl <- function(..., use.names = TRUE, fill = FALSE, idcol = NULL, 
+                         ignore.attr=FALSE) {
+  rbind_lst(list(...), use.names = use.names, fill = fill, idcol = idcol,
+            ignore.attr = ignore.attr)
 }
 
 #' @rawNamespace if (getRversion() >= "4.0.0") { S3method(cbind, id_tbl) }

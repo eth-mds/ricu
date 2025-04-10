@@ -1,3 +1,11 @@
+# ricu 0.6.2
+
+* fix ignore.attr argument that changed in rbindlist() in data.table >=1.15.0
+* SICdb bicarbonate / BUN units fixed
+* SICdb vasopressor units
+* separate SpO2 / SaO2 concepts
+
+
 # ricu 0.6.1
 
 * fixing the data-sources specification for MIMIC-IV (`miiv`)

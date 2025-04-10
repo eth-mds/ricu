@@ -18,7 +18,13 @@ cbind_id_tbl(
   stringsAsFactors = FALSE
 )
 
-rbind_id_tbl(..., use.names = TRUE, fill = FALSE, idcol = NULL)
+rbind_id_tbl(
+  ...,
+  use.names = TRUE,
+  fill = FALSE,
+  idcol = NULL,
+  ignore.attr = FALSE
+)
 
 \method{merge}{id_tbl}(x, y, by = NULL, by.x = NULL, by.y = NULL, ...)
 
