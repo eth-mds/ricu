@@ -1007,11 +1007,11 @@ init_cncpt.unt_cncpt <- function(x, unit = NULL, min = NULL, max = NULL, ...) {
 #'
 #' @rdname data_concepts
 #' @export
-init_cncpt.fct_cncpt <- function(x, levels, ...) {
+init_cncpt.fct_cncpt <- function(x, levels = NULL, ...) {
 
   warn_dots(...)
 
-  assert_that(is.atomic(levels), has_length(levels),
+  assert_that(null_or(levels, is.atomic), null_or(levels, has_length),
               null_or(x[["aggregate"]], is.string))
 
   x[["levels"]] <- levels
