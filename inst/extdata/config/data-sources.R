@@ -1226,6 +1226,19 @@ miiv_tbl_cfg <- function() {
       statusdescription = list(spec = "col_character"),
       originalamount = list(spec = "col_double"),
       originalrate = list(spec = "col_double")
+    ),
+    cxrmetadata = list(
+      dicom_id = list(spec = "col_character"),
+      subject_id = list(spec = "col_integer"),
+      study_id = list(spec = "col_integer"),
+      performedprocedurestepdescription = list(spec = "col_character"),
+      viewposition = list(spec = "col_character"),
+      rows = list(spec = "col_integer"),
+      columns = list(spec = "col_integer"),
+      studytime = list(spec = "col_datetime", format = "%Y-%m-%d %H:%M:%S"),
+      procedurecodesequence_codemeaning = list(spec = "col_character"),
+      viewcodesequence_codemeaning = list(spec = "col_character"),
+      patientorientationcodesequence_codemeaning = list(spec = "col_character")
     )
   )
 
@@ -1346,6 +1359,10 @@ miiv_tbl_cfg <- function() {
       index_var = "starttime",
       val_var = "rate",
       unit_var = "rateuom"
+    ),
+    cxrmetadata = list(
+      id_var = "dicom_id",
+      index_var = "studytime"
     )
   )
 
@@ -1387,7 +1404,8 @@ miiv_tbl_cfg <- function() {
     omr = 6439169L,
     caregiver = 15468L,
     provider = 40508L,
-    ingredientevents = 11627821L
+    ingredientevents = 11627821L,
+    cxrmetadata = 377110L
   )
 
   files <- c(
@@ -1421,7 +1439,8 @@ miiv_tbl_cfg <- function() {
     omr = "hosp/omr.csv.gz",
     caregiver = "icu/caregiver.csv.gz",
     provider = "hosp/provider.csv.gz",
-    ingredientevents = "icu/ingredientevents.csv.gz"
+    ingredientevents = "icu/ingredientevents.csv.gz",
+    cxrmetadata = "cxr/cxrmetadata.csv.gz"
   )
 
   part <- list(
@@ -1739,7 +1758,9 @@ cfg <- list(
       hadm = list(id = "hadm_id", position = 2L, start = "admittime",
                   end = "dischtime", table = "admissions"),
       icustay = list(id = "stay_id", position = 3L, start = "intime",
-                     end = "outtime", table = "icustays")
+                     end = "outtime", table = "icustays"),
+      dicom_id = list(id = "dicom_id", position = 4L, start = "studytime", 
+                      end = "studytime", table = "cxrmetadata")
     ),
     tables = miiv_tbl_cfg()
   ),

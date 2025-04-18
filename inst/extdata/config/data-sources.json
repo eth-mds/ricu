@@ -7061,6 +7061,13 @@
         "start": "intime",
         "end": "outtime",
         "table": "icustays"
+      },
+      "dicom_id": {
+        "id": "dicom_id",
+        "position": 4,
+        "start": "studytime",
+        "end": "studytime",
+        "table": "cxrmetadata"
       }
     },
     "tables": {
@@ -8830,6 +8837,62 @@
           "originalrate": {
             "name": "originalrate",
             "spec": "col_double"
+          }
+        }
+      },
+      "cxrmetadata": {
+        "files": "cxr/cxrmetadata.csv.gz",
+        "defaults": {
+          "id_var": "dicom_id",
+          "index_var": "studytime",
+          "time_vars": "studytime"
+        },
+        "num_rows": 377110,
+        "cols": {
+          "dicom_id": {
+            "name": "dicom_id",
+            "spec": "col_character"
+          },
+          "subject_id": {
+            "name": "subject_id",
+            "spec": "col_integer"
+          },
+          "study_id": {
+            "name": "study_id",
+            "spec": "col_integer"
+          },
+          "performedprocedurestepdescription": {
+            "name": "performedprocedurestepdescription",
+            "spec": "col_character"
+          },
+          "viewposition": {
+            "name": "viewposition",
+            "spec": "col_character"
+          },
+          "rows": {
+            "name": "rows",
+            "spec": "col_integer"
+          },
+          "columns": {
+            "name": "columns",
+            "spec": "col_integer"
+          },
+          "studytime": {
+            "name": "studytime",
+            "spec": "col_datetime",
+            "format": "%Y-%m-%d %H:%M:%S"
+          },
+          "procedurecodesequence_codemeaning": {
+            "name": "procedurecodesequence_codemeaning",
+            "spec": "col_character"
+          },
+          "viewcodesequence_codemeaning": {
+            "name": "viewcodesequence_codemeaning",
+            "spec": "col_character"
+          },
+          "patientorientationcodesequence_codemeaning": {
+            "name": "patientorientationcodesequence_codemeaning",
+            "spec": "col_character"
           }
         }
       }

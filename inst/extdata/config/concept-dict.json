@@ -5999,6 +5999,18 @@
       ]
     }
   },
+  "study_id": {
+    "description": "unique identifier for the subject",
+    "sources": {
+      "miiv": [
+        {
+          "table": "cxrmetadata",
+          "val_var": "study_id",
+          "class": "col_itm"
+        }
+      ]
+    }
+  },
   "supp_o2": {
     "concepts": ["vent_ind", "fio2"],
     "description": "supplemental oxygen",
@@ -6620,6 +6632,22 @@
           "ids": [723, 223900],
           "table": "chartevents",
           "sub_var": "itemid"
+        }
+      ]
+    }
+  },
+  "viewposition": {
+    "levels": ["frontal", "lateral", "decubitus", "oblique", "special", "unknown"],
+    "class": "fct_cncpt",
+    "description": "Grouped X-ray view positions",
+    "category": "imaging",
+    "sources": {
+      "miiv": [
+        {
+          "table": "cxrmetadata",
+          "val_var": "viewposition",
+          "callback": "apply_map(\n            c(\n              'PA' = 'frontal', 'AP' = 'frontal', 'AP AXIAL' = 'frontal',\n              'LATERAL' = 'lateral', 'LL' = 'lateral', 'XTABLE LATERAL' = 'lateral',\n              'PA LLD' = 'decubitus', 'AP LLD' = 'decubitus', 'AP RLD' = 'decubitus', 'PA RLD' = 'decubitus',\n              'LAO' = 'oblique', 'RAO' = 'oblique', 'LPO' = 'oblique',\n              'SWIMMERS' = 'special'\n            )\n          )",
+          "class": "col_itm"
         }
       ]
     }

@@ -3322,6 +3322,38 @@ cfg <- list(
       )
     ),
     class = c("unt_cncpt", "num_cncpt")
+  ),
+  viewposition = list(
+    levels = c("frontal", "lateral", "decubitus", "oblique", "special", "unknown"),
+    class = "fct_cncpt",
+    description = "Grouped X-ray view positions",
+    category = "imaging",
+    sources = list(
+      miiv = list(
+        list(
+          table = "cxrmetadata",
+          val_var = "viewposition",
+          callback = "apply_map(
+            c(
+              'PA' = 'frontal', 'AP' = 'frontal', 'AP AXIAL' = 'frontal',
+              'LATERAL' = 'lateral', 'LL' = 'lateral', 'XTABLE LATERAL' = 'lateral',
+              'PA LLD' = 'decubitus', 'AP LLD' = 'decubitus', 'AP RLD' = 'decubitus', 'PA RLD' = 'decubitus',
+              'LAO' = 'oblique', 'RAO' = 'oblique', 'LPO' = 'oblique',
+              'SWIMMERS' = 'special'
+            )
+          )",
+          class = "col_itm"
+        )
+      )
+    )
+  ),
+  study_id = list(
+    description = "unique identifier for the subject",
+    sources = list(
+      miiv = list(
+        list(table = "cxrmetadata", val_var = "study_id", class = "col_itm")
+      )
+    )
   )
 )
 
