@@ -592,6 +592,19 @@
       ]
     }
   },
+  "atelectasis": {
+    "description": "Atelectasis",
+    "category": "imaging",
+    "sources": {
+      "miiv": [
+        {
+          "table": "cxrchexpert",
+          "val_var": "atelectasis",
+          "class": "col_itm"
+        }
+      ]
+    }
+  },
   "avpu": {
     "concepts": "gcs",
     "description": "AVPU scale",
@@ -1215,6 +1228,19 @@
       ]
     }
   },
+  "cardiomegaly": {
+    "description": "Cardiomegaly",
+    "category": "imaging",
+    "sources": {
+      "miiv": [
+        {
+          "table": "cxrchexpert",
+          "val_var": "cardiomegaly",
+          "class": "col_itm"
+        }
+      ]
+    }
+  },
   "ck": {
     "unit": ["IU/L", "U/l"],
     "min": 0,
@@ -1410,6 +1436,19 @@
           "ids": [683, 450],
           "table": "laboratory",
           "sub_var": "LaboratoryID"
+        }
+      ]
+    }
+  },
+  "consolidation": {
+    "description": "Consolidation",
+    "category": "imaging",
+    "sources": {
+      "miiv": [
+        {
+          "table": "cxrchexpert",
+          "val_var": "consolidation",
+          "class": "col_itm"
         }
       ]
     }
@@ -2228,6 +2267,19 @@
     "callback": "vaso60",
     "class": "rec_cncpt"
   },
+  "edema": {
+    "description": "Edema",
+    "category": "imaging",
+    "sources": {
+      "miiv": [
+        {
+          "table": "cxrchexpert",
+          "val_var": "edema",
+          "class": "col_itm"
+        }
+      ]
+    }
+  },
   "egcs": {
     "min": 1,
     "max": 4,
@@ -2290,6 +2342,19 @@
           "ids": [184, 220739],
           "table": "chartevents",
           "sub_var": "itemid"
+        }
+      ]
+    }
+  },
+  "enlarged_cardiomediastinum": {
+    "description": "Enlarged Cardiomediastinum",
+    "category": "imaging",
+    "sources": {
+      "miiv": [
+        {
+          "table": "cxrchexpert",
+          "val_var": "enlarged_cardiomediastinum",
+          "class": "col_itm"
         }
       ]
     }
@@ -2884,6 +2949,19 @@
           "ids": 2283,
           "table": "data_float_h",
           "sub_var": "DataID"
+        }
+      ]
+    }
+  },
+  "fracture": {
+    "description": "Fracture",
+    "category": "imaging",
+    "sources": {
+      "miiv": [
+        {
+          "table": "cxrchexpert",
+          "val_var": "fracture",
+          "class": "col_itm"
         }
       ]
     }
@@ -3690,6 +3768,32 @@
       ]
     }
   },
+  "lung_lesion": {
+    "description": "Lung Lesion",
+    "category": "imaging",
+    "sources": {
+      "miiv": [
+        {
+          "table": "cxrchexpert",
+          "val_var": "lung_lesion",
+          "class": "col_itm"
+        }
+      ]
+    }
+  },
+  "lung_opacity": {
+    "description": "Lung Opacity",
+    "category": "imaging",
+    "sources": {
+      "miiv": [
+        {
+          "table": "cxrchexpert",
+          "val_var": "lung_opacity",
+          "class": "col_itm"
+        }
+      ]
+    }
+  },
   "lymph": {
     "unit": "%",
     "min": 0,
@@ -4437,6 +4541,19 @@
     "callback": "news_score",
     "class": "rec_cncpt"
   },
+  "no_finding": {
+    "description": "If all other chexpert labels are 0 or -1, no finding is 1",
+    "category": "imaging",
+    "sources": {
+      "miiv": [
+        {
+          "table": "cxrchexpert",
+          "val_var": "no_finding",
+          "class": "col_itm"
+        }
+      ]
+    }
+  },
   "norepi_dur": {
     "description": "norepinephrine duration",
     "category": "medications",
@@ -5052,6 +5169,32 @@
       ]
     }
   },
+  "pleural_effusion": {
+    "description": "Pleural Effusion",
+    "category": "imaging",
+    "sources": {
+      "miiv": [
+        {
+          "table": "cxrchexpert",
+          "val_var": "pleural_effusion",
+          "class": "col_itm"
+        }
+      ]
+    }
+  },
+  "pleural_other": {
+    "description": "Pleural Other",
+    "category": "imaging",
+    "sources": {
+      "miiv": [
+        {
+          "table": "cxrchexpert",
+          "val_var": "pleural_other",
+          "class": "col_itm"
+        }
+      ]
+    }
+  },
   "plt": {
     "unit": ["K/uL", "G/l"],
     "min": 5,
@@ -5115,6 +5258,32 @@
           "ids": 314,
           "table": "laboratory",
           "sub_var": "LaboratoryID"
+        }
+      ]
+    }
+  },
+  "pneumonia": {
+    "description": "Pneumonia",
+    "category": "imaging",
+    "sources": {
+      "miiv": [
+        {
+          "table": "cxrchexpert",
+          "val_var": "pneumonia",
+          "class": "col_itm"
+        }
+      ]
+    }
+  },
+  "pneumothorax": {
+    "description": "Pneumothorax",
+    "category": "imaging",
+    "sources": {
+      "miiv": [
+        {
+          "table": "cxrchexpert",
+          "val_var": "pneumothorax",
+          "class": "col_itm"
         }
       ]
     }
@@ -6001,6 +6170,7 @@
   },
   "study_id": {
     "description": "unique identifier for the subject",
+    "category": "imaging",
     "sources": {
       "miiv": [
         {
@@ -6018,6 +6188,19 @@
     "category": "respiratory",
     "callback": "supp_o2",
     "class": "rec_cncpt"
+  },
+  "support_devices": {
+    "description": "Support Devices",
+    "category": "imaging",
+    "sources": {
+      "miiv": [
+        {
+          "table": "cxrchexpert",
+          "val_var": "support_devices",
+          "class": "col_itm"
+        }
+      ]
+    }
   },
   "susp_inf": {
     "concepts": ["abx", "samp"],

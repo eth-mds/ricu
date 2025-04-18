@@ -3349,9 +3349,136 @@ cfg <- list(
   ),
   study_id = list(
     description = "unique identifier for the subject",
+    category = "imaging",
     sources = list(
       miiv = list(
         list(table = "cxrmetadata", val_var = "study_id", class = "col_itm")
+      )
+    )
+  ),
+  atelectasis = list(
+    description = "Atelectasis",
+    category = "imaging",
+    sources = list(
+      miiv = list(
+        list(table = "cxrchexpert", val_var = "atelectasis", class = "col_itm")
+      )
+    )
+  ),
+  cardiomegaly = list(
+    description = "Cardiomegaly",
+    category = "imaging",
+    sources = list(
+      miiv = list(
+        list(table = "cxrchexpert", val_var = "cardiomegaly", class = "col_itm")
+      )
+    )
+  ),
+  consolidation = list(
+    description = "Consolidation",
+    category = "imaging",
+    sources = list(
+      miiv = list(
+        list(table = "cxrchexpert", val_var = "consolidation", class = "col_itm")
+      )
+    )
+  ),
+  edema = list(
+    description = "Edema",
+    category = "imaging",
+    sources = list(
+      miiv = list(
+        list(table = "cxrchexpert", val_var = "edema", class = "col_itm")
+      )
+    )
+  ),
+  enlarged_cardiomediastinum = list(
+    description = "Enlarged Cardiomediastinum",
+    category = "imaging",
+    sources = list(
+      miiv = list(
+        list(table = "cxrchexpert", val_var = "enlarged_cardiomediastinum", class = "col_itm")
+      )
+    )
+  ),
+  fracture = list(
+    description = "Fracture",
+    category = "imaging",
+    sources = list(
+      miiv = list(
+        list(table = "cxrchexpert", val_var = "fracture", class = "col_itm")
+      )
+    )
+  ),
+  lung_lesion = list(
+    description = "Lung Lesion",
+    category = "imaging",
+    sources = list(
+      miiv = list(
+        list(table = "cxrchexpert", val_var = "lung_lesion", class = "col_itm")
+      )
+    )
+  ),
+  lung_opacity = list(
+    description = "Lung Opacity",
+    category = "imaging",
+    sources = list(
+      miiv = list(
+        list(table = "cxrchexpert", val_var = "lung_opacity", class = "col_itm")
+      )
+    )
+  ),
+  no_finding = list(
+    description = "If all other chexpert labels are 0 or -1, no finding is 1",
+    category = "imaging",
+    sources = list(
+      miiv = list(
+        list(table = "cxrchexpert", val_var = "no_finding", class = "col_itm")
+      )
+    )
+  ),
+  pleural_effusion = list(
+    description = "Pleural Effusion",
+    category = "imaging",
+    sources = list(
+      miiv = list(
+        list(table = "cxrchexpert", val_var = "pleural_effusion", class = "col_itm")
+      )
+    )
+  ),
+  pleural_other = list(
+    description = "Pleural Other",
+    category = "imaging",
+    sources = list(
+      miiv = list(
+        list(table = "cxrchexpert", val_var = "pleural_other", class = "col_itm")
+      )
+    )
+  ),
+  pneumonia = list(
+    description = "Pneumonia",
+    category = "imaging",
+    sources = list(
+      miiv = list(
+        list(table = "cxrchexpert", val_var = "pneumonia", class = "col_itm")
+      )
+    )
+  ),
+  pneumothorax = list(
+    description = "Pneumothorax",
+    category = "imaging",
+    sources = list(
+      miiv = list(
+        list(table = "cxrchexpert", val_var = "pneumothorax", class = "col_itm")
+      )
+    )
+  ),
+  support_devices = list(
+    description = "Support Devices",
+    category = "imaging",
+    sources = list(
+      miiv = list(
+        list(table = "cxrchexpert", val_var = "support_devices", class = "col_itm")
       )
     )
   )

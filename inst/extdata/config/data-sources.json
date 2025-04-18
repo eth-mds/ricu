@@ -8895,6 +8895,86 @@
             "spec": "col_character"
           }
         }
+      },
+      "cxrchexpert": {
+        "files": "cxr/cxrchexpert.csv.gz",
+        "defaults": {
+          "id_var": "subject_id",
+          "index_var": "studytime",
+          "time_vars": "studytime"
+        },
+        "num_rows": 227827,
+        "cols": {
+          "subject_id": {
+            "name": "subject_id",
+            "spec": "col_integer"
+          },
+          "study_id": {
+            "name": "study_id",
+            "spec": "col_integer"
+          },
+          "atelectasis": {
+            "name": "atelectasis",
+            "spec": "col_double"
+          },
+          "cardiomegaly": {
+            "name": "cardiomegaly",
+            "spec": "col_double"
+          },
+          "consolidation": {
+            "name": "consolidation",
+            "spec": "col_double"
+          },
+          "edema": {
+            "name": "edema",
+            "spec": "col_double"
+          },
+          "enlarged_cardiomediastinum": {
+            "name": "enlarged_cardiomediastinum",
+            "spec": "col_double"
+          },
+          "fracture": {
+            "name": "fracture",
+            "spec": "col_double"
+          },
+          "lung_lesion": {
+            "name": "lung_lesion",
+            "spec": "col_double"
+          },
+          "lung_opacity": {
+            "name": "lung_opacity",
+            "spec": "col_double"
+          },
+          "no_finding": {
+            "name": "no_finding",
+            "spec": "col_double"
+          },
+          "pleural_effusion": {
+            "name": "pleural_effusion",
+            "spec": "col_double"
+          },
+          "pleural_other": {
+            "name": "pleural_other",
+            "spec": "col_double"
+          },
+          "pneumonia": {
+            "name": "pneumonia",
+            "spec": "col_double"
+          },
+          "pneumothorax": {
+            "name": "pneumothorax",
+            "spec": "col_double"
+          },
+          "support_devices": {
+            "name": "support_devices",
+            "spec": "col_double"
+          },
+          "studytime": {
+            "name": "studytime",
+            "spec": "col_datetime",
+            "format": "%Y-%m-%d %H:%M:%S"
+          }
+        }
       }
     }
   },
