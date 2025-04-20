@@ -1226,6 +1226,38 @@ miiv_tbl_cfg <- function() {
       statusdescription = list(spec = "col_character"),
       originalamount = list(spec = "col_double"),
       originalrate = list(spec = "col_double")
+    ),
+    cxrmetadata = list(
+      dicom_id = list(spec = "col_character"),
+      subject_id = list(spec = "col_integer"),
+      study_id = list(spec = "col_integer"),
+      performedprocedurestepdescription = list(spec = "col_character"),
+      viewposition = list(spec = "col_character"),
+      rows = list(spec = "col_integer"),
+      columns = list(spec = "col_integer"),
+      studytime = list(spec = "col_datetime", format = "%Y-%m-%d %H:%M:%S"),
+      procedurecodesequence_codemeaning = list(spec = "col_character"),
+      viewcodesequence_codemeaning = list(spec = "col_character"),
+      patientorientationcodesequence_codemeaning = list(spec = "col_character")
+    ),
+    cxrchexpert = list(
+      subject_id = list(spec = "col_integer"),
+      study_id = list(spec = "col_integer"),
+      atelectasis = list(spec = "col_double"),
+      cardiomegaly = list(spec = "col_double"),
+      consolidation = list(spec = "col_double"),
+      edema = list(spec = "col_double"),
+      enlarged_cardiomediastinum = list(spec = "col_double"),
+      fracture = list(spec = "col_double"),
+      lung_lesion = list(spec = "col_double"),
+      lung_opacity = list(spec = "col_double"),
+      no_finding = list(spec = "col_double"),
+      pleural_effusion = list(spec = "col_double"),
+      pleural_other = list(spec = "col_double"),
+      pneumonia = list(spec = "col_double"),
+      pneumothorax = list(spec = "col_double"),
+      support_devices = list(spec = "col_double"),
+      studytime = list(spec = "col_datetime", format = "%Y-%m-%d %H:%M:%S")
     )
   )
 
@@ -1346,6 +1378,14 @@ miiv_tbl_cfg <- function() {
       index_var = "starttime",
       val_var = "rate",
       unit_var = "rateuom"
+    ),
+    cxrmetadata = list(
+      id_var = "subject_id",
+      index_var = "studytime"
+    ),
+    cxrchexpert = list(
+      id_var = "subject_id",
+      index_var = "studytime"
     )
   )
 
@@ -1387,7 +1427,9 @@ miiv_tbl_cfg <- function() {
     omr = 6439169L,
     caregiver = 15468L,
     provider = 40508L,
-    ingredientevents = 11627821L
+    ingredientevents = 11627821L,
+    cxrmetadata = 377110L,
+    cxrchexpert = 227827L
   )
 
   files <- c(
@@ -1421,7 +1463,9 @@ miiv_tbl_cfg <- function() {
     omr = "hosp/omr.csv.gz",
     caregiver = "icu/caregiver.csv.gz",
     provider = "hosp/provider.csv.gz",
-    ingredientevents = "icu/ingredientevents.csv.gz"
+    ingredientevents = "icu/ingredientevents.csv.gz",
+    cxrmetadata = "cxr/cxrmetadata.csv.gz",
+    cxrchexpert = "cxr/cxrchexpert.csv.gz"
   )
 
   part <- list(
