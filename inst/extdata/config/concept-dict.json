@@ -1871,6 +1871,20 @@
     },
     "class": ["unt_cncpt", "num_cncpt"]
   },
+  "dicom_id": {
+    "description": "unique identifier for the image",
+    "category": "imaging",
+    "sources": {
+      "miiv": [
+        {
+          "table": "cxrmetadata",
+          "sub_var": "dicom_id",
+          "regex": "^.*$",
+          "class": "rgx_itm"
+        }
+      ]
+    }
+  },
   "dobu_dur": {
     "description": "dobutamine duration",
     "category": "medications",

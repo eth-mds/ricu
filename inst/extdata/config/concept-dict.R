@@ -3356,6 +3356,16 @@ cfg <- list(
       )
     )
   ),
+  dicom_id = list(
+    description = "unique identifier for the image",
+    category = "imaging",
+    sources = list(
+      miiv = list(
+        list(table = "cxrmetadata", sub_var = "dicom_id", regex = "^.*$",
+          class = "rgx_itm")
+      )
+    )
+  ),
   atelectasis = list(
     description = "Atelectasis",
     category = "imaging",

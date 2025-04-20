@@ -7061,13 +7061,6 @@
         "start": "intime",
         "end": "outtime",
         "table": "icustays"
-      },
-      "dicom_id": {
-        "id": "dicom_id",
-        "position": 4,
-        "start": "studytime",
-        "end": "studytime",
-        "table": "cxrmetadata"
       }
     },
     "tables": {
@@ -8843,7 +8836,7 @@
       "cxrmetadata": {
         "files": "cxr/cxrmetadata.csv.gz",
         "defaults": {
-          "id_var": "dicom_id",
+          "id_var": "subject_id",
           "index_var": "studytime",
           "time_vars": "studytime"
         },

@@ -1380,7 +1380,7 @@ miiv_tbl_cfg <- function() {
       unit_var = "rateuom"
     ),
     cxrmetadata = list(
-      id_var = "dicom_id",
+      id_var = "subject_id",
       index_var = "studytime"
     ),
     cxrchexpert = list(
@@ -1783,9 +1783,7 @@ cfg <- list(
       hadm = list(id = "hadm_id", position = 2L, start = "admittime",
                   end = "dischtime", table = "admissions"),
       icustay = list(id = "stay_id", position = 3L, start = "intime",
-                     end = "outtime", table = "icustays"),
-      dicom_id = list(id = "dicom_id", position = 4L, start = "studytime", 
-                      end = "studytime", table = "cxrmetadata")
+                     end = "outtime", table = "icustays")
     ),
     tables = miiv_tbl_cfg()
   ),
