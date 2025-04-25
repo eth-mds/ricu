@@ -4,36 +4,10 @@ collect_dots <- function(concepts, interval, ..., merge_dat = FALSE) {
 
   dots <- list(...)
 
-  if (length(concepts) == 1L) {
-
-    assert_that(identical(length(dots), 1L))
-
-    res <- dots[[1L]]
-
-    if (is_ts_tbl(res)) {
-      ival <- coalesce(interval, interval(res))
-      assert_that(has_interval(res, ival))
-    } else {
-      assert_that(is_df(res))
-    }
-
-    return(res)
-  }
-
-  if (length(dots) == 1L) {
-    dots <- dots[[1L]]
-  }
-
-  if (is.null(names(dots))) {
-    names(dots) <- concepts
-  }
-
   if (not_null(names(concepts))) {
     concepts <- chr_ply(concepts, grep, names(dots), value = TRUE,
                         use_names = TRUE)
   }
-
-  assert_that(setequal(names(dots), concepts))
 
   res <- dots[concepts]
 
@@ -45,7 +19,9 @@ collect_dots <- function(concepts, interval, ..., merge_dat = FALSE) {
 
   ival <- check_interval(res, interval)
 
-  if (merge_dat) {
+  if (length(res) == 1) {
+    res <- res[[1]]
+  } else if (merge_dat) {
     res <- reduce(merge, res, all = TRUE)
   } else {
     attr(res, "ival_checked") <- ival

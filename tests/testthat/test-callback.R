@@ -274,5 +274,5 @@ test_that("susp_inf", {
     57, 61, 70)), susp_inf = rep(TRUE, 6L), interval = hours(1L)
   )
 
-  expect_identical(susp_inf(abx, samp), expected)
+  expect_identical(susp_inf(abx = abx, samp = samp), expected)
 })

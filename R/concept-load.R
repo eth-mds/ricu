@@ -547,7 +547,7 @@ load_concepts.rec_cncpt <- function(x, aggregate = NULL, patient_ids = NULL,
 
   ext <- list(patient_ids = patient_ids, id_type = id_type,
               interval = coalesce(x[["interval"]], interval),
-              progress = progress)
+              ..., progress = progress)
 
   sub <- x[["items"]]
   agg <- x[["aggregate"]]
@@ -605,8 +605,6 @@ load_concepts.item <- function(x, patient_ids = NULL, id_type = "icustay",
 #' @export
 load_concepts.itm <- function(x, patient_ids = NULL, id_type = "icustay",
                               interval = hours(1L), ...) {
-
-  warn_dots(..., ok_args = "keep_components")
 
   res <- do_itm_load(x, id_type, interval = interval)
   res <- merge_patid(res, patient_ids)
