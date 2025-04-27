@@ -468,7 +468,8 @@ urine24 <- function(..., min_win = hours(12L), limits = NULL,
   step_factor <- convert_dt(hours(24L)) / as.double(interval)
 
   if (is.null(limits)) {
-    limits <- collapse(res)
+    limits <- collapse(res, as_win_tbl = FALSE) 
+    limits <- as_ts_tbl(limits, index_var = "start", interval = interval(res))
   }
 
   res <- fill_gaps(res, limits = limits)
