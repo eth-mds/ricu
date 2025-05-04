@@ -450,7 +450,7 @@ load_win.src_tbl <- function(x, rows, cols = colnames(x), id_var = id_vars(x),
   time_vars <- setdiff(intersect(time_vars, colnames(res)), dur_var)
 
   res <- change_id(res, id_var, x, cols = time_vars, keep_old_id = FALSE)
-  res <- change_interval(res, interval, time_vars, by_ref = TRUE)
+  res <- change_interval(res, interval, c(time_vars, dur_var), by_ref = TRUE)
 
   res
 }
