@@ -26,4 +26,3 @@ jobs:
           python-version: "3.12"
       - name: Run pre-commit checks
         uses: pre-commit/action@v3.0.0
-10 changes: 10 additions & 0 deletions
