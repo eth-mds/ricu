@@ -288,7 +288,7 @@
                     "ids": 13066,
                     "table": "listitems",
                     "sub_var": "itemid",
-                    "callback": "apply_map( c(`Geen geluid` = 1, `Onverstaanbare woorden` = 2, `Onjuiste woorden` = 3, `Verwarde taal` = 4, `Geori\u00ebnteerd` = 5) )"
+                    "callback": "apply_map( c(`Geen geluid` = 1, `Onverstaanbare woorden` = 2, `Onjuiste woorden` = 3, `Verwarde taal` = 4, `Georiënteerd` = 5) )"
                 }
             ],
             "eicu": [

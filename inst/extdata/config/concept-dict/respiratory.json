@@ -12,7 +12,7 @@
                     "table": "listitems",
                     "sub_var": "itemid",
                     "target": "ts_tbl",
-                    "callback": "combine_callbacks(\n               transform_fun(comp_na(`==`, 'Ge\u00efntubeerd')),\n               ts_to_win_tbl(mins(1L))\n             )"
+                    "callback": "combine_callbacks(\n               transform_fun(comp_na(`==`, 'Geïntubeerd')),\n               ts_to_win_tbl(mins(1L))\n             )"
                 }
             ],
             "eicu": [
