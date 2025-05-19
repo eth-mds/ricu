@@ -1,47 +1,47 @@
 {
-  "esr": {
-    "sources": {
-      "eicu_demo": [
-        {
-          "ids": "eryth",
-          "table": "lab",
-          "sub_var": "labname"
+    "esr": {
+        "sources": {
+            "eicu_demo": [
+                {
+                    "ids": "eryth",
+                    "table": "lab",
+                    "sub_var": "labname"
+                }
+            ]
         }
-      ]
+    },
+    "fgn": {
+        "sources": {
+            "mimic_demo": [
+                {
+                    "ids": 12345,
+                    "table": "labevents",
+                    "sub_var": "itemid"
+                }
+            ]
+        }
+    },
+    "foo": {
+        "unit": "mg/dL",
+        "min": 0,
+        "max": 1500,
+        "description": "foo concept",
+        "category": "bar category",
+        "sources": {
+            "eicu_demo": [
+                {
+                    "ids": "foo",
+                    "table": "lab",
+                    "sub_var": "labname"
+                }
+            ],
+            "mimic_demo": [
+                {
+                    "ids": 12345,
+                    "table": "labevents",
+                    "sub_var": "itemid"
+                }
+            ]
+        }
     }
-  },
-  "fgn": {
-    "sources": {
-      "mimic_demo": [
-        {
-          "ids": 12345,
-          "table": "labevents",
-          "sub_var": "itemid"
-        }
-      ]
-    }
-  },
-  "foo": {
-    "unit": "mg/dL",
-    "min": 0,
-    "max": 1500,
-    "description": "foo concept",
-    "category": "bar category",
-    "sources": {
-      "eicu_demo": [
-        {
-          "ids": "foo",
-          "table": "lab",
-          "sub_var": "labname"
-        }
-      ],
-      "mimic_demo": [
-        {
-          "ids": 12345,
-          "table": "labevents",
-          "sub_var": "itemid"
-        }
-      ]
-    }
-  }
 }

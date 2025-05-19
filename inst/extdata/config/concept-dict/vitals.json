@@ -1,0 +1,544 @@
+{
+    "dbp": {
+        "unit": [
+            "mmHg",
+            "mm Hg"
+        ],
+        "min": 0,
+        "max": 200,
+        "description": "diastolic blood pressure",
+        "omopid": 4154790,
+        "category": "vitals",
+        "sources": {
+            "aumc": [
+                {
+                    "ids": 6643,
+                    "table": "numericitems",
+                    "sub_var": "itemid"
+                }
+            ],
+            "eicu": [
+                {
+                    "table": "vitalperiodic",
+                    "val_var": "systemicdiastolic",
+                    "class": "col_itm"
+                }
+            ],
+            "eicu_demo": [
+                {
+                    "table": "vitalperiodic",
+                    "val_var": "systemicdiastolic",
+                    "class": "col_itm"
+                }
+            ],
+            "hirid": [
+                {
+                    "ids": 120,
+                    "table": "observations",
+                    "sub_var": "variableid",
+                    "class": "hrd_itm"
+                }
+            ],
+            "miiv": [
+                {
+                    "ids": [
+                        220051,
+                        220180
+                    ],
+                    "table": "chartevents",
+                    "sub_var": "itemid"
+                }
+            ],
+            "mimic": [
+                {
+                    "ids": [
+                        8368,
+                        8441,
+                        8555,
+                        220051,
+                        220180
+                    ],
+                    "table": "chartevents",
+                    "sub_var": "itemid"
+                }
+            ],
+            "mimic_demo": [
+                {
+                    "ids": [
+                        8368,
+                        8441,
+                        8555,
+                        220051,
+                        220180
+                    ],
+                    "table": "chartevents",
+                    "sub_var": "itemid"
+                }
+            ],
+            "sic": [
+                {
+                    "ids": [
+                        702,
+                        705
+                    ],
+                    "table": "data_float_h",
+                    "sub_var": "DataID"
+                }
+            ]
+        }
+    },
+    "etco2": {
+        "unit": [
+            "mmHg",
+            "mm Hg"
+        ],
+        "min": 10,
+        "max": 60,
+        "description": "endtidal CO2",
+        "omopid": 4353940,
+        "category": "vitals",
+        "sources": {
+            "aumc": [
+                {
+                    "ids": [
+                        6707,
+                        8884,
+                        8885,
+                        9658,
+                        12805,
+                        12356
+                    ],
+                    "table": "numericitems",
+                    "sub_var": "itemid",
+                    "callback": "convert_unit(binary_op(`*`, 7.6), 'mmHg', 'None|Geen')"
+                }
+            ],
+            "hirid": [
+                {
+                    "ids": [
+                        2200,
+                        8290,
+                        30010009
+                    ],
+                    "table": "observations",
+                    "sub_var": "variableid",
+                    "class": "hrd_itm"
+                }
+            ],
+            "miiv": [
+                {
+                    "ids": 228640,
+                    "table": "chartevents",
+                    "sub_var": "itemid"
+                }
+            ],
+            "mimic": [
+                {
+                    "ids": [
+                        1817,
+                        228640
+                    ],
+                    "table": "chartevents",
+                    "sub_var": "itemid"
+                }
+            ],
+            "mimic_demo": [
+                {
+                    "ids": [
+                        1817,
+                        228640
+                    ],
+                    "table": "chartevents",
+                    "sub_var": "itemid"
+                }
+            ]
+        }
+    },
+    "hr": {
+        "unit": [
+            "bpm",
+            "/min"
+        ],
+        "min": 0,
+        "max": 300,
+        "description": "heart rate",
+        "omopid": 4239408,
+        "category": "vitals",
+        "sources": {
+            "aumc": [
+                {
+                    "ids": 6640,
+                    "table": "numericitems",
+                    "sub_var": "itemid"
+                }
+            ],
+            "eicu": [
+                {
+                    "table": "vitalperiodic",
+                    "val_var": "heartrate",
+                    "class": "col_itm"
+                }
+            ],
+            "eicu_demo": [
+                {
+                    "table": "vitalperiodic",
+                    "val_var": "heartrate",
+                    "class": "col_itm"
+                }
+            ],
+            "hirid": [
+                {
+                    "ids": 200,
+                    "table": "observations",
+                    "sub_var": "variableid",
+                    "class": "hrd_itm"
+                }
+            ],
+            "miiv": [
+                {
+                    "ids": 220045,
+                    "table": "chartevents",
+                    "sub_var": "itemid"
+                }
+            ],
+            "mimic": [
+                {
+                    "ids": [
+                        211,
+                        220045
+                    ],
+                    "table": "chartevents",
+                    "sub_var": "itemid"
+                }
+            ],
+            "mimic_demo": [
+                {
+                    "ids": [
+                        211,
+                        220045
+                    ],
+                    "table": "chartevents",
+                    "sub_var": "itemid"
+                }
+            ],
+            "sic": [
+                {
+                    "ids": 708,
+                    "table": "data_float_h",
+                    "sub_var": "DataID"
+                }
+            ]
+        }
+    },
+    "map": {
+        "unit": [
+            "mmHg",
+            "mm Hg"
+        ],
+        "min": 0,
+        "max": 250,
+        "description": "mean arterial pressure",
+        "omopid": 4239021,
+        "category": "vitals",
+        "sources": {
+            "aumc": [
+                {
+                    "ids": 6642,
+                    "table": "numericitems",
+                    "sub_var": "itemid"
+                }
+            ],
+            "eicu": [
+                {
+                    "table": "vitalperiodic",
+                    "val_var": "systemicmean",
+                    "class": "col_itm"
+                },
+                {
+                    "table": "vitalaperiodic",
+                    "val_var": "noninvasivemean",
+                    "class": "col_itm"
+                }
+            ],
+            "eicu_demo": [
+                {
+                    "table": "vitalperiodic",
+                    "val_var": "systemicmean",
+                    "class": "col_itm"
+                },
+                {
+                    "table": "vitalaperiodic",
+                    "val_var": "noninvasivemean",
+                    "class": "col_itm"
+                }
+            ],
+            "hirid": [
+                {
+                    "ids": [
+                        110,
+                        610
+                    ],
+                    "table": "observations",
+                    "sub_var": "variableid",
+                    "class": "hrd_itm"
+                }
+            ],
+            "miiv": [
+                {
+                    "ids": [
+                        220052,
+                        220181,
+                        225312
+                    ],
+                    "table": "chartevents",
+                    "sub_var": "itemid"
+                }
+            ],
+            "mimic": [
+                {
+                    "ids": [
+                        52,
+                        443,
+                        456,
+                        6072,
+                        220052,
+                        220181,
+                        225312
+                    ],
+                    "table": "chartevents",
+                    "sub_var": "itemid"
+                }
+            ],
+            "mimic_demo": [
+                {
+                    "ids": [
+                        52,
+                        443,
+                        456,
+                        6072,
+                        220052,
+                        220181,
+                        225312
+                    ],
+                    "table": "chartevents",
+                    "sub_var": "itemid"
+                }
+            ],
+            "sic": [
+                {
+                    "ids": [
+                        703,
+                        706
+                    ],
+                    "table": "data_float_h",
+                    "sub_var": "DataID"
+                }
+            ]
+        }
+    },
+    "sbp": {
+        "unit": [
+            "mmHg",
+            "mm Hg"
+        ],
+        "min": 0,
+        "max": 300,
+        "description": "systolic blood pressure",
+        "omopid": 4152194,
+        "category": "vitals",
+        "sources": {
+            "aumc": [
+                {
+                    "ids": 6641,
+                    "table": "numericitems",
+                    "sub_var": "itemid"
+                }
+            ],
+            "eicu": [
+                {
+                    "table": "vitalperiodic",
+                    "val_var": "systemicsystolic",
+                    "class": "col_itm"
+                }
+            ],
+            "eicu_demo": [
+                {
+                    "table": "vitalperiodic",
+                    "val_var": "systemicsystolic",
+                    "class": "col_itm"
+                }
+            ],
+            "hirid": [
+                {
+                    "ids": 100,
+                    "table": "observations",
+                    "sub_var": "variableid",
+                    "class": "hrd_itm"
+                }
+            ],
+            "miiv": [
+                {
+                    "ids": [
+                        220050,
+                        220179
+                    ],
+                    "table": "chartevents",
+                    "sub_var": "itemid"
+                }
+            ],
+            "mimic": [
+                {
+                    "ids": [
+                        51,
+                        455,
+                        6701,
+                        220050,
+                        220179
+                    ],
+                    "table": "chartevents",
+                    "sub_var": "itemid"
+                }
+            ],
+            "mimic_demo": [
+                {
+                    "ids": [
+                        51,
+                        455,
+                        6701,
+                        220050,
+                        220179
+                    ],
+                    "table": "chartevents",
+                    "sub_var": "itemid"
+                }
+            ],
+            "sic": [
+                {
+                    "ids": [
+                        701,
+                        704
+                    ],
+                    "table": "data_float_h",
+                    "sub_var": "DataID"
+                }
+            ]
+        }
+    },
+    "temp": {
+        "unit": [
+            "C",
+            "°C"
+        ],
+        "min": 32,
+        "max": 42,
+        "description": "temperature",
+        "omopid": 4302666,
+        "category": "vitals",
+        "sources": {
+            "aumc": [
+                {
+                    "ids": [
+                        8658,
+                        13952,
+                        16110
+                    ],
+                    "table": "numericitems",
+                    "sub_var": "itemid"
+                }
+            ],
+            "eicu": [
+                {
+                    "table": "vitalperiodic",
+                    "val_var": "temperature",
+                    "class": "col_itm"
+                }
+            ],
+            "eicu_demo": [
+                {
+                    "table": "vitalperiodic",
+                    "val_var": "temperature",
+                    "class": "col_itm"
+                }
+            ],
+            "hirid": [
+                {
+                    "ids": [
+                        410,
+                        400,
+                        7100
+                    ],
+                    "table": "observations",
+                    "sub_var": "variableid",
+                    "class": "hrd_itm"
+                }
+            ],
+            "miiv": [
+                {
+                    "ids": 223762,
+                    "table": "chartevents",
+                    "sub_var": "itemid"
+                },
+                {
+                    "ids": [
+                        223761,
+                        224027
+                    ],
+                    "table": "chartevents",
+                    "sub_var": "itemid",
+                    "callback": "convert_unit(fahr_to_cels, 'C', 'f')"
+                }
+            ],
+            "mimic": [
+                {
+                    "ids": [
+                        676,
+                        677,
+                        223762
+                    ],
+                    "table": "chartevents",
+                    "sub_var": "itemid"
+                },
+                {
+                    "ids": [
+                        678,
+                        679,
+                        223761,
+                        224027
+                    ],
+                    "table": "chartevents",
+                    "sub_var": "itemid",
+                    "callback": "convert_unit(fahr_to_cels, 'C', 'f')"
+                }
+            ],
+            "mimic_demo": [
+                {
+                    "ids": [
+                        676,
+                        677,
+                        223762
+                    ],
+                    "table": "chartevents",
+                    "sub_var": "itemid"
+                },
+                {
+                    "ids": [
+                        678,
+                        679,
+                        223761,
+                        224027
+                    ],
+                    "table": "chartevents",
+                    "sub_var": "itemid",
+                    "callback": "convert_unit(fahr_to_cels, 'C', 'f')"
+                }
+            ],
+            "sic": [
+                {
+                    "ids": 709,
+                    "table": "data_float_h",
+                    "sub_var": "DataID"
+                }
+            ]
+        }
+    }
+}

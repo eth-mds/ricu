@@ -252,6 +252,7 @@ user_config_path <- function() {
 config_paths <- function() c(user_config_path(), default_config_path())
 
 #' @param name File name of the configuration file (`.json` will be appended)
+#' or name of a folder containing multiple configuration files.
 #' @param cfg_dirs Character vector of directories searched for config files
 #' @param combine_fun If multiple files are found, a function for combining
 #' returned lists
@@ -275,8 +276,23 @@ get_config <- function(name, cfg_dirs = config_paths(), combine_fun = c, ...) {
   assert_that(is.string(name), has_length(cfg_dirs), all_fun(cfg_dirs, is.dir),
               null_or(combine_fun, is.function))
 
-  res <- lapply(file.path(cfg_dirs, paste0(name, ".json")),
-                read_if_exists, ...)
+  res <- list()
+
+  for (dir in cfg_dirs) {
+    dir_json <- file.path(dir, paste0(name, ".json"))
+    if (isTRUE(file.exists(dir_json))) {
+      res <- append(res, list(read_if_exists(dir_json, ...)))
+    }
+
+    if (isTRUE(dir.exists(file.path(dir, name)))) {
+      for (dir_json in list.files(path = file.path(dir, name),
+                                  pattern = "\\.json$",
+                                  full.names = TRUE,
+                                  recursive = TRUE)) {
+        res <- append(res, list(read_if_exists(dir_json, ...)))
+      }
+    }
+  }
 
   if (is.null(combine_fun)) {
     res

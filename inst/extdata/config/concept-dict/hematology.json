@@ -1,0 +1,1308 @@
+{
+    "basos": {
+        "unit": "%",
+        "min": 0,
+        "max": 50,
+        "description": "basophils",
+        "omopid": 4172647,
+        "category": "hematology",
+        "sources": {
+            "aumc": [
+                {
+                    "ids": 11710,
+                    "table": "numericitems",
+                    "sub_var": "itemid"
+                },
+                {
+                    "ids": 14256,
+                    "table": "numericitems",
+                    "sub_var": "itemid",
+                    "callback": "blood_cell_ratio"
+                }
+            ],
+            "eicu": [
+                {
+                    "ids": "-basos",
+                    "table": "lab",
+                    "sub_var": "labname"
+                }
+            ],
+            "eicu_demo": [
+                {
+                    "ids": "-basos",
+                    "table": "lab",
+                    "sub_var": "labname"
+                }
+            ],
+            "miiv": [
+                {
+                    "ids": 51146,
+                    "table": "labevents",
+                    "sub_var": "itemid"
+                }
+            ],
+            "mimic": [
+                {
+                    "ids": 51146,
+                    "table": "labevents",
+                    "sub_var": "itemid"
+                }
+            ],
+            "mimic_demo": [
+                {
+                    "ids": 51146,
+                    "table": "labevents",
+                    "sub_var": "itemid"
+                }
+            ],
+            "sic": [
+                {
+                    "ids": 174,
+                    "table": "laboratory",
+                    "sub_var": "LaboratoryID"
+                }
+            ]
+        }
+    },
+    "bnd": {
+        "unit": "%",
+        "description": "band form neutrophils",
+        "omopid": 4100147,
+        "category": "hematology",
+        "sources": {
+            "aumc": [
+                {
+                    "ids": [
+                        6796,
+                        11586
+                    ],
+                    "table": "numericitems",
+                    "sub_var": "itemid"
+                }
+            ],
+            "eicu": [
+                {
+                    "ids": "-bands",
+                    "table": "lab",
+                    "sub_var": "labname"
+                }
+            ],
+            "eicu_demo": [
+                {
+                    "ids": "-bands",
+                    "table": "lab",
+                    "sub_var": "labname"
+                }
+            ],
+            "hirid": [
+                {
+                    "ids": 24000557,
+                    "table": "observations",
+                    "sub_var": "variableid",
+                    "class": "hrd_itm"
+                }
+            ],
+            "miiv": [
+                {
+                    "ids": 51144,
+                    "table": "labevents",
+                    "sub_var": "itemid"
+                }
+            ],
+            "mimic": [
+                {
+                    "ids": 51144,
+                    "table": "labevents",
+                    "sub_var": "itemid"
+                }
+            ],
+            "mimic_demo": [
+                {
+                    "ids": 51144,
+                    "table": "labevents",
+                    "sub_var": "itemid"
+                }
+            ]
+        }
+    },
+    "eos": {
+        "unit": "%",
+        "min": 0,
+        "max": 50,
+        "description": "eosinophils",
+        "omopid": 4216098,
+        "category": "hematology",
+        "sources": {
+            "aumc": [
+                {
+                    "ids": 6773,
+                    "table": "numericitems",
+                    "sub_var": "itemid"
+                },
+                {
+                    "ids": 9967,
+                    "table": "numericitems",
+                    "sub_var": "itemid",
+                    "callback": "blood_cell_ratio"
+                }
+            ],
+            "eicu": [
+                {
+                    "ids": "-eos",
+                    "table": "lab",
+                    "sub_var": "labname"
+                }
+            ],
+            "eicu_demo": [
+                {
+                    "ids": "-eos",
+                    "table": "lab",
+                    "sub_var": "labname"
+                }
+            ],
+            "miiv": [
+                {
+                    "ids": 51200,
+                    "table": "labevents",
+                    "sub_var": "itemid"
+                }
+            ],
+            "mimic": [
+                {
+                    "ids": 51200,
+                    "table": "labevents",
+                    "sub_var": "itemid"
+                }
+            ],
+            "mimic_demo": [
+                {
+                    "ids": 51200,
+                    "table": "labevents",
+                    "sub_var": "itemid"
+                }
+            ],
+            "sic": [
+                {
+                    "ids": 197,
+                    "table": "laboratory",
+                    "sub_var": "LaboratoryID"
+                }
+            ]
+        }
+    },
+    "esr": {
+        "unit": [
+            "mm/hr",
+            "mm/1h"
+        ],
+        "min": 0,
+        "max": 200,
+        "description": "erythrocyte sedimentation rate",
+        "omopid": 4212065,
+        "category": "hematology",
+        "sources": {
+            "aumc": [
+                {
+                    "ids": [
+                        6808,
+                        11902
+                    ],
+                    "table": "numericitems",
+                    "sub_var": "itemid"
+                }
+            ],
+            "hirid": [
+                {
+                    "ids": 24000668,
+                    "table": "observations",
+                    "sub_var": "variableid",
+                    "class": "hrd_itm"
+                }
+            ],
+            "miiv": [
+                {
+                    "ids": 51288,
+                    "table": "labevents",
+                    "sub_var": "itemid"
+                }
+            ],
+            "mimic": [
+                {
+                    "ids": 51288,
+                    "table": "labevents",
+                    "sub_var": "itemid"
+                }
+            ],
+            "mimic_demo": [
+                {
+                    "ids": 51288,
+                    "table": "labevents",
+                    "sub_var": "itemid"
+                }
+            ]
+        }
+    },
+    "fgn": {
+        "unit": "mg/dL",
+        "min": 0,
+        "max": 1500,
+        "description": "fibrinogen",
+        "omopid": 4094436,
+        "category": "hematology",
+        "sources": {
+            "aumc": [
+                {
+                    "ids": [
+                        6776,
+                        9989,
+                        10175
+                    ],
+                    "table": "numericitems",
+                    "sub_var": "itemid",
+                    "callback": "convert_unit(binary_op(`*`, 100), 'mg/dL')"
+                }
+            ],
+            "eicu": [
+                {
+                    "ids": "fibrinogen",
+                    "table": "lab",
+                    "sub_var": "labname"
+                }
+            ],
+            "eicu_demo": [
+                {
+                    "ids": "fibrinogen",
+                    "table": "lab",
+                    "sub_var": "labname"
+                }
+            ],
+            "hirid": [
+                {
+                    "ids": 24000536,
+                    "table": "observations",
+                    "sub_var": "variableid",
+                    "callback": "convert_unit(binary_op(`*`, 100), 'mg/dL')",
+                    "class": "hrd_itm"
+                }
+            ],
+            "miiv": [
+                {
+                    "ids": 51214,
+                    "table": "labevents",
+                    "sub_var": "itemid"
+                }
+            ],
+            "mimic": [
+                {
+                    "ids": 51214,
+                    "table": "labevents",
+                    "sub_var": "itemid"
+                }
+            ],
+            "mimic_demo": [
+                {
+                    "ids": 51214,
+                    "table": "labevents",
+                    "sub_var": "itemid"
+                }
+            ],
+            "sic": [
+                {
+                    "ids": 344,
+                    "table": "laboratory",
+                    "sub_var": "LaboratoryID"
+                }
+            ]
+        }
+    },
+    "hba1c": {
+        "unit": "%",
+        "description": "Hemoglobin A1C",
+        "omopid": 4184637,
+        "category": "hematology",
+        "sources": {
+            "aumc": [
+                {
+                    "ids": [
+                        11812,
+                        16166
+                    ],
+                    "table": "numericitems",
+                    "sub_var": "itemid"
+                }
+            ],
+            "miiv": [
+                {
+                    "ids": 50852,
+                    "table": "labevents",
+                    "sub_var": "itemid"
+                }
+            ],
+            "mimic": [
+                {
+                    "ids": 50852,
+                    "table": "labevents",
+                    "sub_var": "itemid"
+                }
+            ],
+            "mimic_demo": [
+                {
+                    "ids": 50852,
+                    "table": "labevents",
+                    "sub_var": "itemid"
+                }
+            ]
+        }
+    },
+    "hct": {
+        "unit": "%",
+        "min": 15,
+        "max": 60,
+        "description": "hematocrit",
+        "omopid": 4151358,
+        "category": "hematology",
+        "sources": {
+            "aumc": [
+                {
+                    "ids": [
+                        6777,
+                        11423,
+                        11545
+                    ],
+                    "table": "numericitems",
+                    "sub_var": "itemid",
+                    "callback": "transform_fun(binary_op(`*`, 100))"
+                }
+            ],
+            "eicu": [
+                {
+                    "ids": "Hct",
+                    "table": "lab",
+                    "sub_var": "labname"
+                }
+            ],
+            "eicu_demo": [
+                {
+                    "ids": "Hct",
+                    "table": "lab",
+                    "sub_var": "labname"
+                }
+            ],
+            "miiv": [
+                {
+                    "ids": 51221,
+                    "table": "labevents",
+                    "sub_var": "itemid"
+                }
+            ],
+            "mimic": [
+                {
+                    "ids": 51221,
+                    "table": "labevents",
+                    "sub_var": "itemid"
+                }
+            ],
+            "mimic_demo": [
+                {
+                    "ids": 51221,
+                    "table": "labevents",
+                    "sub_var": "itemid"
+                }
+            ],
+            "sic": [
+                {
+                    "ids": [
+                        217,
+                        682
+                    ],
+                    "table": "laboratory",
+                    "sub_var": "LaboratoryID"
+                }
+            ]
+        }
+    },
+    "hgb": {
+        "unit": "g/dL",
+        "min": 4,
+        "max": 18,
+        "description": "hemoglobin",
+        "omopid": 4118981,
+        "category": "hematology",
+        "sources": {
+            "aumc": [
+                {
+                    "ids": [
+                        6778,
+                        9553,
+                        9960,
+                        10286,
+                        19703
+                    ],
+                    "table": "numericitems",
+                    "sub_var": "itemid",
+                    "callback": "convert_unit(binary_op(`*`, 1.611344), 'g/dL')"
+                }
+            ],
+            "eicu": [
+                {
+                    "ids": "Hgb",
+                    "table": "lab",
+                    "sub_var": "labname"
+                }
+            ],
+            "eicu_demo": [
+                {
+                    "ids": "Hgb",
+                    "table": "lab",
+                    "sub_var": "labname"
+                }
+            ],
+            "hirid": [
+                {
+                    "ids": [
+                        24000548,
+                        24000836,
+                        20000900
+                    ],
+                    "table": "observations",
+                    "sub_var": "variableid",
+                    "callback": "convert_unit(binary_op(`*`, 0.1), 'g/dL', 'g/l')",
+                    "class": "hrd_itm"
+                }
+            ],
+            "miiv": [
+                {
+                    "ids": 51222,
+                    "table": "labevents",
+                    "sub_var": "itemid"
+                }
+            ],
+            "mimic": [
+                {
+                    "ids": 51222,
+                    "table": "labevents",
+                    "sub_var": "itemid"
+                }
+            ],
+            "mimic_demo": [
+                {
+                    "ids": 51222,
+                    "table": "labevents",
+                    "sub_var": "itemid"
+                }
+            ],
+            "sic": [
+                {
+                    "ids": [
+                        658,
+                        289
+                    ],
+                    "table": "laboratory",
+                    "sub_var": "LaboratoryID"
+                }
+            ]
+        }
+    },
+    "inr_pt": {
+        "description": "prothrombin time/international normalized ratio",
+        "omopid": 4306239,
+        "category": "hematology",
+        "sources": {
+            "aumc": [
+                {
+                    "ids": 11893,
+                    "table": "numericitems",
+                    "sub_var": "itemid"
+                }
+            ],
+            "eicu": [
+                {
+                    "ids": "PT - INR",
+                    "table": "lab",
+                    "sub_var": "labname"
+                }
+            ],
+            "eicu_demo": [
+                {
+                    "ids": "PT - INR",
+                    "table": "lab",
+                    "sub_var": "labname"
+                }
+            ],
+            "hirid": [
+                {
+                    "ids": 24000567,
+                    "table": "observations",
+                    "sub_var": "variableid",
+                    "class": "hrd_itm"
+                }
+            ],
+            "miiv": [
+                {
+                    "ids": 51237,
+                    "table": "labevents",
+                    "sub_var": "itemid"
+                }
+            ],
+            "mimic": [
+                {
+                    "ids": 51237,
+                    "table": "labevents",
+                    "sub_var": "itemid"
+                }
+            ],
+            "mimic_demo": [
+                {
+                    "ids": 51237,
+                    "table": "labevents",
+                    "sub_var": "itemid"
+                }
+            ]
+        }
+    },
+    "lymph": {
+        "unit": "%",
+        "min": 0,
+        "max": 100,
+        "description": "lymphocytes",
+        "omopid": 4254663,
+        "category": "hematology",
+        "sources": {
+            "aumc": [
+                {
+                    "ids": 11846,
+                    "table": "numericitems",
+                    "sub_var": "itemid"
+                },
+                {
+                    "ids": 14258,
+                    "table": "numericitems",
+                    "sub_var": "itemid",
+                    "callback": "blood_cell_ratio"
+                }
+            ],
+            "eicu": [
+                {
+                    "ids": "-lymphs",
+                    "table": "lab",
+                    "sub_var": "labname"
+                }
+            ],
+            "eicu_demo": [
+                {
+                    "ids": "-lymphs",
+                    "table": "lab",
+                    "sub_var": "labname"
+                }
+            ],
+            "hirid": [
+                {
+                    "ids": 24000480,
+                    "table": "observations",
+                    "sub_var": "variableid",
+                    "callback": "blood_cell_ratio",
+                    "class": "hrd_itm"
+                }
+            ],
+            "miiv": [
+                {
+                    "ids": 51244,
+                    "table": "labevents",
+                    "sub_var": "itemid"
+                }
+            ],
+            "mimic": [
+                {
+                    "ids": 51244,
+                    "table": "labevents",
+                    "sub_var": "itemid"
+                }
+            ],
+            "mimic_demo": [
+                {
+                    "ids": 51244,
+                    "table": "labevents",
+                    "sub_var": "itemid"
+                }
+            ],
+            "sic": [
+                {
+                    "ids": 223,
+                    "table": "laboratory",
+                    "sub_var": "LaboratoryID"
+                }
+            ]
+        }
+    },
+    "mch": {
+        "unit": "pg",
+        "min": 0,
+        "description": "mean corpuscular hemoglobin",
+        "omopid": 4182871,
+        "category": "hematology",
+        "sources": {
+            "aumc": [
+                {
+                    "ids": 11679,
+                    "table": "numericitems",
+                    "sub_var": "itemid",
+                    "callback": "convert_unit(binary_op(`*`, 0.016113), 'pg')"
+                }
+            ],
+            "eicu": [
+                {
+                    "ids": "MCH",
+                    "table": "lab",
+                    "sub_var": "labname"
+                }
+            ],
+            "eicu_demo": [
+                {
+                    "ids": "MCH",
+                    "table": "lab",
+                    "sub_var": "labname"
+                }
+            ],
+            "hirid": [
+                {
+                    "ids": 24000160,
+                    "table": "observations",
+                    "sub_var": "variableid",
+                    "class": "hrd_itm"
+                }
+            ],
+            "miiv": [
+                {
+                    "ids": 51248,
+                    "table": "labevents",
+                    "sub_var": "itemid"
+                }
+            ],
+            "mimic": [
+                {
+                    "ids": 51248,
+                    "table": "labevents",
+                    "sub_var": "itemid"
+                }
+            ],
+            "mimic_demo": [
+                {
+                    "ids": 51248,
+                    "table": "labevents",
+                    "sub_var": "itemid"
+                }
+            ],
+            "sic": [
+                {
+                    "ids": 566,
+                    "table": "laboratory",
+                    "sub_var": "LaboratoryID"
+                }
+            ]
+        }
+    },
+    "mchc": {
+        "unit": "%",
+        "min": 20,
+        "max": 50,
+        "description": "mean corpuscular hemoglobin concentration",
+        "omopid": 4290193,
+        "category": "hematology",
+        "sources": {
+            "aumc": [
+                {
+                    "ids": 18666,
+                    "table": "numericitems",
+                    "sub_var": "itemid",
+                    "callback": "convert_unit(binary_op(`*`, 1.611), '%')"
+                }
+            ],
+            "eicu": [
+                {
+                    "ids": "MCHC",
+                    "table": "lab",
+                    "sub_var": "labname"
+                }
+            ],
+            "eicu_demo": [
+                {
+                    "ids": "MCHC",
+                    "table": "lab",
+                    "sub_var": "labname"
+                }
+            ],
+            "hirid": [
+                {
+                    "ids": 24000170,
+                    "table": "observations",
+                    "sub_var": "variableid",
+                    "callback": "convert_unit(binary_op(`*`, 0.16114), '%')",
+                    "class": "hrd_itm"
+                }
+            ],
+            "miiv": [
+                {
+                    "ids": 51249,
+                    "table": "labevents",
+                    "sub_var": "itemid"
+                }
+            ],
+            "mimic": [
+                {
+                    "ids": 51249,
+                    "table": "labevents",
+                    "sub_var": "itemid"
+                }
+            ],
+            "mimic_demo": [
+                {
+                    "ids": 51249,
+                    "table": "labevents",
+                    "sub_var": "itemid"
+                }
+            ],
+            "sic": [
+                {
+                    "ids": 290,
+                    "table": "laboratory",
+                    "sub_var": "LaboratoryID"
+                }
+            ]
+        }
+    },
+    "mcv": {
+        "unit": "fL",
+        "min": 50,
+        "max": 150,
+        "description": "mean corpuscular volume",
+        "omopid": 4016239,
+        "category": "hematology",
+        "sources": {
+            "aumc": [
+                {
+                    "ids": 9968,
+                    "table": "numericitems",
+                    "sub_var": "itemid"
+                }
+            ],
+            "eicu": [
+                {
+                    "ids": "MCV",
+                    "table": "lab",
+                    "sub_var": "labname"
+                }
+            ],
+            "eicu_demo": [
+                {
+                    "ids": "MCV",
+                    "table": "lab",
+                    "sub_var": "labname"
+                }
+            ],
+            "hirid": [
+                {
+                    "ids": 24000150,
+                    "table": "observations",
+                    "sub_var": "variableid",
+                    "class": "hrd_itm"
+                }
+            ],
+            "miiv": [
+                {
+                    "ids": 51250,
+                    "table": "labevents",
+                    "sub_var": "itemid"
+                }
+            ],
+            "mimic": [
+                {
+                    "ids": 51250,
+                    "table": "labevents",
+                    "sub_var": "itemid"
+                }
+            ],
+            "mimic_demo": [
+                {
+                    "ids": 51250,
+                    "table": "labevents",
+                    "sub_var": "itemid"
+                }
+            ],
+            "sic": [
+                {
+                    "ids": 286,
+                    "table": "laboratory",
+                    "sub_var": "LaboratoryID"
+                }
+            ]
+        }
+    },
+    "neut": {
+        "unit": "%",
+        "min": 0,
+        "max": 100,
+        "description": "neutrophils",
+        "omopid": 4148615,
+        "category": "hematology",
+        "sources": {
+            "aumc": [
+                {
+                    "ids": [
+                        6786,
+                        11856
+                    ],
+                    "table": "numericitems",
+                    "sub_var": "itemid"
+                },
+                {
+                    "ids": 14254,
+                    "table": "numericitems",
+                    "sub_var": "itemid",
+                    "callback": "blood_cell_ratio"
+                }
+            ],
+            "eicu": [
+                {
+                    "ids": "-polys",
+                    "table": "lab",
+                    "sub_var": "labname"
+                }
+            ],
+            "eicu_demo": [
+                {
+                    "ids": "-polys",
+                    "table": "lab",
+                    "sub_var": "labname"
+                }
+            ],
+            "hirid": [
+                {
+                    "ids": 24000550,
+                    "table": "observations",
+                    "sub_var": "variableid",
+                    "class": "hrd_itm"
+                }
+            ],
+            "miiv": [
+                {
+                    "ids": 51256,
+                    "table": "labevents",
+                    "sub_var": "itemid"
+                }
+            ],
+            "mimic": [
+                {
+                    "ids": 51256,
+                    "table": "labevents",
+                    "sub_var": "itemid"
+                }
+            ],
+            "mimic_demo": [
+                {
+                    "ids": 51256,
+                    "table": "labevents",
+                    "sub_var": "itemid"
+                }
+            ],
+            "sic": [
+                {
+                    "ids": 230,
+                    "table": "laboratory",
+                    "sub_var": "LaboratoryID"
+                }
+            ]
+        }
+    },
+    "plt": {
+        "unit": [
+            "K/uL",
+            "G/l"
+        ],
+        "min": 5,
+        "max": 1200,
+        "description": "platelet count",
+        "omopid": 4267147,
+        "category": "hematology",
+        "sources": {
+            "aumc": [
+                {
+                    "ids": [
+                        6797,
+                        9964,
+                        10409,
+                        14252
+                    ],
+                    "table": "numericitems",
+                    "sub_var": "itemid"
+                }
+            ],
+            "eicu": [
+                {
+                    "ids": "platelets x 1000",
+                    "table": "lab",
+                    "sub_var": "labname"
+                }
+            ],
+            "eicu_demo": [
+                {
+                    "ids": "platelets x 1000",
+                    "table": "lab",
+                    "sub_var": "labname"
+                }
+            ],
+            "hirid": [
+                {
+                    "ids": 20000110,
+                    "table": "observations",
+                    "sub_var": "variableid",
+                    "class": "hrd_itm"
+                }
+            ],
+            "miiv": [
+                {
+                    "ids": 51265,
+                    "table": "labevents",
+                    "sub_var": "itemid"
+                }
+            ],
+            "mimic": [
+                {
+                    "ids": 51265,
+                    "table": "labevents",
+                    "sub_var": "itemid"
+                }
+            ],
+            "mimic_demo": [
+                {
+                    "ids": 51265,
+                    "table": "labevents",
+                    "sub_var": "itemid"
+                }
+            ],
+            "sic": [
+                {
+                    "ids": 314,
+                    "table": "laboratory",
+                    "sub_var": "LaboratoryID"
+                }
+            ]
+        }
+    },
+    "pt": {
+        "unit": "sec",
+        "min": 0,
+        "description": "prothrombine time",
+        "omopid": 4245261,
+        "category": "hematology",
+        "sources": {
+            "aumc": [
+                {
+                    "ids": 6789,
+                    "table": "numericitems",
+                    "sub_var": "itemid"
+                }
+            ],
+            "eicu": [
+                {
+                    "ids": "PT",
+                    "table": "lab",
+                    "sub_var": "labname"
+                }
+            ],
+            "eicu_demo": [
+                {
+                    "ids": "PT",
+                    "table": "lab",
+                    "sub_var": "labname"
+                }
+            ],
+            "miiv": [
+                {
+                    "ids": 51274,
+                    "table": "labevents",
+                    "sub_var": "itemid"
+                }
+            ],
+            "mimic": [
+                {
+                    "ids": 51274,
+                    "table": "labevents",
+                    "sub_var": "itemid"
+                }
+            ],
+            "mimic_demo": [
+                {
+                    "ids": 51274,
+                    "table": "labevents",
+                    "sub_var": "itemid"
+                }
+            ],
+            "sic": [
+                {
+                    "ids": 598,
+                    "table": "laboratory",
+                    "sub_var": "LaboratoryID"
+                }
+            ]
+        }
+    },
+    "ptt": {
+        "unit": "sec",
+        "min": 0,
+        "description": "partial thromboplastin time",
+        "omopid": 4175016,
+        "category": "hematology",
+        "sources": {
+            "aumc": [
+                {
+                    "ids": 17982,
+                    "table": "numericitems",
+                    "sub_var": "itemid"
+                }
+            ],
+            "eicu": [
+                {
+                    "ids": "PTT",
+                    "table": "lab",
+                    "sub_var": "labname"
+                }
+            ],
+            "eicu_demo": [
+                {
+                    "ids": "PTT",
+                    "table": "lab",
+                    "sub_var": "labname"
+                }
+            ],
+            "hirid": [
+                {
+                    "ids": 20004410,
+                    "table": "observations",
+                    "sub_var": "variableid",
+                    "class": "hrd_itm"
+                }
+            ],
+            "miiv": [
+                {
+                    "ids": 51275,
+                    "table": "labevents",
+                    "sub_var": "itemid"
+                }
+            ],
+            "mimic": [
+                {
+                    "ids": 51275,
+                    "table": "labevents",
+                    "sub_var": "itemid"
+                }
+            ],
+            "mimic_demo": [
+                {
+                    "ids": 51275,
+                    "table": "labevents",
+                    "sub_var": "itemid"
+                }
+            ],
+            "sic": [
+                {
+                    "ids": 597,
+                    "table": "laboratory",
+                    "sub_var": "LaboratoryID"
+                }
+            ]
+        }
+    },
+    "rbc": {
+        "unit": "m/uL",
+        "min": 0,
+        "max": 20,
+        "description": "red blood cell count",
+        "omopid": 4030871,
+        "category": "hematology",
+        "sources": {
+            "aumc": [
+                {
+                    "ids": [
+                        6774,
+                        9962
+                    ],
+                    "table": "numericitems",
+                    "sub_var": "itemid"
+                }
+            ],
+            "eicu": [
+                {
+                    "ids": "RBC",
+                    "table": "lab",
+                    "sub_var": "labname"
+                }
+            ],
+            "eicu_demo": [
+                {
+                    "ids": "RBC",
+                    "table": "lab",
+                    "sub_var": "labname"
+                }
+            ],
+            "miiv": [
+                {
+                    "ids": 51279,
+                    "table": "labevents",
+                    "sub_var": "itemid"
+                }
+            ],
+            "mimic": [
+                {
+                    "ids": 51279,
+                    "table": "labevents",
+                    "sub_var": "itemid"
+                }
+            ],
+            "mimic_demo": [
+                {
+                    "ids": 51279,
+                    "table": "labevents",
+                    "sub_var": "itemid"
+                }
+            ],
+            "sic": [
+                {
+                    "ids": 599,
+                    "table": "laboratory",
+                    "sub_var": "LaboratoryID"
+                }
+            ]
+        }
+    },
+    "rdw": {
+        "unit": "%",
+        "min": 0,
+        "max": 100,
+        "description": "erythrocyte distribution width",
+        "omopid": 4281085,
+        "category": "hematology",
+        "sources": {
+            "aumc": [
+                {
+                    "ids": 18952,
+                    "table": "numericitems",
+                    "sub_var": "itemid"
+                }
+            ],
+            "eicu": [
+                {
+                    "ids": "RDW",
+                    "table": "lab",
+                    "sub_var": "labname"
+                }
+            ],
+            "eicu_demo": [
+                {
+                    "ids": "RDW",
+                    "table": "lab",
+                    "sub_var": "labname"
+                }
+            ],
+            "miiv": [
+                {
+                    "ids": 51277,
+                    "table": "labevents",
+                    "sub_var": "itemid"
+                }
+            ],
+            "mimic": [
+                {
+                    "ids": 51277,
+                    "table": "labevents",
+                    "sub_var": "itemid"
+                }
+            ],
+            "mimic_demo": [
+                {
+                    "ids": 51277,
+                    "table": "labevents",
+                    "sub_var": "itemid"
+                }
+            ],
+            "sic": [
+                {
+                    "ids": 3319,
+                    "table": "laboratory",
+                    "sub_var": "LaboratoryID"
+                }
+            ]
+        }
+    },
+    "wbc": {
+        "unit": [
+            "K/uL",
+            "G/l"
+        ],
+        "min": 0,
+        "description": "white blood cell count",
+        "omopid": 4298431,
+        "category": "hematology",
+        "sources": {
+            "aumc": [
+                {
+                    "ids": [
+                        6779,
+                        9965
+                    ],
+                    "table": "numericitems",
+                    "sub_var": "itemid"
+                }
+            ],
+            "eicu": [
+                {
+                    "ids": "WBC x 1000",
+                    "table": "lab",
+                    "sub_var": "labname"
+                }
+            ],
+            "eicu_demo": [
+                {
+                    "ids": "WBC x 1000",
+                    "table": "lab",
+                    "sub_var": "labname"
+                }
+            ],
+            "hirid": [
+                {
+                    "ids": 20000700,
+                    "table": "observations",
+                    "sub_var": "variableid",
+                    "class": "hrd_itm"
+                }
+            ],
+            "miiv": [
+                {
+                    "ids": 51301,
+                    "table": "labevents",
+                    "sub_var": "itemid"
+                }
+            ],
+            "mimic": [
+                {
+                    "ids": 51301,
+                    "table": "labevents",
+                    "sub_var": "itemid"
+                }
+            ],
+            "mimic_demo": [
+                {
+                    "ids": 51301,
+                    "table": "labevents",
+                    "sub_var": "itemid"
+                }
+            ],
+            "sic": [
+                {
+                    "ids": 301,
+                    "table": "laboratory",
+                    "sub_var": "LaboratoryID"
+                }
+            ]
+        }
+    }
+}

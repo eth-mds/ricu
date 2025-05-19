@@ -1,436 +1,544 @@
 [
-  {
-    "name": "eicu_test",
-    "class_prefix": ["eicu_test", "eicu_demo", "eicu"],
-    "id_cfg": {
-      "hadm": {
-        "id": "patienthealthsystemstayid",
-        "position": 1,
-        "start": "hospitaladmitoffset",
-        "end": "hospitaldischargeoffset",
-        "table": "patient"
-      },
-      "icustay": {
-        "id": "patientunitstayid",
-        "position": 2,
-        "start": "unitadmitoffset",
-        "end": "unitdischargeoffset",
-        "table": "patient"
-      }
+    {
+        "name": "eicu_test",
+        "class_prefix": [
+            "eicu_test",
+            "eicu_demo",
+            "eicu"
+        ],
+        "id_cfg": {
+            "hadm": {
+                "id": "patienthealthsystemstayid",
+                "position": 1,
+                "start": "hospitaladmitoffset",
+                "end": "hospitaldischargeoffset",
+                "table": "patient"
+            },
+            "icustay": {
+                "id": "patientunitstayid",
+                "position": 2,
+                "start": "unitadmitoffset",
+                "end": "unitdischargeoffset",
+                "table": "patient"
+            }
+        },
+        "tables": {
+            "admissiondrug": {
+                "defaults": {
+                    "index_var": "drugoffset",
+                    "val_var": "drugdosage",
+                    "unit_var": "drugunit",
+                    "time_vars": [
+                        "drugoffset",
+                        "drugenteredoffset"
+                    ]
+                }
+            },
+            "admissiondx": {
+                "defaults": {
+                    "index_var": "admitdxenteredoffset",
+                    "val_var": "admitdxtext",
+                    "time_vars": "admitdxenteredoffset"
+                }
+            },
+            "allergy": {
+                "defaults": {
+                    "index_var": "allergyoffset",
+                    "val_var": "allergyname",
+                    "time_vars": [
+                        "allergyoffset",
+                        "allergyenteredoffset"
+                    ]
+                }
+            },
+            "apacheapsvar": {
+                "defaults": []
+            },
+            "apachepatientresult": {
+                "defaults": {
+                    "val_var": "apachescore"
+                }
+            },
+            "apachepredvar": {
+                "defaults": []
+            },
+            "careplancareprovider": {
+                "defaults": {
+                    "index_var": "careprovidersaveoffset",
+                    "val_var": "specialty",
+                    "time_vars": "careprovidersaveoffset"
+                }
+            },
+            "careplaneol": {
+                "defaults": {
+                    "index_var": "cpleoldiscussionoffset",
+                    "time_vars": [
+                        "cpleolsaveoffset",
+                        "cpleoldiscussionoffset"
+                    ]
+                }
+            },
+            "careplangeneral": {
+                "defaults": {
+                    "index_var": "cplitemoffset",
+                    "val_var": "cplitemvalue",
+                    "time_vars": "cplitemoffset"
+                }
+            },
+            "careplangoal": {
+                "defaults": {
+                    "index_var": "cplgoaloffset",
+                    "val_var": "cplgoalvalue",
+                    "time_vars": "cplgoaloffset"
+                }
+            },
+            "careplaninfectiousdisease": {
+                "defaults": {
+                    "index_var": "cplinfectdiseaseoffset",
+                    "val_var": "infectdiseasesite",
+                    "time_vars": "cplinfectdiseaseoffset"
+                }
+            },
+            "customlab": {
+                "defaults": {
+                    "index_var": "labotheroffset",
+                    "val_var": "labotherresult",
+                    "time_vars": "labotheroffset"
+                }
+            },
+            "diagnosis": {
+                "defaults": {
+                    "index_var": "diagnosisoffset",
+                    "val_var": "icd9code",
+                    "time_vars": "diagnosisoffset"
+                }
+            },
+            "hospital": {
+                "defaults": {
+                    "id_var": "hospitalid",
+                    "val_var": "numbedscategory"
+                }
+            },
+            "infusiondrug": {
+                "defaults": {
+                    "index_var": "infusionoffset",
+                    "val_var": "drugrate",
+                    "time_vars": "infusionoffset"
+                }
+            },
+            "intakeoutput": {
+                "defaults": {
+                    "index_var": "intakeoutputoffset",
+                    "val_var": "cellvaluenumeric",
+                    "time_vars": [
+                        "intakeoutputoffset",
+                        "intakeoutputentryoffset"
+                    ]
+                }
+            },
+            "lab": {
+                "defaults": {
+                    "index_var": "labresultoffset",
+                    "val_var": "labresult",
+                    "unit_var": "labmeasurenameinterface",
+                    "time_vars": [
+                        "labresultoffset",
+                        "labresultrevisedoffset"
+                    ]
+                }
+            },
+            "medication": {
+                "defaults": {
+                    "index_var": "drugstartoffset",
+                    "val_var": "dosage",
+                    "time_vars": [
+                        "drugorderoffset",
+                        "drugstartoffset",
+                        "drugstopoffset"
+                    ]
+                }
+            },
+            "microlab": {
+                "defaults": {
+                    "index_var": "culturetakenoffset",
+                    "val_var": "organism",
+                    "time_vars": "culturetakenoffset"
+                }
+            },
+            "note": {
+                "defaults": {
+                    "index_var": "noteoffset",
+                    "val_var": "notetext",
+                    "time_vars": [
+                        "noteoffset",
+                        "noteenteredoffset"
+                    ]
+                }
+            },
+            "nurseassessment": {
+                "defaults": {
+                    "index_var": "nurseassessoffset",
+                    "val_var": "cellattributevalue",
+                    "time_vars": [
+                        "nurseassessoffset",
+                        "nurseassessentryoffset"
+                    ]
+                }
+            },
+            "nursecare": {
+                "defaults": {
+                    "index_var": "nursecareoffset",
+                    "val_var": "cellattributevalue",
+                    "time_vars": [
+                        "nursecareoffset",
+                        "nursecareentryoffset"
+                    ]
+                }
+            },
+            "nursecharting": {
+                "defaults": {
+                    "index_var": "nursingchartoffset",
+                    "val_var": "nursingchartvalue",
+                    "time_vars": [
+                        "nursingchartoffset",
+                        "nursingchartentryoffset"
+                    ]
+                },
+                "partitioning": {
+                    "col": "patientunitstayid",
+                    "breaks": 1775421
+                }
+            },
+            "pasthistory": {
+                "defaults": {
+                    "index_var": "pasthistoryoffset",
+                    "val_var": "pasthistoryvalue",
+                    "time_vars": [
+                        "pasthistoryoffset",
+                        "pasthistoryenteredoffset"
+                    ]
+                }
+            },
+            "patient": {
+                "defaults": {
+                    "val_var": "unitdischargestatus",
+                    "time_vars": [
+                        "hospitaladmitoffset",
+                        "hospitaldischargeoffset",
+                        "unitdischargeoffset"
+                    ]
+                }
+            },
+            "physicalexam": {
+                "defaults": {
+                    "index_var": "physicalexamoffset",
+                    "val_var": "physicalexamvalue",
+                    "time_vars": "physicalexamoffset"
+                }
+            },
+            "respiratorycare": {
+                "defaults": {
+                    "index_var": "respcarestatusoffset",
+                    "time_vars": [
+                        "respcarestatusoffset",
+                        "ventstartoffset",
+                        "ventendoffset",
+                        "priorventstartoffset",
+                        "priorventendoffset"
+                    ]
+                }
+            },
+            "respiratorycharting": {
+                "defaults": {
+                    "index_var": "respchartoffset",
+                    "val_var": "respchartvalue",
+                    "time_vars": [
+                        "respchartoffset",
+                        "respchartentryoffset"
+                    ]
+                }
+            },
+            "treatment": {
+                "defaults": {
+                    "index_var": "treatmentoffset",
+                    "val_var": "treatmentstring",
+                    "time_vars": "treatmentoffset"
+                }
+            },
+            "vitalaperiodic": {
+                "defaults": {
+                    "index_var": "observationoffset",
+                    "time_vars": "observationoffset"
+                }
+            },
+            "vitalperiodic": {
+                "defaults": {
+                    "index_var": "observationoffset",
+                    "time_vars": "observationoffset"
+                },
+                "partitioning": {
+                    "col": "patientunitstayid",
+                    "breaks": 1775421
+                }
+            }
+        }
     },
-    "tables": {
-      "admissiondrug": {
-        "defaults": {
-          "index_var": "drugoffset",
-          "val_var": "drugdosage",
-          "unit_var": "drugunit",
-          "time_vars": ["drugoffset", "drugenteredoffset"]
-        }
-      },
-      "admissiondx": {
-        "defaults": {
-          "index_var": "admitdxenteredoffset",
-          "val_var": "admitdxtext",
-          "time_vars": "admitdxenteredoffset"
-        }
-      },
-      "allergy": {
-        "defaults": {
-          "index_var": "allergyoffset",
-          "val_var": "allergyname",
-          "time_vars": ["allergyoffset", "allergyenteredoffset"]
-        }
-      },
-      "apacheapsvar": {
-        "defaults": []
-      },
-      "apachepatientresult": {
-        "defaults": {
-          "val_var": "apachescore"
-        }
-      },
-      "apachepredvar": {
-        "defaults": []
-      },
-      "careplancareprovider": {
-        "defaults": {
-          "index_var": "careprovidersaveoffset",
-          "val_var": "specialty",
-          "time_vars": "careprovidersaveoffset"
-        }
-      },
-      "careplaneol": {
-        "defaults": {
-          "index_var": "cpleoldiscussionoffset",
-          "time_vars": ["cpleolsaveoffset", "cpleoldiscussionoffset"]
-        }
-      },
-      "careplangeneral": {
-        "defaults": {
-          "index_var": "cplitemoffset",
-          "val_var": "cplitemvalue",
-          "time_vars": "cplitemoffset"
-        }
-      },
-      "careplangoal": {
-        "defaults": {
-          "index_var": "cplgoaloffset",
-          "val_var": "cplgoalvalue",
-          "time_vars": "cplgoaloffset"
-        }
-      },
-      "careplaninfectiousdisease": {
-        "defaults": {
-          "index_var": "cplinfectdiseaseoffset",
-          "val_var": "infectdiseasesite",
-          "time_vars": "cplinfectdiseaseoffset"
-        }
-      },
-      "customlab": {
-        "defaults": {
-          "index_var": "labotheroffset",
-          "val_var": "labotherresult",
-          "time_vars": "labotheroffset"
-        }
-      },
-      "diagnosis": {
-        "defaults": {
-          "index_var": "diagnosisoffset",
-          "val_var": "icd9code",
-          "time_vars": "diagnosisoffset"
-        }
-      },
-      "hospital": {
-        "defaults": {
-          "id_var": "hospitalid",
-          "val_var": "numbedscategory"
-        }
-      },
-      "infusiondrug": {
-        "defaults": {
-          "index_var": "infusionoffset",
-          "val_var": "drugrate",
-          "time_vars": "infusionoffset"
-        }
-      },
-      "intakeoutput": {
-        "defaults": {
-          "index_var": "intakeoutputoffset",
-          "val_var": "cellvaluenumeric",
-          "time_vars": ["intakeoutputoffset", "intakeoutputentryoffset"]
-        }
-      },
-      "lab": {
-        "defaults": {
-          "index_var": "labresultoffset",
-          "val_var": "labresult",
-          "unit_var": "labmeasurenameinterface",
-          "time_vars": ["labresultoffset", "labresultrevisedoffset"]
-        }
-      },
-      "medication": {
-        "defaults": {
-          "index_var": "drugstartoffset",
-          "val_var": "dosage",
-          "time_vars": ["drugorderoffset", "drugstartoffset", "drugstopoffset"]
-        }
-      },
-      "microlab": {
-        "defaults": {
-          "index_var": "culturetakenoffset",
-          "val_var": "organism",
-          "time_vars": "culturetakenoffset"
-        }
-      },
-      "note": {
-        "defaults": {
-          "index_var": "noteoffset",
-          "val_var": "notetext",
-          "time_vars": ["noteoffset", "noteenteredoffset"]
-        }
-      },
-      "nurseassessment": {
-        "defaults": {
-          "index_var": "nurseassessoffset",
-          "val_var": "cellattributevalue",
-          "time_vars": ["nurseassessoffset", "nurseassessentryoffset"]
-        }
-      },
-      "nursecare": {
-        "defaults": {
-          "index_var": "nursecareoffset",
-          "val_var": "cellattributevalue",
-          "time_vars": ["nursecareoffset", "nursecareentryoffset"]
-        }
-      },
-      "nursecharting": {
-        "defaults": {
-          "index_var": "nursingchartoffset",
-          "val_var": "nursingchartvalue",
-          "time_vars": ["nursingchartoffset", "nursingchartentryoffset"]
+    {
+        "name": "mimic_test",
+        "class_prefix": [
+            "mimic_test",
+            "mimic_demo",
+            "mimic"
+        ],
+        "id_cfg": {
+            "patient": {
+                "id": "subject_id",
+                "position": 1,
+                "start": "dob",
+                "end": "dod",
+                "table": "patients"
+            },
+            "hadm": {
+                "id": "hadm_id",
+                "position": 2,
+                "start": "admittime",
+                "end": "dischtime",
+                "table": "admissions"
+            },
+            "icustay": {
+                "id": "icustay_id",
+                "position": 3,
+                "start": "intime",
+                "end": "outtime",
+                "table": "icustays"
+            }
         },
-        "partitioning": {
-          "col": "patientunitstayid",
-          "breaks": 1775421
+        "tables": {
+            "admissions": {
+                "defaults": {
+                    "val_var": "admission_type",
+                    "time_vars": [
+                        "admittime",
+                        "dischtime",
+                        "deathtime",
+                        "edregtime",
+                        "edouttime"
+                    ]
+                }
+            },
+            "callout": {
+                "defaults": {
+                    "index_var": "outcometime",
+                    "val_var": "callout_outcome",
+                    "time_vars": [
+                        "createtime",
+                        "updatetime",
+                        "acknowledgetime",
+                        "outcometime",
+                        "firstreservationtime",
+                        "currentreservationtime"
+                    ]
+                }
+            },
+            "caregivers": {
+                "defaults": {
+                    "id_var": "cgid",
+                    "val_var": "label"
+                }
+            },
+            "chartevents": {
+                "defaults": {
+                    "index_var": "charttime",
+                    "val_var": "valuenum",
+                    "unit_var": "valueuom",
+                    "time_vars": [
+                        "charttime",
+                        "storetime"
+                    ]
+                },
+                "partitioning": {
+                    "col": "itemid",
+                    "breaks": 100000
+                }
+            },
+            "cptevents": {
+                "defaults": {
+                    "index_var": "chartdate",
+                    "val_var": "cpt_cd",
+                    "time_vars": "chartdate"
+                }
+            },
+            "d_cpt": {
+                "defaults": {
+                    "id_var": "subsectionrange",
+                    "val_var": "subsectionheader"
+                }
+            },
+            "d_icd_diagnoses": {
+                "defaults": {
+                    "id_var": "icd9_code",
+                    "val_var": "short_title"
+                }
+            },
+            "d_icd_procedures": {
+                "defaults": {
+                    "id_var": "icd9_code",
+                    "val_var": "short_title"
+                }
+            },
+            "d_items": {
+                "defaults": {
+                    "id_var": "itemid",
+                    "val_var": "label"
+                }
+            },
+            "d_labitems": {
+                "defaults": {
+                    "id_var": "itemid",
+                    "val_var": "label"
+                }
+            },
+            "datetimeevents": {
+                "defaults": {
+                    "index_var": "charttime",
+                    "val_var": "itemid",
+                    "time_vars": [
+                        "charttime",
+                        "storetime",
+                        "value"
+                    ]
+                }
+            },
+            "diagnoses_icd": {
+                "defaults": {
+                    "val_var": "icd9_code"
+                }
+            },
+            "drgcodes": {
+                "defaults": {
+                    "val_var": "drg_code"
+                }
+            },
+            "icustays": {
+                "defaults": {
+                    "index_var": "intime",
+                    "val_var": "last_careunit",
+                    "time_vars": [
+                        "intime",
+                        "outtime"
+                    ]
+                }
+            },
+            "inputevents_cv": {
+                "defaults": {
+                    "index_var": "charttime",
+                    "val_var": "rate",
+                    "unit_var": "rateuom",
+                    "time_vars": [
+                        "charttime",
+                        "storetime"
+                    ]
+                }
+            },
+            "inputevents_mv": {
+                "defaults": {
+                    "index_var": "starttime",
+                    "val_var": "rate",
+                    "unit_var": "rateuom",
+                    "time_vars": [
+                        "starttime",
+                        "endtime",
+                        "storetime",
+                        "comments_date"
+                    ]
+                }
+            },
+            "labevents": {
+                "defaults": {
+                    "index_var": "charttime",
+                    "val_var": "valuenum",
+                    "unit_var": "valueuom",
+                    "time_vars": "charttime"
+                }
+            },
+            "microbiologyevents": {
+                "defaults": {
+                    "index_var": "chartdate",
+                    "val_var": "isolate_num",
+                    "time_vars": [
+                        "chartdate",
+                        "charttime"
+                    ]
+                }
+            },
+            "outputevents": {
+                "defaults": {
+                    "index_var": "charttime",
+                    "val_var": "value",
+                    "unit_var": "valueuom",
+                    "time_vars": [
+                        "charttime",
+                        "storetime"
+                    ]
+                }
+            },
+            "patients": {
+                "defaults": {
+                    "val_var": "expire_flag",
+                    "time_vars": [
+                        "dob",
+                        "dod",
+                        "dod_hosp",
+                        "dod_ssn"
+                    ]
+                }
+            },
+            "prescriptions": {
+                "defaults": {
+                    "index_var": "startdate",
+                    "val_var": "dose_val_rx",
+                    "unit_var": "dose_unit_rx",
+                    "time_vars": [
+                        "startdate",
+                        "enddate"
+                    ]
+                }
+            },
+            "procedureevents_mv": {
+                "defaults": {
+                    "index_var": "starttime",
+                    "val_var": "value",
+                    "unit_var": "valueuom",
+                    "time_vars": [
+                        "starttime",
+                        "endtime",
+                        "storetime",
+                        "comments_date"
+                    ]
+                }
+            },
+            "procedures_icd": {
+                "defaults": {
+                    "val_var": "icd9_code"
+                }
+            },
+            "services": {
+                "defaults": {
+                    "index_var": "transfertime",
+                    "val_var": "curr_service",
+                    "time_vars": "transfertime"
+                }
+            },
+            "transfers": {
+                "defaults": {
+                    "index_var": "intime",
+                    "val_var": "curr_careunit",
+                    "time_vars": [
+                        "intime",
+                        "outtime"
+                    ]
+                }
+            }
         }
-      },
-      "pasthistory": {
-        "defaults": {
-          "index_var": "pasthistoryoffset",
-          "val_var": "pasthistoryvalue",
-          "time_vars": ["pasthistoryoffset", "pasthistoryenteredoffset"]
-        }
-      },
-      "patient": {
-        "defaults": {
-          "val_var": "unitdischargestatus",
-          "time_vars": ["hospitaladmitoffset", "hospitaldischargeoffset", "unitdischargeoffset"]
-        }
-      },
-      "physicalexam": {
-        "defaults": {
-          "index_var": "physicalexamoffset",
-          "val_var": "physicalexamvalue",
-          "time_vars": "physicalexamoffset"
-        }
-      },
-      "respiratorycare": {
-        "defaults": {
-          "index_var": "respcarestatusoffset",
-          "time_vars": ["respcarestatusoffset", "ventstartoffset", "ventendoffset", "priorventstartoffset", "priorventendoffset"]
-        }
-      },
-      "respiratorycharting": {
-        "defaults": {
-          "index_var": "respchartoffset",
-          "val_var": "respchartvalue",
-          "time_vars": ["respchartoffset", "respchartentryoffset"]
-        }
-      },
-      "treatment": {
-        "defaults": {
-          "index_var": "treatmentoffset",
-          "val_var": "treatmentstring",
-          "time_vars": "treatmentoffset"
-        }
-      },
-      "vitalaperiodic": {
-        "defaults": {
-          "index_var": "observationoffset",
-          "time_vars": "observationoffset"
-        }
-      },
-      "vitalperiodic": {
-        "defaults": {
-          "index_var": "observationoffset",
-          "time_vars": "observationoffset"
-        },
-        "partitioning": {
-          "col": "patientunitstayid",
-          "breaks": 1775421
-        }
-      }
     }
-  },
-  {
-    "name": "mimic_test",
-    "class_prefix": ["mimic_test", "mimic_demo", "mimic"],
-    "id_cfg": {
-      "patient": {
-        "id": "subject_id",
-        "position": 1,
-        "start": "dob",
-        "end": "dod",
-        "table": "patients"
-      },
-      "hadm": {
-        "id": "hadm_id",
-        "position": 2,
-        "start": "admittime",
-        "end": "dischtime",
-        "table": "admissions"
-      },
-      "icustay": {
-        "id": "icustay_id",
-        "position": 3,
-        "start": "intime",
-        "end": "outtime",
-        "table": "icustays"
-      }
-    },
-    "tables": {
-      "admissions": {
-        "defaults": {
-          "val_var": "admission_type",
-          "time_vars": ["admittime", "dischtime", "deathtime", "edregtime", "edouttime"]
-        }
-      },
-      "callout": {
-        "defaults": {
-          "index_var": "outcometime",
-          "val_var": "callout_outcome",
-          "time_vars": ["createtime", "updatetime", "acknowledgetime", "outcometime", "firstreservationtime", "currentreservationtime"]
-        }
-      },
-      "caregivers": {
-        "defaults": {
-          "id_var": "cgid",
-          "val_var": "label"
-        }
-      },
-      "chartevents": {
-        "defaults": {
-          "index_var": "charttime",
-          "val_var": "valuenum",
-          "unit_var": "valueuom",
-          "time_vars": ["charttime", "storetime"]
-        },
-        "partitioning": {
-          "col": "itemid",
-          "breaks": 100000
-        }
-      },
-      "cptevents": {
-        "defaults": {
-          "index_var": "chartdate",
-          "val_var": "cpt_cd",
-          "time_vars": "chartdate"
-        }
-      },
-      "d_cpt": {
-        "defaults": {
-          "id_var": "subsectionrange",
-          "val_var": "subsectionheader"
-        }
-      },
-      "d_icd_diagnoses": {
-        "defaults": {
-          "id_var": "icd9_code",
-          "val_var": "short_title"
-        }
-      },
-      "d_icd_procedures": {
-        "defaults": {
-          "id_var": "icd9_code",
-          "val_var": "short_title"
-        }
-      },
-      "d_items": {
-        "defaults": {
-          "id_var": "itemid",
-          "val_var": "label"
-        }
-      },
-      "d_labitems": {
-        "defaults": {
-          "id_var": "itemid",
-          "val_var": "label"
-        }
-      },
-      "datetimeevents": {
-        "defaults": {
-          "index_var": "charttime",
-          "val_var": "itemid",
-          "time_vars": ["charttime", "storetime", "value"]
-        }
-      },
-      "diagnoses_icd": {
-        "defaults": {
-          "val_var": "icd9_code"
-        }
-      },
-      "drgcodes": {
-        "defaults": {
-          "val_var": "drg_code"
-        }
-      },
-      "icustays": {
-        "defaults": {
-          "index_var": "intime",
-          "val_var": "last_careunit",
-          "time_vars": ["intime", "outtime"]
-        }
-      },
-      "inputevents_cv": {
-        "defaults": {
-          "index_var": "charttime",
-          "val_var": "rate",
-          "unit_var": "rateuom",
-          "time_vars": ["charttime", "storetime"]
-        }
-      },
-      "inputevents_mv": {
-        "defaults": {
-          "index_var": "starttime",
-          "val_var": "rate",
-          "unit_var": "rateuom",
-          "time_vars": ["starttime", "endtime", "storetime", "comments_date"]
-        }
-      },
-      "labevents": {
-        "defaults": {
-          "index_var": "charttime",
-          "val_var": "valuenum",
-          "unit_var": "valueuom",
-          "time_vars": "charttime"
-        }
-      },
-      "microbiologyevents": {
-        "defaults": {
-          "index_var": "chartdate",
-          "val_var": "isolate_num",
-          "time_vars": ["chartdate", "charttime"]
-        }
-      },
-      "outputevents": {
-        "defaults": {
-          "index_var": "charttime",
-          "val_var": "value",
-          "unit_var": "valueuom",
-          "time_vars": ["charttime", "storetime"]
-        }
-      },
-      "patients": {
-        "defaults": {
-          "val_var": "expire_flag",
-          "time_vars": ["dob", "dod", "dod_hosp", "dod_ssn"]
-        }
-      },
-      "prescriptions": {
-        "defaults": {
-          "index_var": "startdate",
-          "val_var": "dose_val_rx",
-          "unit_var": "dose_unit_rx",
-          "time_vars": ["startdate", "enddate"]
-        }
-      },
-      "procedureevents_mv": {
-        "defaults": {
-          "index_var": "starttime",
-          "val_var": "value",
-          "unit_var": "valueuom",
-          "time_vars": ["starttime", "endtime", "storetime", "comments_date"]
-        }
-      },
-      "procedures_icd": {
-        "defaults": {
-          "val_var": "icd9_code"
-        }
-      },
-      "services": {
-        "defaults": {
-          "index_var": "transfertime",
-          "val_var": "curr_service",
-          "time_vars": "transfertime"
-        }
-      },
-      "transfers": {
-        "defaults": {
-          "index_var": "intime",
-          "val_var": "curr_careunit",
-          "time_vars": ["intime", "outtime"]
-        }
-      }
-    }
-  }
 ]

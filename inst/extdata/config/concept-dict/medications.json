@@ -1,0 +1,1835 @@
+{
+    "abx": {
+        "class": "lgl_cncpt",
+        "description": "antibiotics",
+        "omopid": 4085730,
+        "category": "medications",
+        "sources": {
+            "aumc": [
+                {
+                    "ids": [
+                        2,
+                        13,
+                        19,
+                        24,
+                        28,
+                        29,
+                        57,
+                        59,
+                        82,
+                        103,
+                        240,
+                        247,
+                        333,
+                        1133,
+                        1199,
+                        1300,
+                        1371,
+                        1795,
+                        2284,
+                        2834,
+                        3237,
+                        3741,
+                        5576,
+                        6834,
+                        6847,
+                        6871,
+                        6919,
+                        6948,
+                        6953,
+                        6958,
+                        7044,
+                        7064,
+                        7185,
+                        7187,
+                        7208,
+                        7227,
+                        7235,
+                        8064,
+                        8394,
+                        8942,
+                        9029,
+                        9030,
+                        9052,
+                        9070,
+                        9117,
+                        9128,
+                        9133,
+                        9142,
+                        9151,
+                        9152,
+                        12262,
+                        12389,
+                        12398,
+                        12956,
+                        12997,
+                        13057,
+                        13094,
+                        13102,
+                        15591,
+                        18860,
+                        19137,
+                        19773,
+                        20563,
+                        23166,
+                        24241,
+                        25776,
+                        27617,
+                        29321
+                    ],
+                    "table": "drugitems",
+                    "sub_var": "itemid",
+                    "callback": "transform_fun(set_val(TRUE))"
+                }
+            ],
+            "eicu": [
+                {
+                    "regex": "bactrim|cipro|flagyl|metronidazole|zithromax|zosyn|(((amika|cleo|ofloxa)|(azithro|clinda|tobra|vanco)my)c|(ampi|oxa|peni|pipera)cill|cefazol|levaqu|rifamp)in",
+                    "table": "infusiondrug",
+                    "sub_var": "drugname",
+                    "callback": "transform_fun(set_val(TRUE))",
+                    "class": "rgx_itm"
+                },
+                {
+                    "regex": "cipro|flagyl|maxipime|metronidazole|tazobactam|zosyn|cef(azolin|epime)|(((azithro|clinda|vanco)my|ofloxa|vanco)c|levaqu|piperacill|roceph)in",
+                    "table": "medication",
+                    "sub_var": "drugname",
+                    "callback": "transform_fun(set_val(TRUE))",
+                    "class": "rgx_itm"
+                }
+            ],
+            "eicu_demo": [
+                {
+                    "regex": "bactrim|cipro|flagyl|metronidazole|zithromax|zosyn|(((amika|cleo|ofloxa)|(azithro|clinda|tobra|vanco)my)c|(ampi|oxa|peni|pipera)cill|cefazol|levaqu|rifamp)in",
+                    "table": "infusiondrug",
+                    "sub_var": "drugname",
+                    "callback": "transform_fun(set_val(TRUE))",
+                    "class": "rgx_itm"
+                },
+                {
+                    "regex": "cipro|flagyl|maxipime|metronidazole|tazobactam|zosyn|cef(azolin|epime)|(((azithro|clinda|vanco)my|ofloxa|vanco)c|levaqu|piperacill|roceph)in",
+                    "table": "medication",
+                    "sub_var": "drugname",
+                    "callback": "transform_fun(set_val(TRUE))",
+                    "class": "rgx_itm"
+                }
+            ],
+            "hirid": [
+                {
+                    "ids": [
+                        163,
+                        176,
+                        181,
+                        186,
+                        189,
+                        300,
+                        326,
+                        331,
+                        351,
+                        405,
+                        1000234,
+                        1000272,
+                        1000273,
+                        1000274,
+                        1000284,
+                        1000299,
+                        1000300,
+                        1000302,
+                        1000304,
+                        1000305,
+                        1000306,
+                        1000315,
+                        1000317,
+                        1000318,
+                        1000320,
+                        1000321,
+                        1000322,
+                        1000335,
+                        1000348,
+                        1000352,
+                        1000363,
+                        1000365,
+                        1000390,
+                        1000407,
+                        1000408,
+                        1000424,
+                        1000425,
+                        1000426,
+                        1000437,
+                        1000483,
+                        1000507,
+                        1000508,
+                        1000518,
+                        1000519,
+                        1000549,
+                        1000601,
+                        1000648,
+                        1000666,
+                        1000670,
+                        1000671,
+                        1000760,
+                        1000781,
+                        1000791,
+                        1000797,
+                        1000812,
+                        1000825,
+                        1000829,
+                        1000830,
+                        1000837,
+                        1000838,
+                        1000854,
+                        1000855,
+                        1000893,
+                        1000894,
+                        1001005,
+                        1001068,
+                        1001075,
+                        1001079,
+                        1001084,
+                        1001086,
+                        1001095,
+                        1001096,
+                        1001097,
+                        1001098,
+                        1001168,
+                        1001169,
+                        1001170,
+                        1001171,
+                        1001173,
+                        1001193,
+                        1001198
+                    ],
+                    "table": "pharma",
+                    "sub_var": "pharmaid",
+                    "callback": "transform_fun(set_val(TRUE))"
+                }
+            ],
+            "miiv": [
+                {
+                    "regex": "aztreonam|bactrim|cephalexin|chloramphenicol|cipro|flagyl|metronidazole|nitrofurantoin|tazobactam|rifampin|sulfadiazine|timentin|trimethoprim|(amika|gentami|vanco)cin|(amoxi|ampi|dicloxa|naf|oxa|peni|pipera)cillin|(azithro|clarithro|erythro|clinda|strepto|tobra|vanco)mycin|cef(azolin|tazidime|adroxil|epime|otetan|otaxime|podoxime|uroxime)|(doxy|mino|tetra)cycline|(levofl|moxifl|ofl)oxacin|macro(bid|dantin)|(una|zo)syn",
+                    "table": "prescriptions",
+                    "sub_var": "drug",
+                    "callback": "transform_fun(set_val(TRUE))",
+                    "class": "rgx_itm"
+                },
+                {
+                    "ids": [
+                        225798,
+                        225837,
+                        225838,
+                        225840,
+                        225842,
+                        225843,
+                        225844,
+                        225845,
+                        225847,
+                        225848,
+                        225850,
+                        225851,
+                        225853,
+                        225855,
+                        225857,
+                        225859,
+                        225860,
+                        225862,
+                        225863,
+                        225865,
+                        225866,
+                        225868,
+                        225869,
+                        225871,
+                        225873,
+                        225875,
+                        225876,
+                        225877,
+                        225879,
+                        225881,
+                        225882,
+                        225883,
+                        225884,
+                        225885,
+                        225886,
+                        225888,
+                        225889,
+                        225890,
+                        225892,
+                        225893,
+                        225895,
+                        225896,
+                        225897,
+                        225898,
+                        225899,
+                        225900,
+                        225902,
+                        225903,
+                        225905,
+                        227691,
+                        228003
+                    ],
+                    "table": "inputevents",
+                    "sub_var": "itemid",
+                    "callback": "transform_fun(set_val(TRUE))"
+                }
+            ],
+            "mimic": [
+                {
+                    "regex": "aztreonam|bactrim|cephalexin|chloramphenicol|cipro|flagyl|metronidazole|nitrofurantoin|tazobactam|rifampin|sulfadiazine|timentin|trimethoprim|(amika|gentami|vanco)cin|(amoxi|ampi|dicloxa|naf|oxa|peni|pipera)cillin|(azithro|clarithro|erythro|clinda|strepto|tobra|vanco)mycin|cef(azolin|tazidime|adroxil|epime|otetan|otaxime|podoxime|uroxime)|(doxy|mino|tetra)cycline|(levofl|moxifl|ofl)oxacin|macro(bid|dantin)|(una|zo)syn",
+                    "table": "prescriptions",
+                    "sub_var": "drug",
+                    "interval": "00:01:00",
+                    "callback": "mimic_abx_presc",
+                    "class": "rgx_itm"
+                },
+                {
+                    "ids": [
+                        225798,
+                        225837,
+                        225838,
+                        225840,
+                        225842,
+                        225843,
+                        225844,
+                        225845,
+                        225847,
+                        225848,
+                        225850,
+                        225851,
+                        225853,
+                        225855,
+                        225857,
+                        225859,
+                        225860,
+                        225862,
+                        225863,
+                        225865,
+                        225866,
+                        225868,
+                        225869,
+                        225871,
+                        225873,
+                        225875,
+                        225876,
+                        225877,
+                        225879,
+                        225881,
+                        225882,
+                        225883,
+                        225884,
+                        225885,
+                        225886,
+                        225888,
+                        225889,
+                        225890,
+                        225892,
+                        225893,
+                        225895,
+                        225896,
+                        225897,
+                        225898,
+                        225899,
+                        225900,
+                        225902,
+                        225903,
+                        225905,
+                        227691,
+                        228003
+                    ],
+                    "table": "inputevents_mv",
+                    "sub_var": "itemid",
+                    "callback": "transform_fun(set_val(TRUE))"
+                }
+            ],
+            "mimic_demo": [
+                {
+                    "regex": "aztreonam|bactrim|cephalexin|chloramphenicol|cipro|flagyl|metronidazole|nitrofurantoin|tazobactam|rifampin|sulfadiazine|timentin|trimethoprim|(amika|gentami|vanco)cin|(amoxi|ampi|dicloxa|naf|oxa|peni|pipera)cillin|(azithro|clarithro|erythro|clinda|strepto|tobra|vanco)mycin|cef(azolin|tazidime|adroxil|epime|otetan|otaxime|podoxime|uroxime)|(doxy|mino|tetra)cycline|(levofl|moxifl|ofl)oxacin|macro(bid|dantin)|(una|zo)syn",
+                    "table": "prescriptions",
+                    "sub_var": "drug",
+                    "interval": "00:01:00",
+                    "callback": "mimic_abx_presc",
+                    "class": "rgx_itm"
+                },
+                {
+                    "ids": [
+                        225798,
+                        225837,
+                        225838,
+                        225840,
+                        225842,
+                        225843,
+                        225844,
+                        225845,
+                        225847,
+                        225848,
+                        225850,
+                        225851,
+                        225853,
+                        225855,
+                        225857,
+                        225859,
+                        225860,
+                        225862,
+                        225863,
+                        225865,
+                        225866,
+                        225868,
+                        225869,
+                        225871,
+                        225873,
+                        225875,
+                        225876,
+                        225877,
+                        225879,
+                        225881,
+                        225882,
+                        225883,
+                        225884,
+                        225885,
+                        225886,
+                        225888,
+                        225889,
+                        225890,
+                        225892,
+                        225893,
+                        225895,
+                        225896,
+                        225897,
+                        225898,
+                        225899,
+                        225900,
+                        225902,
+                        225903,
+                        225905,
+                        227691,
+                        228003
+                    ],
+                    "table": "inputevents_mv",
+                    "sub_var": "itemid",
+                    "callback": "transform_fun(set_val(TRUE))"
+                }
+            ],
+            "sic": [
+                {
+                    "ids": [
+                        1406,
+                        1408,
+                        1410,
+                        1418,
+                        1421,
+                        1422,
+                        1423,
+                        1428,
+                        1431,
+                        1433,
+                        1436,
+                        1449,
+                        1454,
+                        1457,
+                        1458,
+                        1459,
+                        1460,
+                        1461,
+                        1603,
+                        1795,
+                        1913,
+                        1927
+                    ],
+                    "table": "medication",
+                    "sub_var": "DrugID",
+                    "callback": "transform_fun(set_val(TRUE))"
+                }
+            ]
+        }
+    },
+    "adh_rate": {
+        "unit": [
+            "units/min",
+            "U/min"
+        ],
+        "description": "vasopressin rate",
+        "omopid": 1507835,
+        "category": "medications",
+        "sources": {
+            "aumc": [
+                {
+                    "ids": 12467,
+                    "table": "drugitems",
+                    "sub_var": "itemid",
+                    "rate_uom": "doserateunit",
+                    "stop_var": "stop",
+                    "callback": "aumc_rate_units(0.53)"
+                }
+            ],
+            "eicu": [
+                {
+                    "regex": "^vasopressin.*\\(.+/.+\\)$",
+                    "table": "infusiondrug",
+                    "sub_var": "drugname",
+                    "callback": "eicu_rate_units(2.65, 0.53)",
+                    "class": "rgx_itm"
+                }
+            ],
+            "eicu_demo": [
+                {
+                    "regex": "^vasopressin.*\\(.+/.+\\)$",
+                    "table": "infusiondrug",
+                    "sub_var": "drugname",
+                    "callback": "eicu_rate_units(2.65, 0.53)",
+                    "class": "rgx_itm"
+                }
+            ],
+            "hirid": [
+                {
+                    "ids": [
+                        112,
+                        113
+                    ],
+                    "table": "pharma",
+                    "sub_var": "pharmaid",
+                    "grp_var": "infusionid",
+                    "callback": "hirid_rate"
+                }
+            ],
+            "miiv": [
+                {
+                    "ids": 222315,
+                    "table": "inputevents",
+                    "sub_var": "itemid",
+                    "stop_var": "endtime",
+                    "callback": "combine_callbacks(\n               convert_unit(binary_op(`/`, 60), 'units/min', 'units/hour'),\n               mimic_rate_mv\n             )"
+                }
+            ],
+            "mimic": [
+                {
+                    "ids": 30051,
+                    "table": "inputevents_cv",
+                    "sub_var": "itemid",
+                    "grp_var": "linkorderid",
+                    "callback": "combine_callbacks(\n               convert_unit(binary_op(`/`, 60), 'units/min', 'Uhr'),\n               mimic_rate_cv\n             )"
+                },
+                {
+                    "ids": 222315,
+                    "table": "inputevents_mv",
+                    "sub_var": "itemid",
+                    "stop_var": "endtime",
+                    "callback": "combine_callbacks(\n               convert_unit(binary_op(`/`, 60), 'units/min', 'units/hour'),\n               mimic_rate_mv\n             )"
+                }
+            ],
+            "mimic_demo": [
+                {
+                    "ids": 30051,
+                    "table": "inputevents_cv",
+                    "sub_var": "itemid",
+                    "grp_var": "linkorderid",
+                    "callback": "combine_callbacks(\n               convert_unit(binary_op(`/`, 60), 'units/min', 'Uhr'),\n               mimic_rate_cv\n             )"
+                },
+                {
+                    "ids": 222315,
+                    "table": "inputevents_mv",
+                    "sub_var": "itemid",
+                    "stop_var": "endtime",
+                    "callback": "combine_callbacks(\n               convert_unit(binary_op(`/`, 60), 'units/min', 'units/hour'),\n               mimic_rate_mv\n             )"
+                }
+            ]
+        }
+    },
+    "cort": {
+        "class": "lgl_cncpt",
+        "description": "corticosteroids",
+        "omopid": 304275008,
+        "category": "medications",
+        "sources": {
+            "aumc": [
+                {
+                    "ids": [
+                        6922,
+                        6995,
+                        7106,
+                        8132,
+                        9042,
+                        9130,
+                        10628
+                    ],
+                    "table": "drugitems",
+                    "sub_var": "itemid",
+                    "callback": "transform_fun(set_val(TRUE))"
+                }
+            ],
+            "hirid": [
+                {
+                    "ids": [
+                        146,
+                        151,
+                        1000325,
+                        1000383,
+                        1000431,
+                        1000432,
+                        1000433,
+                        1000434,
+                        1000435,
+                        1000486,
+                        1000487,
+                        1000488,
+                        1000769,
+                        1000770,
+                        1000929
+                    ],
+                    "table": "pharma",
+                    "sub_var": "pharmaid",
+                    "callback": "transform_fun(set_val(TRUE))"
+                }
+            ]
+        }
+    },
+    "dex": {
+        "min": 0,
+        "unit": "ml/hr",
+        "description": "dextrose (as D10)",
+        "omopid": 4197597,
+        "category": "medications",
+        "target": "win_tbl",
+        "sources": {
+            "aumc": [
+                {
+                    "ids": [
+                        7254,
+                        7255,
+                        7256,
+                        8940,
+                        9571
+                    ],
+                    "table": "drugitems",
+                    "sub_var": "itemid",
+                    "dur_var": "stop",
+                    "rate_var": "doserateunit",
+                    "callback": "combine_callbacks(\n                           aumc_rate,\n                           dex_to_10(list(7255L, 7256L, c(8940L, 9571L)),\n                                     c(2, 3, 4))\n                         )"
+                }
+            ],
+            "eicu": [
+                {
+                    "regex": "(d50|dextrose.+50 ?%)",
+                    "table": "medication",
+                    "sub_var": "drugname",
+                    "dur_var": "drugstopoffset",
+                    "callback": "eicu_dex_med",
+                    "class": "rgx_itm"
+                },
+                {
+                    "regex": "(d10|dextrose.+10 ?%).+ml/hr",
+                    "table": "infusiondrug",
+                    "sub_var": "drugname",
+                    "callback": "eicu_dex_inf",
+                    "target": "ts_tbl",
+                    "class": "rgx_itm"
+                }
+            ],
+            "eicu_demo": [
+                {
+                    "regex": "(d50|dextrose.+50 ?%)",
+                    "table": "medication",
+                    "sub_var": "drugname",
+                    "dur_var": "drugstopoffset",
+                    "callback": "eicu_dex_med",
+                    "class": "rgx_itm"
+                },
+                {
+                    "regex": "(d10|dextrose.+10 ?%).+ml/hr",
+                    "table": "infusiondrug",
+                    "sub_var": "drugname",
+                    "callback": "eicu_dex_inf",
+                    "target": "ts_tbl",
+                    "class": "rgx_itm"
+                }
+            ],
+            "hirid": [
+                {
+                    "ids": [
+                        1000022,
+                        1000690,
+                        1000689,
+                        1000544,
+                        1000746,
+                        1000835,
+                        1000060,
+                        1000545,
+                        1000567
+                    ],
+                    "table": "pharma",
+                    "sub_var": "pharmaid",
+                    "grp_var": "infusionid",
+                    "target": "ts_tbl",
+                    "interval": "00:01:00",
+                    "callback": "combine_callbacks(\n               grp_mount_to_rate(mins(1L), hours(1L)),\n               dex_to_10(list(c(1000689L, 1000544L, 1000746L, 1000835L),\n                                1000060L, 1000545L, 1000567L), c(2, 3, 4, 5))\n             )"
+                }
+            ],
+            "miiv": [
+                {
+                    "ids": [
+                        220950,
+                        228140,
+                        220952
+                    ],
+                    "table": "inputevents",
+                    "sub_var": "itemid",
+                    "dur_var": "endtime",
+                    "amount_var": "amount",
+                    "auom_var": "amountuom",
+                    "callback": "combine_callbacks(\n               mimv_rate,\n               dex_to_10(c(228140L, 220952L), c(2, 5))\n             )"
+                }
+            ],
+            "mimic": [
+                {
+                    "ids": [
+                        220950,
+                        228140,
+                        220952
+                    ],
+                    "table": "inputevents_mv",
+                    "sub_var": "itemid",
+                    "dur_var": "endtime",
+                    "amount_var": "amount",
+                    "auom_var": "amountuom",
+                    "callback": "combine_callbacks(\n               mimv_rate,\n               dex_to_10(c(228140L, 220952L), c(2, 5))\n             )"
+                },
+                {
+                    "ids": [
+                        30016,
+                        30017
+                    ],
+                    "table": "inputevents_cv",
+                    "sub_var": "itemid",
+                    "grp_var": "linkorderid",
+                    "val_var": "amount",
+                    "unit_var": "amountuom",
+                    "target": "ts_tbl",
+                    "interval": "00:01:00",
+                    "callback": "combine_callbacks(\n               grp_mount_to_rate(mins(1L), hours(1L)),\n               dex_to_10(30017L, 2)\n             )"
+                }
+            ],
+            "mimic_demo": [
+                {
+                    "ids": [
+                        220950,
+                        228140,
+                        220952
+                    ],
+                    "table": "inputevents_mv",
+                    "sub_var": "itemid",
+                    "dur_var": "endtime",
+                    "amount_var": "amount",
+                    "auom_var": "amountuom",
+                    "callback": "combine_callbacks(\n               mimv_rate,\n               dex_to_10(c(228140L, 220952L), c(2, 5))\n             )"
+                },
+                {
+                    "ids": [
+                        30016,
+                        30017
+                    ],
+                    "table": "inputevents_cv",
+                    "sub_var": "itemid",
+                    "grp_var": "linkorderid",
+                    "val_var": "amount",
+                    "unit_var": "amountuom",
+                    "target": "ts_tbl",
+                    "interval": "00:01:00",
+                    "callback": "combine_callbacks(\n               grp_mount_to_rate(mins(1L), hours(1L)),\n               dex_to_10(30017L, 2)\n             )"
+                }
+            ]
+        },
+        "class": [
+            "unt_cncpt",
+            "num_cncpt"
+        ]
+    },
+    "dobu_dur": {
+        "description": "dobutamine duration",
+        "category": "medications",
+        "aggregate": "max",
+        "sources": {
+            "aumc": [
+                {
+                    "ids": 7178,
+                    "table": "drugitems",
+                    "sub_var": "itemid",
+                    "stop_var": "stop",
+                    "grp_var": "orderid",
+                    "callback": "aumc_dur"
+                }
+            ],
+            "eicu": [
+                {
+                    "regex": "^dobu",
+                    "table": "infusiondrug",
+                    "sub_var": "drugname",
+                    "callback": "eicu_duration(gap_length = hours(5L))",
+                    "class": "rgx_itm"
+                }
+            ],
+            "eicu_demo": [
+                {
+                    "regex": "^dobu",
+                    "table": "infusiondrug",
+                    "sub_var": "drugname",
+                    "callback": "eicu_duration(gap_length = hours(5L))",
+                    "class": "rgx_itm"
+                }
+            ],
+            "hirid": [
+                {
+                    "ids": 426,
+                    "table": "pharma",
+                    "sub_var": "pharmaid",
+                    "grp_var": "infusionid",
+                    "callback": "hirid_duration"
+                }
+            ],
+            "miiv": [
+                {
+                    "ids": 221653,
+                    "table": "inputevents",
+                    "sub_var": "itemid",
+                    "stop_var": "endtime",
+                    "grp_var": "linkorderid",
+                    "callback": "mimic_dur_inmv"
+                }
+            ],
+            "mimic": [
+                {
+                    "ids": [
+                        30042,
+                        30306
+                    ],
+                    "table": "inputevents_cv",
+                    "sub_var": "itemid",
+                    "grp_var": "linkorderid",
+                    "callback": "mimic_dur_incv"
+                },
+                {
+                    "ids": 221653,
+                    "table": "inputevents_mv",
+                    "sub_var": "itemid",
+                    "stop_var": "endtime",
+                    "grp_var": "linkorderid",
+                    "callback": "mimic_dur_inmv"
+                }
+            ],
+            "mimic_demo": [
+                {
+                    "ids": [
+                        30042,
+                        30306
+                    ],
+                    "table": "inputevents_cv",
+                    "sub_var": "itemid",
+                    "grp_var": "linkorderid",
+                    "callback": "mimic_dur_incv"
+                },
+                {
+                    "ids": 221653,
+                    "table": "inputevents_mv",
+                    "sub_var": "itemid",
+                    "stop_var": "endtime",
+                    "grp_var": "linkorderid",
+                    "callback": "mimic_dur_inmv"
+                }
+            ],
+            "sic": [
+                {
+                    "ids": [
+                        1559
+                    ],
+                    "table": "medication",
+                    "sub_var": "DrugID",
+                    "stop_var": "OffsetDrugEnd",
+                    "callback": "sic_dur"
+                }
+            ]
+        }
+    },
+    "dobu_rate": {
+        "unit": [
+            "mcg/kg/min",
+            "mcgkgmin"
+        ],
+        "min": 0,
+        "max": 50,
+        "description": "dobutamine rate",
+        "omopid": 1337720,
+        "category": "medications",
+        "sources": {
+            "aumc": [
+                {
+                    "ids": 7178,
+                    "table": "drugitems",
+                    "sub_var": "itemid",
+                    "rel_weight": "doserateperkg",
+                    "rate_uom": "doserateunit",
+                    "stop_var": "stop",
+                    "callback": "aumc_rate_kg"
+                }
+            ],
+            "eicu": [
+                {
+                    "regex": "^dobu.*\\(.+\\)$",
+                    "table": "infusiondrug",
+                    "sub_var": "drugname",
+                    "weight_var": "patientweight",
+                    "callback": "eicu_rate_kg(ml_to_mcg = 2000)",
+                    "class": "rgx_itm"
+                }
+            ],
+            "eicu_demo": [
+                {
+                    "regex": "^dobu.*\\(.+\\)$",
+                    "table": "infusiondrug",
+                    "sub_var": "drugname",
+                    "weight_var": "patientweight",
+                    "callback": "eicu_rate_kg(ml_to_mcg = 2000)",
+                    "class": "rgx_itm"
+                }
+            ],
+            "hirid": [
+                {
+                    "ids": 426,
+                    "table": "pharma",
+                    "sub_var": "pharmaid",
+                    "grp_var": "infusionid",
+                    "callback": "hirid_rate_kg"
+                }
+            ],
+            "miiv": [
+                {
+                    "ids": 221653,
+                    "table": "inputevents",
+                    "sub_var": "itemid",
+                    "stop_var": "endtime",
+                    "callback": "mimic_rate_mv"
+                }
+            ],
+            "mimic": [
+                {
+                    "ids": [
+                        30042,
+                        30306
+                    ],
+                    "table": "inputevents_cv",
+                    "sub_var": "itemid",
+                    "grp_var": "linkorderid",
+                    "callback": "mimic_rate_cv"
+                },
+                {
+                    "ids": 221653,
+                    "table": "inputevents_mv",
+                    "sub_var": "itemid",
+                    "stop_var": "endtime",
+                    "callback": "mimic_rate_mv"
+                }
+            ],
+            "mimic_demo": [
+                {
+                    "ids": [
+                        30042,
+                        30306
+                    ],
+                    "table": "inputevents_cv",
+                    "sub_var": "itemid",
+                    "grp_var": "linkorderid",
+                    "callback": "mimic_rate_cv"
+                },
+                {
+                    "ids": 221653,
+                    "table": "inputevents_mv",
+                    "sub_var": "itemid",
+                    "stop_var": "endtime",
+                    "callback": "mimic_rate_mv"
+                }
+            ],
+            "sic": [
+                {
+                    "ids": 1559,
+                    "table": "medication",
+                    "sub_var": "DrugID",
+                    "val_var": "AmountPerMinute",
+                    "stop_var": "OffsetDrugEnd",
+                    "callback": "sic_rate_kg"
+                }
+            ]
+        }
+    },
+    "dobu60": {
+        "concepts": [
+            "dobu_rate",
+            "dobu_dur"
+        ],
+        "description": "dobutamine administration for min 1h",
+        "category": "medications",
+        "interval": "00:01:00",
+        "callback": "vaso60",
+        "class": "rec_cncpt"
+    },
+    "dopa_dur": {
+        "description": "dopamine duration",
+        "category": "medications",
+        "aggregate": "max",
+        "sources": {
+            "aumc": [
+                {
+                    "ids": 7179,
+                    "table": "drugitems",
+                    "sub_var": "itemid",
+                    "stop_var": "stop",
+                    "grp_var": "orderid",
+                    "callback": "aumc_dur"
+                }
+            ],
+            "eicu": [
+                {
+                    "regex": "^dopa",
+                    "table": "infusiondrug",
+                    "sub_var": "drugname",
+                    "callback": "eicu_duration(gap_length = hours(5L))",
+                    "class": "rgx_itm"
+                }
+            ],
+            "eicu_demo": [
+                {
+                    "regex": "^dopa",
+                    "table": "infusiondrug",
+                    "sub_var": "drugname",
+                    "callback": "eicu_duration(gap_length = hours(5L))",
+                    "class": "rgx_itm"
+                }
+            ],
+            "miiv": [
+                {
+                    "ids": 221662,
+                    "table": "inputevents",
+                    "sub_var": "itemid",
+                    "stop_var": "endtime",
+                    "grp_var": "linkorderid",
+                    "callback": "mimic_dur_inmv"
+                }
+            ],
+            "mimic": [
+                {
+                    "ids": [
+                        30043,
+                        30125,
+                        30307
+                    ],
+                    "table": "inputevents_cv",
+                    "sub_var": "itemid",
+                    "grp_var": "linkorderid",
+                    "callback": "mimic_dur_incv"
+                },
+                {
+                    "ids": 221662,
+                    "table": "inputevents_mv",
+                    "sub_var": "itemid",
+                    "stop_var": "endtime",
+                    "grp_var": "linkorderid",
+                    "callback": "mimic_dur_inmv"
+                }
+            ],
+            "mimic_demo": [
+                {
+                    "ids": [
+                        30043,
+                        30125,
+                        30307
+                    ],
+                    "table": "inputevents_cv",
+                    "sub_var": "itemid",
+                    "grp_var": "linkorderid",
+                    "callback": "mimic_dur_incv"
+                },
+                {
+                    "ids": 221662,
+                    "table": "inputevents_mv",
+                    "sub_var": "itemid",
+                    "stop_var": "endtime",
+                    "grp_var": "linkorderid",
+                    "callback": "mimic_dur_inmv"
+                }
+            ],
+            "sic": [
+                {
+                    "ids": 1618,
+                    "table": "medication",
+                    "sub_var": "DrugID",
+                    "stop_var": "OffsetDrugEnd",
+                    "callback": "sic_dur"
+                }
+            ]
+        }
+    },
+    "dopa_rate": {
+        "unit": [
+            "mcg/kg/min",
+            "mcgkgmin"
+        ],
+        "min": 0,
+        "max": 50,
+        "description": "dopamine rate",
+        "omopid": 1337860,
+        "category": "medications",
+        "sources": {
+            "aumc": [
+                {
+                    "ids": 7179,
+                    "table": "drugitems",
+                    "sub_var": "itemid",
+                    "rel_weight": "doserateperkg",
+                    "rate_uom": "doserateunit",
+                    "stop_var": "stop",
+                    "callback": "aumc_rate_kg"
+                }
+            ],
+            "eicu": [
+                {
+                    "regex": "^dopa.*\\(.+\\)$",
+                    "table": "infusiondrug",
+                    "sub_var": "drugname",
+                    "weight_var": "patientweight",
+                    "callback": "eicu_rate_kg(ml_to_mcg = 1600)",
+                    "class": "rgx_itm"
+                }
+            ],
+            "eicu_demo": [
+                {
+                    "regex": "^dopa.*\\(.+\\)$",
+                    "table": "infusiondrug",
+                    "sub_var": "drugname",
+                    "weight_var": "patientweight",
+                    "callback": "eicu_rate_kg(ml_to_mcg = 1600)",
+                    "class": "rgx_itm"
+                }
+            ],
+            "miiv": [
+                {
+                    "ids": 221662,
+                    "table": "inputevents",
+                    "sub_var": "itemid",
+                    "stop_var": "endtime",
+                    "callback": "mimic_rate_mv"
+                }
+            ],
+            "mimic": [
+                {
+                    "ids": [
+                        30043,
+                        30125,
+                        30307
+                    ],
+                    "table": "inputevents_cv",
+                    "sub_var": "itemid",
+                    "grp_var": "linkorderid",
+                    "callback": "mimic_rate_cv"
+                },
+                {
+                    "ids": 221662,
+                    "table": "inputevents_mv",
+                    "sub_var": "itemid",
+                    "stop_var": "endtime",
+                    "callback": "mimic_rate_mv"
+                }
+            ],
+            "mimic_demo": [
+                {
+                    "ids": [
+                        30043,
+                        30125,
+                        30307
+                    ],
+                    "table": "inputevents_cv",
+                    "sub_var": "itemid",
+                    "grp_var": "linkorderid",
+                    "callback": "mimic_rate_cv"
+                },
+                {
+                    "ids": 221662,
+                    "table": "inputevents_mv",
+                    "sub_var": "itemid",
+                    "stop_var": "endtime",
+                    "callback": "mimic_rate_mv"
+                }
+            ],
+            "sic": [
+                {
+                    "ids": 1618,
+                    "table": "medication",
+                    "sub_var": "DrugID",
+                    "val_var": "AmountPerMinute",
+                    "stop_var": "OffsetDrugEnd",
+                    "callback": "sic_rate_kg"
+                }
+            ]
+        }
+    },
+    "epi_dur": {
+        "description": "epinephrine duration",
+        "category": "medications",
+        "aggregate": "max",
+        "sources": {
+            "aumc": [
+                {
+                    "ids": 6818,
+                    "table": "drugitems",
+                    "sub_var": "itemid",
+                    "stop_var": "stop",
+                    "grp_var": "orderid",
+                    "callback": "aumc_dur"
+                }
+            ],
+            "eicu": [
+                {
+                    "regex": "^epi( |n)",
+                    "table": "infusiondrug",
+                    "sub_var": "drugname",
+                    "callback": "eicu_duration(gap_length = hours(5L))",
+                    "class": "rgx_itm"
+                }
+            ],
+            "eicu_demo": [
+                {
+                    "regex": "^epi( |n)",
+                    "table": "infusiondrug",
+                    "sub_var": "drugname",
+                    "callback": "eicu_duration(gap_length = hours(5L))",
+                    "class": "rgx_itm"
+                }
+            ],
+            "hirid": [
+                {
+                    "ids": [
+                        71,
+                        1000649,
+                        1000650,
+                        1000655,
+                        1000750
+                    ],
+                    "table": "pharma",
+                    "sub_var": "pharmaid",
+                    "grp_var": "infusionid",
+                    "callback": "hirid_duration"
+                }
+            ],
+            "miiv": [
+                {
+                    "ids": 221289,
+                    "table": "inputevents",
+                    "sub_var": "itemid",
+                    "stop_var": "endtime",
+                    "grp_var": "linkorderid",
+                    "callback": "mimic_dur_inmv"
+                }
+            ],
+            "mimic": [
+                {
+                    "ids": [
+                        30044,
+                        30119,
+                        30309
+                    ],
+                    "table": "inputevents_cv",
+                    "sub_var": "itemid",
+                    "grp_var": "linkorderid",
+                    "callback": "mimic_dur_incv"
+                },
+                {
+                    "ids": 221289,
+                    "table": "inputevents_mv",
+                    "sub_var": "itemid",
+                    "stop_var": "endtime",
+                    "grp_var": "linkorderid",
+                    "callback": "mimic_dur_inmv"
+                }
+            ],
+            "mimic_demo": [
+                {
+                    "ids": [
+                        30044,
+                        30119,
+                        30309
+                    ],
+                    "table": "inputevents_cv",
+                    "sub_var": "itemid",
+                    "grp_var": "linkorderid",
+                    "callback": "mimic_dur_incv"
+                },
+                {
+                    "ids": 221289,
+                    "table": "inputevents_mv",
+                    "sub_var": "itemid",
+                    "stop_var": "endtime",
+                    "grp_var": "linkorderid",
+                    "callback": "mimic_dur_inmv"
+                }
+            ],
+            "sic": [
+                {
+                    "ids": [
+                        1502
+                    ],
+                    "table": "medication",
+                    "sub_var": "DrugID",
+                    "stop_var": "OffsetDrugEnd",
+                    "callback": "sic_dur"
+                }
+            ]
+        }
+    },
+    "epi_rate": {
+        "unit": [
+            "mcg/kg/min",
+            "mcgkgmin"
+        ],
+        "min": 0,
+        "max": 1.5,
+        "description": "epinephrine rate",
+        "omopid": 1343916,
+        "category": "medications",
+        "sources": {
+            "aumc": [
+                {
+                    "ids": 6818,
+                    "table": "drugitems",
+                    "sub_var": "itemid",
+                    "rel_weight": "doserateperkg",
+                    "rate_uom": "doserateunit",
+                    "stop_var": "stop",
+                    "callback": "aumc_rate_kg"
+                }
+            ],
+            "eicu": [
+                {
+                    "regex": "^epi( |n).*\\(.+\\)$",
+                    "table": "infusiondrug",
+                    "sub_var": "drugname",
+                    "weight_var": "patientweight",
+                    "callback": "eicu_rate_kg(ml_to_mcg = 40)",
+                    "class": "rgx_itm"
+                }
+            ],
+            "eicu_demo": [
+                {
+                    "regex": "^epi( |n).*\\(.+\\)$",
+                    "table": "infusiondrug",
+                    "sub_var": "drugname",
+                    "weight_var": "patientweight",
+                    "callback": "eicu_rate_kg(ml_to_mcg = 40)",
+                    "class": "rgx_itm"
+                }
+            ],
+            "hirid": [
+                {
+                    "ids": [
+                        71,
+                        1000649,
+                        1000650,
+                        1000655,
+                        1000750
+                    ],
+                    "table": "pharma",
+                    "sub_var": "pharmaid",
+                    "grp_var": "infusionid",
+                    "callback": "hirid_rate_kg"
+                }
+            ],
+            "miiv": [
+                {
+                    "ids": 221289,
+                    "table": "inputevents",
+                    "sub_var": "itemid",
+                    "stop_var": "endtime",
+                    "callback": "mimic_rate_mv"
+                }
+            ],
+            "mimic": [
+                {
+                    "ids": [
+                        30044,
+                        30119,
+                        30309
+                    ],
+                    "table": "inputevents_cv",
+                    "sub_var": "itemid",
+                    "grp_var": "linkorderid",
+                    "callback": "mimic_rate_cv"
+                },
+                {
+                    "ids": 221289,
+                    "table": "inputevents_mv",
+                    "sub_var": "itemid",
+                    "stop_var": "endtime",
+                    "callback": "mimic_rate_mv"
+                }
+            ],
+            "mimic_demo": [
+                {
+                    "ids": [
+                        30044,
+                        30119,
+                        30309
+                    ],
+                    "table": "inputevents_cv",
+                    "sub_var": "itemid",
+                    "grp_var": "linkorderid",
+                    "callback": "mimic_rate_cv"
+                },
+                {
+                    "ids": 221289,
+                    "table": "inputevents_mv",
+                    "sub_var": "itemid",
+                    "stop_var": "endtime",
+                    "callback": "mimic_rate_mv"
+                }
+            ],
+            "sic": [
+                {
+                    "ids": 1502,
+                    "table": "medication",
+                    "sub_var": "DrugID",
+                    "val_var": "AmountPerMinute",
+                    "stop_var": "OffsetDrugEnd",
+                    "callback": "sic_rate_kg"
+                }
+            ]
+        }
+    },
+    "ins": {
+        "unit": "units/hr",
+        "min": 0,
+        "description": "insulin",
+        "omopid": 42537007,
+        "category": "medications",
+        "sources": {
+            "aumc": [
+                {
+                    "ids": [
+                        7624,
+                        9014,
+                        19129
+                    ],
+                    "sub_var": "itemid",
+                    "table": "drugitems"
+                }
+            ],
+            "eicu": [
+                {
+                    "regex": "^insulin (250.+)?\\(((ml|units)/hr)?\\)$",
+                    "table": "infusiondrug",
+                    "sub_var": "drugname",
+                    "class": "rgx_itm"
+                }
+            ],
+            "eicu_demo": [
+                {
+                    "regex": "^insulin (250.+)?\\(((ml|units)/hr)?\\)$",
+                    "table": "infusiondrug",
+                    "sub_var": "drugname",
+                    "class": "rgx_itm"
+                }
+            ],
+            "hirid": [
+                {
+                    "ids": [
+                        15,
+                        1000724
+                    ],
+                    "table": "pharma",
+                    "sub_var": "pharmaid",
+                    "callback": "aggregate_fun('sum', 'units')"
+                }
+            ],
+            "miiv": [
+                {
+                    "ids": [
+                        223258,
+                        223260
+                    ],
+                    "table": "inputevents",
+                    "sub_var": "itemid",
+                    "val_var": "amount",
+                    "end_var": "endtime",
+                    "callback": "distribute_amount"
+                }
+            ],
+            "mimic": [
+                {
+                    "ids": [
+                        30045,
+                        30100
+                    ],
+                    "table": "inputevents_cv",
+                    "sub_var": "itemid"
+                },
+                {
+                    "ids": [
+                        223258,
+                        223260
+                    ],
+                    "table": "inputevents_mv",
+                    "sub_var": "itemid",
+                    "val_var": "amount",
+                    "end_var": "endtime",
+                    "callback": "distribute_amount"
+                }
+            ],
+            "mimic_demo": [
+                {
+                    "ids": [
+                        30045,
+                        30100
+                    ],
+                    "table": "inputevents_cv",
+                    "sub_var": "itemid"
+                },
+                {
+                    "ids": [
+                        223258,
+                        223260
+                    ],
+                    "table": "inputevents_mv",
+                    "sub_var": "itemid",
+                    "val_var": "amount",
+                    "end_var": "endtime",
+                    "callback": "distribute_amount"
+                }
+            ]
+        }
+    },
+    "norepi_dur": {
+        "description": "norepinephrine duration",
+        "category": "medications",
+        "aggregate": "max",
+        "sources": {
+            "aumc": [
+                {
+                    "ids": 7229,
+                    "table": "drugitems",
+                    "sub_var": "itemid",
+                    "stop_var": "stop",
+                    "grp_var": "orderid",
+                    "callback": "aumc_dur"
+                }
+            ],
+            "eicu": [
+                {
+                    "regex": "^norepi",
+                    "table": "infusiondrug",
+                    "sub_var": "drugname",
+                    "callback": "eicu_duration(gap_length = hours(5L))",
+                    "class": "rgx_itm"
+                }
+            ],
+            "eicu_demo": [
+                {
+                    "regex": "^norepi",
+                    "table": "infusiondrug",
+                    "sub_var": "drugname",
+                    "callback": "eicu_duration(gap_length = hours(5L))",
+                    "class": "rgx_itm"
+                }
+            ],
+            "hirid": [
+                {
+                    "ids": [
+                        1000462,
+                        1000656,
+                        1000657,
+                        1000658
+                    ],
+                    "table": "pharma",
+                    "sub_var": "pharmaid",
+                    "grp_var": "infusionid",
+                    "callback": "hirid_duration"
+                }
+            ],
+            "miiv": [
+                {
+                    "ids": 221906,
+                    "table": "inputevents",
+                    "sub_var": "itemid",
+                    "stop_var": "endtime",
+                    "grp_var": "linkorderid",
+                    "callback": "mimic_dur_inmv"
+                }
+            ],
+            "mimic": [
+                {
+                    "ids": [
+                        30047,
+                        30120
+                    ],
+                    "table": "inputevents_cv",
+                    "sub_var": "itemid",
+                    "grp_var": "linkorderid",
+                    "callback": "mimic_dur_incv"
+                },
+                {
+                    "ids": 221906,
+                    "table": "inputevents_mv",
+                    "sub_var": "itemid",
+                    "stop_var": "endtime",
+                    "grp_var": "linkorderid",
+                    "callback": "mimic_dur_inmv"
+                }
+            ],
+            "mimic_demo": [
+                {
+                    "ids": [
+                        30047,
+                        30120
+                    ],
+                    "table": "inputevents_cv",
+                    "sub_var": "itemid",
+                    "grp_var": "linkorderid",
+                    "callback": "mimic_dur_incv"
+                },
+                {
+                    "ids": 221906,
+                    "table": "inputevents_mv",
+                    "sub_var": "itemid",
+                    "stop_var": "endtime",
+                    "grp_var": "linkorderid",
+                    "callback": "mimic_dur_inmv"
+                }
+            ],
+            "sic": [
+                {
+                    "ids": [
+                        1562
+                    ],
+                    "table": "medication",
+                    "sub_var": "DrugID",
+                    "stop_var": "OffsetDrugEnd",
+                    "callback": "sic_dur"
+                }
+            ]
+        }
+    },
+    "norepi_equiv": {
+        "description": "norepinephrine equivalents",
+        "category": "medications",
+        "concepts": [
+            "epi_rate",
+            "norepi_rate",
+            "dopa_rate",
+            "adh_rate",
+            "phn_rate"
+        ],
+        "callback": "norepi_equiv",
+        "class": "rec_cncpt"
+    },
+    "norepi_rate": {
+        "unit": [
+            "mcg/kg/min",
+            "mcgkgmin"
+        ],
+        "min": 0,
+        "max": 3,
+        "description": "norepinephrine rate",
+        "omopid": 1321341,
+        "category": "medications",
+        "sources": {
+            "aumc": [
+                {
+                    "ids": 7229,
+                    "table": "drugitems",
+                    "sub_var": "itemid",
+                    "rel_weight": "doserateperkg",
+                    "rate_uom": "doserateunit",
+                    "stop_var": "stop",
+                    "callback": "aumc_rate_kg"
+                }
+            ],
+            "eicu": [
+                {
+                    "regex": "^norepi.*\\(.+\\)$",
+                    "table": "infusiondrug",
+                    "sub_var": "drugname",
+                    "weight_var": "patientweight",
+                    "callback": "eicu_rate_kg(ml_to_mcg = 32)",
+                    "class": "rgx_itm"
+                }
+            ],
+            "eicu_demo": [
+                {
+                    "regex": "^norepi.*\\(.+\\)$",
+                    "table": "infusiondrug",
+                    "sub_var": "drugname",
+                    "weight_var": "patientweight",
+                    "callback": "eicu_rate_kg(ml_to_mcg = 32)",
+                    "class": "rgx_itm"
+                }
+            ],
+            "hirid": [
+                {
+                    "ids": [
+                        1000462,
+                        1000656,
+                        1000657,
+                        1000658
+                    ],
+                    "table": "pharma",
+                    "sub_var": "pharmaid",
+                    "grp_var": "infusionid",
+                    "callback": "hirid_rate_kg"
+                }
+            ],
+            "miiv": [
+                {
+                    "ids": 221906,
+                    "table": "inputevents",
+                    "sub_var": "itemid",
+                    "stop_var": "endtime",
+                    "callback": "mimic_rate_mv"
+                }
+            ],
+            "mimic": [
+                {
+                    "ids": [
+                        30047,
+                        30120
+                    ],
+                    "table": "inputevents_cv",
+                    "sub_var": "itemid",
+                    "grp_var": "linkorderid",
+                    "callback": "mimic_rate_cv"
+                },
+                {
+                    "ids": 221906,
+                    "table": "inputevents_mv",
+                    "sub_var": "itemid",
+                    "stop_var": "endtime",
+                    "callback": "mimic_rate_mv"
+                }
+            ],
+            "mimic_demo": [
+                {
+                    "ids": [
+                        30047,
+                        30120
+                    ],
+                    "table": "inputevents_cv",
+                    "sub_var": "itemid",
+                    "grp_var": "linkorderid",
+                    "callback": "mimic_rate_cv"
+                },
+                {
+                    "ids": 221906,
+                    "table": "inputevents_mv",
+                    "sub_var": "itemid",
+                    "stop_var": "endtime",
+                    "callback": "mimic_rate_mv"
+                }
+            ],
+            "sic": [
+                {
+                    "ids": 1562,
+                    "table": "medication",
+                    "sub_var": "DrugID",
+                    "val_var": "AmountPerMinute",
+                    "stop_var": "OffsetDrugEnd",
+                    "callback": "sic_rate_kg"
+                }
+            ]
+        }
+    },
+    "phn_rate": {
+        "unit": "mcg/kg/min",
+        "description": "phenylephrine rate",
+        "omopid": 1135766,
+        "category": "medications",
+        "sources": {
+            "eicu": [
+                {
+                    "regex": "^phenylephrine.*\\(.+\\)$",
+                    "table": "infusiondrug",
+                    "sub_var": "drugname",
+                    "weight_var": "patientweight",
+                    "callback": "eicu_rate_kg(ml_to_mcg = 200)",
+                    "class": "rgx_itm"
+                }
+            ],
+            "eicu_demo": [
+                {
+                    "regex": "^phenylephrine.*\\(.+\\)$",
+                    "table": "infusiondrug",
+                    "sub_var": "drugname",
+                    "weight_var": "patientweight",
+                    "callback": "eicu_rate_kg(ml_to_mcg = 200)",
+                    "class": "rgx_itm"
+                }
+            ],
+            "miiv": [
+                {
+                    "ids": 221749,
+                    "table": "inputevents",
+                    "sub_var": "itemid",
+                    "stop_var": "endtime",
+                    "callback": "mimic_rate_mv"
+                }
+            ],
+            "mimic": [
+                {
+                    "ids": 30127,
+                    "table": "inputevents_cv",
+                    "sub_var": "itemid",
+                    "grp_var": "linkorderid",
+                    "callback": "combine_callbacks(\n               mimic_kg_rate, mimic_rate_cv)\n             "
+                },
+                {
+                    "ids": 30128,
+                    "table": "inputevents_cv",
+                    "sub_var": "itemid",
+                    "grp_var": "linkorderid",
+                    "callback": "mimic_rate_cv"
+                },
+                {
+                    "ids": 221749,
+                    "table": "inputevents_mv",
+                    "sub_var": "itemid",
+                    "stop_var": "endtime",
+                    "callback": "mimic_rate_mv"
+                }
+            ],
+            "mimic_demo": [
+                {
+                    "ids": 30127,
+                    "table": "inputevents_cv",
+                    "sub_var": "itemid",
+                    "grp_var": "linkorderid",
+                    "callback": "combine_callbacks(\n               mimic_kg_rate, mimic_rate_cv)\n             "
+                },
+                {
+                    "ids": 30128,
+                    "table": "inputevents_cv",
+                    "sub_var": "itemid",
+                    "grp_var": "linkorderid",
+                    "callback": "mimic_rate_cv"
+                },
+                {
+                    "ids": 221749,
+                    "table": "inputevents_mv",
+                    "sub_var": "itemid",
+                    "stop_var": "endtime",
+                    "callback": "mimic_rate_mv"
+                }
+            ]
+        }
+    },
+    "vaso_ind": {
+        "concepts": [
+            "dopa_dur",
+            "norepi_dur",
+            "dobu_dur",
+            "epi_dur"
+        ],
+        "description": "vasopressor indicator",
+        "omopid": 3655896,
+        "category": "medications",
+        "callback": "vaso_ind",
+        "class": "rec_cncpt"
+    }
+}

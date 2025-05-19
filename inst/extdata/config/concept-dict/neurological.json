@@ -1,0 +1,345 @@
+{
+    "avpu": {
+        "concepts": "gcs",
+        "description": "AVPU scale",
+        "omopid": 40493498,
+        "category": "neurological",
+        "callback": "avpu",
+        "class": "rec_cncpt"
+    },
+    "egcs": {
+        "min": 1,
+        "max": 4,
+        "description": "GCS eye",
+        "omopid": 4084277,
+        "category": "neurological",
+        "sources": {
+            "aumc": [
+                {
+                    "ids": 6732,
+                    "table": "listitems",
+                    "sub_var": "itemid",
+                    "callback": "apply_map( c(`Geen reactie` = 1, `Reactie op pijnprikkel` = 2, `Reactie op verbale prikkel` = 3, `Spontane reactie` = 4) )"
+                },
+                {
+                    "ids": 13077,
+                    "table": "listitems",
+                    "sub_var": "itemid",
+                    "callback": "apply_map( c(`Niet` = 1, `Op pijn` = 2, `Op aanspreken` = 3, `Spontaan` = 4) )"
+                }
+            ],
+            "eicu": [
+                {
+                    "ids": "Eyes",
+                    "table": "nursecharting",
+                    "sub_var": "nursingchartcelltypevalname"
+                }
+            ],
+            "eicu_demo": [
+                {
+                    "ids": "Eyes",
+                    "table": "nursecharting",
+                    "sub_var": "nursingchartcelltypevalname"
+                }
+            ],
+            "hirid": [
+                {
+                    "ids": 10000300,
+                    "table": "observations",
+                    "sub_var": "variableid",
+                    "class": "hrd_itm"
+                }
+            ],
+            "miiv": [
+                {
+                    "ids": 220739,
+                    "table": "chartevents",
+                    "sub_var": "itemid"
+                }
+            ],
+            "mimic": [
+                {
+                    "ids": [
+                        184,
+                        220739
+                    ],
+                    "table": "chartevents",
+                    "sub_var": "itemid"
+                }
+            ],
+            "mimic_demo": [
+                {
+                    "ids": [
+                        184,
+                        220739
+                    ],
+                    "table": "chartevents",
+                    "sub_var": "itemid"
+                }
+            ]
+        }
+    },
+    "gcs": {
+        "concepts": [
+            "egcs",
+            "mgcs",
+            "vgcs",
+            "tgcs",
+            "ett_gcs"
+        ],
+        "description": "Glasgow coma scale (non-sedated)",
+        "omopid": 4093836,
+        "category": "neurological",
+        "aggregate": [
+            "min",
+            "min",
+            "min",
+            "min",
+            "any"
+        ],
+        "callback": "gcs",
+        "class": "rec_cncpt"
+    },
+    "mgcs": {
+        "min": 1,
+        "max": 6,
+        "description": "GCS motor",
+        "omopid": 4083352,
+        "category": "neurological",
+        "sources": {
+            "aumc": [
+                {
+                    "ids": 6734,
+                    "table": "listitems",
+                    "sub_var": "itemid",
+                    "callback": "apply_map( c(`Geen reactie` = 1, `Strekken` = 2, `Decortatie reflex (abnormaal buigen)` = 3, `Spastische reactie (terugtrekken)` = 4, `Localiseert pijn` = 5, `Volgt verbale commando's op` = 6) )"
+                },
+                {
+                    "ids": 13072,
+                    "table": "listitems",
+                    "sub_var": "itemid",
+                    "callback": "apply_map( c(`Geen reactie` = 1, `Strekken op pijn` = 2, `Abnormaal buigen bij pijn` = 3, `Terugtrekken bij pijn` = 4, `Localiseren pijn` = 5, `Voert opdrachten uit` = 6) )"
+                }
+            ],
+            "eicu": [
+                {
+                    "ids": "Motor",
+                    "table": "nursecharting",
+                    "sub_var": "nursingchartcelltypevalname"
+                }
+            ],
+            "eicu_demo": [
+                {
+                    "ids": "Motor",
+                    "table": "nursecharting",
+                    "sub_var": "nursingchartcelltypevalname"
+                }
+            ],
+            "hirid": [
+                {
+                    "ids": 10000200,
+                    "table": "observations",
+                    "sub_var": "variableid",
+                    "class": "hrd_itm"
+                }
+            ],
+            "miiv": [
+                {
+                    "ids": 223901,
+                    "table": "chartevents",
+                    "sub_var": "itemid"
+                }
+            ],
+            "mimic": [
+                {
+                    "ids": [
+                        454,
+                        223901
+                    ],
+                    "table": "chartevents",
+                    "sub_var": "itemid"
+                }
+            ],
+            "mimic_demo": [
+                {
+                    "ids": [
+                        454,
+                        223901
+                    ],
+                    "table": "chartevents",
+                    "sub_var": "itemid"
+                }
+            ]
+        }
+    },
+    "rass": {
+        "min": -5,
+        "max": 4,
+        "description": "Richmond agitation sedation scale",
+        "omopid": 36684829,
+        "category": "neurological",
+        "sources": {
+            "aumc": [
+                {
+                    "ids": 14444,
+                    "sub_var": "itemid",
+                    "table": "listitems",
+                    "callback": "transform_fun(aumc_rass)"
+                }
+            ],
+            "eicu": [
+                {
+                    "ids": "Sedation Score",
+                    "table": "nursecharting",
+                    "sub_var": "nursingchartcelltypevalname"
+                }
+            ],
+            "eicu_demo": [
+                {
+                    "ids": "Sedation Score",
+                    "table": "nursecharting",
+                    "sub_var": "nursingchartcelltypevalname"
+                }
+            ],
+            "hirid": [
+                {
+                    "ids": 15001565,
+                    "table": "observations",
+                    "sub_var": "variableid",
+                    "callback": "transform_fun(floor)",
+                    "class": "hrd_itm"
+                }
+            ],
+            "miiv": [
+                {
+                    "ids": 228096,
+                    "table": "chartevents",
+                    "sub_var": "itemid"
+                }
+            ],
+            "mimic": [
+                {
+                    "ids": 228096,
+                    "table": "chartevents",
+                    "sub_var": "itemid"
+                }
+            ],
+            "mimic_demo": [
+                {
+                    "ids": 228096,
+                    "table": "chartevents",
+                    "sub_var": "itemid"
+                }
+            ]
+        }
+    },
+    "tgcs": {
+        "min": 3,
+        "max": 15,
+        "description": "GCS total",
+        "omopid": 4093836,
+        "category": "neurological",
+        "sources": {
+            "eicu": [
+                {
+                    "ids": "GCS Total",
+                    "table": "nursecharting",
+                    "sub_var": "nursingchartcelltypevalname"
+                }
+            ],
+            "eicu_demo": [
+                {
+                    "ids": "GCS Total",
+                    "table": "nursecharting",
+                    "sub_var": "nursingchartcelltypevalname"
+                }
+            ],
+            "mimic": [
+                {
+                    "ids": 198,
+                    "table": "chartevents",
+                    "sub_var": "itemid"
+                }
+            ],
+            "mimic_demo": [
+                {
+                    "ids": 198,
+                    "table": "chartevents",
+                    "sub_var": "itemid"
+                }
+            ]
+        }
+    },
+    "vgcs": {
+        "min": 1,
+        "max": 5,
+        "description": "GCS verbal",
+        "omopid": 4084912,
+        "category": "neurological",
+        "sources": {
+            "aumc": [
+                {
+                    "ids": 6735,
+                    "table": "listitems",
+                    "sub_var": "itemid",
+                    "callback": "apply_map( c(`Geen reactie (geen zichtbare poging tot praten)` = 1, `Onbegrijpelijke geluiden` = 2, `Onduidelijke woorden (pogingen tot communicatie, maar onduidelijk)` = 3, `Verwarde conversatie` = 4, `Helder en adequaat (communicatie mogelijk)` = 5) )"
+                },
+                {
+                    "ids": 13066,
+                    "table": "listitems",
+                    "sub_var": "itemid",
+                    "callback": "apply_map( c(`Geen geluid` = 1, `Onverstaanbare woorden` = 2, `Onjuiste woorden` = 3, `Verwarde taal` = 4, `Georiënteerd` = 5) )"
+                }
+            ],
+            "eicu": [
+                {
+                    "ids": "Verbal",
+                    "table": "nursecharting",
+                    "sub_var": "nursingchartcelltypevalname"
+                }
+            ],
+            "eicu_demo": [
+                {
+                    "ids": "Verbal",
+                    "table": "nursecharting",
+                    "sub_var": "nursingchartcelltypevalname"
+                }
+            ],
+            "hirid": [
+                {
+                    "ids": 10000100,
+                    "table": "observations",
+                    "sub_var": "variableid",
+                    "class": "hrd_itm"
+                }
+            ],
+            "miiv": [
+                {
+                    "ids": 223900,
+                    "table": "chartevents",
+                    "sub_var": "itemid"
+                }
+            ],
+            "mimic": [
+                {
+                    "ids": [
+                        723,
+                        223900
+                    ],
+                    "table": "chartevents",
+                    "sub_var": "itemid"
+                }
+            ],
+            "mimic_demo": [
+                {
+                    "ids": [
+                        723,
+                        223900
+                    ],
+                    "table": "chartevents",
+                    "sub_var": "itemid"
+                }
+            ]
+        }
+    }
+}

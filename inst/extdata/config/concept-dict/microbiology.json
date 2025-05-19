@@ -1,0 +1,82 @@
+{
+    "samp": {
+        "class": "lgl_cncpt",
+        "category": "microbiology",
+        "description": "body fluid sampling",
+        "omopid": 4133843,
+        "sources": {
+            "aumc": [
+                {
+                    "ids": [
+                        8097,
+                        8418,
+                        8588,
+                        9189,
+                        9190,
+                        9191,
+                        9192,
+                        9193,
+                        9194,
+                        9195,
+                        9197,
+                        9198,
+                        9200,
+                        9202,
+                        9203,
+                        9204,
+                        9205,
+                        13024,
+                        19663,
+                        19664
+                    ],
+                    "table": "procedureorderitems",
+                    "sub_var": "itemid",
+                    "callback": "transform_fun(set_val(TRUE))"
+                }
+            ],
+            "eicu": [
+                {
+                    "table": "microlab",
+                    "val_var": "organism",
+                    "callback": "transform_fun(comp_na(`!=`, 'no growth'))",
+                    "class": "col_itm"
+                }
+            ],
+            "eicu_demo": [
+                {
+                    "table": "microlab",
+                    "val_var": "organism",
+                    "callback": "transform_fun(comp_na(`!=`, 'no growth'))",
+                    "class": "col_itm"
+                }
+            ],
+            "miiv": [
+                {
+                    "table": "microbiologyevents",
+                    "val_var": "org_itemid",
+                    "callback": "mimic_sampling",
+                    "aux_time": "charttime",
+                    "class": "col_itm"
+                }
+            ],
+            "mimic": [
+                {
+                    "table": "microbiologyevents",
+                    "val_var": "org_itemid",
+                    "callback": "mimic_sampling",
+                    "aux_time": "charttime",
+                    "class": "col_itm"
+                }
+            ],
+            "mimic_demo": [
+                {
+                    "table": "microbiologyevents",
+                    "val_var": "org_itemid",
+                    "callback": "mimic_sampling",
+                    "aux_time": "charttime",
+                    "class": "col_itm"
+                }
+            ]
+        }
+    }
+}
