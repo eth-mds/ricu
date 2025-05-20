@@ -6,55 +6,51 @@ on:
     branches:
       - main
 
-name: check
-
 jobs:
-  check:
-    runs-on: ${{ matrix.config.os }}
-
-    name: ${{ matrix.config.os }} (${{ matrix.config.r }})
+  R-CMD-check:
+    name: R CMD check (${{ matrix.os }})
+    runs-on: ${{ matrix.os }}
 
     strategy:
       fail-fast: false
       matrix:
-        config:
-          - {os: macOS-latest,   r: 'release'}
-          - {os: windows-latest, r: 'release'}
-          - {os: ubuntu-latest,  r: 'devel', http-user-agent: 'release'}
-          - {os: ubuntu-latest,  r: 'release'}
-          - {os: ubuntu-latest,  r: 'oldrel-1'}
-
-    env:
-      R_REMOTES_NO_ERRORS_FROM_WARNINGS: true
-      GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
-      R_KEEP_PKG_SOURCE: yes
+         os: ['ubuntu-latest']
 
     steps:
-      - uses: actions/checkout@v2
-
-      - uses: r-lib/actions/setup-tinytex@v2
-      - run: tlmgr --version
-
-      - uses: r-lib/actions/setup-pandoc@v2
-
-      - uses: r-lib/actions/setup-r@v2
+      - uses: actions/checkout@v4
+      - name: Set up Conda env
+        uses: mamba-org/provision-with-micromamba@e2b397b12d0a38069451664382b769c9456e3d6d
         with:
-          r-version: ${{ matrix.config.r }}
-          http-user-agent: ${{ matrix.config.http-user-agent }}
-          use-public-rspm: true
-
-      - uses: r-lib/actions/setup-r-dependencies@v2
-        with:
-          extra-packages: |
-            any::rcmdcheck
-            eth-mds/mimic-demo
-            eth-mds/eicu-demo
-            nbenn/mockthat
-
-      - uses: r-lib/actions/check-r-package@v2
+          cache-env: true
+      - name: Install TinyTex
+        shell: bash -l {0}
+        run: |
+          Rscript -e 'tinytex::install_tinytex()'
+      - name: Run R CMD check
+        shell: bash -l {0}
+        run: |
+          R CMD build . && R CMD check --no-manual --as-cran $(ls -t . | head -n1)
         env:
           _R_CHECK_CRAN_INCOMING_: false
           _R_CHECK_FORCE_SUGGESTS_: false
-          _R_CHECK_DOC_SIZES_: false
-        with:
-          upload-snapshots: true
+      # R CMD check raises a warning by qpdf that the generated docs PDF is large and
+      # should be compressed. Currently we ignore this warning via the grep below.
+      - name: Check for warnings
+        shell: bash -l {0}
+        run: |
+          CHECK_LOG_FILE=ricu.Rcheck/00check.log
+          CHECK_INSTALL_FILE=ricu.Rcheck/00install.out
+          if ! [[ -f "$CHECK_LOG_FILE" ]]; then
+            echo "Log-file not found."
+            exit 1
+          fi
+          if cat $CHECK_LOG_FILE | grep -q "ERROR"; then
+            cat $CHECK_INSTALL_FILE
+            cat $CHECK_LOG_FILE
+            exit 1
+          fi
+          if cat $CHECK_LOG_FILE | grep -q "WARNING" | grep -q -v -e "checking sizes of PDF files under ‘inst/doc’ ... WARNING"; then
+            echo "Found warnings, treated as errors."
+            cat $CHECK_LOG_FILE
+            exit 1
+          fi
