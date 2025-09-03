@@ -43,57 +43,100 @@ hosted data source is available as well. As with the PhysioNet datasets,
 access is public but has to be granted by the data collectors.
 }
 \details{
-Setting up a dataset for use with `ricu` requires a configuration object.
+Setting up a dataset for use with \code{ricu} requires a configuration object.
 For the included datasets, configuration can be loaded from
 
-```
-system.file("extdata", "config", "data-sources.json", package = "ricu")
-```
+\if{html}{\out{<div class="sourceCode">}}\preformatted{system.file("extdata", "config", "data-sources.json", package = "ricu")
+}\if{html}{\out{</div>}}
 
-by calling [load_src_cfg()] and for dataset that are external to `ricu`,
+by calling \code{\link[=load_src_cfg]{load_src_cfg()}} and for dataset that are external to \code{ricu},
 additional configuration can be made available by setting the environment
-variable `RICU_CONFIG_PATH` (for more information, refer to
-[load_src_cfg()]). Using the dataset configuration object, data can be
-downloaded ([download_src()]), imported ([import_src()]) and attached
-([attach_src()]). While downloading and importing are one-time procedures,
+variable \code{RICU_CONFIG_PATH} (for more information, refer to
+\code{\link[=load_src_cfg]{load_src_cfg()}}). Using the dataset configuration object, data can be
+downloaded (\code{\link[=download_src]{download_src()}}), imported (\code{\link[=import_src]{import_src()}}) and attached
+(\code{\link[=attach_src]{attach_src()}}). While downloading and importing are one-time procedures,
 attaching of the dataset is repeated every time the package is loaded.
 Briefly, downloading loads the raw dataset from the internet (most likely
-in `.csv` format), importing consists of some preprocessing to make the
-data available more efficiently (by converting it to [`.fst`][fst::fst()]
+in \code{.csv} format), importing consists of some preprocessing to make the
+data available more efficiently (by converting it to \code{\link[fst:fst]{.fst}}
 format) and attaching sets up the data for use by the package. For more
 information on the individual steps, refer to the respective documentation
 pages.
 
 A dataset that has been successfully made available can interactively be
 explored by typing its name into the console and individual tables can be
-inspected using the `$` function. For example for the MIMIC-III demo
-dataset and the `icustays` table, this gives
+inspected using the \code{$} function. For example for the MIMIC-III demo
+dataset and the \code{icustays} table, this gives
 
-```{r, eval = is_data_avail("mimic_demo")}
-mimic_demo
+\if{html}{\out{<div class="sourceCode r">}}\preformatted{mimic_demo
+#> <mimic_demo_env[25]>
+#>         admissions            callout         caregivers        chartevents 
+#>         [129 x 19]          [77 x 24]        [7,567 x 4]     [758,355 x 15] 
+#>          cptevents              d_cpt    d_icd_diagnoses   d_icd_procedures 
+#>       [1,579 x 12]          [134 x 9]       [14,567 x 4]        [3,882 x 4] 
+#>            d_items         d_labitems     datetimeevents      diagnoses_icd 
+#>      [12,487 x 10]          [753 x 6]      [15,551 x 14]        [1,761 x 5] 
+#>           drgcodes           icustays     inputevents_cv     inputevents_mv 
+#>          [297 x 8]         [136 x 12]      [34,799 x 22]      [13,224 x 31] 
+#>          labevents microbiologyevents       outputevents           patients 
+#>       [76,074 x 9]       [2,003 x 16]      [11,320 x 13]          [100 x 8] 
+#>      prescriptions procedureevents_mv     procedures_icd           services 
+#>      [10,398 x 19]         [753 x 25]          [506 x 5]          [163 x 6] 
+#>          transfers 
+#>         [524 x 13]
 mimic_demo$icustays
-```
+#> # <mimic_tbl>: [136 x 12]
+#> # ID options:  subject_id (patient) < hadm_id (hadm) < icustay_id (icustay)
+#> # Defaults:    `intime` (index), `last_careunit` (val)
+#> # Time vars:   `intime`, `outtime`
+#>     row_id subject_id hadm_id icustay_id dbsource   first_careunit last_careunit
+#>      <int>      <int>   <int>      <int> <chr>      <chr>          <chr>
+#> 1    12742      10006  142345     206504 carevue    MICU           MICU
+#> 2    12747      10011  105331     232110 carevue    MICU           MICU
+#> 3    12749      10013  165520     264446 carevue    MICU           MICU
+#> 4    12754      10017  199207     204881 carevue    CCU            CCU
+#> 5    12755      10019  177759     228977 carevue    MICU           MICU
+#> ...
+#> 132  42676      44083  198330     286428 metavision CCU            CCU
+#> 133  42691      44154  174245     217724 metavision MICU           MICU
+#> 134  42709      44212  163189     239396 metavision MICU           MICU
+#> 135  42712      44222  192189     238186 metavision CCU            CCU
+#> 136  42714      44228  103379     217992 metavision SICU           SICU
+#> # i 131 more rows
+#> # i 5 more variables: first_wardid <int>, last_wardid <int>, intime <dttm>,
+#> #   outtime <dttm>, los <dbl>
+}\if{html}{\out{</div>}}
 
 Table subsets can be loaded into memory for example using the
-[base::subset()] function, which uses non-standard evaluation (NSE) to
+\code{\link[base:subset]{base::subset()}} function, which uses non-standard evaluation (NSE) to
 determine a row-subsetting. This design choice stems form the fact that
 some tables can have on the order of 10^8 rows, which makes loading full
 tables into memory an expensive operation. Table subsets loaded into
-memory are represented as [`data.table`][data.table::data.table()] objects.
+memory are represented as \code{\link[data.table:data.table]{data.table}} objects.
 Extending the above example, if only ICU stays corresponding to the patient
-with `subject_id == 10124` are of interest, the respective data can be
+with \code{subject_id == 10124} are of interest, the respective data can be
 loaded as
 
-```{r, eval = is_data_avail("mimic_demo")}
-subset(mimic_demo$icustays, subject_id == 10124)
-```
+\if{html}{\out{<div class="sourceCode r">}}\preformatted{subset(mimic_demo$icustays, subject_id == 10124)
+#>    row_id subject_id hadm_id icustay_id dbsource first_careunit last_careunit
+#>     <int>      <int>   <int>      <int>   <char>         <char>        <char>
+#> 1:  12863      10124  182664     261764  carevue           MICU          MICU
+#> 2:  12864      10124  170883     222779  carevue           MICU          MICU
+#> 3:  12865      10124  170883     295043  carevue            CCU           CCU
+#> 4:  12866      10124  170883     237528  carevue           MICU          MICU
+#>    first_wardid last_wardid              intime             outtime     los
+#>           <int>       <int>              <POSc>              <POSc>   <num>
+#> 1:           23          23 2192-03-29 10:46:51 2192-04-01 06:36:00  2.8258
+#> 2:           50          50 2192-04-16 20:58:32 2192-04-20 08:51:28  3.4951
+#> 3:            7           7 2192-04-24 02:29:49 2192-04-26 23:59:45  2.8958
+#> 4:           23          23 2192-04-30 14:50:44 2192-05-15 23:34:21 15.3636
+}\if{html}{\out{</div>}}
 
-Much care has been taken to make `ricu` extensible to new datasets. For
-example the publicly available ICU database [AmsterdamUMCdb
-](https://amsterdammedicaldatascience.nl/amsterdamumcdb/)
+Much care has been taken to make \code{ricu} extensible to new datasets. For
+example the publicly available ICU database \href{https://amsterdammedicaldatascience.nl/amsterdamumcdb/}{AmsterdamUMCdb }
 provided by the Amsterdam University Medical Center, currently is not part
-of the core datasets of `ricu`, but code for integrating this dataset is
-available on [github](https://github.com/eth-mds/aumc).
+of the core datasets of \code{ricu}, but code for integrating this dataset is
+available on \href{https://github.com/eth-mds/aumc}{github}.
 }
 \section{MIMIC-III}{
 

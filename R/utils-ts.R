@@ -311,7 +311,7 @@ remove_gaps <- function(x) rm_na(x, data_vars(x), "all")
 #' evaluated over each window
 #' @param before,after Time span to look back/forward
 #' @param ... Passed to `hop_quo()` and ultimately to
-#' [`data.table::[()`][data.table]
+#' [`data.table::[()`][data.table::data.table]
 #'
 #' @rdname ts_utils
 #' @export

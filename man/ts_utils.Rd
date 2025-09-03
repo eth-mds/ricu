@@ -85,7 +85,7 @@ expressions passes as \code{...}}
 an \code{id_tbl}}
 
 \item{...}{Passed to \code{hop_quo()} and ultimately to
-\code{\link[=data.table]{data.table::[()}}}
+\code{\link[data.table:data.table]{data.table::[()}}}
 
 \item{limits}{A table with columns for lower and upper window bounds or a
 length 2 difftime vector}
