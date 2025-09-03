@@ -38,7 +38,8 @@ either downloaded in full (\href{https://physionet.org/content/mimiciii/1.4/}{MI
 third data set is available only in full (\href{https://physionet.org/content/hirid/1.0/}{HiRID }). While demo data sets are
 freely available, full download requires credentialed access which can be
 gained by applying for an account with \href{https://physionet.org/register/}{PhysioNet }. Even though registration is required,
-the described datasets are all publicly available. With \href{https://amsterdammedicaldatascience.nl/#amsterdamumcdb}{AmsterdamUMCdb }, a non-PhysioNet
+the described datasets are all publicly available. With \link[=AmsterdamUMCdb
+]{AmsterdamUMCdb }(https://amsterdammedicaldatascience.nl/#amsterdamumcdb, a non-PhysioNet
 hosted data source is available as well. As with the PhysioNet datasets,
 access is public but has to be granted by the data collectors.
 }
@@ -133,7 +134,7 @@ loaded as
 }\if{html}{\out{</div>}}
 
 Much care has been taken to make \code{ricu} extensible to new datasets. For
-example the publicly available ICU database \href{https://amsterdammedicaldatascience.nl/amsterdamumcdb/}{AmsterdamUMCdb }
+example the publicly available ICU database \href{https://amsterdammedicaldatascience.nl/#amsterdamumcdb}{AmsterdamUMCdb }
 provided by the Amsterdam University Medical Center, currently is not part
 of the core datasets of \code{ricu}, but code for integrating this dataset is
 available on \href{https://github.com/eth-mds/aumc}{github}.
@@ -190,7 +191,7 @@ time resolution can be on the order of 2 minutes.
 \section{AmsterdamUMCdb}{
 
 With similar time-resolution (for vital-sign measurements) as HiRID,
-\href{https://amsterdammedicaldatascience.nl/#amsterdamumcdb}{AmsterdamUMCdb}
+\link{AmsterdamUMCdb}(https://amsterdammedicaldatascience.nl/#amsterdamumcdb
 contains data from 23,000 admissions of adult patients from 2003-2016 to
 the department of Intensive Care, of Amsterdam University Medical Center.
 In total, nearly 10^9^ individual observations consisting of vitals signs,

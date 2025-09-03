@@ -14,7 +14,7 @@
 #' gained by applying for an account with [PhysioNet
 #' ](https://physionet.org/register/). Even though registration is required,
 #' the described datasets are all publicly available. With [AmsterdamUMCdb
-#' ](https://amsterdammedicaldatascience.nl/#amsterdamumcdb), a non-PhysioNet
+#' ](https://amsterdammedicaldatascience.nl/#amsterdamumcdb, a non-PhysioNet
 #' hosted data source is available as well. As with the PhysioNet datasets,
 #' access is public but has to be granted by the data collectors.
 #'
@@ -66,7 +66,7 @@
 #'
 #' Much care has been taken to make `ricu` extensible to new datasets. For
 #' example the publicly available ICU database [AmsterdamUMCdb
-#' ](https://amsterdammedicaldatascience.nl/amsterdamumcdb/)
+#' ](https://amsterdammedicaldatascience.nl/#amsterdamumcdb)
 #' provided by the Amsterdam University Medical Center, currently is not part
 #' of the core datasets of `ricu`, but code for integrating this dataset is
 #' available on [github](https://github.com/eth-mds/aumc).
@@ -120,7 +120,7 @@
 #'
 #' @section AmsterdamUMCdb:
 #' With similar time-resolution (for vital-sign measurements) as HiRID,
-#' [AmsterdamUMCdb](https://amsterdammedicaldatascience.nl/#amsterdamumcdb)
+#' [AmsterdamUMCdb](https://amsterdammedicaldatascience.nl/#amsterdamumcdb
 #' contains data from 23,000 admissions of adult patients from 2003-2016 to
 #' the department of Intensive Care, of Amsterdam University Medical Center.
 #' In total, nearly 10^9^ individual observations consisting of vitals signs,
